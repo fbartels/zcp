@@ -1037,6 +1037,14 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 		{ "mysql_config_file",			"/etc/zarafa/my.cnf" },
 #endif
 		{ "attachment_storage",			"database" },
+#ifdef HAVE_LIBS3_H
+		{"attachment_s3_hostname", ""},
+		{"attachment_s3_protocol", "https"},
+		{"attachment_s3_uristyle", "virtualhost"},
+		{"attachment_s3_accesskeyid", ""},
+		{"attachment_s3_secretaccesskey", ""},
+		{"attachment_s3_bucketname", ""},
+#endif
 #ifdef WIN32
 		{ "attachment_path",			"Zarafa Data" },
 #else
@@ -1262,6 +1270,11 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 				goto exit;
 			}
 		}
+#endif
+#ifdef HAVE_LIBS3_H
+	} else if (strcmp(g_lpConfig->GetSetting("attachment_storage"), "s3") == 0) {
+		// @todo check S3 settings and connectivity
+		g_lpLogger->Log(EC_LOGLEVEL_INFO, "Attachment storage set to S3 Storage");
 #endif
 	} else if (strcmp(g_lpConfig->GetSetting("attachment_storage"), "database") != 0) {
 		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unknown attachment_storage option '%s', reverting to default 'database' method.", g_lpConfig->GetSetting("attachment_storage"));

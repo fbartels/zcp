@@ -637,6 +637,12 @@ AC_CHECK_LIB([curl], [curl_easy_perform], [CURL_LIBS="-lcurl"], AC_MSG_ERROR([re
 AC_SUBST(CURL_LIBS)
 fi # oss only
 
+# Check for libs3 amazon s3 availability
+LIBS_system="$LIBS"
+AC_CHECK_HEADERS([libs3.h])
+AC_SEARCH_LIBS([S3_initialize], [s3], [s3_LIBS="-ls3"; LIBS="$LIBS_system"])
+AC_SUBST([s3_LIBS])
+
 AC_CHECK_FUNCS([uuid_create], UUID_LIBS="",	dnl uuid_create is in libc on FreeBSD
   AC_CHECK_LIB([uuid], [uuid_create],
     UUID_LIBS="-luuid"
@@ -853,6 +859,7 @@ Curl libs	:	$CURL_LIBS
 Pam libs	:	$PAM_LIBS
 Krb5 libs	:	$KRB5_LIBS
 TCMalloc lib	:	$TCMALLOC_LIBS
+S3 lib		:	$s3_LIBS
 Boost		:
  Flags		:	$BOOST_CPPFLAGS
  FS ldflags	:	$BOOST_FILESYSTEM_LDFLAGS

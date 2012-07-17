@@ -67,6 +67,7 @@
 #include <mapitags.h>
 #include <zarafa/stringutil.h>
 #include "StreamUtil.h"
+#include "ECS3Attachment.h"
 
 // chunk size for attachment blobs, must be equal or larger than MAX, MAX may never shrink below 384*1024.
 #define CHUNK_SIZE (384 * 1024)
@@ -159,6 +160,17 @@ ECRESULT ECAttachmentStorage::CreateAttachmentStorage(ECDatabase *lpDatabase,
 		unsigned int complvl = (comp == NULL) ? 0 : strtoul(comp, NULL, 0);
 
 		lpAttachmentStorage = new ECFileAttachment(lpDatabase, dir, complvl, sync_files);
+#ifdef HAVE_LIBS3_H
+	} else if (ans != NULL && strcmp(ans, "s3") == 0) {
+		lpAttachmentStorage = new ECS3Attachment(lpDatabase,
+					lpConfig->GetSetting("attachment_s3_protocol"),
+					lpConfig->GetSetting("attachment_s3_uristyle"),
+					lpConfig->GetSetting("attachment_s3_accesskeyid"),
+					lpConfig->GetSetting("attachment_s3_secretaccesskey"),
+					lpConfig->GetSetting("attachment_s3_bucketname"),
+					lpConfig->GetSetting("attachment_path"),
+					strtol(lpConfig->GetSetting("attachment_compression"), NULL, 0));
+#endif
 	} else {
 		lpAttachmentStorage = new ECDatabaseAttachment(lpDatabase);
 	}

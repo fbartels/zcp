@@ -52,6 +52,7 @@
 #include "ECServerEntrypoint.h"
 
 #include "ECSessionManagerOffline.h"
+#include "ECS3Attachment.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -192,7 +193,10 @@ ECRESULT zarafa_init(ECConfig *lpConfig, ECLogger *lpAudit, bool bHostedZarafa, 
 	er = g_lpSessionManager->CheckUserLicense();
 	if (er != erSuccess)
 		goto exit;
-
+#ifdef HAVE_LIBS3_H
+        if (strcmp(lpConfig->GetSetting("attachment_storage"), "s3") == 0)
+                ECS3Attachment::StaticInit(lpConfig);
+#endif
 exit:
 	return er;
 }
@@ -213,6 +217,11 @@ ECRESULT zarafa_exit()
 		er = ZARAFA_E_NOT_INITIALIZED;
 		goto exit;
 	}
+
+#ifdef HAVE_LIBS3_H
+        if (g_lpSessionManager && strcmp(g_lpSessionManager->GetConfig()->GetSetting("attachment_storage"), "s3") == 0)
+                ECS3Attachment::StaticDeinit();
+#endif
 
 	// delete our plugin of the mainthread: requires ECPluginFactory to be alive, because that holds the dlopen() result
 	plugin_destroy(pthread_getspecific(plugin_key));
