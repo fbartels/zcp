@@ -980,7 +980,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 		{ "server_name",				"" }, // used by multi-server
 		{ "server_hostname",			"" }, // used by kerberos, if empty, gethostbyname is used
 		// server connections
-		{ "server_bind",				"0.0.0.0" },
+		{ "server_bind",				"" },
 		{ "server_tcp_port",			"236" },
 		{ "server_tcp_enabled",			"yes" },
 		{ "server_pipe_enabled",		"yes" },

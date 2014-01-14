@@ -102,7 +102,7 @@ private:
 
 /* helpers to open socket */
 HRESULT HrListen(ECLogger *lpLogger, const char *szPath, int *lpulListenSocket);
-HRESULT HrListen(ECLogger *lpLogger, const char *szBind, int ulPort, int *lpulListenSocket);
+HRESULT HrListen(ECLogger *lpLogger, const char *szBind, uint16_t ulPort, int *lpulListenSocket);
 /* accept data on connection */
 HRESULT HrAccept(ECLogger *lpLogger, int ulListenFD, ECChannel **lppChannel);
 

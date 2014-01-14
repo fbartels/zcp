@@ -321,7 +321,7 @@ int main(int argc, char *argv[]) {
 #endif
 
 	static const configsetting_t lpDefaults[] = {
-		{ "server_bind", "0.0.0.0" },
+		{ "server_bind", "" },
 #ifdef LINUX
 		{ "run_as_user", "" },
 		{ "run_as_group", "" },
