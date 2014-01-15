@@ -675,6 +675,39 @@ const std::string& ECChannel::GetIPAddress() const
 	return strIP;
 }
 
+/**
+ * getaddrinfo() adheres to the preference weights given in /etc/gai.conf,
+ * but only for connect sockets. For AI_PASSIVE, sockets may be returned in
+ * any order. This function will reorder an addrinfo linked list and place
+ * IPv6 in the front.
+ */
+static struct addrinfo *reorder_addrinfo_ipv6(struct addrinfo *node)
+{
+	struct addrinfo v6head, othead;
+	v6head.ai_next = NULL;
+	othead.ai_next = node;
+	struct addrinfo *v6tail = &v6head, *prev = &othead;
+
+	while (node != NULL) {
+		if (node->ai_family != AF_INET6) {
+			prev = node;
+			node = node->ai_next;
+			continue;
+		}
+		/* disconnect current node (INET6) */
+		prev->ai_next = node->ai_next;
+		node->ai_next = NULL;
+		/* - reattach to v6 list */
+		v6tail->ai_next = node;
+		v6tail = node;
+		/* continue in ot list */
+		node = prev->ai_next;
+	}
+	/* join list */
+	v6tail->ai_next = othead.ai_next;
+	return v6head.ai_next;
+}
+
 HRESULT HrListen(ECLogger *lpLogger, const char *szPath, int *lpulListenSocket)
 {
 #ifdef WIN32
@@ -784,6 +817,7 @@ HRESULT HrListen(ECLogger *lpLogger, const char *szBind, uint16_t ulPort,
 		lpLogger->Log(EC_LOGLEVEL_ERROR, "getaddrinfo(%s,%u): %s", szBind, ulPort, gai_strerror(ret));
 		goto exit;
 	}
+	sock_res = reorder_addrinfo_ipv6(sock_res);
 
 	errno = 0;
 	for (sock_addr = sock_res; sock_addr != NULL;
