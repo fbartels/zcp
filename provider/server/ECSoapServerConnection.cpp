@@ -433,6 +433,9 @@ ECRESULT ECSoapServerConnection::ListenSSL(const char* lpServerName, int nServer
 	const char *server_ssl_ciphers = m_lpConfig->GetSetting("server_ssl_ciphers");
 	char *ssl_name = NULL;
 	int ssl_op = 0, ssl_include = 0, ssl_exclude = 0;
+#if !defined(OPENSSL_NO_ECDH) && defined(NID_X9_62_prime256v1)
+	EC_KEY *ecdh;
+#endif
 
 	if(lpServerName == NULL) {
 		er = ZARAFA_E_INVALID_PARAMETER;
@@ -464,7 +467,14 @@ ECRESULT ECSoapServerConnection::ListenSSL(const char* lpServerName, int nServer
 	}
 
 	SSL_CTX_set_options(lpsSoap->ctx, SSL_OP_ALL);
-
+#if !defined(OPENSSL_NO_ECDH) && defined(NID_X9_62_prime256v1)
+	ecdh = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
+	if (ecdh != NULL) {
+		SSL_CTX_set_options(lpsSoap->ctx, SSL_OP_SINGLE_ECDH_USE);
+		SSL_CTX_set_tmp_ecdh(lpsSoap->ctx, ecdh);
+		EC_KEY_free(ecdh);
+	}
+#endif
 	ssl_name = strtok(server_ssl_protocols, " ");
 	while(ssl_name != NULL) {
 		int ssl_proto = 0;
