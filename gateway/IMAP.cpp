@@ -5177,10 +5177,21 @@ HRESULT IMAP::HrGetMessagePart(string &strMessagePart, string &strMessage, strin
         } else {
             vector<string> lstReqFields;
             vector<string>::iterator iterReqField;
+            vector<string>::iterator r, w;
+            set<string> tmpset;
 
             // Get fields as vector
 			lstReqFields = tokenize(strFields, " ");
             
+            // Make elements of vector unique  
+            for(r = lstReqFields.begin(), w = lstReqFields.begin(); r != lstReqFields.end(); ++r) {
+                if(tmpset.insert(*r).second) {
+                    *w++ = *r;
+                }
+            }
+
+            lstReqFields.erase(w, lstReqFields.end());
+
             // Output headers specified, in order of field set
             for(iterReqField = lstReqFields.begin(); iterReqField != lstReqFields.end(); iterReqField++) {
                 for(iterField = lstFields.begin(); iterField != lstFields.end(); iterField++) {
