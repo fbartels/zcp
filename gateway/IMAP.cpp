@@ -2378,7 +2378,7 @@ HRESULT IMAP::HrCmdSearch(const string &strTag, vector<string> &lstSearchCriteri
 		if (lstSearchCriteria[1] != "WINDOWS-1252") {
 			iconv = new ECIConv("windows-1252", lstSearchCriteria[1]);
 			if (!iconv->canConvert()) {
-				hr2 = HrResponse(RESP_TAGGED_NO, strTag, "[BADCHARSET WINDOWS-1252] "+strMode+"SEARCH charset not supported");
+				hr2 = HrResponse(RESP_TAGGED_NO, strTag, "[BADCHARSET (WINDOWS-1252)] " + strMode + "SEARCH charset not supported");
 				hr = MAPI_E_CALL_FAILED;
 				goto exit;
 			}
