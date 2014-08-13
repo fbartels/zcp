@@ -80,6 +80,8 @@
 		switch($_SESSION["hresult"]){
 			case MAPI_E_LOGON_FAILED:
 			case MAPI_E_UNCONFIGURED:
+				if (isset($_POST["username"]))
+					error_log("User \"".$_POST["username"]."\": authentication failure at MAPI");
 				echo _("Logon failed, please check your name/password.");
 				break;
 			case MAPI_E_NETWORK_ERROR:
