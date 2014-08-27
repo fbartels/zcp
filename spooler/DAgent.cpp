@@ -1703,11 +1703,34 @@ static HRESULT SendOutOfOffice(LPADRBOOK lpAdrBook, LPMDB lpMDB,
 		goto exit;
 	}
 
-	// add anti-loop header
+	// add anti-loop header for Zarafa
 	snprintf(szHeader, PATH_MAX, "\nX-Zarafa-Vacation: autorespond");
 	hr = WriteOrLogError(fd, szHeader, strlen(szHeader));
 	if (hr != hrSuccess) {
 		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "SendOutOfOffice(): WriteOrLogError failed(3) %x", hr);
+		goto exit;
+	}
+
+	/*
+	 * Add anti-loop header for Exchange, see
+	 * http://msdn.microsoft.com/en-us/library/ee219609(v=exchg.80).aspx
+	 */
+	snprintf(szHeader, PATH_MAX, "\nX-Auto-Response-Suppress: All");
+	hr = WriteOrLogError(fd, szHeader, strlen(szHeader));
+	if (hr != hrSuccess) {
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "SendOutOfOffice(): WriteOrLogError failed(4) %x", hr);
+		goto exit;
+	}
+
+	/*
+	 * Add anti-loop header for vacation(1) compatible implementations,
+	 * see book "Sendmail" (ISBN 0596555342), section 10.9.
+	 * RFC 3834 §3.1.8.
+	 */
+	snprintf(szHeader, PATH_MAX, "\nPrecedence: bulk");
+	hr = WriteOrLogError(fd, szHeader, strlen(szHeader));
+	if (hr != hrSuccess) {
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "SendOutOfOffice(): WriteOrLogError failed(5) %x", hr);
 		goto exit;
 	}
 
