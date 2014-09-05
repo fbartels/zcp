@@ -1610,11 +1610,19 @@ static HRESULT SendOutOfOffice(LPADRBOOK lpAdrBook, LPMDB lpMDB,
 
 	// See if we're looping
 	if (lpMessageProps[0].ulPropTag == PR_TRANSPORT_MESSAGE_HEADERS_A) {
-		if ( (strstr(lpMessageProps[0].Value.lpszA, "X-Zarafa-Vacation:") != NULL) ||
-			 (strstr(lpMessageProps[0].Value.lpszA, "Auto-Submitted:") != NULL) ||
-			 (strstr(lpMessageProps[0].Value.lpszA, "Precedence:") != NULL) )
+		if ( (strstr(lpMessageProps[0].Value.lpszA, "X-Zarafa-Vacation:") != NULL) ||		// Zarafa
+			 (strstr(lpMessageProps[0].Value.lpszA, "Auto-Submitted:") != NULL) ||		// RFC 3834
+			 (strstr(lpMessageProps[0].Value.lpszA, "List-Id:") != NULL) ||			// RFC 2919
+			 (strstr(lpMessageProps[0].Value.lpszA, "List-Help:") != NULL) ||		// RFC 2369
+			 (strstr(lpMessageProps[0].Value.lpszA, "List-Subscribe:") != NULL) ||		// RFC 2369
+			 (strstr(lpMessageProps[0].Value.lpszA, "List-Unsubscribe:") != NULL) ||	// RFC 2369
+			 (strstr(lpMessageProps[0].Value.lpszA, "List-Post:") != NULL) ||		// RFC 2369
+			 (strstr(lpMessageProps[0].Value.lpszA, "List-Owner:") != NULL) ||		// RFC 2369
+			 (strstr(lpMessageProps[0].Value.lpszA, "List-Archive:") != NULL) ||		// RFC 2369
+			 (strstr(lpMessageProps[0].Value.lpszA, "Precedence:") != NULL) )		// RFC 3834
 			// Vacation header already present, do not send vacation reply
 			// Precedence: list/bulk/junk, do not reply to these mails
+			// See also RFC 5230 §4.6 for details
 			goto exit;
 		// save headers to a file so they can also be tested from the script we're runing
 		snprintf(szTemp, PATH_MAX, "%s/autorespond-headers.XXXXXX", TmpPath::getInstance() -> getTempPath().c_str());
