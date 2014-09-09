@@ -421,7 +421,7 @@ exit:
 }
 
 /**
- * Checks whether hte message needs auto-processing
+ * Checks whether the message needs auto-processing
  */
 static bool FNeedsAutoProcessing(IMsgStore *lpStore, LPMESSAGE lpMessage)
 {
@@ -2448,6 +2448,16 @@ static HRESULT HrPostDeliveryProcessing(PyMapiPlugin *lppyMapiPlugin,
 	if (hr != hrSuccess)
 		goto exit;
 
+	if (FNeedsAutoProcessing(lpStore, *lppMessage)) {
+		g_lpLogger->Log(EC_LOGLEVEL_INFO, "Starting MR auto processing");
+		hr = HrAutoProcess(g_lpLogger, lpUserSession, lpRecip, lpStore,
+		     *lppMessage);
+		if (hr == hrSuccess)
+			g_lpLogger->Log(EC_LOGLEVEL_INFO, "Automatic MR processing successful.");
+		else
+			g_lpLogger->Log(EC_LOGLEVEL_INFO, "Automatic MR processing failed.");
+	}
+
 	if(FNeedsAutoAccept(lpStore, *lppMessage)) {
 		g_lpLogger->Log(EC_LOGLEVEL_INFO, "Starting MR autoaccepter");
 
@@ -4035,6 +4045,7 @@ int main(int argc, char *argv[]) {
 		{ "log_raw_message_path", "/tmp", CONFIGSETTING_RELOADABLE },
 		{ "archive_on_delivery", "no", CONFIGSETTING_RELOADABLE },
 		{ "mr_autoaccepter", "/usr/sbin/zarafa-mr-accept", CONFIGSETTING_RELOADABLE },
+		{ "mr_autoprocessor", "/usr/sbin/zarafa-mr-process", CONFIGSETTING_RELOADABLE },
 		{ "plugin_enabled", "yes" },
 		{ "plugin_path", "/var/lib/zarafa/dagent/plugins" },
 		{ "plugin_manager_path", "/usr/share/zarafa-dagent/python" },
