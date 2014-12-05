@@ -573,7 +573,7 @@ void *CleanupSyncedMessagesTable(void *lpTmpMain)
 	std::string		strQuery;
 	ECDatabase*		lpDatabase = NULL;
 	ECSession*		lpSession = NULL;
-	unsigned int	ulDeleted;
+	unsigned int ulDeleted = 0;
 
 	ec_log_info("Start syncedmessages table clean up");
 
