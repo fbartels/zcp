@@ -191,6 +191,7 @@ HRESULT HrMapFileToBuffer(FILE *f, char **lppBuffer, int *lpSize, bool *lpImmap)
 		if (offset + BLOCKSIZE > ulBufferSize) {    // Next read could cross buffer boundary, realloc
 			char *lpRealloc = (char*)realloc(lpBuffer, offset + BLOCKSIZE);
 			if (lpRealloc == NULL) {
+				free(lpBuffer);
 				hr = MAPI_E_NOT_ENOUGH_MEMORY;
 				goto exit;
 			}
@@ -201,6 +202,7 @@ HRESULT HrMapFileToBuffer(FILE *f, char **lppBuffer, int *lpSize, bool *lpImmap)
 
 	/* Nothing was read */
     if (offset == 0) {
+		free(lpBuffer);
 		*lppBuffer = NULL;
 		*lpSize = 0;
 	} else {
