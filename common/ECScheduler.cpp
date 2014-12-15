@@ -238,8 +238,8 @@ void* ECScheduler::ScheduleThread(void* lpTmpScheduler)
 				
 				if((err = pthread_create(&hThread, NULL, iterScheduleList->lpFunction, (void*)iterScheduleList->lpData)) != 0) {
 				    lpScheduler->m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to spawn new thread: %s", strerror(err));
-                    continue;
-                }
+					goto task_fail;
+				}
 
 				set_thread_name(hThread, "ECScheduler:worker");
 
@@ -247,13 +247,14 @@ void* ECScheduler::ScheduleThread(void* lpTmpScheduler)
 
 				if((err = pthread_join(hThread, (void**)&lperThread)) != 0) {
 				    lpScheduler->m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to join thread: %s", strerror(err));
-				    continue;
+					goto task_fail;
 				}
 
 				delete lperThread;
 				lperThread = NULL;
 			}
 
+ task_fail:
 			pthread_mutex_unlock(&lpScheduler->m_hSchedulerMutex);
 
 			// check for a exit signal
