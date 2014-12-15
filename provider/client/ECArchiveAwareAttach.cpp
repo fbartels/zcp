@@ -80,6 +80,7 @@ HRESULT	ECArchiveAwareAttach::SetPropHandler(ULONG ulPropTag, void* /*lpProvider
 			hr = lpAttach->HrSetRealProp(lpsPropValue);
 		else
 			hr = MAPI_E_COMPUTED;
+		break;
 	default:
 		hr = MAPI_E_NOT_FOUND;
 		break;

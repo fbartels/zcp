@@ -417,6 +417,7 @@ HRESULT ECArchiveAwareMessage::SetPropHandler(ULONG ulPropTag, void* /*lpProvide
 			hr = lpMessage->ECMessage::HrSetRealProp(lpsPropValue);	// Don't call our own overridden HrSetRealProp
 		else
 			hr = MAPI_E_COMPUTED;
+		break;
 	default:
 		hr = MAPI_E_NOT_FOUND;
 		break;
