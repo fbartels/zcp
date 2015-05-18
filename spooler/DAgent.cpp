@@ -355,10 +355,11 @@ static void sigchld(int)
 }
 
 // Look for segmentation faults
-static void sigsegv(int signr)
+static void sigsegv(int signr, siginfo_t *si, void *uc)
 {
-	generic_sigsegv_handler(g_lpLogger, "Spooler/DAgent", PROJECT_VERSION_SPOOLER_STR, signr);
-	}
+	generic_sigsegv_handler(g_lpLogger, "Spooler/DAgent",
+		PROJECT_VERSION_SPOOLER_STR, signr, si, uc);
+}
 
 #endif
 
@@ -3677,11 +3678,10 @@ static HRESULT running_service(const char *servicename, bool bDaemonize,
     st.ss_sp = malloc(65536);
     st.ss_flags = 0;
     st.ss_size = 65536;
-    act.sa_handler = sigsegv;
-    act.sa_flags = SA_ONSTACK | SA_RESETHAND;
-    sigaltstack(&st, NULL);
-
-    sigaction(SIGSEGV, &act, NULL);
+	act.sa_sigaction = sigsegv;
+	act.sa_flags = SA_ONSTACK | SA_RESETHAND | SA_SIGINFO;
+	sigaltstack(&st, NULL);
+	sigaction(SIGSEGV, &act, NULL);
 	sigaction(SIGBUS, &act, NULL);
 	sigaction(SIGABRT, &act, NULL);
 

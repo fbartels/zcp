@@ -294,10 +294,11 @@ static void *signal_handler(void *)
 // SIGSEGV catcher
 #include <execinfo.h>
 
-static void sigsegv(int signr)
+static void sigsegv(int signr, siginfo_t *si, void *uc)
 {
-	generic_sigsegv_handler(g_lpLogger, "Server", PROJECT_VERSION_SERVER_STR, signr);
-	}
+	generic_sigsegv_handler(g_lpLogger, "Server",
+		PROJECT_VERSION_SERVER_STR, signr, si, uc);
+}
 #endif
 
 static ECRESULT check_database_innodb(ECDatabase *lpDatabase)
@@ -1490,8 +1491,8 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 	st.ss_flags = 0;
 	st.ss_size = 65536;
 
-	act.sa_handler = sigsegv;
-	act.sa_flags = SA_ONSTACK | SA_RESETHAND;
+	act.sa_sigaction = sigsegv;
+	act.sa_flags = SA_ONSTACK | SA_RESETHAND | SA_SIGINFO;
 
 	sigaltstack(&st, NULL);
 	sigaction(SIGSEGV, &act, NULL);

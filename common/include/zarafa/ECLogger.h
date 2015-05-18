@@ -409,5 +409,5 @@ extern void LogConfigErrors(ECConfig *lpConfig);
 
 #endif
 
-void generic_sigsegv_handler(ECLogger *lpLogger, const char *const app_name, const char *const version_string, const int signr);
+void generic_sigsegv_handler(ECLogger *, const char *app, const char *vers, int sig, const siginfo_t *, const void *uctx);
 void ec_log_bt(unsigned int, const char *, ...);

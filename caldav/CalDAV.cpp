@@ -148,10 +148,11 @@ static void sigchld(int)
 		--nChildren;
 }
 
-static void sigsegv(int signr)
+static void sigsegv(int signr, siginfo_t *si, void *uc)
 {
-	generic_sigsegv_handler(g_lpLogger, "CalDAV", PROJECT_VERSION_GATEWAY_STR, signr);
-	}
+	generic_sigsegv_handler(g_lpLogger, "CalDAV",
+		PROJECT_VERSION_GATEWAY_STR, signr, si, uc);
+}
 #endif
 
 static void PrintHelp(const char *name)
@@ -325,11 +326,11 @@ int main(int argc, char **argv) {
     st.ss_flags = 0;
     st.ss_size = 65536;
 
-    act.sa_handler = sigsegv;
-    act.sa_flags = SA_ONSTACK | SA_RESETHAND;
+	act.sa_sigaction = sigsegv;
+	act.sa_flags = SA_ONSTACK | SA_RESETHAND | SA_SIGINFO;
 
-    sigaltstack(&st, NULL);
-    sigaction(SIGSEGV, &act, NULL);
+	sigaltstack(&st, NULL);
+	sigaction(SIGSEGV, &act, NULL);
 	sigaction(SIGBUS, &act, NULL);
 	sigaction(SIGABRT, &act, NULL);
 
