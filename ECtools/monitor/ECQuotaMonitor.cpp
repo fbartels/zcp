@@ -59,6 +59,7 @@
 #include <zarafa/ecversion.h>
 #include <zarafa/charset/convert.h>
 #include <zarafa/mapi_ptr.h>
+#include <zarafa/MAPIErrors.h>
 
 //#include <zarafa/IECSecurity.h>
 #include <zarafa/ECGuid.h>
@@ -251,7 +252,7 @@ HRESULT ECQuotaMonitor::CheckQuota()
 				goto check_stores;
 			}
 
-			hr = OpenUserStore(lpsCompanyList[i].lpszCompanyname, &lpMsgStore);
+			hr = OpenUserStore(lpsCompanyList[i].lpszCompanyname, CONTAINER_COMPANY, &lpMsgStore);
 			if (hr != hrSuccess) {
 				hr = hrSuccess;
 				m_ulFailed++;
@@ -555,7 +556,7 @@ HRESULT ECQuotaMonitor::CheckServerQuota(ULONG cUsers, LPECUSER lpsUserList, LPE
 				m_ulFailed++;
 				continue;
 			}
-			hr = OpenUserStore(lpsUserList[u].lpszUsername, &ptrStore);
+			hr = OpenUserStore(lpsUserList[u].lpszUsername, ACTIVE_USER, &ptrStore);
 			if (hr != hrSuccess) {
 				hr = hrSuccess;
 				continue;
@@ -1188,7 +1189,7 @@ exit:
  * 
  * @return MAPI Error code
  */
-HRESULT ECQuotaMonitor::OpenUserStore(LPTSTR szStoreName, LPMDB *lppStore)
+HRESULT ECQuotaMonitor::OpenUserStore(LPTSTR szStoreName, objectclass_t objclass, LPMDB *lppStore)
 {
 	HRESULT hr = hrSuccess;
 	ExchangeManageStorePtr ptrEMS;
@@ -1202,7 +1203,10 @@ HRESULT ECQuotaMonitor::OpenUserStore(LPTSTR szStoreName, LPMDB *lppStore)
 
 	hr = ptrEMS->CreateStoreEntryID((LPTSTR)"", szStoreName, OPENSTORE_HOME_LOGON, &cbUserStoreEntryID, &ptrUserStoreEntryID);
 	if (hr != hrSuccess) {
-		m_lpThreadMonitor->lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to get store entry id for '%s', error code: 0x%08X", (LPSTR)szStoreName, hr);
+		if (hr == MAPI_E_NOT_FOUND)
+			m_lpThreadMonitor->lpLogger->Log(EC_LOGLEVEL_INFO, "Store of %s \"%s\" not found", (objclass == CONTAINER_COMPANY) ? "company" : "user", reinterpret_cast<const char *>(szStoreName));
+		else
+			m_lpThreadMonitor->lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to get store entry id for \"%s\": %s (0x%08X)", reinterpret_cast<const char *>(szStoreName), GetMAPIErrorMessage(hr), hr);
 		goto exit;
 	}
 
@@ -1401,7 +1405,7 @@ HRESULT ECQuotaMonitor::Notify(LPECUSER lpecUser, LPECCOMPANY lpecCompany, LPECQ
 			continue;
 		}
 
-		if (OpenUserStore(lpToUsers[i].lpszUsername, &ptrRecipStore) != hrSuccess)
+		if (OpenUserStore(lpToUsers[i].lpszUsername, sVars.ulClass, &ptrRecipStore) != hrSuccess)
 			continue;
 
 		CreateQuotaWarningMail(&sVars, ptrRecipStore, &lpToUsers[i], lpecFromUser, lpAddrList);

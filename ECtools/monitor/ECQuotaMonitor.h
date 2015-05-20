@@ -86,7 +86,7 @@ private:
 								   IMsgStore* lpMDB, LPECUSER lpecToUser, LPECUSER lpecFromUser,
 								   LPADRLIST lpAddrList);
 
-	HRESULT OpenUserStore(LPTSTR szStoreName, LPMDB *lppStore);
+	HRESULT OpenUserStore(LPTSTR szStoreName, objectclass_t objclass, LPMDB *lppStore);
 	HRESULT CheckQuotaInterval(LPMDB lpStore, LPMESSAGE *lppMessage, bool *lpbTimeout);
 	HRESULT UpdateQuotaTimestamp(LPMESSAGE lpMessage);
 
