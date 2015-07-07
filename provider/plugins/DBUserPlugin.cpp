@@ -211,8 +211,6 @@ objectsignature_t DBUserPlugin::authenticateUser(const string &username, const s
 	DB_LENGTHS	lpDBLen = NULL;
 
 	std::string salt;
-	MD5*		crypt;
-	char*		hex;
 	std::string strMD5;
 
 	/*
@@ -265,18 +263,14 @@ objectsignature_t DBUserPlugin::authenticateUser(const string &username, const s
 		if(strcmp(lpDBRow[0], OP_PASSWORD) == 0)
 		{
 			// Check Password
-			crypt = new MD5();
+			MD5_CTX crypt;
 			salt = lpDBRow[1];
 			salt.resize(8);
 
-			crypt->update((unsigned char*)salt.c_str(), (unsigned int)salt.length());
-			crypt->update((unsigned char*)password.c_str(), (unsigned int)password.size());
-			crypt->finalize();
-
-			hex = crypt->hex_digest();
-			strMD5 = salt+hex;
-			delete [] hex;
-			delete crypt;
+			MD5_Init(&crypt);
+			MD5_Update(&crypt, salt.c_str(), salt.length());
+			MD5_Update(&crypt, password.c_str(), password.size());
+			strMD5 = salt + zcp_md5_final_hex(&crypt);
 
 			if(strMD5.compare((string)lpDBRow[1]) == 0) {
 				objectid = objectid_t(string(lpDBRow[2], lpDBLen[2]), ACTIVE_USER);	// Password is oke

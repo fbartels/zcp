@@ -920,18 +920,12 @@ auto_ptr<signatures_t> DBPlugin::CreateSignatureList(const std::string &query) t
 
 ECRESULT DBPlugin::CreateMD5Hash(const std::string &strData, std::string* lpstrResult)
 {
-	ECRESULT er = erSuccess;
-	MD5 *crypt = NULL;
-	char *hex = NULL;
+	MD5_CTX crypt;
 	std::string salt;
 	std::ostringstream s;
 
-	if (strData.empty() || lpstrResult == NULL) {
-		er = ZARAFA_E_INVALID_PARAMETER;
-		goto exit;
-	}
-
-	crypt = new MD5();
+	if (strData.empty() || lpstrResult == NULL)
+		return ZARAFA_E_INVALID_PARAMETER;
 
 	s.setf(ios::hex, ios::basefield);
 	s.fill('0');
@@ -939,22 +933,11 @@ ECRESULT DBPlugin::CreateMD5Hash(const std::string &strData, std::string* lpstrR
 	s << rand_mt();
 	salt = s.str();
 
-	crypt->update((unsigned char*)salt.c_str(), (unsigned int)salt.size());
-	crypt->update((unsigned char*)strData.c_str(), (unsigned int)strData.size());
-	crypt->finalize();
-
-	hex = crypt->hex_digest();
-
-	(*lpstrResult) = salt+hex;
-
-exit:
-	if(hex)
-		delete [] hex;
-
-	if(crypt)
-		delete crypt;
-
-	return er;
+	MD5_Init(&crypt);
+	MD5_Update(&crypt, salt.c_str(), salt.size());
+	MD5_Update(&crypt, strData.c_str(), strData.size());
+	*lpstrResult = salt + zcp_md5_final_hex(&crypt);
+	return erSuccess;
 }
 
 void DBPlugin::addSendAsToDetails(const objectid_t &objectid, objectdetails_t *lpDetails)

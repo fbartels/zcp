@@ -29,7 +29,7 @@ ldapplugin_la_SOURCES = LDAPUserPlugin.cpp LDAPUserPlugin.h LDAPCache.cpp LDAPCa
 ldapplugin_la_LDFLAGS = ${AM_LDFLAGS} -module -avoid-version
 ldapplugin_la_LIBADD = \
 	${top_builddir}/common/libzcp_common_util.la \
-	../libserver/libzarafa_server.la ${LDAP_LIBS}
+	../libserver/libzarafa_server.la ${CRYPTO_LIBS} ${LDAP_LIBS}
 
 
 endif
