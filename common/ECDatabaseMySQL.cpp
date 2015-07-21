@@ -146,7 +146,7 @@ ECRESULT ECDatabaseMySQL::Connect(ECConfig *lpConfig)
 		else
 			er = ZARAFA_E_DATABASE_ERROR;
 
-		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "ECDatabaseMySQL::Connect(): database access error %d", er);
+		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "ECDatabaseMySQL::Connect(): database access error %d, mysql error: %s", er, mysql_error(&m_lpMySQL));
 
 		goto exit;
 	}
