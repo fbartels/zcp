@@ -74,6 +74,7 @@ ECDatabaseMySQL::ECDatabaseMySQL(ECLogger *lpLogger)
 	m_bLocked			= false;
 	m_bAutoLock			= true;
 	m_lpLogger			= lpLogger;
+	m_lpLogger->AddRef();
 
 	// Create a mutex handle for mysql
 	pthread_mutexattr_t mattr;
@@ -85,6 +86,7 @@ ECDatabaseMySQL::ECDatabaseMySQL(ECLogger *lpLogger)
 ECDatabaseMySQL::~ECDatabaseMySQL()
 {
 	Close();
+	m_lpLogger->Release();
 
 	// Close the mutex handle of mysql
 	pthread_mutex_destroy(&m_hMutexMySql);

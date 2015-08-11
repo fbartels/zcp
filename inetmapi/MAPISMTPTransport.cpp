@@ -112,7 +112,8 @@ namespace smtp {
 MAPISMTPTransport::MAPISMTPTransport(ref <session> sess, ref <security::authenticator> auth, const bool secured)
 	: transport(sess, getInfosInstance(), auth), m_socket(NULL),
 	  m_authentified(false), m_extendedSMTP(false), m_timeoutHandler(NULL),
-	  m_isSMTPS(secured), m_secured(false), m_bDSNRequest(false)
+	  m_isSMTPS(secured), m_secured(false), m_lpLogger(NULL),
+	  m_bDSNRequest(false)
 {
 }
 
@@ -130,6 +131,8 @@ MAPISMTPTransport::~MAPISMTPTransport()
 	{
 		// Ignore
 	}
+	if (m_lpLogger != NULL)
+		m_lpLogger->Release();
 }
 
 
@@ -711,7 +714,11 @@ const std::vector<sFailedRecip> MAPISMTPTransport::getRecipientErrorList() const
                                
 void MAPISMTPTransport::setLogger(ECLogger *lpLogger)
 {                              
+	if (m_lpLogger != NULL)
+		m_lpLogger->Release();
 	m_lpLogger = lpLogger;
+	if (m_lpLogger != NULL)
+		m_lpLogger->AddRef();
 }                              
 
 void MAPISMTPTransport::requestDSN(BOOL bRequest, const std::string &strTrackid)

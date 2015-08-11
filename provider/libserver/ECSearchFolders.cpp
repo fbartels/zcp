@@ -76,6 +76,7 @@ ECSearchFolders::ECSearchFolders(ECSessionManager *lpSessionManager, ECDatabaseF
     this->m_lpSessionManager = lpSessionManager;
     this->m_lpDatabaseFactory = lpFactory;
     this->m_lpLogger = lpLogger;
+    this->m_lpLogger->AddRef();
     this->m_bExitThread = false;
     this->m_bRunning = false;
 
@@ -106,8 +107,8 @@ ECSearchFolders::~ECSearchFolders() {
         iterStore->second.clear();
     }
     
-    m_mapSearchFolders.clear();
-
+	m_mapSearchFolders.clear();
+	m_lpLogger->Release();
 	pthread_mutex_unlock(&m_mutexMapSearchFolders);
     
     pthread_mutex_destroy(&m_mutexMapSearchFolders);

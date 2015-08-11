@@ -56,6 +56,7 @@ ECPluginSharedData::ECPluginSharedData(ECConfig *lpParent, ECLogger *lpLogger, I
 	m_lpszDirectives = NULL;
 	m_lpParentConfig = lpParent;
 	m_lpLogger = lpLogger;
+	m_lpLogger->AddRef();
 	m_lpStatsCollector = lpStatsCollector;
 	m_bHosted = bHosted;
 	m_bDistributed = bDistributed;
@@ -76,6 +77,7 @@ ECPluginSharedData::~ECPluginSharedData()
 			free(m_lpszDirectives[n]);
 		delete [] m_lpszDirectives;
 	}
+	m_lpLogger->Release();
 }
 
 void ECPluginSharedData::GetSingleton(ECPluginSharedData **lppSingleton, ECConfig *lpParent, ECLogger *lpLogger,

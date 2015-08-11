@@ -358,6 +358,7 @@ ECSoapServerConnection::ECSoapServerConnection(ECConfig* lpConfig, ECLogger* lpL
 {
 	m_lpConfig = lpConfig;
 	m_lpLogger = lpLogger;
+	m_lpLogger->AddRef();
 
 #ifdef LINUX
 #ifdef USE_EPOLL
@@ -375,6 +376,7 @@ ECSoapServerConnection::ECSoapServerConnection(ECConfig* lpConfig, ECLogger* lpL
 ECSoapServerConnection::~ECSoapServerConnection(void)
 {
 	delete m_lpDispatcher;
+	m_lpLogger->Release();
 }
 
 ECRESULT ECSoapServerConnection::ListenTCP(const char* lpServerName, int nServerPort, bool bEnableGET)

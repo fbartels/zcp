@@ -61,10 +61,12 @@ ECDatabaseFactory::ECDatabaseFactory(ECConfig *lpConfig, ECLogger *lpLogger)
 {
 	this->m_lpConfig = lpConfig;
 	this->m_lpLogger = lpLogger;
+	m_lpLogger->AddRef();
 }
 
 ECDatabaseFactory::~ECDatabaseFactory()
 {
+	m_lpLogger->Release();
 }
 
 ECRESULT ECDatabaseFactory::GetDatabaseFactory(ECDatabase **lppDatabase)

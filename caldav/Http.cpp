@@ -155,6 +155,7 @@ Http::Http(ECChannel *lpChannel, ECLogger *lpLogger, ECConfig *lpConfig)
 {
 	m_lpChannel = lpChannel;
 	m_lpLogger = lpLogger;
+	m_lpLogger->AddRef();
 	m_lpConfig = lpConfig;
 
 	m_ulKeepAlive = 0;
@@ -166,6 +167,7 @@ Http::Http(ECChannel *lpChannel, ECLogger *lpLogger, ECConfig *lpConfig)
  */
 Http::~Http()
 {
+	m_lpLogger->Release();
 }
 
 /**
