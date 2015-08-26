@@ -1,0 +1,14 @@
+[Unit]
+Description=Zarafa Collaboration Platform Storage Server
+Documentation=man:zarafa-server(8) man:zarafa-server.cfg(5) man:zarafa-admin(8)
+Wants=mysqld.service
+After=network.target mysqld.service
+
+[Service]
+Type=simple
+Environment=LC_ALL=C LANG=C
+ExecStart=/usr/sbin/zarafa-server -F -c /etc/zarafa/server.cfg
+TimeoutStopSec=15
+
+[Install]
+WantedBy=multi-user.target

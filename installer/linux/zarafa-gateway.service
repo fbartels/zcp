@@ -1,0 +1,13 @@
+[Unit]
+Description=Zarafa Collaboration Platform IMAP/POP3 Gateway
+Documentation=man:zarafa-gateway(8) man:zarafa-gateway.cfg(5)
+Wants=zarafa-server.service
+After=zarafa-server.service
+
+[Service]
+Type=simple
+Environment=LC_ALL=C LANG=C
+ExecStart=/usr/sbin/zarafa-gateway -F -c /etc/zarafa/gateway.cfg
+
+[Install]
+WantedBy=multi-user.target
