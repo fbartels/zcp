@@ -22,7 +22,7 @@ libzarafa_archiver_la_LIBADD = ${top_builddir}/mapi4linux/src/libmapi.la \
 
 libzarafa_archiver_la_SOURCES = \
 	ArchiverSession.cpp ArchiverSession.h ArchiverSessionPtr.h \
-	archiver-common.cpp archiver-common.h ArchiveControl.h \
+	archiver-common.cpp \
 	ArchiveManageImpl.cpp ArchiveManageImpl.h ArchiveManage.h\
 	ArchiveStateCollector.cpp ArchiveStateCollector.h \
 	ArchiveStateUpdater.cpp ArchiveStateUpdater.h archivestateupdater_fwd.h \
@@ -30,6 +30,7 @@ libzarafa_archiver_la_SOURCES = \
 	helpers/StoreHelper.cpp helpers/StoreHelper.h \
 	helpers/MAPIPropHelper.cpp helpers/MAPIPropHelper.h \
 	ECArchiverLogger.cpp ECArchiverLogger.h
+pkginclude_HEADERS = archiver-common.h ArchiveControl.h
 
 libzarafa_archiver_la_LDFLAGS = ${AM_LDFLAGS} -no-undefined \
 	-Wl,--version-script=${top_builddir}/default.sym
