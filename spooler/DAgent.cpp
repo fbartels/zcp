@@ -4034,6 +4034,7 @@ int main(int argc, char *argv[]) {
 		{ "no_double_forward", "no", CONFIGSETTING_RELOADABLE },
 		{ "z_statsd_stats", "/var/run/zarafad/statsd.sock" },
 		{ "tmp_path", "/tmp" },
+		{ "html_safety_filter", "no" },
 		{ NULL, NULL },
 	};
 
@@ -4224,6 +4225,7 @@ int main(int argc, char *argv[]) {
 	sDeliveryArgs.strPath = GetServerUnixSocket((char*)sDeliveryArgs.strPath.c_str()); // let environment override if present
 
 	sDeliveryArgs.sDeliveryOpts.default_charset = g_lpConfig->GetSetting("default_charset");
+	sDeliveryArgs.sDeliveryOpts.html_safety_filter = strcasecmp(g_lpConfig->GetSetting("html_safety_filter"), "yes") == 0;
 
 	hr = MAPIInitialize(NULL);
 	if (hr != hrSuccess) {

@@ -7,7 +7,7 @@ AM_CPPFLAGS = ${ZCPPFLAGS} $(DEBUGFLAGS) $(BOOST_CPPFLAGS) \
 	-I$(top_srcdir)/mapi4linux/include -I$(top_srcdir)/provider/common \
 	-I${top_srcdir}/common -I${top_srcdir}/m4lcommon \
 	-I${top_srcdir}/libfreebusy -I${top_srcdir}/libicalmapi \
-	-I/usr/include/libxml2
+	-I${top_srcdir}/librosie -I/usr/include/libxml2
 
 lib_LTLIBRARIES = libinetmapi.la
 noinst_DATA = libinetmapi.ldd
@@ -26,7 +26,8 @@ libinetmapi_la_LIBADD = \
 	${top_builddir}/common/libzcp_common_mapi.la \
 	${top_builddir}/common/libzcp_common_util.la \
 	${top_builddir}/libicalmapi/libicalmapi.la \
-    $(VMIME_LIBS) $(XML2_LIBS)
+	${top_builddir}/librosie/librosie.la \
+	${VMIME_LIBS} ${XML2_LIBS}
 
 #CXXLD=--tag=none gcc
 

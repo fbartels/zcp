@@ -18,7 +18,8 @@ AM_CPPFLAGS = ${ZCPPFLAGS} $(DEBUGFLAGS) $(BOOST_CPPFLAGS)	\
 	-I${top_srcdir}/mapi4linux/include			\
 	-I${top_srcdir}/libfreebusy					\
 	-I${top_srcdir}/common -I${top_srcdir}/m4lcommon \
-	-I${top_srcdir}/zarafa-libsync
+	-I${top_srcdir}/zarafa-libsync \
+	-I${top_srcdir}/librosie
 
 libzarafaclient_la_LDFLAGS = ${AM_LDFLAGS} -avoid-version -module
 libzarafaclient_la_LIBADD = $(SSL_LIBS)	\
@@ -31,6 +32,7 @@ libzarafaclient_la_LIBADD = $(SSL_LIBS)	\
 	${top_builddir}/libfreebusy/libfreebusy.la			\
 	${top_builddir}/mapi4linux/src/libmapi.la			\
 	${top_builddir}/zarafa-libsync/libzarafasync.la		\
+	${top_builddir}/librosie/librosie.la \
 	-lstdc++ $(UUID_LIBS) $(ICU_LIBS)
 
 libzarafaclient_la_SOURCES = ECABLogon.cpp ECABProvider.cpp											\
