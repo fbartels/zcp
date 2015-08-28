@@ -726,6 +726,7 @@ AC_SUBST([AM_LDFLAGS])
 # Output files
 #
 AC_CONFIG_FILES([Makefile
+		librosie/Makefile
 		mapi4linux/Makefile
 		mapi4linux/include/Makefile
 		mapi4linux/src/Makefile
