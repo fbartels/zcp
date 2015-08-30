@@ -110,7 +110,7 @@ ECABObjectTable::ECABObjectTable(ECSession *lpSession, unsigned int ulABId, unsi
 
 	struct sortOrderArray sDefaultSortOrder = {
 		sObjectType,
-		sizeof(sObjectType) / sizeof(sObjectType[0]),
+		ARRAY_SIZE(sObjectType),
 	};
 
 	SetSortOrder(&sDefaultSortOrder, 0, 0);

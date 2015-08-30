@@ -491,7 +491,7 @@ ECRESULT CompareProp(const struct propVal *lpProp1,
 	}
 
 	// First check if the any of the properties is in the sSpecials list
-	for (unsigned x = 0; x < sizeof(sSpecials) / sizeof *sSpecials; ++x) {
+	for (size_t x = 0; x < ARRAY_SIZE(sSpecials); ++x) {
 		if ((lpProp1->ulPropTag == sSpecials[x].ulPropTag && PROP_TYPE(lpProp2->ulPropTag) == PROP_TYPE(sSpecials[x].ulPropTag)) ||
 			(PROP_TYPE(lpProp1->ulPropTag) == PROP_TYPE(sSpecials[x].ulPropTag) && lpProp2->ulPropTag == sSpecials[x].ulPropTag))
 		{

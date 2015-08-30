@@ -351,7 +351,6 @@ exit:
 HRESULT ECNamedProp::ResolveLocal(MAPINAMEID *lpName, ULONG *ulPropTag)
 {
 	HRESULT	hr = hrSuccess;
-	unsigned int i = 0;
 
 	// We can only locally resolve MNID_ID types of named properties
 	if(lpName->ulKind != MNID_ID) {
@@ -360,7 +359,7 @@ HRESULT ECNamedProp::ResolveLocal(MAPINAMEID *lpName, ULONG *ulPropTag)
 	}
 
 	// Loop through our local names to see if the named property is in there
-	for(i=0;i<sizeof(sLocalNames) / sizeof(sLocalNames[0]); i++) {
+	for (size_t i = 0; i < ARRAY_SIZE(sLocalNames); ++i) {
 		if(memcmp(&sLocalNames[i].guid,lpName->lpguid,sizeof(GUID))==0 && sLocalNames[i].ulMin <= lpName->Kind.lID && sLocalNames[i].ulMax >= lpName->Kind.lID) {
 			// Found it, calculate the ID and return it.
 			*ulPropTag = PROP_TAG(PT_UNSPECIFIED, sLocalNames[i].ulMappedId + lpName->Kind.lID - sLocalNames[i].ulMin);
@@ -400,7 +399,6 @@ HRESULT ECNamedProp::ResolveReverseCache(ULONG ulId, LPGUID lpGuid, ULONG ulFlag
 HRESULT ECNamedProp::ResolveReverseLocal(ULONG ulId, LPGUID lpGuid, ULONG ulFlags, void *lpBase, MAPINAMEID **lppName)
 {
 	HRESULT		hr = hrSuccess;
-	unsigned int i = 0;
 	MAPINAMEID*	lpName = NULL; 
 
 	// Local mapping is only for MNID_ID
@@ -410,7 +408,7 @@ HRESULT ECNamedProp::ResolveReverseLocal(ULONG ulId, LPGUID lpGuid, ULONG ulFlag
 	}
 
 	// Loop through the local names to see if we can reverse-map the id
-	for(i=0;i<sizeof(sLocalNames) / sizeof(sLocalNames[0]); i++) {
+	for (size_t i = 0; i < ARRAY_SIZE(sLocalNames); ++i) {
 		if((lpGuid == NULL || memcmp(&sLocalNames[i].guid, lpGuid, sizeof(GUID)) == 0) && ulId >= sLocalNames[i].ulMappedId && ulId < sLocalNames[i].ulMappedId + (sLocalNames[i].ulMax - sLocalNames[i].ulMin + 1)) {
 			// Found it !
 			ECAllocateMore(sizeof(MAPINAMEID), lpBase, (void **)&lpName);

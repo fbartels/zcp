@@ -2520,7 +2520,7 @@ static ECRESULT WriteProps(struct soap *soap, ECSession *lpecSession,
 			sPropTime.__union = SOAP_UNION_propValData_hilo;
 
 			// Same thing for both PR_LAST_MODIFICATION_TIME and PR_CREATION_TIME			
-			for(unsigned int i = 0; i < sizeof(tags)/sizeof(tags[0]); i++) {
+			for (size_t i = 0; i < ARRAY_SIZE(tags); ++i) {
 				if(setInserted.find(tags[i]) == setInserted.end()) {
 				    sObjectTableKey key;
 					sPropTime.ulPropTag = tags[i];
@@ -3688,7 +3688,7 @@ static ECRESULT CreateFolder(ECSession *lpecSession, ECDatabase *lpDatabase,
 			goto exit;
 			
 		// Create counters
-		for(unsigned int i = 0; i < sizeof(tags)/sizeof(tags[0]); i++) {
+		for (size_t i = 0; i < ARRAY_SIZE(tags); ++i) {
 			sProp.ulPropTag = tags[i];
 			sProp.__union = SOAP_UNION_propValData_ul;
 			sProp.Value.ul = 0;
@@ -3729,7 +3729,7 @@ static ECRESULT CreateFolder(ECSession *lpecSession, ECDatabase *lpDatabase,
 		
 		// Create PR_LAST_MODIFICATION_TIME and PR_CREATION_TIME
 		now = time(NULL);
-		for(unsigned int i=0; i < sizeof(timeTags)/sizeof(timeTags[0]); i++) {
+		for (size_t i = 0; i < ARRAY_SIZE(timeTags); ++i) {
 		    sProp.ulPropTag = timeTags[i];
 		    sProp.__union = SOAP_UNION_propValData_hilo;
 		    sProp.Value.hilo = &sHilo;
@@ -3738,7 +3738,7 @@ static ECRESULT CreateFolder(ECSession *lpecSession, ECDatabase *lpDatabase,
 		    er = WriteProp(lpDatabase, ulLastId, ulParentId, &sProp);
 			if(er != erSuccess)
 				goto exit;
-        }
+		}
 
 		// Create SourceKey
 		if (lpsOrigSourceKey && lpsOrigSourceKey->__size > (int)sizeof(GUID) && lpsOrigSourceKey->__ptr){

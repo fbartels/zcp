@@ -125,9 +125,8 @@ static const struct CPMAP {
 HRESULT HrGetCharsetByCP(ULONG codepage, const char **lppszCharset)
 {
     HRESULT hr = hrSuccess;
-    unsigned int i = 0;
     
-    for(i=0;i<sizeof(CPMAP)/sizeof(CPMAP[0]);i++) {
+    for (size_t i = 0; i < ARRAY_SIZE(CPMAP); ++i) {
         if(CPMAP[i].codepage == codepage) {
             *lppszCharset = CPMAP[i].charset;
             return hrSuccess;
@@ -149,9 +148,8 @@ HRESULT HrGetCharsetByCP(ULONG codepage, const char **lppszCharset)
 HRESULT HrGetCPByCharset(const char *lpszCharset,ULONG *codepage)
 {
     HRESULT hr = hrSuccess;
-    unsigned int i = 0;
     
-    for(i=0;i<sizeof(CPMAP)/sizeof(CPMAP[0]);i++) {
+    for (size_t i = 0; i < ARRAY_SIZE(CPMAP); ++i) {
         if(stricmp(CPMAP[i].charset, lpszCharset) == 0) {
             *codepage = CPMAP[i].codepage;
             return hrSuccess;

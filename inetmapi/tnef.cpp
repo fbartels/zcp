@@ -97,13 +97,10 @@ static const struct _sClassMap {
 
 static const char *FindMAPIClassByScheduleClass(const char *szSClass)
 {
-	unsigned int i = 0;
-
-	for(i=0;i<sizeof(sClassMap)/sizeof(sClassMap[0]);i++) {
+	for (size_t i = 0; i < ARRAY_SIZE(sClassMap); ++i)
 		if(stricmp(szSClass, sClassMap[i].szScheduleClass) == 0) {
 			return sClassMap[i].szMAPIClass;
 		}
-	}
 
 	return NULL;
 }
@@ -111,13 +108,10 @@ static const char *FindMAPIClassByScheduleClass(const char *szSClass)
 #if 0
 static const char *FindScheduleClassByMAPIClass(const char *szMAPIClass)
 {
-	unsigned int i = 0;
-
-	for(i=0;i<sizeof(sClassMap)/sizeof(sClassMap[0]);i++) {
+	for (size_t i = 0; i < ARRAY_SIZE(sClassMap); ++i)
 		if(stricmp(szMAPIClass, sClassMap[i].szMAPIClass) == 0) {
 			return sClassMap[i].szScheduleClass;
 		}
-	}
 
 	return NULL;
 }

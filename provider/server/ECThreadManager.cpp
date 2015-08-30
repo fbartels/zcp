@@ -1247,7 +1247,7 @@ ECRESULT ECDispatcherWin32::MainLoop()
             int socket = iterSockets->second.soap->socket;
             
             if(socket > 0) {
-				if(cEvents >= sizeof(hEvent) / sizeof(hEvent[0]))
+				if (cEvents >= ARRAY_SIZEf(hEvent))
 					continue;
 
 				// See if there is a pending overlapped I/O request for this socket
@@ -1308,7 +1308,7 @@ ECRESULT ECDispatcherWin32::MainLoop()
 
         // Listen on listener sockets
         for(iterListenSockets = m_setListenSockets.begin(); iterListenSockets != m_setListenSockets.end(); iterListenSockets++) {
-			if(cEvents >= sizeof(hEvent) / sizeof(hEvent[0]))
+			if (cEvents >= ARRAY_SIZE(hEvent))
 				continue;
 			iterPending = mapPending.find((HANDLE)iterListenSockets->second->socket);
 			if(iterPending == mapPending.end()) {

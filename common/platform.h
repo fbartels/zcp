@@ -44,6 +44,21 @@
 #ifndef PLATFORM_H
 #define PLATFORM_H
 
+#if defined(__GNUC__) && !defined(__cplusplus)
+	/*
+	 * If typeof @a stays the same through a demotion to pointer,
+	 * @a cannot be an array.
+	 */
+#	define __array_size_check(a) BUILD_BUG_ON_EXPR(\
+		__builtin_types_compatible_p(__typeof__(a), \
+		__typeof__(DEMOTE_TO_PTR(a))))
+#else
+#	define __array_size_check(a) 0
+#endif
+#ifndef ARRAY_SIZE
+#	define ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)) + __array_size_check(x))
+#endif
+
 /* About _FORTIFY_SOURCE a.k.a. _BREAKIFY_SOURCE_IN_INSANE_WAYS
  *
  * This has the insane feature that it will assert() when you attempt

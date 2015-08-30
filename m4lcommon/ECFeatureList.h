@@ -44,11 +44,12 @@
 #ifndef EC_FEATURELIST_H
 #define EC_FEATURELIST_H
 
+#include "platform.h"
 #include <string>
 #include <set>
 
 ///< all zarafa features that are checked for access before allowing it
-const char* zarafa_features[] = {
+static const char *const zarafa_features[] = {
 	"imap", "pop3"
 };
 
@@ -58,7 +59,8 @@ const char* zarafa_features[] = {
  * @return unique set of feature names
  */
 inline std::set<std::string> getFeatures() {
-	return std::set<std::string>(zarafa_features, zarafa_features + (sizeof(zarafa_features) / sizeof(*zarafa_features)));
+	return std::set<std::string>(zarafa_features,
+	       zarafa_features + ARRAY_SIZE(zarafa_features));
 }
 
 #endif

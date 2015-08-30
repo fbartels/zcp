@@ -137,7 +137,7 @@ HRESULT ECOfflineState::GetIMAPIOffline(const std::string &strProfname, IMAPIOff
 	}
 
 	memset(wProfName, 0, sizeof(wProfName));
-	mbstowcs(wProfName, strProfname.c_str(), (sizeof(wProfName)-1)/sizeof(WCHAR));
+	mbstowcs(wProfName, strProfname.c_str(), ARRAY_SIZE(wProfName) - 1);
 
 	hr = HrOpenOfflineObj(0, wProfName, &GUID_GlobalState, NULL, &lpOfflineMgr);
 	if(hr != hrSuccess)

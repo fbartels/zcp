@@ -293,7 +293,7 @@ static const struct HTMLEntity_t {
 	{L"zwnj", 8204}
 };
 
-static const int cHTMLEntity = sizeof(_HTMLEntity) / sizeof(_HTMLEntity[0]);
+static const size_t cHTMLEntity = ARRAY_SIZE(_HTMLEntity);
 
 static const struct HTMLEntityToName_t {
 	WCHAR c;
@@ -541,8 +541,7 @@ static const struct HTMLEntityToName_t {
 	{9829, L"hearts"},
 	{9830, L"diams"}
 };
-static const int cHTMLEntityToName = sizeof(_HTMLEntityToName) / sizeof(_HTMLEntityToName[0]);
-
+static const size_t cHTMLEntityToName = ARRAY_SIZE(_HTMLEntityToName);
 
 CHtmlEntity::CHtmlEntity(void)
 {

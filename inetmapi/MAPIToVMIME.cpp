@@ -2232,7 +2232,7 @@ HRESULT MAPIToVMIME::handleReplyTo(IMessage *lpMessage, vmime::ref<vmime::header
 		if (hr != hrSuccess)
 			goto exit;
 
-		cNames = (sizeof(lpulNamesIDs)/sizeof(ULONG));
+		cNames = ARRAY_SIZE(lpulNamesIDs);
 
 		hr = MAPIAllocateBuffer(sizeof(MAPINAMEID) * cNames, (void**)&lpNames);
 		if (hr != hrSuccess)

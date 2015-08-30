@@ -128,9 +128,7 @@ typedef map<int,int> fontmap_t;
  */
 static HRESULT HrGetCharsetByRTFID(int id, const char **lpszCharset)
 {
-	unsigned int i = 0;
-
-	for (i=0; i<sizeof(RTFCHARSET)/sizeof(RTFCHARSET[0]); i++) {
+	for (size_t i = 0; i < ARRAY_SIZE(RTFCHARSET); ++i) {
 		if(RTFCHARSET[i].id == id) {
 			*lpszCharset = RTFCHARSET[i].charset;
 			return hrSuccess;

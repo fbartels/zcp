@@ -45,6 +45,7 @@
  * MAPIErrors.cpp
  * Definition of GetMAPIErrorMessage()
  */
+#include "platform.h"
 #include "MAPIErrors.h"
 #include <mapidefs.h>
 #include "stringutil.h"
@@ -147,9 +148,7 @@ static const MAPIErrorTranslateRecord MAPIErrorCodes[] = {
 const char* GetMAPIErrorMessage(HRESULT errorCode)
 {
     const char* retval = "Unknown error code";
-    size_t tableSize = sizeof(MAPIErrorCodes) / sizeof(MAPIErrorCodes[0]);
-    for (size_t i = 0; i < tableSize; i++)
-    {
+    for (size_t i = 0; i < ARRAY_SIZE(MAPIErrorCodes); ++i) {
         if (MAPIErrorCodes[i].errorCode == errorCode)
         {
             retval = MAPIErrorCodes[i].errorMessage;

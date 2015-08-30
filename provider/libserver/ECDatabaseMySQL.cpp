@@ -1582,8 +1582,7 @@ ECRESULT ECDatabaseMySQL::CreateDatabase()
 		goto exit;
 
 	// Database tables
-	for (unsigned int i=0; i < (sizeof(sDatabaseTables) / sizeof(sSQLDatabase_t)); i++)
-	{
+	for (size_t i = 0; i < ARRAY_SIZE(sDatabaseTables); ++i) {
 		m_lpLogger->Log(EC_LOGLEVEL_FATAL,"Create table: %s", sDatabaseTables[i].lpComment);
 		er = DoInsert(sDatabaseTables[i].lpSQL);
 		if(er != erSuccess)
@@ -1591,8 +1590,7 @@ ECRESULT ECDatabaseMySQL::CreateDatabase()
 	}
 
 	// Add the default table data
-	for (unsigned int i=0; i < (sizeof(sDatabaseData) / sizeof(sSQLDatabase_t)); i++)
-	{
+	for (size_t i = 0; i < ARRAY_SIZE(sDatabaseData); ++i) {
 		m_lpLogger->Log(EC_LOGLEVEL_FATAL,"Add table data for: %s", sDatabaseData[i].lpComment);
 		er = DoInsert(sDatabaseData[i].lpSQL);
 		if(er != erSuccess)
@@ -1609,7 +1607,8 @@ ECRESULT ECDatabaseMySQL::CreateDatabase()
 		goto exit;
 
 	// Loop throught the update list
-	for (unsigned int i=Z_UPDATE_RELEASE_ID; i < (sizeof(sUpdateList) / sizeof(sUpdateList_t)); i++)
+	for (size_t i = Z_UPDATE_RELEASE_ID;
+	     i < ARRAY_SIZE(sUpdateList); ++i)
 	{
 		er = UpdateDatabaseVersion(sUpdateList[i].ulVersion);
 		if(er != erSuccess)
@@ -1790,9 +1789,9 @@ ECRESULT ECDatabaseMySQL::UpdateDatabase(bool bForceUpdate, std::string &strRepo
 		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Manually forced the database upgrade; the option '--force-database-upgrade' was given.");
 
 	// Loop throught the update list
-	for (unsigned int i=ulDatabaseRevisionMin; i < (sizeof(sUpdateList) / sizeof(sUpdateList_t)); i++)
+	for (size_t i = ulDatabaseRevisionMin;
+	     i < ARRAY_SIZE(sUpdateList); ++i)
 	{
-
 		if ( (ulDatabaseRevisionMin > 0 && IsUpdateDone(sUpdateList[i].ulVersion) == hrSuccess) ||
 			(sUpdateList[i].ulVersionMin != 0 && ulDatabaseRevision >= sUpdateList[i].ulVersion && 
 			ulDatabaseRevision >= sUpdateList[i].ulVersionMin) ||

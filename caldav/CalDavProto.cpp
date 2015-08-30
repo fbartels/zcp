@@ -99,12 +99,10 @@ static ULONG GetPropIDForXMLProp(LPMAPIPROP lpObj,
 	wstring wstrName;
 	ULONG ulPropTag = PR_NULL;
 
-	for(unsigned int i = 0; i < sizeof(sPropMap)/sizeof(sPropMap[0]); i++)
-	{
+	for (size_t i = 0; i < ARRAY_SIZE(sPropMap); ++i)
 		// @todo, we really should use the namespace here too
 		if (strcmp(sXmlPropName.strPropname.c_str(), sPropMap[i].name) == 0)
 			return sPropMap[i].ulPropTag;
-	}
 
 	strName = sXmlPropName.strNS + "#" + sXmlPropName.strPropname;
 	wstrName = converter.convert_to<wstring>(strName, rawsize(strName), "UTF-8");
