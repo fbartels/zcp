@@ -7954,6 +7954,7 @@ static ECRESULT MoveObjects(ECSession *lpSession, ECDatabase *lpDatabase,
 	bool			bUpdateDeletedSize = false;
 	ECListIntIterator	iObjectId;
 	size_t			cCopyItems = 0;
+	FILETIME ft;
 
 	unsigned long long ullIMAP = 0;
 
@@ -7981,6 +7982,8 @@ static ECRESULT MoveObjects(ECSession *lpSession, ECDatabase *lpDatabase,
 
 	if(lplObjectIds->empty())
 		goto exit; // Nothing to do
+
+	GetSystemTimeAsFileTime(&ft);
 
 	// Check permission, Destination folder
 	er = lpSession->GetSecurity()->CheckPermission(ulDestFolderId, ecSecurityCreate);
@@ -8162,8 +8165,15 @@ static ECRESULT MoveObjects(ECSession *lpSession, ECDatabase *lpDatabase,
 			// FIXME: Delete from list: iterCopyItems
 			continue;
 		}
-                                                                                
-		// FIXME update last modification time
+
+		// update last modification time
+		// PR_LAST_MODIFICATION_TIME (ZCP-11897)
+		strQuery = "REPLACE INTO properties(hierarchyid, tag, type, val_lo, val_hi) VALUES(" + stringify(iterCopyItems -> ulId) + "," + stringify(PROP_ID(PR_LAST_MODIFICATION_TIME)) + "," + stringify(PROP_TYPE(PR_LAST_MODIFICATION_TIME)) + "," + stringify(ft.dwLowDateTime) + "," + stringify(ft.dwHighDateTime) + ")";
+		er = lpDatabase->DoUpdate(strQuery);
+		if (er != erSuccess)
+			goto exit;
+
+		g_lpSessionManager->GetCacheManager()->Update(fnevObjectModified, iterCopyItems->ulId);
 
 		// remove PR_DELETED_ON, This is on a softdeleted message
 		strQuery = "DELETE FROM properties WHERE hierarchyid="+stringify(iterCopyItems->ulId)+" AND tag="+stringify(PROP_ID(PR_DELETED_ON))+" AND type="+stringify(PROP_TYPE(PR_DELETED_ON));
