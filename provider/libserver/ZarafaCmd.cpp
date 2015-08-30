@@ -8153,15 +8153,15 @@ static ECRESULT MoveObjects(ECSession *lpSession, ECDatabase *lpDatabase,
 		if (er != erSuccess)
 			goto exit;
 
-        strQuery = "UPDATE hierarchy SET parent="+stringify(ulDestFolderId)+", flags=flags&"+stringify(~MSGFLAG_DELETED)+" WHERE id="+stringify(iterCopyItems->ulId);
-        
-        er = lpDatabase->DoUpdate(strQuery);
-        if(er != erSuccess) {
-	        bPartialCompletion = true;
-            er = erSuccess;
-            // FIXME: Delete from list: iterCopyItems
-            continue;
-        }
+		strQuery = "UPDATE hierarchy SET parent=" + stringify(ulDestFolderId) + ", flags=flags&" + stringify(~MSGFLAG_DELETED) + " WHERE id=" + stringify(iterCopyItems->ulId);
+
+		er = lpDatabase->DoUpdate(strQuery);
+		if (er != erSuccess) {
+			bPartialCompletion = true;
+			er = erSuccess;
+			// FIXME: Delete from list: iterCopyItems
+			continue;
+		}
                                                                                 
 		// FIXME update last modification time
 
