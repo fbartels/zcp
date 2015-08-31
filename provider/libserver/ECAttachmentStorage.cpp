@@ -1549,9 +1549,8 @@ ECRESULT ECFileAttachment::LoadAttachmentInstance(struct soap *soap, ULONG ulIns
 				m_lpLogger->Log(EC_LOGLEVEL_ERROR, "ECFileAttachment::LoadAttachmentInstance(SOAP): Error while gzreading attachment data from %s", filename.c_str());
 				// er = ZARAFA_E_DATABASE_ERROR;
 				//break;
-				free(temp);
 				*lpiSize = 0;
-				goto exit;
+				break;
 			}
 
 			if (ret == 0)
@@ -1563,9 +1562,8 @@ ECRESULT ECFileAttachment::LoadAttachmentInstance(struct soap *soap, ULONG ulIns
 				m_lpLogger->Log(EC_LOGLEVEL_ERROR, "ECFileAttachment::LoadAttachmentInstance(SOAP): Size safety limit (%lu) reached for %s (compressed)", static_cast<unsigned long>(attachment_size_safety_limit), filename.c_str());
 				// er = ZARAFA_E_DATABASE_ERROR;
 				//break;
-				free(temp);
 				*lpiSize = 0;
-				goto exit;
+				break;
 			}
 		}
 
@@ -1588,6 +1586,9 @@ ECRESULT ECFileAttachment::LoadAttachmentInstance(struct soap *soap, ULONG ulIns
 		{
 			m_lpLogger->Log(EC_LOGLEVEL_ERROR, "ECFileAttachment::LoadAttachmentInstance(SOAP): Error while doing fstat on %s: %s", filename.c_str(), strerror(errno));
 			// FIXME er = ZARAFA_E_DATABASE_ERROR;
+			*lpiSize = 0;
+			lpData = s_alloc<unsigned char>(soap, *lpiSize);
+			*lppData = lpData;
 			goto exit;
 		}
 
@@ -1597,6 +1598,8 @@ ECRESULT ECFileAttachment::LoadAttachmentInstance(struct soap *soap, ULONG ulIns
 			m_lpLogger->Log(EC_LOGLEVEL_ERROR, "ECFileAttachment::LoadAttachmentInstance(SOAP): Size safety limit (%lu) reached for %s (uncompressed)", static_cast<unsigned long>(attachment_size_safety_limit), filename.c_str());
 			// FIXME er = ZARAFA_E_DATABASE_ERROR;
 			*lpiSize = 0;
+			lpData = s_alloc<unsigned char>(soap, *lpiSize);
+			*lppData = lpData;
 			goto exit;
 		}
 
@@ -1607,16 +1610,16 @@ ECRESULT ECFileAttachment::LoadAttachmentInstance(struct soap *soap, ULONG ulIns
 		if (lReadSize < 0) {
 			m_lpLogger->Log(EC_LOGLEVEL_ERROR, "ECFileAttachment::LoadAttachmentInstance(SOAP): Error while reading attachment data from %s: %s", filename.c_str(), strerror(errno));
 			// FIXME er = ZARAFA_E_DATABASE_ERROR;
-			delete [] lpData;
 			*lpiSize = 0;
+			*lppData = lpData;
 			goto exit;
 		}
 
 		if (lReadSize != static_cast<ssize_t>(*lpiSize)) {
 			m_lpLogger->Log(EC_LOGLEVEL_ERROR, "ECFileAttachment::LoadAttachmentInstance(SOAP): Short read while reading attachment data from %s: expected %lu, got %lu.", filename.c_str(), static_cast<unsigned long>(*lpiSize), static_cast<unsigned long>(lReadSize));
 			// FIXME er = ZARAFA_E_DATABASE_ERROR;
-			delete [] lpData;
 			*lpiSize = 0;
+			*lppData = lpData;
 			goto exit;
 		}
 	}
