@@ -6,6 +6,7 @@ Makefile.in
 *.ldd
 *.ldx
 *.lo
+*.mo
 *.o
 .dirstamp
 
@@ -22,63 +23,15 @@ Makefile.in
 /libtool
 /python-config
 /specialbuild
-/tmp
 /version
 
 /default.sym
-
-# /ECtools/Migrator2/Migrator/
-/ECtools/Migrator2/Migrator/ValidateSMTP.cpp
-
-# /ECtools/Migrator2/MigratorUI/
-/ECtools/Migrator2/MigratorUI/ECIMigratorInterface.cs
-/ECtools/Migrator2/MigratorUI/ECMigrator.cs
-/ECtools/Migrator2/MigratorUI/ECMigratorCallback.cs
-/ECtools/Migrator2/MigratorUI/ECMigratorCaller.cs
-/ECtools/Migrator2/MigratorUI/SWIGTYPE_p_f_double_unsigned_long_p_void_int_int__void.cs
-/ECtools/Migrator2/MigratorUI/SWIGTYPE_p_f_int_int_p_q_const__char_p_q_const__char_p_void__void.cs
-/ECtools/Migrator2/MigratorUI/SWIGTYPE_p_f_p_q_const__char_unsigned_int_p_void__void.cs
-/ECtools/Migrator2/MigratorUI/SWIGTYPE_p_f_p_q_const__char_unsigned_int_v_______void.cs
-/ECtools/Migrator2/MigratorUI/SWIGTYPE_p_f_unsigned_int_p_q_const__char_p_void__void.cs
-/ECtools/Migrator2/MigratorUI/SWIGTYPE_p_void.cs
-/ECtools/Migrator2/MigratorUI/migrator.cs
-/ECtools/Migrator2/MigratorUI/migratorPINVOKE.cs
-/ECtools/Migrator2/MigratorUI/migrator_wrap.cxx
-/ECtools/Migrator2/MigratorUI/migrator_wrap.h
-
-# /ECtools/Migrator2/MigratorUI/MigrationWizard/properties/
-/ECtools/Migrator2/MigratorUI/MigrationWizard/properties/assemblyinfo.cs
-
-# /ECtools/Migrator2/MigratorUI/MigrationWizardBase/properties/
-/ECtools/Migrator2/MigratorUI/MigrationWizardBase/properties/assemblyinfo.cs
-
-# /ECtools/Migrator2/MigratorUI/Properties/
-/ECtools/Migrator2/MigratorUI/Properties/assemblyinfo.cs
-
-# /ECtools/abresync/
-/ECtools/abresync/*.ncb
-/ECtools/abresync/*.suo
-/ECtools/abresync/*.user
-/ECtools/abresync/Debug
-/ECtools/abresync/Release
-/ECtools/abresync/common
-/ECtools/abresync/tmp
-
-# /ECtools/firefox-extensions/
-/ECtools/firefox-extensions/ZarafaDnD.xpi
 
 # /ECtools/zarafa-admin/
 /ECtools/zarafa-admin/zarafa-admin
 
 # /ECtools/zarafa-archiver/
 /ECtools/zarafa-archiver/zarafa-archiver
-
-# /ECtools/zarafa-backup/
-/ECtools/zarafa-backup/zarafa-restore
-/ECtools/zarafa-backup/zarafa-backup
-/ECtools/zarafa-backup/*zbk*
-
-# /ECtools/zarafa-backup/helpers/
 
 # /ECtools/zarafa-cfgchecker/
 /ECtools/zarafa-cfgchecker/zarafa-cfgchecker
@@ -91,12 +44,6 @@ Makefile.in
 
 # /ECtools/zarafa-passwd/
 /ECtools/zarafa-passwd/zarafa-passwd
-
-# /ECtools/zarafa-report/
-/ECtools/zarafa-report/zarafa-report
-
-# /ECtools/zarafa-search/
-/ECtools/zarafa-search/zarafa-search
 
 # /ECtools/zarafa-stats/
 /ECtools/zarafa-stats/zarafa-stats
@@ -116,90 +63,23 @@ Makefile.in
 /autoconf/ylwrap
 /autoconf/compile
 
-# /bin/
-/bin/*.user
-/bin/BugTrap
-/bin/BugTrap-Bin
-/bin/CrashExplorer
-/bin/XMail
-/bin/boost
-/bin/gettext
-/bin/iconv
-/bin/icu
-/bin/libical
-/bin/libvmime
-/bin/libxml2
-/bin/openssl
-/bin/perl
-/bin/swigwin
-/bin/symbols
-/bin/zlib
-
-# /bin/mysql/
-/bin/mysql/MySQL
-
-# /bin/php/
-/bin/php/php-4.3.10-Win32
-
-# /build/BugTrap/
-/build/BugTrap/*.ncb
-/build/BugTrap/*.suo
-/build/BugTrap/*.user
-/build/BugTrap/BugTrap
-/build/BugTrap/bin
-/build/BugTrap/build
-/build/BugTrap/zlib
-
 # /caldav/
 /caldav/zarafa-ical
 
 # /common/
+/common/config.h*
 /common/ecversion.h
-/common/config.h
-/common/config.h.in
 /common/stamp-h1
 /common/zarafa.pc
-/common/res
-
-# /debian/
-/debian/zarafa-dbg
-/debian/zarafa-dev
-/debian/zarafa-opensource
-/debian/tmp
-/debian/zarafa-webaccess
-/debian/zarafa-webaccess-classic
-/debian/zarafa-webaccess-mobile
-/debian/files
-/debian/zarafa
-/debian/zarafa.files
-/debian/changelog
-/debian/control
-/debian/*.debhelper
-/debian/*.substvars
 
 # /doc/
 /doc/*.[1578]
 
-# /doc/Free_Busy_Manual/
-
-# /doc/Free_Busy_Manual/build/
-
-# /doc/Free_Busy_Manual/build/en-US/
-
-# /doc/Free_Busy_Manual/build/pot/
-
-# /doc/Free_Busy_Manual/source/
-
-# /doc/Free_Busy_Manual/source/images/
-
-# /doc/php-ext/
-/doc/php-ext/*html
-
+## /doc/php-ext/
+#/doc/php-ext/*html
+#
 # /gateway/
 /gateway/zarafa-gateway
-
-# /inetmapi/vmime-patches/
-/inetmapi/vmime-patches/zarafa-vmime-patches.tar.gz
 
 # /installer/
 /installer/zarafa.ldif
@@ -207,8 +87,6 @@ Makefile.in
 # /installer/linux/
 /installer/linux/ldap.openldap.cfg
 /installer/linux/ldap.active-directory.cfg
-/installer/linux/ldapms.openldap.cfg
-/installer/linux/ldapms.active-directory.cfg
 
 # /installer/userscripts/
 /installer/userscripts/creategroup
@@ -217,9 +95,6 @@ Makefile.in
 /installer/userscripts/deleteuser
 /installer/userscripts/createcompany
 /installer/userscripts/deletecompany
-
-# /licensed/
-/licensed/zarafa-licensed
 
 # /php-webclient-ajax/
 /php-webclient-ajax/debug.txt
@@ -231,52 +106,17 @@ Makefile.in
 # /php-webclient-ajax/client/widgets/fckeditor/
 /php-webclient-ajax/client/widgets/fckeditor/editor
 
-# /php-webclient-ajax/server/language/da_DK.UTF-8/LC_MESSAGES/
-/php-webclient-ajax/server/language/da_DK.UTF-8/LC_MESSAGES/*.mo
-
-# /php-webclient-ajax/server/language/de_DE.UTF-8/LC_MESSAGES/
-/php-webclient-ajax/server/language/de_DE.UTF-8/LC_MESSAGES/*.mo
-
-# /php-webclient-ajax/server/language/en_US.UTF-8/LC_MESSAGES/
-/php-webclient-ajax/server/language/en_US.UTF-8/LC_MESSAGES/*.mo
-
-# /php-webclient-ajax/server/language/es_ES.UTF-8/LC_MESSAGES/
-/php-webclient-ajax/server/language/es_ES.UTF-8/LC_MESSAGES/*.mo
-
-# /php-webclient-ajax/server/language/fi_FI.UTF-8/LC_MESSAGES/
-/php-webclient-ajax/server/language/fi_FI.UTF-8/LC_MESSAGES/*.mo
-
-# /php-webclient-ajax/server/language/fr_FR.UTF-8/LC_MESSAGES/
-/php-webclient-ajax/server/language/fr_FR.UTF-8/LC_MESSAGES/*.mo
-
-# /php-webclient-ajax/server/language/it_IT.UTF-8/LC_MESSAGES/
-/php-webclient-ajax/server/language/it_IT.UTF-8/LC_MESSAGES/*.mo
-
-# /php-webclient-ajax/server/language/nl_NL.UTF-8/LC_MESSAGES/
-/php-webclient-ajax/server/language/nl_NL.UTF-8/LC_MESSAGES/*.mo
-
-# /php-webclient-ajax/server/language/pt_PT.UTF-8/LC_MESSAGES/
-/php-webclient-ajax/server/language/pt_PT.UTF-8/LC_MESSAGES/*.mo
-
-# /php-webclient-ajax/server/language/sv_SE.UTF-8/LC_MESSAGES/
-/php-webclient-ajax/server/language/sv_SE.UTF-8/LC_MESSAGES/*.mo
-
-# /po/
-/po/*mo
-
-# /provider/ECProps/
-/provider/ECProps/Debug
-
-# /provider/client/
-/provider/client/Debug
-/provider/client/Release
-
-# /provider/plugins/
-/provider/plugins/plugintest
-
+## /provider/ECProps/
+#/provider/ECProps/Debug
+#
+## /provider/client/
+#/provider/client/Debug
+#/provider/client/Release
+#
+## /provider/plugins/
+#/provider/plugins/plugintest
+#
 # /provider/server/
-/provider/server/Debug
-/provider/server/ecenterserver___Win32_Release
 /provider/server/zarafa-server
 
 # /provider/soap/
@@ -295,33 +135,18 @@ Makefile.in
 /provider/soap/soapZarafaCmdProxy.h
 /provider/soap/soapZarafaCmdObject.h
 
-# /provider/tools/gsoap/
-/provider/tools/gsoap/gsoap-win32-2.7
-/provider/tools/gsoap/gsoap-2.7
-
-# /provider/tools/soapcpp2/
-/provider/tools/soapcpp2/soapcpp2_lex.c
-/provider/tools/soapcpp2/soapcpp2_yacc.output
-/provider/tools/soapcpp2/soapcpp2
-/provider/tools/soapcpp2/soapcpp2_yacc.c
-/provider/tools/soapcpp2/soapcpp2_yacc.h
-
-# /rpm/
-/rpm/zarafa.spec
-/rpm/zarafa-webaccess.spec
-
 # /spooler/
 /spooler/zarafa-spooler
 /spooler/zarafa-dagent
 /spooler/PythonSWIGRuntime.h
 
 # /swig/
-/swig/mapi_wrap.cxx
-/swig/MAPICore.pm
-
-# /swig/python/
-/swig/python/*.user
-/swig/python/build
+#/swig/mapi_wrap.cxx
+#/swig/MAPICore.pm
+#
+## /swig/python/
+#/swig/python/*.user
+#/swig/python/build
 /swig/python/MAPICore.py
 /swig/python/mapi_wrap.cxx
 /swig/python/mapi_wrap.h
@@ -329,25 +154,13 @@ Makefile.in
 /swig/python/inetmapi_wrap.cxx
 /swig/python/icalmapi.py
 /swig/python/icalmapi_wrap.cxx
-/swig/python/zarafasync.py
-/swig/python/zarafasync_wrap.cxx
 /swig/python/libcommon.py
 /swig/python/libcommon_wrap.cxx
 /swig/python/archiver.py
 /swig/python/archiver_wrap.cxx
-/swig/python/licensereq.py
-/swig/python/licensereq_wrap.cxx
 /swig/python/licenseclient.py
 /swig/python/licenseclient_wrap.cxx
 /swig/python/libfreebusy.py
 /swig/python/libfreebusy_wrap.cxx
 /swig/python/RecurrenceState.py
 /swig/python/RecurrenceState_wrap.cxx
-
-# /tools/
-/tools/FCKeditor_2.3.1.tar
-
-# /tools/python-scripts/freebusysync/
-
-# /testunit
-/testunit/logs
