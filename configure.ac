@@ -23,37 +23,11 @@ AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_CXX
 AC_PROG_INSTALL
-AC_PROG_MAKE_SET
-AC_PROG_LEX
-AC_PROG_YACC
 AC_PATH_PROG(PROG_XMLTO, xmlto)	# not an error if not found, just no manual pages
 AC_PATH_PROG(PROG_ANT, ant)		# not an error if not found, no 'make dist' (waxt package)
-AM_PROG_CC_C_O
 
 abs_top_srcdir=`cd $srcdir; pwd`
 abs_top_builddir=`pwd`
-
-# Lex / Yacc version
-if test "x$LEX" = "x" -o "x$LEX" = "x:"; then
-    AC_MSG_ERROR([Lexer not found. Please install flex])
-elif test "x$LEX" = "xflex"; then
-   LEX_DEFINE=-DWITH_FLEX
-   LEX_FLAGS="-l"
-else
-   LEX_DEFINE=-DWITH_LEX
-   LEX_FLAGS=
-fi
-AC_SUBST(LEX_DEFINE)
-AC_SUBST(LEX_FLAGS)
-
-AC_PROG_YACC
-if test x"$YACC" = "xyacc"; then
-  AC_CHECK_PROG([YACC_EXISTS], [yacc], [yes], [no])
-  if test x"$YACC_EXISTS" != xyes; then
-    AC_MSG_ERROR([[bison/byacc/yacc not found.
-          Please install bison]])
-  fi
-fi
 
 #
 # construct default CXXFLAGS
