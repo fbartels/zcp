@@ -56,7 +56,6 @@ ldapms.openldap.cfg: ldap.m4
 ldapms.active-directory.cfg: ldap.m4
 	m4 -DTYPE=ADS -DMULTISERVER=1 ${top_srcdir}/installer/linux/ldap.m4 > $@
 
-bindir = ${prefix}/bin
 dist_sbin_SCRIPTS = zarafa-autorespond zarafa-mr-accept zarafa-mr-process
 
 sysconf_rotatedir = ${sysconfdir}/logrotate.d
