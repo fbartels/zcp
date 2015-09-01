@@ -1,4 +1,3 @@
-datadir = ${docdir}
 
 config_files = \
 	server.cfg unix.cfg ldap.propmap.cfg \
@@ -36,12 +35,13 @@ sysconf_sysconfigdir = ${@DISTRO@_sysconfig_path}
 sysconf_sysconfig_DATA = ${@DISTRO@_sysconfig_files}
 alt_sysconfig_path = ${sysconfdir}/sysconfig
 
-dist_data_DATA = \
+dist_doc_DATA = \
 	db-convert-4.1-to-4.2 db-convert-4.20-to-4.21 db-convert-4.20-to-innodb.sql db-calc-storesize db-convert-attachments-to-files \
 	createuser.dotforward db-convert-4.2x-to-5.00 ssl-certificates.sh db-upgrade-objectsid-to-objectguid.pl ldap-switch-sendas.pl \
 	audit-parse.pl zarafa7-upgrade db-remove-orphaned-attachments \
-	${top_srcdir}/tools/python-scripts/optimize-imap.py ${top_srcdir}/tools/python-scripts/update-resource-recipients \
-	ldap.m4
+	${top_srcdir}/tools/python-scripts/optimize-imap.py ${top_srcdir}/tools/python-scripts/update-resource-recipients
+
+dist_pkgdata_DATA = ldap.m4
 
 BUILT_SOURCES = ldap.openldap.cfg ldap.active-directory.cfg
 

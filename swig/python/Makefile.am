@@ -1,8 +1,11 @@
+# -*- Makefile -*-
+
+lib_LTLIBRARIES = libzcp_pyconv.la libzcp_pydirector.la
 pythonexeclib_LTLIBRARIES = _MAPICore.la _inetmapi.la _icalmapi.la _licenseclient.la
 noinst_LTLIBRARIES = _libcommon.la _archiver.la _libfreebusy.la _RecurrenceState.la
-noinst_DATA = _MAPICore.ldd _inetmapi.ldd _icalmapi.ldd \
-	_libcommon.ldd _archiver.ldd _libfreebusy.ldd _RecurrenceState.ldd
-
+noinst_DATA = libzcp_pyconv.ldd _MAPICore.ldd _inetmapi.ldd _icalmapi.ldd \
+	_libcommon.ldd _archiver.ldd _libfreebusy.ldd _RecurrenceState.ldd \
+	_licenseclient.ldd
 
 SUBDIRS = zarafa
 
@@ -13,30 +16,44 @@ AM_CPPFLAGS = ${ZCPPFLAGS} $(DEBUGFLAGS) \
 	$(PYTHON_INCLUDES) -I${top_srcdir}/swig -w \
 	-DSWIG_PYTHON_OUTPUT_TUPLE -DSWIG_TYPE_TABLE=MAPI
 
+pkgincludedir = ${includedir}/zarafa
+pkginclude_HEADERS = conversion.h ../director_util.h
+
+libzcp_pyconv_la_SOURCES = conversion.cpp conversion.h
+libzcp_pyconv_la_LDFLAGS = -Wl,--version-script=${top_srcdir}/default.sym
+libzcp_pyconv_la_LIBADD  = ${PYTHON_LIBS} \
+	${top_builddir}/mapi4linux/src/libmapi.la
+libzcp_pydirector_la_SOURCES = ../director_util.cpp ../director_util.h
+libzcp_pydirector_la_LDFLAGS = -Wl,--version-script=${top_srcdir}/default.sym
+libzcp_pydirector_la_LIBADD  = -lpthread
+
 _MAPICore_la_CPPFLAGS = ${AM_CPPFLAGS} -I${top_srcdir}/zarafa-libsync
 _MAPICore_la_LDFLAGS = ${AM_LDFLAGS} -module -avoid-version
-_MAPICore_la_LIBADD = ${top_builddir}/mapi4linux/src/libmapi.la \
-						${top_builddir}/common/libzcp_common_mapi.la \
-						${top_builddir}/common/libzcp_common_util.la \
-						${top_builddir}/zarafa-libsync/libzarafasync.la \
-						$(XML2_LIBS) $(PROG_LIBS) $(PYTHON_LIBS)
+_MAPICore_la_LIBADD = libzcp_pyconv.la libzcp_pydirector.la \
+	${top_builddir}/mapi4linux/src/libmapi.la \
+	${top_builddir}/common/libzcp_common_mapi.la \
+	${top_builddir}/common/libzcp_common_util.la \
+	${top_builddir}/zarafa-libsync/libzarafasync.la \
+	$(XML2_LIBS) $(PROG_LIBS) $(PYTHON_LIBS)
 
 _inetmapi_la_CPPFLAGS = ${AM_CPPFLAGS} -I${top_srcdir}/inetmapi
 _inetmapi_la_LDFLAGS = ${AM_LDFLAGS} -module -avoid-version
-_inetmapi_la_LIBADD = ${top_builddir}/mapi4linux/src/libmapi.la \
-						${top_builddir}/common/libzcp_common_mapi.la \
-						${top_builddir}/common/libzcp_common_util.la \
-						${top_builddir}/inetmapi/libinetmapi.la \
-						$(PROG_LIBS) $(PYTHON_LIBS)
+_inetmapi_la_LIBADD = libzcp_pyconv.la \
+	${top_builddir}/mapi4linux/src/libmapi.la \
+	${top_builddir}/common/libzcp_common_mapi.la \
+	${top_builddir}/common/libzcp_common_util.la \
+	${top_builddir}/inetmapi/libinetmapi.la \
+	$(PROG_LIBS) $(PYTHON_LIBS)
 
 _icalmapi_la_CPPFLAGS = ${AM_CPPFLAGS} -I${top_srcdir}/libicalmapi -I${top_srcdir}/libfreebusy
 _icalmapi_la_LDFLAGS = ${AM_LDFLAGS} -module -avoid-version
-_icalmapi_la_LIBADD = ${top_builddir}/mapi4linux/src/libmapi.la \
-						${top_builddir}/libicalmapi/libicalmapi.la \
-						${top_builddir}/common/libzcp_common_mapi.la \
-						${top_builddir}/common/libzcp_common_util.la \
-						${top_builddir}/libfreebusy/libfreebusy.la \
-						$(ICAL_LIBS) $(PROG_LIBS) $(PYTHON_LIBS)
+_icalmapi_la_LIBADD = libzcp_pyconv.la \
+	${top_builddir}/mapi4linux/src/libmapi.la \
+	${top_builddir}/libicalmapi/libicalmapi.la \
+	${top_builddir}/common/libzcp_common_mapi.la \
+	${top_builddir}/common/libzcp_common_util.la \
+	${top_builddir}/libfreebusy/libfreebusy.la \
+	$(ICAL_LIBS) $(PROG_LIBS) $(PYTHON_LIBS)
 
 _archiver_la_CPPFLAGS = ${AM_CPPFLAGS} -I${top_srcdir}/ECtools/zarafa-archiver
 _archiver_la_LDFLAGS = ${AM_LDFLAGS} -module -avoid-version -rpath '$(libdir)'
@@ -59,20 +76,21 @@ _licenseclient_la_LIBADD = ${top_builddir}/provider/common/libzarafacommon.la \
 
 # noinst_ and rpath will generate the _libcommon.so file
 _libcommon_la_LDFLAGS = ${AM_LDFLAGS} -module -avoid-version -rpath '$(libdir)'
-_libcommon_la_LIBADD = ${top_builddir}/mapi4linux/src/libmapi.la \
+_libcommon_la_LIBADD = libzcp_pyconv.la ${top_builddir}/mapi4linux/src/libmapi.la \
 					   ${top_builddir}/common/libzcp_common_mapi.la \
 					   ${top_builddir}/common/libzcp_common_util.la \
 				  	   $(PROG_LIBS) $(PYTHON_LIBS)
 
 _RecurrenceState_la_LDFLAGS = ${AM_LDFLAGS} -module -avoid-version -rpath '$(libdir)'
-_RecurrenceState_la_LIBADD = ${top_builddir}/mapi4linux/src/libmapi.la \
+_RecurrenceState_la_LIBADD = libzcp_pyconv.la \
+	${top_builddir}/mapi4linux/src/libmapi.la \
 	${top_builddir}/common/libzcp_common_mapi.la \
 	${top_builddir}/common/libzcp_common_util.la \
 	$(PROG_LIBS) $(PYTHON_LIBS)
 
 _libfreebusy_la_CPPFLAGS = ${AM_CPPFLAGS} -I${top_srcdir}/libfreebusy
 _libfreebusy_la_LDFLAGS = ${AM_LDFLAGS} -module -avoid-version
-_libfreebusy_la_LIBADD = ${top_builddir}/mapi4linux/src/libmapi.la \
+_libfreebusy_la_LIBADD = libzcp_pyconv.la ${top_builddir}/mapi4linux/src/libmapi.la \
 						 ${top_builddir}/libfreebusy/libfreebusy.la \
 						 ${top_builddir}/common/libzcp_common_mapi.la \
                          ${top_builddir}/common/libzcp_common_util.la \
@@ -111,14 +129,14 @@ libfreebusy.py: $(BUILT_SOURCES)
 RecurrenceState.py: $(BUILT_SOURCES)
 
 
-_MAPICore_la_SOURCES = conversion.h conversion.cpp mapi_wrap.cxx mapi_wrap.h scl.h ../director_util.h ../director_util.cpp
-_inetmapi_la_SOURCES = conversion.h conversion.cpp inetmapi_wrap.cxx 
-_icalmapi_la_SOURCES = conversion.h conversion.cpp icalmapi_wrap.cxx
+_MAPICore_la_SOURCES = mapi_wrap.cxx mapi_wrap.h scl.h
+_inetmapi_la_SOURCES = inetmapi_wrap.cxx
+_icalmapi_la_SOURCES = icalmapi_wrap.cxx
 _archiver_la_SOURCES = archiver_wrap.cxx archiver_conv.h archiver_conv.cpp
-_libcommon_la_SOURCES = conversion.h conversion.cpp libcommon_wrap.cxx
-_RecurrenceState_la_SOURCES = conversion.h conversion.cpp RecurrenceState_wrap.cxx
+_libcommon_la_SOURCES = libcommon_wrap.cxx
+_RecurrenceState_la_SOURCES = RecurrenceState_wrap.cxx
 _licenseclient_la_SOURCES = licenseclient_wrap.cxx licenseclient_conv.cpp licenseclient_conv.h
-_libfreebusy_la_SOURCES = conversion.h conversion.cpp libfreebusy_wrap.cxx libfreebusy_conv.h libfreebusy_conv.cpp
+_libfreebusy_la_SOURCES = libfreebusy_wrap.cxx libfreebusy_conv.h libfreebusy_conv.cpp
 
 
 EXTRA_DIST = typemap_python.i helpers_python.i setup.py $(BUILT_SOURCES) MAPICore.py inetmapi.py icalmapi.py licenseclient.py MAPI/Defs.py  MAPI/__init__.py  MAPI/Struct.py  MAPI/Tags.py  MAPI/Time.py MAPI/Util/__init__.py MAPI/Util/Generators.py MAPI/Util/Iterators.py MAPI/Util/AddressBook.py MAPI/Util/codepage.py archiver_python.i
