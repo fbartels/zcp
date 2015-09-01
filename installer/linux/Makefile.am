@@ -2,7 +2,7 @@
 config_files = \
 	server.cfg unix.cfg ldap.propmap.cfg \
 	spooler.cfg gateway.cfg monitor.cfg dagent.cfg ical.cfg search.cfg \
-	autorespond archiver.cfg ws.cfg presence.cfg
+	autorespond archiver.cfg presence.cfg
 
 rhel_initscript_files = \
 	zarafa-server.init.rhel zarafa-spooler.init.rhel zarafa-gateway.init.rhel zarafa-monitor.init.rhel zarafa-ical.init.rhel zarafa-dagent.init.rhel zarafa-search.init.rhel zarafa-presence.init.rhel
