@@ -40,7 +40,8 @@ dist_data_DATA = \
 	db-convert-4.1-to-4.2 db-convert-4.20-to-4.21 db-convert-4.20-to-innodb.sql db-calc-storesize db-convert-attachments-to-files \
 	createuser.dotforward db-convert-4.2x-to-5.00 ssl-certificates.sh db-upgrade-objectsid-to-objectguid.pl ldap-switch-sendas.pl \
 	audit-parse.pl zarafa7-upgrade db-remove-orphaned-attachments \
-	${top_srcdir}/tools/python-scripts/optimize-imap.py ${top_srcdir}/tools/python-scripts/update-resource-recipients
+	${top_srcdir}/tools/python-scripts/optimize-imap.py ${top_srcdir}/tools/python-scripts/update-resource-recipients \
+	ldap.m4
 
 BUILT_SOURCES = ldap.openldap.cfg ldap.active-directory.cfg
 
@@ -70,7 +71,7 @@ dist_sysconf_bc_DATA = zarafa-bash-completion.sh
 sysconf_certdir = ${sysconfdir}/zarafa/report-ca
 
 config_files += $(BUILT_SOURCES)
-EXTRA_DIST = $(BUILT_SOURCES) ldap.m4 \
+EXTRA_DIST = $(BUILT_SOURCES) \
 	$(rhel_initscript_files) $(suse_initscript_files) $(cbs4_initscript_files) $(alt_initscript_files) \
 	$(rhel_sysconfig_files) $(suse_sysconfig_files) $(alt_sysconfig_files)
 
