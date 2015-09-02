@@ -5677,7 +5677,7 @@ SOAP_ENTRY_START(setUser, *result, struct user *lpsUser, unsigned int *result)
 	} else if (lpecSession->GetSecurity()->GetUserId() == ulUserId) {
 		// you're only allowed to set your password, force the lpsUser struct to only contain that update
 		if (lpsUser->lpszUsername && oldDetails.GetPropString(OB_PROP_S_LOGIN) != lpsUser->lpszUsername) {
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_FATAL, "Disallowing user %s to update its username to %s",
+			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_WARNING, "Disallowing user %s to update its username to %s",
 												 oldDetails.GetPropString(OB_PROP_S_LOGIN).c_str(), lpsUser->lpszUsername);
 			lpsUser->lpszUsername = NULL;
 		}
@@ -5685,39 +5685,41 @@ SOAP_ENTRY_START(setUser, *result, struct user *lpsUser, unsigned int *result)
 		// leave lpszPassword
 
 		if (lpsUser->lpszMailAddress && oldDetails.GetPropString(OB_PROP_S_EMAIL) != lpsUser->lpszMailAddress) {
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_FATAL, "Disallowing user %s to update its mail address to %s",
+			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_WARNING, "Disallowing user %s to update its mail address to %s",
 												 oldDetails.GetPropString(OB_PROP_S_LOGIN).c_str(), lpsUser->lpszMailAddress);
 			lpsUser->lpszMailAddress = NULL;
 		}
 
 		if (lpsUser->lpszFullName && oldDetails.GetPropString(OB_PROP_S_FULLNAME) != lpsUser->lpszFullName) {
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_FATAL, "Disallowing user %s to update its fullname to %s",
+			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_WARNING, "Disallowing user %s to update its fullname to %s",
 												 oldDetails.GetPropString(OB_PROP_S_LOGIN).c_str(), lpsUser->lpszFullName);
 			lpsUser->lpszFullName = NULL;
 		}
 
 		if (lpsUser->lpszServername && oldDetails.GetPropString(OB_PROP_S_SERVERNAME) != lpsUser->lpszServername) {
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_FATAL, "Disallowing user %s to update its home server to %s",
+			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_WARNING, "Disallowing user %s to update its home server to %s",
 												 oldDetails.GetPropString(OB_PROP_S_LOGIN).c_str(), lpsUser->lpszServername);
 			lpsUser->lpszServername = NULL;
 		}
 
 		// FIXME: check OB_PROP_B_NONACTIVE too? NOTE: ulIsNonActive is now ignored.
 		if (lpsUser->ulObjClass != (ULONG)-1 && oldDetails.GetClass() != (objectclass_t)lpsUser->ulObjClass) {
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_FATAL, "Disallowing user %s to update its active flag to %d",
+			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_WARNING, "Disallowing user %s to update its active flag to %d",
 												 oldDetails.GetPropString(OB_PROP_S_LOGIN).c_str(), lpsUser->ulObjClass);
 			lpsUser->ulObjClass = (ULONG)-1;
 		}
 
 		if (lpsUser->ulIsAdmin != (ULONG)-1 && oldDetails.GetPropInt(OB_PROP_I_ADMINLEVEL) != lpsUser->ulIsAdmin) {
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_FATAL, "Disallowing user %s to update its admin flag to %d",
+			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_WARNING, "Disallowing user %s to update its admin flag to %d",
 												 oldDetails.GetPropString(OB_PROP_S_LOGIN).c_str(), lpsUser->ulIsAdmin);
 			lpsUser->ulIsAdmin = (ULONG)-1;
 		}
 	} else {
 		// you cannot set any details if you're not an admin or not yourself
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_FATAL, "Disallowing user %s to update details of user %s",
-											 oldDetails.GetPropString(OB_PROP_S_LOGIN).c_str(), lpsUser->lpszUsername);
+		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_WARNING,
+			"Disallowing user %s to update details of user %s",
+			oldDetails.GetPropString(OB_PROP_S_LOGIN).c_str(),
+			lpsUser->lpszUsername);
 		er = ZARAFA_E_NO_ACCESS;
 		goto exit;
 	}
@@ -6121,7 +6123,7 @@ SOAP_ENTRY_START(createStore, *result, unsigned int ulStoreType, unsigned int ul
 		goto exit;
 	}
 
-	g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_FATAL, "Started to create store (userid=%d, type=%d)", ulUserId, ulStoreType);
+	g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Started to create store (userid=%d, type=%d)", ulUserId, ulStoreType);
 
 	er = lpDatabase->Begin();
 	if (er != erSuccess)
@@ -6280,7 +6282,7 @@ SOAP_ENTRY_START(createStore, *result, unsigned int ulStoreType, unsigned int ul
 	if (er != erSuccess)
 		goto exit;
 
-	g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_FATAL, "Finished create store (userid=%d, storeid=%d, type=%d)", ulUserId, ulStoreId, ulStoreType);
+	g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Finished create store (userid=%d, storeid=%d, type=%d)", ulUserId, ulStoreId, ulStoreType);
 
 exit:
 	if(er == ZARAFA_E_NO_ACCESS)
@@ -9495,7 +9497,7 @@ SOAP_ENTRY_START(hookStore, *result, unsigned int ulStoreType, entryId sUserId, 
 		goto exit;
 	}
 
-	g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_FATAL, "Hooking store %s to user %d", lpDBRow[1], ulUserId);
+	g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Hooking store %s to user %d", lpDBRow[1], ulUserId);
 
 	// lpDBRow[2] is the old user id, which is now orphaned. We'll use this id to make the other store orphaned, so we "trade" user id's.
 
@@ -9654,7 +9656,7 @@ SOAP_ENTRY_START(removeStore, *result, struct xsd__base64Binary sStoreGuid, unsi
 	if(er != erSuccess)
 		goto exit;
 
-	g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_FATAL, "Finished remove store (%s)", bin2hex(lpDBLen[1], (unsigned char*)lpDBRow[1]).c_str());
+	g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Finished remove store (%s)", bin2hex(lpDBLen[1], reinterpret_cast<const unsigned char *>(lpDBRow[1])).c_str());
 
 exit:
 	FREE_DBRESULT();
