@@ -80,7 +80,7 @@ private:
 };
 
 template <typename ContainerPtrType>
-class ECHierarchyIterator _final
+class ECHierarchyIterator _zcp_final
 	: public boost::iterator_facade<
 		ECHierarchyIterator<ContainerPtrType>,
 		ContainerPtrType,
@@ -139,7 +139,7 @@ private:
 };
 
 template <typename ContainerPtrType>
-class ECContentsIterator _final
+class ECContentsIterator _zcp_final
 	: public boost::iterator_facade<
 		ECContentsIterator<ContainerPtrType>,
 		ContainerPtrType,

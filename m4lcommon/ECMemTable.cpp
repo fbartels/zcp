@@ -76,7 +76,7 @@ using namespace std;
 
 SSortOrderSet sSortDefault = {0, 0};
 
-class FixStringType _final {
+class FixStringType _zcp_final {
 public:
 	FixStringType(ULONG ulFlags): m_ulFlags(ulFlags) { ASSERT((m_ulFlags & ~MAPI_UNICODE) == 0); }
 	ULONG operator()(ULONG ulPropTag) {

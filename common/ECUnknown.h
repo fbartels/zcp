@@ -82,19 +82,19 @@ public:
 	ECUnknown(const char *szClassName = NULL);
 	virtual ~ECUnknown();
 
-	virtual ULONG AddRef(void) _override;
-	virtual ULONG Release(void) _override;
-	virtual HRESULT QueryInterface(REFIID refiid, void **lppInterface) _override;
+	virtual ULONG AddRef(void) _zcp_override;
+	virtual ULONG Release(void) _zcp_override;
+	virtual HRESULT QueryInterface(REFIID refiid, void **lppInterface) _zcp_override;
 
 	virtual HRESULT AddChild(ECUnknown *lpChild);
 	virtual HRESULT RemoveChild(ECUnknown *lpChild);
 
-	class xUnknown _final : public IUnknown {
+	class xUnknown _zcp_final : public IUnknown {
 	public:
 		// From IUnknown
-		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _override;
-		virtual ULONG __stdcall AddRef(void) _override;
-		virtual ULONG __stdcall Release(void) _override;
+		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _zcp_override;
+		virtual ULONG __stdcall AddRef(void) _zcp_override;
+		virtual ULONG __stdcall Release(void) _zcp_override;
 	} m_xUnknown;
 
 	// lpParent is public because it is always thread-safe and valid

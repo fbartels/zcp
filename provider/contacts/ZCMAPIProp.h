@@ -83,12 +83,12 @@ public:
 	virtual HRESULT GetIDsFromNames(ULONG cPropNames, LPMAPINAMEID * lppPropNames, ULONG ulFlags, LPSPropTagArray * lppPropTags);
 
 private:
-	class xMAPIProp _final : public IMAPIProp {
+	class xMAPIProp _zcp_final : public IMAPIProp {
 	public:
 		// From IUnknown
-		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _override;
-		virtual ULONG __stdcall AddRef(void) _override;
-		virtual ULONG __stdcall Release(void) _override;
+		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _zcp_override;
+		virtual ULONG __stdcall AddRef(void) _zcp_override;
+		virtual ULONG __stdcall Release(void) _zcp_override;
 		
 		// From IMAPIProp
 		virtual HRESULT __stdcall GetLastError(HRESULT hError, ULONG ulFlags, LPMAPIERROR * lppMapiError);

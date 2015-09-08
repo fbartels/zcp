@@ -47,7 +47,7 @@
 #include "zcdefs.h"
 #include <pthread.h>
 
-class CPthreadMutex _final {
+class CPthreadMutex _zcp_final {
 public:
 	CPthreadMutex(bool bRecurse = false);
 	~CPthreadMutex();
@@ -60,7 +60,7 @@ private:
 };
 
 
-class scoped_lock _final {
+class scoped_lock _zcp_final {
 public:
 	scoped_lock(pthread_mutex_t &mutex) : m_mutex(mutex) {
 		pthread_mutex_lock(&m_mutex);
@@ -83,7 +83,7 @@ private:
 
 
 template<int(*fnlock)(pthread_rwlock_t*)>
-class scoped_rwlock _final {
+class scoped_rwlock _zcp_final {
 public:
 	scoped_rwlock(pthread_rwlock_t &rwlock) : m_rwlock(rwlock) {
 		fnlock(&m_rwlock);

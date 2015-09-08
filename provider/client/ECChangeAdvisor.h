@@ -64,7 +64,7 @@ class ECLogger;
  * ECChangeAdvisor: Implementation IECChangeAdvisor, which allows one to register for 
  *                  change notifications on folders.
  */
-class ECChangeAdvisor _final : public ECUnknown
+class ECChangeAdvisor _zcp_final : public ECUnknown
 {
 protected:
 	/**
@@ -169,20 +169,20 @@ private:
 	 */
 	HRESULT							PurgeStates();
 
-	class xECChangeAdvisor _final : public IECChangeAdvisor {
+	class xECChangeAdvisor _zcp_final : public IECChangeAdvisor {
 		// IUnknown
-		virtual ULONG __stdcall AddRef(void) _override;
-		virtual ULONG __stdcall Release(void) _override;
-		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **pInterface) _override;
+		virtual ULONG __stdcall AddRef(void) _zcp_override;
+		virtual ULONG __stdcall Release(void) _zcp_override;
+		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **pInterface) _zcp_override;
 
 		// IECChangeAdvisor
-		virtual HRESULT __stdcall GetLastError(HRESULT hResult, ULONG ulFlags, LPMAPIERROR *lppMAPIError) _override;
-		virtual HRESULT __stdcall Config(LPSTREAM lpStream, LPGUID lpGUID, LPECCHANGEADVISESINK lpAdviseSink, ULONG ulFlags) _override;
-		virtual HRESULT __stdcall UpdateState(LPSTREAM lpStream) _override;
-		virtual HRESULT __stdcall AddKeys(LPENTRYLIST lpEntryList) _override;
-		virtual HRESULT __stdcall RemoveKeys(LPENTRYLIST lpEntryList) _override;
-		virtual HRESULT __stdcall IsMonitoringSyncId(ULONG ulSyncId) _override;
-		virtual HRESULT __stdcall UpdateSyncState(ULONG ulSyncId, ULONG ulChangeId) _override;
+		virtual HRESULT __stdcall GetLastError(HRESULT hResult, ULONG ulFlags, LPMAPIERROR *lppMAPIError) _zcp_override;
+		virtual HRESULT __stdcall Config(LPSTREAM lpStream, LPGUID lpGUID, LPECCHANGEADVISESINK lpAdviseSink, ULONG ulFlags) _zcp_override;
+		virtual HRESULT __stdcall UpdateState(LPSTREAM lpStream) _zcp_override;
+		virtual HRESULT __stdcall AddKeys(LPENTRYLIST lpEntryList) _zcp_override;
+		virtual HRESULT __stdcall RemoveKeys(LPENTRYLIST lpEntryList) _zcp_override;
+		virtual HRESULT __stdcall IsMonitoringSyncId(ULONG ulSyncId) _zcp_override;
+		virtual HRESULT __stdcall UpdateSyncState(ULONG ulSyncId, ULONG ulChangeId) _zcp_override;
 	} m_xECChangeAdvisor;
 
 

@@ -51,7 +51,7 @@
 #include "ZarafaCode.h"
 
 // Thread safe buffer for FIFO operations
-class ECFifoBuffer _final {
+class ECFifoBuffer _zcp_final {
 public:
 	typedef std::deque<unsigned char>	storage_type;
 	typedef storage_type::size_type		size_type;

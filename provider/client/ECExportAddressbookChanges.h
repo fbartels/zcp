@@ -68,16 +68,16 @@ private:
 	static bool LeftPrecedesRight(const ICSCHANGE &left, const ICSCHANGE &right);
 
 private:
-	class xECExportAddressbookChanges _final : public IECExportAddressbookChanges {
+	class xECExportAddressbookChanges _zcp_final : public IECExportAddressbookChanges {
 		// IUnknown
-		virtual ULONG __stdcall AddRef(void) _override;
-		virtual ULONG __stdcall Release(void) _override;
-		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _override;
+		virtual ULONG __stdcall AddRef(void) _zcp_override;
+		virtual ULONG __stdcall Release(void) _zcp_override;
+		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _zcp_override;
 		
 		// IECExportAddressbookChanges
-		virtual HRESULT __stdcall Config(LPSTREAM lpState, ULONG ulFlags, IECImportAddressbookChanges *lpCollector) _override;
-		virtual HRESULT __stdcall Synchronize(ULONG *lpulSteps, ULONG *lpulProgress) _override;
-		virtual HRESULT __stdcall UpdateState(LPSTREAM lpState) _override;
+		virtual HRESULT __stdcall Config(LPSTREAM lpState, ULONG ulFlags, IECImportAddressbookChanges *lpCollector) _zcp_override;
+		virtual HRESULT __stdcall Synchronize(ULONG *lpulSteps, ULONG *lpulProgress) _zcp_override;
+		virtual HRESULT __stdcall UpdateState(LPSTREAM lpState) _zcp_override;
 
 	} m_xECExportAddressbookChanges;
 	

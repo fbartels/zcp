@@ -69,7 +69,7 @@ typedef HRESULT(__cdecl *SVC_ABProviderInit)(HINSTANCE hInstance, LPMALLOC lpMal
 											 ULONG * lpulProviderVer, LPABPROVIDER * lppABProvider);
 
 
-class INFLoader _final {
+class INFLoader _zcp_final {
 public:
 	INFLoader();
 	~INFLoader();
@@ -89,7 +89,7 @@ private:
 	std::map<std::string, unsigned int> m_mapDefs;
 };
 
-class SVCProvider _final {
+class SVCProvider _zcp_final {
 public:
 	/* ZARAFA6_ABP, ZARAFA6_MSMDB_private, ZARAFA6_MSMDB_public */
 	SVCProvider();
@@ -103,7 +103,7 @@ private:
 	LPSPropValue m_lpProps; /* PR_* tags from file */
 };
 
-class SVCService _final {
+class SVCService _zcp_final {
 public:
 	/* ZARAFA6, ZCONTACTS */
 	SVCService();
@@ -136,7 +136,7 @@ private:
 	std::map<std::string, SVCProvider*> m_sProviders;
 };
 
-class MAPISVC _final {
+class MAPISVC _zcp_final {
 public:
 	MAPISVC();
 	~MAPISVC();

@@ -52,7 +52,7 @@
 #endif
 
 template<typename _T>
-class mapi_memory_proxy _final {
+class mapi_memory_proxy _zcp_final {
 public:
 	typedef _T		value_type;
 	typedef _T**	pointerpointer;
@@ -67,7 +67,7 @@ private:
 };
 
 template <typename _T>
-class mapi_memory_ptr _final {
+class mapi_memory_ptr _zcp_final {
 public:
 	typedef _T						value_type;
 	typedef _T*						pointer;

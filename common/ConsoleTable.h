@@ -49,7 +49,7 @@
 #include <vector>
 #include "charset/convert.h"
 
-class ConsoleTable _final {
+class ConsoleTable _zcp_final {
 public:
 	ConsoleTable(size_t rows, size_t columns);
 	~ConsoleTable();

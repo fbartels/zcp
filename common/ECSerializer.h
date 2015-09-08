@@ -72,16 +72,16 @@ public:
 	virtual ECRESULT Stat(ULONG *lpulRead, ULONG *lpulWritten) = 0;
 };
 
-class ECStreamSerializer _final : public ECSerializer
+class ECStreamSerializer _zcp_final : public ECSerializer
 {
 public:
 	ECStreamSerializer(IStream *lpBuffer);
-	ECRESULT SetBuffer(void *lpBuffer) _override;
-	ECRESULT Write(const void *ptr, size_t size, size_t nmemb) _override;
-	ECRESULT Read(void *ptr, size_t size, size_t nmemb) _override;
-	ECRESULT Skip(size_t size, size_t nmemb) _override;
-	ECRESULT Flush(void) _override;
-	ECRESULT Stat(ULONG *lpulRead, ULONG *lpulWritten) _override;
+	ECRESULT SetBuffer(void *lpBuffer) _zcp_override;
+	ECRESULT Write(const void *ptr, size_t size, size_t nmemb) _zcp_override;
+	ECRESULT Read(void *ptr, size_t size, size_t nmemb) _zcp_override;
+	ECRESULT Skip(size_t size, size_t nmemb) _zcp_override;
+	ECRESULT Flush(void) _zcp_override;
+	ECRESULT Stat(ULONG *lpulRead, ULONG *lpulWritten) _zcp_override;
 
 private:
 	IStream *m_lpBuffer;
@@ -89,19 +89,19 @@ private:
 	ULONG m_ulWritten;
 };
 
-class ECFifoSerializer _final : public ECSerializer
+class ECFifoSerializer _zcp_final : public ECSerializer
 {
 public:
 	enum eMode { serialize, deserialize };
 
 	ECFifoSerializer(ECFifoBuffer *lpBuffer, eMode mode);
 	virtual ~ECFifoSerializer(void);
-	ECRESULT SetBuffer(void *lpBuffer) _override;
-	ECRESULT Write(const void *ptr, size_t size, size_t nmemb) _override;
-	ECRESULT Read(void *ptr, size_t size, size_t nmemb) _override;
-	ECRESULT Skip(size_t size, size_t nmemb) _override;
-	ECRESULT Flush(void) _override;
-	ECRESULT Stat(ULONG *lpulRead, ULONG *lpulWritten) _override;
+	ECRESULT SetBuffer(void *lpBuffer) _zcp_override;
+	ECRESULT Write(const void *ptr, size_t size, size_t nmemb) _zcp_override;
+	ECRESULT Read(void *ptr, size_t size, size_t nmemb) _zcp_override;
+	ECRESULT Skip(size_t size, size_t nmemb) _zcp_override;
+	ECRESULT Flush(void) _zcp_override;
+	ECRESULT Stat(ULONG *lpulRead, ULONG *lpulWritten) _zcp_override;
 
 private:
 	ECFifoBuffer *m_lpBuffer;

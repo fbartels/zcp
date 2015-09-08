@@ -82,11 +82,11 @@ public:
 	virtual HRESULT ValidateState(ULONG ulUIParam, ULONG ulFlags);
 	virtual HRESULT FlushQueues(ULONG ulUIParam, ULONG cbTargetTransport, LPENTRYID lpTargetTransport, ULONG ulFlags);
 
-	class xXPLogon _final : public IXPLogon {
+	class xXPLogon _zcp_final : public IXPLogon {
 		// IUnknown
-		virtual ULONG __stdcall AddRef(void) _override;
-		virtual ULONG __stdcall Release(void) _override;
-		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _override;
+		virtual ULONG __stdcall AddRef(void) _zcp_override;
+		virtual ULONG __stdcall Release(void) _zcp_override;
+		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _zcp_override;
 
 		//IXPLogon
 		virtual HRESULT __stdcall AddressTypes(ULONG * lpulFlags, ULONG * lpcAdrType, LPTSTR ** lpppszAdrTypeArray, ULONG * lpcMAPIUID, LPMAPIUID ** lpppUIDArray);
@@ -105,11 +105,11 @@ public:
 	} m_xXPLogon;
 
 private:
-	class xMAPIAdviseSink _final : public IMAPIAdviseSink {
+	class xMAPIAdviseSink _zcp_final : public IMAPIAdviseSink {
 	public:
-		HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _override;
-		ULONG __stdcall AddRef(void) _override;
-		ULONG __stdcall Release(void) _override;
+		HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _zcp_override;
+		ULONG __stdcall AddRef(void) _zcp_override;
+		ULONG __stdcall Release(void) _zcp_override;
 
 		ULONG __stdcall OnNotify(ULONG cNotif, LPNOTIFICATION lpNotifs);
 	} m_xMAPIAdviseSink;

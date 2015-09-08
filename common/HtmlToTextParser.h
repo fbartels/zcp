@@ -48,7 +48,7 @@
 #include <map>
 #include <stack>
 
-class CHtmlToTextParser _final
+class CHtmlToTextParser _zcp_final
 {
 public:
 	CHtmlToTextParser(void);

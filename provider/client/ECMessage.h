@@ -158,11 +158,11 @@ public:
 	// RTF overrides
 	virtual HRESULT		HrSetRealProp(SPropValue *lpsPropValue);
 
-	class xMessage _final : public IMessage {
+	class xMessage _zcp_final : public IMessage {
 		// From IUnknown
-		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _override;
-		virtual ULONG __stdcall AddRef(void) _override;
-		virtual ULONG __stdcall Release(void) _override;
+		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _zcp_override;
+		virtual ULONG __stdcall AddRef(void) _zcp_override;
+		virtual ULONG __stdcall Release(void) _zcp_override;
 		
 		// From IMAPIProp
 		virtual HRESULT __stdcall GetLastError(HRESULT hError, ULONG ulFlags, LPMAPIERROR * lppMapiError);

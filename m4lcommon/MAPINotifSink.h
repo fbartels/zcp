@@ -52,16 +52,16 @@
 #include <pthread.h>
 #include "ECUnknown.h"
 
-class MAPINotifSink _final : public IMAPIAdviseSink {
+class MAPINotifSink _zcp_final : public IMAPIAdviseSink {
 public:
     static HRESULT Create(MAPINotifSink **lppSink);
     
-    virtual ULONG 	__stdcall 	AddRef(void) _override;
-    virtual ULONG 	__stdcall 	Release(void) _override;
+    virtual ULONG 	__stdcall 	AddRef(void) _zcp_override;
+    virtual ULONG 	__stdcall 	Release(void) _zcp_override;
     
-    virtual HRESULT __stdcall	QueryInterface(REFIID iid, void **lpvoid) _override;
+    virtual HRESULT __stdcall	QueryInterface(REFIID iid, void **lpvoid) _zcp_override;
     
-    virtual ULONG 	__stdcall 	OnNotify(ULONG cNotif, LPNOTIFICATION lpNotifications) _override;
+    virtual ULONG 	__stdcall 	OnNotify(ULONG cNotif, LPNOTIFICATION lpNotifications) _zcp_override;
     virtual HRESULT __stdcall 	GetNotifications(ULONG *lpcNotif, LPNOTIFICATION *lppNotifications, BOOL fNonBlock, ULONG timeout);
 
 private:

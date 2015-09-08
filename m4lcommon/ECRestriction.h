@@ -125,7 +125,7 @@ protected:
  * constructors of the ECAndRestriction and the ECOrRestriction classes.
  * It's implicitly created by +-ing multiple ECRestriction objects.
  */
-class ECRestrictionList _final {
+class ECRestrictionList _zcp_final {
 public:
 	ECRestrictionList(const ECRestriction &res1, const ECRestriction &res2) {
 		m_list.push_back(ResPtr(res1.Clone()));
@@ -156,7 +156,7 @@ inline ECRestrictionList ECRestriction::operator+ (const ECRestriction &other) c
 	return ECRestrictionList(*this, other);
 }
 
-class ECAndRestriction _final : public ECRestriction {
+class ECAndRestriction _zcp_final : public ECRestriction {
 public:
 	ECAndRestriction() { }
 	ECAndRestriction(const ECRestrictionList &list);
@@ -165,8 +165,8 @@ public:
 	: m_lstRestrictions(1, ResPtr(restriction.Clone())) 
 	{ }
 
-	HRESULT GetMAPIRestriction(LPVOID lpBase, LPSRestriction lpRestriction, ULONG ulFlags) const _override;
-	ECRestriction *Clone() const _override;
+	HRESULT GetMAPIRestriction(LPVOID lpBase, LPSRestriction lpRestriction, ULONG ulFlags) const _zcp_override;
+	ECRestriction *Clone() const _zcp_override;
 
 	HRESULT append(const ECRestriction &restriction) {
 		m_lstRestrictions.push_back(ResPtr(restriction.Clone()));
@@ -179,7 +179,7 @@ private:
 	ResList	m_lstRestrictions;
 };
 
-class ECOrRestriction _final : public ECRestriction {
+class ECOrRestriction _zcp_final : public ECRestriction {
 public:
 	ECOrRestriction() { }
 	ECOrRestriction(const ECRestrictionList &list);
@@ -188,8 +188,8 @@ public:
 	: m_lstRestrictions(1, ResPtr(restriction.Clone())) 
 	{ }
 	
-	HRESULT GetMAPIRestriction(LPVOID lpBase, LPSRestriction lpRestriction, ULONG ulFlags) const _override;
-	ECRestriction *Clone() const _override;
+	HRESULT GetMAPIRestriction(LPVOID lpBase, LPSRestriction lpRestriction, ULONG ulFlags) const _zcp_override;
+	ECRestriction *Clone() const _zcp_override;
 
 	HRESULT append(const ECRestriction &restriction) {
 		m_lstRestrictions.push_back(ResPtr(restriction.Clone()));
@@ -202,14 +202,14 @@ private:
 	ResList	m_lstRestrictions;
 };
 
-class ECNotRestriction _final : public ECRestriction {
+class ECNotRestriction _zcp_final : public ECRestriction {
 public:
 	ECNotRestriction(const ECRestriction &restriction)
 	: m_ptrRestriction(ResPtr(restriction.Clone())) 
 	{ }
 
-	HRESULT GetMAPIRestriction(LPVOID lpBase, LPSRestriction lpRestriction, ULONG ulFlags) const _override;
-	ECRestriction *Clone() const _override;
+	HRESULT GetMAPIRestriction(LPVOID lpBase, LPSRestriction lpRestriction, ULONG ulFlags) const _zcp_override;
+	ECRestriction *Clone() const _zcp_override;
 
 private:
 	ECNotRestriction(ResPtr ptrRestriction);
@@ -218,11 +218,11 @@ private:
 	ResPtr	m_ptrRestriction;
 };
 
-class ECContentRestriction _final : public ECRestriction {
+class ECContentRestriction _zcp_final : public ECRestriction {
 public:
 	ECContentRestriction(ULONG ulFuzzyLevel, ULONG ulPropTag, LPSPropValue lpProp, ULONG ulFlags = 0);
 
-	HRESULT GetMAPIRestriction(LPVOID lpBase, LPSRestriction lpRestriction, ULONG ulFlags) const _override;
+	HRESULT GetMAPIRestriction(LPVOID lpBase, LPSRestriction lpRestriction, ULONG ulFlags) const _zcp_override;
 	ECRestriction *Clone() const;
 
 private:
@@ -234,7 +234,7 @@ private:
 	PropPtr	m_ptrProp;
 };
 
-class ECBitMaskRestriction _final : public ECRestriction {
+class ECBitMaskRestriction _zcp_final : public ECRestriction {
 public:
 	ECBitMaskRestriction(ULONG relBMR, ULONG ulPropTag, ULONG ulMask)
 	: m_relBMR(relBMR)
@@ -242,8 +242,8 @@ public:
 	, m_ulMask(ulMask) 
 	{ }
 
-	HRESULT GetMAPIRestriction(LPVOID lpBase, LPSRestriction lpRestriction, ULONG ulFlags) const _override;
-	ECRestriction *Clone() const _override;
+	HRESULT GetMAPIRestriction(LPVOID lpBase, LPSRestriction lpRestriction, ULONG ulFlags) const _zcp_override;
+	ECRestriction *Clone() const _zcp_override;
 
 private:
 	ULONG	m_relBMR;
@@ -251,12 +251,12 @@ private:
 	ULONG	m_ulMask;
 };
 
-class ECPropertyRestriction _final : public ECRestriction {
+class ECPropertyRestriction _zcp_final : public ECRestriction {
 public:
 	ECPropertyRestriction(ULONG relop, ULONG ulPropTag, LPSPropValue lpProp, ULONG ulFlags = 0);
 
-	HRESULT GetMAPIRestriction(LPVOID lpBase, LPSRestriction lpRestriction, ULONG ulFlags) const _override;
-	ECRestriction *Clone() const _override;
+	HRESULT GetMAPIRestriction(LPVOID lpBase, LPSRestriction lpRestriction, ULONG ulFlags) const _zcp_override;
+	ECRestriction *Clone() const _zcp_override;
 
 private:
 	ECPropertyRestriction(ULONG relop, ULONG ulPropTag, PropPtr ptrProp);
@@ -267,7 +267,7 @@ private:
 	PropPtr	m_ptrProp;
 };
 
-class ECComparePropsRestriction _final : public ECRestriction {
+class ECComparePropsRestriction _zcp_final : public ECRestriction {
 public:
 	ECComparePropsRestriction(ULONG relop, ULONG ulPropTag1, ULONG ulPropTag2)
 	: m_relop(relop)
@@ -275,8 +275,8 @@ public:
 	, m_ulPropTag2(ulPropTag2)
 	{ }
 
-	HRESULT GetMAPIRestriction(LPVOID lpBase, LPSRestriction lpRestriction, ULONG ulFlags) const _override;
-	ECRestriction *Clone() const _override;
+	HRESULT GetMAPIRestriction(LPVOID lpBase, LPSRestriction lpRestriction, ULONG ulFlags) const _zcp_override;
+	ECRestriction *Clone() const _zcp_override;
 
 private:
 	ULONG	m_relop;
@@ -284,7 +284,7 @@ private:
 	ULONG	m_ulPropTag2;
 };
 
-class ECSizeRestriction _final : public ECRestriction {
+class ECSizeRestriction _zcp_final : public ECRestriction {
 public:
 	ECSizeRestriction(ULONG relop, ULONG ulPropTag, ULONG cb)
 	: m_relop(relop)
@@ -292,8 +292,8 @@ public:
 	, m_cb(cb)
 	{ }
 
-	HRESULT GetMAPIRestriction(LPVOID lpBase, LPSRestriction lpRestriction, ULONG ulFlags) const _override;
-	ECRestriction *Clone() const _override;
+	HRESULT GetMAPIRestriction(LPVOID lpBase, LPSRestriction lpRestriction, ULONG ulFlags) const _zcp_override;
+	ECRestriction *Clone() const _zcp_override;
 
 private:
 	ULONG	m_relop;
@@ -301,28 +301,28 @@ private:
 	ULONG	m_cb;
 };
 
-class ECExistRestriction _final : public ECRestriction {
+class ECExistRestriction _zcp_final : public ECRestriction {
 public:
 	ECExistRestriction(ULONG ulPropTag)
 	: m_ulPropTag(ulPropTag) 
 	{ }
 
-	HRESULT GetMAPIRestriction(LPVOID lpBase, LPSRestriction lpRestriction, ULONG ulFlags) const _override;
-	ECRestriction *Clone() const _override;
+	HRESULT GetMAPIRestriction(LPVOID lpBase, LPSRestriction lpRestriction, ULONG ulFlags) const _zcp_override;
+	ECRestriction *Clone() const _zcp_override;
 
 private:
 	ULONG	m_ulPropTag;
 };
 
-class ECSubRestriction _final : public ECRestriction {
+class ECSubRestriction _zcp_final : public ECRestriction {
 public:
 	ECSubRestriction(ULONG ulSubObject, const ECRestriction &restriction)
 	: m_ulSubObject(ulSubObject)
 	, m_ptrRestriction(ResPtr(restriction.Clone()))
 	{ }
 
-	HRESULT GetMAPIRestriction(LPVOID lpBase, LPSRestriction lpRestriction, ULONG ulFlags) const _override;
-	ECRestriction *Clone() const _override;
+	HRESULT GetMAPIRestriction(LPVOID lpBase, LPSRestriction lpRestriction, ULONG ulFlags) const _zcp_override;
+	ECRestriction *Clone() const _zcp_override;
 
 private:
 	ECSubRestriction(ULONG ulSubObject, ResPtr ptrRestriction);
@@ -332,12 +332,12 @@ private:
 	ResPtr	m_ptrRestriction;
 };
 
-class ECCommentRestriction _final : public ECRestriction {
+class ECCommentRestriction _zcp_final : public ECRestriction {
 public:
 	ECCommentRestriction(const ECRestriction &restriction, ULONG cValues, LPSPropValue lpProp, ULONG ulFlags = 0);
 
-	HRESULT GetMAPIRestriction(LPVOID lpBase, LPSRestriction lpRestriction, ULONG ulFlags) const _override;
-	ECRestriction *Clone() const _override;
+	HRESULT GetMAPIRestriction(LPVOID lpBase, LPSRestriction lpRestriction, ULONG ulFlags) const _zcp_override;
+	ECRestriction *Clone() const _zcp_override;
 
 private:
 	ECCommentRestriction(ResPtr ptrRestriction, ULONG cValues, PropPtr ptrProp);
@@ -352,12 +352,12 @@ private:
  * This is a special class, which encapsulates a raw SRestriction structure to allow
  * prebuild or obtained restriction structures to be used in the ECRestriction model.
  */
-class ECRawRestriction _final : public ECRestriction {
+class ECRawRestriction _zcp_final : public ECRestriction {
 public:
 	ECRawRestriction(LPSRestriction lpRestriction, ULONG ulFlags = 0);
 
-	HRESULT GetMAPIRestriction(LPVOID lpBase, LPSRestriction lpRestriction, ULONG ulFlags) const _override;
-	ECRestriction *Clone() const _override;
+	HRESULT GetMAPIRestriction(LPVOID lpBase, LPSRestriction lpRestriction, ULONG ulFlags) const _zcp_override;
+	ECRestriction *Clone() const _zcp_override;
 
 private:
 	typedef boost::shared_ptr<SRestriction>	RawResPtr;

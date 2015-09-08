@@ -84,22 +84,22 @@ private:
 	~ECMessageStreamImporterIStreamAdapter();
 
 private:
-	class xSequentialStream _final : public ISequentialStream {
+	class xSequentialStream _zcp_final : public ISequentialStream {
 		// IUnknown
-		virtual ULONG __stdcall AddRef(void) _override;
-		virtual ULONG __stdcall Release(void) _override;
-		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _override;
+		virtual ULONG __stdcall AddRef(void) _zcp_override;
+		virtual ULONG __stdcall Release(void) _zcp_override;
+		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _zcp_override;
 		
 		// ISequentialStream
-		virtual HRESULT __stdcall Read(void *pv, ULONG cb, ULONG *pcbRead) _override;
-		virtual HRESULT __stdcall Write(const void *pv, ULONG cb, ULONG *pcbWritten) _override;
+		virtual HRESULT __stdcall Read(void *pv, ULONG cb, ULONG *pcbRead) _zcp_override;
+		virtual HRESULT __stdcall Write(const void *pv, ULONG cb, ULONG *pcbWritten) _zcp_override;
 	} m_xSequentialStream;
 
-	class xStream _final : public IStream {
+	class xStream _zcp_final : public IStream {
 		// IUnknown
-		virtual ULONG __stdcall AddRef(void) _override;
-		virtual ULONG __stdcall Release(void) _override;
-		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _override;
+		virtual ULONG __stdcall AddRef(void) _zcp_override;
+		virtual ULONG __stdcall Release(void) _zcp_override;
+		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _zcp_override;
 		
 		// ISequentialStream
 		virtual HRESULT __stdcall Read(void *pv, ULONG cb, ULONG *pcbRead);

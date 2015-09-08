@@ -60,7 +60,7 @@
 
 #include "WSMessageStreamExporter.h"
 
-class ECExchangeExportChanges _final : public ECUnknown {
+class ECExchangeExportChanges _zcp_final : public ECUnknown {
 protected:
 	ECExchangeExportChanges(ECMsgStore *lpStore, const std::string& strSK, const wchar_t *szDisplay, unsigned int ulSyncType);
 	virtual ~ECExchangeExportChanges();
@@ -84,11 +84,11 @@ private:
 	void LogMessageProps(int loglevel, ULONG cValues, LPSPropValue lpPropArray);
 
 private:
-	class xECExportChanges _final : public IECExportChanges {
+	class xECExportChanges _zcp_final : public IECExportChanges {
 		// IUnknown
-		virtual ULONG __stdcall AddRef(void) _override;
-		virtual ULONG __stdcall Release(void) _override;
-		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _override;
+		virtual ULONG __stdcall AddRef(void) _zcp_override;
+		virtual ULONG __stdcall Release(void) _zcp_override;
+		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _zcp_override;
 
 		// IExchangeExportChanges
 		virtual HRESULT __stdcall GetLastError(HRESULT hResult, ULONG ulFlags, LPMAPIERROR *lppMAPIError);
@@ -96,10 +96,10 @@ private:
 		virtual HRESULT __stdcall Synchronize(ULONG FAR * pulSteps, ULONG FAR * pulProgress);
 		virtual HRESULT __stdcall UpdateState(LPSTREAM lpStream);
 
-		virtual HRESULT __stdcall ConfigSelective(ULONG ulPropTag, LPENTRYLIST lpEntries, LPENTRYLIST lpParents, ULONG ulFlags, LPUNKNOWN lpCollector, LPSPropTagArray lpIncludeProps, LPSPropTagArray lpExcludeProps, ULONG ulBufferSize) _override;
-		virtual HRESULT __stdcall GetChangeCount(ULONG *lpcChanges) _override;
-		virtual HRESULT __stdcall SetMessageInterface(REFIID refiid) _override;
-		virtual HRESULT __stdcall SetLogger(ECLogger *lpLogger) _override;
+		virtual HRESULT __stdcall ConfigSelective(ULONG ulPropTag, LPENTRYLIST lpEntries, LPENTRYLIST lpParents, ULONG ulFlags, LPUNKNOWN lpCollector, LPSPropTagArray lpIncludeProps, LPSPropTagArray lpExcludeProps, ULONG ulBufferSize) _zcp_override;
+		virtual HRESULT __stdcall GetChangeCount(ULONG *lpcChanges) _zcp_override;
+		virtual HRESULT __stdcall SetMessageInterface(REFIID refiid) _zcp_override;
+		virtual HRESULT __stdcall SetLogger(ECLogger *lpLogger) _zcp_override;
 	} m_xECExportChanges;
 	
 	HRESULT ExportMessageChanges();

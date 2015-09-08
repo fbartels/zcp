@@ -67,7 +67,7 @@ using namespace std;
 
 typedef mapi_object_ptr<IECLicense, IID_IECLicense>ECLicensePtr;
 
-class servername _final {
+class servername _zcp_final {
 public:
 	servername(LPCTSTR lpszName): m_strName(lpszName) {}
 	servername(const servername &other): m_strName(other.m_strName) {}
@@ -95,11 +95,11 @@ static HRESULT GetMailboxDataPerServer(ECLogger *lpLogger, IMAPISession *lpSessi
 static HRESULT UpdateServerList(ECLogger *lpLogger, IABContainer *lpContainer, std::set<servername> &listServers);
 
 
-class UserCountCollector _final : public DataCollector
+class UserCountCollector _zcp_final : public DataCollector
 {
 public:
 	UserCountCollector();
-	virtual HRESULT CollectData(LPMAPITABLE lpStoreTable) _override;
+	virtual HRESULT CollectData(LPMAPITABLE lpStoreTable) _zcp_override;
 	unsigned int result() const;
 
 private:
@@ -107,13 +107,13 @@ private:
 };
 
 template <typename string_type, ULONG prAccount>
-class UserListCollector _final : public DataCollector
+class UserListCollector _zcp_final : public DataCollector
 {
 public:
 	UserListCollector(IMAPISession *lpSession);
 
-	virtual HRESULT GetRequiredPropTags(LPMAPIPROP lpProp, LPSPropTagArray *lppPropTagArray) const _override;
-	virtual HRESULT CollectData(LPMAPITABLE lpStoreTable) _override;
+	virtual HRESULT GetRequiredPropTags(LPMAPIPROP lpProp, LPSPropTagArray *lppPropTagArray) const _zcp_override;
+	virtual HRESULT CollectData(LPMAPITABLE lpStoreTable) _zcp_override;
 	void swap_result(std::list<string_type> *lplstUsers);
 
 private:

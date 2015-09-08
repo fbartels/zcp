@@ -75,43 +75,43 @@ typedef struct _ECStrings {
 	std::string value;
 } ECStrings;
 
-class ECStatsCollector _final : public IECStatsCollector {
+class ECStatsCollector _zcp_final : public IECStatsCollector {
 public:
 	ECStatsCollector();
 	~ECStatsCollector();
 
-	void Increment(SCName name, float inc) _override;
-	void Increment(SCName name, int inc = 1) _override;
-	void Increment(SCName name, LONGLONG inc) _override;
+	void Increment(SCName name, float inc) _zcp_override;
+	void Increment(SCName name, int inc = 1) _zcp_override;
+	void Increment(SCName name, LONGLONG inc) _zcp_override;
 
-	void Set(SCName name, float set) _override;
-	void Set(SCName name, LONGLONG set) _override;
-	void SetTime(SCName name, time_t set) _override;
+	void Set(SCName name, float set) _zcp_override;
+	void Set(SCName name, LONGLONG set) _zcp_override;
+	void SetTime(SCName name, time_t set) _zcp_override;
 
-	void Min(SCName name, float min) _override;
-	void Min(SCName name, LONGLONG min) _override;
-	void MinTime(SCName name, time_t min) _override;
+	void Min(SCName name, float min) _zcp_override;
+	void Min(SCName name, LONGLONG min) _zcp_override;
+	void MinTime(SCName name, time_t min) _zcp_override;
 
-	void Max(SCName name, float max) _override;
-	void Max(SCName name, LONGLONG max) _override;
-	void MaxTime(SCName name, time_t max) _override;
+	void Max(SCName name, float max) _zcp_override;
+	void Max(SCName name, LONGLONG max) _zcp_override;
+	void MaxTime(SCName name, time_t max) _zcp_override;
 
-	void Avg(SCName name, float add) _override;
-	void Avg(SCName name, LONGLONG add) _override;
-	void AvgTime(SCName name, time_t add) _override;
+	void Avg(SCName name, float add) _zcp_override;
+	void Avg(SCName name, LONGLONG add) _zcp_override;
+	void AvgTime(SCName name, time_t add) _zcp_override;
 
 	/* strings are separate, used by ECSerial */
-	void Set(const std::string &name, const std::string &description, const std::string &value) _override;
-	void Remove(const std::string &name) _override;
+	void Set(const std::string &name, const std::string &description, const std::string &value) _zcp_override;
+	void Remove(const std::string &name) _zcp_override;
 
 	std::string GetValue(SCMap::iterator iSD);
-	std::string GetValue(SCName name) _override;
+	std::string GetValue(SCName name) _zcp_override;
 
 	void ForEachStat(void(callback)(const std::string &, const std::string &, const std::string &, void*), void *obj);
 	void ForEachString(void(callback)(const std::string &, const std::string &, const std::string &, void*), void *obj);
 
-	void Reset(void) _override;
-	void Reset(SCName name) _override;
+	void Reset(void) _zcp_override;
+	void Reset(SCName name) _zcp_override;
 
 private:
 	void AddStat(SCName index, SCType type, const char *name, const char *description);

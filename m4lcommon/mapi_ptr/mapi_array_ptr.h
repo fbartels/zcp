@@ -48,7 +48,7 @@
 #include <utility>
 
 template<typename _T>
-class mapi_array_proxy _final {
+class mapi_array_proxy _zcp_final {
 public:
 	typedef _T		value_type;
 	typedef _T**	pointerpointer;
@@ -64,7 +64,7 @@ private:
 
 
 template <typename _T>
-class mapi_array_ptr _final {
+class mapi_array_ptr _zcp_final {
 public:
 	typedef _T						value_type;
 	typedef _T*						pointer;

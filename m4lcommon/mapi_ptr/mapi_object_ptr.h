@@ -54,7 +54,7 @@
 
 // http://tinyurl.com/ydb363n
 template<typename BaseT, typename DerivedT>
-class Conversion _final {
+class Conversion _zcp_final {
     static DerivedT& derived();
     static char test(const BaseT&);
     static char (&test(...))[2];
@@ -72,7 +72,7 @@ class mapi_object_proxy<IUnknown, IID_IUnknown>;
 
 
 template<typename _T, REFIID _R = GUID_NULL>
-class mapi_object_ptr _final {
+class mapi_object_ptr _zcp_final {
 public:
 	static const IID				iid;
 	typedef _T						value_type;
@@ -243,7 +243,7 @@ friend class mapi_object_proxy<_T, _R>;
 
 
 template<typename _T, REFIID _R>
-class mapi_object_proxy _final {
+class mapi_object_proxy _zcp_final {
 public:
 	typedef _T		value_type;
 	typedef _T**	pointerpointer;
@@ -261,7 +261,7 @@ private:
 };
 
 template<>
-class mapi_object_proxy<IUnknown, IID_IUnknown> _final {
+class mapi_object_proxy<IUnknown, IID_IUnknown> _zcp_final {
 public:
 	typedef IUnknown	value_type;
 	typedef IUnknown**	pointerpointer;

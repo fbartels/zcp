@@ -61,7 +61,7 @@
  */
 
 template<typename _T, typename _R, _R(*_FREE)(_T)>
-class auto_free_dealloc _final {
+class auto_free_dealloc _zcp_final {
 public:
 	static inline _R free(_T d) {
 		return _FREE(d);
@@ -79,7 +79,7 @@ public:
  * @todo add copy function and ref counting
  */
 template<typename _T, class dealloc = auto_free_dealloc<_T, void, NULL> >
-class auto_free _final {
+class auto_free _zcp_final {
 	typedef _T value_type;
 	typedef _T* pointer;
 	typedef const _T* const_pointer;

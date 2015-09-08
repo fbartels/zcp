@@ -54,7 +54,7 @@
 
 #include "ECLogger.h"
 
-class StatsClient _final {
+class StatsClient _zcp_final {
 private:
 	int fd;
 	struct sockaddr_un addr;

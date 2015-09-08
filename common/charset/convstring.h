@@ -52,7 +52,7 @@
 
 #include <mapidefs.h>
 
-class convstring _final {
+class convstring _zcp_final {
 public:
 	static convstring from_SPropValue(const SPropValue *lpsPropVal, bool bCheapCopy = true);
 	static convstring from_SPropValue(const SPropValue &sPropVal, bool bCheapCopy = true);

@@ -62,7 +62,7 @@
 // this ensures that the ECChannel class is responsible for reading, writing
 // and culling newline characters.
 
-class ECChannel _final {
+class ECChannel _zcp_final {
 public:
 	ECChannel(int socket);
 	~ECChannel();

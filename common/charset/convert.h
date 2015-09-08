@@ -78,7 +78,7 @@ private:
 /**
  * @brief	Unknown charset
  */
-class unknown_charset_exception _final : public convert_exception {
+class unknown_charset_exception _zcp_final : public convert_exception {
 public:
 	unknown_charset_exception(const std::string &message);
 };
@@ -86,7 +86,7 @@ public:
 /**
  * @brief	Illegal sequence
  */
-class illegal_sequence_exception _final : public convert_exception {
+class illegal_sequence_exception _zcp_final : public convert_exception {
 public:
 	illegal_sequence_exception(const std::string &message);
 };
@@ -149,7 +149,7 @@ namespace details {
 	 * @brief	Default converter from one charset to another with string types.
 	 */
 	template <typename _To_Type, typename _From_Type>
-	class iconv_context _final : public iconv_context_base
+	class iconv_context _zcp_final : public iconv_context_base
 	{
 	public:
 		/**
@@ -208,7 +208,7 @@ namespace details {
 		}
 		
 	private:
-		void append(const char *lpBuf, size_t cbBuf) throw() _override {
+		void append(const char *lpBuf, size_t cbBuf) throw() _zcp_override {
 			m_to.append(reinterpret_cast<typename _To_Type::const_pointer>(lpBuf), cbBuf / sizeof(typename _To_Type::value_type));
 		}
 
@@ -225,7 +225,7 @@ namespace details {
 	 * that case the string is merely copied.
 	 */
 	template <typename _Type>
-	class convert_helper _final {
+	class convert_helper _zcp_final {
 	public:
 		/**
 		 * @brief Converts a string to a string with the same charset.
@@ -329,7 +329,7 @@ inline _To_Type convert_to(const char *tocode, const _From_Type &_from, size_t c
  * same context. This basically means that the details::iconv_context classes can
  * be reused, removing the need to recreate them for each conversion.
  */
-class convert_context _final {
+class convert_context _zcp_final {
 public:
 	/**
 	 * @brief Constructor.
@@ -395,7 +395,7 @@ private:
 	 * identical. In that case the string is merely copied.
 	 */
 	template <typename _Type>
-	class helper _final {
+	class helper _zcp_final {
 	public:
 		/**
 		 * @brief Constructor.
@@ -474,7 +474,7 @@ private:
 	 * the caller will end up with a pointer to non-existing data.
 	 */
 	template <typename _Type>
-	class helper<_Type *> _final {
+	class helper<_Type *> _zcp_final {
 	public:
 		typedef std::basic_string<_Type> string_type;
 	
@@ -578,7 +578,7 @@ private:
 	/**
 	 * @brief Sort predicate for the context_map;
 	 */
-	class context_predicate _final {
+	class context_predicate _zcp_final {
 	public:
 		bool operator()(const context_key &lhs, const context_key &rhs) const throw() {
 			int r = strcmp(lhs.fromtype, rhs.fromtype);

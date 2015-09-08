@@ -141,7 +141,7 @@ template<>
 
 // 16-bit character specializations
 template <>
-class iconv_charset<utf16string> _final {
+class iconv_charset<utf16string> _zcp_final {
 public:
 	static const char *name() {
 		return "UTF-16LE";
@@ -155,7 +155,7 @@ public:
 };
 
 template <>
-class iconv_charset<unsigned short *> _final {
+class iconv_charset<unsigned short *> _zcp_final {
 public:
 	static const char *name() {
 		return "UTF-16LE";
@@ -167,7 +167,7 @@ public:
 };
 
 template <>
-class iconv_charset<const unsigned short *> _final {
+class iconv_charset<const unsigned short *> _zcp_final {
 public:
 	static const char *name() {
 		return "UTF-16LE";

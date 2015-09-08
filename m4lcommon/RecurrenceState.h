@@ -51,7 +51,7 @@
 #define RECURRENCE_STATE_CALENDAR	0x01
 #define RECURRENCE_STATE_TASKS		0x02
 
-class RecurrenceState _final {
+class RecurrenceState _zcp_final {
 public:
     RecurrenceState();
     ~RecurrenceState();
@@ -59,7 +59,7 @@ public:
     HRESULT ParseBlob(char *lpData, unsigned int ulLen, ULONG ulFlags);
     HRESULT GetBlob(char **lpData, unsigned int *lpulLen, void *base = NULL);
 
-    class Exception _final {
+    class Exception _zcp_final {
     public:
         unsigned int ulStartDateTime;
         unsigned int ulEndDateTime;
@@ -76,7 +76,7 @@ public:
         unsigned int ulAppointmentColor;
     };
     
-    class ExtendedException _final {
+    class ExtendedException _zcp_final {
     public:
         unsigned int ulChangeHighlightValue;
         std::string strReserved;

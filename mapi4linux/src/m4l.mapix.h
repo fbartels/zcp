@@ -84,7 +84,7 @@ typedef struct _s_profentry {
 } profEntry;
 
 
-class M4LProfAdmin _final : public M4LUnknown, public IProfAdmin {
+class M4LProfAdmin _zcp_final : public M4LUnknown, public IProfAdmin {
 private:
     // variables
     list<profEntry*> profiles;
@@ -117,7 +117,7 @@ public:
 };
 
 
-class M4LMsgServiceAdmin _final : public M4LUnknown, public IMsgServiceAdmin {
+class M4LMsgServiceAdmin _zcp_final : public M4LUnknown, public IMsgServiceAdmin {
 private:
 
 	list<providerEntry*> providers;
@@ -163,7 +163,7 @@ inline bool operator <(const GUID &a, const GUID &b) {
     return memcmp(&a, &b, sizeof(GUID)) < 0;
 }
 
-class M4LMAPISession _final : public M4LUnknown, public IMAPISession {
+class M4LMAPISession _zcp_final : public M4LUnknown, public IMAPISession {
 private:
 	// variables
 	string profileName;
@@ -215,7 +215,7 @@ public:
 	HRESULT __stdcall setStatusRow(ULONG cValues, LPSPropValue lpProps);
 };
 
-class M4LAddrBook _final : public M4LMAPIProp, public IAddrBook {
+class M4LAddrBook _zcp_final : public M4LMAPIProp, public IAddrBook {
 public:
 	M4LAddrBook(M4LMsgServiceAdmin *new_serviceAdmin, LPMAPISUP newlpMAPISup);
 	virtual ~M4LAddrBook();

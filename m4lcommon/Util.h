@@ -59,7 +59,7 @@ class ECLogger;
  * This class only exists to satisfy the %extend directive in swig/libcommon.i.
  * It screams for replacement with a namespace Util {}
  */
-class Util _final {
+class Util _zcp_final {
 	public:
 	static HRESULT	HrAddToPropertyArray(const SPropValue *lpSrc, ULONG cValues, const SPropValue *lpAdd, SPropValue **lppDest, ULONG *cDestValues);
 	static HRESULT	HrMergePropertyArrays(const SPropValue *lpSrc, ULONG cValues, const SPropValue *lpAdds, ULONG cAddValues, SPropValue **lppDest, ULONG *cDestValues);

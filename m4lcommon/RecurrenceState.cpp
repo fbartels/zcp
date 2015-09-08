@@ -76,7 +76,7 @@ static const char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-class BinReader _final {
+class BinReader _zcp_final {
 public:
     BinReader(char *lpData, unsigned int ulLen) {
         this->m_lpData = lpData;
@@ -147,7 +147,7 @@ private:
     unsigned int m_ulCursor;
 };
 
-class BinWriter _final {
+class BinWriter _zcp_final {
 public:
     BinWriter() {};
     ~BinWriter() {};

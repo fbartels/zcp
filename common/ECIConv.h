@@ -48,7 +48,7 @@
 #include "charset/convert.h"
 #include <string>
 
-class ECIConv _final {
+class ECIConv _zcp_final {
 public:
     ECIConv(const std::string &strToCharset, const std::string &strFromCharset);
     ~ECIConv();

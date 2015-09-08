@@ -56,7 +56,7 @@
  * This class does not expose the same methods as STL's std::string as most of those don't make
  * much sense.
  */
-class utf8string _final {
+class utf8string _zcp_final {
 public:
 	typedef std::string::value_type		value_type;
 	typedef std::string::const_pointer	const_pointer;
@@ -136,7 +136,7 @@ private:
 };
 
 template <>
-class iconv_charset<utf8string> _final {
+class iconv_charset<utf8string> _zcp_final {
 public:
 	static const char *name() {
 		return "UTF-8";

@@ -58,13 +58,13 @@ namespace details {
 	 * Subclass of DataCollector that is used to get the current state
 	 * through the MailboxTable.
 	 */
-	class MailboxDataCollector _final : public DataCollector {
+	class MailboxDataCollector _zcp_final : public DataCollector {
 	public:
 		MailboxDataCollector(ArchiveStateCollector::ArchiveInfoMap &mapArchiveInfo, ECLogger *lpLogger);
 		~MailboxDataCollector();
 
-		HRESULT GetRequiredPropTags(LPMAPIPROP lpProp, LPSPropTagArray *lppPropTagArray) const _override;
-		HRESULT CollectData(LPMAPITABLE lpStoreTable) _override;
+		HRESULT GetRequiredPropTags(LPMAPIPROP lpProp, LPSPropTagArray *lppPropTagArray) const _zcp_override;
+		HRESULT CollectData(LPMAPITABLE lpStoreTable) _zcp_override;
 
 	private:
 		ArchiveStateCollector::ArchiveInfoMap &m_mapArchiveInfo;

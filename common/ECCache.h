@@ -54,7 +54,7 @@
 class ECLogger;
 
 template<typename Key>
-class KeyEntry _final {
+class KeyEntry _zcp_final {
 public:
 	Key key;
 	time_t ulLastAccess;
@@ -121,7 +121,7 @@ private:
 
 
 template<typename _MapType>
-class ECCache _final : public ECCacheBase
+class ECCache _zcp_final : public ECCacheBase
 {
 public:
 	typedef typename _MapType::key_type		key_type;
@@ -140,12 +140,12 @@ public:
 		return erSuccess;
 	}
 	
-	count_type ItemCount() const _override
+	count_type ItemCount() const _zcp_override
 	{
 		return m_map.size();
 	}
 	
-	size_type Size() const _override
+	size_type Size() const _zcp_override
 	{
 		// it works with map and hash_map
 		return (m_map.size() * (sizeof(typename _MapType::value_type) + sizeof(_MapType) )) + m_ulSize;

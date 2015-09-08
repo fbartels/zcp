@@ -51,7 +51,7 @@
 #include "ECChannelClient.h"
 #include "ZarafaCode.h"
 
-class ECLicenseClient _final : public ECChannelClient{
+class ECLicenseClient _zcp_final : public ECChannelClient{
 public:
     ECLicenseClient(const char *szLicensePath, unsigned int ulTimeOut);
     ~ECLicenseClient();

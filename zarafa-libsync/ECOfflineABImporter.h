@@ -50,21 +50,21 @@
 
 class ECLogger;
 
-class OfflineABImporter _final : public IECImportAddressbookChanges {
+class OfflineABImporter _zcp_final : public IECImportAddressbookChanges {
 public:
 	OfflineABImporter(IECServiceAdmin *lpDstServiceAdmin, IECServiceAdmin *lpSrcServiceAdmin);
 	~OfflineABImporter();
 	
-	virtual ULONG __stdcall AddRef(void) _override;
-	virtual ULONG __stdcall Release(void) _override;
-	virtual HRESULT __stdcall QueryInterface(REFIID iid, void **lpvoid) _override;
+	virtual ULONG __stdcall AddRef(void) _zcp_override;
+	virtual ULONG __stdcall Release(void) _zcp_override;
+	virtual HRESULT __stdcall QueryInterface(REFIID iid, void **lpvoid) _zcp_override;
 
-	virtual HRESULT __stdcall GetLastError(HRESULT hr, ULONG ulFlags, LPMAPIERROR *lppMAPIError) _override;
-	virtual HRESULT __stdcall Config(LPSTREAM lpState, ULONG ulFlags) _override;
-	virtual HRESULT __stdcall UpdateState(LPSTREAM lpState) _override;
+	virtual HRESULT __stdcall GetLastError(HRESULT hr, ULONG ulFlags, LPMAPIERROR *lppMAPIError) _zcp_override;
+	virtual HRESULT __stdcall Config(LPSTREAM lpState, ULONG ulFlags) _zcp_override;
+	virtual HRESULT __stdcall UpdateState(LPSTREAM lpState) _zcp_override;
 			
-	virtual HRESULT __stdcall ImportABChange(ULONG ulObjType, ULONG cbObjId, LPENTRYID lpObjId) _override;
-	virtual HRESULT __stdcall ImportABDeletion(ULONG ulType, ULONG cbObjId, LPENTRYID lpObjId) _override;
+	virtual HRESULT __stdcall ImportABChange(ULONG ulObjType, ULONG cbObjId, LPENTRYID lpObjId) _zcp_override;
+	virtual HRESULT __stdcall ImportABDeletion(ULONG ulType, ULONG cbObjId, LPENTRYID lpObjId) _zcp_override;
 
 private:
 	IECServiceAdmin *m_lpSrcServiceAdmin;

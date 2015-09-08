@@ -46,7 +46,7 @@
 
 #include "zcdefs.h"
 
-class IStreamAdapter _final : public IStream {
+class IStreamAdapter _zcp_final : public IStream {
 public:
     IStreamAdapter(std::string& str);
     ~IStreamAdapter();

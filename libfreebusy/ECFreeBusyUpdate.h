@@ -88,12 +88,12 @@ public:
 	virtual HRESULT Intersect();
 
 public:
-	class xFreeBusyUpdate _final : public IFreeBusyUpdate {
+	class xFreeBusyUpdate _zcp_final : public IFreeBusyUpdate {
 		public:
 		// From IUnknown
-		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _override;
-		virtual ULONG __stdcall AddRef(void) _override;
-		virtual ULONG __stdcall Release(void) _override;
+		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _zcp_override;
+		virtual ULONG __stdcall AddRef(void) _zcp_override;
+		virtual ULONG __stdcall Release(void) _zcp_override;
 
 		// From IFreeBusyUpdate
 		virtual HRESULT __stdcall Reload();

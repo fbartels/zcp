@@ -44,7 +44,7 @@
 #pragma once
 #include "zcdefs.h"
 
-class CHtmlEntity _final
+class CHtmlEntity _zcp_final
 {
 public:
 	CHtmlEntity(void);

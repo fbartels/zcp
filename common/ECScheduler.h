@@ -70,7 +70,7 @@ typedef struct tagSchedule
 
 typedef std::list<ECSCHEDULE> ECScheduleList;
 
-class ECScheduler _final {
+class ECScheduler _zcp_final {
 public:
 	ECScheduler(ECLogger *lpLogger);
 	~ECScheduler(void);

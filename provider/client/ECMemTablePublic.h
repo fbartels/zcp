@@ -50,7 +50,7 @@
 
 #include <mapidefs.h>
 
-class ECMemTablePublic _final : public ECMemTable
+class ECMemTablePublic _zcp_final : public ECMemTable
 {
 public:
 	typedef struct _sRelation {
@@ -73,10 +73,10 @@ public:
 	
 	static void FreeRelation(t_sRelation* lpRelation);
 
-	HRESULT QueryInterface(REFIID refiid, void **lppInterface) _override;
+	HRESULT QueryInterface(REFIID refiid, void **lppInterface) _zcp_override;
 
-	//virtual ULONG AddRef(void) _override;
-	//virtual ULONG Release(void) _override;
+	//virtual ULONG AddRef(void) _zcp_override;
+	//virtual ULONG Release(void) _zcp_override;
 
 	HRESULT Init(ULONG ulFlags);
 

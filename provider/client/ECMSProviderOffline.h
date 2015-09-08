@@ -59,11 +59,11 @@ public:
 	virtual HRESULT QueryInterface(REFIID refiid, void **lppInterface);
 
 private:
-	class xMSProvider _final : public IMSProvider {
+	class xMSProvider _zcp_final : public IMSProvider {
 		// IUnknown
-		virtual ULONG __stdcall AddRef(void) _override;
-		virtual ULONG __stdcall Release(void) _override;
-		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _override;
+		virtual ULONG __stdcall AddRef(void) _zcp_override;
+		virtual ULONG __stdcall Release(void) _zcp_override;
+		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _zcp_override;
 
 		// MSProvider
 		virtual HRESULT __stdcall Shutdown(ULONG * lpulFlags);

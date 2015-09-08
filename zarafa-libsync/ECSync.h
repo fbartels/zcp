@@ -272,19 +272,19 @@ private:
 	LCID			m_localeOLK;
 
 private:
-	class xMAPIAdviseSink _final : public IMAPIAdviseSink {
+	class xMAPIAdviseSink _zcp_final : public IMAPIAdviseSink {
 	public:
-		HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _override;
-		ULONG __stdcall AddRef(void) _override;
-		ULONG __stdcall Release(void) _override;
+		HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _zcp_override;
+		ULONG __stdcall AddRef(void) _zcp_override;
+		ULONG __stdcall Release(void) _zcp_override;
 
 		ULONG __stdcall OnNotify(ULONG cNotif, LPNOTIFICATION lpNotifs);
 	} m_xMAPIAdviseSink;
 
-	class xECSync _final : public IECSync {
-		ULONG AddRef(void) _override;
-		ULONG Release(void) _override;
-		HRESULT QueryInterface(REFIID refiid, void **lpvoid) _override;
+	class xECSync _zcp_final : public IECSync {
+		ULONG AddRef(void) _zcp_override;
+		ULONG Release(void) _zcp_override;
+		HRESULT QueryInterface(REFIID refiid, void **lpvoid) _zcp_override;
 		HRESULT FirstFolderSync();
 		HRESULT StartSync();
 		HRESULT StopSync();

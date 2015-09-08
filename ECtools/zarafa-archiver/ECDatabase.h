@@ -49,11 +49,11 @@
 
 class lpLogger;
 
-class ECDatabase _final : public ECDatabaseMySQL {
+class ECDatabase _zcp_final : public ECDatabaseMySQL {
 public:
     ECDatabase(ECLogger *lpLogger) : ECDatabaseMySQL(lpLogger) {}
         
-    const sSQLDatabase_t *GetDatabaseDefs(void) _override;
+    const sSQLDatabase_t *GetDatabaseDefs(void) _zcp_override;
 };
 
 #endif

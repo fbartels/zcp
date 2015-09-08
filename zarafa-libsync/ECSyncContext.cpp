@@ -82,7 +82,7 @@ static const char THIS_FILE[] = __FILE__;
 
 
 #define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
-class ECChangeAdviseSink _final : public ECUnknown
+class ECChangeAdviseSink _zcp_final : public ECUnknown
 {
 public:
 	typedef ULONG(ECSyncContext::*NOTIFYCALLBACK)(ULONG,LPENTRYLIST);
@@ -115,22 +115,22 @@ public:
 	}
 
 private:
-	class xECChangeAdviseSink _final : public IECChangeAdviseSink {
+	class xECChangeAdviseSink _zcp_final : public IECChangeAdviseSink {
 	public:
 		// IUnknown
-		virtual ULONG __stdcall AddRef(void) _override
+		virtual ULONG __stdcall AddRef(void) _zcp_override
 		{
 			METHOD_PROLOGUE_(ECChangeAdviseSink, ECChangeAdviseSink);
 			return pThis->AddRef();
 		}
 
-		virtual ULONG __stdcall Release(void) _override
+		virtual ULONG __stdcall Release(void) _zcp_override
 		{
 			METHOD_PROLOGUE_(ECChangeAdviseSink, ECChangeAdviseSink);
 			return pThis->Release();
 		}
 
-		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **pInterface) _override
+		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **pInterface) _zcp_override
 		{
 			METHOD_PROLOGUE_(ECChangeAdviseSink, ECChangeAdviseSink);
 			return pThis->QueryInterface(refiid, pInterface);

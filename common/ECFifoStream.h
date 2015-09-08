@@ -81,34 +81,34 @@ private:
 };
 
 // Class defs for reader and writer classes
-class ECFifoStreamReader _final : public ECUnknown {
+class ECFifoStreamReader _zcp_final : public ECUnknown {
 public:
     static HRESULT Create(ECFifoStream *lpBuffer, ECFifoStreamReader **lppReader);
     
-    HRESULT QueryInterface(REFIID refiid, LPVOID *lppInterface) _override;
+    HRESULT QueryInterface(REFIID refiid, LPVOID *lppInterface) _zcp_override;
     HRESULT Read(void *pv, ULONG cb, ULONG *pcbRead);
     
 private:
     ECFifoStreamReader(ECFifoStream *lpBuffer);
     ~ECFifoStreamReader();
     
-    class xStream _final : public IStream {
+    class xStream _zcp_final : public IStream {
     public:
-        virtual ULONG   __stdcall AddRef(void) _override;
-        virtual ULONG   __stdcall Release(void) _override;
-        virtual HRESULT __stdcall QueryInterface(REFIID refiid, LPVOID *lppInterface) _override;
+        virtual ULONG   __stdcall AddRef(void) _zcp_override;
+        virtual ULONG   __stdcall Release(void) _zcp_override;
+        virtual HRESULT __stdcall QueryInterface(REFIID refiid, LPVOID *lppInterface) _zcp_override;
 
         virtual HRESULT __stdcall Read(void *pv, ULONG cb, ULONG *pcbRead);
         virtual HRESULT __stdcall Write(const void *pv, ULONG cb, ULONG *pcbWritten);
-        virtual HRESULT __stdcall Seek(LARGE_INTEGER dlibmove, DWORD dwOrigin, ULARGE_INTEGER *plibNewPosition) _override;
-        virtual HRESULT __stdcall SetSize(ULARGE_INTEGER libNewSize) _override;
-        virtual HRESULT __stdcall CopyTo(IStream *pstm, ULARGE_INTEGER cb, ULARGE_INTEGER *pcbRead, ULARGE_INTEGER *pcbWritten) _override;
-        virtual HRESULT __stdcall Commit(DWORD grfCommitFlags) _override;
-        virtual HRESULT __stdcall Revert() _override;
-        virtual HRESULT __stdcall LockRegion(ULARGE_INTEGER libOffset, ULARGE_INTEGER cb, DWORD dwLockType) _override;
-        virtual HRESULT __stdcall UnlockRegion(ULARGE_INTEGER libOffset, ULARGE_INTEGER cb, DWORD dwLockType) _override;
-        virtual HRESULT __stdcall Stat(STATSTG *pstatstg, DWORD grfStatFlag) _override;
-        virtual HRESULT __stdcall Clone(IStream **ppstm) _override;
+        virtual HRESULT __stdcall Seek(LARGE_INTEGER dlibmove, DWORD dwOrigin, ULARGE_INTEGER *plibNewPosition) _zcp_override;
+        virtual HRESULT __stdcall SetSize(ULARGE_INTEGER libNewSize) _zcp_override;
+        virtual HRESULT __stdcall CopyTo(IStream *pstm, ULARGE_INTEGER cb, ULARGE_INTEGER *pcbRead, ULARGE_INTEGER *pcbWritten) _zcp_override;
+        virtual HRESULT __stdcall Commit(DWORD grfCommitFlags) _zcp_override;
+        virtual HRESULT __stdcall Revert() _zcp_override;
+        virtual HRESULT __stdcall LockRegion(ULARGE_INTEGER libOffset, ULARGE_INTEGER cb, DWORD dwLockType) _zcp_override;
+        virtual HRESULT __stdcall UnlockRegion(ULARGE_INTEGER libOffset, ULARGE_INTEGER cb, DWORD dwLockType) _zcp_override;
+        virtual HRESULT __stdcall Stat(STATSTG *pstatstg, DWORD grfStatFlag) _zcp_override;
+        virtual HRESULT __stdcall Clone(IStream **ppstm) _zcp_override;
     } m_xStream;
     
     ECFifoStream *m_lpFifoBuffer;
@@ -118,7 +118,7 @@ class ECFifoStreamWriter : public ECUnknown {
 public:
     static HRESULT Create(ECFifoStream *lpBuffer, ECFifoStreamWriter **lppWriter);
     
-    HRESULT QueryInterface(REFIID refiid, LPVOID *lppInterface) _override;
+    HRESULT QueryInterface(REFIID refiid, LPVOID *lppInterface) _zcp_override;
     HRESULT Write(const void *pv, ULONG cb, ULONG *pcbWritten);
     HRESULT Commit(DWORD grfCommitFlags);
     
@@ -126,23 +126,23 @@ private:
     ECFifoStreamWriter(ECFifoStream *lpBuffer);
     ~ECFifoStreamWriter();
     
-    class xStream _final : public IStream {
+    class xStream _zcp_final : public IStream {
     public:
-        virtual ULONG   __stdcall AddRef(void) _override;
-        virtual ULONG   __stdcall Release(void) _override;
-        virtual HRESULT __stdcall QueryInterface(REFIID refiid, LPVOID *lppInterface) _override;
+        virtual ULONG   __stdcall AddRef(void) _zcp_override;
+        virtual ULONG   __stdcall Release(void) _zcp_override;
+        virtual HRESULT __stdcall QueryInterface(REFIID refiid, LPVOID *lppInterface) _zcp_override;
 
         virtual HRESULT __stdcall Read(void *pv, ULONG cb, ULONG *pcbRead);
         virtual HRESULT __stdcall Write(const void *pv, ULONG cb, ULONG *pcbWritten);
-        virtual HRESULT __stdcall Seek(LARGE_INTEGER dlibmove, DWORD dwOrigin, ULARGE_INTEGER *plibNewPosition) _override;
-        virtual HRESULT __stdcall SetSize(ULARGE_INTEGER libNewSize) _override;
-        virtual HRESULT __stdcall CopyTo(IStream *pstm, ULARGE_INTEGER cb, ULARGE_INTEGER *pcbRead, ULARGE_INTEGER *pcbWritten) _override;
-        virtual HRESULT __stdcall Commit(DWORD grfCommitFlags) _override;
-        virtual HRESULT __stdcall Revert() _override;
-        virtual HRESULT __stdcall LockRegion(ULARGE_INTEGER libOffset, ULARGE_INTEGER cb, DWORD dwLockType) _override;
-        virtual HRESULT __stdcall UnlockRegion(ULARGE_INTEGER libOffset, ULARGE_INTEGER cb, DWORD dwLockType) _override;
-        virtual HRESULT __stdcall Stat(STATSTG *pstatstg, DWORD grfStatFlag) _override;
-        virtual HRESULT __stdcall Clone(IStream **ppstm) _override;
+        virtual HRESULT __stdcall Seek(LARGE_INTEGER dlibmove, DWORD dwOrigin, ULARGE_INTEGER *plibNewPosition) _zcp_override;
+        virtual HRESULT __stdcall SetSize(ULARGE_INTEGER libNewSize) _zcp_override;
+        virtual HRESULT __stdcall CopyTo(IStream *pstm, ULARGE_INTEGER cb, ULARGE_INTEGER *pcbRead, ULARGE_INTEGER *pcbWritten) _zcp_override;
+        virtual HRESULT __stdcall Commit(DWORD grfCommitFlags) _zcp_override;
+        virtual HRESULT __stdcall Revert() _zcp_override;
+        virtual HRESULT __stdcall LockRegion(ULARGE_INTEGER libOffset, ULARGE_INTEGER cb, DWORD dwLockType) _zcp_override;
+        virtual HRESULT __stdcall UnlockRegion(ULARGE_INTEGER libOffset, ULARGE_INTEGER cb, DWORD dwLockType) _zcp_override;
+        virtual HRESULT __stdcall Stat(STATSTG *pstatstg, DWORD grfStatFlag) _zcp_override;
+        virtual HRESULT __stdcall Clone(IStream **ppstm) _zcp_override;
     } m_xStream;
     
     ECFifoStream *m_lpFifoBuffer;

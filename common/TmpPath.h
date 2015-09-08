@@ -46,7 +46,7 @@
 
 class ECConfig;
 
-class TmpPath _final {
+class TmpPath _zcp_final {
 	private:
 		std::string path;
 

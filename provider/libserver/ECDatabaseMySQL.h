@@ -57,7 +57,7 @@
 
 class ECConfig;
 
-class ECDatabaseMySQL _final : public ECDatabase
+class ECDatabaseMySQL _zcp_final : public ECDatabase
 {
 public:
 	ECDatabaseMySQL(ECLogger *lpLogger, ECConfig *lpConfig);
@@ -67,59 +67,59 @@ public:
 	static ECRESULT	InitLibrary(const char *lpDatabaseDir, const char *lpConfigFile, ECLogger *lpLogger);
 	static void UnloadLibrary(ECLogger * = NULL);
 
-	ECRESULT Connect(void) _override;
-	ECRESULT Close(void) _override;
-	ECRESULT DoSelect(const std::string &strQuery, DB_RESULT *lpResult, bool fStreamResult = false) _override;
-	ECRESULT DoSelectMulti(const std::string &strQuery) _override;
-	ECRESULT DoUpdate(const std::string &strQuery, unsigned int *lpulAffectedRows = NULL) _override;
-	ECRESULT DoInsert(const std::string &strQuery, unsigned int *lpulInsertId = NULL, unsigned int *lpulAffectedRows = NULL) _override;
-	ECRESULT DoDelete(const std::string &strQuery, unsigned int *lpulAffectedRows = NULL) _override;
-	ECRESULT DoSequence(const std::string &strSeqName, unsigned int ulCount, unsigned long long *lpllFirstId) _override;
+	ECRESULT Connect(void) _zcp_override;
+	ECRESULT Close(void) _zcp_override;
+	ECRESULT DoSelect(const std::string &strQuery, DB_RESULT *lpResult, bool fStreamResult = false) _zcp_override;
+	ECRESULT DoSelectMulti(const std::string &strQuery) _zcp_override;
+	ECRESULT DoUpdate(const std::string &strQuery, unsigned int *lpulAffectedRows = NULL) _zcp_override;
+	ECRESULT DoInsert(const std::string &strQuery, unsigned int *lpulInsertId = NULL, unsigned int *lpulAffectedRows = NULL) _zcp_override;
+	ECRESULT DoDelete(const std::string &strQuery, unsigned int *lpulAffectedRows = NULL) _zcp_override;
+	ECRESULT DoSequence(const std::string &strSeqName, unsigned int ulCount, unsigned long long *lpllFirstId) _zcp_override;
 
 	//Result functions
-	unsigned int GetNumRows(DB_RESULT sResult) _override;
-	unsigned int GetNumRowFields(DB_RESULT sResult) _override;
-	unsigned int GetRowIndex(DB_RESULT sResult, const std::string &strFieldname) _override;
-	virtual ECRESULT GetNextResult(DB_RESULT *sResult) _override;
-	virtual ECRESULT FinalizeMulti(void) _override;
+	unsigned int GetNumRows(DB_RESULT sResult) _zcp_override;
+	unsigned int GetNumRowFields(DB_RESULT sResult) _zcp_override;
+	unsigned int GetRowIndex(DB_RESULT sResult, const std::string &strFieldname) _zcp_override;
+	virtual ECRESULT GetNextResult(DB_RESULT *sResult) _zcp_override;
+	virtual ECRESULT FinalizeMulti(void) _zcp_override;
 
-	DB_ROW FetchRow(DB_RESULT sResult) _override;
-	DB_LENGTHS FetchRowLengths(DB_RESULT sResult) _override;
+	DB_ROW FetchRow(DB_RESULT sResult) _zcp_override;
+	DB_LENGTHS FetchRowLengths(DB_RESULT sResult) _zcp_override;
 
-	std::string Escape(const std::string &strToEscape) _override;
-	std::string EscapeBinary(unsigned char *lpData, unsigned int ulLen) _override;
-	std::string EscapeBinary(const std::string& strData) _override;
-	std::string FilterBMP(const std::string &strToFilter) _override;
+	std::string Escape(const std::string &strToEscape) _zcp_override;
+	std::string EscapeBinary(unsigned char *lpData, unsigned int ulLen) _zcp_override;
+	std::string EscapeBinary(const std::string& strData) _zcp_override;
+	std::string FilterBMP(const std::string &strToFilter) _zcp_override;
 
-	void ResetResult(DB_RESULT sResult) _override;
+	void ResetResult(DB_RESULT sResult) _zcp_override;
 
-	ECRESULT ValidateTables(void) _override;
+	ECRESULT ValidateTables(void) _zcp_override;
 
-	std::string GetError(void) _override;
-	DB_ERROR GetLastError(void) _override;
-	bool SuppressLockErrorLogging(bool bSuppress) _override;
+	std::string GetError(void) _zcp_override;
+	DB_ERROR GetLastError(void) _zcp_override;
+	bool SuppressLockErrorLogging(bool bSuppress) _zcp_override;
 	
-	ECRESULT Begin(void) _override;
-	ECRESULT Commit(void) _override;
-	ECRESULT Rollback(void) _override;
+	ECRESULT Begin(void) _zcp_override;
+	ECRESULT Commit(void) _zcp_override;
+	ECRESULT Rollback(void) _zcp_override;
 	
-	unsigned int GetMaxAllowedPacket(void) _override;
+	unsigned int GetMaxAllowedPacket(void) _zcp_override;
 
-	void ThreadInit(void) _override;
-	void ThreadEnd(void) _override;
+	void ThreadInit(void) _zcp_override;
+	void ThreadEnd(void) _zcp_override;
 
 	// Database maintenance functions
-	ECRESULT CreateDatabase(void) _override;
+	ECRESULT CreateDatabase(void) _zcp_override;
 	// Main update unit
-	ECRESULT UpdateDatabase(bool bForceUpdate, std::string &strReport) _override;
-	ECRESULT InitializeDBState(void) _override;
+	ECRESULT UpdateDatabase(bool bForceUpdate, std::string &strReport) _zcp_override;
+	ECRESULT InitializeDBState(void) _zcp_override;
 
-	ECLogger *GetLogger(void) _override;
+	ECLogger *GetLogger(void) _zcp_override;
 
-	std::string GetDatabaseDir(void) _override;
+	std::string GetDatabaseDir(void) _zcp_override;
 	
-	ECRESULT CheckExistColumn(const std::string &strTable, const std::string &strColumn, bool *lpbExist) _override;
-	ECRESULT CheckExistIndex(const std::string strTable, const std::string &strKey, bool *lpbExist) _override;
+	ECRESULT CheckExistColumn(const std::string &strTable, const std::string &strColumn, bool *lpbExist) _zcp_override;
+	ECRESULT CheckExistIndex(const std::string strTable, const std::string &strKey, bool *lpbExist) _zcp_override;
 
 public:
 	// Freememory methods

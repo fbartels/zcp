@@ -141,7 +141,7 @@ template<>
 
 // 32-bit character specializations
 template <>
-class iconv_charset<utf32string> _final {
+class iconv_charset<utf32string> _zcp_final {
 public:
 	static const char *name() {
 		return "UTF-32LE";
@@ -155,7 +155,7 @@ public:
 };
 
 template <>
-class iconv_charset<unsigned int *> _final {
+class iconv_charset<unsigned int *> _zcp_final {
 public:
 	static const char *name() {
 		return "UTF32LE//TRANSLIT";
@@ -167,7 +167,7 @@ public:
 };
 
 template <>
-class iconv_charset<const unsigned int *> _final {
+class iconv_charset<const unsigned int *> _zcp_final {
 public:
 	static const char *name() {
 		return "UTF32LE//TRANSLIT";

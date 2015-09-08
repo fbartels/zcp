@@ -82,12 +82,12 @@ public:
 
 public:
 	/* IEnumFBBlock wrapper class */
-	class xEnumFBBlock _final : public IEnumFBBlock {
+	class xEnumFBBlock _zcp_final : public IEnumFBBlock {
 		public:
 			// From IUnknown
-			virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _override;
-			virtual ULONG __stdcall AddRef(void) _override;
-			virtual ULONG __stdcall Release(void) _override;
+			virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _zcp_override;
+			virtual ULONG __stdcall AddRef(void) _zcp_override;
+			virtual ULONG __stdcall Release(void) _zcp_override;
 
 			// From IEnumFBBlock
 			virtual HRESULT __stdcall Next(LONG celt, FBBlock_1 *pblk, LONG *pcfetch);

@@ -47,7 +47,7 @@
 #include "zcdefs.h"
 
 template <typename Type>
-class ECInvariantChecker _final {
+class ECInvariantChecker _zcp_final {
 public:
 	ECInvariantChecker(const Type *p): m_p(p) { m_p->CheckInvariant(); }
 	~ECInvariantChecker() { m_p->CheckInvariant(); }

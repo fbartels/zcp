@@ -95,7 +95,7 @@ protected:
 public:
 	static  HRESULT Create(LPSPropTagArray lpsPropTagArray, ULONG ulRowPropTag, ECMemTable **lppRecipTable);
 
-	virtual HRESULT QueryInterface(REFIID refiid, void **lppInterface) _override;
+	virtual HRESULT QueryInterface(REFIID refiid, void **lppInterface) _zcp_override;
 
 	virtual HRESULT HrGetView(const ECLocale &locale, ULONG ulFlags, ECMemTableView **lpView);
 
@@ -127,14 +127,14 @@ protected:
 	friend class ECMemTableView;
 };
 
-class ECMemTableView _final : public ECUnknown {
+class ECMemTableView _zcp_final : public ECUnknown {
 protected:
 	ECMemTableView(ECMemTable *lpMemTable, const ECLocale &locale, ULONG ulFlags);
 	virtual ~ECMemTableView();
 public:
 	static HRESULT	Create(ECMemTable *lpMemTable, const ECLocale &locale, ULONG ulFlags, ECMemTableView **lppMemTableView);
 
-	virtual HRESULT QueryInterface(REFIID refiid, void **lppInterface) _override;
+	virtual HRESULT QueryInterface(REFIID refiid, void **lppInterface) _zcp_override;
 	virtual HRESULT UpdateRow(ULONG ulUpdateType, ULONG ulId);
 	virtual HRESULT Clear();
 
@@ -162,11 +162,11 @@ public:
 	virtual HRESULT GetCollapseState(ULONG ulFlags, ULONG cbInstanceKey, LPBYTE lpbInstanceKey, ULONG *lpcbCollapseState, LPBYTE *lppbCollapseState);
 	virtual HRESULT SetCollapseState(ULONG ulFlags, ULONG cbCollapseState, LPBYTE pbCollapseState, BOOKMARK *lpbkLocation);
 
-	class xMAPITable _final : public IMAPITable {
+	class xMAPITable _zcp_final : public IMAPITable {
 		// IUnknown
-		virtual ULONG __stdcall AddRef(void) _override;
-		virtual ULONG __stdcall Release(void) _override;
-		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _override;
+		virtual ULONG __stdcall AddRef(void) _zcp_override;
+		virtual ULONG __stdcall Release(void) _zcp_override;
+		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _zcp_override;
 
 		// From IMAPITable
 		virtual HRESULT __stdcall GetLastError(HRESULT hResult, ULONG ulFlags, LPMAPIERROR *lppMAPIError);

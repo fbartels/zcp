@@ -65,11 +65,11 @@ public:
 	virtual HRESULT ImportFolderChange(ULONG cValue, LPSPropValue lpPropArray);
 	virtual HRESULT ImportFolderDeletion(ULONG ulFlags, LPENTRYLIST lpSourceEntryList);
 
-	class xExchangeImportHierarchyChanges _final : public IExchangeImportHierarchyChanges{
+	class xExchangeImportHierarchyChanges _zcp_final : public IExchangeImportHierarchyChanges{
 		// IUnknown
-		virtual ULONG __stdcall AddRef(void) _override;
-		virtual ULONG __stdcall Release(void) _override;
-		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _override;
+		virtual ULONG __stdcall AddRef(void) _zcp_override;
+		virtual ULONG __stdcall Release(void) _zcp_override;
+		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _zcp_override;
 
 		// IExchangeImportContentsChanges
 		virtual HRESULT __stdcall GetLastError(HRESULT hResult, ULONG ulFlags, LPMAPIERROR *lppMAPIError);

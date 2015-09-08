@@ -195,7 +195,7 @@ HRESULT HrGetGAB(LPADRBOOK lpAddrBook, LPABCONT *lppGAB);
  * printf("%X %X\n", PROP_RECURRING, PROP_START);
  *
  */
-class ECPropMapEntry _final {
+class ECPropMapEntry _zcp_final {
 public:
     ECPropMapEntry(GUID guid, ULONG ulId);
     ECPropMapEntry(GUID guid, const char *strName);
@@ -208,7 +208,7 @@ private:
     GUID m_sGuid;
 };
 
-class ECPropMap _final {
+class ECPropMap _zcp_final {
 public:
     ECPropMap();
     void AddProp(ULONG *lpId, ULONG ulType, ECPropMapEntry entry);

@@ -119,12 +119,12 @@ private:
 	friend class ECParentStorage;
 
 public:
-	class xECPropStorage _final : public IECPropStorage {
+	class xECPropStorage _zcp_final : public IECPropStorage {
 		public:
 			// IECUnknown
-			virtual ULONG AddRef(void) _override;
-			virtual ULONG Release(void) _override;
-			virtual HRESULT QueryInterface(REFIID refiid, void **lppInterface) _override;
+			virtual ULONG AddRef(void) _zcp_override;
+			virtual ULONG Release(void) _zcp_override;
+			virtual HRESULT QueryInterface(REFIID refiid, void **lppInterface) _zcp_override;
 
 			// IECPropStorage
 			virtual HRESULT HrReadProps(LPSPropTagArray *lppPropTags,ULONG *cValues, LPSPropValue *lppValues);

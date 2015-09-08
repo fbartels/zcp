@@ -61,11 +61,11 @@ public:
     virtual HRESULT Shutdown(ULONG * lpulFlags);
 	virtual HRESULT TransportLogon(LPMAPISUP lpMAPISup, ULONG ulUIParam, LPTSTR lpszProfileName, ULONG FAR * lpulFlags, LPMAPIERROR FAR * lppMAPIError, LPXPLOGON FAR * lppXPLogon);
 
-	class xXPProvider _final : public IXPProvider {
+	class xXPProvider _zcp_final : public IXPProvider {
 		// IUnknown
-		virtual ULONG __stdcall AddRef(void) _override;
-		virtual ULONG __stdcall Release(void) _override;
-		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _override;
+		virtual ULONG __stdcall AddRef(void) _zcp_override;
+		virtual ULONG __stdcall Release(void) _zcp_override;
+		virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _zcp_override;
 
 		//IXPProvider
 		virtual HRESULT __stdcall Shutdown(ULONG * lpulFlags);

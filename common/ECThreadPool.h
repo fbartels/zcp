@@ -62,7 +62,7 @@ class ECTask;
  * The amount of workers can be modified at run time, but is not automatically
  * adjusted based on the task queue length or age.
  */
-class ECThreadPool _final {
+class ECThreadPool _zcp_final {
 private:	// types
 	struct STaskInfo {
 		ECTask			*lpTask;
@@ -176,7 +176,7 @@ public:
 	
 public:
 	virtual ~ECWaitableTask();
-	virtual void execute(void) _override;
+	virtual void execute(void) _zcp_override;
 	
 	bool done() const;
 	bool wait(unsigned timeout = WAIT_INFINITE, unsigned waitMask = Done) const;
@@ -205,7 +205,7 @@ inline bool ECWaitableTask::done() const {
  * To call a function with more than one argument boost::bind can be used.
  */
 template<typename _Rt, typename _Fn, typename _At>
-class ECDeferredFunc _final : public ECWaitableTask
+class ECDeferredFunc _zcp_final : public ECWaitableTask
 {
 public:
 	/**
@@ -216,7 +216,7 @@ public:
 	ECDeferredFunc(_Fn fn, const _At &arg) : m_fn(fn), m_arg(arg)
 	{ }
 	
-	virtual void run(void) _override
+	virtual void run(void) _zcp_override
 	{
 		m_result = m_fn(m_arg);
 	}

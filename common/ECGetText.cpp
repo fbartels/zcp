@@ -70,7 +70,7 @@ namespace detail {
 	 *    this assumption is false, this will lead to more conversions, and more memory usage
 	 *    by the cache.
 	 */
-	class converter _final {
+	class converter _zcp_final {
 	public:
 		/**
 		 * Get the global converter instance.

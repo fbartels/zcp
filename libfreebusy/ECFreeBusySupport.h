@@ -115,13 +115,13 @@ public:
 
 public:
 	// Interface voor Outlook 2002 and up
-	class xFreeBusySupport _final : public IFreeBusySupport
+	class xFreeBusySupport _zcp_final : public IFreeBusySupport
 	{
 		public:
 			// From IUnknown
-			virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _override;
-			virtual ULONG __stdcall AddRef(void) _override;
-			virtual ULONG __stdcall Release(void) _override;
+			virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _zcp_override;
+			virtual ULONG __stdcall AddRef(void) _zcp_override;
+			virtual ULONG __stdcall Release(void) _zcp_override;
 
 			// From IFreeBusySupport
 			virtual HRESULT __stdcall Open(IMAPISession* lpMAPISession, IMsgStore* lpMsgStore, BOOL bStore);
@@ -153,12 +153,12 @@ public:
 	} m_xFreeBusySupport;
 
 	// Interface for Outlook 2000
-	class xFreeBusySupportOutlook2000 _final : public IFreeBusySupportOutlook2000 {
+	class xFreeBusySupportOutlook2000 _zcp_final : public IFreeBusySupportOutlook2000 {
 		public:
 			// From IUnknown
-			virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _override;
-			virtual ULONG __stdcall AddRef(void) _override;
-			virtual ULONG __stdcall Release(void) _override;
+			virtual HRESULT __stdcall QueryInterface(REFIID refiid, void **lppInterface) _zcp_override;
+			virtual ULONG __stdcall AddRef(void) _zcp_override;
+			virtual ULONG __stdcall Release(void) _zcp_override;
 
 			// From IFreeBusySupport
 			virtual HRESULT __stdcall Open(IMAPISession* lpMAPISession, IMsgStore* lpMsgStore, BOOL bStore);

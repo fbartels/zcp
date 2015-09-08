@@ -53,11 +53,11 @@
 #define ZCOMMON_DEFS_H 1
 
 #if __cplusplus >= 201100L
-#	define _final final
-#	define _override override
+#	define _zcp_final final
+#	define _zcp_override override
 #else
-#	define _final
-#	define _override
+#	define _zcp_final
+#	define _zcp_override
 #endif
 
 #endif /* ZCOMMON_DEFS_H */

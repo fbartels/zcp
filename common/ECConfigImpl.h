@@ -98,35 +98,35 @@ typedef struct {
 #define LOADSETTING_OVERWRITE_RELOAD	0x0010	/* Same as CONFIG_LOAD_OVERWRITE but only if option is marked reloadable */
 #define LOADSETTING_CMDLINE_PARAM		0x0020	/* This setting is being set from commandline parameters. Sets the option non-reloadable */
 
-class ECConfigImpl _final : public ECConfig {
+class ECConfigImpl _zcp_final : public ECConfig {
 public:
 	ECConfigImpl(const configsetting_t *lpDefaults, const char **lpszDirectives);
 	~ECConfigImpl();
 
-	bool LoadSettings(const char *szFilename) _override;
-	virtual bool ParseParams(int argc, char *argv[], int *lpargidx) _override;
-	const char *GetSettingsPath(void) _override;
-	bool ReloadSettings(void) _override;
+	bool LoadSettings(const char *szFilename) _zcp_override;
+	virtual bool ParseParams(int argc, char *argv[], int *lpargidx) _zcp_override;
+	const char *GetSettingsPath(void) _zcp_override;
+	bool ReloadSettings(void) _zcp_override;
 
-	bool AddSetting(const char *szName, const char *szValue, const unsigned int ulGroup = 0) _override;
+	bool AddSetting(const char *szName, const char *szValue, const unsigned int ulGroup = 0) _zcp_override;
 
 	void	AddWriteSetting(const char *szName, const char *szValue, const unsigned int ulGroup = 0);
 
-	const char *GetSetting(const char *szName) _override;
-	const char *GetSetting(const char *szName, const char *equal, const char *other) _override;
-	const wchar_t *GetSettingW(const char *szName) _override;
-	const wchar_t *GetSettingW(const char *szName, const wchar_t *equal, const wchar_t *other) _override;
+	const char *GetSetting(const char *szName) _zcp_override;
+	const char *GetSetting(const char *szName, const char *equal, const char *other) _zcp_override;
+	const wchar_t *GetSettingW(const char *szName) _zcp_override;
+	const wchar_t *GetSettingW(const char *szName, const wchar_t *equal, const wchar_t *other) _zcp_override;
 
-	std::list<configsetting_t> GetSettingGroup(unsigned int ulGroup) _override;
-	std::list<configsetting_t> GetAllSettings(void) _override;
+	std::list<configsetting_t> GetSettingGroup(unsigned int ulGroup) _zcp_override;
+	std::list<configsetting_t> GetAllSettings(void) _zcp_override;
 
-	bool HasWarnings(void) _override;
-	const std::list<std::string> *GetWarnings(void) _override;
-	bool HasErrors(void) _override;
-	const std::list<std::string> *GetErrors(void) _override;
+	bool HasWarnings(void) _zcp_override;
+	const std::list<std::string> *GetWarnings(void) _zcp_override;
+	bool HasErrors(void) _zcp_override;
+	const std::list<std::string> *GetErrors(void) _zcp_override;
 
-	bool WriteSettingToFile(const char *szName, const char *szValue, const char *szFileName) _override;
-	bool WriteSettingsToFile(const char *szFileName) _override;
+	bool WriteSettingToFile(const char *szName, const char *szValue, const char *szFileName) _zcp_override;
+	bool WriteSettingsToFile(const char *szFileName) _zcp_override;
 
 private:
 	typedef boost::filesystem::path path_type;

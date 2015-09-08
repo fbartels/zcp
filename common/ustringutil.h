@@ -52,12 +52,12 @@
 #include <unicode/coll.h>
 #include <unicode/sortkey.h>
 /* With typedefs, our ABI would always change */
-class ECLocale _final : public Locale {
+class ECLocale _zcp_final : public Locale {
 	public:
 	ECLocale(void) : Locale() {};
 	ECLocale(const Locale &s) : Locale(s) {};
 };
-class ECSortKey _final : public CollationKey {
+class ECSortKey _zcp_final : public CollationKey {
 	public:
 	ECSortKey(void) : CollationKey() {};
 	ECSortKey(const CollationKey &s) : CollationKey(s) {};
@@ -65,7 +65,7 @@ class ECSortKey _final : public CollationKey {
 #else
 
 //typedef locale_t ECLocale;
-class ECLocale _final {
+class ECLocale _zcp_final {
 public:
 	ECLocale();
 	ECLocale(int category, const char *locale);
@@ -85,7 +85,7 @@ private:
 };
 
 
-class ECSortKey _final {
+class ECSortKey _zcp_final {
 public:
 	ECSortKey(const unsigned char *lpSortData, unsigned int cbSortData);
 	ECSortKey(const ECSortKey &other);
