@@ -75,7 +75,7 @@ Makefile.in
 /common/zarafa.pc
 
 # /doc/
-/doc/*.[1578]
+/doc/*.[0-9]
 
 ## /doc/php-ext/
 #/doc/php-ext/*html

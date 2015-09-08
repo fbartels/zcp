@@ -1,8 +1,8 @@
-dist_data_DATA = 
-datadir = ${docdir}
+# -*- Makefile -*-
 
-BUILT_SOURCES=zarafa.7
-allpages=\
+dist_man_MANS = ${genpages}
+genpages = \
+	zarafa.7 \
 	zarafa-admin.8 \
 	zarafa-archiver.8 zarafa-archiver.cfg.5 \
 	zarafa-autorespond.8 \
@@ -22,20 +22,16 @@ allpages=\
 	zarafa-stats.1 \
 	zarafa-unix.cfg.5
 
+CLEANFILES = ${genpages} zarafa.0
+EXTRA_DIST = manual.xml
 
-CLEANFILES = zarafa-cfgchecker.1
-
-man_MANS=$(BUILT_SOURCES) $(allpages)
+${genpages}: zarafa.0
 
 # Since the manual.xml file is in UTF-8, we need to call 'xmlto' in UTF-8 mode as well.
-$(BUILT_SOURCES): manual.xml
-	@if [ -z $(PROG_XMLTO) ]; then \
+zarafa.0: manual.xml
+	@${AM_V_GEN} if [ -z "$(PROG_XMLTO)" ]; then \
 		echo Please install xmlto to generate manual pages; \
 	else \
-		LC_ALL=en_US.UTF-8 $(PROG_XMLTO) man ${top_srcdir}/doc/manual.xml; \
+		LC_ALL=en_US.UTF-8 $(PROG_XMLTO) man ${srcdir}/manual.xml && \
+		touch $@; \
 	fi
-
-# force allpages to wait on output from xmlto
-$(allpages): $(BUILT_SOURCES)
-
-EXTRA_DIST = $(BUILT_SOURCES) $(allpages) manual.xml
