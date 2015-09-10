@@ -3,6 +3,7 @@
 Makefile
 Makefile.in
 *.la
+*.pyc
 *.ldd
 *.ldx
 *.lo
