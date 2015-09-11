@@ -280,12 +280,13 @@ done:
 		g_lpStatsCollector->Increment(SCN_PROCESSING_TIME, int64_t((dblEnd - dblStart) * 1000));
 		g_lpStatsCollector->Increment(SCN_RESPONSE_TIME, int64_t((dblEnd - lpWorkItem->dblReceiveStamp) * 1000));
 
-            // Clear memory used by soap calls. Note that this does not actually
-            // undo our soap_new2() call so the soap object is still valid after these calls
-            soap_destroy(lpWorkItem->soap);
-            soap_end(lpWorkItem->soap);
-
         }
+
+	// Clear memory used by soap calls. Note that this does not actually
+	// undo our soap_new2() call so the soap object is still valid after these calls
+	soap_destroy(lpWorkItem->soap);
+	soap_end(lpWorkItem->soap);
+
         // We're done processing the item, the workitem's socket is returned to the queue
         lpThis->m_lpDispatcher->NotifyDone(lpWorkItem->soap);
         delete lpWorkItem;

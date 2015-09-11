@@ -88,6 +88,7 @@ static void database_destroy(void *lpParam)
 
 	pthread_mutex_unlock(&g_hMutexDBObjectList);
 
+	lpDatabase->ThreadEnd();
 	delete lpDatabase;
 }
 

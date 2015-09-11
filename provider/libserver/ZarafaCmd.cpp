@@ -1855,7 +1855,7 @@ SOAP_ENTRY_START(loadProp, lpsResponse->er, entryId sEntryId, unsigned int ulObj
 		lpsResponse->lpPropVal->ulPropTag = ulPropTag;
 		lpsResponse->lpPropVal->__union = SOAP_UNION_propValData_bin;
 		lpsResponse->lpPropVal->Value.bin = s_alloc<struct xsd__base64Binary>(soap);
-		lpsResponse->lpPropVal->Value.bin->__size = 0;
+		memset(lpsResponse->lpPropVal->Value.bin, 0, sizeof(struct xsd__base64Binary));
 
 		er = CreateAttachmentStorage(lpDatabase, &lpAttachmentStorage);
 		if (er != erSuccess)

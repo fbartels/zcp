@@ -385,7 +385,6 @@ ECRESULT ECSoapServerConnection::ListenSSL(const char* lpServerName, int nServer
 	int ssl_op = 0, ssl_include = 0, ssl_exclude = 0;
 
 	if(lpServerName == NULL) {
-		free(server_ssl_protocols);
 		er = ZARAFA_E_INVALID_PARAMETER;
 		goto exit;
 	}
@@ -512,6 +511,8 @@ ECRESULT ECSoapServerConnection::ListenSSL(const char* lpServerName, int nServer
 	m_lpLogger->Log(EC_LOGLEVEL_NOTICE, "Listening for SSL connections on port %d", nServerPort);
 
 exit:
+	free(server_ssl_protocols);
+
 	if (er != erSuccess && lpsSoap) {
 		soap_free(lpsSoap);
 	}

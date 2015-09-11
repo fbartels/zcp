@@ -432,7 +432,7 @@ int CreatePath(const char *createpath)
 	char *path = strdup(createpath);
 
 	// Remove trailing slashes
-	while(path[strlen(path)-1] == '/' || path[strlen(path)-1] == '\\') {
+	while (strlen(path) > 0 && (path[strlen(path)-1] == '/' || path[strlen(path)-1] == '\\')) {
 		path[strlen(path)-1] = 0;
 	}
 
