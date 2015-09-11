@@ -1506,6 +1506,11 @@ class Folder(object):
                 item.mapiobj = _openentry_raw(self.store.mapiobj, PpropFindProp(row, PR_ENTRYID).Value, MAPI_MODIFY | self.content_flag)
                 yield item
 
+    def occurrences(self):
+        for item in self:
+            for occurrence in item.occurrences():
+                yield occurrence
+
     def create_item(self, eml=None, ics=None, vcf=None, load=None, loads=None, **kwargs): # XXX associated
         item = Item(self, eml=eml, ics=ics, vcf=vcf, load=load, loads=loads, create=True)
         item.server = self.server
@@ -2101,6 +2106,16 @@ class Item(object):
     def recurrence(self):
         return Recurrence(self)
 
+    def occurrences(self):
+        try:
+            if self.recurring:
+                for d in self.recurrence.recurrences:
+                    yield Occurrence(self, d, d+datetime.timedelta(hours=1)) # XXX
+            else:
+                yield Occurrence(self, self.start, self.end)
+        except MAPIErrorNotFound:
+            pass # XXX
+
     @to.setter
     def to(self, addrs):
         if isinstance(addrs, (str, unicode)):
@@ -2319,6 +2334,15 @@ class Body:
 
     def __repr__(self):
         return unicode(self).encode(sys.stdout.encoding or 'utf8')
+
+class Occurrence:
+    def __init__(self, item, start, end):
+        self.item = item
+        self.start = start
+        self.end = end
+
+    def __getattr__(self, x):
+        return getattr(self.item, x)
 
 class Recurrence:
     def __init__(self, item): # XXX just readable start/end for now
