@@ -48,7 +48,7 @@
 #ifndef ECDATABASEMYSQL_H
 #define ECDATABASEMYSQL_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <pthread.h>
 #include <mysql.h>
 #include <string>

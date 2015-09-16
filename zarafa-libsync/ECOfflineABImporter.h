@@ -44,7 +44,7 @@
 #ifndef ECOFFLINEABIMPORTER_INCLUDED
 #define ECOFFLINEABIMPORTER_INCLUDED
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <IECImportAddressbookChanges.h>
 #include <IECServiceAdmin.h>
 

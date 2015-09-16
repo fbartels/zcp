@@ -44,7 +44,7 @@
 #ifndef ECCACHE_INCLUDED
 #define ECCACHE_INCLUDED
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <cassert>
 #include <list>
 #include <string>

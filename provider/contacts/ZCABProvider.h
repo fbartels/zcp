@@ -44,7 +44,7 @@
 #ifndef ECABPROVIDER
 #define ECABPROVIDER
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include "ECUnknown.h"
 #include <mapispi.h>
 

@@ -44,7 +44,7 @@
 #ifndef convert_INCLUDED
 #define convert_INCLUDED
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <map>
 #include <set>
 #include <list>

@@ -44,7 +44,7 @@
 #ifndef ECATTACH_H
 #define ECATTACH_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <mapidefs.h>
 
 #include "ECMessage.h"

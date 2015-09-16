@@ -44,7 +44,7 @@
 #ifndef ECCHANGEADVISOR_H
 #define ECCHANGEADVISOR_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <mapidefs.h>
 #include <mapispi.h>
 

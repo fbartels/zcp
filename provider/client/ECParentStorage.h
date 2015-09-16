@@ -48,7 +48,7 @@
    It reads from the saved data in the parent
 */
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include "ECUnknown.h"
 #include "IECPropStorage.h"
 

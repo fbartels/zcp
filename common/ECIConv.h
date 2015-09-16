@@ -44,7 +44,7 @@
 #ifndef ICONV_H
 #define ICONV_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include "charset/convert.h"
 #include <string>
 

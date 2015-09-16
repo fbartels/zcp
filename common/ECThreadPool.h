@@ -47,7 +47,7 @@
 #include <pthread.h>
 #include <set>
 #include <list>
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 
 #ifdef WIN32
 static inline bool operator<(const pthread_t &lhs, const pthread_t &rhs) {

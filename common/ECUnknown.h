@@ -44,7 +44,7 @@
 #ifndef ECUNKNOWN_H
 #define ECUNKNOWN_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include "IECUnknown.h"
 #include <pthread.h>
 

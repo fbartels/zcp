@@ -44,7 +44,7 @@
 #ifndef ECInvariantChecker_INCLUDED
 #define ECInvariantChecker_INCLUDED
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 
 template <typename Type>
 class ECInvariantChecker _zcp_final {

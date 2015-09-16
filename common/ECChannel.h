@@ -44,7 +44,7 @@
 #ifndef ECCHANNEL_H
 #define ECCHANNEL_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <cstdio>
 #include <iostream>
 #include <openssl/ssl.h>

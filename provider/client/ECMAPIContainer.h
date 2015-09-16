@@ -48,7 +48,7 @@
 #ifndef ECMAPICONTAINER
 #define ECMAPICONTAINER
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <mapidefs.h>
 #include "WSTransport.h"
 #include "ECMsgStore.h"

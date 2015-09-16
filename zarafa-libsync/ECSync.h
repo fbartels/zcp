@@ -46,7 +46,7 @@
 
 #ifdef HAVE_OFFLINE_SUPPORT
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <string>
 #include <mapidefs.h>
 #include <mapispi.h>

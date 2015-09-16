@@ -44,7 +44,7 @@
 #ifndef ECABPROP_H
 #define ECABPROP_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <mapidefs.h>
 
 #include "ECGenericProp.h"

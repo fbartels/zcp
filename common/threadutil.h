@@ -44,7 +44,7 @@
 #ifndef ECTHREADUTIL_H
 #define ECTHREADUTIL_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <pthread.h>
 
 class CPthreadMutex _zcp_final {

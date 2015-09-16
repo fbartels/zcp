@@ -44,7 +44,7 @@
 #ifndef ECSERIALIZER_H
 #define ECSERIALIZER_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <ZarafaCode.h>
 
 struct IStream;

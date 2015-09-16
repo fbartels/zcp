@@ -44,7 +44,7 @@
 #ifndef ECFIFOSTREAM_H
 #define ECFIFOSTREAM_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include "ECUnknown.h"
 
 class ECFifoBuffer;

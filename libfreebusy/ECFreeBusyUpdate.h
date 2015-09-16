@@ -52,7 +52,7 @@
 #ifndef ECFREEBUSYUPDATE_H
 #define ECFREEBUSYUPDATE_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include "freebusy.h"
 #include "freebusyguid.h"
 #include "ECUnknown.h"

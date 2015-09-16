@@ -44,7 +44,7 @@
 #ifndef ECMEMTABLE_H
 #define ECMEMTABLE_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <vector>
 #include <map>
 #include <mapitags.h>

@@ -44,7 +44,7 @@
 #ifndef WSMAPIPROPSTORAGE_H
 #define WSMAPIPROPSTORAGE_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include "ECUnknown.h"
 #include "IECPropStorage.h"
 

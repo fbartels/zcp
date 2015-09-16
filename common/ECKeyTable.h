@@ -84,7 +84,7 @@
 #pragma warning ( disable: 4786 )
 #endif
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include "ZarafaCode.h"
 
 #include <list>

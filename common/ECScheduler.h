@@ -44,7 +44,7 @@
 #ifndef ECSCHEDULER_H
 #define ECSCHEDULER_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include "ECLogger.h"
 
 #include <pthread.h>

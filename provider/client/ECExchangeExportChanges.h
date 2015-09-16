@@ -44,7 +44,7 @@
 #ifndef ECEXCHANGEEXPORTCHANGES_H
 #define ECEXCHANGEEXPORTCHANGES_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <mapidefs.h>
 #include <vector>
 #include <set>

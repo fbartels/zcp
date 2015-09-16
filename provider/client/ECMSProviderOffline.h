@@ -44,7 +44,7 @@
 #ifndef ECMSPROVIDEROFFLINE_H
 #define ECMSPROVIDEROFFLINE_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include "ECUnknown.h"
 #include "ECMSProvider.h"
 

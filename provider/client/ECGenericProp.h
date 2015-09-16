@@ -44,7 +44,7 @@
 #ifndef ECGENERICPROP_H
 #define ECGENERICPROP_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include "ECUnknown.h"
 #include "IECPropStorage.h"
 #include "ECPropertyEntry.h"

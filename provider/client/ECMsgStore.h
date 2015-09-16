@@ -44,7 +44,7 @@
 #ifndef ECMSGSTORE_H
 #define ECMSGSTORE_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <mapidefs.h>
 #include <mapispi.h>
 

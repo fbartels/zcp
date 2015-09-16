@@ -1,5 +1,7 @@
 # -*- Makefile -*-
 
+SUBDIRS = include/zarafa
+
 AM_CPPFLAGS = ${ZCPPFLAGS} ${DEBUGFLAGS} ${BOOST_CPPFLAGS} ${SSL_CFLAGS} \
 	-I${top_srcdir}/m4lcommon \
 	-I${top_srcdir}/mapi4linux/include -I${top_srcdir}/provider/common \
@@ -26,7 +28,7 @@ nobase_pkginclude_HEADERS = \
 	SymmetricCrypt.h TimeUtil.h TmpPath.h Trace.h UnixUtil.h \
 	base64.h fileutil.h md5.h my_getopt.h \
 	platform.linux.h platform.h pthreadutil.h \
-	stringutil.h threadutil.h ustringutil.h utf8.h zcdefs.h \
+	stringutil.h threadutil.h ustringutil.h utf8.h \
 	charset/convert.h charset/traits.h charset/utf32string.h \
 	charset/utf8string.h charset/utf16string.h charset/convstring.h \
 	charset/localeutil.h \

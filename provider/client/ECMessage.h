@@ -44,7 +44,7 @@
 #ifndef ECMESSAGE_H
 #define ECMESSAGE_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include "ECMemTable.h"
 
 #include <mapidefs.h>

@@ -44,7 +44,7 @@
 #ifndef ECMAILUSER
 #define ECMAILUSER
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <mapidefs.h>
 
 #include "ECABProp.h"

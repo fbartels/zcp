@@ -44,7 +44,7 @@
 #ifndef ECMAPIPROP_H
 #define ECMAPIPROP_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include "Zarafa.h"
 #include "IECSecurity.h"
 #include "ECGenericProp.h"

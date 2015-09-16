@@ -44,7 +44,7 @@
 #ifndef ECLICENSECLIENT_H
 #define ECLICENSECLIENT_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <vector>
 #include <string>
 

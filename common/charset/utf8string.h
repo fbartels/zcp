@@ -44,7 +44,7 @@
 #ifndef utf8string_INCLUDED
 #define utf8string_INCLUDED
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <string>
 #include <stdexcept>
 

@@ -44,7 +44,7 @@
 #ifndef ECABLOGON_H
 #define ECABLOGON_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <mapispi.h>
 #include "ECUnknown.h"
 

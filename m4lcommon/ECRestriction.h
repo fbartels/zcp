@@ -44,7 +44,7 @@
 #ifndef ECRestrictionBuilder_INCLUDED
 #define ECRestrictionBuilder_INCLUDED
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <mapidefs.h>
 
 #include <list>

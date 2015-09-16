@@ -44,7 +44,7 @@
 #ifndef MSPROVIDER_H
 #define MSPROVIDER_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include "ECUnknown.h"
 #include "WSTransport.h"
 

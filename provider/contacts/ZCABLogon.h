@@ -44,7 +44,7 @@
 #ifndef ZCABLOGON_H
 #define ZCABLOGON_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <vector>
 #include <mapispi.h>
 #include "ECUnknown.h"

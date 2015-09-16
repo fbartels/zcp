@@ -44,7 +44,7 @@
 #ifndef mapi_object_ptr_INCLUDED
 #define mapi_object_ptr_INCLUDED
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <algorithm>
 #include <mapiutil.h>
 #include "IECUnknown.h"

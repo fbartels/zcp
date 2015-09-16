@@ -63,7 +63,7 @@ AC_SUBST([ZPHPCXXFLAGS])
 
 # default to debug mode
 # disable write-strings: too much complains about "" being 'cast' to char* (since const char* is not in the declarations) on g++-4.2 and higher
-ZCPPFLAGS="$BUILDOS -DHAVE_CONFIG_H"
+ZCPPFLAGS="$BUILDOS -DHAVE_CONFIG_H -I\${top_srcdir}/common/include"
 ZCXXFLAGS="-Wall -Wmissing-declarations -Wno-write-strings"
 if ! test "$want_release" = "yes"; then
 # when using -pedantic, -Wno-long-long is required
@@ -745,6 +745,7 @@ AC_CONFIG_FILES([Makefile
 		spooler/python/Makefile
 		spooler/python/plugins/Makefile
 		common/Makefile
+		common/include/zarafa/Makefile
 		ECtools/Makefile
 		ECtools/zarafa-admin/Makefile
 		ECtools/zarafa-passwd/Makefile

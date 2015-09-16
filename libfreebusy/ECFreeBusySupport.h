@@ -52,7 +52,7 @@
 #ifndef ECFREEBUSYSUPPORT_H
 #define ECFREEBUSYSUPPORT_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include "freebusy.h"
 #include "freebusyguid.h"
 

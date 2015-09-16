@@ -44,7 +44,7 @@
 #ifndef WSABPROPSTORAGE_H
 #define WSABPROPSTORAGE_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include "ECUnknown.h"
 #include "IECPropStorage.h"
 

@@ -44,7 +44,7 @@
 #ifndef UTIL_H
 #define UTIL_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <mapix.h>
 #include <edkmdb.h>
 #include <string>

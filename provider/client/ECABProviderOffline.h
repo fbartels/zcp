@@ -44,7 +44,7 @@
 #ifndef ECABPROVIDEROFFLINE_H
 #define ECABPROVIDEROFFLINE_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include "ECUnknown.h"
 #include "ECABProvider.h"
 

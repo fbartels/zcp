@@ -44,7 +44,7 @@
 #ifndef COMMONUTIL_H
 #define COMMONUTIL_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <mapidefs.h>
 #include <mapix.h>
 #include <string>

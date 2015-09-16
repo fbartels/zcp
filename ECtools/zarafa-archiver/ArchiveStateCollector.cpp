@@ -41,7 +41,7 @@
  *
  */
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include "platform.h"
 #include "userutil.h"
 #include "ArchiveStateCollector.h"

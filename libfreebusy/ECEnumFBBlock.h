@@ -52,7 +52,7 @@
 #ifndef ECENUMFBBLOCK_H
 #define ECENUMFBBLOCK_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include "freebusy.h"
 #include "ECUnknown.h"
 #include "Trace.h"

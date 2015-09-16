@@ -44,7 +44,7 @@
 #ifndef __M4L_MAPIX_IMPL_H
 #define __M4L_MAPIX_IMPL_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <pthread.h>
 
 #include "m4l.common.h"

@@ -45,7 +45,7 @@
 #ifndef ECLOGGER_H
 #define ECLOGGER_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <list>
 #include <pthread.h>
 #include <csignal>

@@ -44,7 +44,7 @@
 #ifndef traits_INCLUDED
 #define traits_INCLUDED
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <string>
 #include <cstring>
 

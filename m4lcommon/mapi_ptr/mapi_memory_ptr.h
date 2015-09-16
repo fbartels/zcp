@@ -44,7 +44,7 @@
 #ifndef mapi_memory_ptr_INCLUDED
 #define mapi_memory_ptr_INCLUDED
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <utility>
 
 #ifdef free

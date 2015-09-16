@@ -44,7 +44,7 @@
 #ifndef ECFIFOBUFFER_H
 #define ECFIFOBUFFER_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <deque>
 #include <pthread.h>
 

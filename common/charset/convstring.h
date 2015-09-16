@@ -44,7 +44,7 @@
 #ifndef convstring_INCLUDED
 #define convstring_INCLUDED
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include "convert.h"
 #include "tstring.h"
 #include <string>

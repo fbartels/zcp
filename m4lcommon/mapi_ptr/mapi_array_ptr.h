@@ -44,7 +44,7 @@
 #ifndef mapi_array_ptr_INCLUDED
 #define mapi_array_ptr_INCLUDED
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <utility>
 
 template<typename _T>

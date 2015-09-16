@@ -44,7 +44,7 @@
 #ifndef ustringutil_INCLUDED
 #define ustringutil_INCLUDED
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include "ZarafaCode.h"
 #include <string>
 

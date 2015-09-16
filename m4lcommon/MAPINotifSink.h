@@ -44,7 +44,7 @@
 #ifndef MAPINOTIFSINK_H
 #define MAPINOTIFSINK_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <list>
 #include <mapi.h>
 #include <mapix.h>

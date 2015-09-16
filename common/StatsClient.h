@@ -44,7 +44,7 @@
 #ifndef __STATSCLIENT_H__
 #define __STATSCLIENT_H__
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <map>
 #include <string>
 #include <ctime>

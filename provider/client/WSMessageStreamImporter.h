@@ -44,7 +44,7 @@
 #ifndef WSMessageStreamImporter_INCLUDED
 #define WSMessageStreamImporter_INCLUDED
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include "ECUnknown.h"
 #include "mapi_ptr.h"
 #include "soapStub.h"

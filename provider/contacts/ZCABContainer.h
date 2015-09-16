@@ -44,7 +44,7 @@
 #ifndef ZCABCONTAINER_H
 #define ZCABCONTAINER_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <mapispi.h>
 #include <mapidefs.h>
 #include "ZCABLogon.h"

@@ -44,7 +44,7 @@
 #ifndef __MAPI_SVC_H
 #define __MAPI_SVC_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <map>
 #include <set>
 #include <vector>

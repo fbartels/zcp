@@ -44,7 +44,7 @@
 #ifndef ECABCONTAINER_H
 #define ECABCONTAINER_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include "IECExportAddressbookChanges.h"
 #include "IECImportAddressbookChanges.h"
 
