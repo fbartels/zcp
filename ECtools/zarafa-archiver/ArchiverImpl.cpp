@@ -44,7 +44,7 @@
 /* ArchiverImpl.cpp
  * Definition of class ArchiverImpl
  */
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ArchiverImpl.h"
 #include "ArchiveControlImpl.h"
 #include "ArchiveManageImpl.h"

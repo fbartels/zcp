@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ZCMAPIProp.h"
 #include "ZCABData.h"
 

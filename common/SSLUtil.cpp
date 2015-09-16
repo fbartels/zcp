@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "SSLUtil.h"
 #include <pthread.h>
 #include <openssl/bn.h>

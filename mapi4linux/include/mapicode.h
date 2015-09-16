@@ -54,7 +54,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #define MAKE_MAPI_SCODE(sev,fac,code) \
     ((SCODE) (((ULONG)(sev)<<31) | ((ULONG)(fac)<<16) | ((ULONG)(code))) )

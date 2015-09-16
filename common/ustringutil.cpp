@@ -87,7 +87,7 @@ performed on the complete strings before the actual comparison is even started.
 At some point we need to rewqrite these functions to do all the conversion on the fly to minimize processing.
 */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ustringutil.h"
 #include "CommonUtil.h"
 #include "utf8.h"

@@ -44,7 +44,7 @@
 // From http://www.wischik.com/lu/programmer/mapi_utils.html
 // Parts rewritten by Zarafa
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <iostream>
 #include "codepage.h"
 #include "CommonUtil.h"

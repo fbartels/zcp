@@ -41,7 +41,7 @@
  *
  */
 
-#include <platform.h>
+#include <zarafa/platform.h>
 #include "ECConfig.h"
 #include "operations.h"
 #include "ECArchiverLogger.h"

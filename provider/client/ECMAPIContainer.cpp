@@ -44,7 +44,7 @@
 // ECMAPIContainer.cpp: implementation of the ECMAPIContainer class.
 //
 //////////////////////////////////////////////////////////////////////
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "Zarafa.h"
 #include "ECMAPIContainer.h"
 

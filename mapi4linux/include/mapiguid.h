@@ -57,7 +57,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 /* Because they have nowhere else to go ... sad huh? */
 #if !defined(INITGUID) || defined(USES_IID_IUnknown)

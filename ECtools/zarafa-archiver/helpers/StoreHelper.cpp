@@ -41,7 +41,7 @@
  *
  */
 
-#include <platform.h>
+#include <zarafa/platform.h>
 #include <mapix.h>
 #include <mapiutil.h>
 #include <restrictionutil.h>

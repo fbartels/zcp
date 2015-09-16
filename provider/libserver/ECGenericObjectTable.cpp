@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 /* Returns the rows for a contents- or hierarchytable
  *

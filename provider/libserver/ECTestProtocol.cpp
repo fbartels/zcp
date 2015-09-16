@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ECTestProtocol.h"
 #include "SOAPUtils.h"
 #include "ECSessionManager.h"

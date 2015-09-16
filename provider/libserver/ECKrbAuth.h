@@ -44,7 +44,7 @@
 #ifndef __ECAUTHKRB5_H_
 
 #include <string>
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ZarafaCode.h"
 
 /**

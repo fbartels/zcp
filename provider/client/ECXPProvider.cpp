@@ -45,7 +45,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <mapi.h>
 #include <mapispi.h>
 #include <mapiutil.h>

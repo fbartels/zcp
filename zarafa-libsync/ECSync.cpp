@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #ifdef HAVE_OFFLINE_SUPPORT
 #include "ECGuid.h"
 #include "ECSync.h"

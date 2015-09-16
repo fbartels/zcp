@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <string>
 #include <openssl/md5.h>
 #include "md5.h"

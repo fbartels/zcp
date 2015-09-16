@@ -41,7 +41,7 @@
  *
  */
 
-#include <platform.h>
+#include <zarafa/platform.h>
 
 #ifdef WIN32
 // For WSAIoctl

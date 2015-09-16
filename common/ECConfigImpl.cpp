@@ -42,7 +42,7 @@
  */
 
 #include <zarafa/zcdefs.h>
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <cstdio>
 #include <cstdlib>

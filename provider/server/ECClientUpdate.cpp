@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ZarafaCode.h"
 #include "soapH.h"
 #include "ECClientUpdate.h"

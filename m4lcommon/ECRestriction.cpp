@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ECRestriction.h"
 #include "Util.h"
 #include "mapi_ptr.h"

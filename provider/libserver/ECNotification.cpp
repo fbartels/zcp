@@ -44,7 +44,7 @@
 // ECNotification.cpp: implementation of the ECNotification class.
 //
 //////////////////////////////////////////////////////////////////////
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include "ECNotification.h"
 #include "ECMAPI.h"

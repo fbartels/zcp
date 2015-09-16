@@ -44,7 +44,7 @@
 // zarafa-monitor.cpp : Defines the entry point for the console application.
 //
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #ifdef _WIN32
 	#include "ECNTService.h"

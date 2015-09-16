@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <new>          // std::bad_alloc
 #include <list>          // std::list
 #include "ArchiveControlImpl.h"

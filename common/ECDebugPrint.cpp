@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ECDebugPrint.h"
 #include "ECDebug.h"
 #include "charset/convert.h"

@@ -45,7 +45,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #ifdef LINUX
 #include <sys/types.h>

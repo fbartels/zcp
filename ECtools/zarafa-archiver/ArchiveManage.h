@@ -47,7 +47,7 @@
 #ifndef ARCHIVEMANAGE_H_INCLUDED
 #define ARCHIVEMANAGE_H_INCLUDED
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <list>
 #include <mapix.h>
 #include "ArchiveControl.h"

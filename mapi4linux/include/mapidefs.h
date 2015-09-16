@@ -54,7 +54,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <cstring>		/* memcmp() */
 
 #define MAPI_DIM	1

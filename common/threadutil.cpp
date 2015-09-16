@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "threadutil.h"
 
 CPthreadMutex::CPthreadMutex(bool bRecurse) {

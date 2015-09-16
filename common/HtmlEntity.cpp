@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <string>
 #include "HtmlEntity.h"
 #include "charset/convert.h"

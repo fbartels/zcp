@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <cerrno>
 #include <cstdio>
 #include <cstdlib>

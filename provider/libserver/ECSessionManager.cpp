@@ -44,7 +44,7 @@
 /// ECSessionManager.cpp: implementation of the ECSessionManager class.
 //
 //////////////////////////////////////////////////////////////////////
-#include "platform.h"
+#include <zarafa/platform.h>
  
  
 #include <algorithm>

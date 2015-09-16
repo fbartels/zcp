@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "CalDavUtil.h"
 #include "EMSAbTag.h"
 #include "charset/convert.h"

@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "Http.h"
 #include "mapi_ptr.h"
 #include "stringutil.h"

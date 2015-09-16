@@ -49,7 +49,7 @@
 #include <list>
 #include <string>
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 class ECLogger;
 

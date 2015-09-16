@@ -67,7 +67,7 @@
 // the GNU General Public License cover the whole combination.
 //
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "MAPISMTPTransport.h"
 #include "vmime/net/smtp/SMTPResponse.hpp"
 

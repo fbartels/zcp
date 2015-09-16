@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "instanceidmapper.h"
 #include "Archiver.h"
 #include "ECDatabase.h"

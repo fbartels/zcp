@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <mapicode.h>
 #include "ZarafaCode.h"
 #include "mapiext.h"

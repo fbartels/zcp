@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ECIterators.h"
 #include "ECRestriction.h"
 #include "HrException.h"

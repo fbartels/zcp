@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "utfutil.h"
 
 #include <unicode/ustring.h>

@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ZCABProvider.h"
 #include "ZCABLogon.h"
 

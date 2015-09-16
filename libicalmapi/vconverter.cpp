@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "vconverter.h"
 #include "valarm.h"
 #include "icalrecurrence.h"

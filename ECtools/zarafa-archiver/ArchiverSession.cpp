@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ArchiverSession.h"
 #include "ecversion.h"
 #include "mapi_ptr.h"

@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ClientUtil.h"
 
 #include "ECGetText.h"

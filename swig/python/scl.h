@@ -45,7 +45,7 @@
 #ifndef SCL_H
 #define SCL_H
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 // Get Py_ssize_t for older versions of python
 #if PY_VERSION_HEX < 0x02050000 && !defined(PY_SSIZE_T_MIN)

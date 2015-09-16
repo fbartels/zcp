@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "PublishFreeBusy.h"
 #include "CalDavProto.h"
 #include "mapi_ptr.h"

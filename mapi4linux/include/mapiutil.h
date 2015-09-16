@@ -54,7 +54,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <mapix.h>
 
 

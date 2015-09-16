@@ -44,7 +44,7 @@
 #ifndef ZARAFACODE_H
 #define ZARAFACODE_H
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #define MAKE_ZARAFA_SCODE(sev,code) ( (((unsigned int)(sev)<<31) | ((unsigned int)(code))) )
 #define MAKE_ZARAFA_E( err ) (MAKE_ZARAFA_SCODE( 1, err ))

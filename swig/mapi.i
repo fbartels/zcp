@@ -2,7 +2,7 @@
 
 %{
 #undef LOCK_WRITE
-#include <platform.h>
+#include <zarafa/platform.h>
 #include <mapi.h>
 #include <mapidefs.h>
 #include <mapicode.h>

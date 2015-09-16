@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "mapi_ptr.h"
 #include "ECMAPIDebug.h"
 #include "ECDebug.h"

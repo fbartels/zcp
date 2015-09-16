@@ -54,7 +54,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 /* Include common MAPI header files if they haven't been already. */
 #include <mapidefs.h>

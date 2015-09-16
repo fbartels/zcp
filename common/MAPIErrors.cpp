@@ -45,7 +45,7 @@
  * MAPIErrors.cpp
  * Definition of GetMAPIErrorMessage()
  */
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "MAPIErrors.h"
 #include <mapidefs.h>
 #include "stringutil.h"

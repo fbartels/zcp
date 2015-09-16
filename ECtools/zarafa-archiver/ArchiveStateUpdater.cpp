@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "archiver-common.h"
 #include "ArchiveStateUpdater.h"
 #include "ArchiverSession.h"

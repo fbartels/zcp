@@ -54,7 +54,7 @@
  * This advise sink unblocks the main (waiting) thread.
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #ifdef _WIN32
 	#include "ECNTService.h"
 #endif

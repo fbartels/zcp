@@ -48,7 +48,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include "platform.h"
+#include <zarafa/platform.h>
 
 /*
  * Comparison handler for case-insensitive keys in maps

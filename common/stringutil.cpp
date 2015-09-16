@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "stringutil.h"
 #include "charset/convert.h"
 #include <sstream>

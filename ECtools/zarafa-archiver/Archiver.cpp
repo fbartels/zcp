@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <string>
 #include "Archiver.h"
 #include "ECConfig.h"

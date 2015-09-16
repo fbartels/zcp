@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "icaluid.h"
 #include <mapix.h>
 #include <stringutil.h>

@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ECRulesTableProxy.h"
 #include "ECGuid.h"
 #include "mapi_ptr.h"

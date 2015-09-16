@@ -47,7 +47,7 @@
  * constants
  */
 
-#include "platform.h"	// for declaration of HRESULT
+#include <zarafa/platform.h>	// for declaration of HRESULT
 #include <string>
 
 #ifndef MAPIERRORS_H_INCLUDED

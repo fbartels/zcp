@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #ifndef ECDEFS_H
 #define ECDEFS_H

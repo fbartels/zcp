@@ -44,7 +44,7 @@
 #ifndef ZARAFA_FSCK
 #define ZARAFA_FSCK
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <string>
 #include <list>
 #include <set>

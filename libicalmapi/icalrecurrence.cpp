@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "icalrecurrence.h"
 #include "vconverter.h"
 #include "nameids.h"

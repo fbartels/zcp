@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "m4l.common.h"
 #include <mapicode.h>
 #include <mapidefs.h>

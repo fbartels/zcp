@@ -1,3 +1,3 @@
 # -*- Makefile -*-
 
-pkginclude_HEADERS = zcdefs.h
+pkginclude_HEADERS = platform.h platform.linux.h zcdefs.h

@@ -44,7 +44,7 @@
 #ifndef EC_FEATURELIST_H
 #define EC_FEATURELIST_H
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <string>
 #include <set>
 

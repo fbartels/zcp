@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ECEnumFBBlock.h"
 #include "freebusyutil.h"
 #include "stringutil.h"

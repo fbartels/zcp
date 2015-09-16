@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "WebDav.h"
 #include "stringutil.h"
 #include "CommonUtil.h"

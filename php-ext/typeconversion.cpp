@@ -43,7 +43,7 @@
 
 #include "phpconfig.h"
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <cmath>
 

@@ -77,7 +77,7 @@
 #endif
 
 #if defined(WIN32) || defined(WINCE)
-  #include "platform.win32.h"
+  #include <zarafa/platform.win32.h>
 #else
 
   // We have to include this now in case select.h is included too soon.
@@ -92,7 +92,7 @@
   #ifdef HAVE_CONFIG_H
   #include "config.h"
   #endif
-  #include "platform.linux.h"
+  #include <zarafa/platform.linux.h>
 #endif
 
 #define ZARAFA_SYSTEM_USER		"SYSTEM"

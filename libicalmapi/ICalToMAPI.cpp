@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ICalToMAPI.h"
 #include "vconverter.h"
 #include "vtimezone.h"

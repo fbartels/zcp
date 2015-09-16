@@ -71,7 +71,7 @@
  * Detail:
  * see rfc.
  */
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <cstdio>
 #include <cstdlib>
 
@@ -149,7 +149,7 @@
 #include "UnixUtil.h"
 #include "LMTP.h"
 #include "ecversion.h"
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <csignal>
 #include "SSLUtil.h"
 #include "StatsClient.h"

@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <climits>
 #include <mapidefs.h>
 #include <cerrno>

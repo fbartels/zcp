@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ECMsgStorePublic.h"
 
 #include "ECMAPIFolder.h"
