@@ -51,6 +51,7 @@
 #include "helpers/StoreHelper.h"
 #include "charset/convert.h"
 #include "ECACL.h"
+#include "ECConfig.h"
 #include "userutil.h"
 #include "ArchiveStateUpdater.h"
 #include "ECRestriction.h"

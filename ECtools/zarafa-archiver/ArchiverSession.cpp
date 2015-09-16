@@ -45,6 +45,7 @@
 #include "ArchiverSession.h"
 #include "ecversion.h"
 #include "mapi_ptr.h"
+#include "ECConfig.h"
 #include "ECLogger.h"
 #include "CommonUtil.h"
 #include "mapiext.h"

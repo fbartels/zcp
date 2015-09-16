@@ -68,6 +68,7 @@
 #include <sys/utsname.h>
 #endif
 
+#include "ECConfig.h"
 #if defined(_WIN32) && !defined(WINCE)
 #include "NTService.h"
 #endif

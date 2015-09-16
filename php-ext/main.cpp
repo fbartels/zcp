@@ -49,6 +49,7 @@
 #include <syslog.h>
 #include <ctime>
 
+#include "ECConfig.h"
 #include "ECLogger.h"
 #include "mapi_ptr.h"
 #include "ECRulesTableProxy.h"

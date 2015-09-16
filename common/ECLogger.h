@@ -53,11 +53,12 @@
 #include <cstdio>
 #include <string>
 
-#include "ECConfig.h"
-
 #ifndef __LIKE_PRINTF
 #define __LIKE_PRINTF(_fmt, _va)
 #endif
+
+class ECConfig;
+class ECLogger;
 
 static const unsigned int EC_LOGLEVEL_NONE       = 0;
 static const unsigned int EC_LOGLEVEL_FATAL	 = 1;
