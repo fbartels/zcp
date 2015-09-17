@@ -46,7 +46,7 @@
 
 #include <zarafa/zcdefs.h>
 #include "convert.h"
-#include "tstring.h"
+#include <zarafa/tstring.h>
 #include <string>
 #include <charset/utf8string.h>
 

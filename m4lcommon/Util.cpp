@@ -60,7 +60,7 @@
 #include "CommonUtil.h"
 #include "stringutil.h"
 #include "charset/convert.h"
-#include "tstring.h"
+#include <zarafa/tstring.h>
 
 #include "ECMemStream.h"
 #include "IECSingleInstance.h"

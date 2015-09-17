@@ -74,7 +74,7 @@
 #include "ConsoleTable.h"
 #include "mapi_ptr.h"
 #include "ECFeatures.h"
-#include "tstring.h"
+#include <zarafa/tstring.h>
 #include "ECACL.h"
 #include "charset/localeutil.h"
 #include "MAPIErrors.h"

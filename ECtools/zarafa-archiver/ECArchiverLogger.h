@@ -45,7 +45,7 @@
 #define LOGGER_H
 
 #include "ECLogger.h"
-#include "tstring.h"
+#include <zarafa/tstring.h>
 
 class ECArchiverLogger : public ECLogger
 {

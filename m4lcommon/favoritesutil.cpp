@@ -50,7 +50,7 @@
 #include "restrictionutil.h"
 #include "CommonUtil.h"
 
-#include <tstring.h>
+#include <zarafa/tstring.h>
 #include <charset/convstring.h>
 
 #include <string>

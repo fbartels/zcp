@@ -87,7 +87,7 @@
 #include "ECSoapServerConnection.h"
 #include <libintl.h>
 #include <map>
-#include "tstring.h"
+#include <zarafa/tstring.h>
 #include <charset/convstring.h>
 
 #ifdef WIN32

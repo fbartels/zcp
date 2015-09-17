@@ -46,7 +46,7 @@
 
 #include "ArchiverSessionPtr.h"
 #include "mapi_ptr.h"
-#include "tstring.h"
+#include <zarafa/tstring.h>
 #include "archiver-common.h"
 
 // Forward declarations

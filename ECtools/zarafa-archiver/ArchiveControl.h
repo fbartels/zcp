@@ -48,7 +48,7 @@
 #define ARCHIVECONTROL_H_INCLUDED
 
 #include <memory>
-#include "tstring.h"
+#include <zarafa/tstring.h>
 
 enum eResult {
 	Success = 0,

@@ -47,7 +47,7 @@
 #include <mapispi.h>
 
 #include "ProviderUtil.h"
-#include "tstring.h"
+#include <zarafa/tstring.h>
 
 extern "C" {
 

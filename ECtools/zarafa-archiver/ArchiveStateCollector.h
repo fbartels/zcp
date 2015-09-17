@@ -48,7 +48,7 @@
 #include <map>
 #include "archivestateupdater_fwd.h"
 #include "ArchiverSessionPtr.h"     // For ArchiverSessionPtr
-#include "tstring.h"
+#include <zarafa/tstring.h>
 #include "archiver-common.h"
 #include "ECArchiverLogger.h"
 

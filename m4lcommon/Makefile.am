@@ -1,5 +1,7 @@
 # -*- Makefile -*-
 
+SUBDIRS = include/zarafa
+
 AM_CPPFLAGS = ${ZCPPFLAGS} $(DEBUGFLAGS) $(BOOST_CPPFLAGS) \
 	-DMAPICONFIGDIR=\"${MAPICONFIGDIR}\" \
 	-DPKGLIBDIR=\"${pkglibdir}\" \
@@ -54,8 +56,7 @@ pkginclude_HEADERS = \
 	mapiext.h \
 	mapiguidext.h \
 	namedprops.h \
-	restrictionutil.h \
-	tstring.h
+	restrictionutil.h
 mapiptr_HEADERS = \
 	mapi_ptr/mapi_array_ptr.h \
 	mapi_ptr/mapi_memory_ptr.h \
