@@ -75,7 +75,7 @@ extern "C" {
 #include <edkmdb.h>
 
 #include "typeconversion.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 
 // Calls MAPIAllocateMore or MAPIAllocateBuffer according to whether an lpBase was passed or not
 #define MAPI_ALLOC(n, lpBase, lpp) (lpBase ? MAPIAllocateMore(n, lpBase, lpp) : MAPIAllocateBuffer(n, lpp))

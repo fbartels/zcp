@@ -58,7 +58,7 @@
 
 #include <sstream>
 #include "ECDebug.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 
 #ifdef HAVE_OFFLINE_SUPPORT
 #include "ECOfflineState.h"

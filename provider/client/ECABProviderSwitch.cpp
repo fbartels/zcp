@@ -70,7 +70,7 @@
 
 #include "ProviderUtil.h"
 
-#include "charset/convstring.h"
+#include <zarafa/charset/convstring.h>
 
 #ifdef _DEBUG
 #undef THIS_FILE

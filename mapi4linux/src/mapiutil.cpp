@@ -65,7 +65,7 @@
 
 #include "rtf.h"
 
-#include "charset/convstring.h"
+#include <zarafa/charset/convstring.h>
 
 ULONG __stdcall UlRelease(LPVOID lpUnknown)
 {

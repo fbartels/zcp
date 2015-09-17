@@ -80,7 +80,7 @@
 
 #include "ECSensNetwork.h"
 #include "ECGetText.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include "MAPINotifSink.h"
 
 typedef mapi_object_ptr<IExchangeImportContentsChanges, IID_IExchangeImportContentsChanges> ExchangeImportContentsChangesPtr;

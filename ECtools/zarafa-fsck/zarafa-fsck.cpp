@@ -56,7 +56,7 @@
 #include <stringutil.h>
 #include <edkmdb.h>
 #include <edkguid.h>
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include "ecversion.h"
 #include "charset/localeutil.h"
 #include "Util.h"

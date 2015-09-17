@@ -44,7 +44,7 @@
 #include <zarafa/zcdefs.h>
 #include <zarafa/platform.h>
 #include "ECGetText.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 
 #include <map>
 #include <string>

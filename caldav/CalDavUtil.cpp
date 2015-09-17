@@ -44,7 +44,7 @@
 #include <zarafa/platform.h>
 #include "CalDavUtil.h"
 #include "EMSAbTag.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include "mapi_ptr.h"
 
 using namespace std;

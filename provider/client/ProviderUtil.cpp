@@ -63,7 +63,7 @@
 #include "ECMsgStore.h"
 #include "ECArchiveAwareMsgStore.h"
 #include "ECMsgStorePublic.h"
-#include "charset/convstring.h"
+#include <zarafa/charset/convstring.h>
 
 
 #ifdef WIN32
@@ -78,7 +78,7 @@
 #include "EntryPoint.h"
 #include "ProviderUtil.h"
 
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 
 #include <boost/filesystem.hpp>
 namespace bfs = boost::filesystem;

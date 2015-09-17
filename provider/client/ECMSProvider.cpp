@@ -74,8 +74,8 @@ using namespace std;
 #include <edkguid.h>
 
 #include <cwchar>
-#include "charset/convert.h"
-#include "charset/utf8string.h"
+#include <zarafa/charset/convert.h>
+#include <zarafa/charset/utf8string.h>
 
 #include <mapi_ptr/mapi_memory_ptr.h>
 typedef mapi_memory_ptr<ECUSER>	ECUserPtr;

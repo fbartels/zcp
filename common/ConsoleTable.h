@@ -47,7 +47,7 @@
 #include <zarafa/zcdefs.h>
 #include <string>
 #include <vector>
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 
 class ConsoleTable _zcp_final {
 public:

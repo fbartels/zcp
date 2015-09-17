@@ -63,7 +63,7 @@
 #include "Mem.h"
 #include "stringutil.h"
 
-#include "charset/convstring.h"
+#include <zarafa/charset/convstring.h>
 #include "EntryPoint.h"
 
 #include <boost/algorithm/string/case_conv.hpp>

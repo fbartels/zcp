@@ -52,7 +52,7 @@
 #include "options.h"
 #include <mapidefs.h>
 #include "ECLogger.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include "SMIMEMessage.h"
 
 class MAPIToVMIME

@@ -91,7 +91,7 @@
 
 #include "EntryPoint.h"
 
-#include <charset/convstring.h>
+#include <zarafa/charset/convstring.h>
 
 using namespace std;
 

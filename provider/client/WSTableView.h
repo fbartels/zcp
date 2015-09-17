@@ -51,7 +51,7 @@
 #include "ECUnknown.h"
 #include "Zarafa.h"
 
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 #include <mapi.h>
 #include <mapispi.h>
 

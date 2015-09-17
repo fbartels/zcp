@@ -45,7 +45,7 @@
 #include "base64.h"
 
 #include <string>
-#include <charset/convert.h>
+#include <zarafa/charset/convert.h>
 #include <cassert>
 #include "SymmetricCrypt.h"
 

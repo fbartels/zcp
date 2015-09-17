@@ -70,8 +70,8 @@
 #include "ECABEntryID.h"
 #include "ECGetText.h"
 
-#include "charset/convert.h"
-#include "charset/convstring.h"
+#include <zarafa/charset/convert.h>
+#include <zarafa/charset/convstring.h>
 
 #include "PyMapiPlugin.h"
 

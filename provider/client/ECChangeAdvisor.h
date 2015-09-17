@@ -53,7 +53,7 @@
 #include <ECUnknown.h>
 #include <IECChangeAdvisor.h>
 #include "ECICS.h"
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 
 #include <map>
 

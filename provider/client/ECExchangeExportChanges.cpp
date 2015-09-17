@@ -73,7 +73,7 @@
 #include <arpa/inet.h>
 #endif
 
-#include <charset/convert.h>
+#include <zarafa/charset/convert.h>
 
 #ifdef _DEBUG
 #undef THIS_FILE

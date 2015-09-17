@@ -52,7 +52,7 @@
 #include "ECSessionManager.h"
 #include "ECDatabaseFactory.h"
 #include "ECStatsCollector.h"
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 
 #include "ECTPropsPurge.h"
 

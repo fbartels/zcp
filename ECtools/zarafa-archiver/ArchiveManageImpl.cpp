@@ -49,7 +49,7 @@
 #include "ArchiveManageImpl.h"
 #include "ArchiverSession.h"
 #include "helpers/StoreHelper.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include "ECACL.h"
 #include "ECConfig.h"
 #include "userutil.h"

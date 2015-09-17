@@ -55,7 +55,7 @@
 #include "ECGenericProp.h"
 #include "WSMAPIPropStorage.h"
 
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 #include "soapZarafaCmdProxy.h"
 
 #include <mapi.h>

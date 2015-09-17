@@ -73,7 +73,7 @@
 #endif
 
 // The header files we use for communication with the server
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 #include "soapZarafaCmdProxy.h"
 #include "ZarafaCmd.nsmap"
 #include "Mem.h"
@@ -91,9 +91,9 @@
 #include "stringutil.h"
 #include "ZarafaVersions.h"
 
-#include "charset/convert.h"
-#include "charset/utf8string.h"
-#include "charset/convstring.h"
+#include <zarafa/charset/convert.h>
+#include <zarafa/charset/utf8string.h>
+#include <zarafa/charset/convstring.h>
 
 #include "SOAPSock.h"
 #include "mapi_ptr.h"

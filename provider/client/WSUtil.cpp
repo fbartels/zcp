@@ -79,8 +79,8 @@
 #include "SOAPUtils.h"
 #include "CommonUtil.h"
 
-#include <charset/convert.h>
-#include <charset/utf8string.h>
+#include <zarafa/charset/convert.h>
+#include <zarafa/charset/utf8string.h>
 #include "EntryPoint.h"
 #include "ECGetText.h"
 

@@ -45,7 +45,7 @@
 #include "WSMessageStreamExporter.h"
 #include "WSSerializedMessage.h"
 #include "WSTransport.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include "WSUtil.h"
 
 #ifdef _DEBUG

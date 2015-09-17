@@ -44,7 +44,7 @@
 #ifndef ECGENPROPS_H
 #define ECGENPROPS_H
 
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 
 #include <string>
 #include <map>

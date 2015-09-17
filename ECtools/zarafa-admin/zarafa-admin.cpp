@@ -70,7 +70,7 @@
 #include "Util.h"
 #include "ECRestriction.h"
 #include "ECABEntryID.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include "ConsoleTable.h"
 #include "mapi_ptr.h"
 #include "ECFeatures.h"

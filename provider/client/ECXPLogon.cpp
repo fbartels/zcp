@@ -65,7 +65,7 @@
 #include "ECMsgStore.h"
 #include "ECMessage.h"
 
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 
 #include "ECDebug.h"
 #include "ECRestriction.h"

@@ -45,7 +45,7 @@
 
 #include <string>
 #include <zarafa/platform.h>
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 
 /**
  * Authenticate a user through Kerberos

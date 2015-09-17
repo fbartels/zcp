@@ -53,7 +53,7 @@
 #include <typeinfo>
 
 #include <iconv.h>
-#include "traits.h"
+#include <zarafa/charset/traits.h>
 
 /**
  * @brief	Exception class

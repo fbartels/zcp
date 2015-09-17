@@ -46,7 +46,7 @@
 
 #include <pthread.h>
 
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 #include "ECDatabase.h"
 #include "ECDatabaseUtils.h"
 #include "ECSession.h"

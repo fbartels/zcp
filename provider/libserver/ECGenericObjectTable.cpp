@@ -66,7 +66,7 @@
  */
 
 #include "soapH.h"
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 
 #include <mapidefs.h>
 #include <mapitags.h>

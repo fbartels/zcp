@@ -57,7 +57,7 @@
 #include "IECUnknown.h"
 #include "Util.h"
 #include "ecversion.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include "mapi_ptr.h"
 
 //#include "IECSecurity.h"

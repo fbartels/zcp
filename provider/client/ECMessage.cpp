@@ -68,7 +68,7 @@
 #include "ECMemStream.h"
 
 #include <charset/utf32string.h>
-#include <charset/convert.h>
+#include <zarafa/charset/convert.h>
 
 using namespace std;
 

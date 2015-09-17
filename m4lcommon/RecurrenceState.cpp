@@ -51,8 +51,8 @@
 
 #include "stringutil.h"
 #include "RecurrenceState.h"
-#include "charset/convert.h"
-#include "charset/utf16string.h"
+#include <zarafa/charset/convert.h>
+#include <zarafa/charset/utf16string.h>
 
 #ifndef WIN32
 #define DEBUGREAD 0

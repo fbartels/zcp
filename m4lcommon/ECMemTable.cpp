@@ -54,9 +54,9 @@
 #include "Util.h"
 #include "Trace.h"
 #include "CommonUtil.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 
 #include "ECDebug.h"
 #include <algorithm>

@@ -28,9 +28,7 @@ nobase_pkginclude_HEADERS = \
 	SymmetricCrypt.h TimeUtil.h TmpPath.h Trace.h UnixUtil.h \
 	base64.h fileutil.h md5.h my_getopt.h pthreadutil.h \
 	stringutil.h threadutil.h ustringutil.h utf8.h \
-	charset/convert.h charset/traits.h charset/utf32string.h \
-	charset/utf8string.h charset/utf16string.h charset/convstring.h \
-	charset/localeutil.h \
+	charset/utf32string.h charset/localeutil.h \
 	ustringutil/utfutil.h \
 	utf8/checked.h utf8/core.h utf8/unchecked.h
 libzcp_common_util_la_SOURCES = \
@@ -61,7 +59,7 @@ nobase_pkginclude_HEADERS += \
 	ECABEntryID.h ECDebug.h ECDebugPrint.h ECGuid.h \
 	ECFifoStream.h ECKeyTable.h ECMemStream.h ECUnknown.h \
 	HtmlEntity.h HtmlToTextParser.h IStreamAdapter.h \
-	MAPIErrors.h ZarafaCode.h codepage.h rtfutil.h
+	MAPIErrors.h codepage.h rtfutil.h
 libzcp_common_mapi_la_SOURCES = \
 	ECABEntryID.cpp ECDebug.cpp ECDebugPrint.cpp ECGuid.cpp \
 	ECFifoStream.cpp ECKeyTable.cpp ECMemStream.cpp ECUnknown.cpp \

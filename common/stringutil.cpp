@@ -43,7 +43,7 @@
 
 #include <zarafa/platform.h>
 #include "stringutil.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include <sstream>
 
 #include "ECIConv.h"

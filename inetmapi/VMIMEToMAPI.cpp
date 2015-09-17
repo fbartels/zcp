@@ -89,7 +89,7 @@
 #include "Util.h"
 #include "CommonUtil.h"
 #include "namedprops.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include "stringutil.h"
 #include "mapi_ptr.h"
 

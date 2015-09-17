@@ -42,7 +42,7 @@
  */
 
 #include <zarafa/platform.h>
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 #include "soapH.h"
 #include "ECClientUpdate.h"
 #include "ECLicenseClient.h"

@@ -63,7 +63,7 @@
 #include "ECDebug.h"
 
 #include "ZarafaUtil.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include "utf8.h"
 
 #include "ECInterfaceDefs.h"

@@ -50,8 +50,8 @@
 
 #include "userutil.h"
 
-#include <charset/utf8string.h>
-#include <charset/convert.h>
+#include <zarafa/charset/utf8string.h>
+#include <zarafa/charset/convert.h>
 #include "ECDefs.h"
 #include "ECGuid.h"
 #include "IECServiceAdmin.h"

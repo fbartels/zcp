@@ -45,7 +45,7 @@
 #define ustringutil_INCLUDED
 
 #include <zarafa/zcdefs.h>
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 #include <string>
 
 #if HAVE_ICU

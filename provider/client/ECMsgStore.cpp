@@ -88,7 +88,7 @@ typedef mapi_memory_ptr<char> MAPIStringPtr;
 typedef mapi_object_ptr<WSTransport> WSTransportPtr;
 typedef mapi_object_ptr<ECMessage, IID_ECMessage> ECMessagePtr;
 
-#include <charset/convstring.h>
+#include <zarafa/charset/convstring.h>
 
 using namespace std;
 

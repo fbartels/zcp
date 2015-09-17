@@ -75,8 +75,8 @@
 #include "ECFeatureList.h"
 #include <EMSAbTag.h>
 
-#include <charset/convert.h>
-#include <charset/utf8string.h>
+#include <zarafa/charset/convert.h>
+#include <zarafa/charset/utf8string.h>
 
 #include "threadutil.h"
 

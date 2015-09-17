@@ -68,7 +68,7 @@
 #include <mapiext.h>
 #include <edkmdb.h>
 #include "CommonUtil.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 // inetmapi
 #include "inetmapi.h"
 #include "VMIMEToMAPI.h"

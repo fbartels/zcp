@@ -51,7 +51,7 @@
 #include "globals.h"
 ZEND_EXTERN_MODULE_GLOBALS(mapi)
 
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include "options.h"
 
 /*

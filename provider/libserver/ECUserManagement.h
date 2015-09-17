@@ -48,7 +48,7 @@
 #include <map>
 #include <pthread.h>
 
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 #include "ZarafaUser.h"
 #include "ECConfig.h"
 #include "ECSession.h"

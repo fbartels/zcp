@@ -118,7 +118,7 @@ typedef std::auto_ptr<Collator> unique_ptr_Collator;
 
 #else
 #include <cstring>
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #endif
 
 #ifdef _DEBUG

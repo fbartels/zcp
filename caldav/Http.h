@@ -57,7 +57,7 @@
 #include <libxml/xmlmemory.h>
 #include <libxml/uri.h>
 #include <libxml/globals.h>
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 
 
 #define HTTP_CHUNK_SIZE 10000

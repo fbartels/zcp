@@ -48,7 +48,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "traits.h"
+#include <zarafa/charset/traits.h>
 
 #ifdef LINUX
 #define UTF16_CHAR unsigned short

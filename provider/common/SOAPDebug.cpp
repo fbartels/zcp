@@ -43,7 +43,7 @@
 
 #include <zarafa/platform.h>
 #include "SOAPDebug.h"
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 #include "ECDebug.h"
 
 #include <edkmdb.h>

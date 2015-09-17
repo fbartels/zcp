@@ -80,7 +80,7 @@
 #include "vmime/net/defaultConnectionInfos.hpp"
 
 #include "ECLogger.h"
-#include "charset/traits.h"
+#include <zarafa/charset/traits.h>
 
 #if VMIME_HAVE_SASL_SUPPORT
 	#include "vmime/security/sasl/SASLContext.hpp"

@@ -55,7 +55,7 @@
 
 #include "ECDebug.h"
 
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include "EntryPoint.h"
 
 #ifdef _DEBUG

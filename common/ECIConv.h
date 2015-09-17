@@ -45,7 +45,7 @@
 #define ICONV_H
 
 #include <zarafa/zcdefs.h>
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include <string>
 
 class ECIConv _zcp_final {

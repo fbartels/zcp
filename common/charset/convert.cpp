@@ -42,7 +42,7 @@
  */
 
 #include <zarafa/platform.h>
-#include "convert.h"
+#include <zarafa/charset/convert.h>
 
 #include <mapicode.h>
 

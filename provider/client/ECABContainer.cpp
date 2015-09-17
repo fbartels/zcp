@@ -64,7 +64,7 @@
 #include <edkmdb.h>
 #include <mapiutil.h>
 
-#include <charset/convstring.h>
+#include <zarafa/charset/convstring.h>
 #include "ECGetText.h"
 
 #ifdef _DEBUG

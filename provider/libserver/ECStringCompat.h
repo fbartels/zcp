@@ -45,7 +45,7 @@
 #define ECSTRINGCOMPAT_H
 
 #include <boost/noncopyable.hpp>
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 #include "Zarafa.h"
 #include "SOAPUtils.h"
 #include <mapidefs.h>

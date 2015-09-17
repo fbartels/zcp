@@ -45,7 +45,7 @@
 
 #include "ECPropertyEntry.h"
 #include "Mem.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

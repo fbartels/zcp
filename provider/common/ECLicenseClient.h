@@ -49,7 +49,7 @@
 #include <string>
 
 #include "ECChannelClient.h"
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 
 class ECLicenseClient _zcp_final : public ECChannelClient{
 public:

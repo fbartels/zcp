@@ -51,7 +51,7 @@
 #include "CommonUtil.h"
 
 #include <zarafa/tstring.h>
-#include <charset/convstring.h>
+#include <zarafa/charset/convstring.h>
 
 #include <string>
 using namespace std;

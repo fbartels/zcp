@@ -85,7 +85,7 @@
 #endif
 
 #include <zarafa/zcdefs.h>
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 
 #include <list>
 #include <map>

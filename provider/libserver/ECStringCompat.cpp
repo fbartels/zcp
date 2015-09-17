@@ -46,8 +46,8 @@
 
 #include "soapH.h"
 
-#include "charset/convert.h"
-#include "charset/utf8string.h"
+#include <zarafa/charset/convert.h>
+#include <zarafa/charset/utf8string.h>
 #include "utf8.h"
 
 using namespace std;

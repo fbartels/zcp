@@ -53,7 +53,7 @@
 #include <set>
 
 #include "soapH.h"
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 #include "ECNotification.h"
 #include "ECTableManager.h"
 

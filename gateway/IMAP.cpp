@@ -73,7 +73,7 @@
 #include <edkmdb.h>
 #include "stringutil.h"
 #include "codepage.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include "restrictionutil.h"
 #include "ecversion.h"
 #include "ECGuid.h"

@@ -47,7 +47,7 @@
 #include "mapi_ptr.h"
 #include "ECInterfaceDefs.h"
 #include "Trace.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 
 #include <mapix.h>
 

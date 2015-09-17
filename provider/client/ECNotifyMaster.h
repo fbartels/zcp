@@ -50,7 +50,7 @@
 
 #include "ECSessionGroupManager.h"
 #include "ECUnknown.h"
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 
 class ECNotifyClient;
 class ECNotifyMaster;

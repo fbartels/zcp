@@ -65,7 +65,7 @@
 #include "favoritesutil.h"
 #include "restrictionutil.h"
 
-#include <charset/convstring.h>
+#include <zarafa/charset/convstring.h>
 
 #include "ECGetText.h"
 

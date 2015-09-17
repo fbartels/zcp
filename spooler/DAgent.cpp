@@ -137,7 +137,7 @@
 #include "archive.h"
 #include "helpers/MAPIPropHelper.h"
 #include "options.h"			// inetmapi/options.h
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include "base64.h"
 
 #include "IECServiceAdmin.h"

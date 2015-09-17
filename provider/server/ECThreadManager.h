@@ -49,7 +49,7 @@
 
 #include "ECLogger.h"
 #include "ECConfig.h"
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 #include "SOAPUtils.h"
 #include "soapH.h"
 

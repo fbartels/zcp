@@ -48,7 +48,7 @@
 
 #include <mapispi.h>
 
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 #include "ClientUtil.h"
 
 class ECNotifyMaster;

@@ -48,7 +48,7 @@
 #include <mapiutil.h>
 #include <edkmdb.h>
 #include <Python.h>
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include "conversion.h"
 #include "scl.h"
 

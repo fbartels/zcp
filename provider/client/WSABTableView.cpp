@@ -44,7 +44,7 @@
 #include <zarafa/platform.h>
 #include "Zarafa.h"
 
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 #include <mapi.h>
 #include <mapispi.h>
 #include "WSABTableView.h"

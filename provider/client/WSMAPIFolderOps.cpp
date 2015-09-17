@@ -51,7 +51,7 @@
 #include "SOAPUtils.h"
 #include "WSUtil.h"
 
-#include <charset/utf8string.h>
+#include <zarafa/charset/utf8string.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

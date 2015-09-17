@@ -46,7 +46,7 @@
 
 #include "ECLogger.h"
 #include "ECGetText.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include "mapi_ptr.h"
 
 #include "helpers/StoreHelper.h"

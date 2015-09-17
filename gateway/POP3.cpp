@@ -60,9 +60,9 @@
 #include <mapiext.h>
 
 #include "stringutil.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include "ecversion.h"
-#include "charset/utf8string.h"
+#include <zarafa/charset/utf8string.h>
 #include "ECFeatures.h"
 
 #include "POP3.h"

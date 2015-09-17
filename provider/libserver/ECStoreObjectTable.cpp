@@ -66,7 +66,7 @@
  */
 
 #include "soapH.h"
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 
 #include <mapidefs.h>
 #include <mapitags.h>
@@ -85,8 +85,8 @@
 #include "ECTPropsPurge.h"
 #include "SOAPUtils.h"
 #include "stringutil.h"
-#include <charset/utf8string.h>
-#include <charset/convert.h>
+#include <zarafa/charset/utf8string.h>
+#include <zarafa/charset/convert.h>
 
 #include "Trace.h"
 #include "ECSessionManager.h"

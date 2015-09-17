@@ -51,8 +51,8 @@
 #include <mapiutil.h>
 #include <mapix.h>
 #include <namedprops.h>
-#include <charset/utf16string.h>
-#include <charset/convert.h>
+#include <zarafa/charset/utf16string.h>
+#include <zarafa/charset/convert.h>
 
 #include "RecurrenceState.h"
 #include "zarafa-fsck.h"

@@ -62,7 +62,7 @@
 #include "ECTags.h"
 #include "my_getopt.h"
 #include "ecversion.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include "MAPIConsoleTable.h"
 #include "ECLogger.h"
 

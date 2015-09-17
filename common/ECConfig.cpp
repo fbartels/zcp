@@ -43,7 +43,7 @@
 
 #include <zarafa/platform.h>
 #include "ECConfigImpl.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

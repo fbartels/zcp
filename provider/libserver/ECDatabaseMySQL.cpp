@@ -55,7 +55,7 @@
 #include "ECUserManagement.h"
 #include "ECConfig.h"
 #include "ECLogger.h"
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 
 #include "ecversion.h"
 

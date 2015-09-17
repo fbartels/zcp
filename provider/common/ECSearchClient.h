@@ -50,7 +50,7 @@
 #include <string>
 
 #include <soapH.h>
-#include <ZarafaCode.h>
+#include <zarafa/ZarafaCode.h>
 
 #include "ECChannelClient.h"
 

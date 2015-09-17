@@ -62,7 +62,7 @@
 
 #include "ZarafaICS.h"
 
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include "ECStringCompat.h"
 #include "ECMAPI.h"
 

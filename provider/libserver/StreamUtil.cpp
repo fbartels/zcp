@@ -55,8 +55,8 @@
 #include "ECMemStream.h"
 #include "MAPIErrors.h"
 
-#include "charset/convert.h"
-#include "charset/utf8string.h"
+#include <zarafa/charset/convert.h>
+#include <zarafa/charset/utf8string.h>
 
 #include <ECFifoBuffer.h>
 #include <ECSerializer.h>

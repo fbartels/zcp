@@ -56,7 +56,7 @@
 #include "stringutil.h"
 #include "ECConfigImpl.h"
 
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 
 #include "boost_compat.h"
 

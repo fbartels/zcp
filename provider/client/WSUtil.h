@@ -47,7 +47,7 @@
 #include <mapidefs.h>
 #include <mapicode.h>
 #include "Zarafa.h"
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 
 #include "soapZarafaCmdProxy.h"
 

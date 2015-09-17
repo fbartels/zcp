@@ -41,56 +41,113 @@
  *
  */
 
-#ifndef convstring_INCLUDED
-#define convstring_INCLUDED
+#ifndef utf8string_INCLUDED
+#define utf8string_INCLUDED
 
 #include <zarafa/zcdefs.h>
-#include "convert.h"
-#include <zarafa/tstring.h>
 #include <string>
-#include <charset/utf8string.h>
+#include <stdexcept>
 
-#include <mapidefs.h>
+#include <zarafa/charset/traits.h>
 
-class convstring _zcp_final {
+/**
+ * @brief	This class represents an UTF-8 string.
+ *
+ * This class does not expose the same methods as STL's std::string as most of those don't make
+ * much sense.
+ */
+class utf8string _zcp_final {
 public:
-	static convstring from_SPropValue(const SPropValue *lpsPropVal, bool bCheapCopy = true);
-	static convstring from_SPropValue(const SPropValue &sPropVal, bool bCheapCopy = true);
-
-	convstring();
-	convstring(const convstring &other);
-	convstring(const char *lpsz, bool bCheapCopy = true);
-	convstring(const wchar_t *lpsz, bool bCheapCopy = true);
-	convstring(const TCHAR *lpsz, ULONG ulFlags, bool bCheapCopy = true);
+	typedef std::string::value_type		value_type;
+	typedef std::string::const_pointer	const_pointer;
+	typedef std::string::size_type		size_type;
 	
-	bool null_or_empty() const;
-	
-	operator utf8string() const;
-	operator std::string() const;
-	operator std::wstring() const;
-	const char *c_str() const;
-	const wchar_t *wc_str() const;
-	const char *u8_str() const;
+	static utf8string from_string(const std::string &str) {
+		utf8string s;
+		s.m_str.assign(str);
+		return s;
+	}
 
-#ifdef UNICODE
-	#define t_str	wc_str
-#else
-	#define t_str	c_str
-#endif
+	static utf8string null_string() {
+		utf8string s;
+		s.set_null();
+		return s;
+	}
+
+	utf8string(): m_bNull(false) {}
+	utf8string(const utf8string &other): m_bNull(other.m_bNull), m_str(other.m_str) {}
+	utf8string(size_t n, char c): m_bNull(false), m_str(n, c) {}
+	
+	utf8string &operator=(const utf8string &other) {
+		if (this != &other) {
+			m_bNull = other.m_bNull;
+			m_str = other.m_str;
+		}
+			
+		return *this;
+	}
+
+	const_pointer c_str() const {
+		return m_bNull ? NULL : m_str.c_str();
+	}
+
+	const_pointer data() const {
+		return m_bNull ? NULL : m_str.data();
+	}
+	
+	const std::string &str() const {
+		return m_str;
+	}
+
+	size_type size() const {
+		return m_str.size();
+	}
+	
+	bool empty() const {
+		return m_str.empty();
+	}
+
+	size_type length() const {
+		return m_str.length();
+	}
+	
+	void append(const_pointer lpData, size_t cbData) {
+		m_str.append(lpData, cbData);
+		m_bNull = false;
+	}
+
+	void append(const utf8string &str) {
+		m_str.append(str.m_str);
+		m_bNull = false;
+	}
+	
+	void clear() {
+		m_str.clear();
+	}
+
+	void set_null() {
+		clear();
+		m_bNull = true;
+	}
 	
 private:
-	template<typename T>
-	T convert_to() const;
-	
-	template<typename T>
-	T convert_to(const char *tocode) const;
-
-private:
-	const TCHAR *m_lpsz;
-	ULONG		m_ulFlags;
-	tstring		m_str;
-
-	mutable convert_context	m_converter;
+	bool m_bNull;
+	std::string	m_str;
 };
 
-#endif // ndef convstring_INCLUDED
+template <>
+class iconv_charset<utf8string> _zcp_final {
+public:
+	static const char *name() {
+		return "UTF-8";
+	}
+	static const char *rawptr(const utf8string &from) {
+		return reinterpret_cast<const char*>(from.c_str());
+	}
+	static size_t rawsize(const utf8string &from) {
+		return from.size();
+	}
+};
+
+
+#endif //ndef utf8string_INCLUDED

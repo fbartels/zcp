@@ -44,7 +44,7 @@
 #ifndef STORAGEUTIL_H
 #define STORAGEUTIL_H
 
-#include <ZarafaCode.h>
+#include <zarafa/ZarafaCode.h>
 #include <mapidefs.h>
 
 class ECDatabase;

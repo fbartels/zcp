@@ -45,7 +45,7 @@
 
 #include <iostream>
 #include "my_getopt.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 
 #include <cmath>
 #include <mapidefs.h>

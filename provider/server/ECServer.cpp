@@ -78,7 +78,7 @@
 
 #include <sys/stat.h>
 #include "ECScheduler.h"
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 #include "ZarafaCmd.h"
 
 #include "ECServerEntrypoint.h"
@@ -88,7 +88,7 @@
 #include <libintl.h>
 #include <map>
 #include <zarafa/tstring.h>
-#include <charset/convstring.h>
+#include <zarafa/charset/convstring.h>
 
 #ifdef WIN32
 #include "ECProcessPriority.h"

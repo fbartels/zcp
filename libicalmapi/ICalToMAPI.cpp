@@ -57,7 +57,7 @@
 #include <libical/ical.h>
 #include <algorithm>
 #include <vector>
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 
 class ICalToMapiImpl : public ICalToMapi {
 public:

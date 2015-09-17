@@ -59,7 +59,7 @@
 #include "ECDebug.h"
 #include "ECGuid.h"
 #include "ECMemTable.h"
-#include "charset/utf16string.h"
+#include <zarafa/charset/utf16string.h>
 
 #include "CommonUtil.h"
 #include "stringutil.h"
@@ -69,7 +69,7 @@
 
 #include <string>
 #include <map>
-#include <charset/convert.h>
+#include <zarafa/charset/convert.h>
 
 #ifdef WIN32
 HMODULE g_hLibMapi = 0;

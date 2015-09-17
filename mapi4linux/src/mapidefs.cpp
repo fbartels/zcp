@@ -50,7 +50,7 @@
 #include "ECDebug.h"
 #include "Util.h"
 #include "ECMemTable.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include "ustringutil.h"
 
 #include <mapi.h>

@@ -44,7 +44,7 @@
 #include <zarafa/platform.h>
 
 #include "Zarafa.h"
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 
 #include <mapidefs.h>
 #include <mapitags.h>

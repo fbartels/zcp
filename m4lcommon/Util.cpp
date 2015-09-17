@@ -59,7 +59,7 @@
 #include "ECIConv.h"
 #include "CommonUtil.h"
 #include "stringutil.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include <zarafa/tstring.h>
 
 #include "ECMemStream.h"
@@ -79,7 +79,6 @@
 using namespace std;
 
 #include "ECGetText.h"
-#include "charset/convert.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

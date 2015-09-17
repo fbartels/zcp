@@ -66,8 +66,8 @@
 #include "base64.h"
 #include "mapi_ptr.h"
 
-#include "charset/convert.h"
-#include "charset/utf16string.h"
+#include <zarafa/charset/convert.h>
+#include <zarafa/charset/utf16string.h>
 
 #include "mapiext.h"
 #include "freebusytags.h"
