@@ -1,10 +1,6 @@
 # make sure common swig lib builds first
 
-SUBDIRS = . include/zarafa
-
-if WITH_PYTHON
-SUBDIRS += python
-endif
+SUBDIRS = . include/zarafa python
 
 AM_CPPFLAGS = ${ZCPPFLAGS} $(DEBUGFLAGS) \
 	-I$(top_srcdir)/mapi4linux/include -I$(top_srcdir)/provider/common \
