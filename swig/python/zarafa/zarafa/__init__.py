@@ -2113,8 +2113,8 @@ class Item(object):
                     yield Occurrence(self, d, d+datetime.timedelta(hours=1)) # XXX
             else:
                 yield Occurrence(self, self.start, self.end)
-        except MAPIErrorNotFound:
-            pass # XXX
+        except MAPIErrorNotFound: # XXX shouldn't happen
+            pass
 
     @to.setter
     def to(self, addrs):
@@ -2474,11 +2474,11 @@ class Recurrence:
             self.exceptions.append(exception)
 
 
-        # FIXME: move to class Item?
-        self.clipend = item.prop('appointment:33334').value
-        self.clipstart = item.prop('appointment:33333').value 
+        # FIXME: move to class Item? XXX also some of these properties do not seem to exist when syncing over Z-push
+#        self.clipend = item.prop('appointment:33334').value
+#        self.clipstart = item.prop('appointment:33333').value
         self.recurrence_pattern = item.prop('appointment:33330').value
-        self.invited = item.prop('appointment:33321').value
+#        self.invited = item.prop('appointment:33321').value
 
         # FIXME; doesn't dateutil have a list of this?
         rrule_weekdays = {0: SU, 1: MO, 2: TU, 3: WE, 4: TH, 5: FR, 6: SA} # FIXME: remove above
