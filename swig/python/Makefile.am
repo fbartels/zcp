@@ -3,7 +3,7 @@
 SUBDIRS = include/zarafa zarafa
 
 lib_LTLIBRARIES = libzcp_pyconv.la libzcp_pydirector.la
-pythonexeclib_LTLIBRARIES = _MAPICore.la _inetmapi.la _icalmapi.la _licenseclient.la
+pyexec_LTLIBRARIES = _MAPICore.la _inetmapi.la _icalmapi.la _licenseclient.la
 noinst_LTLIBRARIES = _libcommon.la _archiver.la _libfreebusy.la _RecurrenceState.la
 noinst_DATA = libzcp_pyconv.ldd _MAPICore.ldd _inetmapi.ldd _icalmapi.ldd \
 	_libcommon.ldd _archiver.ldd _libfreebusy.ldd _RecurrenceState.ldd \
@@ -137,7 +137,7 @@ _libfreebusy_la_SOURCES = libfreebusy_wrap.cxx libfreebusy_conv.h libfreebusy_co
 
 
 EXTRA_DIST = typemap_python.i helpers_python.i setup.py $(BUILT_SOURCES) MAPICore.py inetmapi.py icalmapi.py licenseclient.py MAPI/Defs.py  MAPI/__init__.py  MAPI/Struct.py  MAPI/Tags.py  MAPI/Time.py MAPI/Util/__init__.py MAPI/Util/Generators.py MAPI/Util/Iterators.py MAPI/Util/AddressBook.py MAPI/Util/codepage.py archiver_python.i
-datadir = $(pythonexeclibdir)
+datadir = ${pythondir}
 data_DATA = MAPICore.py inetmapi.py icalmapi.py licenseclient.py
 noinst_datadir = libcommon.py RecurrenceState.py
 
@@ -187,6 +187,6 @@ check-syntax:
 install-exec-local:
 	test -n "$(DESTDIR)" && pyroot="--root=$(DESTDIR)"; \
 	test "$(DISTRO)" = "suse" -o "$(DISTRO)" = "sles" && pyrpm="--record-rpm=INSTALLED_FILES"; \
-	cd ${top_srcdir}/swig/python/ && ${PYTHON} setup.py install $${pyroot} --prefix="$(prefix)" --install-purelib $(pythonexeclibdir) $${pyrpm}
+	cd ${top_srcdir}/swig/python/ && ${PYTHON} setup.py install $${pyroot} --prefix="${prefix}" --install-purelib ${pythondir} $${pyrpm}
 
 include ../../global.am

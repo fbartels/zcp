@@ -26,6 +26,16 @@ AC_PROG_INSTALL
 AC_PATH_PROG(PROG_XMLTO, xmlto)	# not an error if not found, just no manual pages
 AC_PATH_PROG(PROG_ANT, ant)		# not an error if not found, no 'make dist' (waxt package)
 
+AC_PATH_PROG([SWIG_EXEC], [swig])
+AS_IF([test "x$SWIG_EXEC" = "x"], [AC_MSG_ERROR([Cannot find swig binary])])
+
+
+AM_PATH_PYTHON([2.5])
+PYTHON_LIBS=$("$PYTHON" -c "import distutils.sysconfig as x; print('-lpython' + x.get_config_var('VERSION') + ' ' + x.get_config_var('LIBS') + ' ' + x.get_config_var('SYSLIBS'))")
+PYTHON_INCLUDES=$("$PYTHON" -c "import distutils.sysconfig as x; print('-I' + x.get_python_inc())")
+AC_SUBST([PYTHON_LIBS])
+AC_SUBST([PYTHON_INCLUDES])
+
 abs_top_srcdir=`cd $srcdir; pwd`
 abs_top_builddir=`pwd`
 
@@ -109,9 +119,12 @@ fi
 
 AC_ARG_ENABLE(unicode, AC_HELP_STRING([--enable-unicode],[enable unicode mode (compile flags -DUNICODE)]),
   [want_unicode=${enableval}],[want_unicode=yes])
+SWIG_FLAGS=""
 if test "$want_unicode" = "yes"; then
     ZCPPFLAGS="$ZCPPFLAGS -DUNICODE"
+    SWIG_FLAGS="-DUNICODE "
 fi
+AC_SUBST([SWIG_FLAGS])
 
 AC_ARG_ENABLE(tcmalloc, AC_HELP_STRING([--enable-tcmalloc],[enable use of tcmalloc minimal lib]),
   [want_tcmalloc=${enableval}],[want_tcmalloc=no])
@@ -270,14 +283,6 @@ AC_CHECK_FUNCS([random gettimeofday ftime localtime_r timegm gmtime gmtime_r mem
 #
 # find required/optional libraries
 #
-
-# checks for swig (optional if files are already generated in make dist) and python
-SWIG_CHECK_SWIG
-SWIG_CHECK_PYTHON
-if test "$want_unicode" = "yes"; then
-   SWIG_FLAGS="-DUNICODE"
-fi
-AC_SUBST(SWIG_FLAGS)
 
 AC_ARG_WITH([php], [AS_HELP_STRING([--without-php], [Disable building PHP components])])
 AM_CONDITIONAL([WITH_PHP], [test "$with_php" != "no"])
@@ -846,6 +851,6 @@ Boost		:
  FS ldflags	:	$BOOST_FILESYSTEM_LDFLAGS
  FS libs	:	$BOOST_FILESYSTEM_LIBS
 ICU libs	:	$ICU_LIBS
-Swig 		:	$want_swig
-Python module	:	$want_python
+Python flags	:	$PYTHON_INCLUDES
+Python libs	:	$PYTHON_LIBS
 ])

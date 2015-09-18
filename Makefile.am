@@ -6,15 +6,7 @@ SUBDIRS = . common m4lcommon mapi4linux libfreebusy zarafa-libsync \
 if WITH_PHP
 SUBDIRS += php-ext
 endif
-SUBDIRS += ECtools spooler gateway caldav installer po doc
-
-if WITH_SWIG
-SUBDIRS += swig
-else
-if WITH_PYTHON
-SUBDIRS += swig
-endif
-endif
+SUBDIRS += ECtools spooler gateway caldav installer po doc swig
 
 #EXTRA_DIST = version php-webclient-ajax
 EXTRA_DIST = version versionheader.sh php-webclient-ajax \
