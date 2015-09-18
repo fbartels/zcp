@@ -32,9 +32,6 @@ common/include/zarafa/ecversion.h: versionheader.sh
 
 dist-hook:
 	find $(distdir) -type d -name .svn -exec rm -rf {} \; 2>/dev/null || true
-if OSS_ONLY
-	[ -x $(top_srcdir)/fixup-distro.sh ] && $(top_srcdir)/fixup-distro.sh $(distdir)
-endif
 
 install-ajax-webaccess:
 	install -d -m 755 $(DESTDIR)/usr/share
