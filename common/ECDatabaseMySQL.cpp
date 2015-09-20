@@ -49,7 +49,7 @@
 
 #include "stringutil.h"
 #include "ECDefs.h"
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 #include <mapidefs.h>
 #include "CommonUtil.h"
 

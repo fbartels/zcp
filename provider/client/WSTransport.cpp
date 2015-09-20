@@ -85,7 +85,7 @@
 
 #include "WSABTableView.h"
 #include "WSABPropStorage.h"
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 #include "ClientUtil.h"
 #include "ECSessionGroupManager.h"
 #include "stringutil.h"

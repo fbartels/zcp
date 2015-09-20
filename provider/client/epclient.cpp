@@ -72,7 +72,7 @@
 #include <iostream>
 #endif
 
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 
 #include "ECDebug.h"
 #include <stringutil.h>

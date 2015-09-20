@@ -66,7 +66,7 @@
 using namespace std;
 #include "ECDatabaseFactory.h"
 #include "DBUserPlugin.h"
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 
 extern "C" {
 	UserPlugin* getUserPluginInstance(pthread_mutex_t *pluginlock, ECPluginSharedData *shareddata) {

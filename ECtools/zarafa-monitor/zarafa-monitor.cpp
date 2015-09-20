@@ -72,7 +72,7 @@
 #ifdef LINUX
 #include "UnixUtil.h"
 #endif
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 #include "charset/localeutil.h"
 
 using namespace std;

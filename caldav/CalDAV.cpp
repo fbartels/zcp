@@ -60,7 +60,7 @@
 #include <zarafa/ECLogger.h>
 #include "ECChannel.h"
 #include "my_getopt.h"
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 #include "CommonUtil.h"
 #include "SSLUtil.h"
 

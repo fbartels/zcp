@@ -61,7 +61,7 @@
 #include "stringutil.h"
 #include <zarafa/ECTags.h>
 #include "my_getopt.h"
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 #include <zarafa/charset/convert.h>
 #include "MAPIConsoleTable.h"
 #include <zarafa/ECLogger.h>

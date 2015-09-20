@@ -51,7 +51,7 @@
 #include "ECPluginFactory.h"
 #include <zarafa/ECConfig.h>
 #include <zarafa/ECLogger.h>
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 
 #ifdef EMBEDDED_USERPLUGIN
 	#include "DBUserPlugin.h"

@@ -76,7 +76,7 @@
 #include "ECChannel.h"
 #include "POP3.h"
 #include "IMAP.h"
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 
 #include "SSLUtil.h"
 #include "stringutil.h"

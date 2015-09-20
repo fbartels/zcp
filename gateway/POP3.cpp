@@ -61,7 +61,7 @@
 
 #include "stringutil.h"
 #include <zarafa/charset/convert.h>
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 #include <zarafa/charset/utf8string.h>
 #include "ECFeatures.h"
 

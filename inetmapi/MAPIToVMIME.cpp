@@ -81,7 +81,7 @@
 #include "Util.h"
 #include <zarafa/ECLogger.h>
 #include "codepage.h"
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 #include "SMIMEMessage.h"
 
 // icalmapi

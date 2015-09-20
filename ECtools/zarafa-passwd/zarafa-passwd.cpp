@@ -59,7 +59,7 @@
 #include <zarafa/ECTags.h>
 #include <zarafa/ECGuid.h>
 #include "CommonUtil.h"
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 #include "stringutil.h"
 #include "MAPIErrors.h"
 #include <zarafa/ECLogger.h>

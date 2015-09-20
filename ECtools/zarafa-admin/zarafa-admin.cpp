@@ -65,7 +65,7 @@
 #include "ECABEntryID.h"
 #include "CommonUtil.h"
 #include "stringutil.h"
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 #include "mapiext.h"
 #include "Util.h"
 #include "ECRestriction.h"

@@ -44,7 +44,7 @@
 #include "phpconfig.h"
 
 #include <zarafa/platform.h>
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 #include <cstdio>
 #include <ctime>
 #include <cmath>

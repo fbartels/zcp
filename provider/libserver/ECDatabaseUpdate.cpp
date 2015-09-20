@@ -52,7 +52,7 @@
 #include "ECDBDef.h"
 #include "ECUserManagement.h"
 
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 
 #include <mapidefs.h>
 #include <mapitags.h>

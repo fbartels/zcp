@@ -57,7 +57,7 @@
 #include <zarafa/ECLogger.h>
 #include <zarafa/ZarafaCode.h>
 
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 
 #include <mapidefs.h>
 #include "ECConversion.h"

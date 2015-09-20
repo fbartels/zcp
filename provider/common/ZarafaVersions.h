@@ -44,7 +44,7 @@
 #ifndef ZARAFAVERSIONS_INCLUDED
 #define ZARAFAVERSIONS_INCLUDED
 
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 
 #define MAKE_ZARAFA_VERSION(major, minor, update) \
 	((((major) & 0xff) << 24) | (((minor) & 0xff) << 16) | ((update) & 0xffff))

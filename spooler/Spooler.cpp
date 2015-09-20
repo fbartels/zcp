@@ -92,7 +92,7 @@
 #include "UnixUtil.h"
 #endif
 #include "my_getopt.h"
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 #include "Util.h"
 #include "stringutil.h"
 

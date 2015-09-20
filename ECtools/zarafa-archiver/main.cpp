@@ -49,7 +49,7 @@
 #include <zarafa/charset/convert.h>
 #include <zarafa/ECConfig.h>
 #include <zarafa/ECLogger.h>
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 #include "Archiver.h"
 
 #ifdef LINUX

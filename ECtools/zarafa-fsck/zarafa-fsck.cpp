@@ -57,7 +57,7 @@
 #include <edkmdb.h>
 #include <edkguid.h>
 #include <zarafa/charset/convert.h>
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 #include "charset/localeutil.h"
 #include "Util.h"
 #include <zarafa/ECLogger.h>

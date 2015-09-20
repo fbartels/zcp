@@ -71,6 +71,7 @@ Makefile.in
 # /common/
 /common/config.h*
 /common/ecversion.h
+/common/include/zarafa/ecversion.h
 /common/stamp-h1
 /common/zarafa.pc
 

@@ -42,7 +42,7 @@
  */
 
 #include <zarafa/platform.h>
-#include <ecversion.h>
+#include <zarafa/ecversion.h>
 
 #include "ECSyncLog.h"
 #include "ECSyncSettings.h"

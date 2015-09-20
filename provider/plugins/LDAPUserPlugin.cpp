@@ -69,7 +69,7 @@ using namespace std;
 
 #include "LDAPUserPlugin.h"
 #include "ldappasswords.h"
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 
 #ifndef PROP_ID
 // from mapidefs.h

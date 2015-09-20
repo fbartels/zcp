@@ -74,7 +74,7 @@
 using namespace std;
 
 #include "UnixUserPlugin.h"
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 
 /**
  * static buffer size for getpwnam_r() calls etc.
