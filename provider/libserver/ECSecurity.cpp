@@ -65,7 +65,7 @@
 #include "stringutil.h"
 #include "Trace.h"
 #include "Zarafa.h"
-#include "md5.h"
+#include <zarafa/md5.h>
 
 #include "ECDefs.h"
 #include <mapidefs.h>

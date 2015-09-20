@@ -47,7 +47,7 @@
 #include "ECDefs.h"
 #include "EMSAbTag.h"
 #include "stringutil.h"
-#include "md5.h"
+#include <zarafa/md5.h>
 #include <mapidefs.h>
 #include "base64.h"
 

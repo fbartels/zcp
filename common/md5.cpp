@@ -44,7 +44,7 @@
 #include <zarafa/platform.h>
 #include <string>
 #include <openssl/md5.h>
-#include "md5.h"
+#include <zarafa/md5.h>
 
 std::string zcp_md5_final_hex(MD5_CTX *ctx)
 {

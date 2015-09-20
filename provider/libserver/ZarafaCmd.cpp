@@ -87,7 +87,7 @@
 
 #include "Zarafa.h"
 #include "ZarafaUtil.h"
-#include "md5.h"
+#include <zarafa/md5.h>
 
 #include "ECAttachmentStorage.h"
 #include "ECGenProps.h"
