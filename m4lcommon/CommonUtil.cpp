@@ -75,7 +75,7 @@
 #include "edkguid.h"
 #include "mapiguidext.h"
 #include <edkmdb.h>
-#include "IECUnknown.h"
+#include <zarafa/IECUnknown.h>
 #include "IECServiceAdmin.h"
 #include "EMSAbTag.h"
 #include "ECRestriction.h"

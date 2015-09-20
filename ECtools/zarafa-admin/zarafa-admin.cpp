@@ -54,7 +54,7 @@
 
 #include "IECServiceAdmin.h"
 #include "IECSecurity.h"
-#include "IECUnknown.h"
+#include <zarafa/IECUnknown.h>
 
 #include "SSLUtil.h"
 #include <zarafa/ECConfig.h>

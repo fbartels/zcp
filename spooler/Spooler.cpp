@@ -77,7 +77,7 @@
 #include <mapiguid.h>
 #include <cctype>
 
-#include "IECUnknown.h"
+#include <zarafa/IECUnknown.h>
 #include "IECSpooler.h"
 #include "IECServiceAdmin.h"
 #include "IECSecurity.h"

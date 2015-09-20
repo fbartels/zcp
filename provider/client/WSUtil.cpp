@@ -84,7 +84,7 @@
 #include "EntryPoint.h"
 #include "ECGetText.h"
 
-#include "threadutil.h"
+#include <zarafa/threadutil.h>
 #include "SOAPSock.h"
 
 using namespace std;

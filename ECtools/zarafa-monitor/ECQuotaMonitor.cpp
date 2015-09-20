@@ -54,7 +54,7 @@
 //Zarafa includes
 #include "ECDefs.h"
 #include "ECABEntryID.h"
-#include "IECUnknown.h"
+#include <zarafa/IECUnknown.h>
 #include "Util.h"
 #include <zarafa/ecversion.h>
 #include <zarafa/charset/convert.h>

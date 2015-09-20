@@ -48,7 +48,7 @@
 #include "ECOfflineABImporter.h"
 #include "ECSyncUtil.h"
 #include "ECSyncSettings.h"
-#include "threadutil.h"
+#include <zarafa/threadutil.h>
 
 #include <IECExportAddressbookChanges.h>
 #include <IECExportChanges.h>

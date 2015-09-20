@@ -45,7 +45,7 @@
 #define ECUNKNOWN_H
 
 #include <zarafa/zcdefs.h>
-#include "IECUnknown.h"
+#include <zarafa/IECUnknown.h>
 #include <pthread.h>
 
 #include <list>

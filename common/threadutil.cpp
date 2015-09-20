@@ -42,7 +42,7 @@
  */
 
 #include <zarafa/platform.h>
-#include "threadutil.h"
+#include <zarafa/threadutil.h>
 
 CPthreadMutex::CPthreadMutex(bool bRecurse) {
 	pthread_mutexattr_t a;

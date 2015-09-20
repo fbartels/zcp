@@ -45,7 +45,7 @@
 
 #include <stringutil.h>
 
-#include "threadutil.h"
+#include <zarafa/threadutil.h>
 #include <zarafa/ECLogger.h>
 #include <zarafa/ECConfig.h>
 #include "ECSession.h"

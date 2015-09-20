@@ -49,7 +49,7 @@
 #endif
 
 #include "SOAPUtils.h"
-#include "threadutil.h"
+#include <zarafa/threadutil.h>
 #include "CommonUtil.h"
 #include <string>
 #include <map>

@@ -78,7 +78,7 @@
 #include <zarafa/charset/convert.h>
 #include <zarafa/charset/utf8string.h>
 
-#include "threadutil.h"
+#include <zarafa/threadutil.h>
 
 #include <boost/algorithm/string.hpp>
 namespace ba = boost::algorithm;

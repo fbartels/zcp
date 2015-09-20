@@ -82,7 +82,7 @@
 #include "ZarafaVersions.h"
 
 #include "pthreadutil.h"
-#include "threadutil.h"
+#include <zarafa/threadutil.h>
 #include <zarafa/boost_compat.h>
 
 #include <boost/filesystem.hpp>

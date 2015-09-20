@@ -54,7 +54,7 @@
 #include <mapiutil.h>
 
 #include "IECServiceAdmin.h"
-#include "IECUnknown.h"
+#include <zarafa/IECUnknown.h>
 
 #include <zarafa/ECTags.h>
 #include <zarafa/ECGuid.h>

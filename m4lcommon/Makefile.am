@@ -40,7 +40,6 @@ pkginclude_HEADERS = \
 	IECSpooler.h \
 	IECStatsCollector.h \
 	IECTestProtocol.h \
-	IECUnknown.h \
 	IMAPIOffline.h \
 	MAPIConsoleTable.h \
 	MAPINotifSink.h \

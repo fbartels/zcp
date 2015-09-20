@@ -141,7 +141,7 @@
 #include "base64.h"
 
 #include "IECServiceAdmin.h"
-#include "IECUnknown.h"
+#include <zarafa/IECUnknown.h>
 #include <zarafa/ECTags.h>
 #include "ECFeatures.h"
 

@@ -57,7 +57,7 @@
 #include "ECMAPI.h"
 #include "stringutil.h"
 #include "ECGenericObjectTable.h"
-#include "threadutil.h"
+#include <zarafa/threadutil.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

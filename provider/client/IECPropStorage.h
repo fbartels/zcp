@@ -60,7 +60,7 @@
 #ifndef IECPROPSTORAGE_H
 #define IECPROPSTORAGE_H
 
-#include "IECUnknown.h"
+#include <zarafa/IECUnknown.h>
 #include <mapi.h>
 #include <mapispi.h>
 #include <list>

@@ -47,7 +47,7 @@
 #include <zarafa/zcdefs.h>
 #include <algorithm>
 #include <mapiutil.h>
-#include "IECUnknown.h"
+#include <zarafa/IECUnknown.h>
 #include <zarafa/ECTags.h>
 #include <zarafa/ECGuid.h>
 #include "mapi_memory_ptr.h"

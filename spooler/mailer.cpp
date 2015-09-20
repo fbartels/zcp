@@ -54,7 +54,7 @@
 
 #include <zarafa/ECLogger.h>
 #include <zarafa/ECConfig.h>
-#include "IECUnknown.h"
+#include <zarafa/IECUnknown.h>
 #include <zarafa/ecversion.h>
 #include "IECSecurity.h"
 #include "IECServiceAdmin.h"

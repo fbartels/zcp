@@ -43,7 +43,7 @@
 
 #include <zarafa/platform.h>
 #include "ECLockManager.h"
-#include "threadutil.h"
+#include <zarafa/threadutil.h>
 
 #include <boost/utility.hpp>
 
