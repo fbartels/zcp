@@ -1,5 +1,5 @@
 %{
-#include "ECTags.h"
+#include <zarafa/ECTags.h>
 #include "IECUnknown.h"
 %}
 

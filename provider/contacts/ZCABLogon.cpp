@@ -45,7 +45,7 @@
 #include "Trace.h"
 #include "ZCABLogon.h"
 #include "ZCABContainer.h"
-#include "ECTags.h"
+#include <zarafa/ECTags.h>
 #include "ECDebug.h"
 #include "ECDebugPrint.h"
 #include <zarafa/ECGuid.h>

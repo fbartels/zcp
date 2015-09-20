@@ -54,7 +54,7 @@
 #include "Trace.h"
 #include "ECDebug.h"
 
-#include "ECTags.h"
+#include <zarafa/ECTags.h>
 
 #include "ECABProviderOffline.h"
 

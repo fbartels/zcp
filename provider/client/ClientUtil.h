@@ -46,7 +46,7 @@
 
 #include <mapispi.h>
 #include <string>
-#include "ECTags.h"
+#include <zarafa/ECTags.h>
 #include <edkmdb.h>
 #include <zarafa/tstring.h>
 

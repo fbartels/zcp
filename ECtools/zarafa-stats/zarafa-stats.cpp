@@ -59,7 +59,7 @@
 
 #include "CommonUtil.h"
 #include "stringutil.h"
-#include "ECTags.h"
+#include <zarafa/ECTags.h>
 #include "my_getopt.h"
 #include "ecversion.h"
 #include <zarafa/charset/convert.h>

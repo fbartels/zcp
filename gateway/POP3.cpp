@@ -55,7 +55,7 @@
 
 #include <CommonUtil.h>
 #include <Util.h>
-#include <ECTags.h>
+#include <zarafa/ECTags.h>
 #include <inetmapi.h>
 #include <mapiext.h>
 

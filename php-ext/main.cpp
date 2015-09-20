@@ -205,7 +205,7 @@ ZEND_END_ARG_INFO()
 #include "IECMultiStoreTable.h"
 #include <zarafa/IECLicense.h>
 
-#include "ECTags.h"
+#include <zarafa/ECTags.h>
 #include "ECDefs.h"
 
 #define USES_IID_IMAPIProp

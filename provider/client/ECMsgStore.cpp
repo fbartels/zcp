@@ -57,7 +57,7 @@
 #include "ECMAPIProp.h"
 #include "WSTransport.h"
 
-#include "ECTags.h"
+#include <zarafa/ECTags.h>
 
 #include <zarafa/ECGuid.h>
 #include "ECDebug.h"

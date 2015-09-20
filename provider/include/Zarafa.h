@@ -45,7 +45,7 @@
 #define ZARAFA_H
 
 #include <mapi.h>
-#include "ECTags.h"
+#include <zarafa/ECTags.h>
 #include "Trace.h"
 
 // We have 2 types of entryids: those of objects, and those of stores.

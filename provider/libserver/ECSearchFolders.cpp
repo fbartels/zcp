@@ -55,7 +55,7 @@
 #include "ECSessionManager.h"
 #include "ECStatsCollector.h"
 #include "ECIndexer.h"
-#include "ECTags.h"
+#include <zarafa/ECTags.h>
 #include "ZarafaCmdUtil.h"
 #include "stringutil.h"
 

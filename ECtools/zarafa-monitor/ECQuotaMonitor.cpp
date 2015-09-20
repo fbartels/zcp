@@ -62,7 +62,7 @@
 
 //#include "IECSecurity.h"
 #include <zarafa/ECGuid.h>
-#include "ECTags.h"
+#include <zarafa/ECTags.h>
 #include "IECServiceAdmin.h"
 #include "CommonUtil.h"
 #include "stringutil.h"

@@ -142,7 +142,7 @@
 
 #include "IECServiceAdmin.h"
 #include "IECUnknown.h"
-#include "ECTags.h"
+#include <zarafa/ECTags.h>
 #include "ECFeatures.h"
 
 #include "ECChannel.h"

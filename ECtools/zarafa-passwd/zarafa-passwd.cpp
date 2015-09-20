@@ -56,7 +56,7 @@
 #include "IECServiceAdmin.h"
 #include "IECUnknown.h"
 
-#include "ECTags.h"
+#include <zarafa/ECTags.h>
 #include <zarafa/ECGuid.h>
 #include "CommonUtil.h"
 #include "ecversion.h"

@@ -48,7 +48,7 @@
 #include <mapidefs.h>
 #include <mapix.h>
 #include <string>
-#include "ECTags.h"
+#include <zarafa/ECTags.h>
 #include "charset/utf32string.h"
 #include <list>
 

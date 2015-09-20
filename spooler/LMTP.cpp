@@ -58,7 +58,7 @@
 
 #include <CommonUtil.h>
 #include <fileutil.h>
-#include <ECTags.h>
+#include <zarafa/ECTags.h>
 #include "ECChannel.h"
 #include "LMTP.h"
 #include "stringutil.h"

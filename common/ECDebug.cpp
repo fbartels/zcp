@@ -51,7 +51,7 @@
 #include "freebusytags.h"
 #include "stringutil.h"
 #include <zarafa/charset/convert.h>
-#include "ECTags.h"
+#include <zarafa/ECTags.h>
 #include "EMSAbTag.h"
 #include "ECABEntryID.h"
 

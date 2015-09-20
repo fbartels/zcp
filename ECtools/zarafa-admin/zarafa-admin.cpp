@@ -59,7 +59,7 @@
 #include "SSLUtil.h"
 #include <zarafa/ECConfig.h>
 #include <zarafa/ECLogger.h>
-#include "ECTags.h"
+#include <zarafa/ECTags.h>
 #include "EMSAbTag.h"
 #include <zarafa/ECGuid.h>
 #include "ECABEntryID.h"

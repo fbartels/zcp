@@ -83,7 +83,7 @@
 #include "IECSecurity.h"
 #include <zarafa/ECGuid.h>
 #include "EMSAbTag.h"
-#include "ECTags.h"
+#include <zarafa/ECTags.h>
 #include "ECABEntryID.h"
 #include "CommonUtil.h"
 #include <zarafa/ECLogger.h>

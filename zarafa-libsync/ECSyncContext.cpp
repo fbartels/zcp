@@ -56,7 +56,7 @@
 
 #include <ECUnknown.h>
 #include <zarafa/ECGuid.h>
-#include <ECTags.h>
+#include <zarafa/ECTags.h>
 #include <zarafa/ECLogger.h>
 #include <stringutil.h>
 

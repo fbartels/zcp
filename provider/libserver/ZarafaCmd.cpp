@@ -71,7 +71,7 @@
 #include <algorithm>
 #include <cstdio>
 
-#include "ECTags.h"
+#include <zarafa/ECTags.h>
 #include "stringutil.h"
 #include "SOAPUtils.h"
 #include <zarafa/ZarafaCode.h>
