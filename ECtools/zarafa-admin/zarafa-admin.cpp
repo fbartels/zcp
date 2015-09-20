@@ -44,7 +44,7 @@
 #include <zarafa/platform.h>
 
 #include <iostream>
-#include "my_getopt.h"
+#include <zarafa/my_getopt.h>
 
 #include <cmath>
 #include <mapidefs.h>

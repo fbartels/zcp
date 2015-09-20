@@ -71,7 +71,7 @@
 
 #include <zarafa/ECLogger.h>
 #include <zarafa/ECConfig.h>
-#include "my_getopt.h"
+#include <zarafa/my_getopt.h>
 
 #include "ECChannel.h"
 #include "POP3.h"

@@ -91,7 +91,7 @@
 #ifdef LINUX
 #include "UnixUtil.h"
 #endif
-#include "my_getopt.h"
+#include <zarafa/my_getopt.h>
 #include <zarafa/ecversion.h>
 #include "Util.h"
 #include "stringutil.h"

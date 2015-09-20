@@ -62,7 +62,7 @@
 
 #include <mapiguid.h>
 #include <cctype>
-#include "my_getopt.h"
+#include <zarafa/my_getopt.h>
 
 #include "ECScheduler.h"
 #include "ECMonitorDefs.h"

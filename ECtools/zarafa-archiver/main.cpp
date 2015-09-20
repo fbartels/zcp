@@ -44,7 +44,7 @@
 #include <zarafa/platform.h>
 #include <iostream>
 #include "stringutil.h"
-#include "my_getopt.h"
+#include <zarafa/my_getopt.h>
 #include "archiver-common.h"
 #include <zarafa/charset/convert.h>
 #include <zarafa/ECConfig.h>

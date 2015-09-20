@@ -131,7 +131,7 @@
 #include "CommonUtil.h"
 #include "Util.h"
 #include <zarafa/ECLogger.h>
-#include "my_getopt.h"
+#include <zarafa/my_getopt.h>
 #include "restrictionutil.h"
 #include "rules.h"
 #include "archive.h"

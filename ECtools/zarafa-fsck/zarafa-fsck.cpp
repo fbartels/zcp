@@ -51,7 +51,7 @@
 #include <mapiguidext.h>
 #include <mapiutil.h>
 #include <mapix.h>
-#include <my_getopt.h>
+#include <zarafa/my_getopt.h>
 #include <namedprops.h>
 #include <stringutil.h>
 #include <edkmdb.h>
