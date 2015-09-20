@@ -48,7 +48,7 @@
 #include "archiver-common.h"
 #include <zarafa/charset/convert.h>
 #include "ECConfig.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "ecversion.h"
 #include "Archiver.h"
 

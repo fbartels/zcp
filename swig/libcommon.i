@@ -11,7 +11,7 @@
     #include "rtfutil.h"
     #include "favoritesutil.h"
     #include "Util.h"
-	#include "ECLogger.h"
+	#include <zarafa/ECLogger.h>
     #include "fileutil.h"
 	#include "IStreamAdapter.h"
 %}

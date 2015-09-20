@@ -79,7 +79,7 @@
 #include "stringutil.h"
 #include "mapicontact.h"
 #include "Util.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "codepage.h"
 #include "ecversion.h"
 #include "SMIMEMessage.h"

@@ -57,7 +57,7 @@
 #include "ECSearchFolders.h"
 #include "ECDatabaseFactory.h"
 #include "ECCacheManager.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "ECPluginFactory.h"
 #include "ECServerEntrypoint.h"
 #include "ECSessionGroup.h"

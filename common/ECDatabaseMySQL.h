@@ -50,7 +50,7 @@
 
 #include <zarafa/platform.h>
 #include "ECConfig.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include <zarafa/ZarafaCode.h>
 
 #include <pthread.h>

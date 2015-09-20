@@ -45,7 +45,7 @@
 #include <zarafa/ZarafaCode.h>
 
 #include "ECCache.h"
-#include <ECLogger.h>
+#include <zarafa/ECLogger.h>
 #include <stringutil.h>
 
 #ifdef _DEBUG

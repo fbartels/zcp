@@ -57,7 +57,7 @@
 #include <cerrno>
 #include <iconv.h>
 
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "CommonUtil.h"
 #include "ECTags.h"
 #include <zarafa/ECGuid.h>

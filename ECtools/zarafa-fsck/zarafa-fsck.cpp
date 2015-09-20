@@ -60,7 +60,7 @@
 #include "ecversion.h"
 #include "charset/localeutil.h"
 #include "Util.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "zarafa-fsck.h"
 
 using namespace std;

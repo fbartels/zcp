@@ -73,7 +73,7 @@
 #include "mapi_ptr.h"
 
 #include "HtmlToTextParser.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "HtmlEntity.h"
 
 using namespace std;

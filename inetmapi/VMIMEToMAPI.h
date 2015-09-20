@@ -48,7 +48,7 @@
 #include <list>
 #include <mapix.h>
 #include <mapidefs.h>
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "options.h"
 #include <zarafa/charset/convert.h>
 

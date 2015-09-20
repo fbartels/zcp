@@ -46,7 +46,7 @@
 #include "ECExchangeImportContentsChanges.h"
 #include "WSMessageStreamImporter.h"
 #include "ECMessageStreamImporterIStreamAdapter.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "ECSyncLog.h"
 
 #include "Util.h"

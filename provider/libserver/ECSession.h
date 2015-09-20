@@ -58,7 +58,7 @@
 #include "ECTableManager.h"
 
 #include "ECConfig.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "ECDatabaseFactory.h"
 #include "ECPluginFactory.h"
 #include "ECSessionGroup.h"

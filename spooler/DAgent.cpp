@@ -130,7 +130,7 @@
 #include "stringutil.h"
 #include "CommonUtil.h"
 #include "Util.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "my_getopt.h"
 #include "restrictionutil.h"
 #include "rules.h"

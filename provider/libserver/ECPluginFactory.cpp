@@ -50,7 +50,7 @@
 
 #include "ECPluginFactory.h"
 #include "ECConfig.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "ecversion.h"
 
 #ifdef EMBEDDED_USERPLUGIN

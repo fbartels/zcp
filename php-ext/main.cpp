@@ -50,7 +50,7 @@
 #include <ctime>
 
 #include "ECConfig.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "mapi_ptr.h"
 #include "ECRulesTableProxy.h"
 
@@ -220,7 +220,7 @@ ZEND_END_ARG_INFO()
 #include "util.h"
 #include "rtfutil.h"
 #include "CommonUtil.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 
 #include "ECImportContentsChangesProxy.h"
 #include "ECImportHierarchyChangesProxy.h"

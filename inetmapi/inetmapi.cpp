@@ -75,7 +75,7 @@
 #include "MAPIToVMIME.h"
 #include "ECVMIMEUtils.h"
 #include "ECMapiUtils.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "mapi_ptr.h"
 
 using namespace std;

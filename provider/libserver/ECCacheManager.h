@@ -51,7 +51,7 @@
 #include "ECDatabaseUtils.h"
 #include "ECGenericObjectTable.h"	// ECListInt
 #include "ECConfig.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "SOAPUtils.h"
 #include "ZarafaCmdUtil.h"
 #include <mapidefs.h>

@@ -48,7 +48,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "recurrence.h"
 #include "MAPIErrors.h"
 

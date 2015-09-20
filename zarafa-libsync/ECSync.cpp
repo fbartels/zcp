@@ -65,7 +65,7 @@
 #include "stringutil.h"
 #include "ECABEntryID.h"
 #include "ECSyncLog.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "mapi_ptr.h"
 #include "threadutil.h"
 

@@ -52,7 +52,7 @@
 #include "ZarafaUser.h"
 #include "ECConfig.h"
 #include "ECSession.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "ECDefs.h"
 #include "plugin.h"
 

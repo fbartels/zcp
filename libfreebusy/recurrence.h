@@ -47,7 +47,7 @@
 #include "RecurrenceState.h"
 #include <mapidefs.h>
 #include <mapix.h>
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "Util.h"
 #include <list>
 #include "TimeUtil.h"

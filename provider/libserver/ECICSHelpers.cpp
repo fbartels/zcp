@@ -56,7 +56,7 @@
 #include <string>
 #include <algorithm>
 
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 extern ECLogger* g_lpLogger;
 
 #ifdef _DEBUG

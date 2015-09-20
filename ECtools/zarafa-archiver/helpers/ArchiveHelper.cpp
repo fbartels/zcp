@@ -44,7 +44,7 @@
 #include <zarafa/platform.h>
 #include "ArchiveHelper.h"
 #include "ArchiverSession.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "StoreHelper.h"
 #include "ECACL.h"
 #include "ECABEntryID.h"

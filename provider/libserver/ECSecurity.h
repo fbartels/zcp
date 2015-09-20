@@ -51,7 +51,7 @@
 #include "ECUserManagement.h"
 #include "plugin.h"
 
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "ECConfig.h"
 #include "ECDefs.h"
 

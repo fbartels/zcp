@@ -62,7 +62,7 @@
 #include "ecversion.h"
 #include "stringutil.h"
 #include "MAPIErrors.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 
 using namespace std;
 

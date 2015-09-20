@@ -53,7 +53,7 @@
 
 #include "ECExportAddressbookChanges.h"
 
-#include <ECLogger.h>
+#include <zarafa/ECLogger.h>
 #include <ECSyncLog.h>
 #include <stringutil.h>
 #include <Util.h>

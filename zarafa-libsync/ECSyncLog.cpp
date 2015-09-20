@@ -47,7 +47,7 @@
 #include "ECSyncLog.h"
 #include "ECSyncSettings.h"
 #include "stringutil.h"
-#include <ECLogger.h>
+#include <zarafa/ECLogger.h>
 
 #include <cstdlib>
 #include <mapidefs.h>

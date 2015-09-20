@@ -47,7 +47,7 @@
 #include <pthread.h>
 #include <mapix.h>
 
-#include <ECLogger.h>
+#include <zarafa/ECLogger.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

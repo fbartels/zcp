@@ -54,7 +54,7 @@
 #include "stringutil.h"
 #include "Util.h"
 #include "CommonUtil.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "mapi_ptr.h"
 #include "mapiguidext.h"
 

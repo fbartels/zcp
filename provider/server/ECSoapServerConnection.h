@@ -48,7 +48,7 @@
 #include <zarafa/ZarafaCode.h>
 #include "ECThreadManager.h"
 #include "soapH.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "ECConfig.h"
 
 class ECSoapServerConnection

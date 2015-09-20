@@ -67,7 +67,7 @@
 #include "EMSAbTag.h"
 #include "ECConfig.h"
 #include "ECDefs.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "ECPluginSharedData.h"
 #include "stringutil.h"
 

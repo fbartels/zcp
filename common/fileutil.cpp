@@ -46,7 +46,7 @@
 #include <zarafa/charset/convert.h>
 #include <string>
 #include "ECIConv.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 
 #include <mapicode.h> // only for MAPI error codes
 #include <mapidefs.h> // only for MAPI error codes

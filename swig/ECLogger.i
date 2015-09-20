@@ -2,7 +2,7 @@
 // ECLogger director
 ////////////////////////////
 %{
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 
 class IECSimpleLogger {
 public:

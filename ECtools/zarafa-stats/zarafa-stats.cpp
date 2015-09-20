@@ -64,7 +64,7 @@
 #include "ecversion.h"
 #include <zarafa/charset/convert.h>
 #include "MAPIConsoleTable.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 
 using namespace std;
 

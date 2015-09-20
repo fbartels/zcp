@@ -43,7 +43,7 @@
 
 #include <zarafa/platform.h>
 
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 
 #ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>

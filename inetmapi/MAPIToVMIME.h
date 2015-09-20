@@ -51,7 +51,7 @@
 #include <vmime/mailbox.hpp>
 #include "options.h"
 #include <mapidefs.h>
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include <zarafa/charset/convert.h>
 #include "SMIMEMessage.h"
 

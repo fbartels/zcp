@@ -46,7 +46,7 @@
 #include <zarafa/ECGuid.h>
 #include <ECSyncLog.h>
 #include <ECDebug.h>
-#include <ECLogger.h>
+#include <zarafa/ECLogger.h>
 
 #include "ECChangeAdvisor.h"
 #include "ECMsgStore.h"

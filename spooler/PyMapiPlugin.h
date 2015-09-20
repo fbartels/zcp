@@ -45,7 +45,7 @@
 #define _PYMAPIPLUGIN_H
 
 #include <Python.h>
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "ECConfig.h"
 #include "PythonSWIGRuntime.h"
 #include <edkmdb.h>

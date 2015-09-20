@@ -52,7 +52,7 @@
 #include <sys/types.h>
 #include <sys/un.h>
 
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 
 class StatsClient _zcp_final {
 private:

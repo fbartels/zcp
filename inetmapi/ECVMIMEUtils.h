@@ -46,7 +46,7 @@
 
 #include <string>
 #include <set>
-#include <ECLogger.h>
+#include <zarafa/ECLogger.h>
 #include <vmime/vmime.hpp>
 #include "inetmapi.h"
 

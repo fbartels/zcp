@@ -50,7 +50,7 @@
 #include "ECDatabase.h"
 #include "ECDatabaseFactory.h"
 #include "ECDatabaseUtils.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "my_getopt.h"
 
 #include "ECConfig.h"

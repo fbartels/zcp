@@ -53,7 +53,7 @@
 #include <string>
 
 #include "ECConfig.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 
 // ECChannel is the communication channel with the other side. Initially, it is
 // a simple way to read/write full lines of data. The reason why we specify

@@ -57,7 +57,7 @@
 #include <iostream>
 #include <string>
 
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "ECChannel.h"
 #include "my_getopt.h"
 #include "ecversion.h"

@@ -53,7 +53,7 @@
 #include "ECICS.h"
 #include "ECMAPIProp.h"
 
-#include <ECLogger.h>
+#include <zarafa/ECLogger.h>
 #include <ECUnknown.h>
 #include <IECExportChanges.h>
 #include <IECImportContentsChanges.h>

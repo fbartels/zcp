@@ -52,7 +52,7 @@
 #include <mapix.h>
 #include <mapi.h>
 
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "ECConfig.h"
 #include "IECUnknown.h"
 #include "ecversion.h"

@@ -46,7 +46,7 @@
 
 #include <mapi.h>
 #include <mapiutil.h>
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 
 #include "userutil.h"
 

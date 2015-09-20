@@ -77,7 +77,7 @@
 #include "ECDebug.h"
 #include <stringutil.h>
 
-#include <ECLogger.h>
+#include <zarafa/ECLogger.h>
 
 #include <zarafa/ECGuid.h>
 #include <edkmdb.h>

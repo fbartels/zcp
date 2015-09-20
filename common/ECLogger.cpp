@@ -42,7 +42,7 @@
  */
 
 #include <zarafa/platform.h>
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include <cassert>
 #include <clocale>
 #include <pthread.h>

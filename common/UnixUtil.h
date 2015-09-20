@@ -48,7 +48,7 @@
 
 #include <sys/resource.h>
 
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "ECConfig.h"
 
 struct popen_rlimit {

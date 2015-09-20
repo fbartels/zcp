@@ -45,7 +45,7 @@
 #define ECNOTIFICATIONMANAGER_H
 
 #include "ECSession.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "ECConfig.h"
 
 #include <map>

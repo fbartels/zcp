@@ -46,7 +46,7 @@
 #include "ECOfflineABImporter.h"
 #include "ECSyncLog.h"
 
-#include <ECLogger.h>
+#include <zarafa/ECLogger.h>
 #include <ECABEntryID.h>
 #include <stringutil.h>
 

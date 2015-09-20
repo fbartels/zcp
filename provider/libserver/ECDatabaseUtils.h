@@ -49,7 +49,7 @@
 #include <zarafa/ZarafaCode.h>
 #include "ECDatabase.h"
 #include "ECDatabaseFactory.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 
 #include <string>
 
