@@ -50,7 +50,7 @@
 #include <mapicode.h>
 #include <mapitags.h>
 #include <mapiutil.h>
-#include "boost_compat.h"
+#include <zarafa/boost_compat.h>
 
 #include "Util.h"
 

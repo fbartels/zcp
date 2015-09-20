@@ -63,7 +63,7 @@ namespace ba = boost::algorithm;
 #include "ECSessionManager.h"
 #include "ECDatabase.h"
 #include "ECStatsCollector.h"
-#include "boost_compat.h"
+#include <zarafa/boost_compat.h>
 
 /* class and add constructor params? */
 extern ECRESULT GetBestServerPath(struct soap *soap, ECSession *lpecSession, const std::string &strServerName, std::string *lpstrServerPath);

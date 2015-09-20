@@ -47,7 +47,6 @@ pkginclude_HEADERS = \
 	MAPINotifSink.h \
 	Util.h \
 	auto_free.h \
-	boost_compat.h \
 	edkguid.h \
 	favoritesutil.h \
 	mapi_ptr.h \

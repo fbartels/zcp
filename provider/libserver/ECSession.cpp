@@ -83,7 +83,7 @@
 
 #include "pthreadutil.h"
 #include "threadutil.h"
-#include "boost_compat.h"
+#include <zarafa/boost_compat.h>
 
 #include <boost/filesystem.hpp>
 namespace bfs = boost::filesystem;

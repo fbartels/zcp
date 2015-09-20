@@ -57,8 +57,7 @@
 #include "ECConfigImpl.h"
 
 #include <zarafa/charset/convert.h>
-
-#include "boost_compat.h"
+#include <zarafa/boost_compat.h>
 
 using namespace std;
 
