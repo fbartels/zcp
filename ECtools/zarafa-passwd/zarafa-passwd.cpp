@@ -53,7 +53,7 @@
 #include <mapix.h>
 #include <mapiutil.h>
 
-#include "IECServiceAdmin.h"
+#include <zarafa/IECServiceAdmin.h>
 #include <zarafa/IECUnknown.h>
 
 #include <zarafa/ECTags.h>

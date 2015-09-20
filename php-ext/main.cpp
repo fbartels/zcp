@@ -198,8 +198,8 @@ ZEND_END_ARG_INFO()
 #include <mapitags.h>
 #include <mapidefs.h>
 
-#include "IECServiceAdmin.h"
-#include "IECSecurity.h"
+#include <zarafa/IECServiceAdmin.h>
+#include <zarafa/IECSecurity.h>
 #include <zarafa/IECUnknown.h>
 #include "IECExportChanges.h"
 #include "IECMultiStoreTable.h"

@@ -57,7 +57,7 @@
 #include "ECNotifyClient.h"
 #include "ECNamedProp.h"
 
-#include "IECServiceAdmin.h"
+#include <zarafa/IECServiceAdmin.h>
 #include "IECSpooler.h"
 #include "IECMultiStoreTable.h"
 #include <zarafa/IECLicense.h>

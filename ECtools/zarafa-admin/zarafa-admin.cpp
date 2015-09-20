@@ -52,8 +52,8 @@
 #include <mapix.h>
 #include <mapiutil.h>
 
-#include "IECServiceAdmin.h"
-#include "IECSecurity.h"
+#include <zarafa/IECServiceAdmin.h>
+#include <zarafa/IECSecurity.h>
 #include <zarafa/IECUnknown.h>
 
 #include "SSLUtil.h"

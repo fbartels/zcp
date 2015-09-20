@@ -48,7 +48,7 @@
 #include "ECUnknown.h"
 #include "IECPropStorage.h"
 #include "ECPropertyEntry.h"
-#include "IECSingleInstance.h"
+#include <zarafa/IECSingleInstance.h>
 
 #include <list>
 #include <map>

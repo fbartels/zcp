@@ -54,9 +54,9 @@
 #include <edkmdb.h>
 #include <edkguid.h>
 
-#include "IECServiceAdmin.h"
-#include "IECSecurity.h"
-#include "IECSingleInstance.h"
+#include <zarafa/IECServiceAdmin.h>
+#include <zarafa/IECSecurity.h>
+#include <zarafa/IECSingleInstance.h>
 #include <zarafa/ECGuid.h>
 #include <zarafa/mapiguidext.h>
 

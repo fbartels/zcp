@@ -7,7 +7,7 @@
 #include <mapidefs.h>
 #include <mapicode.h>
 #include <mapiutil.h>
-#include "IECServiceAdmin.h"
+#include <zarafa/IECServiceAdmin.h>
 #include "IECSpooler.h"
 #include "IECTestProtocol.h"
 #include "IECMultiStoreTable.h"

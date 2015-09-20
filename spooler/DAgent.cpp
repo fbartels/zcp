@@ -140,7 +140,7 @@
 #include <zarafa/charset/convert.h>
 #include "base64.h"
 
-#include "IECServiceAdmin.h"
+#include <zarafa/IECServiceAdmin.h>
 #include <zarafa/IECUnknown.h>
 #include <zarafa/ECTags.h>
 #include "ECFeatures.h"

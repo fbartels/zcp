@@ -63,7 +63,7 @@
 #include <zarafa/tstring.h>
 
 #include "ECMemStream.h"
-#include "IECSingleInstance.h"
+#include <zarafa/IECSingleInstance.h>
 #include <zarafa/ECGuid.h>
 #include "codepage.h"
 #include "rtfutil.h"

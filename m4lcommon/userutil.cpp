@@ -54,7 +54,7 @@
 #include <zarafa/charset/convert.h>
 #include "ECDefs.h"
 #include <zarafa/ECGuid.h>
-#include "IECServiceAdmin.h"
+#include <zarafa/IECServiceAdmin.h>
 #include <edkmdb.h>
 #include "edkguid.h"
 #include <zarafa/IECLicense.h>

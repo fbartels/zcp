@@ -74,7 +74,7 @@
 #include "IECImportContentsChanges.h"
 #include "ECOfflineABImporter.h"
 
-#include "IECServiceAdmin.h"
+#include <zarafa/IECServiceAdmin.h>
 #include "IECChangeAdvisor.h"
 #include "ECResyncSet.h"
 

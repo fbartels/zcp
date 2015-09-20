@@ -60,10 +60,10 @@
 #include <zarafa/charset/convert.h>
 #include "mapi_ptr.h"
 
-//#include "IECSecurity.h"
+//#include <zarafa/IECSecurity.h>
 #include <zarafa/ECGuid.h>
 #include <zarafa/ECTags.h>
-#include "IECServiceAdmin.h"
+#include <zarafa/IECServiceAdmin.h>
 #include "CommonUtil.h"
 #include "stringutil.h"
 #include "mapiext.h"

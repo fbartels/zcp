@@ -34,9 +34,6 @@ pkginclude_HEADERS = \
 	IECImportContentsChanges.h \
 	IECImportHierarchyChanges.h \
 	IECMultiStoreTable.h \
-	IECSecurity.h \
-	IECServiceAdmin.h \
-	IECSingleInstance.h \
 	IECSpooler.h \
 	IECStatsCollector.h \
 	IECTestProtocol.h \

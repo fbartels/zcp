@@ -4,7 +4,7 @@
 %{
 #include "IECChangeAdvisor.h"
 #include "IECChangeAdviseSink.h"
-#include "IECSingleInstance.h"
+#include <zarafa/IECSingleInstance.h>
 #include "IECImportContentsChanges.h"
 #include "IECImportHierarchyChanges.h"
 %}

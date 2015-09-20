@@ -47,7 +47,7 @@
 #include <zarafa/platform.h>
 #include <mapidefs.h>
 #include <mapix.h>
-#include "IECServiceAdmin.h"
+#include <zarafa/IECServiceAdmin.h>
 #include <string>
 #include <set>
 

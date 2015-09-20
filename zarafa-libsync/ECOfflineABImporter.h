@@ -46,7 +46,7 @@
 
 #include <zarafa/zcdefs.h>
 #include <IECImportAddressbookChanges.h>
-#include <IECServiceAdmin.h>
+#include <zarafa/IECServiceAdmin.h>
 
 class ECLogger;
 

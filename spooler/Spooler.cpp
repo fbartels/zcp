@@ -79,8 +79,8 @@
 
 #include <zarafa/IECUnknown.h>
 #include "IECSpooler.h"
-#include "IECServiceAdmin.h"
-#include "IECSecurity.h"
+#include <zarafa/IECServiceAdmin.h>
+#include <zarafa/IECSecurity.h>
 #include <zarafa/ECGuid.h>
 #include "EMSAbTag.h"
 #include <zarafa/ECTags.h>

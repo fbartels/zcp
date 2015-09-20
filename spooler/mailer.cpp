@@ -56,8 +56,8 @@
 #include <zarafa/ECConfig.h>
 #include <zarafa/IECUnknown.h>
 #include <zarafa/ecversion.h>
-#include "IECSecurity.h"
-#include "IECServiceAdmin.h"
+#include <zarafa/IECSecurity.h>
+#include <zarafa/IECServiceAdmin.h>
 #include "IECSpooler.h"
 #include <zarafa/ECGuid.h>
 #include "edkguid.h"
