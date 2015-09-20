@@ -50,7 +50,6 @@ pkginclude_HEADERS = \
 	mapi_ptr.h \
 	mapicontact.h \
 	mapiext.h \
-	mapiguidext.h \
 	namedprops.h \
 	restrictionutil.h
 mapiptr_HEADERS = \

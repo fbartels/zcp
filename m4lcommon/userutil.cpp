@@ -61,7 +61,7 @@
 #include "CommonUtil.h"
 #include "ECRestriction.h"
 #include "mapi_ptr.h"
-#include "mapiguidext.h"
+#include <zarafa/mapiguidext.h>
 
 using namespace std;
 

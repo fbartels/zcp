@@ -53,7 +53,7 @@
 #include "ECDebug.h"
 #include "CommonUtil.h"
 #include "mapiext.h"
-#include "mapiguidext.h"
+#include <zarafa/mapiguidext.h>
 #include "namedprops.h"
 #include <zarafa/charset/convert.h>
 #include "mapi_ptr.h"

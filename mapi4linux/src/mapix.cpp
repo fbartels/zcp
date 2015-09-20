@@ -63,7 +63,7 @@
 
 #include "CommonUtil.h"
 #include "stringutil.h"
-#include "mapiguidext.h"
+#include <zarafa/mapiguidext.h>
 #include "ECRestriction.h"
 #include "../common/MAPIErrors.h"
 

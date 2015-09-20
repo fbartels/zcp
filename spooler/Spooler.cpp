@@ -99,7 +99,7 @@
 #include "mapiext.h"
 #include <edkmdb.h>
 #include "edkguid.h"
-#include "mapiguidext.h"
+#include <zarafa/mapiguidext.h>
 #include "mapicontact.h"
 #include "restrictionutil.h"
 #include <zarafa/charset/convert.h>

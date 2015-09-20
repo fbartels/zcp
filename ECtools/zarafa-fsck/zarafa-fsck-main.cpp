@@ -49,7 +49,7 @@
 
 #include <CommonUtil.h>
 #include <mapiext.h>
-#include <mapiguidext.h>
+#include <zarafa/mapiguidext.h>
 #include <mapiutil.h>
 #include <mapix.h>
 #include <stringutil.h>

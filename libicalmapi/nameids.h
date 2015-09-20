@@ -46,7 +46,7 @@
 
 #include <mapidefs.h>
 #include "namedprops.h"
-#include "mapiguidext.h"
+#include <zarafa/mapiguidext.h>
 #include <mapiguid.h>
 #include "icalmapi.h"
 

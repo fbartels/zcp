@@ -58,7 +58,7 @@
 #include "IECSecurity.h"
 #include "IECSingleInstance.h"
 #include <zarafa/ECGuid.h>
-#include "mapiguidext.h"
+#include <zarafa/mapiguidext.h>
 
 typedef mapi_object_ptr<IABContainer, IID_IABContainer> ABContainerPtr;
 typedef mapi_object_ptr<IAddrBook, IID_IAddrBook> AddrBookPtr;

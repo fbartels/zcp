@@ -56,7 +56,7 @@
 #include "Util.h"
 #include "stringutil.h"
 #include "mapi_ptr.h"
-#include "mapiguidext.h"
+#include <zarafa/mapiguidext.h>
 
 #include <algorithm>
 using namespace std;

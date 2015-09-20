@@ -57,7 +57,7 @@
 #include "Zarafa.h"
 #include <zarafa/ECGuid.h>
 #include "edkguid.h"
-#include "mapiguidext.h"
+#include <zarafa/mapiguidext.h>
 #include "mapiext.h"
 
 #include "Mem.h"

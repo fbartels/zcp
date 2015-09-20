@@ -54,7 +54,7 @@
 #include <zarafa/ECGuid.h>
 #include "mapi_ptr.h"
 #include "namedprops.h"
-#include "mapiguidext.h"
+#include <zarafa/mapiguidext.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

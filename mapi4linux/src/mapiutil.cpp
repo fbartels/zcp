@@ -61,7 +61,7 @@
 #include "Util.h"
 
 #include "ECMemStream.h"
-#include "mapiguidext.h"
+#include <zarafa/mapiguidext.h>
 
 #include "rtf.h"
 

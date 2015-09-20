@@ -51,7 +51,7 @@
 #include "Mem.h"
 
 #include <mapiext.h>
-#include "mapiguidext.h"
+#include <zarafa/mapiguidext.h>
 #include "ECArchiveAwareMessage.h"
 #include "ECGetText.h"
 #include "stringutil.h"

@@ -56,7 +56,7 @@
 #include "CommonUtil.h"
 #include <zarafa/ECLogger.h>
 #include "mapi_ptr.h"
-#include "mapiguidext.h"
+#include <zarafa/mapiguidext.h>
 
 #include "IECExchangeModifyTable.h"
 #include "PyMapiPlugin.h"

@@ -80,7 +80,7 @@
 #include <mapix.h>
 #include <mapiutil.h>
 #include <mapiext.h>
-#include <mapiguidext.h>
+#include <zarafa/mapiguidext.h>
 #include <edkmdb.h>
 
 #include "EMSAbTag.h"

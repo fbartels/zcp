@@ -46,7 +46,7 @@
 
 #include "WebDav.h"
 #include "mapiext.h"
-#include "mapiguidext.h"
+#include <zarafa/mapiguidext.h>
 #include <cstring>
 #include <algorithm>
 #include "restrictionutil.h"

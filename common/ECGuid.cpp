@@ -174,4 +174,4 @@
 #include "edkguid.h"
 #include <zarafa/ECGuid.h>
 #include "freebusyguid.h"
-#include "mapiguidext.h"
+#include <zarafa/mapiguidext.h>

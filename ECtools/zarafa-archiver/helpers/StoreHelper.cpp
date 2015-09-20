@@ -51,7 +51,7 @@ using namespace std;
 
 #include <mapi_ptr.h>
 
-#include "mapiguidext.h"
+#include <zarafa/mapiguidext.h>
 #include "archiver-common.h"
 
 #include "ECRestriction.h"

@@ -51,7 +51,7 @@
 #include <ctime>
 #include "CommonUtil.h"
 #include <mapiutil.h>
-#include "mapiguidext.h"
+#include <zarafa/mapiguidext.h>
 #include "namedprops.h"
 
 #include <iostream>

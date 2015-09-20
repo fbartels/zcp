@@ -73,7 +73,7 @@
 #include "freebusytags.h"
 
 #include "edkguid.h"
-#include "mapiguidext.h"
+#include <zarafa/mapiguidext.h>
 #include <edkmdb.h>
 #include <zarafa/IECUnknown.h>
 #include "IECServiceAdmin.h"
