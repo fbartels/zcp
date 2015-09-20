@@ -53,7 +53,7 @@
 #include <zarafa/ECLogger.h>
 #include "my_getopt.h"
 
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 #include "ECDatabase.h"
 #include "ECPluginFactory.h"
 

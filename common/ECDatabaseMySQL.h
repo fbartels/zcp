@@ -49,7 +49,7 @@
 #define ECDATABASEMYSQL_H
 
 #include <zarafa/platform.h>
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 #include <zarafa/ECLogger.h>
 #include <zarafa/ZarafaCode.h>
 

@@ -47,7 +47,7 @@
 #include <string>
 #include "ECChannel.h"
 #include <zarafa/ECLogger.h>
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 
 #define LOGIN_RETRIES 5
 

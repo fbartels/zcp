@@ -52,7 +52,7 @@
 
 #include "CommonUtil.h"
 #include "WSTransport.h"
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 
 #include "Zarafa.h"
 #include <zarafa/ECGuid.h>

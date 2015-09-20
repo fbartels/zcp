@@ -55,7 +55,7 @@
 
 #include "Util.h"
 
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 #include "ECDebug.h"
 #include <zarafa/ECGuid.h>
 #include "ECMemTable.h"

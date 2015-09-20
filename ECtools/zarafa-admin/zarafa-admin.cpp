@@ -57,7 +57,7 @@
 #include "IECUnknown.h"
 
 #include "SSLUtil.h"
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 #include <zarafa/ECLogger.h>
 #include "ECTags.h"
 #include "EMSAbTag.h"

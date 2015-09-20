@@ -46,7 +46,7 @@
 
 #include <Python.h>
 #include <zarafa/ECLogger.h>
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 #include "PythonSWIGRuntime.h"
 #include <edkmdb.h>
 

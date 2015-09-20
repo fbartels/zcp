@@ -87,7 +87,7 @@
 #include "ECABEntryID.h"
 #include "CommonUtil.h"
 #include <zarafa/ECLogger.h>
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 #ifdef LINUX
 #include "UnixUtil.h"
 #endif

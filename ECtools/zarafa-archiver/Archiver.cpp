@@ -44,7 +44,7 @@
 #include <zarafa/platform.h>
 #include <string>
 #include "Archiver.h"
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 #include "ArchiverImpl.h"
 
 const char* Archiver::GetConfigPath()

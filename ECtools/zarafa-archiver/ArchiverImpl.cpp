@@ -51,7 +51,7 @@
 #include "ArchiveStateCollector.h"
 #include "ArchiveStateUpdater.h"
 #include "ArchiverSession.h"
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 
 ArchiverImpl::ArchiverImpl()
 : m_lpsConfig(NULL)

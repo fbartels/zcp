@@ -53,7 +53,7 @@
 #include <mapi.h>
 
 #include <zarafa/ECLogger.h>
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 #include "IECUnknown.h"
 #include "ecversion.h"
 #include "IECSecurity.h"

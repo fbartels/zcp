@@ -48,7 +48,7 @@
 #include <set>
 
 #include <zarafa/ECLogger.h>
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 #include <zarafa/ZarafaCode.h>
 #include "SOAPUtils.h"
 #include "soapH.h"

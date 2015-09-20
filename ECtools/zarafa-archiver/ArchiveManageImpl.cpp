@@ -51,7 +51,7 @@
 #include "helpers/StoreHelper.h"
 #include <zarafa/charset/convert.h>
 #include "ECACL.h"
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 #include "userutil.h"
 #include "ArchiveStateUpdater.h"
 #include "ECRestriction.h"

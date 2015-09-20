@@ -53,7 +53,7 @@
 #include "ECDefs.h"
 #include "ECDBDef.h"
 #include "ECUserManagement.h"
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 #include <zarafa/ECLogger.h>
 #include <zarafa/ZarafaCode.h>
 

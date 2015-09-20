@@ -22,7 +22,7 @@ noinst_DATA = \
 # libzcp_common_util
 #
 nobase_pkginclude_HEADERS = \
-	ConsoleTable.h ECACL.h ECCache.h ECConfig.h ECConfigImpl.h \
+	ConsoleTable.h ECACL.h ECCache.h ECConfigImpl.h \
 	ECFifoBuffer.h ECGetText.h ECIConv.h \
 	ECScheduler.h ECSerializer.h ECThreadPool.h StatsClient.h \
 	SymmetricCrypt.h TimeUtil.h TmpPath.h Trace.h UnixUtil.h \

@@ -56,7 +56,7 @@
 #include <list>
 #include <map>
 
-#include  <ECConfig.h>
+#include <zarafa/ECConfig.h>
 
 using namespace std;
 

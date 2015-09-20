@@ -59,7 +59,7 @@
 #include <mapix.h>
 #include <mapiutil.h>
 
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 #include "CommonUtil.h"
 
 #include <set>

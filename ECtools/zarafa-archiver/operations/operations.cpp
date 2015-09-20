@@ -42,7 +42,7 @@
  */
 
 #include <zarafa/platform.h>
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 #include "operations.h"
 #include "ECArchiverLogger.h"
 #include "helpers/MAPIPropHelper.h"

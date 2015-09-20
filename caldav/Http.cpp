@@ -46,7 +46,7 @@
 #include "mapi_ptr.h"
 #include "stringutil.h"
 
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 
 using namespace std;
 

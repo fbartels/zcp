@@ -47,7 +47,7 @@
 
 #include "threadutil.h"
 #include <zarafa/ECLogger.h>
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 #include "ECSession.h"
 #include "ECSessionManager.h"
 #include "ECDatabaseFactory.h"

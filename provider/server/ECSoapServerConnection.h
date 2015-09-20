@@ -49,7 +49,7 @@
 #include "ECThreadManager.h"
 #include "soapH.h"
 #include <zarafa/ECLogger.h>
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 
 class ECSoapServerConnection
 {

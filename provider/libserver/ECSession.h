@@ -57,7 +57,7 @@
 #include "ECNotification.h"
 #include "ECTableManager.h"
 
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 #include <zarafa/ECLogger.h>
 #include "ECDatabaseFactory.h"
 #include "ECPluginFactory.h"

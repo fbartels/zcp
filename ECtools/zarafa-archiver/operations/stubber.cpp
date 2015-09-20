@@ -42,7 +42,7 @@
  */
 
 #include <zarafa/platform.h>
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 #include "ECArchiverLogger.h"
 #include "stubber.h"
 #include "archiver-common.h"

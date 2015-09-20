@@ -45,7 +45,7 @@
 #include "ArchiverSession.h"
 #include "ecversion.h"
 #include "mapi_ptr.h"
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 #include <zarafa/ECLogger.h>
 #include "CommonUtil.h"
 #include "mapiext.h"

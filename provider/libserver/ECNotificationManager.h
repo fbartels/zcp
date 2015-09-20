@@ -46,7 +46,7 @@
 
 #include "ECSession.h"
 #include <zarafa/ECLogger.h>
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 
 #include <map>
 #include <set>

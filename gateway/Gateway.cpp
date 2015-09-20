@@ -70,7 +70,7 @@
 #include <cerrno>
 
 #include <zarafa/ECLogger.h>
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 #include "my_getopt.h"
 
 #include "ECChannel.h"

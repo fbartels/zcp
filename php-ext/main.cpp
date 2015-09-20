@@ -49,7 +49,7 @@
 #include <syslog.h>
 #include <ctime>
 
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 #include <zarafa/ECLogger.h>
 #include "mapi_ptr.h"
 #include "ECRulesTableProxy.h"

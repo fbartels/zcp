@@ -44,7 +44,7 @@
 #ifndef ECDATABASE_H
 #define ECDATABASE_H
 
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 #include <zarafa/ECLogger.h>
 #include <zarafa/ZarafaCode.h>
 

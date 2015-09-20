@@ -45,7 +45,7 @@
 #define ECECSERVERENTRYPOINT_H
 
 #include <zarafa/ECLogger.h>
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 #include "ECDatabase.h"
 #include "ZarafaUtil.h"
 

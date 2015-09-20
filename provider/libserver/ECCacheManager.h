@@ -50,7 +50,7 @@
 #include "ECDatabaseFactory.h"
 #include "ECDatabaseUtils.h"
 #include "ECGenericObjectTable.h"	// ECListInt
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 #include <zarafa/ECLogger.h>
 #include "SOAPUtils.h"
 #include "ZarafaCmdUtil.h"

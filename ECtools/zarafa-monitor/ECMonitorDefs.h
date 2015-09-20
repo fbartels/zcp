@@ -45,7 +45,7 @@
 #define ECMONITORDEFS_H
 
 #include <zarafa/ECLogger.h>
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 
 typedef struct _sECMonitor
 {

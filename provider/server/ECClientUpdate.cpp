@@ -49,7 +49,7 @@
 #include "stringutil.h"
 #include "base64.h"
 #include <zarafa/ECLogger.h>
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 
 #include <boost/filesystem.hpp>
 namespace bfs = boost::filesystem;

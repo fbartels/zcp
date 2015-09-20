@@ -56,7 +56,7 @@
 #include "operations/deleter.h"
 #include "operations/stubber.h"
 #include "restrictionutil.h"
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 #include "ECIterators.h"
 #include "ECRestriction.h"
 #include "HrException.h"
