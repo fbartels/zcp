@@ -12,7 +12,7 @@
 #include "IECTestProtocol.h"
 #include "IECMultiStoreTable.h"
 #include "IECExportChanges.h"
-#include "IECLicense.h"
+#include <zarafa/IECLicense.h>
 #include "mapi_ptr.h"
 
 // DIRTIEST HACK IN THE WORLD WARNING: we need to fix the broken swig output for mapi_wrap.h .....

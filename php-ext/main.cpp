@@ -203,7 +203,7 @@ ZEND_END_ARG_INFO()
 #include "IECUnknown.h"
 #include "IECExportChanges.h"
 #include "IECMultiStoreTable.h"
-#include "IECLicense.h"
+#include <zarafa/IECLicense.h>
 
 #include "ECTags.h"
 #include "ECDefs.h"

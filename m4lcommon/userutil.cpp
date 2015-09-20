@@ -57,7 +57,7 @@
 #include "IECServiceAdmin.h"
 #include <edkmdb.h>
 #include "edkguid.h"
-#include "IECLicense.h"
+#include <zarafa/IECLicense.h>
 #include "CommonUtil.h"
 #include "ECRestriction.h"
 #include "mapi_ptr.h"

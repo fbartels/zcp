@@ -60,7 +60,7 @@
 #include "IECServiceAdmin.h"
 #include "IECSpooler.h"
 #include "IECMultiStoreTable.h"
-#include "IECLicense.h"
+#include <zarafa/IECLicense.h>
 #include "IECTestProtocol.h"
 
 #include "IMAPIOffline.h"

@@ -1,3 +1,3 @@
 # -*- Makefile -*-
 
-nobase_pkginclude_HEADERS = tstring.h
+nobase_pkginclude_HEADERS = IECLicense.h tstring.h

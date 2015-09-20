@@ -34,7 +34,6 @@ pkginclude_HEADERS = \
 	IECImportAddressbookChanges.h \
 	IECImportContentsChanges.h \
 	IECImportHierarchyChanges.h \
-	IECLicense.h \
 	IECMultiStoreTable.h \
 	IECSecurity.h \
 	IECServiceAdmin.h \
