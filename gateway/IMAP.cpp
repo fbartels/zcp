@@ -76,7 +76,7 @@
 #include <zarafa/charset/convert.h>
 #include "restrictionutil.h"
 #include "ecversion.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "namedprops.h"
 #include "ECFeatures.h"
 

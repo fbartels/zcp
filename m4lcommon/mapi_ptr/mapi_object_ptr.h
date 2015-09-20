@@ -49,7 +49,7 @@
 #include <mapiutil.h>
 #include "IECUnknown.h"
 #include "ECTags.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "mapi_memory_ptr.h"
 
 // http://tinyurl.com/ydb363n

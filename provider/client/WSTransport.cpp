@@ -77,7 +77,7 @@
 #include "soapZarafaCmdProxy.h"
 #include "ZarafaCmd.nsmap"
 #include "Mem.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 
 #include "SOAPUtils.h"
 #include "WSUtil.h"

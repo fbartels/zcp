@@ -49,7 +49,7 @@
 #include "../common/base64.h"
 
 #include <mapidefs.h>
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "ZarafaVersions.h"
 
 #ifdef _DEBUG

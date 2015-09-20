@@ -43,7 +43,7 @@
 
 #include <zarafa/platform.h>
 
-#include <ECGuid.h>
+#include <zarafa/ECGuid.h>
 #include <ECSyncLog.h>
 #include <ECDebug.h>
 #include <ECLogger.h>

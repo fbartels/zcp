@@ -61,7 +61,7 @@
 #include "mapi_ptr.h"
 
 //#include "IECSecurity.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "ECTags.h"
 #include "IECServiceAdmin.h"
 #include "CommonUtil.h"

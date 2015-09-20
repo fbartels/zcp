@@ -110,7 +110,7 @@
 #define USES_IID_IMAPIFolder
 #define USES_IID_IExchangeManageStore
 #define USES_IID_IMsgStore
-#include <ECGuid.h>
+#include <zarafa/ECGuid.h>
 
 #include <inetmapi.h>
 

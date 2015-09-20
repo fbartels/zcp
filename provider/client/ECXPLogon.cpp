@@ -50,7 +50,7 @@
 #include <mapispi.h>
 #include <mapiutil.h>
 #include "mapiguidext.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "mapiext.h"
 #include <edkmdb.h>
 #include "edkguid.h"

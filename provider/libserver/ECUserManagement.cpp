@@ -70,7 +70,7 @@
 
 #include "ECICS.h"
 #include "ZarafaICS.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "ECDefs.h"
 #include "ECFeatureList.h"
 #include <EMSAbTag.h>

@@ -230,7 +230,7 @@ ZEND_END_ARG_INFO()
 
 #include <edkmdb.h>
 #include <mapiguid.h>
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "edkguid.h"
 
 //Freebusy includes

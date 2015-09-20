@@ -59,7 +59,7 @@
 #include "IECSecurity.h"
 #include "IECServiceAdmin.h"
 #include "IECSpooler.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "edkguid.h"
 #include "CommonUtil.h"
 #include "Util.h"

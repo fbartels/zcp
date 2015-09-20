@@ -54,7 +54,7 @@
 #include "Mem.h"
 #include "stringutil.h"
 
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 
 #include "ECABProvider.h"
 #include "ECMSProvider.h"

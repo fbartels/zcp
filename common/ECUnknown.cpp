@@ -48,7 +48,7 @@
 #include <mapiguid.h>
 
 #include "ECUnknown.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -47,7 +47,7 @@
 #undef max
 
 #include "VMIMEToMAPI.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 
 #include <algorithm>
 #include <string>

@@ -46,7 +46,7 @@
 #include "ECFifoStream.h"
 #include "ECFifoBuffer.h"
 #include "ECInterfaceDefs.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "Trace.h"
 
 #include <mapidefs.h>

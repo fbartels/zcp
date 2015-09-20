@@ -50,7 +50,7 @@
 
 #include "ECMemTable.h"
 #include "ECKeyTable.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "Util.h"
 #include "Trace.h"
 #include "CommonUtil.h"

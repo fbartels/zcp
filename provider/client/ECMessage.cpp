@@ -58,7 +58,7 @@
 #include "Mem.h"
 #include "mapi_ptr.h"
 
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "edkguid.h"
 #include "ECDebug.h"
 #include "WSUtil.h"

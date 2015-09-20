@@ -52,7 +52,7 @@
 
 #include "Mem.h"
 
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 
 #include "ECMSProvider.h"
 #include "ECMsgStore.h"

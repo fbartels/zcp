@@ -43,7 +43,7 @@
 
 #include <zarafa/platform.h>
 #include "ECRulesTableProxy.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "mapi_ptr.h"
 #include "ECInterfaceDefs.h"
 #include "Trace.h"

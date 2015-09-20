@@ -60,7 +60,7 @@
 #endif
 #include "WSUtil.h"
 #include "ECIConv.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "Trace.h"
 
 #include "Mem.h"

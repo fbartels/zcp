@@ -47,7 +47,7 @@
 #include "WSTableView.h"
 
 #include "Mem.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 
 // Utils
 #include "SOAPUtils.h"

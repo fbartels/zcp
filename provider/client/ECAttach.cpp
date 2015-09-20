@@ -49,7 +49,7 @@
 
 #include "ECAttach.h"
 
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "ECDebug.h"
 #include "ECInterfaceDefs.h"
 

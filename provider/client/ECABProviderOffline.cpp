@@ -48,7 +48,7 @@
 #include <mapispi.h>
 
 
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "edkguid.h"
 
 #include "Trace.h"

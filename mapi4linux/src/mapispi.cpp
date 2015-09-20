@@ -50,7 +50,7 @@
 #include <mapi.h>
 #include "CommonUtil.h"
 #include "Util.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 
 #include <algorithm>
 #include "mapi_ptr.h"

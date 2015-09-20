@@ -48,7 +48,7 @@
 #include "ECTags.h"
 #include "ECDebug.h"
 #include "ECDebugPrint.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "Zarafa.h"
 #include <mapix.h>
 #include <edkmdb.h>

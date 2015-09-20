@@ -49,7 +49,7 @@
 #include <mapicode.h>
 #include <mapiguid.h>
 
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "ECDebug.h"
 #include "Trace.h"
 

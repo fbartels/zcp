@@ -54,7 +54,7 @@
 #include "ECMSProvider.h"
 #include "ECOfflineState.h"
 
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 
 #include "Trace.h"
 #include "ECDebug.h"

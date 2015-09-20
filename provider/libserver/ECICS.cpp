@@ -55,7 +55,7 @@
 #include "ZarafaCmdUtil.h"
 #include "ECStoreObjectTable.h"
 
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "ECICS.h"
 #include "ECICSHelpers.h"
 #include "ECMAPI.h"

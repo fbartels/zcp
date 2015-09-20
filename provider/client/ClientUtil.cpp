@@ -55,7 +55,7 @@
 #include "ECConfig.h"
 
 #include "Zarafa.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "edkguid.h"
 #include "mapiguidext.h"
 #include "mapiext.h"

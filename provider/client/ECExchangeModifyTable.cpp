@@ -56,7 +56,7 @@
 #include "ECExchangeModifyTable.h"
 #include <mapicode.h>
 #include "edkguid.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include <mapiguid.h>
 
 #include "Trace.h"

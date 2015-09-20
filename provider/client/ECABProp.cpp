@@ -46,7 +46,7 @@
 #include "Zarafa.h"
 #include "ECABProp.h"
 #include "Mem.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "ECDefs.h"
 #include "CommonUtil.h"
 #include "ECDebug.h"

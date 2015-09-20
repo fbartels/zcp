@@ -172,6 +172,6 @@
 
 #include <mapiguid.h>
 #include "edkguid.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "freebusyguid.h"
 #include "mapiguidext.h"

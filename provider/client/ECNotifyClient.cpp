@@ -54,7 +54,7 @@
 #include "ECMsgStore.h"
 #include "ECNotifyClient.h"
 #include "ECSessionGroupManager.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "SOAPUtils.h"
 #include "WSUtil.h"
 #include "Util.h"

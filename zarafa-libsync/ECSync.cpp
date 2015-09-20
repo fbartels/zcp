@@ -43,7 +43,7 @@
 
 #include <zarafa/platform.h>
 #ifdef HAVE_OFFLINE_SUPPORT
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "ECSync.h"
 #include "ECSyncUtil.h"
 #include "ECDebug.h"

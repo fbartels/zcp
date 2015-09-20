@@ -58,7 +58,7 @@
 #include "ECUnknown.h"
 #include "Trace.h"
 #include "ECDebug.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 
 #include <mapi.h>
 #include <mapidefs.h>

@@ -58,7 +58,7 @@
 #include <mapiguid.h>
 #include "mapiguidext.h"
 #include "edkguid.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 
 #include "freebusyguid.h"
 

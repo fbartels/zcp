@@ -81,7 +81,7 @@
 #include "IECSpooler.h"
 #include "IECServiceAdmin.h"
 #include "IECSecurity.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "EMSAbTag.h"
 #include "ECTags.h"
 #include "ECABEntryID.h"

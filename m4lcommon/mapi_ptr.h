@@ -57,7 +57,7 @@
 #include "IECServiceAdmin.h"
 #include "IECSecurity.h"
 #include "IECSingleInstance.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "mapiguidext.h"
 
 typedef mapi_object_ptr<IABContainer, IID_IABContainer> ABContainerPtr;

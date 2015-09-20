@@ -61,7 +61,7 @@
 #include "ECLogger.h"
 #include "ECTags.h"
 #include "EMSAbTag.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "ECABEntryID.h"
 #include "CommonUtil.h"
 #include "stringutil.h"

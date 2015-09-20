@@ -45,7 +45,7 @@
 #include "ECMemTablePublic.h"
 
 #include "Mem.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "edkguid.h"
 #include "Util.h"
 #include "ClientUtil.h"

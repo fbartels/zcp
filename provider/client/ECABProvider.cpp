@@ -51,7 +51,7 @@
 #include <mapispi.h>
 #include <mapiutil.h>
 #include "Zarafa.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "edkguid.h"
 #include "ECABProvider.h"
 #include "ECABLogon.h"

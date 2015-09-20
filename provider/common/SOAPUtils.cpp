@@ -46,7 +46,7 @@
 #include <mapidefs.h>
 #include <mapitags.h>
 #include <edkmdb.h>
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include <Zarafa.h>
 
 #include "SOAPUtils.h"

@@ -51,7 +51,7 @@
 #include <mapiutil.h>
 
 #include "Util.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "mapi_ptr.h"
 #include "namedprops.h"
 #include "mapiguidext.h"

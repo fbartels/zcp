@@ -43,7 +43,7 @@
 
 #include <zarafa/platform.h>
 
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "ZarafaICS.h"
 #include "ZarafaUtil.h"
 

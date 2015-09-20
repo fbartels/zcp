@@ -49,7 +49,7 @@
 #include <mapi.h>
 #include <mapispi.h>
 #include <mapiutil.h>
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 
 
 #include "Zarafa.h"

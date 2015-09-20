@@ -53,7 +53,7 @@
 #include <zarafa/charset/utf8string.h>
 #include <zarafa/charset/convert.h>
 #include "ECDefs.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "IECServiceAdmin.h"
 #include <edkmdb.h>
 #include "edkguid.h"

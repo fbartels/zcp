@@ -49,7 +49,7 @@
 #include "ECDBDef.h"
 #include "ECDatabaseUpdate.h"
 #include "ECLicenseClient.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "ECLockManager.h"
 
 #include "soapH.h"

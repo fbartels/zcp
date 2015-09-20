@@ -232,7 +232,7 @@ public:
 
 
 %{
-#include <ECGuid.h>
+#include <zarafa/ECGuid.h>
 #include <edkguid.h>
 
 swig_type_info *TypeFromIID(REFIID iid)

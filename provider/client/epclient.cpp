@@ -79,7 +79,7 @@
 
 #include <ECLogger.h>
 
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include <edkmdb.h>
 #include "edkguid.h"
 

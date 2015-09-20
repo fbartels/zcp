@@ -44,7 +44,7 @@
 #include <zarafa/platform.h>
 #include "ECArchiveAwareMsgStore.h"
 #include "ECArchiveAwareMessage.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "mapi_ptr.h"
 #include "threadutil.h"
 

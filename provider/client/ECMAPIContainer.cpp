@@ -51,7 +51,7 @@
 #include "ECMAPITable.h"
 #include "Mem.h"
 
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "ECDebug.h"
 
 

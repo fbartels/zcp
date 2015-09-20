@@ -60,7 +60,7 @@
 #include "ECLogger.h"
 #include "CommonUtil.h"
 #include "ECTags.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "Util.h"
 #include "stringutil.h"
 #include "base64.h"

@@ -56,7 +56,7 @@
 
 #include "ECMAPIFolderPublic.h"
 
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 
 using namespace std;
 
