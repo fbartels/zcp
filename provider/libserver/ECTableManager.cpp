@@ -64,7 +64,7 @@
 #include "ECDatabaseUtils.h"
 #include "ECSecurity.h"
 #include "ECSubRestriction.h"
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 #include "SOAPUtils.h"
 #include "stringutil.h"
 #include "Trace.h"

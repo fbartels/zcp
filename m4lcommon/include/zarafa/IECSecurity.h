@@ -45,7 +45,7 @@
 #define IECSECURITY_H
 
 #include <zarafa/IECUnknown.h>
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 
 #include <mapidefs.h>
 

@@ -53,7 +53,7 @@
 
 #include <zarafa/ECLogger.h>
 #include <zarafa/ECConfig.h>
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 
 class ECSession;
 

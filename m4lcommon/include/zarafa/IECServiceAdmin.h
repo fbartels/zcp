@@ -48,7 +48,7 @@
 #ifndef IECSERVICEADMIN
 #define IECSERVICEADMIN
 
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 
 class IECServiceAdmin : public IUnknown {
 public:

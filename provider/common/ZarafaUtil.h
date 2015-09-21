@@ -48,7 +48,7 @@
 #include "Zarafa.h"
 #include <zarafa/ZarafaCode.h>
 #include "soapH.h"
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 #include "SOAPUtils.h"
 #include <mapidefs.h>
 

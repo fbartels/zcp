@@ -53,7 +53,7 @@
 #include <zarafa/ECConfig.h>
 #include "ECSession.h"
 #include <zarafa/ECLogger.h>
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 #include "plugin.h"
 
 #include <boost/date_time/posix_time/posix_time_types.hpp>

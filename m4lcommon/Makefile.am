@@ -18,7 +18,6 @@ mapiptrdir = ${pkgincludedir}/mapi_ptr
 m4linclude_HEADERS = include/edkguid.h
 pkginclude_HEADERS = \
 	CommonUtil.h \
-	ECDefs.h \
 	ECFeatureList.h \
 	ECInterfaceDefs.h \
 	ECInvariantChecker.h \

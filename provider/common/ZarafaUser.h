@@ -48,7 +48,7 @@
 #include <list>
 #include <string>
 #include <stringutil.h>
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 
 /* Extern object */
 typedef struct objectid_t {

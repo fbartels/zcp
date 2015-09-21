@@ -50,7 +50,7 @@
 
 #include "stringutil.h"
 
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 #include "ECDBDef.h"
 #include "ECUserManagement.h"
 #include <zarafa/ECConfig.h>

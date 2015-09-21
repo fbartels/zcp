@@ -56,7 +56,7 @@
 
 #include <base64.h>
 #include <ECChannel.h>
-#include <ECDefs.h>
+#include <zarafa/ECDefs.h>
 #include <stringutil.h>
 
 #include "ECChannelClient.h"

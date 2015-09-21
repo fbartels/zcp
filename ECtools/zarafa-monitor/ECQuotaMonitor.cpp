@@ -52,7 +52,7 @@
 #include <edkmdb.h>
 
 //Zarafa includes
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 #include "ECABEntryID.h"
 #include <zarafa/IECUnknown.h>
 #include "Util.h"

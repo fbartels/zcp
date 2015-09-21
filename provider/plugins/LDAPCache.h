@@ -49,7 +49,7 @@
 #include <map>
 #include <string>
 
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 #include "ZarafaUser.h"
 
 class LDAPUserPlugin;

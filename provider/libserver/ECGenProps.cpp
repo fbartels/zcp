@@ -56,7 +56,7 @@
 #include "ECStoreObjectTable.h"
 #include "ECGenProps.h"
 #include "Zarafa.h"
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 #include "ECUserManagement.h"
 #include "ECSecurity.h"
 #include "ECSessionManager.h"

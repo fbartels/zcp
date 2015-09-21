@@ -45,7 +45,7 @@
 #define CONVERSION_H
 
 #include <edkmdb.h>		// LPREADSTATE
-#include "ECDefs.h"		// LPECUSER
+#include <zarafa/ECDefs.h>		// LPECUSER
 
 #define CONV_COPY_SHALLOW	0
 #define CONV_COPY_DEEP		1

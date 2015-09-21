@@ -51,7 +51,7 @@
 #include "Zarafa.h"
 
 #include <zarafa/ECGuid.h>
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 
 #include "ECMsgStore.h"
 #include "ECMAPIProp.h"

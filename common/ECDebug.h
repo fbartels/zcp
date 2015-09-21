@@ -51,7 +51,7 @@
 #include <mapicode.h>
 #include <edkmdb.h>
 
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 
 #ifndef DEBUGBUFSIZE
 #define DEBUGBUFSIZE	1024

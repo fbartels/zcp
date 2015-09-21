@@ -51,7 +51,7 @@
 #include <sys/socket.h>
 #endif
 
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 #include "ECChannel.h"
 #include "base64.h"
 #include "stringutil.h"

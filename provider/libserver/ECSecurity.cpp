@@ -59,7 +59,7 @@
 #include "ECSessionManager.h"
 #include "ECSession.h"
 
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 #include "ECSecurity.h"
 
 #include "stringutil.h"
@@ -67,7 +67,7 @@
 #include "Zarafa.h"
 #include <zarafa/md5.h>
 
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 #include <mapidefs.h>
 #include <mapicode.h>
 #include <mapitags.h>

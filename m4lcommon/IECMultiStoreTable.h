@@ -48,7 +48,7 @@
 #ifndef IECMULTISTORETABLE
 #define IECMULTISTORETABLE
 
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 
 class IECMultiStoreTable : public IUnknown {
 public:

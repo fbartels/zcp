@@ -206,7 +206,7 @@ ZEND_END_ARG_INFO()
 #include <zarafa/IECLicense.h>
 
 #include <zarafa/ECTags.h>
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 
 #define USES_IID_IMAPIProp
 #define USES_IID_IMAPIContainer

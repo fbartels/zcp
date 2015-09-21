@@ -49,7 +49,7 @@
 #include <edkmdb.h>
 #include <string>
 
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 
 #include "ustringutil.h"
 

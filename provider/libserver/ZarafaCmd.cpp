@@ -102,7 +102,7 @@
 #include "ECTestProtocol.h"
 #include "ECTPropsPurge.h"
 
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 #include <EMSAbTag.h>
 #include <edkmdb.h>
 #include <zarafa/ecversion.h>

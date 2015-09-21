@@ -43,7 +43,7 @@
 
 #include <zarafa/platform.h>
 
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 #include "ECSecurityOffline.h"
 
 #ifdef _DEBUG
