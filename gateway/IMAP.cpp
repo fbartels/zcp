@@ -67,7 +67,7 @@
 #include <set>
 #include <map>
 #include <algorithm>
-#include <base64.h>
+#include <zarafa/base64.h>
 #include <options.h>
 
 #include <edkmdb.h>

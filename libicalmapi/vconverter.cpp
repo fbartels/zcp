@@ -57,7 +57,7 @@
 #include <ctime>
 #include <zarafa/mapi_ptr.h>
 #include "namedprops.h"
-#include "base64.h"
+#include <zarafa/base64.h>
 
 using namespace std;
 

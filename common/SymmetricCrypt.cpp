@@ -42,7 +42,7 @@
  */
 
 #include <zarafa/platform.h>
-#include "base64.h"
+#include <zarafa/base64.h>
 
 #include <string>
 #include <zarafa/charset/convert.h>

@@ -46,7 +46,7 @@
 #include "ZarafaUtil.h"
 #include <mapicode.h>
 #include "../common/stringutil.h"
-#include "../common/base64.h"
+#include <zarafa/base64.h>
 
 #include <mapidefs.h>
 #include <zarafa/ECGuid.h>

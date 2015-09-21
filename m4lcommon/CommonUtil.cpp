@@ -63,7 +63,7 @@
 #include <zarafa/ECGuid.h>
 #include <zarafa/Util.h>
 #include "stringutil.h"
-#include "base64.h"
+#include <zarafa/base64.h>
 #include <zarafa/mapi_ptr.h>
 
 #include <zarafa/charset/convert.h>

@@ -53,7 +53,7 @@
 
 #include <zarafa/ECDefs.h>
 #include "ECChannel.h"
-#include "base64.h"
+#include <zarafa/base64.h>
 #include "stringutil.h"
 
 #include "ECLicenseClient.h"

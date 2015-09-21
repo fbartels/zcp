@@ -69,7 +69,7 @@
 #include "ECSecurity.h"
 #include "ECSecurityOffline.h"
 #include "ECPluginFactory.h"
-#include "base64.h"
+#include <zarafa/base64.h>
 #include "SSLUtil.h"
 #include "stringutil.h"
 

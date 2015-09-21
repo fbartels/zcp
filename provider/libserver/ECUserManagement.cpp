@@ -66,7 +66,7 @@
 #include "WinUtil.h"
 #endif
 
-#include "base64.h"
+#include <zarafa/base64.h>
 
 #include "ECICS.h"
 #include "ZarafaICS.h"
