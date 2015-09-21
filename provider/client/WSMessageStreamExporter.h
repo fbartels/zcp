@@ -44,7 +44,7 @@
 #ifndef WSMessageStreamExporter_INCLUDED
 #define WSMessageStreamExporter_INCLUDED
 
-#include "ECUnknown.h"
+#include <zarafa/ECUnknown.h>
 #include "soapStub.h"
 #include <zarafa/mapi_ptr.h>
 

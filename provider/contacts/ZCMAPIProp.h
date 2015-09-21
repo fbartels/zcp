@@ -45,7 +45,7 @@
 #define ZCMAPIPROP_H
 
 #include <zarafa/zcdefs.h>
-#include "ECUnknown.h"
+#include <zarafa/ECUnknown.h>
 #include <mapidefs.h>
 #include <zarafa/charset/convert.h>
 

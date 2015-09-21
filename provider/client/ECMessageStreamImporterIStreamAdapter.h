@@ -45,7 +45,7 @@
 #define ECMessageStreamImporterIStreamAdapter_INCLUDED
 
 #include <zarafa/zcdefs.h>
-#include "ECUnknown.h"
+#include <zarafa/ECUnknown.h>
 #include "WSMessageStreamImporter.h"
 #include <zarafa/mapi_ptr.h>
 

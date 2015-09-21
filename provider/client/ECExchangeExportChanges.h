@@ -54,7 +54,7 @@
 #include "ECMAPIProp.h"
 
 #include <zarafa/ECLogger.h>
-#include <ECUnknown.h>
+#include <zarafa/ECUnknown.h>
 #include <IECExportChanges.h>
 #include <IECImportContentsChanges.h>
 

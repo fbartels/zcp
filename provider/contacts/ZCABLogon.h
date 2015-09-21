@@ -47,7 +47,7 @@
 #include <zarafa/zcdefs.h>
 #include <vector>
 #include <mapispi.h>
-#include "ECUnknown.h"
+#include <zarafa/ECUnknown.h>
 
 typedef struct _s_zcabFolderEntry {
 	ULONG cbStore;

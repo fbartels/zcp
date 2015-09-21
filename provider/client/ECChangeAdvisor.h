@@ -50,7 +50,7 @@
 
 #include <pthread.h>	
 
-#include <ECUnknown.h>
+#include <zarafa/ECUnknown.h>
 #include <IECChangeAdvisor.h>
 #include "ECICS.h"
 #include <zarafa/ZarafaCode.h>

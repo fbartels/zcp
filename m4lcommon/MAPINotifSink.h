@@ -50,7 +50,7 @@
 #include <mapix.h>
 #include <mapidefs.h>
 #include <pthread.h>
-#include "ECUnknown.h"
+#include <zarafa/ECUnknown.h>
 
 class MAPINotifSink _zcp_final : public IMAPIAdviseSink {
 public:

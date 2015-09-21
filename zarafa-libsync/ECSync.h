@@ -56,7 +56,7 @@
 #include <pthread.h>
 #include <edkmdb.h>
 #include "IECSync.h"
-#include "ECUnknown.h"
+#include <zarafa/ECUnknown.h>
 
 #include "ECLibSync.h"
 #include "ECSyncContext.h"

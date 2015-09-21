@@ -48,7 +48,7 @@
 #ifndef WSABTABLEVIEW_H
 #define WSABTABLEVIEW_H
 
-#include "ECUnknown.h"
+#include <zarafa/ECUnknown.h>
 #include "WSTableView.h"
 #include "ECABLogon.h"
 

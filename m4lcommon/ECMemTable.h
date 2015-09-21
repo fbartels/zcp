@@ -52,7 +52,7 @@
 #include <pthread.h>
 
 #include "ECKeyTable.h"
-#include "ECUnknown.h"
+#include <zarafa/ECUnknown.h>
 #include <zarafa/ustringutil.h>
 
 typedef struct {

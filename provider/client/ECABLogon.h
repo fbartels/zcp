@@ -46,7 +46,7 @@
 
 #include <zarafa/zcdefs.h>
 #include <mapispi.h>
-#include "ECUnknown.h"
+#include <zarafa/ECUnknown.h>
 
 #include "ECNotifyClient.h"
 

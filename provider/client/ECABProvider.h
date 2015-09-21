@@ -45,7 +45,7 @@
 #define ECABPROVIDER
 
 #include <zarafa/zcdefs.h>
-#include "ECUnknown.h"
+#include <zarafa/ECUnknown.h>
 
 
 class ECABProvider : public ECUnknown 

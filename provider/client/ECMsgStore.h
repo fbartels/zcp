@@ -51,7 +51,7 @@
 //NOTE: windows in $TOP/common/windows, linux in $TOP/mapi4linux/include
 #include <edkmdb.h>
 
-#include "ECUnknown.h"
+#include <zarafa/ECUnknown.h>
 #include "ECMAPIProp.h"
 #include "WSTransport.h"
 #include "ECNotifyClient.h"

@@ -47,7 +47,7 @@
 #include <mapicode.h>
 #include <mapiguid.h>
 
-#include "ECUnknown.h"
+#include <zarafa/ECUnknown.h>
 #include <zarafa/ECGuid.h>
 
 #ifdef _DEBUG

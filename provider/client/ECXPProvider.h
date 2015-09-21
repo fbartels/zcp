@@ -45,7 +45,7 @@
 #define ECXPPROVIDER_H
 
 #include <zarafa/zcdefs.h>
-#include "ECUnknown.h"
+#include <zarafa/ECUnknown.h>
 
 class ECXPProvider : public ECUnknown
 {

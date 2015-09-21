@@ -49,7 +49,7 @@
 */
 
 #include <zarafa/zcdefs.h>
-#include "ECUnknown.h"
+#include <zarafa/ECUnknown.h>
 #include "IECPropStorage.h"
 
 #include "ECGenericProp.h"

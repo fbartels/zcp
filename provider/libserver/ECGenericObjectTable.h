@@ -55,7 +55,7 @@
 #include "ECKeyTable.h"
 #include "ECDatabase.h"
 #include <zarafa/ustringutil.h>
-#include "ECUnknown.h"
+#include <zarafa/ECUnknown.h>
 
 /*
  * This object is an actual table, with a cursor in-memory. We also keep the complete

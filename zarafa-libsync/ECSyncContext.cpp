@@ -54,7 +54,7 @@
 #include <IECExportChanges.h>
 #include <IECChangeAdvisor.h>
 
-#include <ECUnknown.h>
+#include <zarafa/ECUnknown.h>
 #include <zarafa/ECGuid.h>
 #include <zarafa/ECTags.h>
 #include <zarafa/ECLogger.h>

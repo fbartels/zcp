@@ -49,7 +49,7 @@
 #include <pthread.h>
 
 #include "ECSessionGroupManager.h"
-#include "ECUnknown.h"
+#include <zarafa/ECUnknown.h>
 #include <zarafa/ZarafaCode.h>
 
 class ECNotifyClient;

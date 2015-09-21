@@ -45,7 +45,7 @@
 #define ECXPLOGON_H
 
 #include <zarafa/zcdefs.h>
-#include "ECUnknown.h"
+#include <zarafa/ECUnknown.h>
 #include "IMAPIOffline.h"
 #include <pthread.h>
 #include <string>

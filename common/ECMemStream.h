@@ -45,7 +45,7 @@
 #define ECMEMSTREAM_H
 
 #include <zarafa/zcdefs.h>
-#include "ECUnknown.h"
+#include <zarafa/ECUnknown.h>
 
 /* The ECMemBlock class is basically a random-access block of data that can be
  * read from and written to, expanded and contracted, and has a Commit and Revert

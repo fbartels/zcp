@@ -47,7 +47,7 @@
 #include <zarafa/zcdefs.h>
 #include <mapidefs.h>
 #include "ECMAPIFolder.h"
-#include "ECUnknown.h"
+#include <zarafa/ECUnknown.h>
 
 class ECExchangeImportHierarchyChanges : public ECUnknown {
 protected:

@@ -48,7 +48,7 @@
 #include <mapidefs.h>
 #include "ECMAPIFolder.h"
 
-#include <ECUnknown.h>
+#include <zarafa/ECUnknown.h>
 #include <IECImportContentsChanges.h>
 
 class ECExchangeImportContentsChanges : public ECUnknown {
