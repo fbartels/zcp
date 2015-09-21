@@ -52,7 +52,7 @@
 #include "ECKeyTable.h"
 #include <zarafa/ECGuid.h>
 #include <zarafa/Util.h>
-#include "Trace.h"
+#include <zarafa/Trace.h>
 #include <zarafa/CommonUtil.h>
 #include <zarafa/charset/convert.h>
 

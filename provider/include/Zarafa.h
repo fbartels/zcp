@@ -46,7 +46,7 @@
 
 #include <mapi.h>
 #include <zarafa/ECTags.h>
-#include "Trace.h"
+#include <zarafa/Trace.h>
 
 // We have 2 types of entryids: those of objects, and those of stores.
 // Objects have a store-relative path, however they do have a GUID to make

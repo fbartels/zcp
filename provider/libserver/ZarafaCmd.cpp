@@ -75,7 +75,7 @@
 #include <zarafa/stringutil.h>
 #include "SOAPUtils.h"
 #include <zarafa/ZarafaCode.h>
-#include "Trace.h"
+#include <zarafa/Trace.h>
 #include "ZarafaCmd.nsmap"
 #include "ECFifoBuffer.h"
 #include "ECSerializer.h"

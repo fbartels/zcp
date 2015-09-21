@@ -67,7 +67,7 @@
 #include <zarafa/ECDefs.h>
 #include "SOAPUtils.h"
 #include <zarafa/stringutil.h>
-#include "Trace.h"
+#include <zarafa/Trace.h>
 #include "ECServerEntrypoint.h"
 #include "ECMailBoxTable.h"
 

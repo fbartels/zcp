@@ -44,7 +44,7 @@
 #include <zarafa/platform.h>
 #include "ZCABContainer.h"
 #include "ZCMAPIProp.h"
-#include "Trace.h"
+#include <zarafa/Trace.h>
 
 #include <mapiutil.h>
 

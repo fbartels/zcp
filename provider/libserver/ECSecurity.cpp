@@ -63,7 +63,7 @@
 #include "ECSecurity.h"
 
 #include <zarafa/stringutil.h>
-#include "Trace.h"
+#include <zarafa/Trace.h>
 #include "Zarafa.h"
 #include <zarafa/md5.h>
 

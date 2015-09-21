@@ -45,7 +45,7 @@
 
 #include <mapispi.h>
 #include <mapicode.h>
-#include "Trace.h"
+#include <zarafa/Trace.h>
 #include "Mem.h"
 
 #ifdef _DEBUG

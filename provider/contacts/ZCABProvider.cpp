@@ -51,7 +51,7 @@
 
 #include <zarafa/ECGuid.h>
 #include "ECDebug.h"
-#include "Trace.h"
+#include <zarafa/Trace.h>
 
 ZCABProvider::ZCABProvider(ULONG ulFlags, const char *szClassName) :
     ECUnknown(szClassName), m_ulFlags(ulFlags)

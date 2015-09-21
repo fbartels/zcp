@@ -59,7 +59,7 @@
 #include <zarafa/ECGuid.h>
 #include <mapiguid.h>
 
-#include "Trace.h"
+#include <zarafa/Trace.h>
 #include "ECDebug.h"
 
 #include "ZarafaUtil.h"

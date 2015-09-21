@@ -46,7 +46,7 @@
 #include <mapix.h>
 #include <zarafa/ECGuid.h>
 #include "ECMemStream.h"
-#include "Trace.h"
+#include <zarafa/Trace.h>
 #include "ECDebug.h"
 
 #ifdef _DEBUG

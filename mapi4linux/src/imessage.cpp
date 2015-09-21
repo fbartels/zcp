@@ -51,7 +51,7 @@
 
 #include <zarafa/Util.h>
 #include "ECDebug.h"
-#include "Trace.h"
+#include <zarafa/Trace.h>
 
 #ifdef WIN32
 extern HMODULE g_hLibMapi;

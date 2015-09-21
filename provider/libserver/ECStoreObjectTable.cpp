@@ -88,7 +88,7 @@
 #include <zarafa/charset/utf8string.h>
 #include <zarafa/charset/convert.h>
 
-#include "Trace.h"
+#include <zarafa/Trace.h>
 #include "ECSessionManager.h"
 
 #include "ECSession.h"

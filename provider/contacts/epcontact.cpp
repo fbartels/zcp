@@ -45,7 +45,7 @@
 #include <mapidefs.h>
 #include <mapispi.h>
 #include "ECDebug.h"
-#include "Trace.h"
+#include <zarafa/Trace.h>
 
 #include "ZCABProvider.h"
 

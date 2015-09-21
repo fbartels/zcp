@@ -64,7 +64,7 @@
 #include "freebusyguid.h"
 
 #include <zarafa/ECUnknown.h>
-#include "Trace.h"
+#include <zarafa/Trace.h>
 #include "ECDebug.h"
 #include <zarafa/ECGuid.h>
 

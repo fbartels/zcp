@@ -89,7 +89,7 @@
 #include "SOAPUtils.h"
 #include <zarafa/stringutil.h>
 
-#include "Trace.h"
+#include <zarafa/Trace.h>
 #include "ECSessionManager.h"
        
 #include "ECSession.h"

@@ -65,7 +65,7 @@
 #include "ECSecurity.h"
 #include "SSLUtil.h"
 
-#include "Trace.h"
+#include <zarafa/Trace.h>
 #include "Zarafa.h"
 
 #include "ECICS.h"

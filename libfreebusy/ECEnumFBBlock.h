@@ -55,7 +55,7 @@
 #include <zarafa/zcdefs.h>
 #include "freebusy.h"
 #include <zarafa/ECUnknown.h>
-#include "Trace.h"
+#include <zarafa/Trace.h>
 #include "ECDebug.h"
 #include <zarafa/ECGuid.h>
 #include "freebusyguid.h"

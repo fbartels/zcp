@@ -61,7 +61,7 @@
 #include "WSUtil.h"
 #include "ECIConv.h"
 #include <zarafa/ECGuid.h>
-#include "Trace.h"
+#include <zarafa/Trace.h>
 
 #include "Mem.h"
 

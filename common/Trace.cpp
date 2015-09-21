@@ -45,7 +45,7 @@
 
 #include <cstdio>
 #include <cstdarg>
-#include "Trace.h"
+#include <zarafa/Trace.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

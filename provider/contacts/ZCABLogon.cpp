@@ -42,7 +42,7 @@
  */
 
 #include <zarafa/platform.h>
-#include "Trace.h"
+#include <zarafa/Trace.h>
 #include "ZCABLogon.h"
 #include "ZCABContainer.h"
 #include <zarafa/ECTags.h>

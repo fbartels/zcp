@@ -53,7 +53,7 @@
 
 #include <zarafa/ECGuid.h>
 
-#include "Trace.h"
+#include <zarafa/Trace.h>
 #include "ECDebug.h"
 
 
