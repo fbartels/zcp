@@ -42,7 +42,7 @@
  */
 
 #include <zarafa/platform.h>
-#include "ECScheduler.h"
+#include <zarafa/ECScheduler.h>
 #ifdef LINUX
 // ETIMEDOUT in linux is in errno, windows has this though pthread.h
 #include <cerrno>

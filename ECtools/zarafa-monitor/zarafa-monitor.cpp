@@ -64,7 +64,7 @@
 #include <cctype>
 #include <zarafa/my_getopt.h>
 
-#include "ECScheduler.h"
+#include <zarafa/ECScheduler.h>
 #include "ECMonitorDefs.h"
 #include "ECQuotaMonitor.h"
 

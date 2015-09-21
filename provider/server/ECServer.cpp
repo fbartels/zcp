@@ -77,7 +77,7 @@
 #endif
 
 #include <sys/stat.h>
-#include "ECScheduler.h"
+#include <zarafa/ECScheduler.h>
 #include <zarafa/ZarafaCode.h>
 #include "ZarafaCmd.h"
 
