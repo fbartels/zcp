@@ -61,7 +61,7 @@
 #include <zarafa/CommonUtil.h>
 #include <zarafa/ecversion.h>
 #include <zarafa/stringutil.h>
-#include "MAPIErrors.h"
+#include <zarafa/MAPIErrors.h>
 #include <zarafa/ECLogger.h>
 
 using namespace std;

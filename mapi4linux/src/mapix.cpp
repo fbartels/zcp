@@ -65,7 +65,7 @@
 #include <zarafa/stringutil.h>
 #include <zarafa/mapiguidext.h>
 #include "ECRestriction.h"
-#include "../common/MAPIErrors.h"
+#include <zarafa/MAPIErrors.h>
 
 #include <string>
 #include <map>

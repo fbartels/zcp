@@ -45,7 +45,7 @@
 #include "mapidefs.h"
 #include <zarafa/ECChannel.h>
 #include <mapix.h>
-#include "MAPIErrors.h"
+#include <zarafa/MAPIErrors.h>
 #include "Http.h"
 #include "CalDavUtil.h"
 #include "iCal.h"

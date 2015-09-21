@@ -45,7 +45,7 @@
 #include "PublishFreeBusy.h"
 #include "CalDavProto.h"
 #include <zarafa/mapi_ptr.h>
-#include "MAPIErrors.h"
+#include <zarafa/MAPIErrors.h>
 
 using namespace std;
 

@@ -61,7 +61,7 @@
 #include "ECRestriction.h"
 #include "HrException.h"
 #include "ArchiveManage.h"
-#include "MAPIErrors.h"
+#include <zarafa/MAPIErrors.h>
 
 using namespace za::helpers;
 using namespace za::operations;

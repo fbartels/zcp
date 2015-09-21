@@ -55,7 +55,7 @@
 #include <zarafa/userutil.h>
 #include "ArchiveStateUpdater.h"
 #include "ECRestriction.h"
-#include "MAPIErrors.h"
+#include <zarafa/MAPIErrors.h>
     
 using namespace za::helpers;
 

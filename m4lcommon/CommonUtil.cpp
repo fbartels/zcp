@@ -79,7 +79,7 @@
 #include <zarafa/IECServiceAdmin.h>
 #include <zarafa/EMSAbTag.h>
 #include "ECRestriction.h"
-#include "MAPIErrors.h"
+#include <zarafa/MAPIErrors.h>
 
 #include <sys/types.h>
 #ifdef WIN32

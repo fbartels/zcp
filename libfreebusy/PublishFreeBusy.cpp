@@ -50,7 +50,7 @@
 #include <algorithm>
 #include <zarafa/ECLogger.h>
 #include "recurrence.h"
-#include "MAPIErrors.h"
+#include <zarafa/MAPIErrors.h>
 
 #include "restrictionutil.h"
 #include "ECFreeBusyUpdate.h"

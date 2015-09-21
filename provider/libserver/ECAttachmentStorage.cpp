@@ -62,7 +62,7 @@
 
 #include "ECAttachmentStorage.h"
 #include "SOAPUtils.h"
-#include "MAPIErrors.h"
+#include <zarafa/MAPIErrors.h>
 #include <mapitags.h>
 #include <zarafa/stringutil.h>
 #include "StreamUtil.h"

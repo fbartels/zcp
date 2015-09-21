@@ -77,7 +77,7 @@
 #include <zarafa/tstring.h>
 #include "ECACL.h"
 #include "charset/localeutil.h"
-#include "MAPIErrors.h"
+#include <zarafa/MAPIErrors.h>
 
 #include <edkmdb.h>
 #include <edkguid.h>
@@ -87,7 +87,7 @@
 #define ARCHIVER_EXTRA
 #include "Archiver.h"
 
-#include "MAPIErrors.h" // for declaration of GetMAPIErrorMessage()
+#include <zarafa/MAPIErrors.h> // for declaration of GetMAPIErrorMessage()
 
 using namespace std;
 

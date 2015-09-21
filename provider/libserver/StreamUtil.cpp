@@ -53,7 +53,7 @@
 #include "ECTPropsPurge.h"
 #include "ECICS.h"
 #include "ECMemStream.h"
-#include "MAPIErrors.h"
+#include <zarafa/MAPIErrors.h>
 
 #include <zarafa/charset/convert.h>
 #include <zarafa/charset/utf8string.h>
