@@ -53,7 +53,7 @@
 #include <zarafa/ECGuid.h>
 #include "mapiext.h"
 #include <edkmdb.h>
-#include "edkguid.h"
+#include <edkguid.h>
 
 #include "Zarafa.h"
 #include "ECXPLogon.h"

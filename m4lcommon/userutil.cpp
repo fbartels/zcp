@@ -56,7 +56,7 @@
 #include <zarafa/ECGuid.h>
 #include <zarafa/IECServiceAdmin.h>
 #include <edkmdb.h>
-#include "edkguid.h"
+#include <edkguid.h>
 #include <zarafa/IECLicense.h>
 #include "CommonUtil.h"
 #include "ECRestriction.h"

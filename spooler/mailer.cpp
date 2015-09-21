@@ -60,7 +60,7 @@
 #include <zarafa/IECServiceAdmin.h>
 #include "IECSpooler.h"
 #include <zarafa/ECGuid.h>
-#include "edkguid.h"
+#include <edkguid.h>
 #include "CommonUtil.h"
 #include "Util.h"
 #include "stringutil.h"

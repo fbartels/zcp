@@ -11,9 +11,11 @@ AM_CPPFLAGS = ${ZCPPFLAGS} $(DEBUGFLAGS) $(BOOST_CPPFLAGS) \
 
 noinst_LTLIBRARIES = libm4lcommon.la
 
+m4lincludedir = ${includedir}/mapi4linux
 pkgincludedir = ${includedir}/zarafa
 mapiptrdir = ${pkgincludedir}/mapi_ptr
 
+m4linclude_HEADERS = include/edkguid.h
 pkginclude_HEADERS = \
 	CommonUtil.h \
 	ECDefs.h \
@@ -42,7 +44,6 @@ pkginclude_HEADERS = \
 	MAPINotifSink.h \
 	Util.h \
 	auto_free.h \
-	edkguid.h \
 	favoritesutil.h \
 	mapi_ptr.h \
 	mapicontact.h \

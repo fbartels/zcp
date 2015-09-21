@@ -45,7 +45,7 @@
 #include "ECArchiveAwareMsgStore.h"
 #include "ECArchiveAwareAttach.h"
 #include <zarafa/ECGuid.h>
-#include "edkguid.h"
+#include <edkguid.h>
 #include "mapi_ptr.h"
 #include "IECPropStorage.h"
 #include "Mem.h"

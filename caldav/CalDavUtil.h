@@ -53,7 +53,7 @@
 #include "namedprops.h"
 #include "nameids.h"
 #include "icaluid.h"
-#include "edkguid.h"
+#include <edkguid.h>
 #include "freebusy.h"
 #include "ECFreeBusySupport.h"
 #include "MAPIToICal.h"

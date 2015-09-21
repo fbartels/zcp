@@ -50,7 +50,7 @@
 #include "ECSyncLog.h"
 
 #include "Util.h"
-#include "edkguid.h"
+#include <edkguid.h>
 #include <zarafa/ECGuid.h>
 #include <mapiguid.h>
 #include "ECMessage.h"

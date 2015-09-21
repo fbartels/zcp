@@ -59,7 +59,7 @@
 #include "Trace.h"
 #include "ECDebug.h"
 
-#include "edkguid.h"
+#include <edkguid.h>
 #include "EntryPoint.h"
 #include "DLLGlobal.h"
 #include <edkmdb.h>

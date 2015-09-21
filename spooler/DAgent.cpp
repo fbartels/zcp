@@ -120,7 +120,7 @@
 #include <mapidefs.h>
 #include <mapiext.h>
 #include <mapiguid.h>
-#include "edkguid.h"
+#include <edkguid.h>
 #include <edkmdb.h>
 #include "EMSAbTag.h"
 

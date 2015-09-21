@@ -59,7 +59,7 @@
 #include "mapi_ptr.h"
 
 #include <zarafa/ECGuid.h>
-#include "edkguid.h"
+#include <edkguid.h>
 #include "ECDebug.h"
 #include "WSUtil.h"
 

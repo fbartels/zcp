@@ -52,7 +52,7 @@
 #include "ECGetText.h"
 
 #include <zarafa/ECGuid.h>
-#include "edkguid.h"
+#include <edkguid.h>
 
 #include "Trace.h"
 #include "ECDebug.h"

@@ -98,7 +98,7 @@
 
 #include "mapiext.h"
 #include <edkmdb.h>
-#include "edkguid.h"
+#include <edkguid.h>
 #include <zarafa/mapiguidext.h>
 #include "mapicontact.h"
 #include "restrictionutil.h"

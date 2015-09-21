@@ -171,7 +171,7 @@
 #define USES_IID_ISensNetwork
 
 #include <mapiguid.h>
-#include "edkguid.h"
+#include <edkguid.h>
 #include <zarafa/ECGuid.h>
 #include "freebusyguid.h"
 #include <zarafa/mapiguidext.h>

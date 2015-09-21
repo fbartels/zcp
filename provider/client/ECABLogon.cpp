@@ -51,7 +51,7 @@
 
 #include "Zarafa.h"
 #include <zarafa/ECGuid.h>
-#include "edkguid.h"
+#include <edkguid.h>
 #include "ECABLogon.h"
 
 #include "ECABContainer.h"

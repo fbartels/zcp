@@ -51,7 +51,7 @@
 
 #include "Util.h"
 #include <zarafa/ECGuid.h>
-#include "edkguid.h"
+#include <edkguid.h>
 #include <mapiguid.h>
 #include "mapiext.h"
 

@@ -81,7 +81,7 @@
 
 #include <zarafa/ECGuid.h>
 #include <edkmdb.h>
-#include "edkguid.h"
+#include <edkguid.h>
 
 #include "mapi_ptr.h"
 

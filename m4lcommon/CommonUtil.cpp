@@ -72,7 +72,7 @@
 #include "mapiext.h"
 #include "freebusytags.h"
 
-#include "edkguid.h"
+#include <edkguid.h>
 #include <zarafa/mapiguidext.h>
 #include <edkmdb.h>
 #include <zarafa/IECUnknown.h>
