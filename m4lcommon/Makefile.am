@@ -17,7 +17,6 @@ pkgincludedir = ${includedir}/zarafa
 m4linclude_HEADERS = include/edkguid.h
 pkginclude_HEADERS = \
 	ECFeatureList.h \
-	ECInterfaceDefs.h \
 	ECInvariantChecker.h \
 	ECIterators.h \
 	ECMAPIDebug.h \

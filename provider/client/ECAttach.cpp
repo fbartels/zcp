@@ -51,7 +51,7 @@
 
 #include <zarafa/ECGuid.h>
 #include <zarafa/ECDebug.h>
-#include "ECInterfaceDefs.h"
+#include <zarafa/ECInterfaceDefs.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

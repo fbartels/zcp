@@ -66,7 +66,7 @@
 #include <zarafa/charset/convert.h>
 #include "utf8.h"
 
-#include "ECInterfaceDefs.h"
+#include <zarafa/ECInterfaceDefs.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

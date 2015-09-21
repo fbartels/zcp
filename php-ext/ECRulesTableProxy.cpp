@@ -45,7 +45,7 @@
 #include "ECRulesTableProxy.h"
 #include <zarafa/ECGuid.h>
 #include <zarafa/mapi_ptr.h>
-#include "ECInterfaceDefs.h"
+#include <zarafa/ECInterfaceDefs.h>
 #include <zarafa/Trace.h>
 #include <zarafa/charset/convert.h>
 

@@ -56,7 +56,7 @@
 #include <zarafa/Util.h>
 
 #include <zarafa/ECDebug.h>
-#include "ECInterfaceDefs.h"
+#include <zarafa/ECInterfaceDefs.h>
 
 
 #ifdef _DEBUG
