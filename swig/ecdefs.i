@@ -62,7 +62,7 @@ public:
 #if SWIGPYTHON
 
 %{
-#include "swig_iunknown.h"
+#include <zarafa/swig_iunknown.h>
 typedef IUnknownImplementor<IECChangeAdviseSink> ECChangeAdviseSink;
 typedef IUnknownImplementor<IECImportContentsChanges> ECImportContentsChanges;
 typedef IUnknownImplementor<IECImportHierarchyChanges> ECImportHierarchyChanges;

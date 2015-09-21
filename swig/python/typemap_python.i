@@ -3,8 +3,8 @@
 %include <python/cwstring.i>
 
 %{
-#include "conversion.h"
-#include "director_util.h"
+#include <zarafa/conversion.h>
+#include <zarafa/director_util.h>
 
 #define SWIG_SHADOW 0
 #define SWIG_OWNER SWIG_POINTER_OWN

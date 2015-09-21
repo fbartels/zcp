@@ -49,7 +49,7 @@
 #include <edkmdb.h>
 #include <Python.h>
 #include <zarafa/charset/convert.h>
-#include "conversion.h"
+#include <zarafa/conversion.h>
 #include "scl.h"
 
 // mapi4linux does defines this in edkmdb.h

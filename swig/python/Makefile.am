@@ -1,5 +1,7 @@
 # -*- Makefile -*-
 
+SUBDIRS = include/zarafa zarafa
+
 lib_LTLIBRARIES = libzcp_pyconv.la libzcp_pydirector.la
 pythonexeclib_LTLIBRARIES = _MAPICore.la _inetmapi.la _icalmapi.la _licenseclient.la
 noinst_LTLIBRARIES = _libcommon.la _archiver.la _libfreebusy.la _RecurrenceState.la
@@ -7,17 +9,12 @@ noinst_DATA = libzcp_pyconv.ldd _MAPICore.ldd _inetmapi.ldd _icalmapi.ldd \
 	_libcommon.ldd _archiver.ldd _libfreebusy.ldd _RecurrenceState.ldd \
 	_licenseclient.ldd
 
-SUBDIRS = zarafa
-
 # disable warnings since code is mostly generated
 AM_CPPFLAGS = ${ZCPPFLAGS} $(DEBUGFLAGS) \
 	-I$(top_srcdir)/mapi4linux/include -I$(top_srcdir)/provider/common \
 	-I${top_srcdir}/common -I${top_srcdir}/m4lcommon \
 	$(PYTHON_INCLUDES) -I${top_srcdir}/swig -w \
 	-DSWIG_PYTHON_OUTPUT_TUPLE -DSWIG_TYPE_TABLE=MAPI
-
-pkgincludedir = ${includedir}/zarafa
-pkginclude_HEADERS = conversion.h ../director_util.h
 
 libzcp_pyconv_la_SOURCES = conversion.cpp conversion.h
 libzcp_pyconv_la_LDFLAGS = -Wl,--version-script=${top_srcdir}/default.sym

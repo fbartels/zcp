@@ -27,7 +27,7 @@
 #endif
 
 #include "MAPINotifSink.h"
-#include "director_util.h"
+#include <zarafa/director_util.h>
 
 HRESULT MAPIInitialize_Multithreaded() {
 	MAPIINIT_0 init = {0, MAPI_MULTITHREAD_NOTIFICATIONS};
@@ -310,7 +310,7 @@ LPCIID IIDFromType(const char *type)
 // Directors for IStream
 
 %{
-#include "swig_iunknown.h"
+#include <zarafa/swig_iunknown.h>
 
 typedef IUnknownImplementor<IStream> Stream;
 %}

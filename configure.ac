@@ -66,7 +66,9 @@ AC_SUBST([ZPHPCXXFLAGS])
 ZCPPFLAGS="$BUILDOS -DHAVE_CONFIG_H -I\${top_srcdir}/common/include \
 	-I\${top_srcdir}/m4lcommon/include \
 	-I\${top_srcdir}/ECtools/zarafa-archiver/include \
-	-I\${top_srcdir}/inetmapi/include"
+	-I\${top_srcdir}/inetmapi/include \
+	-I\${top_srcdir}/swig/include \
+	-I\${top_srcdir}/swig/python/include"
 ZCXXFLAGS="-Wall -Wmissing-declarations -Wno-write-strings"
 if ! test "$want_release" = "yes"; then
 # when using -pedantic, -Wno-long-long is required
@@ -786,7 +788,9 @@ AC_CONFIG_FILES([Makefile
 		libicalmapi/Makefile
 		caldav/Makefile
 		swig/Makefile
+		swig/include/zarafa/Makefile
 		swig/python/Makefile
+		swig/python/include/zarafa/Makefile
 		swig/python/zarafa/Makefile
 		zarafa-libsync/Makefile
 
