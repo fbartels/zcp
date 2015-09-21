@@ -49,7 +49,7 @@
 #include <zarafa/base64.h>
 #include <zarafa/stringutil.h>
 #include <zarafa/CommonUtil.h>
-#include "ECChannel.h"
+#include <zarafa/ECChannel.h>
 #include "ECIConv.h"
 #include <cstdio>
 #include <cstdarg>

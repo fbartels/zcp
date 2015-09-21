@@ -72,7 +72,7 @@ EXTRA_libzcp_common_mapi_la_DEPENDENCIES = ${top_builddir}/default.sym
 #
 # libzcp_common_ssl
 #
-nobase_pkginclude_HEADERS += ECChannel.h ECChannelClient.h SSLUtil.h
+nobase_pkginclude_HEADERS += ECChannelClient.h SSLUtil.h
 libzcp_common_ssl_la_SOURCES = ECChannel.cpp ECChannelClient.cpp SSLUtil.cpp
 libzcp_common_ssl_la_LIBADD = libzcp_common_util.la -lpthread ${SSL_LIBS}
 libzcp_common_ssl_la_LDFLAGS = ${AM_LDFLAGS} -no-undefined \

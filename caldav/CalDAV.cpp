@@ -43,7 +43,7 @@
 
 #include <zarafa/platform.h>
 #include "mapidefs.h"
-#include "ECChannel.h"
+#include <zarafa/ECChannel.h>
 #include <mapix.h>
 #include "MAPIErrors.h"
 #include "Http.h"
@@ -58,7 +58,7 @@
 #include <string>
 
 #include <zarafa/ECLogger.h>
-#include "ECChannel.h"
+#include <zarafa/ECChannel.h>
 #include <zarafa/my_getopt.h>
 #include <zarafa/ecversion.h>
 #include <zarafa/CommonUtil.h>

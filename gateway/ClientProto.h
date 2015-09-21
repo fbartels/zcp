@@ -45,7 +45,7 @@
 #define GATEWAY_COMMON_H
 
 #include <string>
-#include "ECChannel.h"
+#include <zarafa/ECChannel.h>
 #include <zarafa/ECLogger.h>
 #include <zarafa/ECConfig.h>
 

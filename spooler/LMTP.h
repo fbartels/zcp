@@ -46,7 +46,7 @@
 
 #include <string>
 #include <vector>
-#include "ECChannel.h"
+#include <zarafa/ECChannel.h>
 #include <zarafa/ECLogger.h>
 #include <zarafa/ECConfig.h>
 

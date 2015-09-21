@@ -73,7 +73,7 @@
 #include <zarafa/ECConfig.h>
 #include <zarafa/my_getopt.h>
 
-#include "ECChannel.h"
+#include <zarafa/ECChannel.h>
 #include "POP3.h"
 #include "IMAP.h"
 #include <zarafa/ecversion.h>

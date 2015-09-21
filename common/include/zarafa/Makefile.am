@@ -1,7 +1,7 @@
 # -*- Makefile -*-
 
 nobase_pkginclude_HEADERS = \
-	ECConfig.h ECGuid.h ECLogger.h ZarafaCode.h \
+	ECChannel.h ECConfig.h ECGuid.h ECLogger.h ZarafaCode.h \
 	base64.h ecversion.h md5.h my_getopt.h platform.h platform.linux.h \
 	stringutil.h threadutil.h ustringutil.h zcdefs.h \
 	charset/convert.h charset/convstring.h \

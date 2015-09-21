@@ -59,7 +59,7 @@
 #include <zarafa/CommonUtil.h>
 #include <fileutil.h>
 #include <zarafa/ECTags.h>
-#include "ECChannel.h"
+#include <zarafa/ECChannel.h>
 #include "LMTP.h"
 #include <zarafa/stringutil.h>
 #include "fileutil.h"
