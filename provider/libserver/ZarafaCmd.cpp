@@ -111,7 +111,7 @@
 #include "../server/ECSoapServerConnection.h"
 
 #include "ZarafaCmdUtil.h"
-#include "ECThreadPool.h"
+#include <zarafa/ECThreadPool.h>
 #include "ZarafaCmd.h"
 
 #if defined(HAVE_GPERFTOOLS_MALLOC_EXTENSION_H)

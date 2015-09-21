@@ -49,7 +49,7 @@
 #include <zarafa/mapi_ptr.h>
 #include "soapStub.h"
 #include "ECFifoBuffer.h"
-#include "ECThreadPool.h"
+#include <zarafa/ECThreadPool.h>
 #include "WSTransport.h"
 
 class ECMAPIFolder;

@@ -42,7 +42,7 @@
  */
 
 #include <zarafa/platform.h>
-#include "ECThreadPool.h"
+#include <zarafa/ECThreadPool.h>
 #include <zarafa/threadutil.h>
 
 #include <algorithm>
