@@ -64,7 +64,7 @@
 #include <malloc.h>
 #endif
 
-#include "EMSAbTag.h"
+#include <zarafa/EMSAbTag.h>
 #include <zarafa/ECConfig.h>
 #include <zarafa/ECDefs.h>
 #include <zarafa/ECLogger.h>

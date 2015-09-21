@@ -52,7 +52,7 @@
 #include "stringutil.h"
 #include <zarafa/charset/convert.h>
 #include <zarafa/ECTags.h>
-#include "EMSAbTag.h"
+#include <zarafa/EMSAbTag.h>
 #include "ECABEntryID.h"
 
 #include <mapiguid.h>

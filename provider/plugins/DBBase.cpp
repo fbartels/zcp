@@ -45,7 +45,7 @@
 
 #include "DBBase.h"
 #include <zarafa/ECDefs.h>
-#include "EMSAbTag.h"
+#include <zarafa/EMSAbTag.h>
 #include "stringutil.h"
 #include <zarafa/md5.h>
 #include <mapidefs.h>

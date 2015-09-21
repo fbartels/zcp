@@ -43,7 +43,7 @@
 
 #include <zarafa/platform.h>
 #include "CalDavUtil.h"
-#include "EMSAbTag.h"
+#include <zarafa/EMSAbTag.h>
 #include <zarafa/charset/convert.h>
 #include <zarafa/mapi_ptr.h>
 

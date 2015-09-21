@@ -22,7 +22,6 @@ pkginclude_HEADERS = \
 	ECIterators.h \
 	ECMAPIDebug.h \
 	ECMemTable.h \
-	EMSAbTag.h \
 	HrException.h \
 	IECChangeAdviseSink.h \
 	IECChangeAdvisor.h \

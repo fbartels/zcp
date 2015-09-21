@@ -50,7 +50,7 @@
 #include <mapitags.h>
 #include "mapiext.h"
 
-#include <EMSAbTag.h>
+#include <zarafa/EMSAbTag.h>
 
 #include "SOAPUtils.h"
 #include "ECABObjectTable.h"

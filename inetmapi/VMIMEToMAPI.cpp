@@ -83,7 +83,7 @@
 #include <zarafa/mapiguidext.h>
 #include <edkmdb.h>
 
-#include "EMSAbTag.h"
+#include <zarafa/EMSAbTag.h>
 #include "tnef.h"
 #include "codepage.h"
 #include <zarafa/Util.h>

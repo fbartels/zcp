@@ -66,7 +66,7 @@
 #include "stringutil.h"
 #include "mapicontact.h"
 #include <zarafa/mapiguidext.h>
-#include "EMSAbTag.h"
+#include <zarafa/EMSAbTag.h>
 #include "ECABEntryID.h"
 #include "ECGetText.h"
 

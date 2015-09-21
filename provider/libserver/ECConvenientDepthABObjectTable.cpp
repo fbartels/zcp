@@ -46,7 +46,7 @@
 
 #include <mapidefs.h>
 #include <mapitags.h>
-#include "EMSAbTag.h"
+#include <zarafa/EMSAbTag.h>
 
 #include "ECSessionManager.h"
 #include "ECConvenientDepthABObjectTable.h"

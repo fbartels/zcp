@@ -103,7 +103,7 @@
 #include "ECTPropsPurge.h"
 
 #include <zarafa/ECDefs.h>
-#include <EMSAbTag.h>
+#include <zarafa/EMSAbTag.h>
 #include <edkmdb.h>
 #include <zarafa/ecversion.h>
 #include "mapiext.h"

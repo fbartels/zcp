@@ -82,7 +82,7 @@
 #include <zarafa/IECServiceAdmin.h>
 #include <zarafa/IECSecurity.h>
 #include <zarafa/ECGuid.h>
-#include "EMSAbTag.h"
+#include <zarafa/EMSAbTag.h>
 #include <zarafa/ECTags.h>
 #include "ECABEntryID.h"
 #include <zarafa/CommonUtil.h>

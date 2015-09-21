@@ -122,7 +122,7 @@
 #include <mapiguid.h>
 #include <edkguid.h>
 #include <edkmdb.h>
-#include "EMSAbTag.h"
+#include <zarafa/EMSAbTag.h>
 
 #include <cctype>
 #include <ctime>

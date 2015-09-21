@@ -77,7 +77,7 @@
 #include <edkmdb.h>
 #include <zarafa/IECUnknown.h>
 #include <zarafa/IECServiceAdmin.h>
-#include "EMSAbTag.h"
+#include <zarafa/EMSAbTag.h>
 #include "ECRestriction.h"
 #include "MAPIErrors.h"
 

@@ -58,7 +58,7 @@
 #include <zarafa/charset/convert.h>
 #include <zarafa/mapi_ptr.h>
 #include "ECGetText.h"
-#include "EMSAbTag.h"
+#include <zarafa/EMSAbTag.h>
 #include "ECRestriction.h"
 
 #include <iostream>

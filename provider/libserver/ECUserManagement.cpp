@@ -73,7 +73,7 @@
 #include <zarafa/ECGuid.h>
 #include <zarafa/ECDefs.h>
 #include "ECFeatureList.h"
-#include <EMSAbTag.h>
+#include <zarafa/EMSAbTag.h>
 
 #include <zarafa/charset/convert.h>
 #include <zarafa/charset/utf8string.h>

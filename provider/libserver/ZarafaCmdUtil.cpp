@@ -53,7 +53,7 @@
 #include <mapidefs.h>
 #include <mapitags.h>
 #include "mapiext.h"
-#include <EMSAbTag.h>
+#include <zarafa/EMSAbTag.h>
 #include <edkmdb.h>
 #include "ECMAPI.h"
 
