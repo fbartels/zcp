@@ -60,7 +60,7 @@
 #include <zarafa/CommonUtil.h>
 #include <zarafa/ECTags.h>
 #include <ECIConv.h>
-#include <inetmapi.h>
+#include <inetmapi/inetmapi.h>
 #include <zarafa/mapiext.h>
 #include <vector>
 #include <list>
@@ -68,7 +68,7 @@
 #include <map>
 #include <algorithm>
 #include <zarafa/base64.h>
-#include <options.h>
+#include <inetmapi/options.h>
 
 #include <edkmdb.h>
 #include <zarafa/stringutil.h>

@@ -50,7 +50,7 @@
 #else
 #endif
 
-#include <inetmapi.h>
+#include <inetmapi/inetmapi.h>
 
 #include <mapi.h>
 #include <mapix.h>

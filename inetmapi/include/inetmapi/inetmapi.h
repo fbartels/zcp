@@ -50,7 +50,7 @@
 #include <mapix.h>
 #include <mapidefs.h>
 #include <vector>
-#include "options.h"
+#include <inetmapi/options.h>
 
 class ECLogger;
 

@@ -225,8 +225,8 @@ ZEND_END_ARG_INFO()
 #include "ECImportContentsChangesProxy.h"
 #include "ECImportHierarchyChangesProxy.h"
 #include "ECMemStream.h"
-#include "inetmapi.h"
-#include "options.h"
+#include <inetmapi/inetmapi.h>
+#include <inetmapi/options.h>
 
 #include <edkmdb.h>
 #include <mapiguid.h>

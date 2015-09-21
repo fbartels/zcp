@@ -112,7 +112,7 @@
 #define USES_IID_IMsgStore
 #include <zarafa/ECGuid.h>
 
-#include <inetmapi.h>
+#include <inetmapi/inetmapi.h>
 
 #include <mapi.h>
 #include <mapix.h>
@@ -136,7 +136,7 @@
 #include "rules.h"
 #include "archive.h"
 #include "helpers/MAPIPropHelper.h"
-#include "options.h"			// inetmapi/options.h
+#include <inetmapi/options.h>
 #include <zarafa/charset/convert.h>
 #include <zarafa/base64.h>
 

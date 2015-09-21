@@ -52,7 +52,7 @@
 ZEND_EXTERN_MODULE_GLOBALS(mapi)
 
 #include <zarafa/charset/convert.h>
-#include "options.h"
+#include <inetmapi/options.h>
 
 /*
  * PHP -> MAPI

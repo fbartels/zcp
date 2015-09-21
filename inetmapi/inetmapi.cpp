@@ -70,7 +70,7 @@
 #include <zarafa/CommonUtil.h>
 #include <zarafa/charset/convert.h>
 // inetmapi
-#include "inetmapi.h"
+#include <inetmapi/inetmapi.h>
 #include "VMIMEToMAPI.h"
 #include "MAPIToVMIME.h"
 #include "ECVMIMEUtils.h"

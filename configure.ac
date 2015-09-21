@@ -65,7 +65,8 @@ AC_SUBST([ZPHPCXXFLAGS])
 # disable write-strings: too much complains about "" being 'cast' to char* (since const char* is not in the declarations) on g++-4.2 and higher
 ZCPPFLAGS="$BUILDOS -DHAVE_CONFIG_H -I\${top_srcdir}/common/include \
 	-I\${top_srcdir}/m4lcommon/include \
-	-I\${top_srcdir}/ECtools/zarafa-archiver/include"
+	-I\${top_srcdir}/ECtools/zarafa-archiver/include \
+	-I\${top_srcdir}/inetmapi/include"
 ZCXXFLAGS="-Wall -Wmissing-declarations -Wno-write-strings"
 if ! test "$want_release" = "yes"; then
 # when using -pedantic, -Wno-long-long is required
@@ -744,6 +745,7 @@ AC_CONFIG_FILES([Makefile
 		provider/server/Makefile
 		provider/soap/Makefile
 		inetmapi/Makefile
+		inetmapi/include/inetmapi/Makefile
 		spooler/Makefile
 		spooler/python/Makefile
 		spooler/python/plugins/Makefile

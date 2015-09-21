@@ -48,7 +48,7 @@
 #include <set>
 #include <zarafa/ECLogger.h>
 #include <vmime/vmime.hpp>
-#include "inetmapi.h"
+#include <inetmapi/inetmapi.h>
 
 class ECVMIMESender : public ECSender
 {

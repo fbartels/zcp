@@ -56,7 +56,7 @@
 #include <zarafa/CommonUtil.h>
 #include <zarafa/Util.h>
 #include <zarafa/ECTags.h>
-#include <inetmapi.h>
+#include <inetmapi/inetmapi.h>
 #include <zarafa/mapiext.h>
 
 #include <zarafa/stringutil.h>

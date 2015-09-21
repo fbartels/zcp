@@ -49,7 +49,7 @@
 #include <string>
 #include <vmime/vmime.hpp>
 #include <vmime/mailbox.hpp>
-#include "options.h"
+#include <inetmapi/options.h>
 #include <mapidefs.h>
 #include <zarafa/ECLogger.h>
 #include <zarafa/charset/convert.h>

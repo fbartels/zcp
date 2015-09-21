@@ -45,7 +45,7 @@
 #define MAILER_H
 
 #include <mapidefs.h>
-#include "inetmapi.h"
+#include <inetmapi/inetmapi.h>
 #include <zarafa/ECDefs.h>
 
 HRESULT SendUndeliverable(LPADRBOOK lpAddrBook, ECSender *lpMailer, LPMDB lpStore, LPECUSER lpUserAdmin, LPMESSAGE lpMessage);

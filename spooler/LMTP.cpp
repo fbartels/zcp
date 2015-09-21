@@ -53,7 +53,7 @@
 #include <mapicode.h>
 #include <mapidefs.h>
 #include <mapiutil.h>
-#include <inetmapi.h>
+#include <inetmapi/inetmapi.h>
 #include <zarafa/mapiext.h>
 
 #include <zarafa/CommonUtil.h>
