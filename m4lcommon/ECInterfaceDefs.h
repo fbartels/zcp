@@ -45,7 +45,7 @@
 
 // @todo: Document
 
-#include "ECDebugPrint.h"
+#include <zarafa/ECDebugPrint.h>
 #include <string>
 
 #define N_ARGS(...) N_ARGS_HELPER1((__VA_ARGS__, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0))

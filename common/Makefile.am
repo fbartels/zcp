@@ -55,7 +55,7 @@ endif
 # libzcp_common_mapi
 #
 nobase_pkginclude_HEADERS += \
-	ECABEntryID.h ECDebugPrint.h \
+	ECABEntryID.h \
 	ECFifoStream.h ECKeyTable.h ECMemStream.h \
 	HtmlEntity.h HtmlToTextParser.h IStreamAdapter.h \
 	codepage.h rtfutil.h

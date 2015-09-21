@@ -47,7 +47,7 @@
 #include <list>
 #include <vector>
 #include <memory>
-#include "ECDebugPrint.h"
+#include <zarafa/ECDebugPrint.h>
 #include "ArchiveControl.h"
 
 #if 1
