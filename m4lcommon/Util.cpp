@@ -65,7 +65,7 @@
 #include "ECMemStream.h"
 #include <zarafa/IECSingleInstance.h>
 #include <zarafa/ECGuid.h>
-#include "codepage.h"
+#include <zarafa/codepage.h>
 #include "rtfutil.h"
 #include <zarafa/mapiext.h>
 

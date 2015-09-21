@@ -80,7 +80,7 @@
 #include "mapicontact.h"
 #include <zarafa/Util.h>
 #include <zarafa/ECLogger.h>
-#include "codepage.h"
+#include <zarafa/codepage.h>
 #include <zarafa/ecversion.h>
 #include "SMIMEMessage.h"
 

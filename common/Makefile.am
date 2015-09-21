@@ -58,7 +58,7 @@ nobase_pkginclude_HEADERS += \
 	ECABEntryID.h \
 	ECFifoStream.h ECMemStream.h \
 	HtmlEntity.h HtmlToTextParser.h IStreamAdapter.h \
-	codepage.h rtfutil.h
+	rtfutil.h
 libzcp_common_mapi_la_SOURCES = \
 	ECABEntryID.cpp ECDebug.cpp ECDebugPrint.cpp ECGuid.cpp \
 	ECFifoStream.cpp ECKeyTable.cpp ECMemStream.cpp ECUnknown.cpp \

@@ -52,7 +52,7 @@
 #include "ECAttach.h"
 #include <zarafa/ECMemTable.h>
 
-#include "codepage.h"
+#include <zarafa/codepage.h>
 #include "rtfutil.h"
 #include <zarafa/Util.h>
 #include "Mem.h"

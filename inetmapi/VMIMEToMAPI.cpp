@@ -85,7 +85,7 @@
 
 #include <zarafa/EMSAbTag.h>
 #include "tnef.h"
-#include "codepage.h"
+#include <zarafa/codepage.h>
 #include <zarafa/Util.h>
 #include <zarafa/CommonUtil.h>
 #include <zarafa/namedprops.h>

@@ -72,7 +72,7 @@
 
 #include <edkmdb.h>
 #include <zarafa/stringutil.h>
-#include "codepage.h"
+#include <zarafa/codepage.h>
 #include <zarafa/charset/convert.h>
 #include "restrictionutil.h"
 #include <zarafa/ecversion.h>
