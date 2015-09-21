@@ -48,7 +48,7 @@
 
 #include "ECMAPI.h"
 #include "ECSession.h"
-#include "ECKeyTable.h"
+#include <zarafa/ECKeyTable.h>
 #include "ECStoreObjectTable.h"
 #include "ECSubRestriction.h"
 #include "ECSearchFolders.h"

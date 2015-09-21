@@ -49,7 +49,7 @@
 #include <mapiutil.h>
 
 #include "ECMemTable.h"
-#include "ECKeyTable.h"
+#include <zarafa/ECKeyTable.h>
 #include <zarafa/ECGuid.h>
 #include <zarafa/Util.h>
 #include <zarafa/Trace.h>

@@ -46,7 +46,7 @@
 
 #include <zarafa/ECLogger.h>
 #include "ECDatabaseFactory.h"
-#include "ECKeyTable.h"
+#include <zarafa/ECKeyTable.h>
 #include "ECStoreObjectTable.h"
 
 #include "soapH.h"

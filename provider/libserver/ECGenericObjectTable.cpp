@@ -83,7 +83,7 @@
 #include "ZarafaUtil.h"
 #include "ECSecurity.h"
 #include "ECDatabaseUtils.h"
-#include "ECKeyTable.h"
+#include <zarafa/ECKeyTable.h>
 #include "ECGenProps.h"
 #include "ECGenericObjectTable.h"
 #include "SOAPUtils.h"

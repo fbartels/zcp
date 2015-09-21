@@ -75,7 +75,7 @@
 
 #include "Zarafa.h"
 #include "ECDatabaseUtils.h"
-#include "ECKeyTable.h"
+#include <zarafa/ECKeyTable.h>
 #include "ECGenProps.h"
 #include "ECStoreObjectTable.h"
 #include "ECStatsCollector.h"

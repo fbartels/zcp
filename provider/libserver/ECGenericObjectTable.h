@@ -52,7 +52,7 @@
 #include <map>
 
 #include "ECSubRestriction.h"
-#include "ECKeyTable.h"
+#include <zarafa/ECKeyTable.h>
 #include "ECDatabase.h"
 #include <zarafa/ustringutil.h>
 #include <zarafa/ECUnknown.h>

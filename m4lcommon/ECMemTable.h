@@ -51,7 +51,7 @@
 #include <mapidefs.h>
 #include <pthread.h>
 
-#include "ECKeyTable.h"
+#include <zarafa/ECKeyTable.h>
 #include <zarafa/ECUnknown.h>
 #include <zarafa/ustringutil.h>
 

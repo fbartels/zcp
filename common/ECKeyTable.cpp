@@ -50,7 +50,7 @@
 #include <map>
 #include <cassert>
 
-#include "ECKeyTable.h" 
+#include <zarafa/ECKeyTable.h> 
 #include <zarafa/ustringutil.h>
 
 #ifdef _DEBUG

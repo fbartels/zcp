@@ -56,7 +56,7 @@ endif
 #
 nobase_pkginclude_HEADERS += \
 	ECABEntryID.h \
-	ECFifoStream.h ECKeyTable.h ECMemStream.h \
+	ECFifoStream.h ECMemStream.h \
 	HtmlEntity.h HtmlToTextParser.h IStreamAdapter.h \
 	codepage.h rtfutil.h
 libzcp_common_mapi_la_SOURCES = \

@@ -52,7 +52,7 @@
 #include <map>
 #include <set>
 
-#include "ECKeyTable.h"
+#include <zarafa/ECKeyTable.h>
 #include "ECNotification.h"
 #include <zarafa/ZarafaCode.h>
 #include <zarafa/CommonUtil.h>

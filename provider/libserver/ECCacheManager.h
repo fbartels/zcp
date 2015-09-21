@@ -57,7 +57,7 @@
 #include <mapidefs.h>
 #include <ECCache.h>
 
-#include "../common/ECKeyTable.h"
+#include <zarafa/ECKeyTable.h>
 
 #ifdef HAVE_SPARSEHASH
 #include <google/sparse_hash_map>

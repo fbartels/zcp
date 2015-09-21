@@ -47,7 +47,7 @@
 #include <set>
 #include <vector>
 
-#include "ECKeyTable.h"
+#include <zarafa/ECKeyTable.h>
 #include "ECDatabase.h"
 #include "soapH.h"
 
