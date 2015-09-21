@@ -78,7 +78,7 @@
 
 using namespace std;
 
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

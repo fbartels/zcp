@@ -45,7 +45,7 @@
 #include "archive.h"
 
 #include <zarafa/ECLogger.h>
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 #include <zarafa/charset/convert.h>
 #include <zarafa/mapi_ptr.h>
 

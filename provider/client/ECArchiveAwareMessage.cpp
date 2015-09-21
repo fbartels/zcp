@@ -53,7 +53,7 @@
 #include <zarafa/mapiext.h>
 #include <zarafa/mapiguidext.h>
 #include "ECArchiveAwareMessage.h"
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 #include <zarafa/stringutil.h>
 
 #include <sstream>

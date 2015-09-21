@@ -59,7 +59,7 @@
 
 #if defined(WIN32) && !defined(DISABLE_SSL_UI)
 #include "EntryPoint.h"
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 #include "CertificateDlg.h"
 #endif
 

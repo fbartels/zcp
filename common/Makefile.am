@@ -23,7 +23,7 @@ noinst_DATA = \
 #
 nobase_pkginclude_HEADERS = \
 	ConsoleTable.h ECACL.h ECCache.h ECConfigImpl.h \
-	ECFifoBuffer.h ECGetText.h ECIConv.h \
+	ECFifoBuffer.h ECIConv.h \
 	ECSerializer.h ECThreadPool.h StatsClient.h \
 	SymmetricCrypt.h TimeUtil.h TmpPath.h \
 	fileutil.h pthreadutil.h utf8.h \

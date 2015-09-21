@@ -43,7 +43,7 @@
 
 #include <zarafa/platform.h>
 
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 
 #include <memory.h>
 #include <mapi.h>

@@ -48,7 +48,7 @@
 #include "StoreHelper.h"
 #include "ECACL.h"
 #include "ECABEntryID.h"
-#include "ECGetText.h" // defines the wonderful macro "_"
+#include <zarafa/ECGetText.h> // defines the wonderful macro "_"
 
 namespace za { namespace helpers {
 

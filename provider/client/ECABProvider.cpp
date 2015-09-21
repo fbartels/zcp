@@ -69,7 +69,7 @@
 #include <zarafa/mapi_ptr/mapi_memory_ptr.h>
 typedef mapi_memory_ptr<ECUSER>	ECUserPtr;
 
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 
 using namespace std;
 

@@ -47,7 +47,7 @@
 #include <edkguid.h>
 #include <list>
 
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 
 #include "Mem.h"
 #include "ECMessage.h"

@@ -47,7 +47,7 @@
 #include <mapispi.h>
 #include <mapiutil.h>
 
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 
 #include <string>
 #include <cassert>

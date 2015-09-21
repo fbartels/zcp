@@ -67,7 +67,7 @@
 
 #include <zarafa/charset/convstring.h>
 
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

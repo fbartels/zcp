@@ -105,7 +105,7 @@
 #include <zarafa/charset/convert.h>
 #include <zarafa/charset/convstring.h>
 #include <zarafa/charset/utf8string.h>
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 #include "StatsClient.h"
 #include "TmpPath.h"
 

@@ -49,7 +49,7 @@
 #include <zarafa/Util.h>
 #include "ClientUtil.h"
 #include "ZarafaUtil.h"
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 
 #include <zarafa/mapiext.h>
 #include <mapiutil.h>

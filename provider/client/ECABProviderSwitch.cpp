@@ -49,7 +49,7 @@
 #include <mapispi.h>
 #include "ECABProvider.h"
 
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 
 #include <zarafa/ECGuid.h>
 #include <edkguid.h>

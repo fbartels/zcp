@@ -44,7 +44,7 @@
 #include <zarafa/platform.h>
 #include "ECDisplayTable.h"
 
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 
 #include <zarafa/CommonUtil.h>
 

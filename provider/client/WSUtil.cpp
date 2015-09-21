@@ -82,7 +82,7 @@
 #include <zarafa/charset/convert.h>
 #include <zarafa/charset/utf8string.h>
 #include "EntryPoint.h"
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 
 #include <zarafa/threadutil.h>
 #include "SOAPSock.h"

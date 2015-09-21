@@ -64,7 +64,7 @@
 #include <mapiutil.h>
 
 #include <zarafa/charset/convert.h>
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 #include "EntryPoint.h"
 
 #include <list>

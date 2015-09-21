@@ -57,7 +57,7 @@
 #include <zarafa/namedprops.h>
 #include <zarafa/charset/convert.h>
 #include <zarafa/mapi_ptr.h>
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 #include <zarafa/EMSAbTag.h>
 #include <zarafa/ECRestriction.h>
 

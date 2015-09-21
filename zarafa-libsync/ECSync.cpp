@@ -79,7 +79,7 @@
 #include "ECResyncSet.h"
 
 #include "ECSensNetwork.h"
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 #include <zarafa/charset/convert.h>
 #include "MAPINotifSink.h"
 

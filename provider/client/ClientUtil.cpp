@@ -44,7 +44,7 @@
 #include <zarafa/platform.h>
 #include "ClientUtil.h"
 
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 
 #include <mapi.h>
 #include <mapidefs.h>
