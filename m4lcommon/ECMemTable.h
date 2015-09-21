@@ -53,7 +53,7 @@
 
 #include "ECKeyTable.h"
 #include "ECUnknown.h"
-#include "ustringutil.h"
+#include <zarafa/ustringutil.h>
 
 typedef struct {
 	LPSPropValue	lpsPropVal;

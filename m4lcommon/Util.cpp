@@ -69,7 +69,7 @@
 #include "rtfutil.h"
 #include "mapiext.h"
 
-#include "ustringutil.h"
+#include <zarafa/ustringutil.h>
 #include "mapi_ptr.h"
 
 #include "HtmlToTextParser.h"

@@ -47,7 +47,7 @@
 #include <string>
 #include <memory>
 #include <map>
-#include "ustringutil.h"
+#include <zarafa/ustringutil.h>
 
 #include <mapi.h>
 #include <mapidefs.h>

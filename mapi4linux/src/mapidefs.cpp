@@ -51,7 +51,7 @@
 #include "Util.h"
 #include "ECMemTable.h"
 #include <zarafa/charset/convert.h>
-#include "ustringutil.h"
+#include <zarafa/ustringutil.h>
 
 #include <mapi.h>
 #include <mapicode.h>

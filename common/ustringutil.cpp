@@ -88,7 +88,7 @@ At some point we need to rewqrite these functions to do all the conversion on th
 */
 
 #include <zarafa/platform.h>
-#include "ustringutil.h"
+#include <zarafa/ustringutil.h>
 #include "CommonUtil.h"
 #include "utf8.h"
 

@@ -54,7 +54,7 @@
 #include "ECSubRestriction.h"
 #include "ECKeyTable.h"
 #include "ECDatabase.h"
-#include "ustringutil.h"
+#include <zarafa/ustringutil.h>
 #include "ECUnknown.h"
 
 /*

@@ -51,7 +51,7 @@
 
 #include <zarafa/ECDefs.h>
 
-#include "ustringutil.h"
+#include <zarafa/ustringutil.h>
 
 class ECLogger;
 

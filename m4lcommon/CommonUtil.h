@@ -52,7 +52,7 @@
 #include "charset/utf32string.h"
 #include <list>
 
-#include "ustringutil.h"
+#include <zarafa/ustringutil.h>
 
 class ECLogger;
 

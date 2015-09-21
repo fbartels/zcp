@@ -52,7 +52,7 @@
 #include "SOAPUtils.h"
 #include "SOAPAlloc.h"
 #include "stringutil.h"
-#include "ustringutil.h"
+#include <zarafa/ustringutil.h>
 #include "base64.h"
 
 using namespace std;

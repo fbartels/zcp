@@ -51,7 +51,7 @@
 #include "ECDatabase.h"
 #include "soapH.h"
 
-#include "ustringutil.h"
+#include <zarafa/ustringutil.h>
 
 class ECSession;
 
