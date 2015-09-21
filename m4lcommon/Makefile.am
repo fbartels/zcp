@@ -56,8 +56,7 @@ libm4lcommon_la_LIBADD = \
 
 
 pkginclude_HEADERS += \
-	ECFeatures.h ECRestriction.h \
-	RecurrenceState.h
+	ECFeatures.h ECRestriction.h
 # These were split off libcommon_util
 libm4lcommon_la_SOURCES += \
 	ECFeatures.cpp ECRestriction.cpp \

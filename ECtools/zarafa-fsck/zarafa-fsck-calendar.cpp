@@ -54,7 +54,7 @@
 #include <zarafa/charset/utf16string.h>
 #include <zarafa/charset/convert.h>
 
-#include "RecurrenceState.h"
+#include <zarafa/RecurrenceState.h>
 #include "zarafa-fsck.h"
 
 HRESULT ZarafaFsckCalendar::ValidateMinimalNamedFields(LPMESSAGE lpMessage)

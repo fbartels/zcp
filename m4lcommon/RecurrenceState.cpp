@@ -50,7 +50,7 @@
 #include <mapicode.h>
 
 #include <zarafa/stringutil.h>
-#include "RecurrenceState.h"
+#include <zarafa/RecurrenceState.h>
 #include <zarafa/charset/convert.h>
 #include <zarafa/charset/utf16string.h>
 

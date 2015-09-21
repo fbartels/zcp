@@ -44,7 +44,7 @@
 #ifndef RECURRENCE_H
 #define RECURRENCE_H
 
-#include "RecurrenceState.h"
+#include <zarafa/RecurrenceState.h>
 #include <mapidefs.h>
 #include <mapix.h>
 #include <zarafa/ECLogger.h>
