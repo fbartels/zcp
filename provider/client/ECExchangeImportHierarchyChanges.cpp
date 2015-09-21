@@ -51,7 +51,7 @@
 #include <edkguid.h>
 #include <mapiguid.h>
 #include "mapiext.h"
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 #include <zarafa/stringutil.h>
 #include "ZarafaUtil.h"
 #include "ZarafaICS.h"

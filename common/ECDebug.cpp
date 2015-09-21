@@ -42,7 +42,7 @@
  */
 
 #include <zarafa/platform.h>
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
 #include <mapidefs.h>
 #include <mapispi.h>

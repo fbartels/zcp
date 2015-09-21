@@ -54,7 +54,7 @@
 #include <zarafa/ECGuid.h>
 #include <mapiguid.h>
 #include "ECMessage.h"
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
 #include "ZarafaICS.h"
 #include "mapiext.h"

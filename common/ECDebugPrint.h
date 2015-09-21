@@ -48,7 +48,7 @@
 
 #include <mapidefs.h>
 #include <zarafa/stringutil.h>
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/utility/enable_if.hpp>

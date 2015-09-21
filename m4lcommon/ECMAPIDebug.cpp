@@ -44,7 +44,7 @@
 #include <zarafa/platform.h>
 #include <zarafa/mapi_ptr.h>
 #include "ECMAPIDebug.h"
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
 using namespace std;
 

@@ -59,7 +59,7 @@
 #include <sstream>
 
 #include <zarafa/Util.h>
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
 using namespace za::helpers;
 using namespace za::operations;

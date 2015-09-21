@@ -50,7 +50,7 @@
 #include <mapiguid.h>
 
 #include <zarafa/ECGuid.h>
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 #include <zarafa/Trace.h>
 
 ZCABProvider::ZCABProvider(ULONG ulFlags, const char *szClassName) :

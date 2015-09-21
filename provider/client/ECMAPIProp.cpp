@@ -61,7 +61,7 @@
 #include "Mem.h"
 #include <zarafa/Util.h>
 
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 #include "mapiext.h"
 
 #include <zarafa/CommonUtil.h>

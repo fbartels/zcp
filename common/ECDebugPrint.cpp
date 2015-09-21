@@ -43,7 +43,7 @@
 
 #include <zarafa/platform.h>
 #include "ECDebugPrint.h"
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 #include <zarafa/charset/convert.h>
 #include <zarafa/stringutil.h>
 

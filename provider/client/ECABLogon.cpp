@@ -58,7 +58,7 @@
 #include "ECMailUser.h"
 #include "ECDistList.h"
 
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
 #include "WSTransport.h"
 

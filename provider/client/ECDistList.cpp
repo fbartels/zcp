@@ -50,7 +50,7 @@
 
 #include <zarafa/ECGuid.h>
 #include <zarafa/CommonUtil.h>
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
 
 #include "ECMAPITable.h"

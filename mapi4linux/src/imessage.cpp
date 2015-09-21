@@ -50,7 +50,7 @@
 #include <imessage.h>
 
 #include <zarafa/Util.h>
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 #include <zarafa/Trace.h>
 
 #ifdef WIN32

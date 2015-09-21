@@ -50,7 +50,7 @@
 #include <mapispi.h>
 #include <mapix.h>
 
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 #include "ECMsgStore.h"
 #include "ECNotifyClient.h"
 #include "ECSessionGroupManager.h"

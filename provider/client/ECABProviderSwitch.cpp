@@ -55,7 +55,7 @@
 #include <edkguid.h>
 
 #include <zarafa/Trace.h>
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
 #include "EntryPoint.h"
 #include "mapiext.h"

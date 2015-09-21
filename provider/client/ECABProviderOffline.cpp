@@ -52,7 +52,7 @@
 #include <edkguid.h>
 
 #include <zarafa/Trace.h>
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
 #include <zarafa/ECTags.h>
 

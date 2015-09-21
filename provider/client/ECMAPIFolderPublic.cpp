@@ -53,7 +53,7 @@
 #include "ClientUtil.h"
 #include "ZarafaUtil.h"
 
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
 #include <edkmdb.h>
 #include <mapiext.h>

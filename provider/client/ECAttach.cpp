@@ -50,7 +50,7 @@
 #include "ECAttach.h"
 
 #include <zarafa/ECGuid.h>
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 #include "ECInterfaceDefs.h"
 
 #ifdef _DEBUG

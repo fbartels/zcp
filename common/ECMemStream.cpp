@@ -47,7 +47,7 @@
 #include <zarafa/ECGuid.h>
 #include "ECMemStream.h"
 #include <zarafa/Trace.h>
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

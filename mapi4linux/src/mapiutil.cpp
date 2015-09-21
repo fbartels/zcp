@@ -55,7 +55,7 @@
 #include <mapiutil.h>
 #include <mapidefs.h>
 
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 #include <zarafa/ECTags.h>
 #include <zarafa/stringutil.h>
 #include <zarafa/Util.h>

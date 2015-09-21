@@ -57,7 +57,7 @@
 
 #include <mapiutil.h>
 #include "ZarafaICS.h"
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
 #include "Mem.h"
 #include "ECMessage.h"

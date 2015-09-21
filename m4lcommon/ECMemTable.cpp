@@ -58,7 +58,7 @@
 
 #include <zarafa/ZarafaCode.h>
 
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 #include <algorithm>
 
 #ifdef LINUX

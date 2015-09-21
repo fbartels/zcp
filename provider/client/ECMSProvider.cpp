@@ -58,7 +58,7 @@
 #include "ECMsgStore.h"
 #include "ECABProvider.h"
 
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
 
 #include "ClientUtil.h"

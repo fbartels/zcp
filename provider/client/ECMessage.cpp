@@ -60,7 +60,7 @@
 
 #include <zarafa/ECGuid.h>
 #include <edkguid.h>
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 #include "WSUtil.h"
 
 

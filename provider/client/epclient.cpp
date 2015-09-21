@@ -74,7 +74,7 @@
 
 #include <zarafa/ecversion.h>
 
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 #include <zarafa/stringutil.h>
 
 #include <zarafa/ECLogger.h>

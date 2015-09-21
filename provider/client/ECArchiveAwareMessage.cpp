@@ -57,7 +57,7 @@
 #include <zarafa/stringutil.h>
 
 #include <sstream>
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 #include <zarafa/charset/convert.h>
 
 #ifdef HAVE_OFFLINE_SUPPORT

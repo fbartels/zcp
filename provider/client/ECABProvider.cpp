@@ -56,7 +56,7 @@
 #include "ECABProvider.h"
 #include "ECABLogon.h"
 
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
 
 #include <zarafa/Util.h>

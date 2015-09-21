@@ -55,7 +55,7 @@
 #include <zarafa/ECGuid.h>
 #include <zarafa/Util.h>
 
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 #include "ECInterfaceDefs.h"
 
 

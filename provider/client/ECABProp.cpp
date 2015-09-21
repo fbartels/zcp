@@ -49,7 +49,7 @@
 #include <zarafa/ECGuid.h>
 #include <zarafa/ECDefs.h>
 #include <zarafa/CommonUtil.h>
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
 
 #ifdef _DEBUG

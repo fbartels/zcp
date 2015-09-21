@@ -46,7 +46,7 @@
 #include "ZCABLogon.h"
 #include "ZCABContainer.h"
 #include <zarafa/ECTags.h>
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 #include "ECDebugPrint.h"
 #include <zarafa/ECGuid.h>
 #include "Zarafa.h"

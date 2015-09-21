@@ -60,7 +60,7 @@
 #include <mapiguid.h>
 
 #include <zarafa/Trace.h>
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
 #include "ZarafaUtil.h"
 #include <zarafa/charset/convert.h>

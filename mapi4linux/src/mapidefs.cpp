@@ -47,7 +47,7 @@
 #include "m4l.debug.h"
 #include "m4l.mapiutil.h"
 
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 #include <zarafa/Util.h>
 #include "ECMemTable.h"
 #include <zarafa/charset/convert.h>

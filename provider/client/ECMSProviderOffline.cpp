@@ -54,7 +54,7 @@
 #include <zarafa/ECGuid.h>
 
 #include <zarafa/Trace.h>
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
 
 #include <edkguid.h>

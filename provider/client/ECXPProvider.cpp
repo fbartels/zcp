@@ -61,7 +61,7 @@
 
 #include <zarafa/Util.h>
 
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
 #include "ClientUtil.h"
 #include "EntryPoint.h"

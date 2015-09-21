@@ -46,7 +46,7 @@
 #include <zarafa/ECGuid.h>
 #include "ECSync.h"
 #include "ECSyncUtil.h"
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 #include "../provider/include/Zarafa.h"
 #include <algorithm>
 
