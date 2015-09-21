@@ -70,7 +70,7 @@ using namespace std;
 
 #ifdef LINUX
 #include <execinfo.h>
-#include "UnixUtil.h"
+#include <zarafa/UnixUtil.h>
 #endif
 
 #if HAVE_ICU

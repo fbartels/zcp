@@ -89,7 +89,7 @@
 #include <zarafa/ECLogger.h>
 #include <zarafa/ECConfig.h>
 #ifdef LINUX
-#include "UnixUtil.h"
+#include <zarafa/UnixUtil.h>
 #endif
 #include <zarafa/my_getopt.h>
 #include <zarafa/ecversion.h>

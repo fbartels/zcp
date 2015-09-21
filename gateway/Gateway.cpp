@@ -84,7 +84,7 @@
 #include "TmpPath.h"
 
 #ifdef LINUX
-#include "UnixUtil.h"
+#include <zarafa/UnixUtil.h>
 #endif
 
 #if HAVE_ICU

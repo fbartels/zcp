@@ -56,7 +56,7 @@
 #include "ECServerEntrypoint.h"
 #include "ECClientUpdate.h"
 #ifdef LINUX
-#include "UnixUtil.h"
+#include <zarafa/UnixUtil.h>
 #endif
 
 extern ECLogger *g_lpLogger;

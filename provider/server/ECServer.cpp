@@ -71,7 +71,7 @@
 #include <csignal>
 
 #ifdef LINUX
-#include "UnixUtil.h"
+#include <zarafa/UnixUtil.h>
 #include "ECLicenseClient.h"
 #include <pwd.h>
 #endif

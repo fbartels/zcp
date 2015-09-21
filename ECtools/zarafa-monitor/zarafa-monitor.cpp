@@ -70,7 +70,7 @@
 
 #include <zarafa/CommonUtil.h>
 #ifdef LINUX
-#include "UnixUtil.h"
+#include <zarafa/UnixUtil.h>
 #endif
 #include <zarafa/ecversion.h>
 #include "charset/localeutil.h"

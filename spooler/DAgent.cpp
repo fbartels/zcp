@@ -146,7 +146,7 @@
 #include "ECFeatures.h"
 
 #include <zarafa/ECChannel.h>
-#include "UnixUtil.h"
+#include <zarafa/UnixUtil.h>
 #include "LMTP.h"
 #include <zarafa/ecversion.h>
 #include <zarafa/platform.h>

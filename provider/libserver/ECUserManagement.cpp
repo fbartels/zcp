@@ -61,7 +61,7 @@
 #include "ECPamAuth.h"
 #include "ECKrbAuth.h"
 #ifdef LINUX
-#include "UnixUtil.h"
+#include <zarafa/UnixUtil.h>
 #else
 #include "WinUtil.h"
 #endif

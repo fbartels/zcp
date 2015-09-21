@@ -25,7 +25,7 @@ nobase_pkginclude_HEADERS = \
 	ConsoleTable.h ECACL.h ECCache.h ECConfigImpl.h \
 	ECFifoBuffer.h ECGetText.h ECIConv.h \
 	ECSerializer.h ECThreadPool.h StatsClient.h \
-	SymmetricCrypt.h TimeUtil.h TmpPath.h Trace.h UnixUtil.h \
+	SymmetricCrypt.h TimeUtil.h TmpPath.h Trace.h \
 	fileutil.h pthreadutil.h utf8.h \
 	charset/utf32string.h charset/localeutil.h \
 	ustringutil/utfutil.h \
