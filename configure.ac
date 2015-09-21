@@ -64,7 +64,8 @@ AC_SUBST([ZPHPCXXFLAGS])
 # default to debug mode
 # disable write-strings: too much complains about "" being 'cast' to char* (since const char* is not in the declarations) on g++-4.2 and higher
 ZCPPFLAGS="$BUILDOS -DHAVE_CONFIG_H -I\${top_srcdir}/common/include \
-	-I\${top_srcdir}/m4lcommon/include"
+	-I\${top_srcdir}/m4lcommon/include \
+	-I\${top_srcdir}/ECtools/zarafa-archiver/include"
 ZCXXFLAGS="-Wall -Wmissing-declarations -Wno-write-strings"
 if ! test "$want_release" = "yes"; then
 # when using -pedantic, -Wno-long-long is required
@@ -756,6 +757,7 @@ AC_CONFIG_FILES([Makefile
 		ECtools/zarafa-cfgchecker/Makefile
 		ECtools/zarafa-stats/Makefile
 		ECtools/zarafa-archiver/Makefile
+		ECtools/zarafa-archiver/include/zarafa/Makefile
 		ECtools/zarafa-search/Makefile
 		ECtools/zarafa-utils/Makefile
 		installer/Makefile

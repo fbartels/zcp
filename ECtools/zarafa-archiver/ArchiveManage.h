@@ -50,7 +50,7 @@
 #include <zarafa/platform.h>
 #include <list>
 #include <mapix.h>
-#include "ArchiveControl.h"
+#include <zarafa/ArchiveControl.h>
 
 class ECLogger;
 

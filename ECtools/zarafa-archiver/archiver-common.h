@@ -48,7 +48,7 @@
 #include <vector>
 #include <memory>
 #include <zarafa/ECDebugPrint.h>
-#include "ArchiveControl.h"
+#include <zarafa/ArchiveControl.h>
 
 #if 1
 #define fMapiDeferredErrors	MAPI_DEFERRED_ERRORS
