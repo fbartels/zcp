@@ -78,7 +78,7 @@
 #include "CommonUtil.h"
 #include "stringutil.h"
 #include "mapicontact.h"
-#include "Util.h"
+#include <zarafa/Util.h>
 #include <zarafa/ECLogger.h>
 #include "codepage.h"
 #include <zarafa/ecversion.h>

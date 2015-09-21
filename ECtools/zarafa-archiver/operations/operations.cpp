@@ -53,7 +53,7 @@
 #include <mapiutil.h>
 #include <mapiext.h>
 
-#include "Util.h"
+#include <zarafa/Util.h>
 #include "stringutil.h"
 #include "mapi_ptr.h"
 #include <zarafa/mapiguidext.h>

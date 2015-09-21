@@ -49,7 +49,7 @@
 #include "Zarafa.h"
 #include "ZarafaUtil.h"
 #include "Mem.h"
-#include "Util.h"
+#include <zarafa/Util.h>
 
 #include <zarafa/ECGuid.h>
 

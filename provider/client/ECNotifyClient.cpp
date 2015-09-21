@@ -57,7 +57,7 @@
 #include <zarafa/ECGuid.h>
 #include "SOAPUtils.h"
 #include "WSUtil.h"
-#include "Util.h"
+#include <zarafa/Util.h>
 #include "stringutil.h"
 #include "mapiext.h"
 

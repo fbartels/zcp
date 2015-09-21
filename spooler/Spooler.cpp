@@ -93,7 +93,7 @@
 #endif
 #include <zarafa/my_getopt.h>
 #include <zarafa/ecversion.h>
-#include "Util.h"
+#include <zarafa/Util.h>
 #include "stringutil.h"
 
 #include "mapiext.h"

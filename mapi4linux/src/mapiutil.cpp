@@ -58,7 +58,7 @@
 #include "ECDebug.h"
 #include <zarafa/ECTags.h>
 #include "stringutil.h"
-#include "Util.h"
+#include <zarafa/Util.h>
 
 #include "ECMemStream.h"
 #include <zarafa/mapiguidext.h>

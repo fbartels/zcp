@@ -52,7 +52,7 @@
 #include <mapidefs.h>
 #include <mapiutil.h>
 
-#include "Util.h"
+#include <zarafa/Util.h>
 #include "ECExchangeModifyTable.h"
 #include <mapicode.h>
 #include <edkguid.h>

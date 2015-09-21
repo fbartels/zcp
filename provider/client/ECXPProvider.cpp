@@ -59,7 +59,7 @@
 #include "WSTransport.h"
 #include "Mem.h"
 
-#include "Util.h"
+#include <zarafa/Util.h>
 
 #include "ECDebug.h"
 

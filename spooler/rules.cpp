@@ -52,7 +52,7 @@
 #include <edkmdb.h>
 #include <edkguid.h>
 #include "stringutil.h"
-#include "Util.h"
+#include <zarafa/Util.h>
 #include "CommonUtil.h"
 #include <zarafa/ECLogger.h>
 #include "mapi_ptr.h"

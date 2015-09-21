@@ -60,7 +60,7 @@
 #include "Mem.h"
 #include <zarafa/ECGuid.h>
 #include <edkguid.h>
-#include "Util.h"
+#include <zarafa/Util.h>
 #include "ClientUtil.h"
 
 #include "ECDebug.h"

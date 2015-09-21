@@ -62,7 +62,7 @@
 
 #include "WSTransport.h"
 
-#include "Util.h"
+#include <zarafa/Util.h>
 #include "Mem.h"
 #include "stringutil.h"
 #include "ZarafaUtil.h"

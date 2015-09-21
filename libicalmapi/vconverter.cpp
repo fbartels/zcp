@@ -50,7 +50,7 @@
 #include "mapiext.h"
 #include "restrictionutil.h"
 #include "CommonUtil.h"
-#include "Util.h"
+#include <zarafa/Util.h>
 #include "icaluid.h"
 #include "nameids.h"
 #include "stringutil.h"

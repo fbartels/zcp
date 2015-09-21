@@ -41,7 +41,6 @@ pkginclude_HEADERS = \
 	IMAPIOffline.h \
 	MAPIConsoleTable.h \
 	MAPINotifSink.h \
-	Util.h \
 	auto_free.h \
 	favoritesutil.h \
 	mapi_ptr.h \

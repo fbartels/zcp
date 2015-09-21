@@ -48,7 +48,7 @@
 #include <iostream>
 #include "codepage.h"
 #include "CommonUtil.h"
-#include "Util.h"
+#include <zarafa/Util.h>
 #include <zarafa/charset/convert.h>
 #include "HtmlEntity.h"
 

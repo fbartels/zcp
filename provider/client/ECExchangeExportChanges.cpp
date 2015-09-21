@@ -49,7 +49,7 @@
 
 #include <set>
 
-#include "Util.h"
+#include <zarafa/Util.h>
 #include <zarafa/ECGuid.h>
 #include <edkguid.h>
 #include <mapiguid.h>

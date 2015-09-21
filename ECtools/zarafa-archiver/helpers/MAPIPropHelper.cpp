@@ -48,7 +48,7 @@
 #include "archiver-common.h"
 
 #include <mapiutil.h>
-#include <Util.h>
+#include <zarafa/Util.h>
 #include <mapi_ptr.h>
 #include <zarafa/mapiguidext.h>
 

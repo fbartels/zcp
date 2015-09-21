@@ -59,7 +59,7 @@
 #include <zarafa/charset/convert.h>
 #include <zarafa/ecversion.h>
 #include "charset/localeutil.h"
-#include "Util.h"
+#include <zarafa/Util.h>
 #include <zarafa/ECLogger.h>
 #include "zarafa-fsck.h"
 

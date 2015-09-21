@@ -50,7 +50,7 @@
 #include <mapicode.h>
 #include <mapiutil.h>
 
-#include "Util.h"
+#include <zarafa/Util.h>
 #include <zarafa/ECGuid.h>
 #include "mapi_ptr.h"
 #include "namedprops.h"

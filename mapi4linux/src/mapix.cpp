@@ -53,7 +53,7 @@
 #include <pthread.h>
 #include <cstring>
 
-#include "Util.h"
+#include <zarafa/Util.h>
 
 #include <zarafa/ECConfig.h>
 #include "ECDebug.h"

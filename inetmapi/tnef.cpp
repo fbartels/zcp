@@ -71,7 +71,7 @@
 #include <mapiutil.h>
 #include <mapiguid.h>
 #include <mapiext.h>
-#include "Util.h"
+#include <zarafa/Util.h>
 #include <zarafa/charset/convert.h>
 #include <zarafa/charset/utf16string.h>
 #include <string>

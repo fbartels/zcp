@@ -59,7 +59,7 @@
 #include "ECMemStream.h"
 
 #include "Mem.h"
-#include "Util.h"
+#include <zarafa/Util.h>
 
 #include "ECDebug.h"
 #include "mapiext.h"

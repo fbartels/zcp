@@ -67,7 +67,7 @@
 #include <set>
 #include "ECPropertyEntry.h"
 #include "Zarafa.h"
-#include "Util.h"
+#include <zarafa/Util.h>
 
 typedef struct MAPIOBJECT {
 	MAPIOBJECT() {

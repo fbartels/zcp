@@ -59,7 +59,7 @@
 #include <mapiutil.h>
 #include <zarafa/mapiguidext.h>
 #include <edkguid.h>
-#include "Util.h"
+#include <zarafa/Util.h>
 #include "CommonUtil.h"
 #include "mapiext.h"
 #include "stringutil.h"

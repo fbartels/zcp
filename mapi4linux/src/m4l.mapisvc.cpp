@@ -52,7 +52,7 @@
 #include <mapiutil.h>
 #include <zarafa/boost_compat.h>
 
-#include "Util.h"
+#include <zarafa/Util.h>
 
 #include <iostream>
 #ifndef WIN32

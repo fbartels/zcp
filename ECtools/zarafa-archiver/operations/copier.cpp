@@ -54,7 +54,7 @@
 #include "helpers/MAPIPropHelper.h"
 #include "helpers/ArchiveHelper.h"
 #include "ArchiverSession.h"
-#include "Util.h"
+#include <zarafa/Util.h>
 #include <zarafa/mapiguidext.h>
 
 #include <list>

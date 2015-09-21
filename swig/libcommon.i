@@ -10,7 +10,7 @@
     #include "HtmlToTextParser.h"
     #include "rtfutil.h"
     #include "favoritesutil.h"
-    #include "Util.h"
+    #include <zarafa/Util.h>
 	#include <zarafa/ECLogger.h>
     #include "fileutil.h"
 	#include "IStreamAdapter.h"

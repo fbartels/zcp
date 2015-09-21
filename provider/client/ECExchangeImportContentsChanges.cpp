@@ -49,7 +49,7 @@
 #include <zarafa/ECLogger.h>
 #include "ECSyncLog.h"
 
-#include "Util.h"
+#include <zarafa/Util.h>
 #include <edkguid.h>
 #include <zarafa/ECGuid.h>
 #include <mapiguid.h>

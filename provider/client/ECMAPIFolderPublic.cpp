@@ -49,7 +49,7 @@
 #include <zarafa/ECGuid.h>
 #include <edkguid.h>
 #include "CommonUtil.h"
-#include "Util.h"
+#include <zarafa/Util.h>
 #include "ClientUtil.h"
 #include "ZarafaUtil.h"
 

@@ -46,7 +46,7 @@
 
 #include <stdexcept>
 #include <mapiutil.h>
-#include "Util.h"
+#include <zarafa/Util.h>
 
 namespace details {
 	template<typename _T>

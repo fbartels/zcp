@@ -50,7 +50,7 @@
 #include "ECCacheManager.h"
 #include "SOAPDebug.h"
 #include "ZarafaCmdUtil.h"
-#include "Util.h"
+#include <zarafa/Util.h>
 #include "ECStatsCollector.h"
 #include "ECIndexer.h"
 

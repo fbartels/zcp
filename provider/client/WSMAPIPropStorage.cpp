@@ -51,7 +51,7 @@
 // Utils
 #include "SOAPUtils.h"
 #include "WSUtil.h"
-#include "Util.h"
+#include <zarafa/Util.h>
 #include "ZarafaUtil.h"
 
 #include <zarafa/charset/convert.h>

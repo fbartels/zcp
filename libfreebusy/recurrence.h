@@ -48,7 +48,7 @@
 #include <mapidefs.h>
 #include <mapix.h>
 #include <zarafa/ECLogger.h>
-#include "Util.h"
+#include <zarafa/Util.h>
 #include <list>
 #include "TimeUtil.h"
 #include "freebusy.h"

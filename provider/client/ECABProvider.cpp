@@ -59,7 +59,7 @@
 #include "ECDebug.h"
 
 
-#include "Util.h"
+#include <zarafa/Util.h>
 
 #include "WSTransport.h"
 #include "ClientUtil.h"

@@ -54,7 +54,7 @@
 #include "recurrence.h"
 #include "namedprops.h"
 #include "CommonUtil.h"
-#include "Util.h"
+#include <zarafa/Util.h>
 #include "stringutil.h"
 
 #ifdef _DEBUG

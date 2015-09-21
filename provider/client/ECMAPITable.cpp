@@ -53,7 +53,7 @@
 #include "ECMAPITable.h"
 #include <edkguid.h>
 #include <zarafa/ECGuid.h>
-#include "Util.h"
+#include <zarafa/Util.h>
 
 #include "ECDebug.h"
 #include "ECInterfaceDefs.h"

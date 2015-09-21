@@ -55,7 +55,7 @@
 #include <zarafa/ECDefs.h>
 #include "ECABEntryID.h"
 #include <zarafa/IECUnknown.h>
-#include "Util.h"
+#include <zarafa/Util.h>
 #include <zarafa/ecversion.h>
 #include <zarafa/charset/convert.h>
 #include "mapi_ptr.h"

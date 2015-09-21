@@ -51,7 +51,7 @@
 #include "ECMemTable.h"
 #include "ECKeyTable.h"
 #include <zarafa/ECGuid.h>
-#include "Util.h"
+#include <zarafa/Util.h>
 #include "Trace.h"
 #include "CommonUtil.h"
 #include <zarafa/charset/convert.h>

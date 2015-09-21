@@ -61,7 +61,7 @@
 #include "CommonUtil.h"
 #include <zarafa/ECTags.h>
 #include <zarafa/ECGuid.h>
-#include "Util.h"
+#include <zarafa/Util.h>
 #include "stringutil.h"
 #include "base64.h"
 #include "mapi_ptr.h"

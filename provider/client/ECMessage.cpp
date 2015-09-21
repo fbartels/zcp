@@ -54,7 +54,7 @@
 
 #include "codepage.h"
 #include "rtfutil.h"
-#include "Util.h"
+#include <zarafa/Util.h>
 #include "Mem.h"
 #include "mapi_ptr.h"
 

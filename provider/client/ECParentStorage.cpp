@@ -52,7 +52,7 @@
 // Utils
 #include "SOAPUtils.h"
 #include "WSUtil.h"
-#include "Util.h"
+#include <zarafa/Util.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

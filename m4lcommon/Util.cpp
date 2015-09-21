@@ -55,7 +55,7 @@
 
 #include <edkmdb.h>
 
-#include "Util.h"
+#include <zarafa/Util.h>
 #include "ECIConv.h"
 #include "CommonUtil.h"
 #include "stringutil.h"

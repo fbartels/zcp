@@ -46,7 +46,7 @@
 
 #include <mapi.h>
 #include <mapiutil.h>
-#include "Util.h"
+#include <zarafa/Util.h>
 
 #define CREATE_RESTRICTION(_lpRestriction) \
 	{\
