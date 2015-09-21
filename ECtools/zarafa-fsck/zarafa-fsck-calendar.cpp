@@ -50,7 +50,7 @@
 #include <zarafa/mapiguidext.h>
 #include <mapiutil.h>
 #include <mapix.h>
-#include <namedprops.h>
+#include <zarafa/namedprops.h>
 #include <zarafa/charset/utf16string.h>
 #include <zarafa/charset/convert.h>
 

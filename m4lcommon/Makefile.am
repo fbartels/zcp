@@ -42,7 +42,6 @@ pkginclude_HEADERS = \
 	favoritesutil.h \
 	mapicontact.h \
 	mapiext.h \
-	namedprops.h \
 	restrictionutil.h
 # These were split off libcommon_mapi
 libm4lcommon_la_SOURCES = \

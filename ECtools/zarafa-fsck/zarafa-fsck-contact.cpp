@@ -50,7 +50,7 @@
 #include <zarafa/mapiguidext.h>
 #include <mapiutil.h>
 #include <mapix.h>
-#include <namedprops.h>
+#include <zarafa/namedprops.h>
 #include <boost/algorithm/string/predicate.hpp>
 
 #include "zarafa-fsck.h"

@@ -52,7 +52,7 @@
 
 #include "valarm.h"
 #include "recurrence.h"
-#include "namedprops.h"
+#include <zarafa/namedprops.h>
 #include <zarafa/CommonUtil.h>
 #include <zarafa/Util.h>
 #include <zarafa/stringutil.h>

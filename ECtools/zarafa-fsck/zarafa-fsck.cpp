@@ -52,7 +52,7 @@
 #include <mapiutil.h>
 #include <mapix.h>
 #include <zarafa/my_getopt.h>
-#include <namedprops.h>
+#include <zarafa/namedprops.h>
 #include <zarafa/stringutil.h>
 #include <edkmdb.h>
 #include <edkguid.h>

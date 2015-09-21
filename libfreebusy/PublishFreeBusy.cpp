@@ -43,7 +43,7 @@
 
 #include <zarafa/platform.h>
 #include "PublishFreeBusy.h"
-#include "namedprops.h"
+#include <zarafa/namedprops.h>
 #include <zarafa/mapiguidext.h>
 #include <iostream>
 #include <vector>

@@ -50,7 +50,7 @@
 #include <cstring>
 #include <algorithm>
 #include "restrictionutil.h"
-#include "namedprops.h"
+#include <zarafa/namedprops.h>
 #include "nameids.h"
 #include "icaluid.h"
 #include <edkguid.h>

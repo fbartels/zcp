@@ -54,7 +54,7 @@
 #include <zarafa/CommonUtil.h>
 #include "mapiext.h"
 #include <zarafa/mapiguidext.h>
-#include "namedprops.h"
+#include <zarafa/namedprops.h>
 #include <zarafa/charset/convert.h>
 #include <zarafa/mapi_ptr.h>
 #include "ECGetText.h"

@@ -77,7 +77,7 @@
 #include "restrictionutil.h"
 #include <zarafa/ecversion.h>
 #include <zarafa/ECGuid.h>
-#include "namedprops.h"
+#include <zarafa/namedprops.h>
 #include "ECFeatures.h"
 
 #include <boost/algorithm/string/join.hpp>

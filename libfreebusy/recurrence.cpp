@@ -52,7 +52,7 @@
 #include <zarafa/CommonUtil.h>
 #include <mapiutil.h>
 #include <zarafa/mapiguidext.h>
-#include "namedprops.h"
+#include <zarafa/namedprops.h>
 
 #include <iostream>
 #include <algorithm>
