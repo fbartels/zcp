@@ -49,7 +49,7 @@
 
 #include <zarafa/ECDebug.h>
 #include <zarafa/Util.h>
-#include "ECMemTable.h"
+#include <zarafa/ECMemTable.h>
 #include <zarafa/charset/convert.h>
 #include <zarafa/ustringutil.h>
 

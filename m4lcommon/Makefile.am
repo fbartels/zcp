@@ -20,7 +20,6 @@ pkginclude_HEADERS = \
 	ECInvariantChecker.h \
 	ECIterators.h \
 	ECMAPIDebug.h \
-	ECMemTable.h \
 	HrException.h \
 	IECChangeAdviseSink.h \
 	IECChangeAdvisor.h \

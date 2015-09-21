@@ -48,7 +48,7 @@
 
 #include <mapiutil.h>
 
-#include "ECMemTable.h"
+#include <zarafa/ECMemTable.h>
 #include <zarafa/ECGuid.h>
 #include <zarafa/ECDebug.h>
 #include <zarafa/CommonUtil.h>

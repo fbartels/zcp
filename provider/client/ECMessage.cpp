@@ -50,7 +50,7 @@
 
 #include "ECMessage.h"
 #include "ECAttach.h"
-#include "ECMemTable.h"
+#include <zarafa/ECMemTable.h>
 
 #include "codepage.h"
 #include "rtfutil.h"

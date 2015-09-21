@@ -58,7 +58,7 @@
 #include <zarafa/ECConfig.h>
 #include <zarafa/ECDebug.h>
 #include <zarafa/ECGuid.h>
-#include "ECMemTable.h"
+#include <zarafa/ECMemTable.h>
 #include <zarafa/charset/utf16string.h>
 
 #include <zarafa/CommonUtil.h>

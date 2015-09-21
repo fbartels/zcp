@@ -46,7 +46,7 @@
 
 #include <zarafa/zcdefs.h>
 #include <zarafa/ECUnknown.h>
-#include "ECMemTable.h"
+#include <zarafa/ECMemTable.h>
 #include <mapidefs.h>
 #include <edkmdb.h>
 #include "IECExchangeModifyTable.h"

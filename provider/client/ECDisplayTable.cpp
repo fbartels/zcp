@@ -49,7 +49,7 @@
 #include <zarafa/CommonUtil.h>
 
 #include "Mem.h"
-#include "ECMemTable.h"
+#include <zarafa/ECMemTable.h>
 
 #if defined(_WIN32) && !defined(WINCE)
 	#include "dialogdefs.h"

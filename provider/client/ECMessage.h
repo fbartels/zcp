@@ -45,7 +45,7 @@
 #define ECMESSAGE_H
 
 #include <zarafa/zcdefs.h>
-#include "ECMemTable.h"
+#include <zarafa/ECMemTable.h>
 
 #include <mapidefs.h>
 #include "WSTransport.h"
