@@ -50,7 +50,7 @@
 
 #include "ECVMIMEUtils.h"
 #include "MAPISMTPTransport.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include <zarafa/charset/convert.h>
 
 #include "stringutil.h"

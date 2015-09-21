@@ -57,7 +57,7 @@
 #include <mapiutil.h>
 #include <mapiguid.h>
 #include <zarafa/ECDefs.h>
-#include <CommonUtil.h>
+#include <zarafa/CommonUtil.h>
 #include <zarafa/ECTags.h>
 #include <ECIConv.h>
 #include <inetmapi.h>

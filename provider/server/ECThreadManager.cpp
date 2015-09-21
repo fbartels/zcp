@@ -52,7 +52,7 @@
 #include <sys/epoll.h>
 #endif
 
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "ECSessionManager.h"
 #include "ECStatsCollector.h"
 #include "ECServerEntrypoint.h"

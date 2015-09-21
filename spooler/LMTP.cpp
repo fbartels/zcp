@@ -56,7 +56,7 @@
 #include <inetmapi.h>
 #include <mapiext.h>
 
-#include <CommonUtil.h>
+#include <zarafa/CommonUtil.h>
 #include <fileutil.h>
 #include <zarafa/ECTags.h>
 #include "ECChannel.h"

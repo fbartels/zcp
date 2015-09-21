@@ -49,7 +49,7 @@
 #include <ctime>
 
 #include "freebusy.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 
 typedef struct{
 	ULONG ulType;

@@ -49,7 +49,6 @@
 #include <mapix.h>
 #include <string>
 #include <zarafa/ECTags.h>
-#include "charset/utf32string.h"
 #include <list>
 
 #include <zarafa/ustringutil.h>

@@ -47,7 +47,7 @@
 #include <boost/smart_ptr.hpp>
 #include "archiver-common.h"
 #include <zarafa/mapi_ptr.h>
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "ArchiverSessionPtr.h"     // For ArchiverSessionPtr
 
 namespace za { namespace helpers {

@@ -60,7 +60,7 @@
 #include <mapiutil.h>
 
 #include <zarafa/ECConfig.h>
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 
 #include <set>
 

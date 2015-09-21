@@ -59,7 +59,7 @@
 #include <mapiext.h>
 #include <mapiguid.h>
 
-#include <CommonUtil.h>
+#include <zarafa/CommonUtil.h>
 #include <stringutil.h>
 #include <iostream>
 #include <cstdio>

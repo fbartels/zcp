@@ -57,7 +57,7 @@
 #include <map>
 #include <set>
 
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "stringutil.h"
 #include <zarafa/ECTags.h>
 #include <zarafa/my_getopt.h>

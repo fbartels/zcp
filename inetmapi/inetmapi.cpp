@@ -67,7 +67,7 @@
 #include <mapiutil.h>
 #include <mapiext.h>
 #include <edkmdb.h>
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include <zarafa/charset/convert.h>
 // inetmapi
 #include "inetmapi.h"

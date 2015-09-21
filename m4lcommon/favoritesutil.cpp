@@ -48,7 +48,7 @@
 
 #include "mapiext.h"
 #include "restrictionutil.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 
 #include <zarafa/tstring.h>
 #include <zarafa/charset/convstring.h>

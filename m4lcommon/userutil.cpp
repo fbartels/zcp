@@ -58,7 +58,7 @@
 #include <edkmdb.h>
 #include <edkguid.h>
 #include <zarafa/IECLicense.h>
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "ECRestriction.h"
 #include <zarafa/mapi_ptr.h>
 #include <zarafa/mapiguidext.h>

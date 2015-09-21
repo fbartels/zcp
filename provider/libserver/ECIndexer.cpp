@@ -43,7 +43,7 @@
 
 #include <zarafa/platform.h>
 
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "ECGenericObjectTable.h"
 #include "stringutil.h"
 #include "ECSearchClient.h"

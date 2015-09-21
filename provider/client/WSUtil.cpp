@@ -77,7 +77,7 @@
 #include "ECABContainer.h"
 
 #include "SOAPUtils.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 
 #include <zarafa/charset/convert.h>
 #include <zarafa/charset/utf8string.h>

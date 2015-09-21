@@ -45,7 +45,7 @@
 #include <zarafa/platform.h>
 #include "userutil.h"
 #include "ArchiveStateCollector.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "ArchiverSession.h"
 #include "ArchiveStateUpdater.h"
 #include "ECIterators.h"

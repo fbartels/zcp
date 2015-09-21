@@ -46,7 +46,7 @@
 
 #include "ECGetText.h"
 
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 
 #include "Mem.h"
 #include "ECMemTable.h"

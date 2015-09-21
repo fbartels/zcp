@@ -51,7 +51,7 @@
 #include "ECMemTable.h"
 #include <zarafa/ECGuid.h>
 #include "ECDebug.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "mapiext.h"
 #include <zarafa/mapiguidext.h>
 #include "namedprops.h"

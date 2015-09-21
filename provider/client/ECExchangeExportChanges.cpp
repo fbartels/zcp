@@ -66,7 +66,7 @@
 #include "ECSyncUtil.h"
 #include "ECSyncSettings.h"
 #include "EntryPoint.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 
 #ifdef LINUX
 // We use ntohl/htonl for network-order conversion

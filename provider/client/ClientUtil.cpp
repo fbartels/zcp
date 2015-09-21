@@ -50,7 +50,7 @@
 #include <mapidefs.h>
 #include <mapiutil.h>
 
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "WSTransport.h"
 #include <zarafa/ECConfig.h>
 

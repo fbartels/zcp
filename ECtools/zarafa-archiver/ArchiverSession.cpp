@@ -47,7 +47,7 @@
 #include <zarafa/mapi_ptr.h>
 #include <zarafa/ECConfig.h>
 #include <zarafa/ECLogger.h>
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "mapiext.h"
 #include "userutil.h"
 #include "ECMsgStore.h"

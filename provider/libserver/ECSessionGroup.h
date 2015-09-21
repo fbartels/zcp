@@ -55,7 +55,7 @@
 #include "ECKeyTable.h"
 #include "ECNotification.h"
 #include <zarafa/ZarafaCode.h>
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 
 class ECSession;
 class ECSessionGroup;

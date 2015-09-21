@@ -49,7 +49,7 @@
 #include "Mem.h"
 
 #include <zarafa/ECGuid.h>
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "ECDebug.h"
 
 

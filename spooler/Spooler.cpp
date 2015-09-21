@@ -85,7 +85,7 @@
 #include "EMSAbTag.h"
 #include <zarafa/ECTags.h>
 #include "ECABEntryID.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include <zarafa/ECLogger.h>
 #include <zarafa/ECConfig.h>
 #ifdef LINUX

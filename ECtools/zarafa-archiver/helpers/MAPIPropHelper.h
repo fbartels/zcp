@@ -49,7 +49,7 @@
 #include <mapix.h>
 #include <zarafa/mapi_ptr.h>
 
-#include <CommonUtil.h>
+#include <zarafa/CommonUtil.h>
 
 #include "archiver-common.h"
 #include "ArchiverSessionPtr.h"     // For ArchiverSessionPtr

@@ -58,7 +58,7 @@
 #include <iconv.h>
 
 #include <zarafa/ECLogger.h>
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include <zarafa/ECTags.h>
 #include <zarafa/ECGuid.h>
 #include <zarafa/Util.h>

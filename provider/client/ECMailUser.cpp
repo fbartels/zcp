@@ -49,7 +49,7 @@
 #include "resource.h"
 #include <mapiutil.h>
 #include "Zarafa.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "ECMailUser.h"
 
 #include "Mem.h"

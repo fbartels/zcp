@@ -47,7 +47,7 @@
 
 #include <vector>
 
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "restrictionutil.h"
 #include "icaluid.h"
 

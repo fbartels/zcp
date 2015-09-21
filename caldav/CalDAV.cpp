@@ -61,7 +61,7 @@
 #include "ECChannel.h"
 #include <zarafa/my_getopt.h>
 #include <zarafa/ecversion.h>
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "SSLUtil.h"
 
 #include "TmpPath.h"

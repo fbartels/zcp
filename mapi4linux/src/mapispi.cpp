@@ -48,7 +48,7 @@
 #include "m4l.debug.h"
 
 #include <mapi.h>
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include <zarafa/Util.h>
 #include <zarafa/ECGuid.h>
 

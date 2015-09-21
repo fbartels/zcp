@@ -87,7 +87,7 @@
 #include "tnef.h"
 #include "codepage.h"
 #include <zarafa/Util.h>
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "namedprops.h"
 #include <zarafa/charset/convert.h>
 #include "stringutil.h"

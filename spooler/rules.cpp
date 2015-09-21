@@ -53,7 +53,7 @@
 #include <edkguid.h>
 #include "stringutil.h"
 #include <zarafa/Util.h>
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include <zarafa/ECLogger.h>
 #include <zarafa/mapi_ptr.h>
 #include <zarafa/mapiguidext.h>

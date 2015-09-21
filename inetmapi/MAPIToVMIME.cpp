@@ -75,7 +75,7 @@
 #include "mapiAttachment.h"
 #include "mapiTextPart.h"
 #include "rtfutil.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "stringutil.h"
 #include "mapicontact.h"
 #include <zarafa/Util.h>

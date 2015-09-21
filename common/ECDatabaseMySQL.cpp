@@ -51,7 +51,7 @@
 #include <zarafa/ECDefs.h>
 #include <zarafa/ecversion.h>
 #include <mapidefs.h>
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

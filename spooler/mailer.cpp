@@ -61,7 +61,7 @@
 #include "IECSpooler.h"
 #include <zarafa/ECGuid.h>
 #include <edkguid.h>
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include <zarafa/Util.h>
 #include "stringutil.h"
 #include "mapicontact.h"

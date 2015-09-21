@@ -219,7 +219,7 @@ ZEND_END_ARG_INFO()
 
 #include "util.h"
 #include "rtfutil.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include <zarafa/ECLogger.h>
 
 #include "ECImportContentsChangesProxy.h"

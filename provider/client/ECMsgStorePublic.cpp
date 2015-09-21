@@ -45,7 +45,7 @@
 #include "ECMsgStorePublic.h"
 
 #include "ECMAPIFolder.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include <zarafa/Util.h>
 #include "ClientUtil.h"
 #include "ZarafaUtil.h"

@@ -45,7 +45,7 @@
 #define ECARCHIVEAWAREMESSAGE_H
 
 #include "ECMessage.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 
 #include <zarafa/mapi_ptr/mapi_memory_ptr.h>
 #include <zarafa/mapi_ptr/mapi_object_ptr.h>

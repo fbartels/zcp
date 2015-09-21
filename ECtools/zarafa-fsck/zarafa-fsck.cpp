@@ -46,7 +46,7 @@
 #include <iostream>
 #include <map>
 
-#include <CommonUtil.h>
+#include <zarafa/CommonUtil.h>
 #include <mapiext.h>
 #include <zarafa/mapiguidext.h>
 #include <mapiutil.h>

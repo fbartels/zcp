@@ -48,7 +48,7 @@
 #include "Mem.h"
 #include <zarafa/ECGuid.h>
 #include <edkguid.h>
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include <zarafa/Util.h>
 #include "ClientUtil.h"
 #include "ZarafaUtil.h"

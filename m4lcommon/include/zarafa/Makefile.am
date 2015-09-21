@@ -1,6 +1,7 @@
 # -*- Makefile -*-
 
 nobase_pkginclude_HEADERS = \
+	CommonUtil.h \
 	ECDefs.h ECTags.h IECLicense.h IECServiceAdmin.h IECSecurity.h \
 	IECSingleInstance.h IECUnknown.h Util.h boost_compat.h \
 	mapiguidext.h mapi_ptr.h tstring.h \

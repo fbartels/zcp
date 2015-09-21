@@ -65,7 +65,7 @@
 #include "mapiext.h"
 
 #include "freebusytags.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "ClientUtil.h"
 #include "ZarafaUtil.h"
 

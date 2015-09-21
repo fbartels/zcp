@@ -55,7 +55,7 @@
 
 #include "ECDisplayTable.h"
 
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "ZarafaICS.h"
 #include "mapiext.h"
 

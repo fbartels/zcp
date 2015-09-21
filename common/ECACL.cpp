@@ -43,7 +43,7 @@
 
 #include <zarafa/platform.h>
 #include "ECACL.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "stringutil.h"
 
 #include <sstream>

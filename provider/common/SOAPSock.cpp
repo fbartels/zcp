@@ -50,7 +50,7 @@
 
 #include "SOAPUtils.h"
 #include <zarafa/threadutil.h>
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include <string>
 #include <map>
 

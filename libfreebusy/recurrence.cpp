@@ -49,7 +49,7 @@
 #include "stringutil.h"
 #include "ECIConv.h"
 #include <ctime>
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include <mapiutil.h>
 #include <zarafa/mapiguidext.h>
 #include "namedprops.h"

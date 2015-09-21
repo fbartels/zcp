@@ -64,7 +64,7 @@
 #include "SettingsDlg.h"
 #include "SettingsTabConnection.h"
 #include "SettingsPropPageAdvance.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "MapiClientReg.h"
 #include "ProgressDlg.h"
 #endif

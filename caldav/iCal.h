@@ -46,7 +46,7 @@
 
 #include "Http.h"
 #include <mapi.h>
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "MAPIToICal.h"
 #include "ICalToMAPI.h"
 #include "CalDavProto.h"

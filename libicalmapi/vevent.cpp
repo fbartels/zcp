@@ -45,7 +45,7 @@
 #include "vevent.h"
 #include <mapiutil.h>
 #include "mapiext.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "nameids.h"
 #include "icaluid.h"
 #include "stringutil.h"

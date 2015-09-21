@@ -49,7 +49,7 @@
 #include <mapiutil.h>
 #include "mapiext.h"
 #include "restrictionutil.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include <zarafa/Util.h>
 #include "icaluid.h"
 #include "nameids.h"

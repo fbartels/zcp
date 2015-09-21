@@ -60,7 +60,7 @@
 #include <zarafa/mapiguidext.h>
 #include <edkguid.h>
 #include <zarafa/Util.h>
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "mapiext.h"
 #include "stringutil.h"
 #include "ECABEntryID.h"

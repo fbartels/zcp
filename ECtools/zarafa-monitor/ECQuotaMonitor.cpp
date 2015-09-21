@@ -64,7 +64,7 @@
 #include <zarafa/ECGuid.h>
 #include <zarafa/ECTags.h>
 #include <zarafa/IECServiceAdmin.h>
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "stringutil.h"
 #include "mapiext.h"
 #include "restrictionutil.h"

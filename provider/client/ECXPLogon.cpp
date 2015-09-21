@@ -61,7 +61,7 @@
 #include "WSTransport.h"
 #include "Mem.h"
 #include "ClientUtil.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "ECMsgStore.h"
 #include "ECMessage.h"
 

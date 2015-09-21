@@ -64,7 +64,7 @@
 #include "ECDebug.h"
 #include "mapiext.h"
 
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include <zarafa/mapi_ptr.h>
 #include "ZarafaUtil.h"
 

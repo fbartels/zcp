@@ -68,7 +68,7 @@
 #include "ECMonitorDefs.h"
 #include "ECQuotaMonitor.h"
 
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #ifdef LINUX
 #include "UnixUtil.h"
 #endif

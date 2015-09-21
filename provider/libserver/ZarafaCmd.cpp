@@ -80,7 +80,7 @@
 #include "ECFifoBuffer.h"
 #include "ECSerializer.h"
 #include "StreamUtil.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "StorageUtil.h"
 
 #include "ZarafaICS.h"
