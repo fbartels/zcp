@@ -48,7 +48,7 @@
 #include <mapiutil.h>
 #include <zarafa/ECLogger.h>
 
-#include "userutil.h"
+#include <zarafa/userutil.h>
 
 #include <zarafa/charset/utf8string.h>
 #include <zarafa/charset/convert.h>

@@ -49,7 +49,7 @@
 #include <zarafa/ECLogger.h>
 #include <zarafa/CommonUtil.h>
 #include "mapiext.h"
-#include "userutil.h"
+#include <zarafa/userutil.h>
 #include "ECMsgStore.h"
 
 typedef mapi_memory_ptr<ECSERVERLIST> ECServerListPtr;

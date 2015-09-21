@@ -49,7 +49,7 @@
 #include "ArchiverSession.h"
 #include "ArchiveStateCollector.h"
 #include "ArchiveStateUpdater.h"
-#include "userutil.h"
+#include <zarafa/userutil.h>
 #include "mapiext.h"
 #include "helpers/StoreHelper.h"
 #include "operations/copier.h"

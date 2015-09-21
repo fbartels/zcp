@@ -52,7 +52,7 @@
 #include <zarafa/charset/convert.h>
 #include "ECACL.h"
 #include <zarafa/ECConfig.h>
-#include "userutil.h"
+#include <zarafa/userutil.h>
 #include "ArchiveStateUpdater.h"
 #include "ECRestriction.h"
 #include "MAPIErrors.h"

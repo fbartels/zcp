@@ -43,7 +43,7 @@
 
 #include <zarafa/zcdefs.h>
 #include <zarafa/platform.h>
-#include "userutil.h"
+#include <zarafa/userutil.h>
 #include "ArchiveStateCollector.h"
 #include <zarafa/CommonUtil.h>
 #include "ArchiverSession.h"
