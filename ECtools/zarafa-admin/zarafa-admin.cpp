@@ -68,7 +68,7 @@
 #include <zarafa/ecversion.h>
 #include "mapiext.h"
 #include <zarafa/Util.h>
-#include "ECRestriction.h"
+#include <zarafa/ECRestriction.h>
 #include "ECABEntryID.h"
 #include <zarafa/charset/convert.h>
 #include "ConsoleTable.h"

@@ -43,7 +43,7 @@
 
 #include <zarafa/platform.h>
 #include <zarafa/ECConfig.h>
-#include "ECRestriction.h"
+#include <zarafa/ECRestriction.h>
 #include "ECArchiverLogger.h"
 #include "copier.h"
 #include "deleter.h"

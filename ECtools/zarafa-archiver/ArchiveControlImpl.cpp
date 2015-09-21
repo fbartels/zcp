@@ -58,7 +58,7 @@
 #include "restrictionutil.h"
 #include <zarafa/ECConfig.h>
 #include "ECIterators.h"
-#include "ECRestriction.h"
+#include <zarafa/ECRestriction.h>
 #include "HrException.h"
 #include "ArchiveManage.h"
 #include <zarafa/MAPIErrors.h>

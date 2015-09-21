@@ -59,7 +59,7 @@
 #include "ZarafaICS.h"
 #include "mapiext.h"
 #include <zarafa/mapi_ptr.h>
-#include "ECRestriction.h"
+#include <zarafa/ECRestriction.h>
 
 #include <mapiutil.h>
 

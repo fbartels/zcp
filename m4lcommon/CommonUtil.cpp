@@ -78,7 +78,7 @@
 #include <zarafa/IECUnknown.h>
 #include <zarafa/IECServiceAdmin.h>
 #include <zarafa/EMSAbTag.h>
-#include "ECRestriction.h"
+#include <zarafa/ECRestriction.h>
 #include <zarafa/MAPIErrors.h>
 
 #include <sys/types.h>

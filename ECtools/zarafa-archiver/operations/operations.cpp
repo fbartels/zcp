@@ -48,7 +48,7 @@
 #include "helpers/MAPIPropHelper.h"
 #include "helpers/ArchiveHelper.h"
 #include "ArchiverSession.h"
-#include "ECRestriction.h"
+#include <zarafa/ECRestriction.h>
 
 #include <mapiutil.h>
 #include <mapiext.h>

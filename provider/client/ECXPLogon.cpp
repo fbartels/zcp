@@ -68,7 +68,7 @@
 #include <zarafa/ZarafaCode.h>
 
 #include <zarafa/ECDebug.h>
-#include "ECRestriction.h"
+#include <zarafa/ECRestriction.h>
 #include <zarafa/mapi_ptr.h>
 
 

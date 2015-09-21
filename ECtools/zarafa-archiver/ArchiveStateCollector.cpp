@@ -50,7 +50,7 @@
 #include "ArchiveStateUpdater.h"
 #include "ECIterators.h"
 #include "HrException.h"
-#include "ECRestriction.h"
+#include <zarafa/ECRestriction.h>
 
 namespace details {
 

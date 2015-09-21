@@ -2,7 +2,7 @@
 
 nobase_pkginclude_HEADERS = \
 	CommonUtil.h \
-	ECDefs.h ECInterfaceDefs.h ECTags.h EMSAbTag.h \
+	ECDefs.h ECInterfaceDefs.h ECRestriction.h ECTags.h EMSAbTag.h \
 	IECLicense.h IECServiceAdmin.h IECSecurity.h \
 	IECSingleInstance.h IECUnknown.h RecurrenceState.h \
 	Util.h boost_compat.h \

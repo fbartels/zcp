@@ -59,7 +59,7 @@
 #include <zarafa/mapi_ptr.h>
 #include "ECGetText.h"
 #include <zarafa/EMSAbTag.h>
-#include "ECRestriction.h"
+#include <zarafa/ECRestriction.h>
 
 #include <iostream>
 #include <zarafa/stringutil.h>

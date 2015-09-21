@@ -42,7 +42,7 @@
  */
 
 #include <zarafa/platform.h>
-#include "ECRestriction.h"
+#include <zarafa/ECRestriction.h>
 #include <zarafa/Util.h>
 #include <zarafa/mapi_ptr.h>
 

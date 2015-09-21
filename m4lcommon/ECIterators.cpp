@@ -43,7 +43,7 @@
 
 #include <zarafa/platform.h>
 #include "ECIterators.h"
-#include "ECRestriction.h"
+#include <zarafa/ECRestriction.h>
 #include "HrException.h"
 
 /**

@@ -64,7 +64,7 @@
 #include <zarafa/CommonUtil.h>
 #include <zarafa/stringutil.h>
 #include <zarafa/mapiguidext.h>
-#include "ECRestriction.h"
+#include <zarafa/ECRestriction.h>
 #include <zarafa/MAPIErrors.h>
 
 #include <string>

@@ -54,7 +54,7 @@ using namespace std;
 #include <zarafa/mapiguidext.h>
 #include "archiver-common.h"
 
-#include "ECRestriction.h"
+#include <zarafa/ECRestriction.h>
 
 namespace za { namespace helpers {
 
