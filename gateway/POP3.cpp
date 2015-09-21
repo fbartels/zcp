@@ -57,7 +57,7 @@
 #include <zarafa/Util.h>
 #include <zarafa/ECTags.h>
 #include <inetmapi.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 
 #include <zarafa/stringutil.h>
 #include <zarafa/charset/convert.h>

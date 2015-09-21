@@ -56,7 +56,7 @@
 
 
 //#include <edkmdb.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <mapiutil.h>
 
 #ifdef _DEBUG

@@ -47,7 +47,7 @@
 
 #include <zarafa/platform.h>
 #include <mapi.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <mapispi.h>
 #include <mapiutil.h>
 #include "Zarafa.h"

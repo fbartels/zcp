@@ -63,7 +63,7 @@
 #include "EntryPoint.h"
 #include "DLLGlobal.h"
 #include <edkmdb.h>
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 
 #include "ClientUtil.h"
 #include "ECMsgStore.h"

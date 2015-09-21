@@ -47,7 +47,7 @@
 #include <mapidefs.h>
 #include <mapix.h>
 #include <mapiutil.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <zarafa/mapiguidext.h>
 
 #include "valarm.h"

@@ -44,7 +44,7 @@
 #include <zarafa/platform.h>
 #include <mapicode.h>
 #include <zarafa/ZarafaCode.h>
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 
 #ifdef _DEBUG
 #undef THIS_FILE

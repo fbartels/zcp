@@ -65,7 +65,7 @@
 
 #include "Mem.h"
 
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 
 // For the static row getprop functions
 #include "ECMAPIProp.h"

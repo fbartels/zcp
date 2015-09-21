@@ -61,7 +61,7 @@
 #include <zarafa/ECTags.h>
 #include <ECIConv.h>
 #include <inetmapi.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <vector>
 #include <list>
 #include <set>

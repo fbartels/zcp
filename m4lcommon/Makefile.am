@@ -40,7 +40,6 @@ pkginclude_HEADERS = \
 	auto_free.h \
 	favoritesutil.h \
 	mapicontact.h \
-	mapiext.h \
 	restrictionutil.h
 # These were split off libcommon_mapi
 libm4lcommon_la_SOURCES = \

@@ -48,7 +48,7 @@
 #include <mapix.h>
 #include <mapiutil.h>
 #include <mapidefs.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <mapiguid.h>
 #include "PyMapiPlugin.h"
 #include <zarafa/stringutil.h>

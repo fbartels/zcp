@@ -47,7 +47,7 @@
 #include <mapidefs.h>
 #include <mapispi.h>
 #include <edkmdb.h>
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 #include "freebusytags.h"
 #include <zarafa/stringutil.h>
 #include <zarafa/charset/convert.h>

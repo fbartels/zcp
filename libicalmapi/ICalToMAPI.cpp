@@ -52,7 +52,7 @@
 #include "icalrecurrence.h"
 #include <mapix.h>
 #include <mapiutil.h>
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 #include "restrictionutil.h"
 #include <libical/ical.h>
 #include <algorithm>

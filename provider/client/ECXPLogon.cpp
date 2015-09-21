@@ -51,7 +51,7 @@
 #include <mapiutil.h>
 #include <zarafa/mapiguidext.h>
 #include <zarafa/ECGuid.h>
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 #include <edkmdb.h>
 #include <edkguid.h>
 

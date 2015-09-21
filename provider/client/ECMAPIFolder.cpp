@@ -67,7 +67,7 @@
 #include <zarafa/mapi_ptr.h>
 
 #include <edkmdb.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <mapiutil.h>
 #include <cstdio>
 

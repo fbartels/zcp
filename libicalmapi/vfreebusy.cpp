@@ -44,7 +44,7 @@
 #include <zarafa/platform.h>
 #include "vfreebusy.h"
 #include <mapiutil.h>
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 #include "nameids.h"
 
 using namespace std;

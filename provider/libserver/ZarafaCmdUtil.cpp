@@ -52,7 +52,7 @@
 // mapi defines
 #include <mapidefs.h>
 #include <mapitags.h>
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 #include <zarafa/EMSAbTag.h>
 #include <edkmdb.h>
 #include "ECMAPI.h"

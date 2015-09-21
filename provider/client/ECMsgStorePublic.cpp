@@ -51,7 +51,7 @@
 #include "ZarafaUtil.h"
 #include "ECGetText.h"
 
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <mapiutil.h>
 
 #include "ECMAPIFolderPublic.h"

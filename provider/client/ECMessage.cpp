@@ -46,7 +46,7 @@
 #include <mapidefs.h>
 #include <mapiutil.h>
 #include <mapitags.h>
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 
 #include "ECMessage.h"
 #include "ECAttach.h"

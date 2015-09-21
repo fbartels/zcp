@@ -96,7 +96,7 @@
 #include <zarafa/Util.h>
 #include <zarafa/stringutil.h>
 
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 #include <edkmdb.h>
 #include <edkguid.h>
 #include <zarafa/mapiguidext.h>

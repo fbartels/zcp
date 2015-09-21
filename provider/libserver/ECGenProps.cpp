@@ -63,7 +63,7 @@
 #include "ECLockManager.h"
 
 #include <edkmdb.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

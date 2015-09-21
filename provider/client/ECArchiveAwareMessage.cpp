@@ -50,7 +50,7 @@
 #include "IECPropStorage.h"
 #include "Mem.h"
 
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <zarafa/mapiguidext.h>
 #include "ECArchiveAwareMessage.h"
 #include "ECGetText.h"

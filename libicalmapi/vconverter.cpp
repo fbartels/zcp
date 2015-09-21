@@ -47,7 +47,7 @@
 #include "icalrecurrence.h"
 #include <mapi.h>
 #include <mapiutil.h>
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 #include "restrictionutil.h"
 #include <zarafa/CommonUtil.h>
 #include <zarafa/Util.h>

@@ -60,7 +60,7 @@
 #include <mapidefs.h>
 #include <mapiutil.h>
 #include <mapix.h>
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 #include <zarafa/EMSAbTag.h>
 #include "ECABEntryID.h"
 #include <zarafa/mapi_ptr.h>

@@ -62,7 +62,7 @@
 #include <zarafa/Util.h>
 
 #include <zarafa/ECDebug.h>
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 
 #include <zarafa/CommonUtil.h>
 #include <zarafa/mapi_ptr.h>

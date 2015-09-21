@@ -47,7 +47,7 @@
 #include "nameids.h"
 #include "valarm.h"
 #include <mapicode.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <mapix.h>
 #include <mapiutil.h>
 #include <cmath>

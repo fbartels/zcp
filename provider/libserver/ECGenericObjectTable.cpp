@@ -70,7 +70,7 @@
 
 #include <mapidefs.h>
 #include <mapitags.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 
 #include <sys/types.h>
 #ifdef LINUX

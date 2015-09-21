@@ -72,7 +72,7 @@
 #include <mapicode.h>
 #include <mapitags.h>
 
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 
 #include <cstdarg>
 

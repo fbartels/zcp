@@ -49,7 +49,7 @@
 #include <libxml/uri.h>
 
 #include "restrictionutil.h"
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 #include "MAPIToICal.h"
 #include "ICalToMAPI.h"
 #include "icaluid.h"

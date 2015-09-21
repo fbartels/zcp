@@ -48,7 +48,7 @@
 #include <mapidefs.h>
 #include <mapicode.h>
 #include <mapiutil.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <edkmdb.h>
 #include <edkguid.h>
 #include <zarafa/stringutil.h>

@@ -71,7 +71,7 @@
 #include <mapidefs.h>
 #include <mapitags.h>
 #include <edkmdb.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 
 #include "Zarafa.h"
 #include "ECDatabaseUtils.h"

@@ -58,7 +58,7 @@
 #include <zarafa/ECDebug.h>
 
 #include "EntryPoint.h"
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 
 #include "ECABProviderSwitch.h"
 #include "ECOfflineState.h"

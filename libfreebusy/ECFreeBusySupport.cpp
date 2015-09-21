@@ -47,7 +47,7 @@
 #include "ECFreeBusyUpdate.h"
 #include "ECFreeBusyData.h"
 #include <zarafa/CommonUtil.h>
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 #include <mapiutil.h>
 
 #include "freebusyutil.h"

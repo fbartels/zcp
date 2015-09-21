@@ -52,7 +52,7 @@
 #include <zarafa/stringutil.h>
 
 #include "freebusytags.h"
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 #include <edkmdb.h>
 
 #ifdef _DEBUG

@@ -59,7 +59,7 @@
 #include "WSUtil.h"
 #include <zarafa/Util.h>
 #include <zarafa/stringutil.h>
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 
 #ifdef WIN32
 #define NOTIFY_THROUGH_SUPPORT_OBJECT

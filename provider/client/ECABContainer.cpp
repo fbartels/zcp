@@ -57,7 +57,7 @@
 
 #include <zarafa/CommonUtil.h>
 #include "ZarafaICS.h"
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 
 #include "ECABContainer.h"
 

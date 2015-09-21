@@ -67,7 +67,7 @@
 #include "ECMAPI.h"
 
 #include <zlib.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <edkmdb.h>
 
 #ifdef HAVE_OFFLINE_SUPPORT

@@ -45,7 +45,7 @@
 #define CALDAV_UTIL_H_
 
 #include "WebDav.h"
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 #include <zarafa/mapiguidext.h>
 #include <cstring>
 #include <algorithm>

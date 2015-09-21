@@ -62,7 +62,7 @@
 #include <zarafa/ECGuid.h>
 #include <zarafa/ECDebug.h>
 
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 
 #include "freebusytags.h"
 #include <zarafa/CommonUtil.h>

@@ -71,7 +71,7 @@
 #include "ECServerEntrypoint.h"
 #include "ECMailBoxTable.h"
 
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 #include <edkmdb.h>
 
 #ifdef _DEBUG

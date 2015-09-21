@@ -69,7 +69,7 @@
 #include <zarafa/charset/convert.h>
 #include <zarafa/charset/utf16string.h>
 
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 #include "freebusytags.h"
 
 #include <edkguid.h>

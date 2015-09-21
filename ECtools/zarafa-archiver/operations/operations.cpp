@@ -51,7 +51,7 @@
 #include <zarafa/ECRestriction.h>
 
 #include <mapiutil.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 
 #include <zarafa/Util.h>
 #include <zarafa/stringutil.h>

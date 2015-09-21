@@ -50,7 +50,7 @@
 #include <zarafa/ECGuid.h>
 #include <edkguid.h>
 #include <mapiguid.h>
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 #include <zarafa/ECDebug.h>
 #include <zarafa/stringutil.h>
 #include "ZarafaUtil.h"

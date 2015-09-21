@@ -81,7 +81,7 @@
 
 #include "SOAPUtils.h"
 #include "WSUtil.h"
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 
 #include "WSABTableView.h"
 #include "WSABPropStorage.h"

@@ -52,7 +52,7 @@
 #include <zarafa/ECGuid.h>
 #include <zarafa/ECDebug.h>
 #include <zarafa/CommonUtil.h>
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 #include <zarafa/mapiguidext.h>
 #include <zarafa/namedprops.h>
 #include <zarafa/charset/convert.h>

@@ -56,7 +56,7 @@
 #include <zarafa/ECDebug.h>
 
 #include <edkmdb.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 
 #include <zarafa/stringutil.h>
 #include "ECMsgStorePublic.h"

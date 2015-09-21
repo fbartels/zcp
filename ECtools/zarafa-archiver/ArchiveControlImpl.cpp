@@ -50,7 +50,7 @@
 #include "ArchiveStateCollector.h"
 #include "ArchiveStateUpdater.h"
 #include <zarafa/userutil.h>
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 #include "helpers/StoreHelper.h"
 #include "operations/copier.h"
 #include "operations/deleter.h"

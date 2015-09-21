@@ -46,7 +46,7 @@
 #include "archive.h"
 
 #include <mapitags.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <mapiutil.h>
 #include <mapidefs.h>
 #include <mapix.h>

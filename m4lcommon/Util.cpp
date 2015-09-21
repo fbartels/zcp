@@ -67,7 +67,7 @@
 #include <zarafa/ECGuid.h>
 #include "codepage.h"
 #include "rtfutil.h"
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 
 #include <zarafa/ustringutil.h>
 #include <zarafa/mapi_ptr.h>

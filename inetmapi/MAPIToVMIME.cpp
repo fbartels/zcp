@@ -59,7 +59,7 @@
 // mapi
 #include <mapi.h>
 #include <mapiutil.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <edkmdb.h>
 #include <zarafa/mapiguidext.h>
 #include <zarafa/mapi_ptr.h>

@@ -61,7 +61,7 @@
 #include <zarafa/stringutil.h>
 
 #include <mapix.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <mapiutil.h>
 #include <edkguid.h>
 #include <edkmdb.h>

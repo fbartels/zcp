@@ -65,7 +65,7 @@
 // mapi
 #include <mapix.h>
 #include <mapiutil.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <edkmdb.h>
 #include <zarafa/CommonUtil.h>
 #include <zarafa/charset/convert.h>

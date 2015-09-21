@@ -47,7 +47,7 @@
 #include "stubber.h"
 #include "archiver-common.h"
 #include "helpers/MAPIPropHelper.h"
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 using namespace za::helpers;
 
 namespace za { namespace operations {

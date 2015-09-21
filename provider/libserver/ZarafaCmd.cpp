@@ -106,7 +106,7 @@
 #include <zarafa/EMSAbTag.h>
 #include <edkmdb.h>
 #include <zarafa/ecversion.h>
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 
 #include "../server/ECSoapServerConnection.h"
 

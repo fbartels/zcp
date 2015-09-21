@@ -51,7 +51,7 @@
 #include "ClientUtil.h"
 
 #include <edkmdb.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 
 #include "ECMsgStorePublic.h"
 #include "restrictionutil.h"

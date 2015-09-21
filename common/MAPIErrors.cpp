@@ -51,7 +51,7 @@
 #include <zarafa/stringutil.h>
 
 #include <mapicode.h>
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 #include <string>
 
 typedef struct tagMAPIErrorTranslateRecord

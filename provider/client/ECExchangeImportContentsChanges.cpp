@@ -57,7 +57,7 @@
 #include <zarafa/ECDebug.h>
 
 #include "ZarafaICS.h"
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 #include <zarafa/mapi_ptr.h>
 #include <zarafa/ECRestriction.h>
 
