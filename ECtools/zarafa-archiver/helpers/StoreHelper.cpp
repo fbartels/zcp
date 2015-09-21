@@ -52,7 +52,7 @@ using namespace std;
 #include <zarafa/mapi_ptr.h>
 
 #include <zarafa/mapiguidext.h>
-#include "archiver-common.h"
+#include <zarafa/archiver-common.h>
 
 #include <zarafa/ECRestriction.h>
 

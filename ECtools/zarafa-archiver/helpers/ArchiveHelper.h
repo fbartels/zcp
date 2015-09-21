@@ -45,7 +45,7 @@
 #define ARCHIVEHELPER_H_INCLUDED
 
 #include <boost/smart_ptr.hpp>
-#include "archiver-common.h"
+#include <zarafa/archiver-common.h>
 #include <zarafa/mapi_ptr.h>
 #include <zarafa/CommonUtil.h>
 #include "ArchiverSessionPtr.h"     // For ArchiverSessionPtr

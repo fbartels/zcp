@@ -47,7 +47,7 @@
 #include "ArchiverSessionPtr.h"
 #include <zarafa/mapi_ptr.h>
 #include <zarafa/tstring.h>
-#include "archiver-common.h"
+#include <zarafa/archiver-common.h>
 
 // Forward declarations
 class ECConfig;

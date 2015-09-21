@@ -42,7 +42,7 @@
  */
 
 #include <zarafa/platform.h>
-#include "archiver-common.h"
+#include <zarafa/archiver-common.h>
 #include "ArchiveStateUpdater.h"
 #include "ArchiverSession.h"
 #include "helpers/StoreHelper.h"

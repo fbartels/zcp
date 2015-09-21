@@ -45,7 +45,7 @@
 #include "MAPIPropHelper.h"
 
 #include "ArchiverSession.h"
-#include "archiver-common.h"
+#include <zarafa/archiver-common.h>
 
 #include <mapiutil.h>
 #include <zarafa/Util.h>

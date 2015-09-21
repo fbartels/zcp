@@ -45,7 +45,7 @@
 #include <zarafa/ECConfig.h>
 #include "ECArchiverLogger.h"
 #include "stubber.h"
-#include "archiver-common.h"
+#include <zarafa/archiver-common.h>
 #include "helpers/MAPIPropHelper.h"
 #include <zarafa/mapiext.h>
 using namespace za::helpers;
