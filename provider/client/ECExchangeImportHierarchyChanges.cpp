@@ -52,7 +52,7 @@
 #include <mapiguid.h>
 #include "mapiext.h"
 #include "ECDebug.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "ZarafaUtil.h"
 #include "ZarafaICS.h"
 #include <mapiutil.h>

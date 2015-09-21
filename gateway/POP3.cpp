@@ -59,7 +59,7 @@
 #include <inetmapi.h>
 #include <mapiext.h>
 
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include <zarafa/charset/convert.h>
 #include <zarafa/ecversion.h>
 #include <zarafa/charset/utf8string.h>

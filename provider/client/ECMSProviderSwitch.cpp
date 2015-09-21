@@ -67,7 +67,7 @@
 
 #include "ClientUtil.h"
 #include "ECMsgStore.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #ifdef WIN32
 #include <Sensapi.h>

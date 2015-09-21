@@ -43,7 +43,7 @@
 
 #include <zarafa/platform.h>
 
-#include <stringutil.h>
+#include <zarafa/stringutil.h>
 
 #include <zarafa/threadutil.h>
 #include <zarafa/ECLogger.h>

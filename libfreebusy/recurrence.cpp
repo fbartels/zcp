@@ -46,7 +46,7 @@
 #include "recurrence.h"
 #include <cmath>
 #include <mapicode.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "ECIConv.h"
 #include <ctime>
 #include <zarafa/CommonUtil.h>

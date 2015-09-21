@@ -90,7 +90,7 @@
 #include <zarafa/CommonUtil.h>
 #include "namedprops.h"
 #include <zarafa/charset/convert.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include <zarafa/mapi_ptr.h>
 
 // inetmapi

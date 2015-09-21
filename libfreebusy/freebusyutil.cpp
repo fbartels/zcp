@@ -49,7 +49,7 @@
 #include <mapiutil.h>
 
 #include "freebusyutil.h"
-#include <stringutil.h>
+#include <zarafa/stringutil.h>
 
 #include "freebusytags.h"
 #include "mapiext.h"

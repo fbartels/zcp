@@ -94,7 +94,7 @@
 #include <zarafa/my_getopt.h>
 #include <zarafa/ecversion.h>
 #include <zarafa/Util.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include "mapiext.h"
 #include <edkmdb.h>

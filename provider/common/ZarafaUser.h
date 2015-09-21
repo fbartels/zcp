@@ -47,7 +47,7 @@
 #include <map>
 #include <list>
 #include <string>
-#include <stringutil.h>
+#include <zarafa/stringutil.h>
 #include <zarafa/ECDefs.h>
 
 /* Extern object */

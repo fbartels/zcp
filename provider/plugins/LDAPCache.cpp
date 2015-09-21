@@ -46,7 +46,7 @@
 #include <pthread.h>
 #include "LDAPCache.h"
 #include "LDAPUserPlugin.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 LDAPCache::LDAPCache()
 {

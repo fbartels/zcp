@@ -53,7 +53,7 @@
 #include <zarafa/CommonUtil.h>
 #include <zarafa/charset/convert.h>
 
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include <mapi.h>
 #include <mapitags.h>

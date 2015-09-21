@@ -47,7 +47,7 @@
 #include "ECDatabaseMySQL.h"
 #include "mysqld_error.h"
 
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include <zarafa/ECDefs.h>
 #include <zarafa/ecversion.h>
 #include <mapidefs.h>

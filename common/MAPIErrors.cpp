@@ -48,7 +48,7 @@
 #include <zarafa/platform.h>
 #include "MAPIErrors.h"
 #include <mapidefs.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include <mapicode.h>
 #include "mapiext.h"

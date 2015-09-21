@@ -44,7 +44,7 @@
 #include <zarafa/platform.h>
 #include "icaluid.h"
 #include <mapix.h>
-#include <stringutil.h>
+#include <zarafa/stringutil.h>
 
 /**
  * Check if UID is of outlook format.

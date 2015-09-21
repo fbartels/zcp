@@ -71,7 +71,7 @@
 #include <options.h>
 
 #include <edkmdb.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "codepage.h"
 #include <zarafa/charset/convert.h>
 #include "restrictionutil.h"

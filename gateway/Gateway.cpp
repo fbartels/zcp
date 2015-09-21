@@ -60,7 +60,7 @@
 #include <mapiguid.h>
 
 #include <zarafa/CommonUtil.h>
-#include <stringutil.h>
+#include <zarafa/stringutil.h>
 #include <iostream>
 #include <cstdio>
 #include <string>
@@ -79,7 +79,7 @@
 #include <zarafa/ecversion.h>
 
 #include "SSLUtil.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include "TmpPath.h"
 

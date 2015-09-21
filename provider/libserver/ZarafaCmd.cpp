@@ -72,7 +72,7 @@
 #include <cstdio>
 
 #include <zarafa/ECTags.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "SOAPUtils.h"
 #include <zarafa/ZarafaCode.h>
 #include "Trace.h"

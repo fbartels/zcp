@@ -45,7 +45,7 @@
 #include "instanceidmapper.h"
 #include "Archiver.h"
 #include "ECDatabase.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 namespace za { namespace operations {
 

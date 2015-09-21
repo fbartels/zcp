@@ -44,7 +44,7 @@
 #include <zarafa/platform.h>
 #include "Http.h"
 #include <zarafa/mapi_ptr.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include <zarafa/ECConfig.h>
 

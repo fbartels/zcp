@@ -57,7 +57,7 @@
 #include "ECIndexer.h"
 #include <zarafa/ECTags.h>
 #include "ZarafaCmdUtil.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include "ECSearchClient.h"
 

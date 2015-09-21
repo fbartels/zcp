@@ -87,7 +87,7 @@
 #include "ECGenProps.h"
 #include "ECGenericObjectTable.h"
 #include "SOAPUtils.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include "Trace.h"
 #include "ECSessionManager.h"

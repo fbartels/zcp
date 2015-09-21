@@ -58,7 +58,7 @@
 #include <zarafa/Util.h>
 #include "ECIConv.h"
 #include <zarafa/CommonUtil.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include <zarafa/charset/convert.h>
 #include <zarafa/tstring.h>
 

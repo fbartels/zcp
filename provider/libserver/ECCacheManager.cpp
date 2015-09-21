@@ -55,7 +55,7 @@
 #include "ECCacheManager.h"
 
 #include "ECMAPI.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "ECGenericObjectTable.h"
 #include <zarafa/threadutil.h>
 

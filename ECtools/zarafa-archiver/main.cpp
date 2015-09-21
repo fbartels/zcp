@@ -43,7 +43,7 @@
 
 #include <zarafa/platform.h>
 #include <iostream>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include <zarafa/my_getopt.h>
 #include "archiver-common.h"
 #include <zarafa/charset/convert.h>

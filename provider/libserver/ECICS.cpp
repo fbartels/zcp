@@ -47,7 +47,7 @@
 #include <mapidefs.h>
 #include <edkmdb.h>
 
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "ECSessionManager.h"
 #include "ECSecurity.h"
 

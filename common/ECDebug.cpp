@@ -49,7 +49,7 @@
 #include <edkmdb.h>
 #include "mapiext.h"
 #include "freebusytags.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include <zarafa/charset/convert.h>
 #include <zarafa/ECTags.h>
 #include <zarafa/EMSAbTag.h>
@@ -62,7 +62,7 @@
 
 #include "freebusyguid.h"
 
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include <iostream>
 #include <sstream>

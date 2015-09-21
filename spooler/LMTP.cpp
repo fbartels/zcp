@@ -61,7 +61,7 @@
 #include <zarafa/ECTags.h>
 #include "ECChannel.h"
 #include "LMTP.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "fileutil.h"
 
 using namespace std;

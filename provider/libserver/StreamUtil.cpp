@@ -60,7 +60,7 @@
 
 #include <ECFifoBuffer.h>
 #include <ECSerializer.h>
-#include <stringutil.h>
+#include <zarafa/stringutil.h>
 #include <mapitags.h>
 #include <mapiext.h>
 #include <mapidefs.h>

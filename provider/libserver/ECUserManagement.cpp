@@ -51,7 +51,7 @@
 #include <algorithm>
 
 #include "Zarafa.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "ECUserManagement.h"
 #include "ECSessionManager.h"
 #include "ECPluginFactory.h"

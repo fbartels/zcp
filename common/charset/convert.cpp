@@ -49,7 +49,7 @@
 #include <numeric>
 #include <vector>
 #include <string>
-#include <stringutil.h>
+#include <zarafa/stringutil.h>
 #include <cerrno>
 #define BUFSIZE 4096
 

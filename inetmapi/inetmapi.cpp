@@ -42,7 +42,7 @@
  */
 
 #include <zarafa/platform.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 // Damn windows header defines max which break C++ header files
 #undef max

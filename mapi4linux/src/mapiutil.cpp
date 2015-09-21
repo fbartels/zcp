@@ -57,7 +57,7 @@
 
 #include "ECDebug.h"
 #include <zarafa/ECTags.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include <zarafa/Util.h>
 
 #include "ECMemStream.h"

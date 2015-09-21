@@ -42,7 +42,7 @@
  */
 
 #include <zarafa/platform.h>
-#include <stringutil.h>
+#include <zarafa/stringutil.h>
 #include <ZarafaICS.h>
 
 #include "ECStoreObjectTable.h"

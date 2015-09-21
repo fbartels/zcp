@@ -47,7 +47,7 @@
 #include <mapidefs.h>
 #include <mapicode.h>
 #include <zarafa/base64.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include <zarafa/CommonUtil.h>
 #include "ECChannel.h"
 #include "ECIConv.h"

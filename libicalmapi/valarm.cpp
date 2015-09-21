@@ -55,7 +55,7 @@
 #include "namedprops.h"
 #include <zarafa/CommonUtil.h>
 #include <zarafa/Util.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

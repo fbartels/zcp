@@ -58,7 +58,7 @@
 #include "SOAPUtils.h"
 #include "WSUtil.h"
 #include <zarafa/Util.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "mapiext.h"
 
 #ifdef WIN32

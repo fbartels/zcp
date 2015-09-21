@@ -51,7 +51,7 @@
 #include <mapiext.h>
 #include <mapiguid.h>
 #include "PyMapiPlugin.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "frameobject.h"
 
 /**

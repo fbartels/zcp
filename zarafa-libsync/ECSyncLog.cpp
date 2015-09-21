@@ -46,7 +46,7 @@
 
 #include "ECSyncLog.h"
 #include "ECSyncSettings.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include <zarafa/ECLogger.h>
 
 #include <cstdlib>

@@ -58,7 +58,7 @@
 #include <edkmdb.h>
 #include <mapiext.h>
 
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "ECMsgStorePublic.h"
 #include "ECMemTablePublic.h"
 

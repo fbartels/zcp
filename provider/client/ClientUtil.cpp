@@ -61,7 +61,7 @@
 #include "mapiext.h"
 
 #include "Mem.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include <zarafa/charset/convstring.h>
 #include "EntryPoint.h"

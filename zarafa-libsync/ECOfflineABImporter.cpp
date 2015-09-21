@@ -48,7 +48,7 @@
 
 #include <zarafa/ECLogger.h>
 #include <ECABEntryID.h>
-#include <stringutil.h>
+#include <zarafa/stringutil.h>
 
 #include <mapix.h>
 #include <edkmdb.h>

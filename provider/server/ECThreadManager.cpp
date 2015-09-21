@@ -46,7 +46,7 @@
 
 #include <cstdlib>
 #include <algorithm>
-#include <stringutil.h>
+#include <zarafa/stringutil.h>
 
 #ifdef HAVE_EPOLL_CREATE
 #include <sys/epoll.h>

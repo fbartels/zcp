@@ -43,7 +43,7 @@
 
 #include <zarafa/platform.h>
 #include "WebDav.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include <zarafa/CommonUtil.h>
 #include <libical/ical.h>
 

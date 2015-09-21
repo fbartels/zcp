@@ -45,7 +45,7 @@
 #include "ECDebugPrint.h"
 #include "ECDebug.h"
 #include <zarafa/charset/convert.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 using namespace std;
 

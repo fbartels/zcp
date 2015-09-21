@@ -88,7 +88,7 @@
 #include <zarafa/ecversion.h>
 #include "ClientUtil.h"
 #include "ECSessionGroupManager.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "ZarafaVersions.h"
 
 #include <zarafa/charset/convert.h>

@@ -76,7 +76,7 @@
 #include "mapiTextPart.h"
 #include "rtfutil.h"
 #include <zarafa/CommonUtil.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "mapicontact.h"
 #include <zarafa/Util.h>
 #include <zarafa/ECLogger.h>

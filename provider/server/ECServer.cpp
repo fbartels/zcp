@@ -43,7 +43,7 @@
 
 #include <zarafa/platform.h>
 #include <zarafa/ecversion.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include "soapH.h"
 

@@ -62,7 +62,7 @@
 #include <zarafa/charset/utf16string.h>
 
 #include <zarafa/CommonUtil.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include <zarafa/mapiguidext.h>
 #include "ECRestriction.h"
 #include "../common/MAPIErrors.h"

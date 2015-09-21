@@ -61,7 +61,7 @@
 #include <zarafa/ECConfig.h>
 #include <zarafa/ECLogger.h>
 #include "ECPluginSharedData.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include <auto_free.h>
 

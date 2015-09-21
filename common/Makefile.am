@@ -26,8 +26,7 @@ nobase_pkginclude_HEADERS = \
 	ECFifoBuffer.h ECGetText.h ECIConv.h \
 	ECScheduler.h ECSerializer.h ECThreadPool.h StatsClient.h \
 	SymmetricCrypt.h TimeUtil.h TmpPath.h Trace.h UnixUtil.h \
-	fileutil.h pthreadutil.h \
-	stringutil.h utf8.h \
+	fileutil.h pthreadutil.h utf8.h \
 	charset/utf32string.h charset/localeutil.h \
 	ustringutil/utfutil.h \
 	utf8/checked.h utf8/core.h utf8/unchecked.h

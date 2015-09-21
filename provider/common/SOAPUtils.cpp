@@ -51,7 +51,7 @@
 
 #include "SOAPUtils.h"
 #include "SOAPAlloc.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include <zarafa/ustringutil.h>
 #include <zarafa/base64.h>
 

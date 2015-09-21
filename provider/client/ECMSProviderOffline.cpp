@@ -64,7 +64,7 @@
 
 #include "ClientUtil.h"
 #include "ECMsgStore.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include "ProviderUtil.h"
 

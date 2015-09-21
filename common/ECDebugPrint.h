@@ -47,7 +47,7 @@
 // @todo: Cleanup 'n' Document
 
 #include <mapidefs.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "ECDebug.h"
 
 #include <boost/type_traits/is_convertible.hpp>

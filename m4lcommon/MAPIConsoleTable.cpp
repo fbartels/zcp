@@ -47,7 +47,7 @@
 #include "ConsoleTable.h"
 #include <zarafa/mapi_ptr.h>
 #include <zarafa/mapi_ptr/mapi_rowset_ptr.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 static std::string ToString(const SPropValue *lpProp)
 {

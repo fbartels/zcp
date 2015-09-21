@@ -46,7 +46,7 @@
 #include "soapH.h"
 #include "ECClientUpdate.h"
 #include "ECLicenseClient.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include <zarafa/base64.h>
 #include <zarafa/ECLogger.h>
 #include <zarafa/ECConfig.h>

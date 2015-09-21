@@ -43,7 +43,7 @@
 
 #include <zarafa/platform.h>
 #include "ECStatsCollector.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 using namespace std;
 

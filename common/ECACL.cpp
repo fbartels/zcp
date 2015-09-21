@@ -44,7 +44,7 @@
 #include <zarafa/platform.h>
 #include "ECACL.h"
 #include <zarafa/CommonUtil.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include <sstream>
 #include <algorithm>

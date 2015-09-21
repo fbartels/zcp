@@ -127,7 +127,7 @@
 #include <cctype>
 #include <ctime>
 
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include <zarafa/CommonUtil.h>
 #include <zarafa/Util.h>
 #include <zarafa/ECLogger.h>

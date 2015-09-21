@@ -49,7 +49,7 @@
 #include <mapix.h>
 #include <mapicode.h>
 
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "RecurrenceState.h"
 #include <zarafa/charset/convert.h>
 #include <zarafa/charset/utf16string.h>

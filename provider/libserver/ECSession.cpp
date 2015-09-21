@@ -71,7 +71,7 @@
 #include "ECPluginFactory.h"
 #include <zarafa/base64.h>
 #include "SSLUtil.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include "ECDatabaseMySQL.h"
 #include "ECDatabaseUtils.h" // used for PR_INSTANCE_KEY

@@ -51,7 +51,7 @@
 #include "ECSessionManager.h"
 #include "ECGenProps.h"
 #include "ECSession.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include "ECMailBoxTable.h"
 

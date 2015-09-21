@@ -53,7 +53,7 @@
 #include <mapix.h>
 #include <zarafa/my_getopt.h>
 #include <namedprops.h>
-#include <stringutil.h>
+#include <zarafa/stringutil.h>
 #include <edkmdb.h>
 #include <edkguid.h>
 #include <zarafa/charset/convert.h>

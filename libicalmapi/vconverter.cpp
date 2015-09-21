@@ -53,7 +53,7 @@
 #include <zarafa/Util.h>
 #include "icaluid.h"
 #include "nameids.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include <ctime>
 #include <zarafa/mapi_ptr.h>
 #include "namedprops.h"

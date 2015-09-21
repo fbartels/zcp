@@ -52,7 +52,7 @@
 #include <zarafa/mapiguidext.h>
 #include <mapiutil.h>
 #include <mapix.h>
-#include <stringutil.h>
+#include <zarafa/stringutil.h>
 
 #include "zarafa-fsck.h"
 

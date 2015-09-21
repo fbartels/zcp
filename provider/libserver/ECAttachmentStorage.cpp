@@ -64,7 +64,7 @@
 #include "SOAPUtils.h"
 #include "MAPIErrors.h"
 #include <mapitags.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "StreamUtil.h"
 
 // chunk size for attachment blobs, must be equal or larger than MAX, MAX may never shrink below 384*1024.

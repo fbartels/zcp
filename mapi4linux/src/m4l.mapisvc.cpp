@@ -42,7 +42,7 @@
  */
 
 #include <zarafa/platform.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include "m4l.mapisvc.h"
 #include <mapix.h>

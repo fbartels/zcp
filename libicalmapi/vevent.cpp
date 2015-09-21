@@ -48,7 +48,7 @@
 #include <zarafa/CommonUtil.h>
 #include "nameids.h"
 #include "icaluid.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 /** 
  * VEvent constructor, implements VConverter

@@ -52,7 +52,7 @@
 #include "ECUserStoreTable.h"
 #include "ECGenProps.h"
 #include "ECSession.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

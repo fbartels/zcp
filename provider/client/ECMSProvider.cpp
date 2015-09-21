@@ -67,7 +67,7 @@
 #include "WSUtil.h"
 #include "ZarafaUtil.h"
 #include "ProviderUtil.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 using namespace std;
 

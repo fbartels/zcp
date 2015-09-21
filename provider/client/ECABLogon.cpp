@@ -64,7 +64,7 @@
 
 #include <zarafa/Util.h>
 #include "Mem.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "ZarafaUtil.h"
 
 #ifdef _DEBUG

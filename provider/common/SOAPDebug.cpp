@@ -48,7 +48,7 @@
 
 #include <edkmdb.h>
 #include <mapidefs.h>
-#include <stringutil.h>
+#include <zarafa/stringutil.h>
 
 using namespace std;
 

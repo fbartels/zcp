@@ -50,7 +50,7 @@
 #include <libintl.h>
 
 #include "ECMAPI.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "SOAPUtils.h"
 #include "soapH.h"
 #include "ECStoreObjectTable.h"

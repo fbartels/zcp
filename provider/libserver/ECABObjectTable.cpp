@@ -58,7 +58,7 @@
 
 #include "ECSession.h"
 #include "ECSessionManager.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

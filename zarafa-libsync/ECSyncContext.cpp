@@ -58,7 +58,7 @@
 #include <zarafa/ECGuid.h>
 #include <zarafa/ECTags.h>
 #include <zarafa/ECLogger.h>
-#include <stringutil.h>
+#include <zarafa/stringutil.h>
 
 #include <mapix.h>
 #include <mapiext.h>

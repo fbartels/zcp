@@ -66,7 +66,7 @@
 #include "ECSubRestriction.h"
 #include <zarafa/ECDefs.h>
 #include "SOAPUtils.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "Trace.h"
 #include "ECServerEntrypoint.h"
 #include "ECMailBoxTable.h"

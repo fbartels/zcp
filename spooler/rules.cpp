@@ -51,7 +51,7 @@
 #include <mapiext.h>
 #include <edkmdb.h>
 #include <edkguid.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include <zarafa/Util.h>
 #include <zarafa/CommonUtil.h>
 #include <zarafa/ECLogger.h>

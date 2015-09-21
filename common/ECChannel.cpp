@@ -44,7 +44,7 @@
 #include <zarafa/platform.h>
 
 #include "ECChannel.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include <csignal>
 #ifdef LINUX
 #include <sys/types.h>

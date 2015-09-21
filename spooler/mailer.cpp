@@ -63,7 +63,7 @@
 #include <edkguid.h>
 #include <zarafa/CommonUtil.h>
 #include <zarafa/Util.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "mapicontact.h"
 #include <zarafa/mapiguidext.h>
 #include <zarafa/EMSAbTag.h>

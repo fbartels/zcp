@@ -52,7 +52,7 @@
 
 #include "ClientUtil.h"
 #include "Mem.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include <zarafa/ECGuid.h>
 

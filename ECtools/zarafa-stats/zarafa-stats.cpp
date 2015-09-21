@@ -58,7 +58,7 @@
 #include <set>
 
 #include <zarafa/CommonUtil.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include <zarafa/ECTags.h>
 #include <zarafa/my_getopt.h>
 #include <zarafa/ecversion.h>

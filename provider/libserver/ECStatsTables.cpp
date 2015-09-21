@@ -56,7 +56,7 @@
 #include <mapiext.h>
 #include <edkmdb.h>
 #include <zarafa/ECTags.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include "ECStatsCollector.h"
 

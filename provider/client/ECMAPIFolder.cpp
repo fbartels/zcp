@@ -71,7 +71,7 @@
 #include <mapiutil.h>
 #include <cstdio>
 
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include <zarafa/charset/convstring.h>
 

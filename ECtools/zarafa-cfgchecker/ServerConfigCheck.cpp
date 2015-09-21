@@ -43,7 +43,7 @@
 
 #include <zarafa/platform.h>
 #include "ServerConfigCheck.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 ServerConfigCheck::ServerConfigCheck(const char *lpszConfigFile) : ECConfigCheck("Server Configuration file", lpszConfigFile)
 {

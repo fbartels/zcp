@@ -49,7 +49,7 @@
 #include <cstdarg>
 #include <csignal>
 #include <zlib.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "charset/localeutil.h"
 
 #ifdef LINUX

@@ -62,7 +62,7 @@
 #include <zarafa/ECTags.h>
 #include <zarafa/ECGuid.h>
 #include <zarafa/Util.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include <zarafa/base64.h>
 #include <zarafa/mapi_ptr.h>
 

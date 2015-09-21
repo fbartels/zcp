@@ -84,7 +84,7 @@
 #include "ECSearchClient.h"
 #include "ECTPropsPurge.h"
 #include "SOAPUtils.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include <zarafa/charset/utf8string.h>
 #include <zarafa/charset/convert.h>
 

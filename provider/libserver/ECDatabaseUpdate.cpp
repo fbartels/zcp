@@ -46,7 +46,7 @@
 #include "ECDatabase.h"
 #include "ECDatabaseUpdate.h"
 
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include <zarafa/ECDefs.h>
 #include "ECDBDef.h"

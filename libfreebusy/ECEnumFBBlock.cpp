@@ -44,7 +44,7 @@
 #include <zarafa/platform.h>
 #include "ECEnumFBBlock.h"
 #include "freebusyutil.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

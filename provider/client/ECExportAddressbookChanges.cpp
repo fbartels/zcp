@@ -55,7 +55,7 @@
 
 #include <zarafa/ECLogger.h>
 #include <ECSyncLog.h>
-#include <stringutil.h>
+#include <zarafa/stringutil.h>
 #include <zarafa/Util.h>
 
 #include <edkmdb.h>

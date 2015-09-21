@@ -45,7 +45,7 @@
 
 #include <zarafa/CommonUtil.h>
 #include "ECGenericObjectTable.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "ECSearchClient.h"
 #include "ECCacheManager.h"
 #include "SOAPDebug.h"

@@ -64,7 +64,7 @@
 #include <zarafa/ECGuid.h>
 #include "ECABEntryID.h"
 #include <zarafa/CommonUtil.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include <zarafa/ecversion.h>
 #include "mapiext.h"
 #include <zarafa/Util.h>

@@ -48,7 +48,7 @@
 #include <mapidefs.h>
 #include <mapitags.h>
 
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "ECSession.h"
 #include "ECStoreObjectTable.h"
 #include "ECGenericObjectTable.h"

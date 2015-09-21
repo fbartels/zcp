@@ -62,7 +62,7 @@
 #include "ECRestriction.h"
 
 #include <iostream>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 using namespace std;
 
 #ifdef _DEBUG

@@ -78,7 +78,7 @@
 #include "ProviderUtil.h"
 #include "EntryPoint.h"
 
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "ECOfflineState.h"
 
 #include "ECExchangeModifyTable.h"

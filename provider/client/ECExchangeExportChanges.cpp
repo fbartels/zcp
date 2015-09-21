@@ -61,7 +61,7 @@
 
 #include "Mem.h"
 #include "ECMessage.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "ECSyncLog.h"
 #include "ECSyncUtil.h"
 #include "ECSyncSettings.h"
