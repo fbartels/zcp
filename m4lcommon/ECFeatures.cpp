@@ -44,7 +44,7 @@
 #include "ECFeatures.h"
 #include "ECFeatureList.h"
 #include "CommonUtil.h"
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
 using namespace std;
 

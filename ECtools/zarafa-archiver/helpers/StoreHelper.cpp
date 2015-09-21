@@ -49,7 +49,7 @@
 #include "StoreHelper.h"
 using namespace std;
 
-#include <mapi_ptr.h>
+#include <zarafa/mapi_ptr.h>
 
 #include <zarafa/mapiguidext.h>
 #include "archiver-common.h"

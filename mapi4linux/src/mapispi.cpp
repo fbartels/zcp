@@ -53,7 +53,7 @@
 #include <zarafa/ECGuid.h>
 
 #include <algorithm>
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
 M4LMAPIGetSession::M4LMAPIGetSession(LPMAPISESSION new_session) {
 	ASSERT(new_session);

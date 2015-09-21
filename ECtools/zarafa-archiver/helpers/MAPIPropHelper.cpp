@@ -49,7 +49,7 @@
 
 #include <mapiutil.h>
 #include <zarafa/Util.h>
-#include <mapi_ptr.h>
+#include <zarafa/mapi_ptr.h>
 #include <zarafa/mapiguidext.h>
 
 using namespace std;

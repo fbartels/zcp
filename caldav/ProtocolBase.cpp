@@ -46,7 +46,7 @@
 #include "stringutil.h"
 #include "CommonUtil.h"
 #include "CalDavUtil.h"
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
 using namespace std;
 

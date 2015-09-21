@@ -49,7 +49,7 @@
 #include "archiver-common.h"
 #include "postsaveaction.h"
 
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
 namespace za { namespace operations {
 

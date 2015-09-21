@@ -47,7 +47,7 @@
 #include <memory>
 
 #include <mapix.h>
-#include <mapi_ptr.h>
+#include <zarafa/mapi_ptr.h>
 
 #include <CommonUtil.h>
 

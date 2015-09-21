@@ -57,7 +57,7 @@
 #include "ZarafaICS.h"
 #include <mapiutil.h>
 #include "Mem.h"
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 #include "EntryPoint.h"
 
 #include <zarafa/charset/convert.h>

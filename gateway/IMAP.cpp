@@ -81,7 +81,7 @@
 #include "ECFeatures.h"
 
 #include <boost/algorithm/string/join.hpp>
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
 #include "IMAP.h"
 using namespace std;

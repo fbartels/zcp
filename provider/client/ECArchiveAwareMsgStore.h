@@ -45,7 +45,7 @@
 #define ECARCHIVEAWAREMSGSTORE_H
 
 #include "ECMsgStore.h"
-#include "mapi_ptr/mapi_object_ptr.h"
+#include <zarafa/mapi_ptr/mapi_object_ptr.h>
 #include <zarafa/ECGuid.h>
 
 #include <list>

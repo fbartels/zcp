@@ -66,7 +66,7 @@
 
 #include <iostream>
 #include <sstream>
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
 using namespace std;
 

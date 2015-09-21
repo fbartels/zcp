@@ -83,7 +83,7 @@
 
 #include "ECExchangeModifyTable.h"
 
-#include <mapi_ptr.h>
+#include <zarafa/mapi_ptr.h>
 typedef mapi_memory_ptr<char> MAPIStringPtr;
 typedef mapi_object_ptr<WSTransport> WSTransportPtr;
 typedef mapi_object_ptr<ECMessage, IID_ECMessage> ECMessagePtr;

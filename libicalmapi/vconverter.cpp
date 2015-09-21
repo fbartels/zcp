@@ -55,7 +55,7 @@
 #include "nameids.h"
 #include "stringutil.h"
 #include <ctime>
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 #include "namedprops.h"
 #include "base64.h"
 

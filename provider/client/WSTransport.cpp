@@ -96,7 +96,7 @@
 #include <zarafa/charset/convstring.h>
 
 #include "SOAPSock.h"
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 #include "WSMessageStreamExporter.h"
 #include "WSMessageStreamImporter.h"
 

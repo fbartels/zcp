@@ -13,7 +13,6 @@ noinst_LTLIBRARIES = libm4lcommon.la
 
 m4lincludedir = ${includedir}/mapi4linux
 pkgincludedir = ${includedir}/zarafa
-mapiptrdir = ${pkgincludedir}/mapi_ptr
 
 m4linclude_HEADERS = include/edkguid.h
 pkginclude_HEADERS = \
@@ -43,16 +42,10 @@ pkginclude_HEADERS = \
 	MAPINotifSink.h \
 	auto_free.h \
 	favoritesutil.h \
-	mapi_ptr.h \
 	mapicontact.h \
 	mapiext.h \
 	namedprops.h \
 	restrictionutil.h
-mapiptr_HEADERS = \
-	mapi_ptr/mapi_array_ptr.h \
-	mapi_ptr/mapi_memory_ptr.h \
-	mapi_ptr/mapi_object_ptr.h \
-	mapi_ptr/mapi_rowset_ptr.h
 # These were split off libcommon_mapi
 libm4lcommon_la_SOURCES = \
 	CommonUtil.cpp ECIterators.cpp \

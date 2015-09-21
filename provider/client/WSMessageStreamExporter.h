@@ -46,7 +46,7 @@
 
 #include "ECUnknown.h"
 #include "soapStub.h"
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
 #include <string>
 #include <map>

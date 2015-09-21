@@ -51,7 +51,7 @@
 #include <mapiutil.h>
 
 #include "freebusyutil.h"
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

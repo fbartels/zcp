@@ -51,7 +51,7 @@
 
 #include <zarafa/ECConfig.h>
 #include <zarafa/ECLogger.h>
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 #include "ECRulesTableProxy.h"
 
 /*

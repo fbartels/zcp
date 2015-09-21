@@ -91,7 +91,7 @@
 #include "namedprops.h"
 #include <zarafa/charset/convert.h>
 #include "stringutil.h"
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
 // inetmapi
 #include "ECMapiUtils.h"

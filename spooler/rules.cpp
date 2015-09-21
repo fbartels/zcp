@@ -55,7 +55,7 @@
 #include <zarafa/Util.h>
 #include "CommonUtil.h"
 #include <zarafa/ECLogger.h>
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 #include <zarafa/mapiguidext.h>
 
 #include "IECExchangeModifyTable.h"

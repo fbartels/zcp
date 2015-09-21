@@ -13,7 +13,7 @@
 #include "IECMultiStoreTable.h"
 #include "IECExportChanges.h"
 #include <zarafa/IECLicense.h>
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
 // DIRTIEST HACK IN THE WORLD WARNING: we need to fix the broken swig output for mapi_wrap.h .....
 #pragma include_alias( "mapi_wrap.h", "mapi_wrap_fixed.h" )

@@ -47,7 +47,7 @@
 #include <zarafa/zcdefs.h>
 #include "ECUnknown.h"
 #include "WSMessageStreamImporter.h"
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
 /**
  * This class wraps a WSMessageStreamImporter object and exposes it as an IStream.

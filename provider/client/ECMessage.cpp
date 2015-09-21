@@ -56,7 +56,7 @@
 #include "rtfutil.h"
 #include <zarafa/Util.h>
 #include "Mem.h"
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
 #include <zarafa/ECGuid.h>
 #include <edkguid.h>

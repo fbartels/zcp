@@ -45,7 +45,7 @@
 #define postsaveiidupdater_INCLUDED
 
 #include "postsaveaction.h"
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 #include "instanceidmapper_fwd.h"
 #include "archiver-common.h"
 #include <list>

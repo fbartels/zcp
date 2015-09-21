@@ -45,7 +45,7 @@
 #include "ECArchiveAwareMsgStore.h"
 #include "ECArchiveAwareMessage.h"
 #include <zarafa/ECGuid.h>
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 #include <zarafa/threadutil.h>
 
 #if defined WIN32 && !defined _DEBUG

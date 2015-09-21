@@ -44,7 +44,7 @@
 #include <zarafa/platform.h>
 #include "ECRestriction.h"
 #include <zarafa/Util.h>
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
 #include <mapicode.h>
 #include <mapix.h>

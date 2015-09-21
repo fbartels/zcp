@@ -79,7 +79,7 @@
 #include <algorithm>
 #include <map>
 
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 #include "fileutil.h"
 #include "PyMapiPlugin.h"
 

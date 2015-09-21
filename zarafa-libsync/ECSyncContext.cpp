@@ -66,7 +66,7 @@
 #include <edkguid.h>
 #include <edkmdb.h>
 
-#include <mapi_ptr.h>
+#include <zarafa/mapi_ptr.h>
 typedef mapi_object_ptr<IECChangeAdvisor, IID_IECChangeAdvisor> ECChangeAdvisorPtr;
 //DEFINEMAPIPTR(ECChangeAdvisor);
 typedef mapi_object_ptr<IECChangeAdviseSink, IID_IECChangeAdviseSink> ECChangeAdviseSinkPtr;

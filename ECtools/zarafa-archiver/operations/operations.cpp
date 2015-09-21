@@ -55,7 +55,7 @@
 
 #include <zarafa/Util.h>
 #include "stringutil.h"
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 #include <zarafa/mapiguidext.h>
 
 #include <algorithm>

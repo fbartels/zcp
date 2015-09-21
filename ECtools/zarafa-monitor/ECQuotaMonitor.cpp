@@ -58,7 +58,7 @@
 #include <zarafa/Util.h>
 #include <zarafa/ecversion.h>
 #include <zarafa/charset/convert.h>
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
 //#include <zarafa/IECSecurity.h>
 #include <zarafa/ECGuid.h>

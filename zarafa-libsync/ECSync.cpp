@@ -66,7 +66,7 @@
 #include "ECABEntryID.h"
 #include "ECSyncLog.h"
 #include <zarafa/ECLogger.h>
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 #include <zarafa/threadutil.h>
 
 #include "IECExportAddressbookChanges.h"

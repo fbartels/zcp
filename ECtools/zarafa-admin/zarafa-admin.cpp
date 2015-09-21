@@ -72,7 +72,7 @@
 #include "ECABEntryID.h"
 #include <zarafa/charset/convert.h>
 #include "ConsoleTable.h"
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 #include "ECFeatures.h"
 #include <zarafa/tstring.h>
 #include "ECACL.h"

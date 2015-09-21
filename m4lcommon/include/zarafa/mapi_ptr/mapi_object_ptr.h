@@ -50,7 +50,7 @@
 #include <zarafa/IECUnknown.h>
 #include <zarafa/ECTags.h>
 #include <zarafa/ECGuid.h>
-#include "mapi_memory_ptr.h"
+#include <zarafa/mapi_ptr/mapi_memory_ptr.h>
 
 // http://tinyurl.com/ydb363n
 template<typename BaseT, typename DerivedT>

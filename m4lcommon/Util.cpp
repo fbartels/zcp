@@ -70,7 +70,7 @@
 #include "mapiext.h"
 
 #include <zarafa/ustringutil.h>
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
 #include "HtmlToTextParser.h"
 #include <zarafa/ECLogger.h>

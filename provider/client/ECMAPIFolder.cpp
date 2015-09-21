@@ -64,7 +64,7 @@
 #include "ClientUtil.h"
 
 #include "ECDebug.h"
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
 #include <edkmdb.h>
 #include <mapiext.h>

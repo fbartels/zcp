@@ -55,7 +55,7 @@
 #include <libxml/parser.h>
 #include "PublishFreeBusy.h"
 
-#include <mapi_ptr.h>
+#include <zarafa/mapi_ptr.h>
 
 using namespace std;
 

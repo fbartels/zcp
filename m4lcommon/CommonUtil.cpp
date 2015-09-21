@@ -64,7 +64,7 @@
 #include <zarafa/Util.h>
 #include "stringutil.h"
 #include "base64.h"
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
 #include <zarafa/charset/convert.h>
 #include <zarafa/charset/utf16string.h>

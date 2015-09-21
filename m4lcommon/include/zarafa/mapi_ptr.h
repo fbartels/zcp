@@ -44,10 +44,10 @@
 #ifndef mapi_ptr_INCLUDED
 #define mapi_ptr_INCLUDED
 
-#include "mapi_ptr/mapi_object_ptr.h"
-#include "mapi_ptr/mapi_memory_ptr.h"
-#include "mapi_ptr/mapi_array_ptr.h"
-#include "mapi_ptr/mapi_rowset_ptr.h"
+#include <zarafa/mapi_ptr/mapi_object_ptr.h>
+#include <zarafa/mapi_ptr/mapi_memory_ptr.h>
+#include <zarafa/mapi_ptr/mapi_array_ptr.h>
+#include <zarafa/mapi_ptr/mapi_rowset_ptr.h>
 
 #include <mapix.h>
 #include <mapispi.h>

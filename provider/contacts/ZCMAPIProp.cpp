@@ -52,7 +52,7 @@
 
 #include <zarafa/Util.h>
 #include <zarafa/ECGuid.h>
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 #include "namedprops.h"
 #include <zarafa/mapiguidext.h>
 
