@@ -166,3 +166,4 @@ Makefile.in
 
 # Ignore Python compiled files
 *.pyc
+*.pyo
