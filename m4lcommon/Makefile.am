@@ -12,10 +12,9 @@ AM_CPPFLAGS = ${ZCPPFLAGS} $(DEBUGFLAGS) $(BOOST_CPPFLAGS) \
 noinst_LTLIBRARIES = libm4lcommon.la
 
 m4lincludedir = ${includedir}/mapi4linux
-pkgincludedir = ${includedir}/zarafa
 
 m4linclude_HEADERS = include/edkguid.h
-pkginclude_HEADERS = \
+noinst_HEADERS = \
 	ECFeatureList.h \
 	ECInvariantChecker.h \
 	ECIterators.h \
@@ -51,7 +50,7 @@ libm4lcommon_la_LIBADD = \
 	-lpthread
 
 
-pkginclude_HEADERS += \
+noinst_HEADERS += \
 	ECFeatures.h
 # These were split off libcommon_util
 libm4lcommon_la_SOURCES += \

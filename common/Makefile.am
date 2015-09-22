@@ -7,7 +7,6 @@ AM_CPPFLAGS = ${ZCPPFLAGS} ${DEBUGFLAGS} ${BOOST_CPPFLAGS} ${SSL_CFLAGS} \
 	-I${top_srcdir}/mapi4linux/include -I${top_srcdir}/provider/common \
 	-I${top_srcdir}/libfreebusy ${MYSQL_INCLUDES}
 
-pkgincludedir = ${includedir}/zarafa
 pkgconfdir = ${libdir}/pkgconfig
 pkgconf_DATA = zarafa.pc
 
@@ -21,7 +20,7 @@ noinst_DATA = \
 #
 # libzcp_common_util
 #
-nobase_pkginclude_HEADERS = \
+noinst_HEADERS = \
 	ConsoleTable.h ECACL.h ECCache.h ECConfigImpl.h \
 	ECFifoBuffer.h ECIConv.h \
 	ECSerializer.h StatsClient.h \
@@ -54,7 +53,7 @@ endif
 #
 # libzcp_common_mapi
 #
-nobase_pkginclude_HEADERS += \
+noinst_HEADERS += \
 	ECFifoStream.h ECMemStream.h \
 	HtmlEntity.h HtmlToTextParser.h IStreamAdapter.h \
 	rtfutil.h
@@ -71,7 +70,7 @@ EXTRA_libzcp_common_mapi_la_DEPENDENCIES = ${top_builddir}/default.sym
 #
 # libzcp_common_ssl
 #
-nobase_pkginclude_HEADERS += ECChannelClient.h SSLUtil.h
+noinst_HEADERS += ECChannelClient.h SSLUtil.h
 libzcp_common_ssl_la_SOURCES = ECChannel.cpp ECChannelClient.cpp SSLUtil.cpp
 libzcp_common_ssl_la_LIBADD = libzcp_common_util.la -lpthread ${SSL_LIBS}
 libzcp_common_ssl_la_LDFLAGS = ${AM_LDFLAGS} -no-undefined \
@@ -81,7 +80,7 @@ EXTRA_libzcp_common_ssl_la_DEPENDENCIES = ${top_builddir}/default.sym
 #
 # libzcp_common_service
 #
-nobase_pkginclude_HEADERS += ECDatabaseMySQL.h
+noinst_HEADERS += ECDatabaseMySQL.h
 libzcp_common_service_la_SOURCES = ECDatabaseMySQL.cpp
 libzcp_common_service_la_LIBADD = libzcp_common_util.la -lpthread ${MYSQL_LIBS}
 libzcp_common_service_la_LDFLAGS = ${AM_LDFLAGS} -no-undefined \
