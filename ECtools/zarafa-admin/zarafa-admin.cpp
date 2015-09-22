@@ -62,14 +62,14 @@
 #include <zarafa/ECTags.h>
 #include <zarafa/EMSAbTag.h>
 #include <zarafa/ECGuid.h>
-#include "ECABEntryID.h"
+#include <zarafa/ECABEntryID.h>"
 #include <zarafa/CommonUtil.h>
 #include <zarafa/stringutil.h>
 #include <zarafa/ecversion.h>
 #include <zarafa/mapiext.h>
 #include <zarafa/Util.h>
 #include <zarafa/ECRestriction.h>
-#include "ECABEntryID.h"
+#include <zarafa/ECABEntryID.h>"
 #include <zarafa/charset/convert.h>
 #include "ConsoleTable.h"
 #include <zarafa/mapi_ptr.h>

@@ -62,7 +62,7 @@
 #include <mapix.h>
 #include <zarafa/mapiext.h>
 #include <zarafa/EMSAbTag.h>
-#include "ECABEntryID.h"
+#include <zarafa/ECABEntryID.h>"
 #include <zarafa/mapi_ptr.h>
 
 using namespace std;

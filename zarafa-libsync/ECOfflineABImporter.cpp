@@ -47,7 +47,7 @@
 #include "ECSyncLog.h"
 
 #include <zarafa/ECLogger.h>
-#include <ECABEntryID.h>
+#include <zarafa/ECABEntryID.h>>
 #include <zarafa/stringutil.h>
 
 #include <mapix.h>

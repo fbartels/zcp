@@ -53,7 +53,7 @@
 
 //Zarafa includes
 #include <zarafa/ECDefs.h>
-#include "ECABEntryID.h"
+#include <zarafa/ECABEntryID.h>"
 #include <zarafa/IECUnknown.h>
 #include <zarafa/Util.h>
 #include <zarafa/ecversion.h>

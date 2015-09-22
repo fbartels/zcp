@@ -1,7 +1,7 @@
 # -*- Makefile -*-
 
 nobase_pkginclude_HEADERS = \
-	ECChannel.h ECConfig.h ECDebug.h ECDebugPrint.h \
+	ECABEntryID.h ECChannel.h ECConfig.h ECDebug.h ECDebugPrint.h \
 	ECGetText.h ECGuid.h ECKeyTable.h ECLogger.h ECScheduler.h \
 	ECThreadPool.h ECUnknown.h MAPIErrors.h \
 	Trace.h UnixUtil.h ZarafaCode.h \
