@@ -163,3 +163,6 @@ Makefile.in
 /swig/python/RecurrenceState.py
 /swig/python/RecurrenceState_wrap.cxx
 /swig/python/zarafa/build/
+
+# Ignore Python compiled files
+*.pyc
