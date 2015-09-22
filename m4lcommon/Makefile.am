@@ -38,8 +38,7 @@ pkginclude_HEADERS = \
 	MAPINotifSink.h \
 	auto_free.h \
 	favoritesutil.h \
-	mapicontact.h \
-	restrictionutil.h
+	mapicontact.h
 # These were split off libcommon_mapi
 libm4lcommon_la_SOURCES = \
 	CommonUtil.cpp ECIterators.cpp \

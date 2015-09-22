@@ -132,7 +132,7 @@
 #include <zarafa/Util.h>
 #include <zarafa/ECLogger.h>
 #include <zarafa/my_getopt.h>
-#include "restrictionutil.h"
+#include <zarafa/restrictionutil.h>"
 #include "rules.h"
 #include "archive.h"
 #include "helpers/MAPIPropHelper.h"

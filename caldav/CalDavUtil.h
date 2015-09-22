@@ -49,7 +49,7 @@
 #include <zarafa/mapiguidext.h>
 #include <cstring>
 #include <algorithm>
-#include "restrictionutil.h"
+#include <zarafa/restrictionutil.h>"
 #include <zarafa/namedprops.h>
 #include "nameids.h"
 #include "icaluid.h"

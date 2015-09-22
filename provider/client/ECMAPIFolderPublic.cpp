@@ -63,7 +63,7 @@
 #include "ECMemTablePublic.h"
 
 #include "favoritesutil.h"
-#include "restrictionutil.h"
+#include <zarafa/restrictionutil.h>"
 
 #include <zarafa/charset/convstring.h>
 

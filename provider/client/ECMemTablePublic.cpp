@@ -54,7 +54,7 @@
 #include <zarafa/mapiext.h>
 
 #include "ECMsgStorePublic.h"
-#include "restrictionutil.h"
+#include <zarafa/restrictionutil.h>"
 #include "favoritesutil.h"
 
 #ifdef _DEBUG
