@@ -283,6 +283,8 @@ HRESULT MAPIToVMIME::processRecipients(IMessage *lpMessage, vmime::messageBuilde
 			}
 
 			hr = getMailBox(&pRows->aRow[i], &vmMailbox);
+			if (hr == MAPI_E_INVALID_PARAMETER)	// skip invalid addresses
+				continue;
 			if (hr != hrSuccess)
 				goto exit;			// Logging done in getMailBox
 
@@ -1529,10 +1531,11 @@ HRESULT MAPIToVMIME::getMailBox(LPSRow lpRow, vmime::ref<vmime::address> *lpvmMa
 		}
 
 		// we only want to have this recipient fail, and not the whole message, if the user has a username
-		m_strError = L"Invalid email address in recipient list found: \"" + strName + L"\" <" + strEmail + L">. Trying to sent anyway.";
+		m_strError = L"Invalid email address in recipient list found: \"" + strName + L"\" <" + strEmail + L">.";
 		lpLogger->Log(EC_LOGLEVEL_ERROR, "%ls", m_strError.c_str());
 
-		vmMailboxNew = vmime::create<vmime::mailbox>(getVmimeTextFromWide(strName), m_converter.convert_to<string>(strEmail));
+		hr = MAPI_E_INVALID_PARAMETER;
+		goto exit;
 	}
 
 	*lpvmMailbox = vmMailboxNew;
