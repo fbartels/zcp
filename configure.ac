@@ -565,29 +565,31 @@ iconv_t i; i = iconv_open("", "");
 AC_SUBST(ICONV_LIBS)
 LIBS=$LIBS_system
 
-AC_MSG_CHECKING([for crypt])
-AC_LINK_IFELSE([ AC_LANG_SOURCE([int main() {
-  char crypt();  crypt();
-}]) ],
-	[ AC_MSG_RESULT([yes]) ],
-	[ AC_MSG_RESULT([no])
-	  AC_CHECK_LIB([crypt], [crypt], [CRYPT_LIBS="-lcrypt"], AC_MSG_ERROR([required library libcrypt missing or unusable])) ])
-LIBS=$LIBS_system
-AC_SUBST(CRYPT_LIBS)
-
-# Only specific links with uuid and dl, clients only with crypto and ssl for ssl connections
-SSL_LIBS=
-# TODO: version of ssl check??
-# ssl before crypto, because of dependancies
-AC_CHECK_LIB([ssl], [SSL_accept], [SSL_LIBS="$SSL_LIBS -lssl"], AC_MSG_ERROR([required library libssl missing or unusable]))
-AC_CHECK_LIB([crypto], [BIO_accept], [SSL_LIBS="$SSL_LIBS -lcrypto"], AC_MSG_ERROR([required library libcrypto missing or unusable]))
-AC_SUBST(SSL_LIBS)
+PKG_CHECK_EXISTS([libssl],
+	[
+		PKG_CHECK_MODULES([SSL], [libssl], [], [ssl_LIBS=-lssl])
+	],
+	[
+		AC_CHECK_LIB([ssl], [SSL_accept], [SSL_LIBS="-lssl"], AC_MSG_ERROR([required library libssl missing or unusable]))
+		AC_SUBST([SSL_LIBS])
+	])
+PKG_CHECK_EXISTS([libcrypto],
+	[
+		PKG_CHECK_MODULES([CRYPTO], [libcrypto])
+	],
+	[
+		AC_CHECK_LIB([crypto], [BIO_accept], [CRYPTO_LIBS="-lcrypto"], AC_MSG_ERROR([required library libcrypto missing or unusable]))
+		AC_SUBST([CRYPTO_LIBS])
+	])
+ZCPPFLAGS="$ZCPPFLAGS $CRYPTO_CFLAGS"
 LIBS=$LIBS_system
 
 # OpenSSL check for new EVP_PKEY_cmp() function
 LIBS="$LIBS $SSL_LIBS"
+CPPFLAGS="$CPPFLAGS $SSL_CFLAGS"
 AC_CHECK_FUNCS([EVP_PKEY_cmp])
 LIBS=$LIBS_system
+CPPFLAGS=$CPPFLAGS_system
 
 # Check for pam library (optional)
 PAM_LIBS=

@@ -1,6 +1,6 @@
 # -*- Makefile -*-
 
-AM_CPPFLAGS = ${ZCPPFLAGS} ${DEBUGFLAGS} ${BOOST_CPPFLAGS} \
+AM_CPPFLAGS = ${ZCPPFLAGS} ${DEBUGFLAGS} ${BOOST_CPPFLAGS} ${SSL_CFLAGS} \
 	-I${top_srcdir}/m4lcommon \
 	-I${top_srcdir}/mapi4linux/include -I${top_srcdir}/provider/common \
 	-I${top_srcdir}/libfreebusy ${MYSQL_INCLUDES}
@@ -43,7 +43,7 @@ libzcp_common_util_la_SOURCES = \
 	charset/convert.cpp charset/convstring.cpp charset/traits.cpp \
 	charset/localeutil.cpp
 libzcp_common_util_la_LIBADD = \
-	-lpthread -lz ${BOOST_FILESYSTEM_LIBS} ${UUID_LIBS}
+	-lpthread -lz ${BOOST_FILESYSTEM_LIBS} ${CRYPTO_LIBS} ${UUID_LIBS}
 libzcp_common_util_la_LDFLAGS = ${AM_LDFLAGS} -no-undefined \
 	-Wl,--version-script=${top_builddir}/default.sym
 EXTRA_libzcp_common_util_la_DEPENDENCIES = ${top_builddir}/default.sym

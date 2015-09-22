@@ -1,6 +1,6 @@
 # -*- Makefile -*-
 
-AM_CPPFLAGS = ${ZCPPFLAGS} $(DEBUGFLAGS) $(BOOST_CPPFLAGS) \
+AM_CPPFLAGS = ${ZCPPFLAGS} ${DEBUGFLAGS} ${BOOST_CPPFLAGS} ${SSL_CFLAGS} \
 	-I${top_srcdir}/mapi4linux/include \
 	-I${top_srcdir}/inetmapi -I${top_srcdir}/provider/common \
 	-I${top_srcdir}/common -I${top_srcdir}/m4lcommon \
