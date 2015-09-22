@@ -41,9 +41,9 @@
  *
  */
 
-#include <platform.h>
-#include "ECConfig.h"
-#include "ECRestriction.h"
+#include <zarafa/platform.h>
+#include <zarafa/ECConfig.h>
+#include <zarafa/ECRestriction.h>
 #include "ECArchiverLogger.h"
 #include "copier.h"
 #include "deleter.h"
@@ -54,8 +54,8 @@
 #include "helpers/MAPIPropHelper.h"
 #include "helpers/ArchiveHelper.h"
 #include "ArchiverSession.h"
-#include "Util.h"
-#include "mapiguidext.h"
+#include <zarafa/Util.h>
+#include <zarafa/mapiguidext.h>
 
 #include <list>
 #include <string>

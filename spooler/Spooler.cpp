@@ -54,7 +54,7 @@
  * This advise sink unblocks the main (waiting) thread.
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #ifdef _WIN32
 	#include "ECNTService.h"
 #endif
@@ -77,35 +77,35 @@
 #include <mapiguid.h>
 #include <cctype>
 
-#include "IECUnknown.h"
+#include <zarafa/IECUnknown.h>
 #include "IECSpooler.h"
-#include "IECServiceAdmin.h"
-#include "IECSecurity.h"
-#include "ECGuid.h"
-#include "EMSAbTag.h"
-#include "ECTags.h"
-#include "ECABEntryID.h"
-#include "CommonUtil.h"
-#include "ECLogger.h"
-#include "ECConfig.h"
+#include <zarafa/IECServiceAdmin.h>
+#include <zarafa/IECSecurity.h>
+#include <zarafa/ECGuid.h>
+#include <zarafa/EMSAbTag.h>
+#include <zarafa/ECTags.h>
+#include <zarafa/ECABEntryID.h>"
+#include <zarafa/CommonUtil.h>
+#include <zarafa/ECLogger.h>
+#include <zarafa/ECConfig.h>
 #ifdef LINUX
-#include "UnixUtil.h"
+#include <zarafa/UnixUtil.h>
 #endif
-#include "my_getopt.h"
-#include "ecversion.h"
-#include "Util.h"
-#include "stringutil.h"
+#include <zarafa/my_getopt.h>
+#include <zarafa/ecversion.h>
+#include <zarafa/Util.h>
+#include <zarafa/stringutil.h>
 
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 #include <edkmdb.h>
-#include "edkguid.h"
-#include "mapiguidext.h"
+#include <edkguid.h>
+#include <zarafa/mapiguidext.h>
 #include "mapicontact.h"
-#include "restrictionutil.h"
-#include "charset/convert.h"
-#include "charset/convstring.h"
-#include "charset/utf8string.h"
-#include "ECGetText.h"
+#include <zarafa/restrictionutil.h>"
+#include <zarafa/charset/convert.h>
+#include <zarafa/charset/convstring.h>
+#include <zarafa/charset/utf8string.h>
+#include <zarafa/ECGetText.h>
 #include "StatsClient.h"
 #include "TmpPath.h"
 

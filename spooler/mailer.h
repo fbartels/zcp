@@ -45,8 +45,8 @@
 #define MAILER_H
 
 #include <mapidefs.h>
-#include "inetmapi.h"
-#include "ECDefs.h"
+#include <inetmapi/inetmapi.h>
+#include <zarafa/ECDefs.h>
 
 HRESULT SendUndeliverable(LPADRBOOK lpAddrBook, ECSender *lpMailer, LPMDB lpStore, LPECUSER lpUserAdmin, LPMESSAGE lpMessage);
 HRESULT ProcessMessageForked(const wchar_t *szUsername, const char *szSMTP, int ulPort, const char *szPath, ULONG cbMsgEntryId, LPENTRYID lpMsgEntryId, bool bDoSentMail);

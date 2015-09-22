@@ -41,15 +41,15 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include "Zarafa.h"
 #include "ECABProp.h"
 #include "Mem.h"
-#include "ECGuid.h"
-#include "ECDefs.h"
-#include "CommonUtil.h"
-#include "ECDebug.h"
+#include <zarafa/ECGuid.h>
+#include <zarafa/ECDefs.h>
+#include <zarafa/CommonUtil.h>
+#include <zarafa/ECDebug.h>
 
 
 #ifdef _DEBUG

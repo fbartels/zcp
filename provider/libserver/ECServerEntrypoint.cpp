@@ -41,9 +41,9 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "ECSessionManager.h"
 #include "ECStatsCollector.h"
 

@@ -52,13 +52,13 @@
 #ifndef ECFREEBUSYUPDATE_H
 #define ECFREEBUSYUPDATE_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include "freebusy.h"
 #include "freebusyguid.h"
-#include "ECUnknown.h"
-#include "Trace.h"
-#include "ECDebug.h"
-#include "ECGuid.h"
+#include <zarafa/ECUnknown.h>
+#include <zarafa/Trace.h>
+#include <zarafa/ECDebug.h>
+#include <zarafa/ECGuid.h>
 
 #include <mapi.h>
 #include <mapidefs.h>

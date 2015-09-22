@@ -45,11 +45,11 @@
 #define ECSOAPSERVERCONNECTION_H
 
 #include <set>
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 #include "ECThreadManager.h"
 #include "soapH.h"
-#include "ECLogger.h"
-#include "ECConfig.h"
+#include <zarafa/ECLogger.h>
+#include <zarafa/ECConfig.h>
 
 class ECSoapServerConnection
 {

@@ -41,10 +41,10 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
-#include "ECChannel.h"
-#include "stringutil.h"
+#include <zarafa/ECChannel.h>
+#include <zarafa/stringutil.h>
 #include <csignal>
 #ifdef LINUX
 #include <sys/types.h>

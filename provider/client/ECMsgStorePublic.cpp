@@ -41,22 +41,22 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ECMsgStorePublic.h"
 
 #include "ECMAPIFolder.h"
-#include "CommonUtil.h"
-#include "Util.h"
+#include <zarafa/CommonUtil.h>
+#include <zarafa/Util.h>
 #include "ClientUtil.h"
 #include "ZarafaUtil.h"
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <mapiutil.h>
 
 #include "ECMAPIFolderPublic.h"
 
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 
 using namespace std;
 

@@ -44,7 +44,7 @@
 #ifndef ECDISTLIST
 #define ECDISTLIST
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include "ECABContainer.h"
 
 class ECDistList : public ECABContainer

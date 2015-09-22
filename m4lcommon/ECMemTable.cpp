@@ -41,24 +41,24 @@
  *
  */
 
-#include "zcdefs.h"
-#include "platform.h"
+#include <zarafa/zcdefs.h>
+#include <zarafa/platform.h>
 
 #include <mapidefs.h>
 #include <mapicode.h>
 #include <mapiutil.h>
 
-#include "ECMemTable.h"
-#include "ECKeyTable.h"
-#include "ECGuid.h"
-#include "Util.h"
-#include "Trace.h"
-#include "CommonUtil.h"
-#include "charset/convert.h"
+#include <zarafa/ECMemTable.h>
+#include <zarafa/ECKeyTable.h>
+#include <zarafa/ECGuid.h>
+#include <zarafa/Util.h>
+#include <zarafa/Trace.h>
+#include <zarafa/CommonUtil.h>
+#include <zarafa/charset/convert.h>
 
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 #include <algorithm>
 
 #ifdef LINUX

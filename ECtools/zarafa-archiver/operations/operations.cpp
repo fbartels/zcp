@@ -41,22 +41,22 @@
  *
  */
 
-#include <platform.h>
-#include "ECConfig.h"
+#include <zarafa/platform.h>
+#include <zarafa/ECConfig.h>
 #include "operations.h"
 #include "ECArchiverLogger.h"
 #include "helpers/MAPIPropHelper.h"
 #include "helpers/ArchiveHelper.h"
 #include "ArchiverSession.h"
-#include "ECRestriction.h"
+#include <zarafa/ECRestriction.h>
 
 #include <mapiutil.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 
-#include "Util.h"
-#include "stringutil.h"
-#include "mapi_ptr.h"
-#include "mapiguidext.h"
+#include <zarafa/Util.h>
+#include <zarafa/stringutil.h>
+#include <zarafa/mapi_ptr.h>
+#include <zarafa/mapiguidext.h>
 
 #include <algorithm>
 using namespace std;

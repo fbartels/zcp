@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include "WSUtil.h"
 #include "WSTransport.h"
@@ -52,21 +52,21 @@
 #include <mapidefs.h>
 #include <mapiutil.h>
 
-#include "Util.h"
+#include <zarafa/Util.h>
 #include "ECExchangeModifyTable.h"
 #include <mapicode.h>
-#include "edkguid.h"
-#include "ECGuid.h"
+#include <edkguid.h>
+#include <zarafa/ECGuid.h>
 #include <mapiguid.h>
 
-#include "Trace.h"
-#include "ECDebug.h"
+#include <zarafa/Trace.h>
+#include <zarafa/ECDebug.h>
 
 #include "ZarafaUtil.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include "utf8.h"
 
-#include "ECInterfaceDefs.h"
+#include <zarafa/ECInterfaceDefs.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

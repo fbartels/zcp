@@ -41,12 +41,12 @@
  *
  */
 
-#include <platform.h>
+#include <zarafa/platform.h>
 
-#include <ECGuid.h>
+#include <zarafa/ECGuid.h>
 #include <ECSyncLog.h>
-#include <ECDebug.h>
-#include <ECLogger.h>
+#include <zarafa/ECDebug.h>
+#include <zarafa/ECLogger.h>
 
 #include "ECChangeAdvisor.h"
 #include "ECMsgStore.h"

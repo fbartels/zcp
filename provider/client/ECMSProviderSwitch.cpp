@@ -41,9 +41,9 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 
 #include <memory.h>
 #include <mapi.h>
@@ -54,20 +54,20 @@
 #include "ECMSProvider.h"
 #include "ECOfflineState.h"
 
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 
-#include "Trace.h"
-#include "ECDebug.h"
+#include <zarafa/Trace.h>
+#include <zarafa/ECDebug.h>
 
-#include "edkguid.h"
+#include <edkguid.h>
 #include "EntryPoint.h"
 #include "DLLGlobal.h"
 #include <edkmdb.h>
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 
 #include "ClientUtil.h"
 #include "ECMsgStore.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #ifdef WIN32
 #include <Sensapi.h>
@@ -77,7 +77,7 @@
 
 #include "ProviderUtil.h"
 
-#include <charset/convstring.h>
+#include <zarafa/charset/convstring.h>
 
 #ifdef swprintf
 	#undef swprintf

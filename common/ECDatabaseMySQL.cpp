@@ -41,17 +41,17 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <iostream>
 #include "ECDatabaseMySQL.h"
 #include "mysqld_error.h"
 
-#include "stringutil.h"
-#include "ECDefs.h"
-#include "ecversion.h"
+#include <zarafa/stringutil.h>
+#include <zarafa/ECDefs.h>
+#include <zarafa/ecversion.h>
 #include <mapidefs.h>
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

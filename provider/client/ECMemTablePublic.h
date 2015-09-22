@@ -44,8 +44,8 @@
 #ifndef ECMEMTABLEPUBLIC_H
 #define ECMEMTABLEPUBLIC_H
 
-#include "zcdefs.h"
-#include "ECMemTable.h"
+#include <zarafa/zcdefs.h>
+#include <zarafa/ECMemTable.h>
 #include "ECMAPIFolderPublic.h"
 
 #include <mapidefs.h>

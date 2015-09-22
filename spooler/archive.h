@@ -47,8 +47,8 @@
 #include <mapidefs.h>
 #include <mapix.h>
 
-#include "mapi_ptr.h"
-#include "tstring.h"
+#include <zarafa/mapi_ptr.h>
+#include <zarafa/tstring.h>
 
 #include <list>
 #include <memory>

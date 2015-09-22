@@ -44,9 +44,9 @@
 #ifndef WSSerializedMessage_INCLUDED
 #define WSSerializedMessage_INCLUDED
 
-#include "ECUnknown.h"
+#include <zarafa/ECUnknown.h>
 #include "soapStub.h"
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 #include <string>
 
 /**

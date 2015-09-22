@@ -45,9 +45,9 @@
 #ifndef ECPLUGINFACTORY_H
 #define ECPLUGINFACTORY_H
 
-#include "ZarafaCode.h"
-#include "ECConfig.h"
-#include "ECLogger.h"
+#include <zarafa/ZarafaCode.h>
+#include <zarafa/ECConfig.h>
+#include <zarafa/ECLogger.h>
 #include "ECPluginSharedData.h"
 #include "plugin.h"
 #include <pthread.h>

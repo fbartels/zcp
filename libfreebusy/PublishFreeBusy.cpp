@@ -41,18 +41,18 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "PublishFreeBusy.h"
-#include "namedprops.h"
-#include "mapiguidext.h"
+#include <zarafa/namedprops.h>
+#include <zarafa/mapiguidext.h>
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "recurrence.h"
-#include "MAPIErrors.h"
+#include <zarafa/MAPIErrors.h>
 
-#include "restrictionutil.h"
+#include <zarafa/restrictionutil.h>"
 #include "ECFreeBusyUpdate.h"
 #include "freebusyutil.h"
 #include "ECFreeBusySupport.h"

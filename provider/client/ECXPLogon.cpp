@@ -45,15 +45,15 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <mapi.h>
 #include <mapispi.h>
 #include <mapiutil.h>
-#include "mapiguidext.h"
-#include "ECGuid.h"
-#include "mapiext.h"
+#include <zarafa/mapiguidext.h>
+#include <zarafa/ECGuid.h>
+#include <zarafa/mapiext.h>
 #include <edkmdb.h>
-#include "edkguid.h"
+#include <edkguid.h>
 
 #include "Zarafa.h"
 #include "ECXPLogon.h"
@@ -61,15 +61,15 @@
 #include "WSTransport.h"
 #include "Mem.h"
 #include "ClientUtil.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "ECMsgStore.h"
 #include "ECMessage.h"
 
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 
-#include "ECDebug.h"
-#include "ECRestriction.h"
-#include "mapi_ptr.h"
+#include <zarafa/ECDebug.h>
+#include <zarafa/ECRestriction.h>
+#include <zarafa/mapi_ptr.h>
 
 
 #ifdef _DEBUG

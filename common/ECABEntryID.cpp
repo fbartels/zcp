@@ -41,9 +41,9 @@
  *
  */
 
-#include "platform.h"
-#include "ECABEntryID.h"
-#include "ECGuid.h"
+#include <zarafa/platform.h>
+#include <zarafa/ECABEntryID.h>"
+#include <zarafa/ECGuid.h>
 
 #include <mapicode.h>
 

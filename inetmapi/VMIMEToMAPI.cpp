@@ -41,13 +41,13 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 // Damn windows header defines max which break C++ header files
 #undef max
 
 #include "VMIMEToMAPI.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 
 #include <algorithm>
 #include <string>
@@ -79,19 +79,19 @@
 #include <mapi.h>
 #include <mapix.h>
 #include <mapiutil.h>
-#include <mapiext.h>
-#include <mapiguidext.h>
+#include <zarafa/mapiext.h>
+#include <zarafa/mapiguidext.h>
 #include <edkmdb.h>
 
-#include "EMSAbTag.h"
+#include <zarafa/EMSAbTag.h>
 #include "tnef.h"
-#include "codepage.h"
-#include "Util.h"
-#include "CommonUtil.h"
-#include "namedprops.h"
-#include "charset/convert.h"
-#include "stringutil.h"
-#include "mapi_ptr.h"
+#include <zarafa/codepage.h>
+#include <zarafa/Util.h>
+#include <zarafa/CommonUtil.h>
+#include <zarafa/namedprops.h>
+#include <zarafa/charset/convert.h>
+#include <zarafa/stringutil.h>
+#include <zarafa/mapi_ptr.h>
 
 // inetmapi
 #include "ECMapiUtils.h"

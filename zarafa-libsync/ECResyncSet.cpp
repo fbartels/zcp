@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ECResyncSet.h"
 
 void ECResyncSet::Append(const SBinary &sbinSourceKey, const SBinary &sbinEntryID, const FILETIME &lastModTime)

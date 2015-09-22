@@ -44,11 +44,11 @@
 #ifndef ECFIFOBUFFER_H
 #define ECFIFOBUFFER_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <deque>
 #include <pthread.h>
 
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 
 // Thread safe buffer for FIFO operations
 class ECFifoBuffer _zcp_final {

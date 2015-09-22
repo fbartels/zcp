@@ -44,7 +44,7 @@
 #ifndef AUTO_FREE
 #define AUTO_FREE
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 
 /**
  * Auto Free deallocation template class.

@@ -41,9 +41,9 @@
  *
  */
 
-#include "platform.h"
-#include "stringutil.h"
-#include "charset/convert.h"
+#include <zarafa/platform.h>
+#include <zarafa/stringutil.h>
+#include <zarafa/charset/convert.h>
 #include <sstream>
 
 #include "ECIConv.h"

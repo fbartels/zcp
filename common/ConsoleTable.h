@@ -44,10 +44,10 @@
 #ifndef __CONSOLE_TABLE_H
 #define __CONSOLE_TABLE_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <string>
 #include <vector>
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 
 class ConsoleTable _zcp_final {
 public:

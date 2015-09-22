@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "MAPIToICal.h"
 #include <libical/ical.h>
 
@@ -54,7 +54,7 @@
 #include <mapiutil.h>
 #include <mapicode.h>
 #include <mapix.h>
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 
 class MapiToICalImpl : public MapiToICal {
 public:

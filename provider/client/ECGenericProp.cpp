@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <mapidefs.h>
 #include "WSTransport.h"
 #include "ECGenericProp.h"
@@ -49,13 +49,13 @@
 #include "Zarafa.h"
 #include "ZarafaUtil.h"
 #include "Mem.h"
-#include "Util.h"
+#include <zarafa/Util.h>
 
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include "EntryPoint.h"
 
 #ifdef _DEBUG

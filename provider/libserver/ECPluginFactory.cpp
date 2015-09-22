@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <cstring>
 #include <iostream>
@@ -49,9 +49,9 @@
 #include <climits>
 
 #include "ECPluginFactory.h"
-#include "ECConfig.h"
-#include "ECLogger.h"
-#include "ecversion.h"
+#include <zarafa/ECConfig.h>
+#include <zarafa/ECLogger.h>
+#include <zarafa/ecversion.h>
 
 #ifdef EMBEDDED_USERPLUGIN
 	#include "DBUserPlugin.h"

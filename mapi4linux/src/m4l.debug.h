@@ -46,8 +46,8 @@
 
 #include <string>
 
-#include <Trace.h>
-#include <ECLogger.h>
+#include <zarafa/Trace.h>
+#include <zarafa/ECLogger.h>
 
 extern ECLogger *m4l_lpLogger;
 

@@ -44,9 +44,9 @@
 #ifndef WSMAPIFOLDEROPS_H
 #define WSMAPIFOLDEROPS_H
 
-#include "ECUnknown.h"
+#include <zarafa/ECUnknown.h>
 #include "Zarafa.h"
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 #include "soapZarafaCmdProxy.h"
 #include "ECICS.h"
 

@@ -1,5 +1,7 @@
 # -*- Makefile -*-
 
+SUBDIRS = include/zarafa
+
 AM_CPPFLAGS = ${ZCPPFLAGS} $(DEBUGFLAGS) $(BOOST_CPPFLAGS) \
 	-DARCHIVER_EXTRA \
 	-I${top_srcdir}/mapi4linux/include \
@@ -30,7 +32,6 @@ libzarafa_archiver_la_SOURCES = \
 	helpers/StoreHelper.cpp helpers/StoreHelper.h \
 	helpers/MAPIPropHelper.cpp helpers/MAPIPropHelper.h \
 	ECArchiverLogger.cpp ECArchiverLogger.h
-pkginclude_HEADERS = archiver-common.h ArchiveControl.h
 
 libzarafa_archiver_la_LDFLAGS = ${AM_LDFLAGS} -no-undefined \
 	-Wl,--version-script=${top_builddir}/default.sym

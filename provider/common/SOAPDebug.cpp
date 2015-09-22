@@ -41,14 +41,14 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "SOAPDebug.h"
-#include "ZarafaCode.h"
-#include "ECDebug.h"
+#include <zarafa/ZarafaCode.h>
+#include <zarafa/ECDebug.h>
 
 #include <edkmdb.h>
 #include <mapidefs.h>
-#include <stringutil.h>
+#include <zarafa/stringutil.h>
 
 using namespace std;
 

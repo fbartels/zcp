@@ -41,8 +41,8 @@
  *
  */
 
-#include "platform.h"
-#include "archiver-common.h"
+#include <zarafa/platform.h>
+#include <zarafa/archiver-common.h>
 #include <boost/algorithm/string/predicate.hpp>
 namespace ba = boost::algorithm;
 

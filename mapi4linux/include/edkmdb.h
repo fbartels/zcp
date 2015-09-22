@@ -57,7 +57,7 @@
 #define OPENSTORE_TRANSPORT					((ULONG)32)
 #define OPENSTORE_REMOTE_TRANSPORT			((ULONG)64)
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 class IExchangeManageStore : public IUnknown {
 public:

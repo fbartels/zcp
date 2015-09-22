@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 // Damn windows header defines max which break C++ header files
 #undef max
@@ -50,20 +50,20 @@
 
 #include "ECVMIMEUtils.h"
 #include "MAPISMTPTransport.h"
-#include "CommonUtil.h"
-#include "charset/convert.h"
+#include <zarafa/CommonUtil.h>
+#include <zarafa/charset/convert.h>
 
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include <mapi.h>
 #include <mapitags.h>
 #include <mapidefs.h>
 #include <mapiutil.h>
 #include <mapix.h>
-#include "mapiext.h"
-#include <EMSAbTag.h>
-#include "ECABEntryID.h"
-#include "mapi_ptr.h"
+#include <zarafa/mapiext.h>
+#include <zarafa/EMSAbTag.h>
+#include <zarafa/ECABEntryID.h>"
+#include <zarafa/mapi_ptr.h>
 
 using namespace std;
 

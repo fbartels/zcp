@@ -45,11 +45,11 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <mapi.h>
 #include <mapispi.h>
 #include <mapiutil.h>
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 
 
 #include "Zarafa.h"
@@ -59,15 +59,15 @@
 #include "WSTransport.h"
 #include "Mem.h"
 
-#include "Util.h"
+#include <zarafa/Util.h>
 
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
 #include "ClientUtil.h"
 #include "EntryPoint.h"
 
-#include <charset/convstring.h>
-#include "ECGetText.h"
+#include <zarafa/charset/convstring.h>
+#include <zarafa/ECGetText.h>
 
 #ifdef _DEBUG
 #undef THIS_FILE

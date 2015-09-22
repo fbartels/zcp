@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <initguid.h>
 
 /*
@@ -171,7 +171,7 @@
 #define USES_IID_ISensNetwork
 
 #include <mapiguid.h>
-#include "edkguid.h"
-#include "ECGuid.h"
+#include <edkguid.h>
+#include <zarafa/ECGuid.h>
 #include "freebusyguid.h"
-#include "mapiguidext.h"
+#include <zarafa/mapiguidext.h>

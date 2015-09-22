@@ -41,32 +41,32 @@
  *
  */
 
-#include "zcdefs.h"
-#include <platform.h>
+#include <zarafa/zcdefs.h>
+#include <zarafa/platform.h>
 
 #include "ECSyncContext.h"
 #include "ECOfflineABImporter.h"
 #include "ECSyncUtil.h"
 #include "ECSyncSettings.h"
-#include "threadutil.h"
+#include <zarafa/threadutil.h>
 
 #include <IECExportAddressbookChanges.h>
 #include <IECExportChanges.h>
 #include <IECChangeAdvisor.h>
 
-#include <ECUnknown.h>
-#include <ECGuid.h>
-#include <ECTags.h>
-#include <ECLogger.h>
-#include <stringutil.h>
+#include <zarafa/ECUnknown.h>
+#include <zarafa/ECGuid.h>
+#include <zarafa/ECTags.h>
+#include <zarafa/ECLogger.h>
+#include <zarafa/stringutil.h>
 
 #include <mapix.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <mapiutil.h>
 #include <edkguid.h>
 #include <edkmdb.h>
 
-#include <mapi_ptr.h>
+#include <zarafa/mapi_ptr.h>
 typedef mapi_object_ptr<IECChangeAdvisor, IID_IECChangeAdvisor> ECChangeAdvisorPtr;
 //DEFINEMAPIPTR(ECChangeAdvisor);
 typedef mapi_object_ptr<IECChangeAdviseSink, IID_IECChangeAdviseSink> ECChangeAdviseSinkPtr;

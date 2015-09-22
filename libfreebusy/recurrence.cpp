@@ -41,18 +41,18 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include "recurrence.h"
 #include <cmath>
 #include <mapicode.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "ECIConv.h"
 #include <ctime>
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include <mapiutil.h>
-#include "mapiguidext.h"
-#include "namedprops.h"
+#include <zarafa/mapiguidext.h>
+#include <zarafa/namedprops.h>
 
 #include <iostream>
 #include <algorithm>

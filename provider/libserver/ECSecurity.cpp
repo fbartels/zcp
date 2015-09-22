@@ -45,7 +45,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #ifdef LINUX
 #include <sys/types.h>
@@ -59,20 +59,20 @@
 #include "ECSessionManager.h"
 #include "ECSession.h"
 
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 #include "ECSecurity.h"
 
-#include "stringutil.h"
-#include "Trace.h"
+#include <zarafa/stringutil.h>
+#include <zarafa/Trace.h>
 #include "Zarafa.h"
-#include "md5.h"
+#include <zarafa/md5.h>
 
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 #include <mapidefs.h>
 #include <mapicode.h>
 #include <mapitags.h>
 
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 
 #include <cstdarg>
 

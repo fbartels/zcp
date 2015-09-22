@@ -41,10 +41,10 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <iostream>
-#include "my_getopt.h"
+#include <zarafa/my_getopt.h>
 
 #include <cmath>
 #include <mapidefs.h>
@@ -52,32 +52,32 @@
 #include <mapix.h>
 #include <mapiutil.h>
 
-#include "IECServiceAdmin.h"
-#include "IECSecurity.h"
-#include "IECUnknown.h"
+#include <zarafa/IECServiceAdmin.h>
+#include <zarafa/IECSecurity.h>
+#include <zarafa/IECUnknown.h>
 
 #include "SSLUtil.h"
-#include "ECConfig.h"
-#include "ECLogger.h"
-#include "ECTags.h"
-#include "EMSAbTag.h"
-#include "ECGuid.h"
-#include "ECABEntryID.h"
-#include "CommonUtil.h"
-#include "stringutil.h"
-#include "ecversion.h"
-#include "mapiext.h"
-#include "Util.h"
-#include "ECRestriction.h"
-#include "ECABEntryID.h"
-#include "charset/convert.h"
+#include <zarafa/ECConfig.h>
+#include <zarafa/ECLogger.h>
+#include <zarafa/ECTags.h>
+#include <zarafa/EMSAbTag.h>
+#include <zarafa/ECGuid.h>
+#include <zarafa/ECABEntryID.h>"
+#include <zarafa/CommonUtil.h>
+#include <zarafa/stringutil.h>
+#include <zarafa/ecversion.h>
+#include <zarafa/mapiext.h>
+#include <zarafa/Util.h>
+#include <zarafa/ECRestriction.h>
+#include <zarafa/ECABEntryID.h>"
+#include <zarafa/charset/convert.h>
 #include "ConsoleTable.h"
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 #include "ECFeatures.h"
-#include "tstring.h"
+#include <zarafa/tstring.h>
 #include "ECACL.h"
 #include "charset/localeutil.h"
-#include "MAPIErrors.h"
+#include <zarafa/MAPIErrors.h>
 
 #include <edkmdb.h>
 #include <edkguid.h>
@@ -87,7 +87,7 @@
 #define ARCHIVER_EXTRA
 #include "Archiver.h"
 
-#include "MAPIErrors.h" // for declaration of GetMAPIErrorMessage()
+#include <zarafa/MAPIErrors.h> // for declaration of GetMAPIErrorMessage()
 
 using namespace std;
 

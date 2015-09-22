@@ -41,12 +41,12 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ProtocolBase.h"
-#include "stringutil.h"
-#include "CommonUtil.h"
+#include <zarafa/stringutil.h>
+#include <zarafa/CommonUtil.h>
 #include "CalDavUtil.h"
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
 using namespace std;
 

@@ -87,9 +87,9 @@ performed on the complete strings before the actual comparison is even started.
 At some point we need to rewqrite these functions to do all the conversion on the fly to minimize processing.
 */
 
-#include "platform.h"
-#include "ustringutil.h"
-#include "CommonUtil.h"
+#include <zarafa/platform.h>
+#include <zarafa/ustringutil.h>
+#include <zarafa/CommonUtil.h>
 #include "utf8.h"
 
 #include <cassert>
@@ -118,7 +118,7 @@ typedef std::auto_ptr<Collator> unique_ptr_Collator;
 
 #else
 #include <cstring>
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #endif
 
 #ifdef _DEBUG

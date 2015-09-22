@@ -41,8 +41,8 @@
  *
  */
 
-#include "platform.h"
-#include "stringutil.h"
+#include <zarafa/platform.h>
+#include <zarafa/stringutil.h>
 
 #include "m4l.mapisvc.h"
 #include <mapix.h>
@@ -50,9 +50,9 @@
 #include <mapicode.h>
 #include <mapitags.h>
 #include <mapiutil.h>
-#include "boost_compat.h"
+#include <zarafa/boost_compat.h>
 
-#include "Util.h"
+#include <zarafa/Util.h>
 
 #include <iostream>
 #ifndef WIN32

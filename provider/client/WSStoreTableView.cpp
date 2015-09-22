@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 
 #include "ECMsgStore.h"
@@ -49,7 +49,7 @@
 #include "WSStoreTableView.h"
 
 #include "Mem.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 
 // Utils
 #include "SOAPUtils.h"

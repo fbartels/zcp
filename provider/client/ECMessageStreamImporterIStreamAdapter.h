@@ -44,10 +44,10 @@
 #ifndef ECMessageStreamImporterIStreamAdapter_INCLUDED
 #define ECMessageStreamImporterIStreamAdapter_INCLUDED
 
-#include "zcdefs.h"
-#include "ECUnknown.h"
+#include <zarafa/zcdefs.h>
+#include <zarafa/ECUnknown.h>
 #include "WSMessageStreamImporter.h"
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
 /**
  * This class wraps a WSMessageStreamImporter object and exposes it as an IStream.

@@ -41,13 +41,13 @@
  *
  */
 
-#include "zcdefs.h"
-#include "platform.h"
+#include <zarafa/zcdefs.h>
+#include <zarafa/platform.h>
 
 #include <string>
 #include <memory>
 #include <map>
-#include "ustringutil.h"
+#include <zarafa/ustringutil.h>
 
 #include <mapi.h>
 #include <mapidefs.h>
@@ -57,29 +57,29 @@
 #include <cerrno>
 #include <iconv.h>
 
-#include "ECLogger.h"
-#include "CommonUtil.h"
-#include "ECTags.h"
-#include "ECGuid.h"
-#include "Util.h"
-#include "stringutil.h"
-#include "base64.h"
-#include "mapi_ptr.h"
+#include <zarafa/ECLogger.h>
+#include <zarafa/CommonUtil.h>
+#include <zarafa/ECTags.h>
+#include <zarafa/ECGuid.h>
+#include <zarafa/Util.h>
+#include <zarafa/stringutil.h>
+#include <zarafa/base64.h>
+#include <zarafa/mapi_ptr.h>
 
-#include "charset/convert.h"
-#include "charset/utf16string.h"
+#include <zarafa/charset/convert.h>
+#include <zarafa/charset/utf16string.h>
 
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 #include "freebusytags.h"
 
-#include "edkguid.h"
-#include "mapiguidext.h"
+#include <edkguid.h>
+#include <zarafa/mapiguidext.h>
 #include <edkmdb.h>
-#include "IECUnknown.h"
-#include "IECServiceAdmin.h"
-#include "EMSAbTag.h"
-#include "ECRestriction.h"
-#include "MAPIErrors.h"
+#include <zarafa/IECUnknown.h>
+#include <zarafa/IECServiceAdmin.h>
+#include <zarafa/EMSAbTag.h>
+#include <zarafa/ECRestriction.h>
+#include <zarafa/MAPIErrors.h>
 
 #include <sys/types.h>
 #ifdef WIN32

@@ -41,11 +41,11 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <iostream>
-#include "my_getopt.h"
-#include "charset/convert.h"
+#include <zarafa/my_getopt.h>
+#include <zarafa/charset/convert.h>
 
 #include <cmath>
 #include <mapidefs.h>
@@ -53,16 +53,16 @@
 #include <mapix.h>
 #include <mapiutil.h>
 
-#include "IECServiceAdmin.h"
-#include "IECUnknown.h"
+#include <zarafa/IECServiceAdmin.h>
+#include <zarafa/IECUnknown.h>
 
-#include "ECTags.h"
-#include "ECGuid.h"
-#include "CommonUtil.h"
-#include "ecversion.h"
-#include "stringutil.h"
-#include "MAPIErrors.h"
-#include "ECLogger.h"
+#include <zarafa/ECTags.h>
+#include <zarafa/ECGuid.h>
+#include <zarafa/CommonUtil.h>
+#include <zarafa/ecversion.h>
+#include <zarafa/stringutil.h>
+#include <zarafa/MAPIErrors.h>
+#include <zarafa/ECLogger.h>
 
 using namespace std;
 

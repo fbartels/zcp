@@ -41,7 +41,7 @@
  *
  */
 
-#include <platform.h>
+#include <zarafa/platform.h>
 #include "StorageUtil.h"
 #include "ECDatabase.h"
 #include "ECAttachmentStorage.h"

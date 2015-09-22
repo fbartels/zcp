@@ -41,13 +41,13 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include "Zarafa.h"
 #include <mapidefs.h>
 #include <edkmdb.h>
 
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "ECSessionManager.h"
 #include "ECSecurity.h"
 
@@ -55,7 +55,7 @@
 #include "ZarafaCmdUtil.h"
 #include "ECStoreObjectTable.h"
 
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "ECICS.h"
 #include "ECICSHelpers.h"
 #include "ECMAPI.h"

@@ -41,13 +41,13 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include "ECFifoStream.h"
 #include "ECFifoBuffer.h"
-#include "ECInterfaceDefs.h"
-#include "ECGuid.h"
-#include "Trace.h"
+#include <zarafa/ECInterfaceDefs.h>
+#include <zarafa/ECGuid.h>
+#include <zarafa/Trace.h>
 
 #include <mapidefs.h>
 

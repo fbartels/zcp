@@ -41,16 +41,16 @@
  *
  */
 
-#include "zcdefs.h"
-#include "platform.h"
-#include "userutil.h"
+#include <zarafa/zcdefs.h>
+#include <zarafa/platform.h>
+#include <zarafa/userutil.h>
 #include "ArchiveStateCollector.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "ArchiverSession.h"
 #include "ArchiveStateUpdater.h"
 #include "ECIterators.h"
 #include "HrException.h"
-#include "ECRestriction.h"
+#include <zarafa/ECRestriction.h>
 
 namespace details {
 

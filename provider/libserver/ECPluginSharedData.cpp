@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ECPluginSharedData.h"
 
 ECPluginSharedData *ECPluginSharedData::m_lpSingleton = NULL;

@@ -44,19 +44,19 @@
 // ECMAPIContainer.cpp: implementation of the ECMAPIContainer class.
 //
 //////////////////////////////////////////////////////////////////////
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "Zarafa.h"
 #include "ECMAPIContainer.h"
 
 #include "ECMAPITable.h"
 #include "Mem.h"
 
-#include "ECGuid.h"
-#include "ECDebug.h"
+#include <zarafa/ECGuid.h>
+#include <zarafa/ECDebug.h>
 
 
 //#include <edkmdb.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <mapiutil.h>
 
 #ifdef _DEBUG

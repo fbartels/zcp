@@ -41,12 +41,12 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <pthread.h>
 #include "LDAPCache.h"
 #include "LDAPUserPlugin.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 LDAPCache::LDAPCache()
 {

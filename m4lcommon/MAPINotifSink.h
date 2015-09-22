@@ -44,13 +44,13 @@
 #ifndef MAPINOTIFSINK_H
 #define MAPINOTIFSINK_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <list>
 #include <mapi.h>
 #include <mapix.h>
 #include <mapidefs.h>
 #include <pthread.h>
-#include "ECUnknown.h"
+#include <zarafa/ECUnknown.h>
 
 class MAPINotifSink _zcp_final : public IMAPIAdviseSink {
 public:

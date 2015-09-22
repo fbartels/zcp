@@ -54,7 +54,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <mapidefs.h>		/* we include this here too for the PROP_ID definitions */
 
 /* Determine if a property is transmittable. */

@@ -44,8 +44,8 @@
 #ifndef ECMSPROVIDERSWITCH_H
 #define ECMSPROVIDERSWITCH_H
 
-#include "zcdefs.h"
-#include "ECUnknown.h"
+#include <zarafa/zcdefs.h>
+#include <zarafa/ECUnknown.h>
 
 class ECMSProviderSwitch : public ECUnknown
 {

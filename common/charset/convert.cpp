@@ -41,15 +41,15 @@
  *
  */
 
-#include "../platform.h"
-#include "convert.h"
+#include <zarafa/platform.h>
+#include <zarafa/charset/convert.h>
 
 #include <mapicode.h>
 
 #include <numeric>
 #include <vector>
 #include <string>
-#include <stringutil.h>
+#include <zarafa/stringutil.h>
 #include <cerrno>
 #define BUFSIZE 4096
 

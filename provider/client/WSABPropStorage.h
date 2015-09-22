@@ -44,11 +44,11 @@
 #ifndef WSABPROPSTORAGE_H
 #define WSABPROPSTORAGE_H
 
-#include "zcdefs.h"
-#include "ECUnknown.h"
+#include <zarafa/zcdefs.h>
+#include <zarafa/ECUnknown.h>
 #include "IECPropStorage.h"
 
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 #include "WSTransport.h"
 #include "soapZarafaCmdProxy.h"
 

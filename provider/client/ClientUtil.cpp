@@ -41,29 +41,29 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ClientUtil.h"
 
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 
 #include <mapi.h>
 #include <mapidefs.h>
 #include <mapiutil.h>
 
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "WSTransport.h"
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 
 #include "Zarafa.h"
-#include "ECGuid.h"
-#include "edkguid.h"
-#include "mapiguidext.h"
-#include "mapiext.h"
+#include <zarafa/ECGuid.h>
+#include <edkguid.h>
+#include <zarafa/mapiguidext.h>
+#include <zarafa/mapiext.h>
 
 #include "Mem.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
-#include "charset/convstring.h"
+#include <zarafa/charset/convstring.h>
 #include "EntryPoint.h"
 
 #include <boost/algorithm/string/case_conv.hpp>

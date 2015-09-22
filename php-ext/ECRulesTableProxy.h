@@ -44,8 +44,8 @@
 #ifndef ECRULESTABLEPROXY_INCLUDED
 #define ECRULESTABLEPROXY_INCLUDED
 
-#include "zcdefs.h"
-#include "ECUnknown.h"
+#include <zarafa/zcdefs.h>
+#include <zarafa/ECUnknown.h>
 
 #include <mapidefs.h>
 

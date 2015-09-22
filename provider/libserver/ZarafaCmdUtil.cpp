@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 // STL defines
 #include <set>
@@ -52,8 +52,8 @@
 // mapi defines
 #include <mapidefs.h>
 #include <mapitags.h>
-#include "mapiext.h"
-#include <EMSAbTag.h>
+#include <zarafa/mapiext.h>
+#include <zarafa/EMSAbTag.h>
 #include <edkmdb.h>
 #include "ECMAPI.h"
 

@@ -41,10 +41,10 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <mapicode.h>
-#include "ZarafaCode.h"
-#include "mapiext.h"
+#include <zarafa/ZarafaCode.h>
+#include <zarafa/mapiext.h>
 
 #ifdef _DEBUG
 #undef THIS_FILE

@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <memory.h>
 #include <mapi.h>
@@ -49,16 +49,16 @@
 #include <mapispi.h>
 #include "ECABProvider.h"
 
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 
-#include "ECGuid.h"
-#include "edkguid.h"
+#include <zarafa/ECGuid.h>
+#include <edkguid.h>
 
-#include "Trace.h"
-#include "ECDebug.h"
+#include <zarafa/Trace.h>
+#include <zarafa/ECDebug.h>
 
 #include "EntryPoint.h"
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 
 #include "ECABProviderSwitch.h"
 #include "ECOfflineState.h"
@@ -70,7 +70,7 @@
 
 #include "ProviderUtil.h"
 
-#include "charset/convstring.h"
+#include <zarafa/charset/convstring.h>
 
 #ifdef _DEBUG
 #undef THIS_FILE

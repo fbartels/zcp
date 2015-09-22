@@ -41,14 +41,14 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <iostream>
 #include <list>
 
 using namespace std;
 
-#include "my_getopt.h"
+#include <zarafa/my_getopt.h>
 
 #include "LDAPConfigCheck.h"
 #include "UnixConfigCheck.h"

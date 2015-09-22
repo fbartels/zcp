@@ -46,7 +46,7 @@
 
 #ifdef HAVE_OFFLINE_SUPPORT
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <string>
 #include <mapidefs.h>
 #include <mapispi.h>
@@ -56,7 +56,7 @@
 #include <pthread.h>
 #include <edkmdb.h>
 #include "IECSync.h"
-#include "ECUnknown.h"
+#include <zarafa/ECUnknown.h>
 
 #include "ECLibSync.h"
 #include "ECSyncContext.h"

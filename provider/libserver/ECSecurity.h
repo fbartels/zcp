@@ -51,9 +51,9 @@
 #include "ECUserManagement.h"
 #include "plugin.h"
 
-#include "ECLogger.h"
-#include "ECConfig.h"
-#include "ECDefs.h"
+#include <zarafa/ECLogger.h>
+#include <zarafa/ECConfig.h>
+#include <zarafa/ECDefs.h>
 
 class ECSession;
 

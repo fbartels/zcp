@@ -50,14 +50,14 @@
 #include "ECDatabaseFactory.h"
 #include "ECDatabaseUtils.h"
 #include "ECGenericObjectTable.h"	// ECListInt
-#include "ECConfig.h"
-#include "ECLogger.h"
+#include <zarafa/ECConfig.h>
+#include <zarafa/ECLogger.h>
 #include "SOAPUtils.h"
 #include "ZarafaCmdUtil.h"
 #include <mapidefs.h>
 #include <ECCache.h>
 
-#include "../common/ECKeyTable.h"
+#include <zarafa/ECKeyTable.h>
 
 #ifdef HAVE_SPARSEHASH
 #include <google/sparse_hash_map>

@@ -41,23 +41,23 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <mapidefs.h>
 #include <mapitags.h>
 
 #include "ECMAPI.h"
 #include "ECSession.h"
-#include "ECKeyTable.h"
+#include <zarafa/ECKeyTable.h>
 #include "ECStoreObjectTable.h"
 #include "ECSubRestriction.h"
 #include "ECSearchFolders.h"
 #include "ECSessionManager.h"
 #include "ECStatsCollector.h"
 #include "ECIndexer.h"
-#include "ECTags.h"
+#include <zarafa/ECTags.h>
 #include "ZarafaCmdUtil.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include "ECSearchClient.h"
 

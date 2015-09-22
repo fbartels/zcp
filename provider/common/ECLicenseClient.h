@@ -44,12 +44,12 @@
 #ifndef ECLICENSECLIENT_H
 #define ECLICENSECLIENT_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <vector>
 #include <string>
 
 #include "ECChannelClient.h"
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 
 class ECLicenseClient _zcp_final : public ECChannelClient{
 public:

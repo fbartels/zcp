@@ -41,13 +41,13 @@
  *
  */
 
-#include <platform.h>
-#include <ecversion.h>
+#include <zarafa/platform.h>
+#include <zarafa/ecversion.h>
 
 #include "ECSyncLog.h"
 #include "ECSyncSettings.h"
-#include "stringutil.h"
-#include <ECLogger.h>
+#include <zarafa/stringutil.h>
+#include <zarafa/ECLogger.h>
 
 #include <cstdlib>
 #include <mapidefs.h>

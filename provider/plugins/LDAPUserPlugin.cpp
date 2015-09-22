@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <iostream>
 #include <string>
@@ -57,11 +57,11 @@
 #include <malloc.h>
 #endif
 
-#include "EMSAbTag.h"
-#include "ECConfig.h"
-#include "ECLogger.h"
+#include <zarafa/EMSAbTag.h>
+#include <zarafa/ECConfig.h>
+#include <zarafa/ECLogger.h>
 #include "ECPluginSharedData.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include <auto_free.h>
 
@@ -69,7 +69,7 @@ using namespace std;
 
 #include "LDAPUserPlugin.h"
 #include "ldappasswords.h"
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 
 #ifndef PROP_ID
 // from mapidefs.h

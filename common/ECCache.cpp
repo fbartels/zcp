@@ -41,12 +41,12 @@
  *
  */
 
-#include <platform.h>
-#include <ZarafaCode.h>
+#include <zarafa/platform.h>
+#include <zarafa/ZarafaCode.h>
 
 #include "ECCache.h"
-#include <ECLogger.h>
-#include <stringutil.h>
+#include <zarafa/ECLogger.h>
+#include <zarafa/stringutil.h>
 
 #ifdef _DEBUG
 #undef THIS_FILE

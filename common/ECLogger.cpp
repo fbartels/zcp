@@ -41,15 +41,15 @@
  *
  */
 
-#include "platform.h"
-#include "ECLogger.h"
+#include <zarafa/platform.h>
+#include <zarafa/ECLogger.h>
 #include <cassert>
 #include <clocale>
 #include <pthread.h>
 #include <cstdarg>
 #include <csignal>
 #include <zlib.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "charset/localeutil.h"
 
 #ifdef LINUX
@@ -68,6 +68,7 @@
 #include <sys/utsname.h>
 #endif
 
+#include <zarafa/ECConfig.h>
 #if defined(_WIN32) && !defined(WINCE)
 #include "NTService.h"
 #endif

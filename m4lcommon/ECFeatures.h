@@ -44,10 +44,10 @@
 #ifndef EC_FEATURES_H
 #define EC_FEATURES_H
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <mapidefs.h>
 #include <mapix.h>
-#include "IECServiceAdmin.h"
+#include <zarafa/IECServiceAdmin.h>
 #include <string>
 #include <set>
 

@@ -45,7 +45,7 @@
 #define deleter_INCLUDED
 
 #include "operations.h"
-#include "archiver-common.h"
+#include <zarafa/archiver-common.h>
 #include <list>
 
 namespace za { namespace operations {

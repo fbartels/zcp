@@ -41,9 +41,9 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ECMessageStreamImporterIStreamAdapter.h"
-#include "ECInterfaceDefs.h"
+#include <zarafa/ECInterfaceDefs.h>
 
 HRESULT ECMessageStreamImporterIStreamAdapter::Create(WSMessageStreamImporter *lpStreamImporter, IStream **lppStream)
 {

@@ -41,23 +41,23 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <iostream>
 #include <errmsg.h>
 #include "ECDatabaseMySQL.h"
 #include "mysqld_error.h"
 
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 #include "ECDBDef.h"
 #include "ECUserManagement.h"
-#include "ECConfig.h"
-#include "ECLogger.h"
-#include "ZarafaCode.h"
+#include <zarafa/ECConfig.h>
+#include <zarafa/ECLogger.h>
+#include <zarafa/ZarafaCode.h>
 
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 
 #include <mapidefs.h>
 #include "ECConversion.h"

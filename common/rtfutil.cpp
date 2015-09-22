@@ -44,12 +44,12 @@
 // From http://www.wischik.com/lu/programmer/mapi_utils.html
 // Parts rewritten by Zarafa
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <iostream>
-#include "codepage.h"
-#include "CommonUtil.h"
-#include "Util.h"
-#include "charset/convert.h"
+#include <zarafa/codepage.h>
+#include <zarafa/CommonUtil.h>
+#include <zarafa/Util.h>
+#include <zarafa/charset/convert.h>
 #include "HtmlEntity.h"
 
 #include "rtfutil.h"

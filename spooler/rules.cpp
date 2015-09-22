@@ -41,22 +41,22 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include "rules.h"
 #include <mapi.h>
 #include <mapidefs.h>
 #include <mapicode.h>
 #include <mapiutil.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <edkmdb.h>
 #include <edkguid.h>
-#include "stringutil.h"
-#include "Util.h"
-#include "CommonUtil.h"
-#include "ECLogger.h"
-#include "mapi_ptr.h"
-#include "mapiguidext.h"
+#include <zarafa/stringutil.h>
+#include <zarafa/Util.h>
+#include <zarafa/CommonUtil.h>
+#include <zarafa/ECLogger.h>
+#include <zarafa/mapi_ptr.h>
+#include <zarafa/mapiguidext.h>
 
 #include "IECExchangeModifyTable.h"
 #include "PyMapiPlugin.h"

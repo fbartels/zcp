@@ -41,14 +41,14 @@
  *
  */
 
-#include "platform.h"
-#include "Trace.h"
+#include <zarafa/platform.h>
+#include <zarafa/Trace.h>
 #include "ZCABLogon.h"
 #include "ZCABContainer.h"
-#include "ECTags.h"
-#include "ECDebug.h"
-#include "ECDebugPrint.h"
-#include "ECGuid.h"
+#include <zarafa/ECTags.h>
+#include <zarafa/ECDebug.h>
+#include <zarafa/ECDebugPrint.h>
+#include <zarafa/ECGuid.h>
 #include "Zarafa.h"
 #include <mapix.h>
 #include <edkmdb.h>

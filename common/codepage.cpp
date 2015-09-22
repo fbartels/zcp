@@ -41,12 +41,12 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <mapidefs.h>
 #include <mapicode.h>
 
-#include "codepage.h"
+#include <zarafa/codepage.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

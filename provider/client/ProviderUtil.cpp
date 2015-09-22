@@ -41,9 +41,9 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 
 #include <memory.h>
 #include <mapi.h>
@@ -52,9 +52,9 @@
 
 #include "ClientUtil.h"
 #include "Mem.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 
 #include "ECABProvider.h"
 #include "ECMSProvider.h"
@@ -63,7 +63,7 @@
 #include "ECMsgStore.h"
 #include "ECArchiveAwareMsgStore.h"
 #include "ECMsgStorePublic.h"
-#include "charset/convstring.h"
+#include <zarafa/charset/convstring.h>
 
 
 #ifdef WIN32
@@ -78,7 +78,7 @@
 #include "EntryPoint.h"
 #include "ProviderUtil.h"
 
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 
 #include <boost/filesystem.hpp>
 namespace bfs = boost::filesystem;

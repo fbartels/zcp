@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <csignal>
 
 #ifdef WIN32
@@ -50,17 +50,17 @@
 #else
 #endif
 
-#include <inetmapi.h>
+#include <inetmapi/inetmapi.h>
 
 #include <mapi.h>
 #include <mapix.h>
 #include <mapidefs.h>
 #include <mapicode.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <mapiguid.h>
 
-#include <CommonUtil.h>
-#include <stringutil.h>
+#include <zarafa/CommonUtil.h>
+#include <zarafa/stringutil.h>
 #include <iostream>
 #include <cstdio>
 #include <string>
@@ -69,22 +69,22 @@
 #include <cstdlib>
 #include <cerrno>
 
-#include "ECLogger.h"
-#include "ECConfig.h"
-#include "my_getopt.h"
+#include <zarafa/ECLogger.h>
+#include <zarafa/ECConfig.h>
+#include <zarafa/my_getopt.h>
 
-#include "ECChannel.h"
+#include <zarafa/ECChannel.h>
 #include "POP3.h"
 #include "IMAP.h"
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 
 #include "SSLUtil.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include "TmpPath.h"
 
 #ifdef LINUX
-#include "UnixUtil.h"
+#include <zarafa/UnixUtil.h>
 #endif
 
 #if HAVE_ICU

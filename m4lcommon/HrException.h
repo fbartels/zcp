@@ -44,7 +44,7 @@
 #ifndef HRException_INCLUDED
 #define HRException_INCLUDED
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <exception>
 
 class HrException _zcp_final : public std::runtime_error

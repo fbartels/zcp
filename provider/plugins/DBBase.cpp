@@ -41,15 +41,15 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include "DBBase.h"
-#include "ECDefs.h"
-#include "EMSAbTag.h"
-#include "stringutil.h"
-#include "md5.h"
+#include <zarafa/ECDefs.h>
+#include <zarafa/EMSAbTag.h>
+#include <zarafa/stringutil.h>
+#include <zarafa/md5.h>
 #include <mapidefs.h>
-#include "base64.h"
+#include <zarafa/base64.h>
 
 ZARAFA_API ECRESULT GetDatabaseObject(ECDatabase **lppDatabase);
 

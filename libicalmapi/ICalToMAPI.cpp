@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ICalToMAPI.h"
 #include "vconverter.h"
 #include "vtimezone.h"
@@ -52,12 +52,12 @@
 #include "icalrecurrence.h"
 #include <mapix.h>
 #include <mapiutil.h>
-#include "mapiext.h"
-#include "restrictionutil.h"
+#include <zarafa/mapiext.h>
+#include <zarafa/restrictionutil.h>"
 #include <libical/ical.h>
 #include <algorithm>
 #include <vector>
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 
 class ICalToMapiImpl : public ICalToMapi {
 public:

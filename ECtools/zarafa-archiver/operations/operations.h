@@ -47,7 +47,7 @@
 #include "operations_fwd.h"
 
 #include <mapix.h>
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
 class ECArchiverLogger;
 

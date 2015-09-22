@@ -41,37 +41,37 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "mailer.h"
 #include "archive.h"
 
 #include <mapitags.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <mapiutil.h>
 #include <mapidefs.h>
 #include <mapix.h>
 #include <mapi.h>
 
-#include "ECLogger.h"
-#include "ECConfig.h"
-#include "IECUnknown.h"
-#include "ecversion.h"
-#include "IECSecurity.h"
-#include "IECServiceAdmin.h"
+#include <zarafa/ECLogger.h>
+#include <zarafa/ECConfig.h>
+#include <zarafa/IECUnknown.h>
+#include <zarafa/ecversion.h>
+#include <zarafa/IECSecurity.h>
+#include <zarafa/IECServiceAdmin.h>
 #include "IECSpooler.h"
-#include "ECGuid.h"
-#include "edkguid.h"
-#include "CommonUtil.h"
-#include "Util.h"
-#include "stringutil.h"
+#include <zarafa/ECGuid.h>
+#include <edkguid.h>
+#include <zarafa/CommonUtil.h>
+#include <zarafa/Util.h>
+#include <zarafa/stringutil.h>
 #include "mapicontact.h"
-#include "mapiguidext.h"
-#include "EMSAbTag.h"
-#include "ECABEntryID.h"
-#include "ECGetText.h"
+#include <zarafa/mapiguidext.h>
+#include <zarafa/EMSAbTag.h>
+#include <zarafa/ECABEntryID.h>"
+#include <zarafa/ECGetText.h>
 
-#include "charset/convert.h"
-#include "charset/convstring.h"
+#include <zarafa/charset/convert.h>
+#include <zarafa/charset/convstring.h>
 
 #include "PyMapiPlugin.h"
 

@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <mapidefs.h>
 #include <mapicode.h>
@@ -50,8 +50,8 @@
 #include <mapiutil.h>
 #include "Zarafa.h"
 
-#include "ECGuid.h"
-#include "ECDefs.h"
+#include <zarafa/ECGuid.h>
+#include <zarafa/ECDefs.h>
 
 #include "ECMsgStore.h"
 #include "ECMAPIProp.h"
@@ -59,13 +59,13 @@
 #include "ECMemStream.h"
 
 #include "Mem.h"
-#include "Util.h"
+#include <zarafa/Util.h>
 
-#include "ECDebug.h"
-#include "mapiext.h"
+#include <zarafa/ECDebug.h>
+#include <zarafa/mapiext.h>
 
-#include "CommonUtil.h"
-#include "mapi_ptr.h"
+#include <zarafa/CommonUtil.h>
+#include <zarafa/mapi_ptr.h>
 #include "ZarafaUtil.h"
 
 #include <sstream>

@@ -41,24 +41,24 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <memory.h>
 #include <mapi.h>
 #include <mapiutil.h>
 #include <mapispi.h>
 
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 
 #include "Mem.h"
 
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 
 #include "ECMSProvider.h"
 #include "ECMsgStore.h"
 #include "ECABProvider.h"
 
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
 
 #include "ClientUtil.h"
@@ -67,17 +67,17 @@
 #include "WSUtil.h"
 #include "ZarafaUtil.h"
 #include "ProviderUtil.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 using namespace std;
 
 #include <edkguid.h>
 
 #include <cwchar>
-#include "charset/convert.h"
-#include "charset/utf8string.h"
+#include <zarafa/charset/convert.h>
+#include <zarafa/charset/utf8string.h>
 
-#include <mapi_ptr/mapi_memory_ptr.h>
+#include <zarafa/mapi_ptr/mapi_memory_ptr.h>
 typedef mapi_memory_ptr<ECUSER>	ECUserPtr;
 
 #ifdef _DEBUG

@@ -46,8 +46,8 @@
 
 #include "vtimezone.h"
 #include "icalitem.h"
-#include "RecurrenceState.h"
-#include "charset/convert.h"
+#include <zarafa/RecurrenceState.h>
+#include <zarafa/charset/convert.h>
 
 #include <mapidefs.h>
 #include <libical/ical.h>

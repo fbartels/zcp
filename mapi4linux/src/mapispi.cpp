@@ -41,19 +41,19 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "m4l.mapispi.h"
 #include "m4l.mapiutil.h"
 #include "m4l.mapix.h"
 #include "m4l.debug.h"
 
 #include <mapi.h>
-#include "CommonUtil.h"
-#include "Util.h"
-#include "ECGuid.h"
+#include <zarafa/CommonUtil.h>
+#include <zarafa/Util.h>
+#include <zarafa/ECGuid.h>
 
 #include <algorithm>
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
 M4LMAPIGetSession::M4LMAPIGetSession(LPMAPISESSION new_session) {
 	ASSERT(new_session);

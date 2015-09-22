@@ -44,8 +44,8 @@
 #ifndef ECMAPITABLE_H
 #define ECMAPITABLE_H
 
-#include "zcdefs.h"
-#include "ECUnknown.h"
+#include <zarafa/zcdefs.h>
+#include <zarafa/ECUnknown.h>
 #include "WSTransport.h"
 #include "ECNotifyClient.h"
 #include <set>

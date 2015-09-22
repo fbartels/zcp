@@ -41,31 +41,31 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "Zarafa.h"
 
 #include "ECMAPITable.h"
 #include "Mem.h"
 
-#include "ECGuid.h"
-#include "ECDebug.h"
+#include <zarafa/ECGuid.h>
+#include <zarafa/ECDebug.h>
 
 
 #include "ECMAPITable.h"
 
 #include "ECDisplayTable.h"
 
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "ZarafaICS.h"
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 
 #include "ECABContainer.h"
 
 #include <edkmdb.h>
 #include <mapiutil.h>
 
-#include <charset/convstring.h>
-#include "ECGetText.h"
+#include <zarafa/charset/convstring.h>
+#include <zarafa/ECGetText.h>
 
 #ifdef _DEBUG
 #undef THIS_FILE

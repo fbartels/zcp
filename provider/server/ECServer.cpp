@@ -41,19 +41,19 @@
  *
  */
 
-#include "platform.h"
-#include "ecversion.h"
-#include "stringutil.h"
+#include <zarafa/platform.h>
+#include <zarafa/ecversion.h>
+#include <zarafa/stringutil.h>
 
 #include "soapH.h"
 
 #include "ECDatabase.h"
 #include "ECDatabaseFactory.h"
 #include "ECDatabaseUtils.h"
-#include "ECLogger.h"
-#include "my_getopt.h"
+#include <zarafa/ECLogger.h>
+#include <zarafa/my_getopt.h>
 
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 #include "ECDatabase.h"
 #include "ECPluginFactory.h"
 
@@ -71,14 +71,14 @@
 #include <csignal>
 
 #ifdef LINUX
-#include "UnixUtil.h"
+#include <zarafa/UnixUtil.h>
 #include "ECLicenseClient.h"
 #include <pwd.h>
 #endif
 
 #include <sys/stat.h>
-#include "ECScheduler.h"
-#include "ZarafaCode.h"
+#include <zarafa/ECScheduler.h>
+#include <zarafa/ZarafaCode.h>
 #include "ZarafaCmd.h"
 
 #include "ECServerEntrypoint.h"
@@ -87,8 +87,8 @@
 #include "ECSoapServerConnection.h"
 #include <libintl.h>
 #include <map>
-#include "tstring.h"
-#include <charset/convstring.h>
+#include <zarafa/tstring.h>
+#include <zarafa/charset/convstring.h>
 
 #ifdef WIN32
 #include "ECProcessPriority.h"

@@ -41,8 +41,8 @@
  *
  */
 
-#include "platform.h"
-#include "base64.h"
+#include <zarafa/platform.h>
+#include <zarafa/base64.h>
 #include <cctype>
 
 #ifdef _DEBUG

@@ -46,8 +46,8 @@
 
 #include <pthread.h>
 
-#include <ECConfig.h>
-#include <ECLogger.h>
+#include <zarafa/ECConfig.h>
+#include <zarafa/ECLogger.h>
 #include <IECStatsCollector.h>
 
 /**

@@ -41,10 +41,10 @@
  *
  */
 
-#include "platform.h"
-#include "mapi_ptr.h"
+#include <zarafa/platform.h>
+#include <zarafa/mapi_ptr.h>
 #include "ECMAPIDebug.h"
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
 using namespace std;
 

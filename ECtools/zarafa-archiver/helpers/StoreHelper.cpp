@@ -41,20 +41,20 @@
  *
  */
 
-#include <platform.h>
+#include <zarafa/platform.h>
 #include <mapix.h>
 #include <mapiutil.h>
-#include <restrictionutil.h>
+#include <zarafa/restrictionutil.h>>
 
 #include "StoreHelper.h"
 using namespace std;
 
-#include <mapi_ptr.h>
+#include <zarafa/mapi_ptr.h>
 
-#include "mapiguidext.h"
-#include "archiver-common.h"
+#include <zarafa/mapiguidext.h>
+#include <zarafa/archiver-common.h>
 
-#include "ECRestriction.h"
+#include <zarafa/ECRestriction.h>
 
 namespace za { namespace helpers {
 

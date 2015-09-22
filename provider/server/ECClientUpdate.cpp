@@ -41,15 +41,15 @@
  *
  */
 
-#include "platform.h"
-#include "ZarafaCode.h"
+#include <zarafa/platform.h>
+#include <zarafa/ZarafaCode.h>
 #include "soapH.h"
 #include "ECClientUpdate.h"
 #include "ECLicenseClient.h"
-#include "stringutil.h"
-#include "base64.h"
-#include "ECLogger.h"
-#include "ECConfig.h"
+#include <zarafa/stringutil.h>
+#include <zarafa/base64.h>
+#include <zarafa/ECLogger.h>
+#include <zarafa/ECConfig.h>
 
 #include <boost/filesystem.hpp>
 namespace bfs = boost::filesystem;
@@ -63,7 +63,7 @@ namespace ba = boost::algorithm;
 #include "ECSessionManager.h"
 #include "ECDatabase.h"
 #include "ECStatsCollector.h"
-#include "boost_compat.h"
+#include <zarafa/boost_compat.h>
 
 /* class and add constructor params? */
 extern ECRESULT GetBestServerPath(struct soap *soap, ECSession *lpecSession, const std::string &strServerName, std::string *lpstrServerPath);

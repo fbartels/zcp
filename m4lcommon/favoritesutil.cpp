@@ -41,17 +41,17 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "favoritesutil.h"
 
 #include <edkmdb.h>
 
-#include "mapiext.h"
-#include "restrictionutil.h"
-#include "CommonUtil.h"
+#include <zarafa/mapiext.h>
+#include <zarafa/restrictionutil.h>"
+#include <zarafa/CommonUtil.h>
 
-#include <tstring.h>
-#include <charset/convstring.h>
+#include <zarafa/tstring.h>
+#include <zarafa/charset/convstring.h>
 
 #include <string>
 using namespace std;

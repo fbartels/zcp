@@ -42,7 +42,7 @@
  */
 
 #pragma once
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 
 class CHtmlEntity _zcp_final
 {

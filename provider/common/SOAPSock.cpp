@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "SOAPSock.h"
 
 #ifdef LINUX
@@ -49,17 +49,17 @@
 #endif
 
 #include "SOAPUtils.h"
-#include "threadutil.h"
-#include "CommonUtil.h"
+#include <zarafa/threadutil.h>
+#include <zarafa/CommonUtil.h>
 #include <string>
 #include <map>
 
-#include <charset/convert.h>
-#include <charset/utf8string.h>
+#include <zarafa/charset/convert.h>
+#include <zarafa/charset/utf8string.h>
 
 #if defined(WIN32) && !defined(DISABLE_SSL_UI)
 #include "EntryPoint.h"
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 #include "CertificateDlg.h"
 #endif
 

@@ -41,9 +41,9 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "ZarafaICS.h"
 #include "ZarafaUtil.h"
 
@@ -53,10 +53,10 @@
 
 #include "ECExportAddressbookChanges.h"
 
-#include <ECLogger.h>
+#include <zarafa/ECLogger.h>
 #include <ECSyncLog.h>
-#include <stringutil.h>
-#include <Util.h>
+#include <zarafa/stringutil.h>
+#include <zarafa/Util.h>
 
 #include <edkmdb.h>
 

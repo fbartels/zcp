@@ -45,31 +45,31 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <mapi.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <mapispi.h>
 #include <mapiutil.h>
 #include "Zarafa.h"
-#include "ECGuid.h"
-#include "edkguid.h"
+#include <zarafa/ECGuid.h>
+#include <edkguid.h>
 #include "ECABProvider.h"
 #include "ECABLogon.h"
 
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
 
-#include "Util.h"
+#include <zarafa/Util.h>
 
 #include "WSTransport.h"
 #include "ClientUtil.h"
 #include "EntryPoint.h"
 #include "ZarafaUtil.h"
 
-#include <mapi_ptr/mapi_memory_ptr.h>
+#include <zarafa/mapi_ptr/mapi_memory_ptr.h>
 typedef mapi_memory_ptr<ECUSER>	ECUserPtr;
 
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 
 using namespace std;
 

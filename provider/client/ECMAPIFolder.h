@@ -44,7 +44,7 @@
 #ifndef ECMAPIFOLDER_H
 #define ECMAPIFOLDER_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <mapidefs.h>
 #include "WSTransport.h"
 #include "ECMsgStore.h"

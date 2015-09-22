@@ -44,7 +44,7 @@
 #ifndef ECDATABASE_H
 #define ECDATABASE_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include "ECDatabaseMySQL.h"
 
 class lpLogger;

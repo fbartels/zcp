@@ -48,7 +48,7 @@
 // define to see which exception is thrown from a plugin
 //#define EXCEPTION_DEBUG
 
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 #include "ZarafaUser.h"
 
 #include <list>

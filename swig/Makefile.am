@@ -1,5 +1,6 @@
 # make sure common swig lib builds first
-SUBDIRS = .
+
+SUBDIRS = . include/zarafa
 
 if WITH_PYTHON
 SUBDIRS += python
@@ -18,7 +19,7 @@ EXTRA_DIST = edkmdb.i mapi.i mapiutil.i mapidefs.i mapicode.i mapix.i	\
 	RecurrenceState.swig.h
 
 nobase_pkginclude_HEADERS = \
-	typemap.i python/typemap_python.i swig_iunknown.h
+	typemap.i python/typemap_python.i
 
 check-syntax:
 	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) \

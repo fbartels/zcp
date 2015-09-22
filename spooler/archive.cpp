@@ -41,13 +41,13 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "archive.h"
 
-#include "ECLogger.h"
-#include "ECGetText.h"
-#include "charset/convert.h"
-#include "mapi_ptr.h"
+#include <zarafa/ECLogger.h>
+#include <zarafa/ECGetText.h>
+#include <zarafa/charset/convert.h>
+#include <zarafa/mapi_ptr.h>
 
 #include "helpers/StoreHelper.h"
 #include "operations/copier.h"
@@ -58,8 +58,8 @@
 #include <list>
 #include <sstream>
 
-#include "Util.h"
-#include "ECDebug.h"
+#include <zarafa/Util.h>
+#include <zarafa/ECDebug.h>
 
 using namespace za::helpers;
 using namespace za::operations;

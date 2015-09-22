@@ -41,17 +41,17 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <mapidefs.h>
 #include <mapitags.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 
 #include <map>
 #include <algorithm>
 
 #include "Zarafa.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "ECUserManagement.h"
 #include "ECSessionManager.h"
 #include "ECPluginFactory.h"
@@ -61,24 +61,24 @@
 #include "ECPamAuth.h"
 #include "ECKrbAuth.h"
 #ifdef LINUX
-#include "UnixUtil.h"
+#include <zarafa/UnixUtil.h>
 #else
 #include "WinUtil.h"
 #endif
 
-#include "base64.h"
+#include <zarafa/base64.h>
 
 #include "ECICS.h"
 #include "ZarafaICS.h"
-#include "ECGuid.h"
-#include "ECDefs.h"
+#include <zarafa/ECGuid.h>
+#include <zarafa/ECDefs.h>
 #include "ECFeatureList.h"
-#include <EMSAbTag.h>
+#include <zarafa/EMSAbTag.h>
 
-#include <charset/convert.h>
-#include <charset/utf8string.h>
+#include <zarafa/charset/convert.h>
+#include <zarafa/charset/utf8string.h>
 
-#include "threadutil.h"
+#include <zarafa/threadutil.h>
 
 #include <boost/algorithm/string.hpp>
 namespace ba = boost::algorithm;

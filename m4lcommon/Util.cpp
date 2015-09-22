@@ -41,8 +41,8 @@
  *
  */
 
-#include "zcdefs.h"
-#include "platform.h"
+#include <zarafa/zcdefs.h>
+#include <zarafa/platform.h>
 
 #include <mapidefs.h>
 #include <mapiutil.h>
@@ -55,31 +55,30 @@
 
 #include <edkmdb.h>
 
-#include "Util.h"
+#include <zarafa/Util.h>
 #include "ECIConv.h"
-#include "CommonUtil.h"
-#include "stringutil.h"
-#include "charset/convert.h"
-#include "tstring.h"
+#include <zarafa/CommonUtil.h>
+#include <zarafa/stringutil.h>
+#include <zarafa/charset/convert.h>
+#include <zarafa/tstring.h>
 
 #include "ECMemStream.h"
-#include "IECSingleInstance.h"
-#include "ECGuid.h"
-#include "codepage.h"
+#include <zarafa/IECSingleInstance.h>
+#include <zarafa/ECGuid.h>
+#include <zarafa/codepage.h>
 #include "rtfutil.h"
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 
-#include "ustringutil.h"
-#include "mapi_ptr.h"
+#include <zarafa/ustringutil.h>
+#include <zarafa/mapi_ptr.h>
 
 #include "HtmlToTextParser.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "HtmlEntity.h"
 
 using namespace std;
 
-#include "ECGetText.h"
-#include "charset/convert.h"
+#include <zarafa/ECGetText.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

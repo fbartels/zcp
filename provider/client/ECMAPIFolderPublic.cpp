@@ -41,33 +41,33 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include "ECMAPIFolderPublic.h"
 
 #include "Mem.h"
-#include "ECGuid.h"
-#include "edkguid.h"
-#include "CommonUtil.h"
-#include "Util.h"
+#include <zarafa/ECGuid.h>
+#include <edkguid.h>
+#include <zarafa/CommonUtil.h>
+#include <zarafa/Util.h>
 #include "ClientUtil.h"
 #include "ZarafaUtil.h"
 
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
 #include <edkmdb.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "ECMsgStorePublic.h"
 #include "ECMemTablePublic.h"
 
 #include "favoritesutil.h"
-#include "restrictionutil.h"
+#include <zarafa/restrictionutil.h>"
 
-#include <charset/convstring.h>
+#include <zarafa/charset/convstring.h>
 
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -44,7 +44,7 @@
 #ifndef __RTFUTIL_H
 #define __RTFUTIL_H
 
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include <string>
 
 bool isrtfhtml(const char *buf, unsigned int len);

@@ -41,13 +41,13 @@
  *
  */
 
-#include <platform.h>
-#include "ECConfig.h"
+#include <zarafa/platform.h>
+#include <zarafa/ECConfig.h>
 #include "ECArchiverLogger.h"
 #include "stubber.h"
-#include "archiver-common.h"
+#include <zarafa/archiver-common.h>
 #include "helpers/MAPIPropHelper.h"
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 using namespace za::helpers;
 
 namespace za { namespace operations {

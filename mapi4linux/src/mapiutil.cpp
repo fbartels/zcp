@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <cstdlib>
 #include <cmath> // for pow() 
@@ -55,17 +55,17 @@
 #include <mapiutil.h>
 #include <mapidefs.h>
 
-#include "ECDebug.h"
-#include "ECTags.h"
-#include "stringutil.h"
-#include "Util.h"
+#include <zarafa/ECDebug.h>
+#include <zarafa/ECTags.h>
+#include <zarafa/stringutil.h>
+#include <zarafa/Util.h>
 
 #include "ECMemStream.h"
-#include "mapiguidext.h"
+#include <zarafa/mapiguidext.h>
 
 #include "rtf.h"
 
-#include "charset/convstring.h"
+#include <zarafa/charset/convstring.h>
 
 ULONG __stdcall UlRelease(LPVOID lpUnknown)
 {

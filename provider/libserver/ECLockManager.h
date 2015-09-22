@@ -44,7 +44,7 @@
 #ifndef ECLockManager_INCLUDED
 #define ECLockManager_INCLUDED
 
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 
 #include <map>
 #include <pthread.h>

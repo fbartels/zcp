@@ -44,11 +44,11 @@
 #ifndef ECGENERICPROP_H
 #define ECGENERICPROP_H
 
-#include "zcdefs.h"
-#include "ECUnknown.h"
+#include <zarafa/zcdefs.h>
+#include <zarafa/ECUnknown.h>
 #include "IECPropStorage.h"
 #include "ECPropertyEntry.h"
-#include "IECSingleInstance.h"
+#include <zarafa/IECSingleInstance.h>
 
 #include <list>
 #include <map>

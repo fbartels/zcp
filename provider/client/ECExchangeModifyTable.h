@@ -44,9 +44,9 @@
 #ifndef EC_EXCHANGE_MODIFY_TABLE_H
 #define EC_EXCHANGE_MODIFY_TABLE_H
 
-#include "zcdefs.h"
-#include "ECUnknown.h"
-#include "ECMemTable.h"
+#include <zarafa/zcdefs.h>
+#include <zarafa/ECUnknown.h>
+#include <zarafa/ECMemTable.h>
 #include <mapidefs.h>
 #include <edkmdb.h>
 #include "IECExchangeModifyTable.h"

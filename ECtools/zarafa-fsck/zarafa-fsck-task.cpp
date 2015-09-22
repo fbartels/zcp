@@ -41,16 +41,16 @@
  *
  */
 
-#include <platform.h>
+#include <zarafa/platform.h>
 
 #include <iostream>
 
-#include <CommonUtil.h>
-#include <mapiext.h>
-#include <mapiguidext.h>
+#include <zarafa/CommonUtil.h>
+#include <zarafa/mapiext.h>
+#include <zarafa/mapiguidext.h>
 #include <mapiutil.h>
 #include <mapix.h>
-#include <namedprops.h>
+#include <zarafa/namedprops.h>
 
 #include "zarafa-fsck.h"
 

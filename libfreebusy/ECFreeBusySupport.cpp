@@ -41,17 +41,17 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ECFreeBusySupport.h"
 
 #include "ECFreeBusyUpdate.h"
 #include "ECFreeBusyData.h"
-#include "CommonUtil.h"
-#include "mapiext.h"
+#include <zarafa/CommonUtil.h>
+#include <zarafa/mapiext.h>
 #include <mapiutil.h>
 
 #include "freebusyutil.h"
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

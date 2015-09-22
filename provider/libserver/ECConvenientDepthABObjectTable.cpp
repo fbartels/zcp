@@ -41,18 +41,18 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ECDatabase.h"
 
 #include <mapidefs.h>
 #include <mapitags.h>
-#include "EMSAbTag.h"
+#include <zarafa/EMSAbTag.h>
 
 #include "ECSessionManager.h"
 #include "ECConvenientDepthABObjectTable.h"
 #include "ECSession.h"
 #include "ECMAPI.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

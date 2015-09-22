@@ -45,9 +45,9 @@
 #define ARCHIVERSESSION_H_INCLUDED
 
 #include "ArchiverSessionPtr.h"
-#include "mapi_ptr.h"
-#include "tstring.h"
-#include "archiver-common.h"
+#include <zarafa/mapi_ptr.h>
+#include <zarafa/tstring.h>
+#include <zarafa/archiver-common.h>
 
 // Forward declarations
 class ECConfig;

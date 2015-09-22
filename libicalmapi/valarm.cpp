@@ -41,21 +41,21 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <mapi.h>
 #include <mapidefs.h>
 #include <mapix.h>
 #include <mapiutil.h>
-#include <mapiext.h>
-#include <mapiguidext.h>
+#include <zarafa/mapiext.h>
+#include <zarafa/mapiguidext.h>
 
 #include "valarm.h"
 #include "recurrence.h"
-#include "namedprops.h"
-#include "CommonUtil.h"
-#include "Util.h"
-#include "stringutil.h"
+#include <zarafa/namedprops.h>
+#include <zarafa/CommonUtil.h>
+#include <zarafa/Util.h>
+#include <zarafa/stringutil.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

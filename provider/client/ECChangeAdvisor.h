@@ -44,16 +44,16 @@
 #ifndef ECCHANGEADVISOR_H
 #define ECCHANGEADVISOR_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <mapidefs.h>
 #include <mapispi.h>
 
 #include <pthread.h>	
 
-#include <ECUnknown.h>
+#include <zarafa/ECUnknown.h>
 #include <IECChangeAdvisor.h>
 #include "ECICS.h"
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 
 #include <map>
 

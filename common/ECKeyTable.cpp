@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <utility>
 #include <algorithm>
@@ -50,8 +50,8 @@
 #include <map>
 #include <cassert>
 
-#include "ECKeyTable.h" 
-#include "ustringutil.h"
+#include <zarafa/ECKeyTable.h> 
+#include <zarafa/ustringutil.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

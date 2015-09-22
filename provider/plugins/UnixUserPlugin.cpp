@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <iostream>
 #include <string>
@@ -64,17 +64,17 @@
 #include <malloc.h>
 #endif
 
-#include "EMSAbTag.h"
-#include "ECConfig.h"
-#include "ECDefs.h"
-#include "ECLogger.h"
+#include <zarafa/EMSAbTag.h>
+#include <zarafa/ECConfig.h>
+#include <zarafa/ECDefs.h>
+#include <zarafa/ECLogger.h>
 #include "ECPluginSharedData.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 using namespace std;
 
 #include "UnixUserPlugin.h"
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 
 /**
  * static buffer size for getpwnam_r() calls etc.

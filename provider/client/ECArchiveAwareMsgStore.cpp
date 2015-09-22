@@ -41,12 +41,12 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ECArchiveAwareMsgStore.h"
 #include "ECArchiveAwareMessage.h"
-#include "ECGuid.h"
-#include "mapi_ptr.h"
-#include "threadutil.h"
+#include <zarafa/ECGuid.h>
+#include <zarafa/mapi_ptr.h>
+#include <zarafa/threadutil.h>
 
 #if defined WIN32 && !defined _DEBUG
 #include "ECLicense.h"

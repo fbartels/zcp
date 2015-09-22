@@ -45,15 +45,15 @@
 #define CALDAV_UTIL_H_
 
 #include "WebDav.h"
-#include "mapiext.h"
-#include "mapiguidext.h"
+#include <zarafa/mapiext.h>
+#include <zarafa/mapiguidext.h>
 #include <cstring>
 #include <algorithm>
-#include "restrictionutil.h"
-#include "namedprops.h"
+#include <zarafa/restrictionutil.h>"
+#include <zarafa/namedprops.h>
 #include "nameids.h"
 #include "icaluid.h"
-#include "edkguid.h"
+#include <edkguid.h>
 #include "freebusy.h"
 #include "ECFreeBusySupport.h"
 #include "MAPIToICal.h"

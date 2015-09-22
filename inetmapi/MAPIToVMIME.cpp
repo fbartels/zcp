@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 // Damn windows header defines max which break C++ header files
 #undef max
@@ -59,10 +59,10 @@
 // mapi
 #include <mapi.h>
 #include <mapiutil.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <edkmdb.h>
-#include <mapiguidext.h>
-#include "mapi_ptr.h"
+#include <zarafa/mapiguidext.h>
+#include <zarafa/mapi_ptr.h>
 
 #include "tnef.h"
 
@@ -75,13 +75,13 @@
 #include "mapiAttachment.h"
 #include "mapiTextPart.h"
 #include "rtfutil.h"
-#include "CommonUtil.h"
-#include "stringutil.h"
+#include <zarafa/CommonUtil.h>
+#include <zarafa/stringutil.h>
 #include "mapicontact.h"
-#include "Util.h"
-#include "ECLogger.h"
-#include "codepage.h"
-#include "ecversion.h"
+#include <zarafa/Util.h>
+#include <zarafa/ECLogger.h>
+#include <zarafa/codepage.h>
+#include <zarafa/ecversion.h>
 #include "SMIMEMessage.h"
 
 // icalmapi

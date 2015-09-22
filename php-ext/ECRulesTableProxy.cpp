@@ -41,13 +41,13 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ECRulesTableProxy.h"
-#include "ECGuid.h"
-#include "mapi_ptr.h"
-#include "ECInterfaceDefs.h"
-#include "Trace.h"
-#include "charset/convert.h"
+#include <zarafa/ECGuid.h>
+#include <zarafa/mapi_ptr.h>
+#include <zarafa/ECInterfaceDefs.h>
+#include <zarafa/Trace.h>
+#include <zarafa/charset/convert.h>
 
 #include <mapix.h>
 

@@ -41,10 +41,10 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "MAPINotifSink.h"
 
-#include "Util.h"
+#include <zarafa/Util.h>
 
 #include <mapi.h>
 #include <mapix.h>

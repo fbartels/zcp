@@ -41,12 +41,12 @@
  *
  */
 
-#include "platform.h"
-#include "stringutil.h"
-#include "charset/convert.h"
+#include <zarafa/platform.h>
+#include <zarafa/stringutil.h>
+#include <zarafa/charset/convert.h>
 #include <string>
 #include "ECIConv.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 
 #include <mapicode.h> // only for MAPI error codes
 #include <mapidefs.h> // only for MAPI error codes

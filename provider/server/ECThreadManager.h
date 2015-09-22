@@ -47,9 +47,9 @@
 #include <queue>
 #include <set>
 
-#include "ECLogger.h"
-#include "ECConfig.h"
-#include "ZarafaCode.h"
+#include <zarafa/ECLogger.h>
+#include <zarafa/ECConfig.h>
+#include <zarafa/ZarafaCode.h>
 #include "SOAPUtils.h"
 #include "soapH.h"
 

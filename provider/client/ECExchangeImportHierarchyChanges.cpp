@@ -41,28 +41,28 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include "ECExchangeImportHierarchyChanges.h"
 #include "ECExchangeImportContentsChanges.h"
 
-#include "Util.h"
-#include "ECGuid.h"
-#include "edkguid.h"
+#include <zarafa/Util.h>
+#include <zarafa/ECGuid.h>
+#include <edkguid.h>
 #include <mapiguid.h>
-#include "mapiext.h"
-#include "ECDebug.h"
-#include "stringutil.h"
+#include <zarafa/mapiext.h>
+#include <zarafa/ECDebug.h>
+#include <zarafa/stringutil.h>
 #include "ZarafaUtil.h"
 #include "ZarafaICS.h"
 #include <mapiutil.h>
 #include "Mem.h"
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 #include "EntryPoint.h"
 
-#include "charset/convert.h"
-#include "charset/utf8string.h"
-#include "charset/convstring.h"
+#include <zarafa/charset/convert.h>
+#include <zarafa/charset/utf8string.h>
+#include <zarafa/charset/convstring.h>
 
 #ifdef _DEBUG
 #undef THIS_FILE

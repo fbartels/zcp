@@ -45,13 +45,13 @@
  * MAPIErrors.cpp
  * Definition of GetMAPIErrorMessage()
  */
-#include "platform.h"
-#include "MAPIErrors.h"
+#include <zarafa/platform.h>
+#include <zarafa/MAPIErrors.h>
 #include <mapidefs.h>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include <mapicode.h>
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 #include <string>
 
 typedef struct tagMAPIErrorTranslateRecord

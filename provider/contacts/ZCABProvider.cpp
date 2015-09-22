@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ZCABProvider.h"
 #include "ZCABLogon.h"
 
@@ -49,9 +49,9 @@
 #include <mapicode.h>
 #include <mapiguid.h>
 
-#include "ECGuid.h"
-#include "ECDebug.h"
-#include "Trace.h"
+#include <zarafa/ECGuid.h>
+#include <zarafa/ECDebug.h>
+#include <zarafa/Trace.h>
 
 ZCABProvider::ZCABProvider(ULONG ulFlags, const char *szClassName) :
     ECUnknown(szClassName), m_ulFlags(ulFlags)

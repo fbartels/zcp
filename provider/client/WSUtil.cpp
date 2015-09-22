@@ -41,7 +41,7 @@
  *
  */
 
-#include <platform.h>
+#include <zarafa/platform.h>
 
 #ifdef WIN32
 // For WSAIoctl
@@ -60,12 +60,12 @@
 #endif
 #include "WSUtil.h"
 #include "ECIConv.h"
-#include "ECGuid.h"
-#include "Trace.h"
+#include <zarafa/ECGuid.h>
+#include <zarafa/Trace.h>
 
 #include "Mem.h"
 
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 
 // For the static row getprop functions
 #include "ECMAPIProp.h"
@@ -77,14 +77,14 @@
 #include "ECABContainer.h"
 
 #include "SOAPUtils.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 
-#include <charset/convert.h>
-#include <charset/utf8string.h>
+#include <zarafa/charset/convert.h>
+#include <zarafa/charset/utf8string.h>
 #include "EntryPoint.h"
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 
-#include "threadutil.h"
+#include <zarafa/threadutil.h>
 #include "SOAPSock.h"
 
 using namespace std;

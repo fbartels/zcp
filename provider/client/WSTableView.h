@@ -48,10 +48,10 @@
 #ifndef WSTABLEVIEW_H
 #define WSTABLEVIEW_H
 
-#include "ECUnknown.h"
+#include <zarafa/ECUnknown.h>
 #include "Zarafa.h"
 
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 #include <mapi.h>
 #include <mapispi.h>
 

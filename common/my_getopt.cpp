@@ -1,4 +1,4 @@
-#include "platform.h"
+#include <zarafa/platform.h>
 /*
  *  my_getopt.c - my re-implementation of getopt.
  *  Copyright 1997, 2000, 2001, 2002, 2006, Benjamin Sittler
@@ -28,7 +28,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
-#include "my_getopt.h"
+#include <zarafa/my_getopt.h>
 
 int my_optind=1, my_opterr=1, my_optopt=0;
 char *my_optarg=0;

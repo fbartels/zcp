@@ -44,8 +44,8 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include "ECLogger.h"
-#include "tstring.h"
+#include <zarafa/ECLogger.h>
+#include <zarafa/tstring.h>
 
 class ECArchiverLogger : public ECLogger
 {

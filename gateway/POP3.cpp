@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
@@ -53,16 +53,16 @@
 #include <mapidefs.h>
 #include <mapiutil.h>
 
-#include <CommonUtil.h>
-#include <Util.h>
-#include <ECTags.h>
-#include <inetmapi.h>
-#include <mapiext.h>
+#include <zarafa/CommonUtil.h>
+#include <zarafa/Util.h>
+#include <zarafa/ECTags.h>
+#include <inetmapi/inetmapi.h>
+#include <zarafa/mapiext.h>
 
-#include "stringutil.h"
-#include "charset/convert.h"
-#include "ecversion.h"
-#include "charset/utf8string.h"
+#include <zarafa/stringutil.h>
+#include <zarafa/charset/convert.h>
+#include <zarafa/ecversion.h>
+#include <zarafa/charset/utf8string.h>
 #include "ECFeatures.h"
 
 #include "POP3.h"

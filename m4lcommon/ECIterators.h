@@ -44,9 +44,9 @@
 #ifndef ECIterators_INCLUDED
 #define ECIterators_INCLUDED
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <boost/iterator/iterator_facade.hpp>
-#include <mapi_ptr.h>
+#include <zarafa/mapi_ptr.h>
 
 class ECHierarchyIteratorBase
 {

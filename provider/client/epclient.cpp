@@ -41,13 +41,13 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <mapi.h>
 #include <mapispi.h>
 #include <mapiutil.h>
 
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 
 #include <string>
 #include <cassert>
@@ -64,7 +64,7 @@
 #include "SettingsDlg.h"
 #include "SettingsTabConnection.h"
 #include "SettingsPropPageAdvance.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "MapiClientReg.h"
 #include "ProgressDlg.h"
 #endif
@@ -72,18 +72,18 @@
 #include <iostream>
 #endif
 
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 
-#include "ECDebug.h"
-#include <stringutil.h>
+#include <zarafa/ECDebug.h>
+#include <zarafa/stringutil.h>
 
-#include <ECLogger.h>
+#include <zarafa/ECLogger.h>
 
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include <edkmdb.h>
-#include "edkguid.h"
+#include <edkguid.h>
 
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
 #include "SSLUtil.h"
 #include "ClientUtil.h"
@@ -91,7 +91,7 @@
 
 #include "EntryPoint.h"
 
-#include <charset/convstring.h>
+#include <zarafa/charset/convstring.h>
 
 using namespace std;
 

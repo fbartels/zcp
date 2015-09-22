@@ -44,7 +44,7 @@
 #ifndef ECEXPORTADDRESSBOOKCHANGES_H
 #define ECEXPORTADDRESSBOOKCHANGES_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <set>
 
 #include "ECABContainer.h"

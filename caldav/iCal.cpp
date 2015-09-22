@@ -41,21 +41,21 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "iCal.h"
 #include "CalDavUtil.h"
 
 #include <vector>
 
-#include "CommonUtil.h"
-#include "restrictionutil.h"
+#include <zarafa/CommonUtil.h>
+#include <zarafa/restrictionutil.h>"
 #include "icaluid.h"
 
 #include <libxml/tree.h>
 #include <libxml/parser.h>
 #include "PublishFreeBusy.h"
 
-#include <mapi_ptr.h>
+#include <zarafa/mapi_ptr.h>
 
 using namespace std;
 

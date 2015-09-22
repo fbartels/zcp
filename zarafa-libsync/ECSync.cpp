@@ -41,12 +41,12 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #ifdef HAVE_OFFLINE_SUPPORT
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "ECSync.h"
 #include "ECSyncUtil.h"
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 #include "../provider/include/Zarafa.h"
 #include <algorithm>
 
@@ -57,30 +57,30 @@
 #endif
 
 #include <mapiutil.h>
-#include <mapiguidext.h>
-#include "edkguid.h"
-#include "Util.h"
-#include "CommonUtil.h"
-#include "mapiext.h"
-#include "stringutil.h"
-#include "ECABEntryID.h"
+#include <zarafa/mapiguidext.h>
+#include <edkguid.h>
+#include <zarafa/Util.h>
+#include <zarafa/CommonUtil.h>
+#include <zarafa/mapiext.h>
+#include <zarafa/stringutil.h>
+#include <zarafa/ECABEntryID.h>"
 #include "ECSyncLog.h"
-#include "ECLogger.h"
-#include "mapi_ptr.h"
-#include "threadutil.h"
+#include <zarafa/ECLogger.h>
+#include <zarafa/mapi_ptr.h>
+#include <zarafa/threadutil.h>
 
 #include "IECExportAddressbookChanges.h"
 #include "IECExportChanges.h"
 #include "IECImportContentsChanges.h"
 #include "ECOfflineABImporter.h"
 
-#include "IECServiceAdmin.h"
+#include <zarafa/IECServiceAdmin.h>
 #include "IECChangeAdvisor.h"
 #include "ECResyncSet.h"
 
 #include "ECSensNetwork.h"
-#include "ECGetText.h"
-#include "charset/convert.h"
+#include <zarafa/ECGetText.h>
+#include <zarafa/charset/convert.h>
 #include "MAPINotifSink.h"
 
 typedef mapi_object_ptr<IExchangeImportContentsChanges, IID_IExchangeImportContentsChanges> ExchangeImportContentsChangesPtr;

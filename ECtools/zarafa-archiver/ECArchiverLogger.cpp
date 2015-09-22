@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ECArchiverLogger.h"
 
 ECArchiverLogger::ECArchiverLogger(ECLogger *lpLogger)

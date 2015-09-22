@@ -51,7 +51,7 @@
 
 #include "ECMsgStore.h"
 #include "ClientUtil.h"
-#include "ECMemTable.h"
+#include <zarafa/ECMemTable.h>
 
 class ECMsgStorePublic : public ECMsgStore
 {

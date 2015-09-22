@@ -41,19 +41,19 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <mapidefs.h>
 #include <mapitags.h>
 #include <edkmdb.h>
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include <Zarafa.h>
 
 #include "SOAPUtils.h"
 #include "SOAPAlloc.h"
-#include "stringutil.h"
-#include "ustringutil.h"
-#include "base64.h"
+#include <zarafa/stringutil.h>
+#include <zarafa/ustringutil.h>
+#include <zarafa/base64.h>
 
 using namespace std;
 

@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <mapi.h>
 #include <mapix.h>
@@ -49,9 +49,9 @@
 
 #include <imessage.h>
 
-#include "Util.h"
-#include "ECDebug.h"
-#include "Trace.h"
+#include <zarafa/Util.h>
+#include <zarafa/ECDebug.h>
+#include <zarafa/Trace.h>
 
 #ifdef WIN32
 extern HMODULE g_hLibMapi;

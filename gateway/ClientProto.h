@@ -45,9 +45,9 @@
 #define GATEWAY_COMMON_H
 
 #include <string>
-#include "ECChannel.h"
-#include "ECLogger.h"
-#include "ECConfig.h"
+#include <zarafa/ECChannel.h>
+#include <zarafa/ECLogger.h>
+#include <zarafa/ECConfig.h>
 
 #define LOGIN_RETRIES 5
 

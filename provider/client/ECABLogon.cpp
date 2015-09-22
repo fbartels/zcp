@@ -45,26 +45,26 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <mapiutil.h>
 
 #include "Zarafa.h"
-#include "ECGuid.h"
-#include "edkguid.h"
+#include <zarafa/ECGuid.h>
+#include <edkguid.h>
 #include "ECABLogon.h"
 
 #include "ECABContainer.h"
 #include "ECMailUser.h"
 #include "ECDistList.h"
 
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
 #include "WSTransport.h"
 
-#include "Util.h"
+#include <zarafa/Util.h>
 #include "Mem.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "ZarafaUtil.h"
 
 #ifdef _DEBUG

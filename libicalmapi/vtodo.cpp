@@ -41,10 +41,10 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "vtodo.h"
 #include <mapiutil.h>
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 #include "nameids.h"
 
 #include <iostream>

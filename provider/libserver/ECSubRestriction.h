@@ -47,11 +47,11 @@
 #include <set>
 #include <vector>
 
-#include "ECKeyTable.h"
+#include <zarafa/ECKeyTable.h>
 #include "ECDatabase.h"
 #include "soapH.h"
 
-#include "ustringutil.h"
+#include <zarafa/ustringutil.h>
 
 class ECSession;
 

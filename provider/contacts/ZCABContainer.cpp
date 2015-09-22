@@ -41,28 +41,28 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ZCABContainer.h"
 #include "ZCMAPIProp.h"
-#include "Trace.h"
+#include <zarafa/Trace.h>
 
 #include <mapiutil.h>
 
-#include "ECMemTable.h"
-#include "ECGuid.h"
-#include "ECDebug.h"
-#include "CommonUtil.h"
-#include "mapiext.h"
-#include "mapiguidext.h"
-#include "namedprops.h"
-#include "charset/convert.h"
-#include "mapi_ptr.h"
-#include "ECGetText.h"
-#include "EMSAbTag.h"
-#include "ECRestriction.h"
+#include <zarafa/ECMemTable.h>
+#include <zarafa/ECGuid.h>
+#include <zarafa/ECDebug.h>
+#include <zarafa/CommonUtil.h>
+#include <zarafa/mapiext.h>
+#include <zarafa/mapiguidext.h>
+#include <zarafa/namedprops.h>
+#include <zarafa/charset/convert.h>
+#include <zarafa/mapi_ptr.h>
+#include <zarafa/ECGetText.h>
+#include <zarafa/EMSAbTag.h>
+#include <zarafa/ECRestriction.h>
 
 #include <iostream>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 using namespace std;
 
 #ifdef _DEBUG

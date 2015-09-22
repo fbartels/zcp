@@ -41,20 +41,20 @@
  *
  */
 
-#include <platform.h>
+#include <zarafa/platform.h>
 
 #include <iostream>
 
-#include <CommonUtil.h>
-#include <mapiext.h>
-#include <mapiguidext.h>
+#include <zarafa/CommonUtil.h>
+#include <zarafa/mapiext.h>
+#include <zarafa/mapiguidext.h>
 #include <mapiutil.h>
 #include <mapix.h>
-#include <namedprops.h>
-#include <charset/utf16string.h>
-#include <charset/convert.h>
+#include <zarafa/namedprops.h>
+#include <zarafa/charset/utf16string.h>
+#include <zarafa/charset/convert.h>
 
-#include "RecurrenceState.h"
+#include <zarafa/RecurrenceState.h>
 #include "zarafa-fsck.h"
 
 HRESULT ZarafaFsckCalendar::ValidateMinimalNamedFields(LPMESSAGE lpMessage)

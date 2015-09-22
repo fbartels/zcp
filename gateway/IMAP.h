@@ -52,7 +52,7 @@
 #include <set>
 
 #include <ECIConv.h>
-#include "ECChannel.h"
+#include <zarafa/ECChannel.h>
 
 using namespace std;
 

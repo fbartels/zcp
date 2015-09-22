@@ -41,16 +41,16 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "Zarafa.h"
 
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 #include <mapi.h>
 #include <mapispi.h>
 #include "WSABTableView.h"
 
 #include "Mem.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 
 // Utils
 #include "SOAPUtils.h"

@@ -46,9 +46,9 @@
 
 #include <mapispi.h>
 #include <string>
-#include "ECTags.h"
+#include <zarafa/ECTags.h>
 #include <edkmdb.h>
-#include "tstring.h"
+#include <zarafa/tstring.h>
 
 class WSTransport;
 

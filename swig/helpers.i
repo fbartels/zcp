@@ -1,6 +1,6 @@
 %{
-#include "ECTags.h"
-#include "IECUnknown.h"
+#include <zarafa/ECTags.h>
+#include <zarafa/IECUnknown.h>
 %}
 
 // Pull in the language-specific helpers

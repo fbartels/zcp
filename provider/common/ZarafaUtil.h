@@ -46,9 +46,9 @@
 
 // All functions which used in zarafa server and client
 #include "Zarafa.h"
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 #include "soapH.h"
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 #include "SOAPUtils.h"
 #include <mapidefs.h>
 

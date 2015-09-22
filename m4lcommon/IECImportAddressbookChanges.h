@@ -45,7 +45,7 @@
 #define IECIMPORTADDRESSBOOKCHANGES_H
 
 #include <mapidefs.h>
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 
 class IECImportAddressbookChanges : public IUnknown {
 public:

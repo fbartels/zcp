@@ -41,9 +41,9 @@
  *
  */
 
-#include "platform.h"
-#include "ECThreadPool.h"
-#include "threadutil.h"
+#include <zarafa/platform.h>
+#include <zarafa/ECThreadPool.h>
+#include <zarafa/threadutil.h>
 
 #include <algorithm>
 

@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include "Zarafa.h"
 #include "ZarafaICS.h"
@@ -58,22 +58,22 @@
 #include "WSMessageStreamImporter.h"
 
 #include "Mem.h"
-#include "ECGuid.h"
-#include "edkguid.h"
-#include "Util.h"
+#include <zarafa/ECGuid.h>
+#include <edkguid.h>
+#include <zarafa/Util.h>
 #include "ClientUtil.h"
 
-#include "ECDebug.h"
-#include "mapi_ptr.h"
+#include <zarafa/ECDebug.h>
+#include <zarafa/mapi_ptr.h>
 
 #include <edkmdb.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <mapiutil.h>
 #include <cstdio>
 
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
-#include <charset/convstring.h>
+#include <zarafa/charset/convstring.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

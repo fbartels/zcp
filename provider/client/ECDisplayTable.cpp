@@ -41,15 +41,15 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ECDisplayTable.h"
 
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 
 #include "Mem.h"
-#include "ECMemTable.h"
+#include <zarafa/ECMemTable.h>
 
 #if defined(_WIN32) && !defined(WINCE)
 	#include "dialogdefs.h"

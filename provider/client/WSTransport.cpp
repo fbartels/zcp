@@ -41,7 +41,7 @@
  *
  */
 
-#include <platform.h>
+#include <zarafa/platform.h>
 
 #ifdef WIN32
 // For WSAIoctl
@@ -73,30 +73,30 @@
 #endif
 
 // The header files we use for communication with the server
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 #include "soapZarafaCmdProxy.h"
 #include "ZarafaCmd.nsmap"
 #include "Mem.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 
 #include "SOAPUtils.h"
 #include "WSUtil.h"
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 
 #include "WSABTableView.h"
 #include "WSABPropStorage.h"
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 #include "ClientUtil.h"
 #include "ECSessionGroupManager.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "ZarafaVersions.h"
 
-#include "charset/convert.h"
-#include "charset/utf8string.h"
-#include "charset/convstring.h"
+#include <zarafa/charset/convert.h>
+#include <zarafa/charset/utf8string.h>
+#include <zarafa/charset/convstring.h>
 
 #include "SOAPSock.h"
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 #include "WSMessageStreamExporter.h"
 #include "WSMessageStreamImporter.h"
 

@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ECNotificationManager.h"
 #include "ECSession.h"
 #include "ECSessionManager.h"

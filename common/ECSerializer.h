@@ -44,8 +44,8 @@
 #ifndef ECSERIALIZER_H
 #define ECSERIALIZER_H
 
-#include "zcdefs.h"
-#include <ZarafaCode.h>
+#include <zarafa/zcdefs.h>
+#include <zarafa/ZarafaCode.h>
 
 struct IStream;
 class ECFifoBuffer;

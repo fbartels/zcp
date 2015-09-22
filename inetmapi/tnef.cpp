@@ -65,15 +65,15 @@
  * -- Steve
  */
  
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <mapidefs.h> 
 #include <mapiutil.h>
 #include <mapiguid.h>
-#include <mapiext.h>
-#include "Util.h"
-#include "charset/convert.h"
-#include "charset/utf16string.h"
+#include <zarafa/mapiext.h>
+#include <zarafa/Util.h>
+#include <zarafa/charset/convert.h>
+#include <zarafa/charset/utf16string.h>
 #include <string>
 
 #include "tnef.h"

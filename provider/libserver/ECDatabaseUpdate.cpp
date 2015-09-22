@@ -41,18 +41,18 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include "ECDatabase.h"
 #include "ECDatabaseUpdate.h"
 
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 #include "ECDBDef.h"
 #include "ECUserManagement.h"
 
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 
 #include <mapidefs.h>
 #include <mapitags.h>
@@ -62,12 +62,12 @@
 
 #include "ZarafaICS.h"
 
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include "ECStringCompat.h"
 #include "ECMAPI.h"
 
 #include <zlib.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <edkmdb.h>
 
 #ifdef HAVE_OFFLINE_SUPPORT

@@ -41,32 +41,32 @@
  *
  */
 
-#include "platform.h"
-#include "ECDebug.h"
+#include <zarafa/platform.h>
+#include <zarafa/ECDebug.h>
 
 #include <mapidefs.h>
 #include <mapispi.h>
 #include <edkmdb.h>
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 #include "freebusytags.h"
-#include "stringutil.h"
-#include "charset/convert.h"
-#include "ECTags.h"
-#include "EMSAbTag.h"
-#include "ECABEntryID.h"
+#include <zarafa/stringutil.h>
+#include <zarafa/charset/convert.h>
+#include <zarafa/ECTags.h>
+#include <zarafa/EMSAbTag.h>
+#include <zarafa/ECABEntryID.h>"
 
 #include <mapiguid.h>
-#include "mapiguidext.h"
-#include "edkguid.h"
-#include "ECGuid.h"
+#include <zarafa/mapiguidext.h>
+#include <edkguid.h>
+#include <zarafa/ECGuid.h>
 
 #include "freebusyguid.h"
 
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include <iostream>
 #include <sstream>
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
 using namespace std;
 

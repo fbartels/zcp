@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <pthread.h>
 
 static pthread_key_t	g_key;

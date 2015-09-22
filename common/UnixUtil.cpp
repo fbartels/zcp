@@ -41,8 +41,8 @@
  *
  */
 
-#include <platform.h>
-#include "UnixUtil.h"
+#include <zarafa/platform.h>
+#include <zarafa/UnixUtil.h>
 
 #include <unistd.h>
 #include <fcntl.h>

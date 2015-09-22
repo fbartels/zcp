@@ -41,14 +41,15 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ArchiverSession.h"
-#include "ecversion.h"
-#include "mapi_ptr.h"
-#include "ECLogger.h"
-#include "CommonUtil.h"
-#include "mapiext.h"
-#include "userutil.h"
+#include <zarafa/ecversion.h>
+#include <zarafa/mapi_ptr.h>
+#include <zarafa/ECConfig.h>
+#include <zarafa/ECLogger.h>
+#include <zarafa/CommonUtil.h>
+#include <zarafa/mapiext.h>
+#include <zarafa/userutil.h>
 #include "ECMsgStore.h"
 
 typedef mapi_memory_ptr<ECSERVERLIST> ECServerListPtr;

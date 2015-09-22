@@ -47,7 +47,7 @@
 #ifdef HAVE_OFFLINE_SUPPORT
 #include <string>
 
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 #include "IMAPIOffline.h"
 
 class ECOfflineState {

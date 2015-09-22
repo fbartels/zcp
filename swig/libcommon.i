@@ -1,7 +1,7 @@
 %module libcommon
 
 %{
-    #include <platform.h>
+    #include <zarafa/platform.h>
     #include <mapi.h>
     #include <mapidefs.h>
     #include <mapicode.h>
@@ -10,8 +10,8 @@
     #include "HtmlToTextParser.h"
     #include "rtfutil.h"
     #include "favoritesutil.h"
-    #include "Util.h"
-	#include "ECLogger.h"
+    #include <zarafa/Util.h>
+	#include <zarafa/ECLogger.h>
     #include "fileutil.h"
 	#include "IStreamAdapter.h"
 %}

@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include "ECDatabaseUtils.h"
 #include "ECSessionManager.h"
@@ -49,7 +49,7 @@
 #include "ECDBDef.h"
 #include "ECDatabaseUpdate.h"
 #include "ECLicenseClient.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "ECLockManager.h"
 
 #include "soapH.h"
@@ -71,23 +71,23 @@
 #include <algorithm>
 #include <cstdio>
 
-#include "ECTags.h"
-#include "stringutil.h"
+#include <zarafa/ECTags.h>
+#include <zarafa/stringutil.h>
 #include "SOAPUtils.h"
-#include "ZarafaCode.h"
-#include "Trace.h"
+#include <zarafa/ZarafaCode.h>
+#include <zarafa/Trace.h>
 #include "ZarafaCmd.nsmap"
 #include "ECFifoBuffer.h"
 #include "ECSerializer.h"
 #include "StreamUtil.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "StorageUtil.h"
 
 #include "ZarafaICS.h"
 
 #include "Zarafa.h"
 #include "ZarafaUtil.h"
-#include "md5.h"
+#include <zarafa/md5.h>
 
 #include "ECAttachmentStorage.h"
 #include "ECGenProps.h"
@@ -102,16 +102,16 @@
 #include "ECTestProtocol.h"
 #include "ECTPropsPurge.h"
 
-#include "ECDefs.h"
-#include <EMSAbTag.h>
+#include <zarafa/ECDefs.h>
+#include <zarafa/EMSAbTag.h>
 #include <edkmdb.h>
-#include "ecversion.h"
-#include "mapiext.h"
+#include <zarafa/ecversion.h>
+#include <zarafa/mapiext.h>
 
 #include "../server/ECSoapServerConnection.h"
 
 #include "ZarafaCmdUtil.h"
-#include "ECThreadPool.h"
+#include <zarafa/ECThreadPool.h>
 #include "ZarafaCmd.h"
 
 #if defined(HAVE_GPERFTOOLS_MALLOC_EXTENSION_H)

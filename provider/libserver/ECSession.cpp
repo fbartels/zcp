@@ -44,7 +44,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #ifdef DEBUG
 #ifdef WIN32
@@ -69,9 +69,9 @@
 #include "ECSecurity.h"
 #include "ECSecurityOffline.h"
 #include "ECPluginFactory.h"
-#include "base64.h"
+#include <zarafa/base64.h>
 #include "SSLUtil.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include "ECDatabaseMySQL.h"
 #include "ECDatabaseUtils.h" // used for PR_INSTANCE_KEY
@@ -82,8 +82,8 @@
 #include "ZarafaVersions.h"
 
 #include "pthreadutil.h"
-#include "threadutil.h"
-#include "boost_compat.h"
+#include <zarafa/threadutil.h>
+#include <zarafa/boost_compat.h>
 
 #include <boost/filesystem.hpp>
 namespace bfs = boost::filesystem;

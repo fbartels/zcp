@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <memory.h>
 #include <mapi.h>
@@ -51,20 +51,20 @@
 #include "ECMSProviderOffline.h"
 #include "ECMSProvider.h"
 
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 
-#include "Trace.h"
-#include "ECDebug.h"
+#include <zarafa/Trace.h>
+#include <zarafa/ECDebug.h>
 
 
-#include "edkguid.h"
+#include <edkguid.h>
 #include "EntryPoint.h"
 #include "DLLGlobal.h"
 #include <edkmdb.h>
 
 #include "ClientUtil.h"
 #include "ECMsgStore.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #include "ProviderUtil.h"
 

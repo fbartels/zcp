@@ -44,11 +44,11 @@
 #ifndef ECCONFIGIMPL_H
 #define ECCONFIGIMPL_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 
 using namespace std;
 
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 
 #include <map>
 #include <set>

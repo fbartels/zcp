@@ -41,17 +41,17 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "WSMAPIFolderOps.h"
 
 #include "Mem.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 
 // Utils
 #include "SOAPUtils.h"
 #include "WSUtil.h"
 
-#include <charset/utf8string.h>
+#include <zarafa/charset/utf8string.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

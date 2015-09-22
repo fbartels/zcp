@@ -46,10 +46,10 @@
 
 #include <mapidefs.h>
 #include <mapicode.h>
-#include <base64.h>
-#include "stringutil.h"
-#include "CommonUtil.h"
-#include "ECChannel.h"
+#include <zarafa/base64.h>
+#include <zarafa/stringutil.h>
+#include <zarafa/CommonUtil.h>
+#include <zarafa/ECChannel.h>
 #include "ECIConv.h"
 #include <cstdio>
 #include <cstdarg>
@@ -57,7 +57,7 @@
 #include <libxml/xmlmemory.h>
 #include <libxml/uri.h>
 #include <libxml/globals.h>
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 
 
 #define HTTP_CHUNK_SIZE 10000

@@ -48,9 +48,9 @@
 #include <list>
 #include <mapix.h>
 #include <mapidefs.h>
-#include "ECLogger.h"
-#include "options.h"
-#include "charset/convert.h"
+#include <zarafa/ECLogger.h>
+#include <inetmapi/options.h>
+#include <zarafa/charset/convert.h>
 
 #define MAPI_CHARSET vmime::charset(vmime::charsets::UTF_8)
 #define MAPI_CHARSET_STRING "UTF-8"

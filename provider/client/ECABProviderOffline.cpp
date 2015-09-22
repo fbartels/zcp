@@ -41,20 +41,20 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <memory.h>
 #include <mapi.h>
 #include <mapiutil.h>
 #include <mapispi.h>
 
 
-#include "ECGuid.h"
-#include "edkguid.h"
+#include <zarafa/ECGuid.h>
+#include <edkguid.h>
 
-#include "Trace.h"
-#include "ECDebug.h"
+#include <zarafa/Trace.h>
+#include <zarafa/ECDebug.h>
 
-#include "ECTags.h"
+#include <zarafa/ECTags.h>
 
 #include "ECABProviderOffline.h"
 

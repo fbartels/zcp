@@ -41,17 +41,17 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "m4l.mapidefs.h"
 #include "m4l.mapix.h"
 #include "m4l.debug.h"
 #include "m4l.mapiutil.h"
 
-#include "ECDebug.h"
-#include "Util.h"
-#include "ECMemTable.h"
-#include "charset/convert.h"
-#include "ustringutil.h"
+#include <zarafa/ECDebug.h>
+#include <zarafa/Util.h>
+#include <zarafa/ECMemTable.h>
+#include <zarafa/charset/convert.h>
+#include <zarafa/ustringutil.h>
 
 #include <mapi.h>
 #include <mapicode.h>
@@ -59,8 +59,8 @@
 #include <mapix.h>
 #include <mapiutil.h>
 
-#include "ECConfig.h"
-#include "CommonUtil.h"
+#include <zarafa/ECConfig.h>
+#include <zarafa/CommonUtil.h>
 
 #include <set>
 

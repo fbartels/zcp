@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ECStatsTables.h"
 
 #include "SOAPUtils.h"
@@ -53,10 +53,10 @@
 #include <mapidefs.h>
 #include <mapicode.h>
 #include <mapitags.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <edkmdb.h>
-#include "ECTags.h"
-#include "stringutil.h"
+#include <zarafa/ECTags.h>
+#include <zarafa/stringutil.h>
 
 #include "ECStatsCollector.h"
 

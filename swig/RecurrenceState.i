@@ -2,7 +2,7 @@
 
 %{
 	/* parse header in the wrapper code */
-#include <platform.h>
+#include <zarafa/platform.h>
 #include <mapidefs.h>
 #include <mapix.h>
 	/* local version without nested classes */

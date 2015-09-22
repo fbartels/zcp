@@ -41,26 +41,26 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <mapidefs.h>
 #include <mapiutil.h>
 #include <mapitags.h>
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 
 #include "ECMessage.h"
 #include "ECAttach.h"
-#include "ECMemTable.h"
+#include <zarafa/ECMemTable.h>
 
-#include "codepage.h"
+#include <zarafa/codepage.h>
 #include "rtfutil.h"
-#include "Util.h"
+#include <zarafa/Util.h>
 #include "Mem.h"
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
-#include "ECGuid.h"
-#include "edkguid.h"
-#include "ECDebug.h"
+#include <zarafa/ECGuid.h>
+#include <edkguid.h>
+#include <zarafa/ECDebug.h>
 #include "WSUtil.h"
 
 
@@ -68,7 +68,7 @@
 #include "ECMemStream.h"
 
 #include <charset/utf32string.h>
-#include <charset/convert.h>
+#include <zarafa/charset/convert.h>
 
 using namespace std;
 

@@ -3,7 +3,7 @@
 %{
 #include <mapix.h>
 #include <mapidefs.h>
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "freebusy.h"
 #include "freebusyguid.h"
 #include "ECFreeBusySupport.h"

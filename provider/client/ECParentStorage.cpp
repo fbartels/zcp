@@ -41,18 +41,18 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ECParentStorage.h"
 
 #include "Mem.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 
 #include <mapiutil.h>
 
 // Utils
 #include "SOAPUtils.h"
 #include "WSUtil.h"
-#include "Util.h"
+#include <zarafa/Util.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

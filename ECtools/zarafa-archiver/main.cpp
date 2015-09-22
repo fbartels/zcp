@@ -41,15 +41,15 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <iostream>
-#include "stringutil.h"
-#include "my_getopt.h"
-#include "archiver-common.h"
-#include "charset/convert.h"
-#include "ECConfig.h"
-#include "ECLogger.h"
-#include "ecversion.h"
+#include <zarafa/stringutil.h>
+#include <zarafa/my_getopt.h>
+#include <zarafa/archiver-common.h>
+#include <zarafa/charset/convert.h>
+#include <zarafa/ECConfig.h>
+#include <zarafa/ECLogger.h>
+#include <zarafa/ecversion.h>
 #include "Archiver.h"
 
 #ifdef LINUX

@@ -45,8 +45,8 @@
 #define ECDATABASEFACTORY_H
 
 #include "ECDatabase.h"
-#include "ECConfig.h"
-#include "ECLogger.h"
+#include <zarafa/ECConfig.h>
+#include <zarafa/ECLogger.h>
 
 // The ECDatabaseFactory creates database objects connected to the server database. Which
 // database is returned is chosen by the database_engine configuration setting.

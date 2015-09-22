@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <mapiguid.h>
 #include <mapicode.h>
@@ -49,9 +49,9 @@
 
 #include "ECAttach.h"
 
-#include "ECGuid.h"
-#include "ECDebug.h"
-#include "ECInterfaceDefs.h"
+#include <zarafa/ECGuid.h>
+#include <zarafa/ECDebug.h>
+#include <zarafa/ECInterfaceDefs.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

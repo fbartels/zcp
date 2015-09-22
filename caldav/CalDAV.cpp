@@ -41,11 +41,11 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "mapidefs.h"
-#include "ECChannel.h"
+#include <zarafa/ECChannel.h>
 #include <mapix.h>
-#include "MAPIErrors.h"
+#include <zarafa/MAPIErrors.h>
 #include "Http.h"
 #include "CalDavUtil.h"
 #include "iCal.h"
@@ -57,11 +57,11 @@
 #include <iostream>
 #include <string>
 
-#include "ECLogger.h"
-#include "ECChannel.h"
-#include "my_getopt.h"
-#include "ecversion.h"
-#include "CommonUtil.h"
+#include <zarafa/ECLogger.h>
+#include <zarafa/ECChannel.h>
+#include <zarafa/my_getopt.h>
+#include <zarafa/ecversion.h>
+#include <zarafa/CommonUtil.h>
 #include "SSLUtil.h"
 
 #include "TmpPath.h"
@@ -70,7 +70,7 @@ using namespace std;
 
 #ifdef LINUX
 #include <execinfo.h>
-#include "UnixUtil.h"
+#include <zarafa/UnixUtil.h>
 #endif
 
 #if HAVE_ICU

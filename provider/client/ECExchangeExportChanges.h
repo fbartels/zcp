@@ -44,7 +44,7 @@
 #ifndef ECEXCHANGEEXPORTCHANGES_H
 #define ECEXCHANGEEXPORTCHANGES_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <mapidefs.h>
 #include <vector>
 #include <set>
@@ -53,8 +53,8 @@
 #include "ECICS.h"
 #include "ECMAPIProp.h"
 
-#include <ECLogger.h>
-#include <ECUnknown.h>
+#include <zarafa/ECLogger.h>
+#include <zarafa/ECUnknown.h>
 #include <IECExportChanges.h>
 #include <IECImportContentsChanges.h>
 

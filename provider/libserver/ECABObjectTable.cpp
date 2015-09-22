@@ -41,16 +41,16 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include "Zarafa.h"
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 
 #include <mapidefs.h>
 #include <mapitags.h>
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 
-#include <EMSAbTag.h>
+#include <zarafa/EMSAbTag.h>
 
 #include "SOAPUtils.h"
 #include "ECABObjectTable.h"
@@ -58,7 +58,7 @@
 
 #include "ECSession.h"
 #include "ECSessionManager.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

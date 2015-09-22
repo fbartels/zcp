@@ -41,24 +41,24 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ECArchiveAwareMsgStore.h"
 #include "ECArchiveAwareAttach.h"
-#include "ECGuid.h"
-#include "edkguid.h"
-#include "mapi_ptr.h"
+#include <zarafa/ECGuid.h>
+#include <edkguid.h>
+#include <zarafa/mapi_ptr.h>
 #include "IECPropStorage.h"
 #include "Mem.h"
 
-#include <mapiext.h>
-#include "mapiguidext.h"
+#include <zarafa/mapiext.h>
+#include <zarafa/mapiguidext.h>
 #include "ECArchiveAwareMessage.h"
-#include "ECGetText.h"
-#include "stringutil.h"
+#include <zarafa/ECGetText.h>
+#include <zarafa/stringutil.h>
 
 #include <sstream>
-#include "ECDebug.h"
-#include "charset/convert.h"
+#include <zarafa/ECDebug.h>
+#include <zarafa/charset/convert.h>
 
 #ifdef HAVE_OFFLINE_SUPPORT
 #include "ECOfflineState.h"

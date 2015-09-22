@@ -48,10 +48,10 @@
 #ifndef ECDATABASEMYSQL_H
 #define ECDATABASEMYSQL_H
 
-#include "platform.h"
-#include "ECConfig.h"
-#include "ECLogger.h"
-#include "ZarafaCode.h"
+#include <zarafa/platform.h>
+#include <zarafa/ECConfig.h>
+#include <zarafa/ECLogger.h>
+#include <zarafa/ZarafaCode.h>
 
 #include <pthread.h>
 #include <mysql.h>

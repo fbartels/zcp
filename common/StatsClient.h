@@ -44,7 +44,7 @@
 #ifndef __STATSCLIENT_H__
 #define __STATSCLIENT_H__
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <map>
 #include <string>
 #include <ctime>
@@ -52,7 +52,7 @@
 #include <sys/types.h>
 #include <sys/un.h>
 
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 
 class StatsClient _zcp_final {
 private:

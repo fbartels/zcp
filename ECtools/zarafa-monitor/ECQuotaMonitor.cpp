@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 // Mapi includes
 #include <mapi.h>
@@ -52,22 +52,22 @@
 #include <edkmdb.h>
 
 //Zarafa includes
-#include "ECDefs.h"
-#include "ECABEntryID.h"
-#include "IECUnknown.h"
-#include "Util.h"
-#include "ecversion.h"
-#include "charset/convert.h"
-#include "mapi_ptr.h"
+#include <zarafa/ECDefs.h>
+#include <zarafa/ECABEntryID.h>"
+#include <zarafa/IECUnknown.h>
+#include <zarafa/Util.h>
+#include <zarafa/ecversion.h>
+#include <zarafa/charset/convert.h>
+#include <zarafa/mapi_ptr.h>
 
-//#include "IECSecurity.h"
-#include "ECGuid.h"
-#include "ECTags.h"
-#include "IECServiceAdmin.h"
-#include "CommonUtil.h"
-#include "stringutil.h"
-#include "mapiext.h"
-#include "restrictionutil.h"
+//#include <zarafa/IECSecurity.h>
+#include <zarafa/ECGuid.h>
+#include <zarafa/ECTags.h>
+#include <zarafa/IECServiceAdmin.h>
+#include <zarafa/CommonUtil.h>
+#include <zarafa/stringutil.h>
+#include <zarafa/mapiext.h>
+#include <zarafa/restrictionutil.h>"
 
 // Other
 #include "ECMonitorDefs.h"

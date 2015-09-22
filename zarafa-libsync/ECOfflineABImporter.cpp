@@ -41,14 +41,14 @@
  *
  */
 
-#include <platform.h>
+#include <zarafa/platform.h>
 
 #include "ECOfflineABImporter.h"
 #include "ECSyncLog.h"
 
-#include <ECLogger.h>
-#include <ECABEntryID.h>
-#include <stringutil.h>
+#include <zarafa/ECLogger.h>
+#include <zarafa/ECABEntryID.h>>
+#include <zarafa/stringutil.h>
 
 #include <mapix.h>
 #include <edkmdb.h>

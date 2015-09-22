@@ -41,9 +41,9 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 
 #ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
@@ -56,7 +56,7 @@
 #include "ECServerEntrypoint.h"
 #include "ECClientUpdate.h"
 #ifdef LINUX
-#include "UnixUtil.h"
+#include <zarafa/UnixUtil.h>
 #endif
 
 extern ECLogger *g_lpLogger;

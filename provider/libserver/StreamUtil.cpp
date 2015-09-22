@@ -41,7 +41,7 @@
  *
  */
 
-#include <platform.h>
+#include <zarafa/platform.h>
 
 #include "StreamUtil.h"
 #include "StorageUtil.h"
@@ -53,16 +53,16 @@
 #include "ECTPropsPurge.h"
 #include "ECICS.h"
 #include "ECMemStream.h"
-#include "MAPIErrors.h"
+#include <zarafa/MAPIErrors.h>
 
-#include "charset/convert.h"
-#include "charset/utf8string.h"
+#include <zarafa/charset/convert.h>
+#include <zarafa/charset/utf8string.h>
 
 #include <ECFifoBuffer.h>
 #include <ECSerializer.h>
-#include <stringutil.h>
+#include <zarafa/stringutil.h>
 #include <mapitags.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <mapidefs.h>
 #include <edkmdb.h>
 

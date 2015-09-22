@@ -54,7 +54,7 @@
 #include <sys/types.h>
 
 #include "TmpPath.h"
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 
 TmpPath::TmpPath() {
 #ifdef WIN32

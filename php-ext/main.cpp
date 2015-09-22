@@ -43,14 +43,15 @@
 
 #include "phpconfig.h"
 
-#include "platform.h"
-#include "ecversion.h"
+#include <zarafa/platform.h>
+#include <zarafa/ecversion.h>
 #include <cstdio>
 #include <syslog.h>
 #include <ctime>
 
-#include "ECLogger.h"
-#include "mapi_ptr.h"
+#include <zarafa/ECConfig.h>
+#include <zarafa/ECLogger.h>
+#include <zarafa/mapi_ptr.h>
 #include "ECRulesTableProxy.h"
 
 /*
@@ -197,15 +198,15 @@ ZEND_END_ARG_INFO()
 #include <mapitags.h>
 #include <mapidefs.h>
 
-#include "IECServiceAdmin.h"
-#include "IECSecurity.h"
-#include "IECUnknown.h"
+#include <zarafa/IECServiceAdmin.h>
+#include <zarafa/IECSecurity.h>
+#include <zarafa/IECUnknown.h>
 #include "IECExportChanges.h"
 #include "IECMultiStoreTable.h"
-#include "IECLicense.h"
+#include <zarafa/IECLicense.h>
 
-#include "ECTags.h"
-#include "ECDefs.h"
+#include <zarafa/ECTags.h>
+#include <zarafa/ECDefs.h>
 
 #define USES_IID_IMAPIProp
 #define USES_IID_IMAPIContainer
@@ -218,19 +219,19 @@ ZEND_END_ARG_INFO()
 
 #include "util.h"
 #include "rtfutil.h"
-#include "CommonUtil.h"
-#include "ECLogger.h"
+#include <zarafa/CommonUtil.h>
+#include <zarafa/ECLogger.h>
 
 #include "ECImportContentsChangesProxy.h"
 #include "ECImportHierarchyChangesProxy.h"
 #include "ECMemStream.h"
-#include "inetmapi.h"
-#include "options.h"
+#include <inetmapi/inetmapi.h>
+#include <inetmapi/options.h>
 
 #include <edkmdb.h>
 #include <mapiguid.h>
-#include "ECGuid.h"
-#include "edkguid.h"
+#include <zarafa/ECGuid.h>
+#include <edkguid.h>
 
 //Freebusy includes
 #include "ECFreeBusySupport.h"
@@ -242,8 +243,8 @@ ZEND_END_ARG_INFO()
 #include "typeconversion.h"
 #include "MAPINotifSink.h"
 
-#include "charset/convert.h"
-#include "charset/utf8string.h"
+#include <zarafa/charset/convert.h>
+#include <zarafa/charset/utf8string.h>
 #include "charset/localeutil.h"
 
 using namespace std;

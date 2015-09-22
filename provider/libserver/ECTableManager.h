@@ -48,7 +48,7 @@
 
 #include "ECDatabase.h"
 #include "ECGenericObjectTable.h"
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 
 
 class ECSession;

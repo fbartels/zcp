@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <sstream>
 
@@ -64,14 +64,14 @@
 #include "ECDatabaseUtils.h"
 #include "ECSecurity.h"
 #include "ECSubRestriction.h"
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 #include "SOAPUtils.h"
-#include "stringutil.h"
-#include "Trace.h"
+#include <zarafa/stringutil.h>
+#include <zarafa/Trace.h>
 #include "ECServerEntrypoint.h"
 #include "ECMailBoxTable.h"
 
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 #include <edkmdb.h>
 
 #ifdef _DEBUG

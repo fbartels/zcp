@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "config.h"
 
 #include <iostream>
@@ -57,14 +57,14 @@
 #include <map>
 #include <set>
 
-#include "CommonUtil.h"
-#include "stringutil.h"
-#include "ECTags.h"
-#include "my_getopt.h"
-#include "ecversion.h"
-#include "charset/convert.h"
+#include <zarafa/CommonUtil.h>
+#include <zarafa/stringutil.h>
+#include <zarafa/ECTags.h>
+#include <zarafa/my_getopt.h>
+#include <zarafa/ecversion.h>
+#include <zarafa/charset/convert.h>
 #include "MAPIConsoleTable.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 
 using namespace std;
 

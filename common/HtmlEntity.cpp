@@ -41,10 +41,10 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <string>
 #include "HtmlEntity.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 
 static const struct HTMLEntity_t {
 	const WCHAR *s;

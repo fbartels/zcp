@@ -43,7 +43,7 @@
 
 #pragma once
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <string>
 #include <map>
 #include <stack>

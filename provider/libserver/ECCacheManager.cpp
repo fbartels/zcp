@@ -43,7 +43,7 @@
 
 //
 //////////////////////////////////////////////////////////////////////
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <mapidefs.h>
 #include <mapitags.h>
@@ -55,9 +55,9 @@
 #include "ECCacheManager.h"
 
 #include "ECMAPI.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "ECGenericObjectTable.h"
-#include "threadutil.h"
+#include <zarafa/threadutil.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

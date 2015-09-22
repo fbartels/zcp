@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 /* Returns the rows for a contents- or hierarchytable
  *
@@ -66,11 +66,11 @@
  */
 
 #include "soapH.h"
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 
 #include <mapidefs.h>
 #include <mapitags.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 
 #include <sys/types.h>
 #ifdef LINUX
@@ -83,13 +83,13 @@
 #include "ZarafaUtil.h"
 #include "ECSecurity.h"
 #include "ECDatabaseUtils.h"
-#include "ECKeyTable.h"
+#include <zarafa/ECKeyTable.h>
 #include "ECGenProps.h"
 #include "ECGenericObjectTable.h"
 #include "SOAPUtils.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
-#include "Trace.h"
+#include <zarafa/Trace.h>
 #include "ECSessionManager.h"
        
 #include "ECSession.h"

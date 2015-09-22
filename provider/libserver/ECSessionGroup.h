@@ -52,10 +52,10 @@
 #include <map>
 #include <set>
 
-#include "ECKeyTable.h"
+#include <zarafa/ECKeyTable.h>
 #include "ECNotification.h"
-#include "ZarafaCode.h"
-#include "CommonUtil.h"
+#include <zarafa/ZarafaCode.h>
+#include <zarafa/CommonUtil.h>
 
 class ECSession;
 class ECSessionGroup;

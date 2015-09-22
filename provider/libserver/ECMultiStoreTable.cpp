@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ECDatabase.h"
 
 #include <mapidefs.h>
@@ -51,7 +51,7 @@
 #include "ECMultiStoreTable.h"
 #include "ECSession.h"
 #include "ECMAPI.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

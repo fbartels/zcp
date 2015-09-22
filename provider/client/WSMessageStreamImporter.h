@@ -44,12 +44,12 @@
 #ifndef WSMessageStreamImporter_INCLUDED
 #define WSMessageStreamImporter_INCLUDED
 
-#include "zcdefs.h"
-#include "ECUnknown.h"
-#include "mapi_ptr.h"
+#include <zarafa/zcdefs.h>
+#include <zarafa/ECUnknown.h>
+#include <zarafa/mapi_ptr.h>
 #include "soapStub.h"
 #include "ECFifoBuffer.h"
-#include "ECThreadPool.h"
+#include <zarafa/ECThreadPool.h>
 #include "WSTransport.h"
 
 class ECMAPIFolder;

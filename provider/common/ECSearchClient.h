@@ -44,13 +44,13 @@
 #ifndef ECSEARCHCLIENT_H
 #define ECSEARCHCLIENT_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <map>
 #include <set>
 #include <string>
 
 #include <soapH.h>
-#include <ZarafaCode.h>
+#include <zarafa/ZarafaCode.h>
 
 #include "ECChannelClient.h"
 

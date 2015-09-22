@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include "ECExchangeExportChanges.h"
 #include "WSMessageStreamExporter.h"
@@ -49,31 +49,31 @@
 
 #include <set>
 
-#include "Util.h"
-#include "ECGuid.h"
-#include "edkguid.h"
+#include <zarafa/Util.h>
+#include <zarafa/ECGuid.h>
+#include <edkguid.h>
 #include <mapiguid.h>
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 
 #include <mapiutil.h>
 #include "ZarafaICS.h"
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
 #include "Mem.h"
 #include "ECMessage.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "ECSyncLog.h"
 #include "ECSyncUtil.h"
 #include "ECSyncSettings.h"
 #include "EntryPoint.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 
 #ifdef LINUX
 // We use ntohl/htonl for network-order conversion
 #include <arpa/inet.h>
 #endif
 
-#include <charset/convert.h>
+#include <zarafa/charset/convert.h>
 
 #ifdef _DEBUG
 #undef THIS_FILE

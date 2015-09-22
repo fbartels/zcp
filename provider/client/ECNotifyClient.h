@@ -44,7 +44,7 @@
 #ifndef ECNOTIFYCLIENT_H
 #define ECNOTIFYCLIENT_H
 
-#include <ECUnknown.h>
+#include <zarafa/ECUnknown.h>
 #include <IECChangeAdviseSink.h>
 
 #include "ECICS.h"

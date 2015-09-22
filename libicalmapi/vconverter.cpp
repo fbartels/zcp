@@ -41,23 +41,23 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "vconverter.h"
 #include "valarm.h"
 #include "icalrecurrence.h"
 #include <mapi.h>
 #include <mapiutil.h>
-#include "mapiext.h"
-#include "restrictionutil.h"
-#include "CommonUtil.h"
-#include "Util.h"
+#include <zarafa/mapiext.h>
+#include <zarafa/restrictionutil.h>"
+#include <zarafa/CommonUtil.h>
+#include <zarafa/Util.h>
 #include "icaluid.h"
 #include "nameids.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include <ctime>
-#include "mapi_ptr.h"
-#include "namedprops.h"
-#include "base64.h"
+#include <zarafa/mapi_ptr.h>
+#include <zarafa/namedprops.h>
+#include <zarafa/base64.h>
 
 using namespace std;
 

@@ -44,7 +44,7 @@
 #ifndef EC_STATS_COLLECTOR_H
 #define EC_STATS_COLLECTOR_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <string>
 #include <map>
 #include <pthread.h>

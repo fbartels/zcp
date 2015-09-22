@@ -41,30 +41,30 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include "ECExchangeImportContentsChanges.h"
 #include "WSMessageStreamImporter.h"
 #include "ECMessageStreamImporterIStreamAdapter.h"
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "ECSyncLog.h"
 
-#include "Util.h"
-#include "edkguid.h"
-#include "ECGuid.h"
+#include <zarafa/Util.h>
+#include <edkguid.h>
+#include <zarafa/ECGuid.h>
 #include <mapiguid.h>
 #include "ECMessage.h"
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 
 #include "ZarafaICS.h"
-#include "mapiext.h"
-#include "mapi_ptr.h"
-#include "ECRestriction.h"
+#include <zarafa/mapiext.h>
+#include <zarafa/mapi_ptr.h>
+#include <zarafa/ECRestriction.h>
 
 #include <mapiutil.h>
 
-#include "charset/convert.h"
-#include "ECGetText.h"
+#include <zarafa/charset/convert.h>
+#include <zarafa/ECGetText.h>
 #include "EntryPoint.h"
 
 #include <list>

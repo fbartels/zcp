@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <new>          // std::bad_alloc
 #include <list>          // std::list
 #include "ArchiveControlImpl.h"
@@ -49,18 +49,19 @@
 #include "ArchiverSession.h"
 #include "ArchiveStateCollector.h"
 #include "ArchiveStateUpdater.h"
-#include "userutil.h"
-#include "mapiext.h"
+#include <zarafa/userutil.h>
+#include <zarafa/mapiext.h>
 #include "helpers/StoreHelper.h"
 #include "operations/copier.h"
 #include "operations/deleter.h"
 #include "operations/stubber.h"
-#include "restrictionutil.h"
+#include <zarafa/restrictionutil.h>"
+#include <zarafa/ECConfig.h>
 #include "ECIterators.h"
-#include "ECRestriction.h"
+#include <zarafa/ECRestriction.h>
 #include "HrException.h"
 #include "ArchiveManage.h"
-#include "MAPIErrors.h"
+#include <zarafa/MAPIErrors.h>
 
 using namespace za::helpers;
 using namespace za::operations;

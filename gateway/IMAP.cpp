@@ -41,7 +41,7 @@
  *
  */
 
-#include <platform.h>
+#include <zarafa/platform.h>
 
 #include <cstdio>
 #include <cstdlib>
@@ -56,32 +56,32 @@
 #include <mapidefs.h>
 #include <mapiutil.h>
 #include <mapiguid.h>
-#include <ECDefs.h>
-#include <CommonUtil.h>
-#include <ECTags.h>
+#include <zarafa/ECDefs.h>
+#include <zarafa/CommonUtil.h>
+#include <zarafa/ECTags.h>
 #include <ECIConv.h>
-#include <inetmapi.h>
-#include <mapiext.h>
+#include <inetmapi/inetmapi.h>
+#include <zarafa/mapiext.h>
 #include <vector>
 #include <list>
 #include <set>
 #include <map>
 #include <algorithm>
-#include <base64.h>
-#include <options.h>
+#include <zarafa/base64.h>
+#include <inetmapi/options.h>
 
 #include <edkmdb.h>
-#include "stringutil.h"
-#include "codepage.h"
-#include "charset/convert.h"
-#include "restrictionutil.h"
-#include "ecversion.h"
-#include "ECGuid.h"
-#include "namedprops.h"
+#include <zarafa/stringutil.h>
+#include <zarafa/codepage.h>
+#include <zarafa/charset/convert.h>
+#include <zarafa/restrictionutil.h>"
+#include <zarafa/ecversion.h>
+#include <zarafa/ECGuid.h>
+#include <zarafa/namedprops.h>
 #include "ECFeatures.h"
 
 #include <boost/algorithm/string/join.hpp>
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
 #include "IMAP.h"
 using namespace std;

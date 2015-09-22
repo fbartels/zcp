@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <mapidefs.h>
 #include <mapitags.h>
@@ -52,7 +52,7 @@
 #include "ECDatabaseFactory.h"
 #include "ECDatabaseUtils.h"
 #include "SOAPUtils.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "ECSessionManager.h"
 
 #include <pthread.h>

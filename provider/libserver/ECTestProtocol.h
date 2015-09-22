@@ -44,7 +44,7 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 
 struct soap;
 class ECSession;

@@ -52,7 +52,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 
 /* seems unused? */

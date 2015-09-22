@@ -44,11 +44,11 @@
 #ifndef WSMAPIPROPSTORAGE_H
 #define WSMAPIPROPSTORAGE_H
 
-#include "zcdefs.h"
-#include "ECUnknown.h"
+#include <zarafa/zcdefs.h>
+#include <zarafa/ECUnknown.h>
 #include "IECPropStorage.h"
 
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 #include "soapZarafaCmdProxy.h"
 #include "WSTransport.h"
 

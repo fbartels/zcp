@@ -41,8 +41,8 @@
  *
  */
 
-#include "platform.h"
-#include "stringutil.h"
+#include <zarafa/platform.h>
+#include <zarafa/stringutil.h>
 
 // Damn windows header defines max which break C++ header files
 #undef max
@@ -65,18 +65,18 @@
 // mapi
 #include <mapix.h>
 #include <mapiutil.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <edkmdb.h>
-#include "CommonUtil.h"
-#include "charset/convert.h"
+#include <zarafa/CommonUtil.h>
+#include <zarafa/charset/convert.h>
 // inetmapi
-#include "inetmapi.h"
+#include <inetmapi/inetmapi.h>
 #include "VMIMEToMAPI.h"
 #include "MAPIToVMIME.h"
 #include "ECVMIMEUtils.h"
 #include "ECMapiUtils.h"
-#include "ECLogger.h"
-#include "mapi_ptr.h"
+#include <zarafa/ECLogger.h>
+#include <zarafa/mapi_ptr.h>
 
 using namespace std;
 

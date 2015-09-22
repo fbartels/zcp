@@ -41,14 +41,14 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <mapidefs.h>
 #include <mapicode.h>
 #include <mapiguid.h>
 
-#include "ECUnknown.h"
-#include "ECGuid.h"
+#include <zarafa/ECUnknown.h>
+#include <zarafa/ECGuid.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

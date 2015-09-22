@@ -53,12 +53,12 @@
 #include <set>
 
 #include "soapH.h"
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 #include "ECNotification.h"
 #include "ECTableManager.h"
 
-#include "ECConfig.h"
-#include "ECLogger.h"
+#include <zarafa/ECConfig.h>
+#include <zarafa/ECLogger.h>
 #include "ECDatabaseFactory.h"
 #include "ECPluginFactory.h"
 #include "ECSessionGroup.h"

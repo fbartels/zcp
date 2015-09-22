@@ -44,10 +44,10 @@
 #ifndef ECEXCHANGEIMPORTCHIERARCHYCHANGES_H
 #define ECEXCHANGEIMPORTCHIERARCHYCHANGES_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <mapidefs.h>
 #include "ECMAPIFolder.h"
-#include "ECUnknown.h"
+#include <zarafa/ECUnknown.h>
 
 class ECExchangeImportHierarchyChanges : public ECUnknown {
 protected:

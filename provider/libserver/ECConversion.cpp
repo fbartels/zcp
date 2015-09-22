@@ -41,13 +41,13 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include "soapH.h"
 
 #include "SOAPUtils.h"
 #include "ECDatabase.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include <sstream>
 
 #include "ECConversion.h"

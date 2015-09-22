@@ -44,7 +44,7 @@
 #ifndef ECQUOTAMONITOR
 #define ECQUOTAMONITOR
 
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 
 #define TEMPLATE_LINE_LENGTH		1024
 

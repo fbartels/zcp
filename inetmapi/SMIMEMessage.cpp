@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <vmime/message.hpp>
 #include "SMIMEMessage.h"

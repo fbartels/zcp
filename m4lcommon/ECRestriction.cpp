@@ -41,10 +41,10 @@
  *
  */
 
-#include "platform.h"
-#include "ECRestriction.h"
-#include "Util.h"
-#include "mapi_ptr.h"
+#include <zarafa/platform.h>
+#include <zarafa/ECRestriction.h>
+#include <zarafa/Util.h>
+#include <zarafa/mapi_ptr.h>
 
 #include <mapicode.h>
 #include <mapix.h>

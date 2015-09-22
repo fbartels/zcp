@@ -44,7 +44,7 @@
 #ifndef ECDATABASEUPDATE_H
 #define ECDATABASEUPDATE_H
 
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 
 ECRESULT UpdateDatabaseCreateVersionsTable(ECDatabase *lpDatabase);
 ECRESULT UpdateDatabaseCreateSearchFolders(ECDatabase *lpDatabase);

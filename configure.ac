@@ -63,7 +63,12 @@ AC_SUBST([ZPHPCXXFLAGS])
 
 # default to debug mode
 # disable write-strings: too much complains about "" being 'cast' to char* (since const char* is not in the declarations) on g++-4.2 and higher
-ZCPPFLAGS="$BUILDOS -DHAVE_CONFIG_H"
+ZCPPFLAGS="$BUILDOS -DHAVE_CONFIG_H -I\${top_srcdir}/common/include \
+	-I\${top_srcdir}/m4lcommon/include \
+	-I\${top_srcdir}/ECtools/zarafa-archiver/include \
+	-I\${top_srcdir}/inetmapi/include \
+	-I\${top_srcdir}/swig/include \
+	-I\${top_srcdir}/swig/python/include"
 ZCXXFLAGS="-Wall -Wmissing-declarations -Wno-write-strings"
 if ! test "$want_release" = "yes"; then
 # when using -pedantic, -Wno-long-long is required
@@ -730,6 +735,7 @@ AC_CONFIG_FILES([Makefile
 		mapi4linux/include/Makefile
 		mapi4linux/src/Makefile
 		m4lcommon/Makefile
+		m4lcommon/include/zarafa/Makefile
 		php-ext/Makefile
 		provider/Makefile
 		provider/client/Makefile
@@ -741,10 +747,12 @@ AC_CONFIG_FILES([Makefile
 		provider/server/Makefile
 		provider/soap/Makefile
 		inetmapi/Makefile
+		inetmapi/include/inetmapi/Makefile
 		spooler/Makefile
 		spooler/python/Makefile
 		spooler/python/plugins/Makefile
 		common/Makefile
+		common/include/zarafa/Makefile
 		ECtools/Makefile
 		ECtools/zarafa-admin/Makefile
 		ECtools/zarafa-passwd/Makefile
@@ -753,6 +761,7 @@ AC_CONFIG_FILES([Makefile
 		ECtools/zarafa-cfgchecker/Makefile
 		ECtools/zarafa-stats/Makefile
 		ECtools/zarafa-archiver/Makefile
+		ECtools/zarafa-archiver/include/zarafa/Makefile
 		ECtools/zarafa-search/Makefile
 		ECtools/zarafa-utils/Makefile
 		installer/Makefile
@@ -779,7 +788,9 @@ AC_CONFIG_FILES([Makefile
 		libicalmapi/Makefile
 		caldav/Makefile
 		swig/Makefile
+		swig/include/zarafa/Makefile
 		swig/python/Makefile
+		swig/python/include/zarafa/Makefile
 		swig/python/zarafa/Makefile
 		zarafa-libsync/Makefile
 

@@ -44,8 +44,8 @@
 #ifndef utf32string_INCLUDED
 #define utf32string_INCLUDED
 
-#include "zcdefs.h"
-#include "traits.h"
+#include <zarafa/zcdefs.h>
+#include <zarafa/charset/traits.h>
 
 #ifdef LINUX
 // The utf32string type

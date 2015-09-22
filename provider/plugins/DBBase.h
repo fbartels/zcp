@@ -50,7 +50,7 @@
 #include <string>
 
 #include "ECDatabase.h"
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 
 /**
  * @defgroup userplugin_dbbase Database common for user plugins

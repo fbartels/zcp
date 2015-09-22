@@ -44,17 +44,17 @@
 // ECMailUser.cpp: implementation of the ECMailUser class.
 //
 //////////////////////////////////////////////////////////////////////
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include "resource.h"
 #include <mapiutil.h>
 #include "Zarafa.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "ECMailUser.h"
 
 #include "Mem.h"
-#include "ECGuid.h"
-#include "ECDebug.h"
+#include <zarafa/ECGuid.h>
+#include <zarafa/ECDebug.h>
 
 #include "ECDisplayTable.h"
 

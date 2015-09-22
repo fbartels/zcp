@@ -44,7 +44,7 @@
 // zarafa-monitor.cpp : Defines the entry point for the console application.
 //
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #ifdef _WIN32
 	#include "ECNTService.h"
@@ -62,17 +62,17 @@
 
 #include <mapiguid.h>
 #include <cctype>
-#include "my_getopt.h"
+#include <zarafa/my_getopt.h>
 
-#include "ECScheduler.h"
+#include <zarafa/ECScheduler.h>
 #include "ECMonitorDefs.h"
 #include "ECQuotaMonitor.h"
 
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #ifdef LINUX
-#include "UnixUtil.h"
+#include <zarafa/UnixUtil.h>
 #endif
-#include "ecversion.h"
+#include <zarafa/ecversion.h>
 #include "charset/localeutil.h"
 
 using namespace std;

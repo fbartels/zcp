@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "m4l.mapix.h"
 #include "m4l.mapispi.h"
 #include "m4l.debug.h"
@@ -53,23 +53,23 @@
 #include <pthread.h>
 #include <cstring>
 
-#include "Util.h"
+#include <zarafa/Util.h>
 
-#include "ECConfig.h"
-#include "ECDebug.h"
-#include "ECGuid.h"
-#include "ECMemTable.h"
-#include "charset/utf16string.h"
+#include <zarafa/ECConfig.h>
+#include <zarafa/ECDebug.h>
+#include <zarafa/ECGuid.h>
+#include <zarafa/ECMemTable.h>
+#include <zarafa/charset/utf16string.h>
 
-#include "CommonUtil.h"
-#include "stringutil.h"
-#include "mapiguidext.h"
-#include "ECRestriction.h"
-#include "../common/MAPIErrors.h"
+#include <zarafa/CommonUtil.h>
+#include <zarafa/stringutil.h>
+#include <zarafa/mapiguidext.h>
+#include <zarafa/ECRestriction.h>
+#include <zarafa/MAPIErrors.h>
 
 #include <string>
 #include <map>
-#include <charset/convert.h>
+#include <zarafa/charset/convert.h>
 
 #ifdef WIN32
 HMODULE g_hLibMapi = 0;

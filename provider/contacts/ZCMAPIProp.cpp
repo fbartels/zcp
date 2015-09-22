@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ZCMAPIProp.h"
 #include "ZCABData.h"
 
@@ -50,11 +50,11 @@
 #include <mapicode.h>
 #include <mapiutil.h>
 
-#include "Util.h"
-#include "ECGuid.h"
-#include "mapi_ptr.h"
-#include "namedprops.h"
-#include "mapiguidext.h"
+#include <zarafa/Util.h>
+#include <zarafa/ECGuid.h>
+#include <zarafa/mapi_ptr.h>
+#include <zarafa/namedprops.h>
+#include <zarafa/mapiguidext.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

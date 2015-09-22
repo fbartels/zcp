@@ -41,20 +41,20 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ECMemTablePublic.h"
 
 #include "Mem.h"
-#include "ECGuid.h"
-#include "edkguid.h"
-#include "Util.h"
+#include <zarafa/ECGuid.h>
+#include <edkguid.h>
+#include <zarafa/Util.h>
 #include "ClientUtil.h"
 
 #include <edkmdb.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 
 #include "ECMsgStorePublic.h"
-#include "restrictionutil.h"
+#include <zarafa/restrictionutil.h>"
 #include "favoritesutil.h"
 
 #ifdef _DEBUG

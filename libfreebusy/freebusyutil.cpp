@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <mapi.h>
 #include <mapidefs.h>
@@ -49,10 +49,10 @@
 #include <mapiutil.h>
 
 #include "freebusyutil.h"
-#include <stringutil.h>
+#include <zarafa/stringutil.h>
 
 #include "freebusytags.h"
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 #include <edkmdb.h>
 
 #ifdef _DEBUG

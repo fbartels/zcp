@@ -45,7 +45,7 @@
 #define ECMAPIFOLDERPUBLIC_H
 
 #include "ECMAPIFolder.h"
-#include "ECMemTable.h"
+#include <zarafa/ECMemTable.h>
 #include "ClientUtil.h"
 
 class ECMAPIFolderPublic : public ECMAPIFolder

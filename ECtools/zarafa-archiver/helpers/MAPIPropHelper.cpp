@@ -41,16 +41,16 @@
  *
  */
 
-#include <platform.h>
+#include <zarafa/platform.h>
 #include "MAPIPropHelper.h"
 
 #include "ArchiverSession.h"
-#include "archiver-common.h"
+#include <zarafa/archiver-common.h>
 
 #include <mapiutil.h>
-#include <Util.h>
-#include <mapi_ptr.h>
-#include "mapiguidext.h"
+#include <zarafa/Util.h>
+#include <zarafa/mapi_ptr.h>
+#include <zarafa/mapiguidext.h>
 
 using namespace std;
 

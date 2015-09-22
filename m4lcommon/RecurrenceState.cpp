@@ -41,18 +41,18 @@
  *
  */
 
-#include "zcdefs.h"
-#include "platform.h"
+#include <zarafa/zcdefs.h>
+#include <zarafa/platform.h>
 
 #include <cstdio>
 #include <mapi.h>
 #include <mapix.h>
 #include <mapicode.h>
 
-#include "stringutil.h"
-#include "RecurrenceState.h"
-#include "charset/convert.h"
-#include "charset/utf16string.h"
+#include <zarafa/stringutil.h>
+#include <zarafa/RecurrenceState.h>
+#include <zarafa/charset/convert.h>
+#include <zarafa/charset/utf16string.h>
 
 #ifndef WIN32
 #define DEBUGREAD 0

@@ -41,17 +41,17 @@
  *
  */
 
-#include <platform.h>
+#include <zarafa/platform.h>
 
 #ifdef LINUX
 #include <sys/un.h>
 #include <sys/socket.h>
 #endif
 
-#include <base64.h>
-#include <ECChannel.h>
-#include <ECDefs.h>
-#include <stringutil.h>
+#include <zarafa/base64.h>
+#include <zarafa/ECChannel.h>
+#include <zarafa/ECDefs.h>
+#include <zarafa/stringutil.h>
 
 #include "ECSearchClient.h"
 

@@ -41,8 +41,8 @@
  *
  */
 
-#include "traits.h"
-#include "utf16string.h"
+#include <zarafa/charset/traits.h>
+#include <zarafa/charset/utf16string.h>
 #include "utf32string.h"
 
 #ifdef _DEBUG

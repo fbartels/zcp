@@ -49,7 +49,7 @@
 #include "transaction_fwd.h"
 #include "instanceidmapper_fwd.h"
 #include "ArchiverSessionPtr.h"     // For ArchiverSessionPtr
-#include "archiver-common.h"
+#include <zarafa/archiver-common.h>
 #include <map>
 #include <boost/smart_ptr.hpp>
 

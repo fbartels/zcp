@@ -45,21 +45,21 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <mapispi.h>
 #include <mapix.h>
 
-#include "ECDebug.h"
+#include <zarafa/ECDebug.h>
 #include "ECMsgStore.h"
 #include "ECNotifyClient.h"
 #include "ECSessionGroupManager.h"
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "SOAPUtils.h"
 #include "WSUtil.h"
-#include "Util.h"
-#include "stringutil.h"
-#include "mapiext.h"
+#include <zarafa/Util.h>
+#include <zarafa/stringutil.h>
+#include <zarafa/mapiext.h>
 
 #ifdef WIN32
 #define NOTIFY_THROUGH_SUPPORT_OBJECT

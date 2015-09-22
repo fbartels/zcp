@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <mapitags.h>
 #include <mapidefs.h>
@@ -50,20 +50,20 @@
 #include <libintl.h>
 
 #include "ECMAPI.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "SOAPUtils.h"
 #include "soapH.h"
 #include "ECStoreObjectTable.h"
 #include "ECGenProps.h"
 #include "Zarafa.h"
-#include "ECDefs.h"
+#include <zarafa/ECDefs.h>
 #include "ECUserManagement.h"
 #include "ECSecurity.h"
 #include "ECSessionManager.h"
 #include "ECLockManager.h"
 
 #include <edkmdb.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

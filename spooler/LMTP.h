@@ -46,9 +46,9 @@
 
 #include <string>
 #include <vector>
-#include "ECChannel.h"
-#include "ECLogger.h"
-#include "ECConfig.h"
+#include <zarafa/ECChannel.h>
+#include <zarafa/ECLogger.h>
+#include <zarafa/ECConfig.h>
 
 enum LMTP_Command {LMTP_Command_LHLO, LMTP_Command_MAIL_FROM, LMTP_Command_RCPT_TO, LMTP_Command_DATA, LMTP_Command_RSET, LMTP_Command_QUIT };
 

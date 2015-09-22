@@ -41,13 +41,13 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <mapiutil.h>
 #include <edkguid.h>
 #include <list>
 
-#include "ECGetText.h"
+#include <zarafa/ECGetText.h>
 
 #include "Mem.h"
 #include "ECMessage.h"
@@ -57,15 +57,15 @@
 #include "ECMAPIProp.h"
 #include "WSTransport.h"
 
-#include "ECTags.h"
+#include <zarafa/ECTags.h>
 
-#include "ECGuid.h"
-#include "ECDebug.h"
+#include <zarafa/ECGuid.h>
+#include <zarafa/ECDebug.h>
 
-#include "mapiext.h"
+#include <zarafa/mapiext.h>
 
 #include "freebusytags.h"
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "ClientUtil.h"
 #include "ZarafaUtil.h"
 
@@ -78,17 +78,17 @@
 #include "ProviderUtil.h"
 #include "EntryPoint.h"
 
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "ECOfflineState.h"
 
 #include "ECExchangeModifyTable.h"
 
-#include <mapi_ptr.h>
+#include <zarafa/mapi_ptr.h>
 typedef mapi_memory_ptr<char> MAPIStringPtr;
 typedef mapi_object_ptr<WSTransport> WSTransportPtr;
 typedef mapi_object_ptr<ECMessage, IID_ECMessage> ECMessagePtr;
 
-#include <charset/convstring.h>
+#include <zarafa/charset/convstring.h>
 
 using namespace std;
 

@@ -48,12 +48,12 @@
 #include <map>
 #include <pthread.h>
 
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 #include "ZarafaUser.h"
-#include "ECConfig.h"
+#include <zarafa/ECConfig.h>
 #include "ECSession.h"
-#include "ECLogger.h"
-#include "ECDefs.h"
+#include <zarafa/ECLogger.h>
+#include <zarafa/ECDefs.h>
 #include "plugin.h"
 
 #include <boost/date_time/posix_time/posix_time_types.hpp>

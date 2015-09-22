@@ -41,18 +41,18 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
-#include <stringutil.h>
+#include <zarafa/stringutil.h>
 
-#include "threadutil.h"
-#include "ECLogger.h"
-#include "ECConfig.h"
+#include <zarafa/threadutil.h>
+#include <zarafa/ECLogger.h>
+#include <zarafa/ECConfig.h>
 #include "ECSession.h"
 #include "ECSessionManager.h"
 #include "ECDatabaseFactory.h"
 #include "ECStatsCollector.h"
-#include "ZarafaCode.h"
+#include <zarafa/ZarafaCode.h>
 
 #include "ECTPropsPurge.h"
 

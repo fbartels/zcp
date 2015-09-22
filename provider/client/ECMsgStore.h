@@ -44,23 +44,23 @@
 #ifndef ECMSGSTORE_H
 #define ECMSGSTORE_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 #include <mapidefs.h>
 #include <mapispi.h>
 
 //NOTE: windows in $TOP/common/windows, linux in $TOP/mapi4linux/include
 #include <edkmdb.h>
 
-#include "ECUnknown.h"
+#include <zarafa/ECUnknown.h>
 #include "ECMAPIProp.h"
 #include "WSTransport.h"
 #include "ECNotifyClient.h"
 #include "ECNamedProp.h"
 
-#include "IECServiceAdmin.h"
+#include <zarafa/IECServiceAdmin.h>
 #include "IECSpooler.h"
 #include "IECMultiStoreTable.h"
-#include "IECLicense.h"
+#include <zarafa/IECLicense.h>
 #include "IECTestProtocol.h"
 
 #include "IMAPIOffline.h"

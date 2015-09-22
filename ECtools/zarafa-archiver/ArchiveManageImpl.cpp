@@ -49,12 +49,13 @@
 #include "ArchiveManageImpl.h"
 #include "ArchiverSession.h"
 #include "helpers/StoreHelper.h"
-#include "charset/convert.h"
+#include <zarafa/charset/convert.h>
 #include "ECACL.h"
-#include "userutil.h"
+#include <zarafa/ECConfig.h>
+#include <zarafa/userutil.h>
 #include "ArchiveStateUpdater.h"
-#include "ECRestriction.h"
-#include "MAPIErrors.h"
+#include <zarafa/ECRestriction.h>
+#include <zarafa/MAPIErrors.h>
     
 using namespace za::helpers;
 

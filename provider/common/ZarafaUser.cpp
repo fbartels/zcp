@@ -41,9 +41,9 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "ZarafaUser.h"
 
 #include <sstream>

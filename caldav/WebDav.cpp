@@ -41,10 +41,10 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "WebDav.h"
-#include "stringutil.h"
-#include "CommonUtil.h"
+#include <zarafa/stringutil.h>
+#include <zarafa/CommonUtil.h>
 #include <libical/ical.h>
 
 using namespace std;

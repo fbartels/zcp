@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <string>
 #include <vector>
@@ -51,10 +51,10 @@
 #include <sys/socket.h>
 #endif
 
-#include "ECDefs.h"
-#include "ECChannel.h"
-#include "base64.h"
-#include "stringutil.h"
+#include <zarafa/ECDefs.h>
+#include <zarafa/ECChannel.h>
+#include <zarafa/base64.h>
+#include <zarafa/stringutil.h>
 
 #include "ECLicenseClient.h"
 

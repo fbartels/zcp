@@ -71,7 +71,7 @@
  * Detail:
  * see rfc.
  */
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <cstdio>
 #include <cstdlib>
 
@@ -79,7 +79,7 @@
 #include <algorithm>
 #include <map>
 
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 #include "fileutil.h"
 #include "PyMapiPlugin.h"
 
@@ -110,46 +110,46 @@
 #define USES_IID_IMAPIFolder
 #define USES_IID_IExchangeManageStore
 #define USES_IID_IMsgStore
-#include <ECGuid.h>
+#include <zarafa/ECGuid.h>
 
-#include <inetmapi.h>
+#include <inetmapi/inetmapi.h>
 
 #include <mapi.h>
 #include <mapix.h>
 #include <mapiutil.h>
 #include <mapidefs.h>
-#include <mapiext.h>
+#include <zarafa/mapiext.h>
 #include <mapiguid.h>
-#include "edkguid.h"
+#include <edkguid.h>
 #include <edkmdb.h>
-#include "EMSAbTag.h"
+#include <zarafa/EMSAbTag.h>
 
 #include <cctype>
 #include <ctime>
 
-#include "stringutil.h"
-#include "CommonUtil.h"
-#include "Util.h"
-#include "ECLogger.h"
-#include "my_getopt.h"
-#include "restrictionutil.h"
+#include <zarafa/stringutil.h>
+#include <zarafa/CommonUtil.h>
+#include <zarafa/Util.h>
+#include <zarafa/ECLogger.h>
+#include <zarafa/my_getopt.h>
+#include <zarafa/restrictionutil.h>"
 #include "rules.h"
 #include "archive.h"
 #include "helpers/MAPIPropHelper.h"
-#include "options.h"			// inetmapi/options.h
-#include "charset/convert.h"
-#include "base64.h"
+#include <inetmapi/options.h>
+#include <zarafa/charset/convert.h>
+#include <zarafa/base64.h>
 
-#include "IECServiceAdmin.h"
-#include "IECUnknown.h"
-#include "ECTags.h"
+#include <zarafa/IECServiceAdmin.h>
+#include <zarafa/IECUnknown.h>
+#include <zarafa/ECTags.h>
 #include "ECFeatures.h"
 
-#include "ECChannel.h"
-#include "UnixUtil.h"
+#include <zarafa/ECChannel.h>
+#include <zarafa/UnixUtil.h>
 #include "LMTP.h"
-#include "ecversion.h"
-#include "platform.h"
+#include <zarafa/ecversion.h>
+#include <zarafa/platform.h>
 #include <csignal>
 #include "SSLUtil.h"
 #include "StatsClient.h"

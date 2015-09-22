@@ -41,27 +41,27 @@
  *
  */
 
-#include "zcdefs.h"
-#include "platform.h"
+#include <zarafa/zcdefs.h>
+#include <zarafa/platform.h>
 
 #include <mapi.h>
 #include <mapiutil.h>
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 
-#include "userutil.h"
+#include <zarafa/userutil.h>
 
-#include <charset/utf8string.h>
-#include <charset/convert.h>
-#include "ECDefs.h"
-#include "ECGuid.h"
-#include "IECServiceAdmin.h"
+#include <zarafa/charset/utf8string.h>
+#include <zarafa/charset/convert.h>
+#include <zarafa/ECDefs.h>
+#include <zarafa/ECGuid.h>
+#include <zarafa/IECServiceAdmin.h>
 #include <edkmdb.h>
-#include "edkguid.h"
-#include "IECLicense.h"
-#include "CommonUtil.h"
-#include "ECRestriction.h"
-#include "mapi_ptr.h"
-#include "mapiguidext.h"
+#include <edkguid.h>
+#include <zarafa/IECLicense.h>
+#include <zarafa/CommonUtil.h>
+#include <zarafa/ECRestriction.h>
+#include <zarafa/mapi_ptr.h>
+#include <zarafa/mapiguidext.h>
 
 using namespace std;
 

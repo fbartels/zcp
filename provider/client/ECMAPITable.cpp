@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <mapicode.h>
 #include <mapidefs.h>
@@ -51,12 +51,12 @@
 
 #include "Mem.h"
 #include "ECMAPITable.h"
-#include "edkguid.h"
-#include "ECGuid.h"
-#include "Util.h"
+#include <edkguid.h>
+#include <zarafa/ECGuid.h>
+#include <zarafa/Util.h>
 
-#include "ECDebug.h"
-#include "ECInterfaceDefs.h"
+#include <zarafa/ECDebug.h>
+#include <zarafa/ECInterfaceDefs.h>
 
 
 #ifdef _DEBUG

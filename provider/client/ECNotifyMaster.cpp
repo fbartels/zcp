@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include <algorithm>
 
@@ -50,7 +50,7 @@
 #include "ECNotifyClient.h"
 #include "ECNotifyMaster.h"
 #include "ECSessionGroupManager.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "SOAPUtils.h"
 #include "WSTransport.h"
 

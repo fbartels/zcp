@@ -44,7 +44,7 @@
 #ifndef ISTREAMADAPTER_H
 #define ISTREAMADAPTER_H
 
-#include "zcdefs.h"
+#include <zarafa/zcdefs.h>
 
 class IStreamAdapter _zcp_final : public IStream {
 public:

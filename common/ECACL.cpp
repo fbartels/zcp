@@ -41,10 +41,10 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ECACL.h"
-#include "CommonUtil.h"
-#include "stringutil.h"
+#include <zarafa/CommonUtil.h>
+#include <zarafa/stringutil.h>
 
 #include <sstream>
 #include <algorithm>

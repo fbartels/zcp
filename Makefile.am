@@ -16,20 +16,19 @@ SUBDIRS += swig
 endif
 endif
 
-#EXTRA_DIST = version common/ecversion.h php-webclient-ajax
-EXTRA_DIST = version versionheader.sh common/ecversion.h php-webclient-ajax \
+#EXTRA_DIST = version php-webclient-ajax
+EXTRA_DIST = version versionheader.sh php-webclient-ajax \
 	LICENSE.txt CONTRIBUTORS.txt AGPL-3 TRADEMARKS.txt \
 	lddcheck global.am pwdcheck.sh
 
-BUILT_SOURCES = source-moved-check common/ecversion.h
+BUILT_SOURCES = source-moved-check common/include/zarafa/ecversion.h
 
 .PHONY: source-moved-check
 source-moved-check:
 	@${top_srcdir}/pwdcheck.sh "${abs_top_builddir}"
 
-common/ecversion.h: versionheader.sh
-	sh ${top_srcdir}/versionheader.sh > common/ecversion.h
-
+common/include/zarafa/ecversion.h: versionheader.sh
+	sh ${top_srcdir}/versionheader.sh >$@
 
 dist-hook:
 	find $(distdir) -type d -name .svn -exec rm -rf {} \; 2>/dev/null || true

@@ -41,26 +41,26 @@
  *
  */
 
-#include <platform.h>
+#include <zarafa/platform.h>
 
 #include <iostream>
 #include <map>
 
-#include <CommonUtil.h>
-#include <mapiext.h>
-#include <mapiguidext.h>
+#include <zarafa/CommonUtil.h>
+#include <zarafa/mapiext.h>
+#include <zarafa/mapiguidext.h>
 #include <mapiutil.h>
 #include <mapix.h>
-#include <my_getopt.h>
-#include <namedprops.h>
-#include <stringutil.h>
+#include <zarafa/my_getopt.h>
+#include <zarafa/namedprops.h>
+#include <zarafa/stringutil.h>
 #include <edkmdb.h>
 #include <edkguid.h>
-#include "charset/convert.h"
-#include "ecversion.h"
+#include <zarafa/charset/convert.h>
+#include <zarafa/ecversion.h>
 #include "charset/localeutil.h"
-#include "Util.h"
-#include "ECLogger.h"
+#include <zarafa/Util.h>
+#include <zarafa/ECLogger.h>
 #include "zarafa-fsck.h"
 
 using namespace std;

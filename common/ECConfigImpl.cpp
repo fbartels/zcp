@@ -41,8 +41,8 @@
  *
  */
 
-#include "zcdefs.h"
-#include "platform.h"
+#include <zarafa/zcdefs.h>
+#include <zarafa/platform.h>
 
 #include <cstdio>
 #include <cstdlib>
@@ -53,12 +53,11 @@
 #endif
 
 #include <algorithm>
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "ECConfigImpl.h"
 
-#include "charset/convert.h"
-
-#include "boost_compat.h"
+#include <zarafa/charset/convert.h>
+#include <zarafa/boost_compat.h>
 
 using namespace std;
 

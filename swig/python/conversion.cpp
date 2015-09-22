@@ -41,15 +41,15 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <mapix.h>
 #include <mapidefs.h>
 #include <mapicode.h>
 #include <mapiutil.h>
 #include <edkmdb.h>
 #include <Python.h>
-#include "charset/convert.h"
-#include "conversion.h"
+#include <zarafa/charset/convert.h>
+#include <zarafa/conversion.h>
 #include "scl.h"
 
 // mapi4linux does defines this in edkmdb.h

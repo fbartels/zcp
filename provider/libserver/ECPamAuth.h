@@ -44,8 +44,8 @@
 #ifndef __ECAUTHPAM_H_
 
 #include <string>
-#include "platform.h"
-#include "ZarafaCode.h"
+#include <zarafa/platform.h>
+#include <zarafa/ZarafaCode.h>
 
 /**
  * Authenticate a user through a PAM service

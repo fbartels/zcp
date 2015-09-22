@@ -46,10 +46,10 @@
 
 #include "transaction_fwd.h"
 #include "ArchiverSessionPtr.h"     // For ArchiverSessionPtr
-#include "archiver-common.h"
+#include <zarafa/archiver-common.h>
 #include "postsaveaction.h"
 
-#include "mapi_ptr.h"
+#include <zarafa/mapi_ptr.h>
 
 namespace za { namespace operations {
 

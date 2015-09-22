@@ -44,9 +44,9 @@
 #ifndef ECSEARCHFOLDERS_H
 #define ECSEARCHFOLDERS_H
 
-#include "ECLogger.h"
+#include <zarafa/ECLogger.h>
 #include "ECDatabaseFactory.h"
-#include "ECKeyTable.h"
+#include <zarafa/ECKeyTable.h>
 #include "ECStoreObjectTable.h"
 
 #include "soapH.h"

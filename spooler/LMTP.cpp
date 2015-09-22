@@ -41,7 +41,7 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
@@ -53,15 +53,15 @@
 #include <mapicode.h>
 #include <mapidefs.h>
 #include <mapiutil.h>
-#include <inetmapi.h>
-#include <mapiext.h>
+#include <inetmapi/inetmapi.h>
+#include <zarafa/mapiext.h>
 
-#include <CommonUtil.h>
+#include <zarafa/CommonUtil.h>
 #include <fileutil.h>
-#include <ECTags.h>
-#include "ECChannel.h"
+#include <zarafa/ECTags.h>
+#include <zarafa/ECChannel.h>
 #include "LMTP.h"
-#include "stringutil.h"
+#include <zarafa/stringutil.h>
 #include "fileutil.h"
 
 using namespace std;

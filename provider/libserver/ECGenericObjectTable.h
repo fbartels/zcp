@@ -52,10 +52,10 @@
 #include <map>
 
 #include "ECSubRestriction.h"
-#include "ECKeyTable.h"
+#include <zarafa/ECKeyTable.h>
 #include "ECDatabase.h"
-#include "ustringutil.h"
-#include "ECUnknown.h"
+#include <zarafa/ustringutil.h>
+#include <zarafa/ECUnknown.h>
 
 /*
  * This object is an actual table, with a cursor in-memory. We also keep the complete

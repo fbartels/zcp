@@ -47,11 +47,11 @@
 #include <memory>
 
 #include <mapix.h>
-#include <mapi_ptr.h>
+#include <zarafa/mapi_ptr.h>
 
-#include <CommonUtil.h>
+#include <zarafa/CommonUtil.h>
 
-#include "archiver-common.h"
+#include <zarafa/archiver-common.h>
 #include "ArchiverSessionPtr.h"     // For ArchiverSessionPtr
 
 namespace za { namespace helpers {

@@ -79,7 +79,7 @@
 
 #include "vmime/net/smtp/SMTPServiceInfos.hpp"
 
-#include "inetmapi.h"
+#include <inetmapi/inetmapi.h>
 
 namespace vmime {
 namespace net {

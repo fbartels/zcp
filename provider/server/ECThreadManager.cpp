@@ -41,18 +41,18 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 #include "ECThreadManager.h"
 
 #include <cstdlib>
 #include <algorithm>
-#include <stringutil.h>
+#include <zarafa/stringutil.h>
 
 #ifdef HAVE_EPOLL_CREATE
 #include <sys/epoll.h>
 #endif
 
-#include "CommonUtil.h"
+#include <zarafa/CommonUtil.h>
 #include "ECSessionManager.h"
 #include "ECStatsCollector.h"
 #include "ECServerEntrypoint.h"

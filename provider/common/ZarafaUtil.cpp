@@ -41,15 +41,15 @@
  *
  */
 
-#include "platform.h"
+#include <zarafa/platform.h>
 
 #include "ZarafaUtil.h"
 #include <mapicode.h>
-#include "../common/stringutil.h"
-#include "../common/base64.h"
+#include <zarafa/stringutil.h>
+#include <zarafa/base64.h>
 
 #include <mapidefs.h>
-#include "ECGuid.h"
+#include <zarafa/ECGuid.h>
 #include "ZarafaVersions.h"
 
 #ifdef _DEBUG

@@ -41,8 +41,8 @@
  *
  */
 
-#include <platform.h>
-#include "convstring.h"
+#include <zarafa/platform.h>
+#include <zarafa/charset/convstring.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
