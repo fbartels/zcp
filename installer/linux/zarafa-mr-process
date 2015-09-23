@@ -3,7 +3,7 @@
 
 <?php
 /*
- * Copyright 2005 - 2014  Zarafa B.V.
+ * Copyright 2005 - 2015  Zarafa B.V.
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License, version 3, 
@@ -138,7 +138,7 @@ function debuglog($message)
 /**
 * Auto-process a meeting request, response or cancellation
 */
-function autoProcess($session, $store, $entryid, $capacity, $policy)
+function autoProcess($session, $store, $entryid)
 {
     debugLog("Processing item with entryid " . bin2hex($entryid) . "\n");
     $message = mapi_msgstore_openentry($store, $entryid);
@@ -224,7 +224,7 @@ $store = GetDefaultStore($session);
 
 $inbox = mapi_msgstore_getreceivefolder($store);
 
-autoProcess($session, $store, hex2bin($entryid), $capacity, $policy);
+autoProcess($session, $store, hex2bin($entryid));
 
 $storeprops = mapi_getprops($store, array(PR_MAILBOX_OWNER_ENTRYID));
 
