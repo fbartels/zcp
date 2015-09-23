@@ -726,9 +726,7 @@ exit:
 	if (lpMessage)
 		lpMessage->Release();
 
-	if (lpMtIcal)
-		delete lpMtIcal;
-
+	delete lpMtIcal;
 	return hr;
 }
 

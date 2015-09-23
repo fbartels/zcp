@@ -207,9 +207,7 @@ ECMsgStore::~ECMsgStore() {
 	if(m_lpNotifyClient)
 		m_lpNotifyClient->Release();
 
-	if(lpNamedProp)
-		delete lpNamedProp;
-
+	delete lpNamedProp;
 	if(lpStorage) {
 		// Release our propstorage since it is registered on lpTransport
 		lpStorage->Release();

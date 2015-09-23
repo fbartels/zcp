@@ -757,8 +757,7 @@ int ssl_verify_callback_zarafa_control(int ok, X509_STORE_CTX *store, BOOL bShow
 exit:
 	if (bioBuffer)
 		BIO_free(bioBuffer);
-	if (data)
-		delete [] data;
+	delete[] data;
 	if (pCertificate)
 		CertFreeCertificateContext(pCertificate);
 	if (depth == 0 && iSCD->second.pPrevCertificate) {

@@ -113,10 +113,7 @@ ECMemTable::ECMemTable(SPropTagArray *lpsPropTags, ULONG ulRowPropTag) : ECUnkno
 ECMemTable::~ECMemTable()
 {
 	HrClear();
-
-	if(this->lpsColumns)
-		delete [] this->lpsColumns;
-
+	delete[] this->lpsColumns;
 	pthread_mutex_destroy(&m_hDataMutex);
 }
 
@@ -625,15 +622,9 @@ ECMemTableView::~ECMemTableView()
 		Unadvise(iterAdviseRemove->first);
 	}
 
-	if(lpsPropTags)
-		delete [] this->lpsPropTags;
-
-	if(lpsSortOrderSet)
-		delete [] lpsSortOrderSet;
-
-	if(lpKeyTable)
-		delete lpKeyTable;
-
+	delete[] this->lpsPropTags;
+	delete[] lpsSortOrderSet;
+	delete lpKeyTable;
 	if (this->lpsRestriction)
 		MAPIFreeBuffer(lpsRestriction);
 }
@@ -816,9 +807,7 @@ HRESULT ECMemTableView::SetColumns(LPSPropTagArray lpPropTagArray, ULONG ulFlags
 {
 	HRESULT hr = hrSuccess;
 
-	if(lpsPropTags)
-		delete [] this->lpsPropTags;
-
+	delete[] this->lpsPropTags;
 	lpsPropTags = (LPSPropTagArray) new BYTE[CbNewSPropTagArray(lpPropTagArray->cValues)];
 
 	lpsPropTags->cValues = lpPropTagArray->cValues;
@@ -1215,9 +1204,7 @@ HRESULT ECMemTableView::SortTable(LPSSortOrderSet lpSortCriteria, ULONG ulFlags)
 	if (!lpSortCriteria)
 		lpSortCriteria = &sSortDefault;
 
-	if(lpsSortOrderSet)
-		delete [] lpsSortOrderSet;
-		
+	delete[] lpsSortOrderSet;
 	lpsSortOrderSet = (LPSSortOrderSet) new BYTE[CbSSortOrderSet(lpSortCriteria)];
 
 	memcpy(lpsSortOrderSet, lpSortCriteria, CbSSortOrderSet(lpSortCriteria));
@@ -1313,19 +1300,13 @@ HRESULT ECMemTableView::ModifyRowKey(sObjectTableKey *lpsRowItem, sObjectTableKe
 	lpKeyTable->UpdateRow(ECKeyTable::TABLE_ROW_ADD, lpsRowItem, lpsSortOrderSet->cSorts, lpulSortLen, lpFlags, lpSortKeys, lpsPrevRow, false, (ECKeyTable::UpdateType*)lpulAction);
 
 	// clean up GetBinarySortKey() allocs
-	for(j=0; j<lpsSortOrderSet->cSorts; j++) {
-		if(lpSortKeys[j])
-			delete [] lpSortKeys[j];
-	}
+	for (j = 0; j < lpsSortOrderSet->cSorts; ++j)
+		delete[] lpSortKeys[j];
 
 exit:
-	if (lpulSortLen)
-		delete [] lpulSortLen;
-	if (lpSortKeys)
-		delete [] lpSortKeys;
-	if (lpFlags)
-		delete [] lpFlags;
-
+	delete[] lpulSortLen;
+	delete[] lpSortKeys;
+	delete[] lpFlags;
 	return hr;
 }
 

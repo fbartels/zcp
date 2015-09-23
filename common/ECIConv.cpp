@@ -60,8 +60,7 @@ ECIConv::ECIConv(const std::string &strToCharset, const std::string &strFromChar
 
 ECIConv::~ECIConv()
 {
-	if (m_lpContext)
-		delete m_lpContext;
+	delete m_lpContext;
 }
 
 bool ECIConv::canConvert() {

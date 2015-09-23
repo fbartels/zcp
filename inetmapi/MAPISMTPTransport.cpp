@@ -453,38 +453,22 @@ void MAPISMTPTransport::authenticateSASL()
 				}
 				catch (exceptions::sasl_exception& e)
 				{
-					if (challenge)
-					{
-						delete [] challenge;
-						challenge = NULL;
-					}
-
-					if (resp)
-					{
-						delete [] resp;
-						resp = NULL;
-					}
-
+					delete[] challenge;
+					challenge = NULL;
+					delete[] resp;
+					resp = NULL;
 					// Cancel SASL exchange
 					sendRequest("*");
 				}
 				catch (...)
 				{
-					if (challenge)
-						delete [] challenge;
-
-					if (resp)
-						delete [] resp;
-
+					delete[] challenge;
+					delete[] resp;
 					throw;
 				}
 
-				if (challenge)
-					delete [] challenge;
-
-				if (resp)
-					delete [] resp;
-
+				delete[] challenge;
+				delete[] resp;
 				break;
 			}
 			default:

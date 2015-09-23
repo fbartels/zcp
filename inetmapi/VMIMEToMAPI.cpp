@@ -2040,10 +2040,7 @@ next:
 exit:
 	if(lpStream)
 		lpStream->Release();
-
-	if (lpIcalMapi)
-		delete lpIcalMapi;
-		
+	delete lpIcalMapi;
 	return hr;
 }
 

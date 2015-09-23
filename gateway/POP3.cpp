@@ -600,10 +600,7 @@ exit:
 
 	if (lpMessage)
 		lpMessage->Release();
-
-	if (szMessage)
-		delete [] szMessage;
-
+	delete[] szMessage;
 	return hr;
 }
 
@@ -694,10 +691,7 @@ HRESULT POP3::HrCmdQuit() {
 	}
 
 	hr = HrResponse(POP3_RESP_OK, "Bye");
-
-	if (ba.lpbin)
-		delete [] ba.lpbin;
-
+	delete[] ba.lpbin;
 	return hr;
 }
 
@@ -841,10 +835,7 @@ exit:
 
 	if (lpMessage)
 		lpMessage->Release();
-
-	if (szMessage)
-		delete [] szMessage;
-
+	delete[] szMessage;
 	return hr;
 }
 

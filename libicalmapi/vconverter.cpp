@@ -2678,10 +2678,7 @@ HRESULT VConverter::HrSetBody(LPMESSAGE lpMessage, icalproperty **lppicProp)
 exit:
 	if (lpStream)
 		lpStream->Release();
-
-	if (lpBody)
-		delete [] lpBody;
-
+	delete[] lpBody;
 	return hr;
 }
 
@@ -3150,9 +3147,7 @@ exit:
 	if (lpPropTagArr)
 		MAPIFreeBuffer(lpPropTagArr);
 
-	if (lpRecurrenceData)
-		delete [] lpRecurrenceData;
-
+	delete[] lpRecurrenceData;
 	if (lpStream)
 		lpStream->Release();
 

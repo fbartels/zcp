@@ -81,8 +81,7 @@ ECChannelClient::ECChannelClient(const char *szPath, const char *szTokenizer)
 
 ECChannelClient::~ECChannelClient()
 {
-	if (m_lpChannel)
-		delete m_lpChannel;
+	delete m_lpChannel;
 }
 
 ECRESULT ECChannelClient::DoCmd(const std::string &strCommand, std::vector<std::string> &lstResponse)

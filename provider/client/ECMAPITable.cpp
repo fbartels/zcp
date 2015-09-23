@@ -148,9 +148,7 @@ ECMAPITable::~ECMAPITable()
 		Unadvise(*iterMapIntDel);
 	}
 
-	if(lpsPropTags)
-		delete [] this->lpsPropTags;
-
+	delete[] this->lpsPropTags;
 	if (m_lpRestrict)
 		MAPIFreeBuffer(m_lpRestrict);
 
@@ -165,10 +163,7 @@ ECMAPITable::~ECMAPITable()
 
 	if(lpTableOps)
 		lpTableOps->Release();	// closes the table on the server too
-
-	if(lpsSortOrderSet)
-		delete [] lpsSortOrderSet;
-
+	delete[] lpsSortOrderSet;
 	pthread_mutex_destroy(&m_hMutexConnectionList);
 	pthread_mutex_destroy(&m_hLock);
 }
@@ -298,10 +293,7 @@ HRESULT ECMAPITable::SetColumns(LPSPropTagArray lpPropTagArray, ULONG ulFlags)
 		return MAPI_E_INVALID_PARAMETER;
 
 	pthread_mutex_lock(&m_hLock);
-
-	if(lpsPropTags)
-		delete [] this->lpsPropTags;
-
+	delete[] this->lpsPropTags;
 	lpsPropTags = (LPSPropTagArray) new BYTE[CbNewSPropTagArray(lpPropTagArray->cValues)];
 
 	lpsPropTags->cValues = lpPropTagArray->cValues;
@@ -548,9 +540,7 @@ HRESULT ECMAPITable::SortTable(LPSSortOrderSet lpSortCriteria, ULONG ulFlags)
 		goto exit;
 	}
 
-	if(lpsSortOrderSet)
-		delete [] lpsSortOrderSet;
-
+	delete[] lpsSortOrderSet;
 	lpsSortOrderSet = (LPSSortOrderSet) new BYTE[CbSSortOrderSet(lpSortCriteria)];
 
 	memcpy(lpsSortOrderSet, lpSortCriteria, CbSSortOrderSet(lpSortCriteria));

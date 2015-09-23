@@ -859,55 +859,45 @@ ECRESULT FreePropVal(struct propVal *lpProp, bool bBasePointerDel)
 		break;
 	case PT_SYSTIME:
 	case PT_CURRENCY:
-		if(lpProp->Value.hilo)
-			delete lpProp->Value.hilo;
+		delete lpProp->Value.hilo;
 		break;
 	case PT_STRING8:
 	case PT_UNICODE:
-		if(lpProp->Value.lpszA)
-			delete [] lpProp->Value.lpszA;
+		delete[] lpProp->Value.lpszA;
 		break;
 	case PT_CLSID:
 	case PT_BINARY:
-		if(lpProp->Value.bin && lpProp->Value.bin->__ptr)
-			delete [] lpProp->Value.bin->__ptr;
-		if(lpProp->Value.bin)
+		if (lpProp->Value.bin) {
+			delete[] lpProp->Value.bin->__ptr;
 			delete lpProp->Value.bin;
+		}
 		break;
 	case PT_MV_I2:
-		if(lpProp->Value.mvi.__ptr)
-			delete []lpProp->Value.mvi.__ptr;
+		delete[] lpProp->Value.mvi.__ptr;
 		break;
 	case PT_MV_LONG:
-		if(lpProp->Value.mvl.__ptr)
-			delete []lpProp->Value.mvl.__ptr;
+		delete[] lpProp->Value.mvl.__ptr;
 		break;
 	case PT_MV_R4:
-		if(lpProp->Value.mvflt.__ptr)
-			delete []lpProp->Value.mvflt.__ptr;
+		delete[] lpProp->Value.mvflt.__ptr;
 		break;
 	case PT_MV_DOUBLE:
 	case PT_MV_APPTIME:
-		if(lpProp->Value.mvdbl.__ptr)
-			delete []lpProp->Value.mvdbl.__ptr;
+		delete[] lpProp->Value.mvdbl.__ptr;
 		break;
 	case PT_MV_I8:
-		if(lpProp->Value.mvli.__ptr)
-			delete []lpProp->Value.mvli.__ptr;
+		delete[] lpProp->Value.mvli.__ptr;
 		break;
 	case PT_MV_SYSTIME:
 	case PT_MV_CURRENCY:
-		if(lpProp->Value.mvhilo.__ptr)
-			delete[] lpProp->Value.mvhilo.__ptr;
+		delete[] lpProp->Value.mvhilo.__ptr;
 		break;
 	case PT_MV_CLSID:
 	case PT_MV_BINARY:
 		if(lpProp->Value.mvbin.__ptr)
 		{
-			for(int i=0; i < lpProp->Value.mvbin.__size; i++) {
-				if(lpProp->Value.mvbin.__ptr[i].__ptr)
-					delete[] lpProp->Value.mvbin.__ptr[i].__ptr;
-			}
+			for (int i = 0; i < lpProp->Value.mvbin.__size; ++i)
+				delete[] lpProp->Value.mvbin.__ptr[i].__ptr;
 			delete[] lpProp->Value.mvbin.__ptr;
 		}
 		break;
@@ -915,10 +905,8 @@ ECRESULT FreePropVal(struct propVal *lpProp, bool bBasePointerDel)
 	case PT_MV_UNICODE:
 		if(lpProp->Value.mvszA.__ptr)
 		{
-			for(int i=0; i < lpProp->Value.mvszA.__size; i++) {
-				if(lpProp->Value.mvszA.__ptr[i])
-					delete[] lpProp->Value.mvszA.__ptr[i];
-			}
+			for (int i = 0; i < lpProp->Value.mvszA.__size; ++i)
+				delete[] lpProp->Value.mvszA.__ptr[i];
 			delete [] lpProp->Value.mvszA.__ptr;
 		}
 		break;
@@ -959,9 +947,7 @@ ECRESULT FreePropVal(struct propVal *lpProp, bool bBasePointerDel)
 				}
 			}
 
-			if(lpActions->__ptr)
-				delete [] lpActions->__ptr;
-
+			delete[] lpActions->__ptr;
 			delete lpProp->Value.actions;
 		}
 		break;
@@ -1021,8 +1007,7 @@ ECRESULT FreeRestrictTable(struct restrictTable *lpRestrict, bool base)
 			}
 			delete [] lpRestrict->lpOr->__ptr;
 		}
-		if(lpRestrict->lpOr)
-			delete lpRestrict->lpOr;
+		delete lpRestrict->lpOr;
 		break;
 	case RES_AND:
 		if(lpRestrict->lpAnd && lpRestrict->lpAnd->__ptr) {
@@ -1034,53 +1019,39 @@ ECRESULT FreeRestrictTable(struct restrictTable *lpRestrict, bool base)
 			}
 			delete [] lpRestrict->lpAnd->__ptr;
 		}
-		if(lpRestrict->lpAnd)
-			delete lpRestrict->lpAnd;
+		delete lpRestrict->lpAnd;
 		break;
 
 	case RES_NOT:
 		if(lpRestrict->lpNot && lpRestrict->lpNot->lpNot)
 			FreeRestrictTable(lpRestrict->lpNot->lpNot);
-
-		if(lpRestrict->lpNot)
-			delete lpRestrict->lpNot;
+		delete lpRestrict->lpNot;
 		break;
 	case RES_CONTENT:
 		if(lpRestrict->lpContent && lpRestrict->lpContent->lpProp)
 			FreePropVal(lpRestrict->lpContent->lpProp, true);
-
-		if(lpRestrict->lpContent)
-			delete lpRestrict->lpContent;
-
+		delete lpRestrict->lpContent;
 		break;
 	case RES_PROPERTY:
 		if(lpRestrict->lpProp && lpRestrict->lpProp->lpProp)
 			FreePropVal(lpRestrict->lpProp->lpProp, true);
-
-		if(lpRestrict->lpProp)
-			delete lpRestrict->lpProp;
-
+		delete lpRestrict->lpProp;
 		break;
 
 	case RES_COMPAREPROPS:
-		if(lpRestrict->lpCompare)
-			delete lpRestrict->lpCompare;
-
+		delete lpRestrict->lpCompare;
 		break;
 
 	case RES_BITMASK:
-		if(lpRestrict->lpBitmask)
-			delete lpRestrict->lpBitmask;
+		delete lpRestrict->lpBitmask;
 		break;
 
 	case RES_SIZE:
-		if(lpRestrict->lpSize)
-			delete lpRestrict->lpSize;
+		delete lpRestrict->lpSize;
 		break;
 
 	case RES_EXIST:
-		if(lpRestrict->lpExist)
-			delete lpRestrict->lpExist;
+		delete lpRestrict->lpExist;
 		break;
 
 	case RES_COMMENT:
@@ -1094,12 +1065,10 @@ ECRESULT FreeRestrictTable(struct restrictTable *lpRestrict, bool base)
 		break;
 
 	case RES_SUBRESTRICTION:
-	    if(lpRestrict->lpSub && lpRestrict->lpSub->lpSubObject)
-	        FreeRestrictTable(lpRestrict->lpSub->lpSubObject);
-
-        if(lpRestrict->lpSub)
-            delete lpRestrict->lpSub;
-        break;
+		if(lpRestrict->lpSub && lpRestrict->lpSub->lpSubObject)
+			FreeRestrictTable(lpRestrict->lpSub->lpSubObject);
+		delete lpRestrict->lpSub;
+		break;
 
 	default:
 		er = ZARAFA_E_INVALID_TYPE;
@@ -1626,12 +1595,8 @@ ECRESULT FreeEntryList(struct entryList *lpEntryList, bool bFreeBase)
 		goto exit;
 
 	if(lpEntryList->__ptr) {
-
-		for(unsigned int i=0; i < lpEntryList->__size; i++) {
-			if(lpEntryList->__ptr[i].__ptr)
-				delete [] lpEntryList->__ptr[i].__ptr;
-		}
-
+		for (unsigned int i = 0; i < lpEntryList->__size; ++i)
+			delete[] lpEntryList->__ptr[i].__ptr;
 		delete [] lpEntryList->__ptr;
 	}
 
@@ -1684,11 +1649,8 @@ ECRESULT FreeNotificationStruct(notification *lpNotification, bool bFreeBase)
 		delete lpNotification->tab;
 	}
 
-	if(lpNotification->newmail != NULL) {
-
-		if(lpNotification->newmail->lpszMessageClass != NULL)
-			delete []lpNotification->newmail->lpszMessageClass;
-
+	if (lpNotification->newmail != NULL) {
+		delete[] lpNotification->newmail->lpszMessageClass;
 		FreeEntryId(lpNotification->newmail->pEntryId, true);
 		FreeEntryId(lpNotification->newmail->pParentId, true);
 
@@ -1861,9 +1823,7 @@ ECRESULT FreeEntryId(entryId* lpEntryId, bool bFreeBase)
 	if(lpEntryId == NULL)
 		goto exit;
 
-	if(lpEntryId->__ptr)
-		delete[] lpEntryId->__ptr;
-
+	delete[] lpEntryId->__ptr;
 	if(bFreeBase == true)
 		delete lpEntryId;
 	else
@@ -1912,8 +1872,7 @@ ECRESULT FreeRightsArray(struct rightsArray *lpRights)
 
 	if(lpRights->__ptr)
 	{
-		if (lpRights->__ptr->sUserId.__ptr)
-			delete [] lpRights->__ptr->sUserId.__ptr;
+		delete[] lpRights->__ptr->sUserId.__ptr;
 		delete [] lpRights->__ptr;
 	}
 
@@ -2740,21 +2699,15 @@ ULONG NormalizePropTag(ULONG ulPropTag)
 ECRESULT FreeNamedPropArray(struct namedPropArray *array, bool bFreeBase)
 {
 	for(unsigned int i = 0; i < array->__size; i++) {
-		if(array->__ptr[i].lpId)
-			delete array->__ptr[i].lpId;
-		if(array->__ptr[i].lpString)
-			delete array->__ptr[i].lpString;
+		delete array->__ptr[i].lpId;
+		delete array->__ptr[i].lpString;
 		if(array->__ptr[i].lpguid) {
-			if(array->__ptr[i].lpguid->__ptr)
-				delete [] array->__ptr[i].lpguid->__ptr;
-				
+			delete[] array->__ptr[i].lpguid->__ptr;
 			delete array->__ptr[i].lpguid;
 		}
 	}
 	
-	if (array->__ptr)
-		delete [] array->__ptr;
-		
+	delete[] array->__ptr;
 	if(bFreeBase)
 		delete array;
 

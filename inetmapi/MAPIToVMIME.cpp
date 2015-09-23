@@ -545,9 +545,7 @@ HRESULT MAPIToVMIME::handleSingleAttachment(IMessage* lpMessage, LPSRow lpRow, v
 
 exit:
 	// ATTN: lpMapiAttach are linked in the VMMessageBuilder. The VMMessageBuilder will delete() it.
-	if (mapiical)
-		delete mapiical;
-
+	delete mapiical;
 	if (lpMIMETag)
 		MAPIFreeBuffer(lpMIMETag);
 
@@ -1361,9 +1359,7 @@ normal:
 	*lpvmMessage = vmMessage;
 
 exit:
-	if (lpszRawSMTP)
-		delete [] lpszRawSMTP;
-
+	delete [] lpszRawSMTP;
 	if (lpStream)
 		lpStream->Release();
 
@@ -2517,9 +2513,7 @@ exit:
     if (lpAttachTable)
         lpAttachTable->Release();
     
-	if (mapiical)
-		delete mapiical;
-
+	delete mapiical;
 	if (lpStream)
 		lpStream->Release();
 

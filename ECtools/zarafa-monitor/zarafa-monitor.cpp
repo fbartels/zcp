@@ -83,9 +83,7 @@ static void deleteThreadMonitor(LPECTHREADMONITOR lpThreadMonitor,
 	if(lpThreadMonitor == NULL)
 		return;
 
-	if(lpThreadMonitor->lpConfig)
-		delete lpThreadMonitor->lpConfig;
-
+	delete lpThreadMonitor->lpConfig;
 	if(lpThreadMonitor->lpLogger)
 		lpThreadMonitor->lpLogger->Release();
 
@@ -396,9 +394,7 @@ static HRESULT running_service(const char *szPath)
 	pthread_mutex_unlock(&m_hExitMutex);
 
 exit:
-	if (lpECScheduler)
-		delete lpECScheduler;
-		
+	delete lpECScheduler;
 	if (bMapiInit)
 		MAPIUninitialize();
 		

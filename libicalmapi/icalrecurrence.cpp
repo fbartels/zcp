@@ -345,9 +345,7 @@ HRESULT ICalRecurrence::HrParseICalRecurrenceRule(TIMEZONE_STRUCT sTimeZone, ica
 	lpRec = NULL;
 
 exit:
-	if (lpRec)
-		delete lpRec;
-
+	delete lpRec;
 	return hr;
 }
 /**

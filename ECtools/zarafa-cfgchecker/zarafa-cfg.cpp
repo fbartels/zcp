@@ -170,7 +170,7 @@ int main(int argc, char* argv[])
 
 		/* We are only looping through the list once, just cleanup
 		 * and don't care about leaving broken pointers in the list. */
-		delete (*it);
+		delete *it;
 	}
 
 	return 0;

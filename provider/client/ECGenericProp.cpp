@@ -243,7 +243,7 @@ HRESULT ECGenericProp::HrSetRealProp(SPropValue *lpsPropValue)
 
 	// Property is now added/modified and marked 'dirty' for saving
 exit:
-	if(hr != hrSuccess && lpProperty)
+	if (hr != hrSuccess)
 		delete lpProperty;
 
 	dwLastError = hr;

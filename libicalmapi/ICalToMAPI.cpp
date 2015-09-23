@@ -308,11 +308,8 @@ HRESULT ICalToMapiImpl::ParseICal(const std::string& strIcal, const std::string&
 			}
 		}
 next:
-		if (lpVEC) {
-			delete lpVEC;
-			lpVEC = NULL;
-		}
-
+		delete lpVEC;
+		lpVEC = NULL;
 		lpicComponent = icalcomponent_get_next_component(lpicCalendar, ICAL_ANY_COMPONENT);
 	}
 	hr = hrSuccess;
@@ -324,9 +321,7 @@ next:
 // 		hr = MAPI_W_ERRORS_RETURNED;
 
 exit:
-	if (lpVEC)
-		delete lpVEC;
-
+	delete lpVEC;
 	if (lpicCalendar)
 		icalcomponent_free(lpicCalendar);
 

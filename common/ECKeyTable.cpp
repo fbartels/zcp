@@ -198,9 +198,7 @@ void ECTableRow::freeSortCols()
 {
 	unsigned int i=0;
 
-	if(lpSortLen)
-		delete [] lpSortLen;
-
+	delete[] lpSortLen;
 	if(lppSortKeys)
 	{
 		for(i=0;i<ulSortCols;i++)
@@ -208,9 +206,7 @@ void ECTableRow::freeSortCols()
 
 		delete [] lppSortKeys;
 	}
-
-	if(lpFlags)
-		delete [] lpFlags;
+	delete[] lpFlags;
 }
 
 ECTableRow::~ECTableRow()
@@ -368,10 +364,7 @@ ECKeyTable::ECKeyTable()
 ECKeyTable::~ECKeyTable()
 {
 	Clear();
-
-	if(lpRoot)
-		delete lpRoot;
-
+	delete lpRoot;
 	pthread_mutex_destroy(&mLock);
 }
 
@@ -603,8 +596,7 @@ ECRESULT ECKeyTable::UpdateRow(UpdateType ulType,
 				}
 				
 				// Delete the unused new node
-				if(lpNewRow) delete lpNewRow;
-
+				delete lpNewRow;
 				goto exit;
 			} else {
 				// new row data is different, so delete the old row now
@@ -1637,17 +1629,10 @@ ECRESULT ECKeyTable::UpdatePartialSortKey(sObjectTableKey *lpsRowItem, unsigned 
     
 exit:
 	pthread_mutex_unlock(&mLock);
-
-    if (lppSortKeys)
-        delete [] lppSortKeys;
-        
-    if (lpSortLen)
-        delete [] lpSortLen;
-        
-    if (lpFlags)
-        delete [] lpFlags;
-    
-    return er;
+	delete[] lppSortKeys;
+	delete[] lpSortLen;
+	delete[] lpFlags;
+	return er;
 }
 
 /**

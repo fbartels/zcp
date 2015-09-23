@@ -933,10 +933,7 @@ exit:
 HRESULT ECMAPIProp::HrStreamCleanup(void *lpData)
 {
 	STREAMDATA *lpStreamData = (STREAMDATA *)lpData;
-	
-	if (lpStreamData)					// just to be sure
-		delete lpStreamData;
-
+	delete lpStreamData;
 	return hrSuccess;
 }
 

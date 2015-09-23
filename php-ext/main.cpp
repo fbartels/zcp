@@ -2944,8 +2944,7 @@ ZEND_FUNCTION(mapi_stream_read)
 	RETVAL_STRINGL(buf, actualRead, 1);
 
 exit:
-	if(buf)
-		delete [] buf;
+	delete[] buf;
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -4027,9 +4026,7 @@ exit:
 		deCompressedStream->Release();
 	if (pStream)
 		pStream->Release();
-	if (htmlbuf)
-		delete [] htmlbuf;
-
+	delete[] htmlbuf;
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -7860,12 +7857,9 @@ exit:
     if(lpMemStream)
         lpMemStream->Release();
         
-    if(lpBuffer)
-        delete [] lpBuffer;
-
+	delete[] lpBuffer;
 	LOG_END();
-    THROW_ON_ERROR();
-    return;    
+	THROW_ON_ERROR();
 }
 
 ZEND_FUNCTION(mapi_inetmapi_imtomapi)

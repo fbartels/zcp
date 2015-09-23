@@ -536,8 +536,7 @@ exit:
 	if (lpsPropVal)
 		MAPIFreeBuffer(lpsPropVal);
 
-	if(lpMtIcal)
-		delete lpMtIcal;
+	delete lpMtIcal;
 
 	if(lpPropTagArr)
 		MAPIFreeBuffer(lpPropTagArr);

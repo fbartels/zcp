@@ -103,13 +103,8 @@ WSTableView::~WSTableView()
 
 	// if the table was still open it will now be closed in the server too
 	this->HrCloseTable();
-
-	if(m_lpsPropTagArray)
-		delete [] m_lpsPropTagArray;
-
-	if(m_lpsSortOrderSet)
-		delete [] m_lpsSortOrderSet;
-
+	delete[] m_lpsPropTagArray;
+	delete[] m_lpsSortOrderSet;
 	FreeEntryId(&m_sEntryId, false);
 }
 
@@ -204,9 +199,7 @@ HRESULT WSTableView::HrSetColumns(LPSPropTagArray lpsPropTagArray)
 	END_SOAP_CALL
 
 exit:
-	if(lpsOld)
-		delete [] lpsOld;
-
+	delete[] lpsOld;
 	UnLockSoap();
 
 	return hr;
@@ -324,13 +317,8 @@ HRESULT WSTableView::HrSortTable(LPSSortOrderSet lpsSortOrderSet)
 
 exit:
 	UnLockSoap();
-
-	if(lpOld)
-		delete [] lpOld;
-
-	if(sSort.__ptr) 
-		delete [] sSort.__ptr;
-
+	delete[] lpOld;
+	delete[] sSort.__ptr;
 	return hr;
 }
 
@@ -694,8 +682,7 @@ HRESULT WSTableView::HrMulti(ULONG ulDeferredFlags, LPSPropTagArray lpsPropTagAr
 	
 	if(lpsPropTagArray) {
 		// Save the proptag set for if we need to reload
-		if(m_lpsPropTagArray)
-			delete [] m_lpsPropTagArray;
+		delete[] m_lpsPropTagArray;
 		m_lpsPropTagArray = (LPSPropTagArray) new char[CbNewSPropTagArray(lpsPropTagArray->cValues)];
 		memcpy(&m_lpsPropTagArray->aulPropTag, &lpsPropTagArray->aulPropTag, sizeof(ULONG) * lpsPropTagArray->cValues);
 		m_lpsPropTagArray->cValues = lpsPropTagArray->cValues;
@@ -717,8 +704,7 @@ HRESULT WSTableView::HrMulti(ULONG ulDeferredFlags, LPSPropTagArray lpsPropTagAr
 	
 	if(lpsSortOrderSet) {
 		// Remember sort order for reconnect
-		if(m_lpsSortOrderSet)
-			delete [] m_lpsSortOrderSet;
+		delete[] m_lpsSortOrderSet;
 		m_lpsSortOrderSet = (LPSSortOrderSet)new char [CbSSortOrderSet(lpsSortOrderSet)];
 		memcpy(m_lpsSortOrderSet, lpsSortOrderSet, CbSSortOrderSet(lpsSortOrderSet));
 
@@ -764,10 +750,8 @@ HRESULT WSTableView::HrMulti(ULONG ulDeferredFlags, LPSPropTagArray lpsPropTagAr
 
 exit:
 	UnLockSoap();
+	delete[] sSort.sSortOrder.__ptr;
 
-	if (sSort.sSortOrder.__ptr)
-		delete [] sSort.sSortOrder.__ptr;
-	
 	if(lpsRestrictTable)
 		FreeRestrictTable(lpsRestrictTable);
         

@@ -345,9 +345,7 @@ ECRESULT ECFifoSerializer::Skip(size_t size, size_t nmemb)
 	er = Read(buf, size, nmemb);
 
 exit:
-	if (buf)
-		delete [] buf;
-
+	delete[] buf;
 	return er;
 }
 

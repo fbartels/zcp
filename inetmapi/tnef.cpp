@@ -183,9 +183,7 @@ void ECTNEF::FreeAttachmentData(tnefattachment* lpTnefAtt)
 {
 	std::list<SPropValue *>::iterator iterProps;
 
-	if (lpTnefAtt->data)
-		delete [] lpTnefAtt->data;
-
+	delete[] lpTnefAtt->data;
 	for (iterProps = lpTnefAtt->lstProps.begin(); iterProps != lpTnefAtt->lstProps.end(); iterProps++) {
 		MAPIFreeBuffer(*iterProps);
 	}
@@ -570,9 +568,7 @@ exit:
 			FreeAttachmentData(lpTnefAtt);
 	}
 
-	if(szSClass)
-		delete [] szSClass;
-
+	delete[] szSClass;
 	if(lpBuffer)
 		MAPIFreeBuffer(lpBuffer);
 
@@ -1595,8 +1591,7 @@ exit:
         lpStream->Release();
     if(lpsNewProp)
         MAPIFreeBuffer(lpsNewProp);
-    if(lpData)
-        delete [] lpData;
+    delete[] lpData;
     if(lpAttach)
         lpAttach->Release();
     if(lpProps)

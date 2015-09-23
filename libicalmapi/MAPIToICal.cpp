@@ -216,10 +216,7 @@ HRESULT MapiToICalImpl::AddMessage(LPMESSAGE lpMessage, const std::string &strSr
 exit:
 	if (lpMessageClass)
 		MAPIFreeBuffer(lpMessageClass);
-
-	if (lpVEC)
-		delete lpVEC;
-
+	delete lpVEC;
 	return hr;
 }
 

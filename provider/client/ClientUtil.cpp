@@ -1050,10 +1050,7 @@ HRESULT ClientUtil::ConvertMSEMSProps(ULONG cValues, LPSPropValue pValues, ULONG
 exit:
 	if (hr != hrSuccess && lpProps)
 		MAPIFreeBuffer(lpProps);
-
-	if(lpConfig)
-		delete lpConfig;
-
+	delete lpConfig;
 	return hr;
 }
 

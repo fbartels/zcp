@@ -339,9 +339,7 @@ exit:
 	if(lpsPropTagArray)
 		ECFreeBuffer(lpsPropTagArray);
 
-	if(lppPropNamesUnresolved)
-		delete [] lppPropNamesUnresolved;
-	
+	delete[] lppPropNamesUnresolved;
 	if(lpServerIDs)
 		ECFreeBuffer(lpServerIDs);
 

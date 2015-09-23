@@ -445,9 +445,7 @@ auth: // User have a logon
 exit:
 
 	UnLockSoap();
-
-	if (sLicenseRequest.__ptr)
-		delete[] sLicenseRequest.__ptr;
+	delete[] sLicenseRequest.__ptr;
 
 	if(hr != hrSuccess) {
 	    // UGLY FIX: due to the ugly code above that does lpCmd = m_lpCmd
@@ -697,9 +695,7 @@ ECRESULT WSTransport::TrySSOLogon(ZarafaCmd* lpCmd, LPCSTR szServer, utf8string 
 		memcpy(lpsServerGuid, sResponse.sServerGuid.__ptr, sizeof *lpsServerGuid);
 
 exit:
-	if (sLicenseRequest.__ptr)
-		delete[] sLicenseRequest.__ptr;
-
+	delete[] sLicenseRequest.__ptr;
 	if (OutSecBuffer.pvBuffer)
 		FreeContextBuffer(OutSecBuffer.pvBuffer);
 
@@ -1390,10 +1386,7 @@ HRESULT WSTransport::HrUnSubscribeMulti(const ECLISTCONNECTION &lstConnections)
 
 exit:
 	UnLockSoap();
-
-	if (ulConnArray.__ptr)
-		delete [] ulConnArray.__ptr;
-
+	delete[] ulConnArray.__ptr;
 	return hr;
 }
 
@@ -4633,10 +4626,7 @@ HRESULT WSTransport::HrGetSyncStates(const ECLISTSYNCID &lstSyncId, ECLISTSYNCST
 
 exit:
 	UnLockSoap();
-
-	if (ulaSyncId.__ptr)
-		delete[] ulaSyncId.__ptr;
-
+	delete[] ulaSyncId.__ptr;
 	return hr;
 }
 

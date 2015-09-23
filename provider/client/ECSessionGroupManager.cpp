@@ -179,8 +179,6 @@ HRESULT ECSessionGroupManager::DeleteSessionGroupDataIfOrphan(ECSESSIONGROUPID e
 	// Delete the object outside the lock; we can do this because nobody can access this group
 	// now (since it is not in the map anymore), and the delete() will cause a pthread_join(), 
 	// which could be blocked by the m_hMutex.
-	if(lpSessionGroupData)
-		delete lpSessionGroupData;
-
+	delete lpSessionGroupData;
 	return hr;
 }

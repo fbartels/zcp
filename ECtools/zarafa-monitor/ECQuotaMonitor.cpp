@@ -168,9 +168,7 @@ void* ECQuotaMonitor::Create(void* lpVoid)
 		lpThreadMonitor->lpLogger->Log(EC_LOGLEVEL_INFO, "Quota monitor done in %lu seconds. Processed: %u, Failed: %u", tmEnd - tmStart, lpecQuotaMonitor->m_ulProcessed, lpecQuotaMonitor->m_ulFailed);
 		
 exit:
-	if(lpecQuotaMonitor)
-		delete lpecQuotaMonitor;
-
+	delete lpecQuotaMonitor;
 	if(lpMDBAdmin)
 		lpMDBAdmin->Release();
 

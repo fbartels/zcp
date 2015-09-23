@@ -422,10 +422,7 @@ HRESULT HrOpenECSession(ECLogger *const lpLogger, IMAPISession **lppSession, con
 exit:
 	// always try to delete the temporary profile
 	DeleteProfileTemp(szProfName);
-		
-	if (szProfName)
-		delete [] szProfName;
-
+	delete[] szProfName;
 	return hr;
 }
 
@@ -2126,10 +2123,7 @@ HRESULT TestRestriction(LPSRestriction lpCondition, ULONG cValues, LPSPropValue 
 	ECRowWrapper *lpRowWrapper = new ECRowWrapper(lpPropVals, cValues);
 
 	hr = TestRestriction(lpCondition, (IMAPIProp *)lpRowWrapper, locale, ulLevel);
-
-	if(lpRowWrapper)
-		delete lpRowWrapper;
-
+	delete lpRowWrapper;
 	return hr;
 }
 
@@ -2386,8 +2380,7 @@ HRESULT TestRestriction(LPSRestriction lpCondition, IMAPIProp *lpMessage, const 
 	};
 
 exit:
-	if (lpRowWrapper)
-		delete lpRowWrapper;
+	delete lpRowWrapper;
 	if (lpRowSet)
 		FreeProws(lpRowSet);
 	if (lpTags)
@@ -2781,9 +2774,8 @@ HRESULT ECPropMap::Resolve(IMAPIProp *lpMAPIProp) {
 exit:
     if(lpPropTags)
         MAPIFreeBuffer(lpPropTags);
-    if(lppNames)
-        delete [] lppNames;
-        
+
+    delete[] lppNames;
     return hr;        
 }
 

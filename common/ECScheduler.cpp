@@ -247,7 +247,8 @@ void* ECScheduler::ScheduleThread(void* lpTmpScheduler)
 				    continue;
 				}
 
-				if(lperThread){delete lperThread; lperThread = NULL;}
+				delete lperThread;
+				lperThread = NULL;
 			}
 
 			pthread_mutex_unlock(&lpScheduler->m_hSchedulerMutex);

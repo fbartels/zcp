@@ -118,8 +118,7 @@ ECABObjectTable::ECABObjectTable(ECSession *lpSession, unsigned int ulABId, unsi
 
 ECABObjectTable::~ECABObjectTable()
 {
-	if(m_lpObjectData)
-		delete (ECODAB*)m_lpObjectData;
+	delete (ECODAB *)m_lpObjectData;
 }
 
 ECRESULT ECABObjectTable::Create(ECSession *lpSession, unsigned int ulABId, unsigned int ulABType, unsigned int ulABParentId, unsigned int ulABParentType, unsigned int ulFlags, const ECLocale &locale, ECABObjectTable **lppTable)
@@ -279,9 +278,7 @@ ECRESULT ECABObjectTable::LoadHierarchyAddressList(unsigned int ulObjectId, unsi
 	}
 
 exit:
-	if (lpObjects)
-		delete lpObjects;
-
+	delete lpObjects;
 	return er;
 }
 
@@ -317,9 +314,7 @@ ECRESULT ECABObjectTable::LoadHierarchyCompany(unsigned int ulObjectId, unsigned
 	}
 
 exit:
-	if (lpObjects)
-		delete lpObjects;
-
+	delete lpObjects;
 	return er;
 }
 
@@ -395,9 +390,7 @@ ECRESULT ECABObjectTable::LoadHierarchyContainer(unsigned int ulObjectId, unsign
 	}
 
 exit:
-	if (lpObjects)
-		delete lpObjects;
-
+	delete lpObjects;
 	return er;
 }
 
@@ -422,9 +415,7 @@ ECRESULT ECABObjectTable::LoadContentsAddressList(unsigned int ulObjectId, unsig
 	}
 
 exit:
-	if (lpObjects)
-		delete lpObjects;
-
+	delete lpObjects;
 	return er;
 }
 
@@ -449,9 +440,7 @@ ECRESULT ECABObjectTable::LoadContentsCompany(unsigned int ulObjectId, unsigned 
 	}
 
 exit:
-	if (lpObjects)
-		delete lpObjects;
-
+	delete lpObjects;
 	return er;
 }
 
@@ -476,9 +465,7 @@ ECRESULT ECABObjectTable::LoadContentsDistlist(unsigned int ulObjectId, unsigned
 	}
 
 exit:
-	if (lpObjects)
-		delete lpObjects;
-
+	delete lpObjects;
 	return er;
 }
 
@@ -608,8 +595,6 @@ ECRESULT ECABObjectTable::Load()
 	er = LoadRows(&lstObjects, 0);
 
 exit:
-	if(lpObjects)
-		delete lpObjects;
-
+	delete lpObjects;
 	return er;
 }

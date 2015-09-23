@@ -2426,9 +2426,7 @@ HRESULT IMAP::HrCmdSearch(const string &strTag, vector<string> &lstSearchCriteri
 		hr = HrResponse(RESP_TAGGED_OK, strTag, strMode+"SEARCH completed");
 
 exit:
-	if (iconv)
-		delete iconv;
-
+	delete iconv;
 	if (hr2 != hrSuccess)
 		return hr2;
 	return hr;
@@ -3487,9 +3485,7 @@ HRESULT IMAP::HrGetSubscribedList() {
 	}
 
 exit:
-    if (lpb)
-        delete [] lpb;
-        
+	delete[] lpb;
 	if (lpStream)
 		lpStream->Release();
 

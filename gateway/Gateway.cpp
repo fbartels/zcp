@@ -471,10 +471,7 @@ int main(int argc, char *argv[]) {
 
 exit:
 	ssl_threading_cleanup();
-    
-	if (g_lpConfig)
-		delete g_lpConfig;
-
+	delete g_lpConfig;
 	DeleteLogger(g_lpLogger);
 
 	return hr == hrSuccess ? 0 : 1;

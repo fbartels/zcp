@@ -221,10 +221,7 @@ empty:
 exit:
 	if (ecTable)
 		ecTable->Release();
-
-	if (szXML)
-		delete [] szXML;
-
+	delete[] szXML;
 	if (lpRulesData)
 		lpRulesData->Release();
 
@@ -367,9 +364,7 @@ done:
 		goto exit;
 
 exit:
-	if(szXML)
-		delete [] szXML;
-
+	delete[] szXML;
 	if(lpPropRemove)
 		MAPIFreeBuffer(lpPropRemove);
 

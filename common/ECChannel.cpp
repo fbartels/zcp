@@ -512,9 +512,7 @@ HRESULT ECChannel::HrReadBytes(std::string * strBuffer, ULONG ulByteCount) {
 	strBuffer->assign(buffer, ulByteCount);
 
 exit:
-	if (buffer)
-		delete [] buffer;
-
+	delete[] buffer;
 	return hr;
 }
 
@@ -843,7 +841,7 @@ HRESULT HrAccept(ECLogger *lpLogger, int ulListenFD, ECChannel **lppChannel)
 	*lppChannel = lpChannel;
 
 exit:
-	if (hr != hrSuccess && lpChannel)
+	if (hr != hrSuccess)
 		delete lpChannel;
 
 	return hr;

@@ -1548,10 +1548,7 @@ HRESULT Util::HrTextToHtml(IStream *text, IStream *html, ULONG ulCodepage)
 exit:
 	if (cd != (iconv_t)-1)
 		iconv_close(cd);
-
-	if (writeBuffer)
-		delete [] writeBuffer;
-
+	delete[] writeBuffer;
 	return hr;
 }
 

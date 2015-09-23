@@ -135,9 +135,7 @@ exit:
 	if(lpTable)
 		lpTable->Release();
 
-	if(lpFreeBusy)
-		delete lpFreeBusy;
-
+	delete lpFreeBusy;
 	if(lpFBblocks)
 		MAPIFreeBuffer(lpFBblocks);
 

@@ -249,9 +249,7 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 
 		ulNewSize = wstrTmp.length() + 1;
 		if(ulSize < ulNewSize) {
-			if(this->Value.lpszW)
-				delete[] this->Value.lpszW;
-
+			delete[] this->Value.lpszW;
 			this->Value.lpszW = new WCHAR[ulNewSize];
 
 			if(this->Value.lpszW == NULL) {
@@ -276,9 +274,7 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		ulNewSize = lpsProp->Value.bin.cb;
 
 		if(ulNewSize == 0)	{
-			if(this->Value.bin.lpb)
-				delete []this->Value.bin.lpb;
-
+			delete[] this->Value.bin.lpb;
 			this->Value.bin.lpb = NULL;
 			this->Value.bin.cb = 0;
 			ulSize = 0;
@@ -286,9 +282,7 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		}
 
 		if(ulSize < ulNewSize) {
-			if(this->Value.bin.lpb)
-				delete []this->Value.bin.lpb;
-
+			delete[] this->Value.bin.lpb;
 			this->Value.bin.lpb = new BYTE[ulNewSize];
 
 			if(this->Value.bin.lpb == NULL) {
@@ -311,9 +305,7 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 
 		ulNewSize = wcslen(lpsProp->Value.lpszW)+1;
 		if(ulSize < ulNewSize) {
-			if(this->Value.lpszW)
-				delete[] this->Value.lpszW;
-
+			delete[] this->Value.lpszW;
 			this->Value.lpszW = new WCHAR[ulNewSize];
 
 			if(this->Value.lpszW == NULL) {
@@ -361,9 +353,7 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		ulNewSize = sizeof(short int)*lpsProp->Value.MVi.cValues;
 
 		if(ulSize < ulNewSize) {
-			if(this->Value.MVi.lpi)
-				delete[] this->Value.MVi.lpi;
-
+			delete[] this->Value.MVi.lpi;
 			this->Value.MVi.lpi = new short int[lpsProp->Value.MVi.cValues];
 		
 			if(this->Value.MVi.lpi == NULL) {
@@ -388,9 +378,7 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		ulNewSize = sizeof(LONG) * lpsProp->Value.MVl.cValues;
 
 		if(ulSize < ulNewSize) {
-			if(this->Value.MVl.lpl)
-				delete[] this->Value.MVl.lpl;
-
+			delete[] this->Value.MVl.lpl;
 			this->Value.MVl.lpl = new LONG[lpsProp->Value.MVl.cValues];
 
 			if(this->Value.MVl.lpl == NULL) {
@@ -415,10 +403,7 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		ulNewSize = sizeof(float) * lpsProp->Value.MVflt.cValues;
 
 		if(ulSize < ulNewSize) {
-			
-			if(this->Value.MVflt.lpflt)
-				delete[] this->Value.MVflt.lpflt;
-
+			delete[] this->Value.MVflt.lpflt;
 			this->Value.MVflt.lpflt = new float[lpsProp->Value.MVflt.cValues];
 
 			if(this->Value.MVflt.lpflt == NULL) {
@@ -443,9 +428,7 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		ulNewSize = sizeof(double) * lpsProp->Value.MVdbl.cValues;
 
 		if(ulSize < ulNewSize) {
-			if(this->Value.MVdbl.lpdbl)
-				delete[] this->Value.MVdbl.lpdbl;
-
+			delete[] this->Value.MVdbl.lpdbl;
 			this->Value.MVdbl.lpdbl = new double[lpsProp->Value.MVdbl.cValues];
 
 			if(this->Value.MVdbl.lpdbl == NULL) {
@@ -470,9 +453,7 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		ulNewSize = sizeof(CURRENCY) * lpsProp->Value.MVcur.cValues;
 
 		if(ulSize < ulNewSize) {
-			if(this->Value.MVcur.lpcur)
-				delete[] this->Value.MVcur.lpcur;
-
+			delete[] this->Value.MVcur.lpcur;
 			this->Value.MVcur.lpcur = new CURRENCY[lpsProp->Value.MVcur.cValues];
 			
 			if(this->Value.MVcur.lpcur == NULL) {
@@ -524,10 +505,7 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		ulNewSize = sizeof(FILETIME) * lpsProp->Value.MVft.cValues;
 
 		if(ulSize < ulNewSize) {
-			
-			if(this->Value.MVft.lpft)
-				delete[] this->Value.MVft.lpft;
-
+			delete[] this->Value.MVft.lpft;
 			this->Value.MVft.lpft = new FILETIME[lpsProp->Value.MVft.cValues];
 
 			if(this->Value.MVft.lpft == NULL) {
@@ -554,11 +532,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		if(ulSize < ulNewSize) {
 			
 			if(this->Value.MVbin.lpbin){
-				for(unsigned int i=0;i<this->Value.MVbin.cValues;i++)
-				{
-					if(this->Value.MVbin.lpbin[i].lpb)
-						delete [] this->Value.MVbin.lpbin[i].lpb;
-				}
+				for (unsigned int i = 0; i < this->Value.MVbin.cValues; ++i)
+					delete[] this->Value.MVbin.lpbin[i].lpb;
 				delete[] this->Value.MVbin.lpbin;
 			}
 
@@ -585,17 +560,13 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 				}
 
 				if(this->Value.MVbin.lpbin[i].lpb == NULL || this->Value.MVbin.lpbin[i].cb < lpsProp->Value.MVbin.lpbin[i].cb) {
-					if(this->Value.MVbin.lpbin[i].lpb)
-						delete[] this->Value.MVbin.lpbin[i].lpb;
-
+					delete[] this->Value.MVbin.lpbin[i].lpb;
 					this->Value.MVbin.lpbin[i].lpb = new BYTE [lpsProp->Value.MVbin.lpbin[i].cb];
 				}
 				
 				memcpy(this->Value.MVbin.lpbin[i].lpb, lpsProp->Value.MVbin.lpbin[i].lpb, lpsProp->Value.MVbin.lpbin[i].cb);
 			}else {
-				if(this->Value.MVbin.lpbin[i].lpb)
-					delete[] this->Value.MVbin.lpbin[i].lpb;
-
+				delete[] this->Value.MVbin.lpbin[i].lpb;
 				this->Value.MVbin.lpbin[i].lpb = NULL;
 			}
 			this->Value.MVbin.lpbin[i].cb = lpsProp->Value.MVbin.lpbin[i].cb;
@@ -652,9 +623,7 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 
 			if(this->Value.MVszW.lppszW[i] == NULL || wcslen(this->Value.MVszW.lppszW[i]) < wstrTmp.length())
 			{
-				if(this->Value.MVszW.lppszW[i])
-					delete[] this->Value.MVszW.lppszW[i];
-
+				delete[] this->Value.MVszW.lppszW[i];
 				this->Value.MVszW.lppszW[i] = new WCHAR [wstrTmp.length() + sizeof(wchar_t)];
 			}
 			wcscpy(this->Value.MVszW.lppszW[i], wstrTmp.c_str());
@@ -700,9 +669,7 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 			}
 
 			if(this->Value.MVszW.lppszW[i] == NULL || wcslen(this->Value.MVszW.lppszW[i]) < wcslen(lpsProp->Value.MVszW.lppszW[i])) {
-				if(this->Value.MVszW.lppszW[i])
-					delete[] this->Value.MVszW.lppszW[i];
-
+				delete[] this->Value.MVszW.lppszW[i];
 				this->Value.MVszW.lppszW[i] = new WCHAR [wcslen(lpsProp->Value.MVszW.lppszW[i])+sizeof(WCHAR)];
 			}
 			wcscpy(this->Value.MVszW.lppszW[i], lpsProp->Value.MVszW.lppszW[i]);
@@ -719,9 +686,7 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		ulNewSize = sizeof(GUID) * lpsProp->Value.MVguid.cValues;
 
 		if(ulSize < ulNewSize) {
-			if(this->Value.MVguid.lpguid)
-				delete[] this->Value.MVguid.lpguid;
-
+			delete[] this->Value.MVguid.lpguid;
 			this->Value.MVguid.lpguid = new GUID[lpsProp->Value.MVguid.cValues];
 
 			if(this->Value.MVguid.lpguid == NULL) {
@@ -746,10 +711,7 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		ulNewSize = sizeof(LARGE_INTEGER) * lpsProp->Value.MVli.cValues;
 
 		if(ulSize < ulNewSize) {
-			
-			if(this->Value.MVli.lpli)
-				delete[] this->Value.MVli.lpli;
-
+			delete[] this->Value.MVli.lpli;
 			this->Value.MVli.lpli = new LARGE_INTEGER[lpsProp->Value.MVli.cValues];
 
 			if(this->Value.MVli.lpli == NULL) {
@@ -796,8 +758,7 @@ ECProperty::~ECProperty()
 		case PT_I8:
 			break;
 		case PT_BINARY:
-			if(this->Value.bin.lpb)
-				delete [] this->Value.bin.lpb;
+			delete[] this->Value.bin.lpb;
 			break;
 		case PT_STRING8:
 			ASSERT(("We should never have PT_STRING8 storage", 0));
@@ -830,10 +791,8 @@ ECProperty::~ECProperty()
 			delete [] this->Value.MVft.lpft;
 			break;
 		case PT_MV_BINARY: {
-			for(unsigned int i=0;i<this->Value.MVbin.cValues;i++) {
-				if(this->Value.MVbin.lpbin[i].lpb)
-					delete [] this->Value.MVbin.lpbin[i].lpb;
-			}
+			for (unsigned int i = 0; i <this->Value.MVbin.cValues; ++i)
+				delete[] this->Value.MVbin.lpbin[i].lpb;
 			delete [] this->Value.MVbin.lpbin;
 			break;
 		}

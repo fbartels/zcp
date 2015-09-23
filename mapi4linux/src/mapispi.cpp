@@ -113,9 +113,7 @@ M4LMAPISupport::M4LMAPISupport(LPMAPISESSION new_session, LPMAPIUID lpUid, SVCSe
 M4LMAPISupport::~M4LMAPISupport() {
 	M4LSUPPORTADVISES::iterator i;
 
-    if(this->lpsProviderUID)
-        delete lpsProviderUID;
-
+	delete lpsProviderUID;
 	for (i = m_advises.begin(); i != m_advises.end(); i++)
 		MAPIFreeBuffer(i->second.lpKey);
 

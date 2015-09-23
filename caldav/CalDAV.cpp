@@ -393,10 +393,7 @@ exit:
 #endif
 
 	ECChannel::HrFreeCtx();
-
-	if (g_lpConfig)
-		delete g_lpConfig;
-
+	delete g_lpConfig;
 	DeleteLogger(g_lpLogger);
 
 	MAPIUninitialize();
@@ -616,7 +613,7 @@ static HRESULT HrStartHandlerClient(ECChannel *lpChannel, bool bUseSSL,
 	}
 
 exit:
-	if (hr != hrSuccess && lpHandlerArgs)
+	if (hr != hrSuccess)
 		delete lpHandlerArgs;
 
 	return hr;
@@ -654,10 +651,7 @@ static void *HandlerClient(void *lpArg)
 
 exit:
 	g_lpLogger->Log(EC_LOGLEVEL_INFO, "Connection closed");
-		
-	if(lpChannel)
-		delete lpChannel;
-
+	delete lpChannel;
 	return NULL;
 }
 
