@@ -47,7 +47,7 @@
 #include <edkmdb.h>
 
 #include <zarafa/mapiext.h>
-#include <zarafa/restrictionutil.h>"
+#include <zarafa/restrictionutil.h>
 #include <zarafa/CommonUtil.h>
 
 #include <zarafa/tstring.h>

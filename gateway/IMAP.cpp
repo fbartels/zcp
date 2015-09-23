@@ -74,7 +74,7 @@
 #include <zarafa/stringutil.h>
 #include <zarafa/codepage.h>
 #include <zarafa/charset/convert.h>
-#include <zarafa/restrictionutil.h>"
+#include <zarafa/restrictionutil.h>
 #include <zarafa/ecversion.h>
 #include <zarafa/ECGuid.h>
 #include <zarafa/namedprops.h>

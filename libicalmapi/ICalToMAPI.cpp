@@ -53,7 +53,7 @@
 #include <mapix.h>
 #include <mapiutil.h>
 #include <zarafa/mapiext.h>
-#include <zarafa/restrictionutil.h>"
+#include <zarafa/restrictionutil.h>
 #include <libical/ical.h>
 #include <algorithm>
 #include <vector>

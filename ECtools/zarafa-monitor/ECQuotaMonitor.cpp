@@ -67,7 +67,7 @@
 #include <zarafa/CommonUtil.h>
 #include <zarafa/stringutil.h>
 #include <zarafa/mapiext.h>
-#include <zarafa/restrictionutil.h>"
+#include <zarafa/restrictionutil.h>
 
 // Other
 #include "ECMonitorDefs.h"

@@ -52,7 +52,7 @@
 #include "recurrence.h"
 #include <zarafa/MAPIErrors.h>
 
-#include <zarafa/restrictionutil.h>"
+#include <zarafa/restrictionutil.h>
 #include "ECFreeBusyUpdate.h"
 #include "freebusyutil.h"
 #include "ECFreeBusySupport.h"

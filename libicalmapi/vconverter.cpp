@@ -48,7 +48,7 @@
 #include <mapi.h>
 #include <mapiutil.h>
 #include <zarafa/mapiext.h>
-#include <zarafa/restrictionutil.h>"
+#include <zarafa/restrictionutil.h>
 #include <zarafa/CommonUtil.h>
 #include <zarafa/Util.h>
 #include "icaluid.h"

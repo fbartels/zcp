@@ -48,7 +48,7 @@
 #include "CalDavUtil.h"
 #include <libxml/uri.h>
 
-#include <zarafa/restrictionutil.h>"
+#include <zarafa/restrictionutil.h>
 #include <zarafa/mapiext.h>
 #include "MAPIToICal.h"
 #include "ICalToMAPI.h"

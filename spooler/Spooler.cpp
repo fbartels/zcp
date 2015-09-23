@@ -101,7 +101,7 @@
 #include <edkguid.h>
 #include <zarafa/mapiguidext.h>
 #include "mapicontact.h"
-#include <zarafa/restrictionutil.h>"
+#include <zarafa/restrictionutil.h>
 #include <zarafa/charset/convert.h>
 #include <zarafa/charset/convstring.h>
 #include <zarafa/charset/utf8string.h>
