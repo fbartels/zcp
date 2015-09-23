@@ -89,6 +89,22 @@ function parseConfig($configfile)
     return $settings;
 }
 
+/**
+* Get the main calendar
+*/
+function getCalendar($store)
+{
+    $inbox = mapi_msgstore_getreceivefolder($store);
+    $inboxprops = mapi_getprops($inbox, array(PR_IPM_APPOINTMENT_ENTRYID));
+
+    if(!isset($inboxprops[PR_IPM_APPOINTMENT_ENTRYID]))
+        return false;
+
+    $calendar = mapi_msgstore_openentry($store, $inboxprops[PR_IPM_APPOINTMENT_ENTRYID]);
+
+    return $calendar;
+}
+
 function u2w($s)
 {
     return $s;
