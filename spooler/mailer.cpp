@@ -641,7 +641,7 @@ exit:
  * @param[in]	lpMessage	The message to fix the recipient table for.
  * @return		HRESULT
  */
-HRESULT UniqueRecipients(IMessage *lpMessage)
+static HRESULT UniqueRecipients(IMessage *lpMessage)
 {
 	HRESULT			hr = hrSuccess;
 	IMAPITable		*lpTable = NULL;
