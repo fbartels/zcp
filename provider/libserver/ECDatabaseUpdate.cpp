@@ -1336,8 +1336,7 @@ ECRESULT UpdateDatabaseCreateReferences(ECDatabase *lpDatabase)
 
 exit:
 #ifdef HAVE_OFFLINE_SUPPORT
-	if (lpUncompressed != NULL)
-		delete[] lpUncompressed;
+	delete[] lpUncompressed;
 #endif
 
 	return er;
@@ -2075,8 +2074,7 @@ ECRESULT UpdateDatabaseConvertRules(ECDatabase *lpDatabase)
 	PROGRESS_DONE
 
 exit:
-	if (lpszConverted)
-		delete[] lpszConverted;
+	delete[] lpszConverted;
 
 	if (lpResult)
 		lpDatabase->FreeResult(lpResult);
@@ -2135,8 +2133,7 @@ ECRESULT UpdateDatabaseConvertSearchFolders(ECDatabase *lpDatabase)
 	PROGRESS_DONE
 
 exit:
-	if (lpszConverted)
-		delete[] lpszConverted;
+	delete[] lpszConverted;
 
 	if (lpResult)
 		lpDatabase->FreeResult(lpResult);

@@ -298,9 +298,7 @@ static HRESULT GetPluginObject(ECLogger *lpLogger,
 	lpPyMapiPlugin = NULL;
 
 exit:
-	if (lpPyMapiPlugin)
-		delete lpPyMapiPlugin;
-
+	delete lpPyMapiPlugin;
 	return hr;
 }
 
@@ -3413,8 +3411,7 @@ static void *HandlerLMTP(void *lpArg)
 				 * only when the structure was added to the mapRCPT will it be freed automatically
 				 * later during email delivery.
 				 */
-				if (lpRecipient)
-					delete lpRecipient;
+				delete lpRecipient;
 			}
 			break;
 
@@ -3561,9 +3558,7 @@ exit:
 
 	g_lpLogger->Log(EC_LOGLEVEL_INFO, "LMTP thread exiting");
 
-	if (lpArgs)
-		delete lpArgs;
-
+	delete lpArgs;
 	return NULL;
 }
 
@@ -3898,8 +3893,7 @@ static HRESULT deliver_recipient(PyMapiPlugin *lppyMapiPlugin,
 	SaveRawMessage(fpMail, recipient);
 
 exit:
-	if (lpSingleRecip)
-		delete lpSingleRecip;
+	delete lpSingleRecip;
 
 	if (fpMail && fpMail != file)
 		fclose(fpMail);
@@ -4303,8 +4297,7 @@ int main(int argc, char *argv[]) {
 exit:
 	DeleteLogger(g_lpLogger);
 
-	if (g_lpConfig)
-		delete g_lpConfig;
+	delete g_lpConfig;
 
 	if (hr == hrSuccess || bListenLMTP)
 		return EX_OK;			// 0

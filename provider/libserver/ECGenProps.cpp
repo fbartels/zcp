@@ -865,12 +865,10 @@ ECRESULT ECGenProps::GetPropComputedUncached(struct soap *soap, ECODStore *lpODS
 
 	*lpPropVal = sPropVal;
 exit:
-	if(sPropTagArray.__ptr)
-		delete[] sPropTagArray.__ptr;
+	delete[] sPropTagArray.__ptr;
 
 	if(soap == NULL) { // soap != NULL gsoap will cleanup the memory
-		if (sPropValArray.__ptr) 
-			delete[] sPropValArray.__ptr;
+		delete[] sPropValArray.__ptr;
 
 		if (er != erSuccess)
 			FreePropVal(&sPropVal, false);
@@ -1008,9 +1006,7 @@ ECRESULT ECGenProps::GetStoreName(struct soap *soap, ECSession* lpSession, unsig
 	*lppStoreName = lpStoreName;
 
 exit:
-	if(sPropTagArray.__ptr)
-		delete[] sPropTagArray.__ptr;
-
+	delete[] sPropTagArray.__ptr;
 	return er;
 }
 

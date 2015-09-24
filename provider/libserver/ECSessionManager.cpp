@@ -147,15 +147,9 @@ ECSessionManager::~ECSessionManager()
 	pthread_cond_signal(&m_hExitSignal);
 
 	pthread_mutex_unlock(&m_hExitMutex);
-
-	if(m_lpTPropsPurge)
-		delete m_lpTPropsPurge;
-
-	if(m_lpDatabase)
-		delete m_lpDatabase;
-
-	if(m_lpDatabaseFactory)
-		delete m_lpDatabaseFactory;
+	delete m_lpTPropsPurge;
+	delete m_lpDatabase;
+	delete m_lpDatabaseFactory;
 		
 	err = pthread_join(m_hSessionCleanerThread, NULL);
 	
@@ -179,23 +173,14 @@ ECSessionManager::~ECSessionManager()
 		iSession = iSessionNext;
 	}
 	
-	if(m_lpNotificationManager)
-	    delete m_lpNotificationManager;
-
+	delete m_lpNotificationManager;
 //#ifdef DEBUG
 	// Clearing the cache takes too long while shutting down
-	if(m_lpECCacheManager)
-		delete m_lpECCacheManager;
+	delete m_lpECCacheManager;
 //#endif
-
-	if(m_lpSearchFolders)
-		delete m_lpSearchFolders;
-
-	if(m_lpPluginFactory)
-		delete m_lpPluginFactory;
-
-	if(m_lpServerGuid)
-		delete m_lpServerGuid;
+	delete m_lpSearchFolders;
+	delete m_lpPluginFactory;
+	delete m_lpServerGuid;
 
 	// Release ownership of the rwlock object.
 	pthread_rwlock_unlock(&m_hCacheRWLock);
@@ -721,9 +706,7 @@ authenticated:
 	}
 
 exit:
-	if (lpAuthSession)
-		delete lpAuthSession;
-
+	delete lpAuthSession;
 	*lppSession = lpSession;
 
 	return er;

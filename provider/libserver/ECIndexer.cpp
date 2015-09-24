@@ -458,8 +458,7 @@ exit:
     if (lpOptimizedRestrict)
         FreeRestrictTable(lpOptimizedRestrict);
         
-	if (lpSearchClient)
-		delete lpSearchClient;
+	delete lpSearchClient;
 
 	if (er != erSuccess)
 		g_lpStatsCollector->Increment(SCN_DATABASE_SEARCHES);

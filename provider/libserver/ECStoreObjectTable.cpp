@@ -165,9 +165,7 @@ ECStoreObjectTable::~ECStoreObjectTable()
 {
 	if(m_lpObjectData) {
 		ECODStore* lpODStore = (ECODStore*)m_lpObjectData;
-		if(lpODStore->lpGuid)
-			delete lpODStore->lpGuid;
-
+		delete lpODStore->lpGuid;
 		delete lpODStore;
 	}
 }

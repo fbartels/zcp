@@ -1944,7 +1944,7 @@ ECRESULT ECCacheManager::GetEntryIdFromObject(unsigned int ulObjId, struct soap 
 
 	*lppEntryId = lpEntryId;
 exit:
-	if (er != erSuccess && lpEntryId)
+	if (er != erSuccess)
 		delete lpEntryId;
 
 	return er;

@@ -103,10 +103,8 @@ static HRESULT GetPluginObject(ECLogger *lpLogger,
 	lpPyMapiPlugin = NULL;
 
 exit:
-	if (lpPyMapiPlugin)
-		delete lpPyMapiPlugin;
-
-    return hr;
+	delete lpPyMapiPlugin;
+	return hr;
 }
 
 /**
@@ -2868,8 +2866,6 @@ exit:
 	if (lpAdminSession)
 		lpAdminSession->Release();
 
-	if (lpMailer)
-		delete lpMailer;
-
+	delete lpMailer;
 	return hr;
 }

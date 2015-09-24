@@ -200,8 +200,7 @@ ECGenericObjectTable::~ECGenericObjectTable()
 {
     ECCategoryMap::iterator iterCategories;
         
-	if(this->lpKeyTable)
-		delete lpKeyTable;
+	delete lpKeyTable;
 
 	if(this->lpsPropTagArray)
 		FreePropTagArray(this->lpsPropTagArray);
@@ -1174,15 +1173,11 @@ exit:
 	if(lpRowSet)
 		FreeRowSet(lpRowSet, true);
 
-	if(lpsRestrictPropTagArray != NULL && lpsRestrictPropTagArray->__ptr)
+	if(lpsRestrictPropTagArray != NULL)
 		delete [] lpsRestrictPropTagArray->__ptr;
 
-	if(lpsRestrictPropTagArray)
-		delete lpsRestrictPropTagArray;
-
-	if(sPropTagArray.__ptr)
-		delete [] sPropTagArray.__ptr;
-
+	delete lpsRestrictPropTagArray;
+	delete[] sPropTagArray.__ptr;
 	return er;
 }
 
@@ -1633,7 +1628,6 @@ ECRESULT ECGenericObjectTable::SetCollapseState(struct xsd__base64Binary sCollap
 next:        
         delete [] lpSortLen;
         for(int j=0;j<lpCollapseState->sCategoryStates.__ptr[i].sProps.__size;j++)
-            if(lpSortData[j])
                 delete [] lpSortData[j];
         delete [] lpSortData;
         delete [] lpSortFlags;
@@ -1671,8 +1665,7 @@ next:
         delete [] lpSortLen;
         lpSortLen = NULL;
         for(int j=0 ; j<lpCollapseState->sBookMarkProps.__size; j++)
-			if (lpSortData[j])
-				delete [] lpSortData[j];
+			delete[] lpSortData[j];
         delete [] lpSortData;
         lpSortData = NULL;
         delete [] lpSortFlags;
@@ -1688,19 +1681,11 @@ exit:
 	soap_end(&xmlsoap);
 	pthread_mutex_unlock(&m_hLock);
 
-    if(lpCollapseState)
         delete lpCollapseState;
-    
-    if(lpSortLen)
         delete [] lpSortLen;
-        
-    if(lpSortData)
         delete [] lpSortData;
-        
-    if(lpSortFlags)
         delete [] lpSortFlags;
-        
-    return er;
+	return er;
 }
 
 ECRESULT ECGenericObjectTable::UpdateRow(unsigned int ulType, unsigned int ulObjId, unsigned int ulFlags)
@@ -2913,18 +2898,15 @@ ECRESULT ECGenericObjectTable::AddCategoryBeforeAddRow(sObjectTableKey sObjKey, 
     ASSERT(m_mapCategories.size() == m_mapSortedCategories.size());
     
 exit:
-    if(lpSortLen)
-        delete [] lpSortLen;
+	delete[] lpSortLen;
     if(lppSortKeys) {
         for(i=0;i < m_ulCategories + 1 && i < cProps;i++)
             delete [] lppSortKeys[i];
             
         delete [] lppSortKeys;
     }
-    if(lpSortFlags)
-        delete [] lpSortFlags;
-        
-    return er;
+	delete[] lpSortFlags;
+	return er;
 }
 
 /**
@@ -3064,18 +3046,15 @@ exit:
 		delete [] lpOrderedProps;
 	}
 		
-    if(lpSortLen)
-        delete [] lpSortLen;
+	delete[] lpSortLen;
     if(lppSortKeys) {
         for(unsigned int i=0; i < cValues; i++)
             delete [] lppSortKeys[i];
             
         delete [] lppSortKeys;
     }
-    if(lpSortFlags)
-        delete [] lpSortFlags;
-        
-    return er;
+	delete[] lpSortFlags;
+	return er;
 }
 
 /**
@@ -3175,8 +3154,7 @@ ECRESULT ECGenericObjectTable::RemoveCategoryAfterRemoveRow(sObjectTableKey sObj
 						AddTableNotif(ulAction, *iterObject, &sPrevRow);
 					}
 					
-					if(lpSortKey)
-						delete [] lpSortKey;
+					delete[] lpSortKey;
 					lpSortKey = NULL;
 						
 					FreePropVal(&sProp, false);
@@ -3235,13 +3213,10 @@ ECRESULT ECGenericObjectTable::RemoveCategoryAfterRemoveRow(sObjectTableKey sObj
     ASSERT(m_mapCategories.size() == m_mapSortedCategories.size());
 
 exit:
-	if(lpSortKey)
-		delete [] lpSortKey;
-		
+	delete[] lpSortKey;
 	FreePropVal(&sProp, false);
 	sProp.ulPropTag = PR_NULL;
-	
-    return er;
+	return er;
 }
 
 /**
@@ -3396,8 +3371,7 @@ ECCategory::~ECCategory()
     	FreePropVal(iterMinMax->second, true);
     }
 
-    if (m_lpProps)
-	    delete [] m_lpProps;
+    delete[] m_lpProps;
 }
 
 void ECCategory::IncLeaf()

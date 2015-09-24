@@ -789,9 +789,7 @@ exit:
 	if (lpSyncStatusProp)
 		MAPIFreeBuffer(lpSyncStatusProp);
 
-	if (lpszStream)
-		delete[] lpszStream;
-
+	delete[] lpszStream;
 	return hr;
 }
 

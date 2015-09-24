@@ -124,8 +124,7 @@ UnixUserPlugin::UnixUserPlugin(pthread_mutex_t *pluginlock, ECPluginSharedData *
 
 UnixUserPlugin::~UnixUserPlugin()
 {
-	if (m_iconv)
-		delete m_iconv;
+	delete m_iconv;
 }
 
 void UnixUserPlugin::InitPlugin() throw(std::exception) {

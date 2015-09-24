@@ -608,9 +608,7 @@ ECRESULT ECUserStatsTable::Load()
 	}
 
 exit:
-	if (lpCompanies)
-		delete lpCompanies;
-
+	delete lpCompanies;
 	return er;
 }
 
@@ -641,9 +639,7 @@ ECRESULT ECUserStatsTable::LoadCompanyUsers(ULONG ulCompanyId)
 	UpdateRows(ECKeyTable::TABLE_ROW_ADD, &lstObjId, 0, false);
 
 exit:
-	if (lpObjects)
-		delete lpObjects;
-
+	delete lpObjects;
 	return er;
 }
 
@@ -893,9 +889,7 @@ ECRESULT ECCompanyStatsTable::Load()
 	}	
 
 exit:
-	if (lpCompanies)
-		delete lpCompanies;
-
+	delete lpCompanies;
 	return er;
 }
 

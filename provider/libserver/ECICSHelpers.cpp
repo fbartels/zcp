@@ -625,9 +625,7 @@ ECRESULT ECGetContentChangesHelper::Create(struct soap *soap, ECSession *lpSessi
 	lpHelper = NULL;
 	
 exit:
-	if (lpHelper)
-		delete lpHelper;
-		
+	delete lpHelper;
 	return er;
 }
 
@@ -762,11 +760,8 @@ exit:
  
 ECGetContentChangesHelper::~ECGetContentChangesHelper()
 {
-	if (m_lpQueryCreator)
-		delete m_lpQueryCreator;
-		
-	if(m_lpMsgProcessor)
-		delete m_lpMsgProcessor;
+	delete m_lpQueryCreator;
+	delete m_lpMsgProcessor;
 }
 	
 ECRESULT ECGetContentChangesHelper::QueryDatabase(DB_RESULT *lppDBResult)
@@ -1118,8 +1113,7 @@ ECRESULT ECGetContentChangesHelper::MatchRestriction(const SOURCEKEY &sSourceKey
     *lpfMatch = fMatch;
 
 exit:
-	if(sODStore.lpGuid)
-		delete sODStore.lpGuid;
+	delete sODStore.lpGuid;
     if(lpPropTags)
         FreePropTagArray(lpPropTags);
 

@@ -137,9 +137,7 @@ HRESULT HrDecodeSyncStateStream(LPSTREAM lpStream, ULONG *lpulSyncId, ULONG *lpu
 		lpSetProcessChanged->insert(setProcessedChanged.begin(), setProcessedChanged.end());
 
 exit:
-	if (lpData)
-		delete[] lpData;
-
+	delete[] lpData;
 	return hr;
 }
 

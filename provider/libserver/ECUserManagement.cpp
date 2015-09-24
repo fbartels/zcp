@@ -696,12 +696,8 @@ ECRESULT ECUserManagement::GetCompanyObjectListAndSync(objectclass_t objclass, u
 	}
 
 exit:
-	if (lpLocalIds)
-		delete lpLocalIds;
-
-	if (lpObjects)
-		delete lpObjects;
-
+	delete lpLocalIds;
+	delete lpObjects;
 	return er;
 }
 
@@ -822,15 +818,9 @@ ECRESULT ECUserManagement::GetSubObjectsOfObjectAndSync(userobject_relation_t re
 	}
 
 exit:
-	if (lpCompanies)
-		delete lpCompanies;
-
-	if (lpObjectsTmp)
-		delete lpObjectsTmp;
-
-	if (lpObjects)
-		delete lpObjects;
-
+	delete lpCompanies;
+	delete lpObjectsTmp;
+	delete lpObjects;
 	return er;
 }
 
@@ -950,9 +940,7 @@ ECRESULT ECUserManagement::GetParentObjectsOfObjectAndSync(userobject_relation_t
 	}
 
 exit:
-	if (lpObjects)
-		delete lpObjects;
-
+	delete lpObjects;
 	return er;
 }
 
@@ -1683,7 +1671,7 @@ exit:
 	if(lpResult)
 		lpDatabase->FreeResult(lpResult);
 
-	if (er != erSuccess && lpObjects)
+	if (er != erSuccess)
 		delete lpObjects;
 
 	return er;
@@ -4321,7 +4309,7 @@ ECRESULT ECUserManagement::ConvertObjectDetailsToProps(struct soap *soap, unsign
 	*lpPropValsRet = *lpPropVals;
 
 exit:
-	if (er != erSuccess && soap == NULL && lpPropVals->__ptr)
+	if (er != erSuccess && soap == NULL)
 		delete [] lpPropVals->__ptr;
 
 	return er;
@@ -5029,9 +5017,7 @@ ECRESULT ECUserManagement::GetABSourceKeyV1(unsigned int ulUserId, SOURCEKEY *lp
 	*lpsSourceKey = SOURCEKEY(ulLen, (char*)lpAbeid);
 
 exit:
-	if (lpAbeid)
-		delete[] lpAbeid;
-
+	delete[] lpAbeid;
 	return er;
 }
 

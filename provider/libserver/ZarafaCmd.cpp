@@ -739,10 +739,8 @@ int ns__logon(struct soap *soap, char *user, char *pass, char *impersonate, char
 exit:
 	if (lpecSession)
 		lpecSession->Unlock();
-        
-    if(lpLicenseResponse)
-        delete [] lpLicenseResponse;
 
+	delete[] lpLicenseResponse;
 	lpsResponse->er = er;
 
 	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &endTimes);
@@ -3414,12 +3412,9 @@ static ECRESULT LoadObject(struct soap *soap, ECSession *lpecSession,
 exit:
 	if (lpAttachmentStorage)
 		lpAttachmentStorage->Release();
-		
-    if (sEmptyProps.lpPropVals)
-        delete sEmptyProps.lpPropVals;
-    if (sEmptyProps.lpPropTags)
-        delete sEmptyProps.lpPropTags;
 
+	delete sEmptyProps.lpPropVals;
+	delete sEmptyProps.lpPropTags;
 	FREE_DBRESULT();
 __soapentry_exit:
 	return er;
@@ -4848,9 +4843,7 @@ SOAP_ENTRY_START(getRights, lpsRightResponse->er, entryId sEntryId, int ulType, 
 exit:
 	if (lpsRightArray) {
 		for (unsigned int i = 0; i < lpsRightArray->__size; i++)
-			if (lpsRightArray->__ptr[i].sUserId.__ptr)
-				delete [] lpsRightArray->__ptr[i].sUserId.__ptr;
-
+			delete[] lpsRightArray->__ptr[i].sUserId.__ptr;
 		if (lpsRightArray->__size > 0)
 			delete[] lpsRightArray->__ptr;
 
@@ -5879,8 +5872,7 @@ SOAP_ENTRY_START(getUserList, lpsUserList->er, unsigned int ulCompanyId, entryId
     }
 
 exit:
-    if(lpUsers)
-        delete lpUsers;
+	delete lpUsers;
 }
 SOAP_ENTRY_END()
 
@@ -6521,8 +6513,7 @@ SOAP_ENTRY_START(getGroupList, lpsGroupList->er, unsigned int ulCompanyId, entry
 	}
 
 exit:
-    if (lpGroups)
-        delete lpGroups;
+	delete lpGroups;
 }
 SOAP_ENTRY_END()
 
@@ -6699,8 +6690,7 @@ SOAP_ENTRY_START(getUserListOfGroup, lpsUserList->er, unsigned int ulGroupId, en
 	}
 
 exit:
-    if(lpUsers)
-        delete lpUsers;
+	delete lpUsers;
 }
 SOAP_ENTRY_END()
 
@@ -6748,8 +6738,7 @@ SOAP_ENTRY_START(getGroupListOfUser, lpsGroupList->er, unsigned int ulUserId, en
 	}
 
 exit:
-    if(lpGroups)
-        delete lpGroups;
+	delete lpGroups;
 }
 SOAP_ENTRY_END()
 
@@ -7070,8 +7059,7 @@ SOAP_ENTRY_START(getCompanyList, lpsCompanyList->er, struct companyListResponse 
 	}
 
 exit:
-	if(lpCompanies)
-		delete lpCompanies;
+	delete lpCompanies;
 }
 SOAP_ENTRY_END()
 
@@ -7202,8 +7190,7 @@ SOAP_ENTRY_START(getRemoteViewList, lpsCompanyList->er, unsigned int ulCompanyId
 	}
 
 exit:
-	if(lpCompanies)
-		delete lpCompanies;
+	delete lpCompanies;
 }
 SOAP_ENTRY_END()
 
@@ -7334,8 +7321,7 @@ SOAP_ENTRY_START(getRemoteAdminList, lpsUserList->er, unsigned int ulCompanyId, 
 	}
 
 exit:
-	if(lpUsers)
-		delete lpUsers;
+	delete lpUsers;
 }
 SOAP_ENTRY_END()
 
@@ -10293,8 +10279,7 @@ SOAP_ENTRY_START(GetQuotaRecipients, lpsUserList->er, unsigned int ulUserid, ent
 	}
 
 exit:
-	if(lpUsers)
-		delete lpUsers;
+	delete lpUsers;
 }
 SOAP_ENTRY_END()
 
@@ -10701,10 +10686,8 @@ SOAP_ENTRY_START(getLicenseAuth, lpsResponse->er, struct xsd__base64Binary sAuth
 	memcpy(lpsResponse->sAuthResponse.__ptr, data, lpsResponse->sAuthResponse.__size);
 
 exit:
-	if (data)
-		delete [] data;
-
-    delete lpLicenseClient;
+	delete[] data;
+	delete lpLicenseClient;
 #else
 	er = ZARAFA_E_NOT_IMPLEMENTED;
 #endif

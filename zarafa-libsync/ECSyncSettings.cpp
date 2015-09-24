@@ -267,9 +267,7 @@ ECSyncSettings::__initializer::__initializer() {
 }
 
 ECSyncSettings::__initializer::~__initializer() {
-	if (ECSyncSettings::s_lpInstance)
-		delete ECSyncSettings::s_lpInstance;
-
+	delete ECSyncSettings::s_lpInstance;
 	pthread_mutex_destroy(&ECSyncSettings::s_hMutex);
 }
 

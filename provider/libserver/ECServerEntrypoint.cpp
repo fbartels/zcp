@@ -222,12 +222,10 @@ ECRESULT zarafa_exit()
 	// delete our plugin of the mainthread: requires ECPluginFactory to be alive, because that holds the dlopen() result
 	plugin_destroy(pthread_getspecific(plugin_key));
 
-	if (g_lpSessionManager)
-		delete g_lpSessionManager;
+	delete g_lpSessionManager;
 	g_lpSessionManager = NULL;
 
-	if (g_lpStatsCollector)
-		delete g_lpStatsCollector;
+	delete g_lpStatsCollector;
 	g_lpStatsCollector = NULL;
 
 	// Close all database connections

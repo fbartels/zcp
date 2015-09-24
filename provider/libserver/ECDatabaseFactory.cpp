@@ -123,9 +123,7 @@ ECRESULT ECDatabaseFactory::CreateDatabase()
 		goto exit;
 	
 exit:
-	if(lpDatabase)
-		delete lpDatabase;
-
+	delete lpDatabase;
 	return er;
 }
 
@@ -143,9 +141,7 @@ ECRESULT ECDatabaseFactory::UpdateDatabase(bool bForceUpdate, std::string &strRe
 		goto exit;
 
 exit:
-	if(lpDatabase)
-		delete lpDatabase;
-
+	delete lpDatabase;
 	return er;
 }
 

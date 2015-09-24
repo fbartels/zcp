@@ -300,7 +300,7 @@ exit:
 	if (lpTable)
 		lpTable->Release();
 
-	if (er != erSuccess && lpEntry)
+	if (er != erSuccess)
 		delete lpEntry;
 
 	return er;
@@ -515,10 +515,8 @@ ECRESULT ECTableManager::OpenStatsTable(unsigned int ulTableType, unsigned int u
 	AddTableEntry(lpEntry, lpulTableId);
 
 exit:
-	if (er != erSuccess) {
-		if (lpEntry)
-			delete lpEntry;
-	}
+	if (er != erSuccess)
+		delete lpEntry;
 
 	if (lpTable)
 		lpTable->Release();
@@ -555,7 +553,7 @@ exit:
 	if (lpTable)
 		lpTable->Release();
 
-	if (er != erSuccess && lpEntry)
+	if (er != erSuccess)
 		delete lpEntry;
 
 	return er;

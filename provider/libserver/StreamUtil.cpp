@@ -928,9 +928,8 @@ exit:
 	if (lpIStream)
 		lpIStream->Release();
 
-	if (lpTempSink)
-		delete lpTempSink;
-		
+	delete lpTempSink;
+
 	if (lpDatabase) {
 		if (lpDBResult)
 			lpDatabase->FreeResult(lpDBResult);

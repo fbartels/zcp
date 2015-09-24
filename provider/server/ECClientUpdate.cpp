@@ -214,11 +214,8 @@ int HandleClientUpdate(struct soap *soap)
 	nRet = SOAP_OK;
 
 exit:
-	if (lpLicenseResponse)
-		delete [] lpLicenseResponse;
-
-	if (lpLicenseClient)
-		delete lpLicenseClient;
+	delete[] lpLicenseResponse;
+	delete lpLicenseClient;
 
 	if (fd)
 		fclose(fd);
@@ -639,11 +636,8 @@ exit:
 
 	lpsResponse->er = er;
 
-	if (lpLicenseResponse)
-		delete [] lpLicenseResponse;
-
-	if (lpLicenseClient)
-		delete lpLicenseClient;
+	delete[] lpLicenseResponse;
+	delete lpLicenseClient;
 
 	if (er && fd)
 		fclose(fd);

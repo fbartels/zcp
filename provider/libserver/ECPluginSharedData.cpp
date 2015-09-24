@@ -63,8 +63,7 @@ ECPluginSharedData::ECPluginSharedData(ECConfig *lpParent, ECLogger *lpLogger, I
 
 ECPluginSharedData::~ECPluginSharedData()
 {
-	if (m_lpConfig)
-		delete m_lpConfig;
+	delete m_lpConfig;
 	if (m_lpDefaults) {
 		for (int n = 0; m_lpDefaults[n].szName; n++) {
 			free((void*)m_lpDefaults[n].szName);

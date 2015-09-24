@@ -123,12 +123,9 @@ ECSecurity::ECSecurity(ECSession *lpSession, ECConfig *lpConfig, ECLogger *lpLog
 
 ECSecurity::~ECSecurity()
 {
-	if(m_lpGroups)
-		delete m_lpGroups;
-	if(m_lpViewCompanies)
-		delete m_lpViewCompanies;
-	if(m_lpAdminCompanies)
-		delete m_lpAdminCompanies;
+	delete m_lpGroups;
+	delete m_lpViewCompanies;
+	delete m_lpAdminCompanies;
 }
 
 /** 
@@ -1070,7 +1067,7 @@ ECRESULT ECSecurity::GetViewableCompanies(unsigned int ulFlags, list<localobject
 	*lppObjects = lpObjects;
 
 exit:
-	if (er != erSuccess && lpObjects)
+	if (er != erSuccess)
 		delete lpObjects;
 
 	return er;
@@ -1114,7 +1111,7 @@ ECRESULT ECSecurity::GetAdminCompanies(unsigned int ulFlags, list<localobjectdet
 	*lppObjects = lpObjects;
 
 exit:
-	if (er != erSuccess && lpObjects)
+	if (er != erSuccess)
 		delete lpObjects;
 
 	return er;

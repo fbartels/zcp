@@ -279,11 +279,8 @@ ECSync::~ECSync(){
 	if(m_lpStoreID)
 		MAPIFreeBuffer(m_lpStoreID);
 
-	if (m_lpOfflineContext)
-		delete m_lpOfflineContext;
-
-	if (m_lpOnlineContext)
-		delete m_lpOnlineContext;
+	delete m_lpOfflineContext;
+	delete m_lpOnlineContext;
 
 	if (m_lpLogger)
 		m_lpLogger->Release();
@@ -1006,9 +1003,7 @@ exit:
 	if (lpOnlineStore)
 		lpOnlineStore->Release();
 
-	if (lpCollector)
-		delete lpCollector;
-
+	delete lpCollector;
 	return hr;
 }
 
@@ -1451,8 +1446,7 @@ HRESULT ECSync::Logon(){
 		if(hr != hrSuccess)
 			goto exit;
 
-		if (m_lpOfflineContext)
-			delete m_lpOfflineContext;
+		delete m_lpOfflineContext;
 		m_lpOfflineContext = new ECSyncContext(lpOfflineStore, m_lpLogger);
 	}
 
@@ -1527,8 +1521,7 @@ HRESULT ECSync::Logon(){
 				goto exit;
 		}
 
-		if (m_lpOnlineContext)
-			delete m_lpOnlineContext;
+		delete m_lpOnlineContext;
 		m_lpOnlineContext = new ECSyncContext(lpOnlineStore, m_lpLogger);
 
 		hr = lpOnlineStore->Advise(0, NULL, fnevNewMail | m_ulSyncOnNotify, &this->m_xMAPIAdviseSink, &this->m_ulOnlineAdviseConnection);
@@ -2863,15 +2856,10 @@ HRESULT ECSync::Logoff(){
 		m_ulOnlineAdviseConnection = 0;
 	}
 
-	if (m_lpOnlineContext) {
-		delete m_lpOnlineContext;
-		m_lpOnlineContext = NULL;
-	}
-
-	if (m_lpOfflineContext) {
-		delete m_lpOfflineContext;
-		m_lpOfflineContext = NULL;
-	}
+	delete m_lpOnlineContext;
+	m_lpOnlineContext = NULL;
+	delete m_lpOfflineContext;
+	m_lpOfflineContext = NULL;
 	return hrSuccess;
 }
 

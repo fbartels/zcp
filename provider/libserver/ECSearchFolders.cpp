@@ -947,8 +947,7 @@ exit:
         m_lpSessionManager->RemoveSessionInternal(lpSession);
     }
         
-    if(lpSubResults)
-        delete lpSubResults;
+	delete lpSubResults;
         
     if(lpRowSet)
         FreeRowSet(lpRowSet, true);
@@ -1804,8 +1803,7 @@ ECRESULT ECSearchFolders::LoadSearchCriteria(unsigned int ulStoreId, unsigned in
 	}
 
 exit:
-	if(lpSearchCriteria)
-		delete lpSearchCriteria;
+	delete lpSearchCriteria;
 
 	if(lpDBResult)
 		lpDatabase->FreeResult(lpDBResult);

@@ -392,14 +392,9 @@ ECSession::~ECSession()
 	pthread_mutex_destroy(&m_hLocksLock);
 	pthread_mutex_destroy(&m_hStateLock);
 
-	if(m_lpTableManager)
-		delete m_lpTableManager;
-
-	if(m_lpUserManagement)
-		delete m_lpUserManagement;
-
-	if(m_lpEcSecurity)
-		delete m_lpEcSecurity;
+	delete m_lpTableManager;
+	delete m_lpUserManagement;
+	delete m_lpEcSecurity;
 }
 
 /**
@@ -899,7 +894,7 @@ ECRESULT ECAuthSession::CreateECSession(ECSESSIONGROUPID ecSessionGroupId, std::
 	*lppNewSession = lpSession;
 
 exit:
-	if (er != erSuccess && lpSession)
+	if (er != erSuccess)
 		delete lpSession;
 
 	return er;
@@ -1954,7 +1949,7 @@ ECRESULT ECAuthSessionOffline::CreateECSession(ECSESSIONGROUPID ecSessionGroupId
 	*lppNewSession = lpSession;
 
 exit:
-	if (er != erSuccess && lpSession)
+	if (er != erSuccess)
 		delete lpSession;
 
 	return er;

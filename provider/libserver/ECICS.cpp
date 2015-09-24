@@ -838,10 +838,8 @@ ECRESULT GetChanges(struct soap *soap, ECSession *lpSession, SOURCEKEY sFolderSo
 				}
 
 nextFolder:
-				if(lpSourceKeyData) {
-					delete []lpSourceKeyData;
-					lpSourceKeyData = NULL;
-				}
+				delete[] lpSourceKeyData;
+				lpSourceKeyData = NULL;
 			}
 
 			if(*lpFolderId != 0) {
@@ -1186,10 +1184,8 @@ exit:
 	if (lpDatabase && er != erSuccess)
 		lpDatabase->Rollback();
 
-	if(lpSourceKeyData) {
-		delete []lpSourceKeyData;
-		lpSourceKeyData = NULL;
-	}
+	delete[] lpSourceKeyData;
+	lpSourceKeyData = NULL;
 	return er;
 }
 

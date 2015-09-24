@@ -1481,9 +1481,7 @@ int main(int argc, char *argv[]) {
 	MAPIUninitialize();
 
 exit:
-	if (g_lpConfig)
-		delete g_lpConfig;
-
+	delete g_lpConfig;
 	DeleteLogger(g_lpLogger);
 
 #ifdef LINUX

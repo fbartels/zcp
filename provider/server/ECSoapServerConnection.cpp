@@ -325,8 +325,7 @@ ECSoapServerConnection::ECSoapServerConnection(ECConfig* lpConfig, ECLogger* lpL
 
 ECSoapServerConnection::~ECSoapServerConnection(void)
 {
-    if(m_lpDispatcher)
-        delete m_lpDispatcher;
+	delete m_lpDispatcher;
 }
 
 ECRESULT ECSoapServerConnection::ListenTCP(const char* lpServerName, int nServerPort, bool bEnableGET)

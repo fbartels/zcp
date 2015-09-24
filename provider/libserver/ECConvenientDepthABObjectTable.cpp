@@ -169,8 +169,6 @@ ECRESULT ECConvenientDepthABObjectTable::Load()
 	}
 
 exit:
-    if (lpSubObjects)
-        delete lpSubObjects;
-
-    return er;
+	delete lpSubObjects;
+	return er;
 }

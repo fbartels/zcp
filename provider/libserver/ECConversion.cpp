@@ -166,8 +166,7 @@ exit:
 	if (er != erSuccess && lpNewSearchCriteria)
 		FreeSearchCriteria(lpNewSearchCriteria);
 
-	if (lpSearchCriteria)
-		delete lpSearchCriteria;
+	delete lpSearchCriteria;
 
 	if (lpDBResult)
 		lpDatabase->FreeResult(lpDBResult);

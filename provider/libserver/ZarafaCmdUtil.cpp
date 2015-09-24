@@ -97,8 +97,7 @@ ECRESULT GetSourceKey(unsigned int ulObjId, SOURCEKEY *lpSourceKey)
 	*lpSourceKey = SOURCEKEY(cbData, (char *)lpData);
 
 exit:
-	if(lpData)
-		delete [] lpData;
+	delete[] lpData;
 	return er;
 }
 
@@ -1297,8 +1296,7 @@ exit:
 
 void FreeDeleteItem(DELETEITEM *src)
 {
-	if(src->sEntryId.__ptr)
-		delete [] src->sEntryId.__ptr;
+	delete[] src->sEntryId.__ptr;
 }
 
 void FreeDeletedItems(ECListDeleteItems *lplstDeleteItems)
