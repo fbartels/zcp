@@ -46,13 +46,13 @@
 #include <iostream>
 #include <map>
 #include <climits>
+#include <getopt.h>
 
 #include <zarafa/CommonUtil.h>
 #include <zarafa/mapiext.h>
 #include <zarafa/mapiguidext.h>
 #include <mapiutil.h>
 #include <mapix.h>
-#include <zarafa/my_getopt.h>
 #include <zarafa/namedprops.h>
 #include <zarafa/stringutil.h>
 #include <edkmdb.h>
@@ -564,21 +564,21 @@ int main(int argc, char *argv[])
 	 * Read arguments.
 	 */
 	while (true) {
-		c = my_getopt_long(argc, argv, "u:p:h:a:P", long_options, NULL);
+		c = getopt_long(argc, argv, "u:p:h:a:P", long_options, NULL);
 		if (c == -1)
 			break;
 
 		switch (c) {
 		case 'a':
-		    strAltUser = my_optarg;
+		    strAltUser = optarg;
 		    break;
 		case OPT_USER:
 		case 'u':
-			strUser = my_optarg;
+			strUser = optarg;
 			break;
 		case OPT_PASS:
 		case 'p':
-			strPass = my_optarg;
+			strPass = optarg;
 			break;
         case OPT_PROMPT:
         case 'P':
@@ -589,7 +589,7 @@ int main(int argc, char *argv[])
 			break;
 		case OPT_HOST:
 		case 'h':
-			strHost = my_optarg;
+			strHost = optarg;
 			break;
 		case OPT_HELP:
 			print_help(argv[0]);
@@ -616,10 +616,10 @@ int main(int argc, char *argv[])
 			bAll = true;
 			break;
 		case OPT_AUTO_FIX:
-			auto_fix = my_optarg;
+			auto_fix = optarg;
 			break;
 		case OPT_AUTO_DEL:
-			auto_del = my_optarg;
+			auto_del = optarg;
 			break;
 		case OPT_CHECK_ONLY:
 			auto_fix = "no";

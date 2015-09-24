@@ -44,8 +44,8 @@
 #include <zarafa/platform.h>
 #include <iostream>
 #include <climits>
+#include <getopt.h>
 #include <zarafa/stringutil.h>
-#include <zarafa/my_getopt.h>
 #include <zarafa/archiver-common.h>
 #include <zarafa/charset/convert.h>
 #include <zarafa/ECConfig.h>
@@ -281,13 +281,13 @@ int main(int argc, char *argv[])
 
     int c;
     while (1) {
-        c = my_getopt_long(argc, argv, "u:c:lLACwa:d:D:f:s:N", long_options, NULL);
+        c = getopt_long(argc, argv, "u:c:lLACwa:d:D:f:s:N", long_options, NULL);
         if (c == -1)
             break;
         switch (c) {
         case 'u':
         case OPT_USER:
-            strUser = converter.convert_to<tstring>(my_optarg);
+            strUser = converter.convert_to<tstring>(optarg);
             break;
 
         case 'a':
@@ -297,7 +297,7 @@ int main(int argc, char *argv[])
                 return 1;
             }
             mode = MODE_ATTACH;
-            lpszArchive = my_optarg;
+            lpszArchive = optarg;
             break;
 
         case 'd':
@@ -307,7 +307,7 @@ int main(int argc, char *argv[])
                 return 1;
             }
             mode = MODE_DETACH;
-            lpszArchive = my_optarg;
+            lpszArchive = optarg;
             break;
 
         case 'D':
@@ -319,7 +319,7 @@ int main(int argc, char *argv[])
                 return 1;
             }
             mode = MODE_DETACH_IDX;
-            ulArchive = strtoul(my_optarg, &res, 10);
+            ulArchive = strtoul(optarg, &res, 10);
             if (!res || *res != '\0') {
                 cerr << "Please specify a valid archive number." << endl;
                 return 1;
@@ -343,12 +343,12 @@ int main(int argc, char *argv[])
                 print_help(cerr, argv[0]);
                 return 1;
             }
-            lpszFolder = my_optarg;
+            lpszFolder = optarg;
             break;
 
         case 's':
         case OPT_ASERVER:
-            lpszArchiveServer = my_optarg;
+            lpszArchiveServer = optarg;
             break;
 
         case 'N':
@@ -405,7 +405,7 @@ int main(int argc, char *argv[])
 
         case 'c':
         case OPT_CONFIG:
-            lpszConfig = my_optarg;
+            lpszConfig = optarg;
             ulFlags |= Archiver::RequireConfig;
             break;
 
@@ -414,7 +414,7 @@ int main(int argc, char *argv[])
             break;
 
         case OPT_WRITABLE:
-            if (parseBool(my_optarg))
+            if (parseBool(optarg))
                 ulAttachFlags |= ArchiveManage::Writable;
             else
                 ulAttachFlags |= ArchiveManage::ReadOnly;
@@ -430,7 +430,7 @@ int main(int argc, char *argv[])
 
         case '?':
             // Invalid option, or required argument missing
-            // my_getopt_long outputs the error message.
+            // getopt_long outputs the error message.
             print_help(cerr, argv[0]);
             return 1;
         default:

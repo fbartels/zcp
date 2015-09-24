@@ -56,11 +56,11 @@
 
 #include <map>
 #include <set>
+#include <getopt.h>
 
 #include <zarafa/CommonUtil.h>
 #include <zarafa/stringutil.h>
 #include <zarafa/ECTags.h>
-#include <zarafa/my_getopt.h>
 #include <zarafa/ecversion.h>
 #include <zarafa/charset/convert.h>
 #include "MAPIConsoleTable.h"
@@ -619,7 +619,7 @@ int main(int argc, char *argv[])
 
 	int c;
 	while (1) {
-		c = my_getopt_long(argc, argv, "h:u:d", long_options, NULL);
+		c = getopt_long(argc, argv, "h:u:d", long_options, NULL);
 		if(c == -1)
 			break;
 		switch(c) {
@@ -628,10 +628,10 @@ int main(int argc, char *argv[])
 				return 1;
 			case OPTION_HOST:
 			case 'h': 
-				host = my_optarg;
+				host = optarg;
 				break;
 			case 'u':
-				user = my_optarg;
+				user = optarg;
 				break;
 			case OPTION_DUMP:
 			case 'd':

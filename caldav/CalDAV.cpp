@@ -255,7 +255,7 @@ int main(int argc, char **argv) {
 
 		switch (opt) {
 			case 'c': 
-				lpszCfg = my_optarg; 
+				lpszCfg = optarg;
 				break;
 			case 'F': 
 				g_bDaemonize = false;
@@ -277,7 +277,9 @@ int main(int argc, char **argv) {
 	xmlInitParser();
 
 	g_lpConfig = ECConfig::Create(lpDefaults);
-	if (!g_lpConfig->LoadSettings(lpszCfg) || !g_lpConfig->ParseParams(argc-my_optind, &argv[my_optind], NULL) || (!bIgnoreUnknownConfigOptions && g_lpConfig->HasErrors())) {
+	if (!g_lpConfig->LoadSettings(lpszCfg) ||
+	    !g_lpConfig->ParseParams(argc - optind, &argv[optind], NULL) ||
+	    (!bIgnoreUnknownConfigOptions && g_lpConfig->HasErrors())) {
 #ifdef WIN32
 		g_lpLogger = new ECLogger_Eventlog(1, "ZarafaICal");
 #else

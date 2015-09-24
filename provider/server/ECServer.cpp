@@ -52,7 +52,6 @@
 #include "ECDatabaseFactory.h"
 #include "ECDatabaseUtils.h"
 #include <zarafa/ECLogger.h>
-#include <zarafa/my_getopt.h>
 
 #include <zarafa/ECConfig.h>
 #include "ECDatabase.h"
@@ -81,6 +80,7 @@
 #include <sys/stat.h>
 #include <zarafa/ECScheduler.h>
 #include <zarafa/ZarafaCode.h>
+#include <zarafa/my_getopt.h>
 #include "ZarafaCmd.h"
 
 #include "ECServerEntrypoint.h"
@@ -789,7 +789,7 @@ int main(int argc, char* argv[])
 		switch (c) {
 		case 'c':
 		case OPT_CONFIG:
-			config = my_optarg;
+			config = optarg;
 			break;
 		case OPT_HELP:
 			cout << "Zarafa " PROJECT_VERSION_SERVER_STR " ";
@@ -857,7 +857,7 @@ int main(int argc, char* argv[])
 
 #else
 	//windows and linux
-	nReturn = running_server(argv[0], config, argc-my_optind, &argv[my_optind]);
+	nReturn = running_server(argv[0], config, argc - optind, &argv[optind]);
 #endif
 
 	return nReturn;

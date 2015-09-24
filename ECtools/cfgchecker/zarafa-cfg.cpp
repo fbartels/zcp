@@ -45,10 +45,9 @@
 
 #include <iostream>
 #include <list>
+#include <getopt.h>
 
 using namespace std;
-
-#include <zarafa/my_getopt.h>
 
 #include "LDAPConfigCheck.h"
 #include "UnixConfigCheck.h"
@@ -102,43 +101,43 @@ int main(int argc, char* argv[])
 	bool bMulti = false;
 
 	while (true) {
-		char c = my_getopt_long(argc, argv, "l:u:s:g:i:m:p:a:c:d:h", long_options, NULL);
+		char c = getopt_long(argc, argv, "l:u:s:g:i:m:p:a:c:d:h", long_options, NULL);
 		if (c == -1)
 			break;
 
 		switch (c) {
 		case 'l':
-			check.push_back(new LDAPConfigCheck(my_optarg));
+			check.push_back(new LDAPConfigCheck(optarg));
 			break;
 		case 'u':
-			check.push_back(new UnixConfigCheck(my_optarg));
+			check.push_back(new UnixConfigCheck(optarg));
 			break;
 		case 's':
-			check.push_back(new ServerConfigCheck(my_optarg));
+			check.push_back(new ServerConfigCheck(optarg));
 			/* Check if hosted is enabled, make sure we don't overwrite commandline */
 			if (strHosted.empty())
 				strHosted = (*check.rbegin())->getSetting("enable_hosted_zarafa");
 			break;
 		case 'g':
-			check.push_back(new GatewayConfigCheck(my_optarg));
+			check.push_back(new GatewayConfigCheck(optarg));
 			break;
 		case 'i':
-			check.push_back(new IcalConfigCheck(my_optarg));
+			check.push_back(new IcalConfigCheck(optarg));
 			break;
 		case 'm':
-			check.push_back(new MonitorConfigCheck(my_optarg));
+			check.push_back(new MonitorConfigCheck(optarg));
 			break;
 		case 'p':
-			check.push_back(new SpoolerConfigCheck(my_optarg));
+			check.push_back(new SpoolerConfigCheck(optarg));
 			break;
 		case 'a':
-			check.push_back(new DAgentConfigCheck(my_optarg));
+			check.push_back(new DAgentConfigCheck(optarg));
 			break;
 		case 'c':
-			strHosted = my_optarg;
+			strHosted = optarg;
 			break;
 		case 'd':
-			strMulti = my_optarg;
+			strMulti = optarg;
 			break;
 		case 'h':
 		default:

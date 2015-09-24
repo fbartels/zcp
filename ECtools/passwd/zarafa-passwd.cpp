@@ -44,10 +44,10 @@
 #include <zarafa/platform.h>
 
 #include <iostream>
-#include <zarafa/my_getopt.h>
 #include <zarafa/charset/convert.h>
 #include <climits>
 #include <cmath>
+#include <getopt.h>
 #include <mapidefs.h>
 #include <mapispi.h>
 #include <mapix.h>
@@ -222,20 +222,20 @@ int main(int argc, char* argv[])
 
 	int c;
 	while (1) {
-		c = my_getopt_long(argc, argv, "u:Pp:h:o:Vv", long_options, NULL);
+		c = getopt_long(argc, argv, "u:Pp:h:o:Vv", long_options, NULL);
 		if (c == -1)
 			break;
 		switch (c) {
 		case 'u':
 			mode = MODE_CHANGE_PASSWD;
-			username = my_optarg;
+			username = optarg;
 			break;
 		case 'p':
-			newpassword = my_optarg;
+			newpassword = optarg;
 			passprompt = 0;
 			break;
 		case 'o':
-			oldpassword = my_optarg;
+			oldpassword = optarg;
 			passprompt = 0;
 			break;
 			// error handling?
@@ -243,11 +243,13 @@ int main(int argc, char* argv[])
 			break;
 		case OPT_HOST:
 		case 'h':
-			path = my_optarg;
+			path = optarg;
 			break;
 		case 'V':
-			cout << "Product version:\t" <<  PROJECT_VERSION_PASSWD_STR << endl
-				 << "File version:\t\t" << PROJECT_SVN_REV_STR << endl;
+			cout << "Product version:\t" <<
+			        PROJECT_VERSION_PASSWD_STR << endl <<
+			        "File version:\t\t" << PROJECT_SVN_REV_STR <<
+			        endl;
 			return 1;			
 		case 'v':
 			verbose = true;
@@ -261,7 +263,7 @@ int main(int argc, char* argv[])
 	}
 
 	// check parameters
-	if (my_optind < argc) {
+	if (optind < argc) {
 		cerr << "Too many options given." << endl;
 		return 1;
 	}

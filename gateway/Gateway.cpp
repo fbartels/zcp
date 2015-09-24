@@ -395,11 +395,11 @@ int main(int argc, char *argv[]) {
 		switch (c) {
 		case OPT_CONFIG:
 		case 'c':
-			szConfig = my_optarg;
+			szConfig = optarg;
 			break;
 		case OPT_HOST:
 		case 'h':
-			szPath = my_optarg;
+			szPath = optarg;
 			break;
 		case 'i':				// Install service
 		case 'u':				// Uninstall service
@@ -424,7 +424,9 @@ int main(int argc, char *argv[]) {
 
 	// Setup config
 	g_lpConfig = ECConfig::Create(lpDefaults);
-	if (!g_lpConfig->LoadSettings(szConfig) || !g_lpConfig->ParseParams(argc-my_optind, &argv[my_optind], NULL) || (!bIgnoreUnknownConfigOptions && g_lpConfig->HasErrors())) {
+	if (!g_lpConfig->LoadSettings(szConfig) ||
+	    !g_lpConfig->ParseParams(argc - optind, &argv[optind], NULL) ||
+	    (!bIgnoreUnknownConfigOptions && g_lpConfig->HasErrors())) {
 #ifdef WIN32
 		g_lpLogger = new ECLogger_Eventlog(EC_LOGLEVEL_INFO, "ZarafaGateway");
 #else

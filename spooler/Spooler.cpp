@@ -1236,11 +1236,11 @@ int main(int argc, char *argv[]) {
 		switch(c) {
 		case OPT_CONFIG:
 		case 'c':
-			szConfig = my_optarg;
+			szConfig = optarg;
 			break;
 		case OPT_HOST:
 		case 'h':
-			szPath = my_optarg;
+			szPath = optarg;
 			break;
 		case 'i': // Install service
 		case 'u': // Uninstall service
@@ -1251,20 +1251,20 @@ int main(int argc, char *argv[]) {
 			break;
 		case OPT_SEND_MESSAGE_ENTRYID:
 			bForked = true;
-			strMsgEntryId = hex2bin(my_optarg);
+			strMsgEntryId = hex2bin(optarg);
 			break;
 		case OPT_SEND_USERNAME:
 			bForked = true;
-			strUsername = decodestring(my_optarg);
+			strUsername = decodestring(optarg);
 			break;
 		case OPT_LOGFD:
-			logfd = atoi(my_optarg);
+			logfd = atoi(optarg);
 			break;
 		case OPT_DO_SENTMAIL:
 			bDoSentMail = true;
 			break;
 		case OPT_PORT:
-			ulPort = atoi(my_optarg);
+			ulPort = atoi(optarg);
 			break;
 		case OPT_IGNORE_UNKNOWN_CONFIG_OPTIONS:
 			bIgnoreUnknownConfigOptions = true;
@@ -1288,7 +1288,9 @@ int main(int argc, char *argv[]) {
 	if (szConfig) {
 		int argidx = 0;
 
-		if (!g_lpConfig->LoadSettings(szConfig) || !g_lpConfig->ParseParams(argc-my_optind, &argv[my_optind], &argidx) || (!bIgnoreUnknownConfigOptions && g_lpConfig->HasErrors())) {
+		if (!g_lpConfig->LoadSettings(szConfig) ||
+		    !g_lpConfig->ParseParams(argc - optind, &argv[optind], &argidx) ||
+		    (!bIgnoreUnknownConfigOptions && g_lpConfig->HasErrors())) {
 #ifdef WIN32
 			g_lpLogger = new ECLogger_Eventlog(EC_LOGLEVEL_INFO, "ZarafaSpooler");
 #else
@@ -1301,16 +1303,16 @@ int main(int argc, char *argv[]) {
 		}
 		
 		// ECConfig::ParseParams returns the index in the passed array,
-		// after some shuffling, where it stopped parsing. my_optind is
+		// after some shuffling, where it stopped parsing. optind is
 		// the index where my_getopt_long_permissive stopped parsing. So
-		// adding argidx to my_optind will result in the index after all
+		// adding argidx to optind will result in the index after all
 		// options are parsed.
-		my_optind += argidx;
+		optind += argidx;
 	}
 
 	// commandline overwrites spooler.cfg
-	if (my_optind < argc)
-		szSMTP = argv[my_optind];
+	if (optind < argc)
+		szSMTP = argv[optind];
 	else
 		szSMTP = g_lpConfig->GetSetting("smtp_server");
 	

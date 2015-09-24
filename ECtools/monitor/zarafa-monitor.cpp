@@ -62,9 +62,9 @@
 
 #include <mapiguid.h>
 #include <cctype>
-#include <zarafa/my_getopt.h>
 
 #include <zarafa/ECScheduler.h>
+#include <zarafa/my_getopt.h>
 #include "ECMonitorDefs.h"
 #include "ECQuotaMonitor.h"
 
@@ -243,11 +243,11 @@ int main(int argc, char *argv[]) {
 		switch(c) {
 		case OPT_CONFIG:
 		case 'c':
-			szConfig = my_optarg;
+			szConfig = optarg;
 			break;
 		case OPT_HOST:
 		case 'h':
-			szPath = my_optarg;
+			szPath = optarg;
 			break;
 		case 'i': // Install service
 		case 'u': // Uninstall service
@@ -273,7 +273,9 @@ int main(int argc, char *argv[]) {
 	m_lpThreadMonitor = new ECTHREADMONITOR;
 
 	m_lpThreadMonitor->lpConfig = ECConfig::Create(lpDefaults);
-	if (!m_lpThreadMonitor->lpConfig->LoadSettings(szConfig) || !m_lpThreadMonitor->lpConfig->ParseParams(argc-my_optind, &argv[my_optind], NULL) || (!bIgnoreUnknownConfigOptions && m_lpThreadMonitor->lpConfig->HasErrors())) {
+	if (!m_lpThreadMonitor->lpConfig->LoadSettings(szConfig) ||
+	    !m_lpThreadMonitor->lpConfig->ParseParams(argc - optind, &argv[optind], NULL) ||
+	    (!bIgnoreUnknownConfigOptions && m_lpThreadMonitor->lpConfig->HasErrors())) {
 #ifdef WIN32
 		m_lpThreadMonitor->lpLogger = new ECLogger_Eventlog(EC_LOGLEVEL_INFO, "ZarafaMonitor");
 #else

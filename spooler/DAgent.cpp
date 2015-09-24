@@ -4122,7 +4122,7 @@ int main(int argc, char *argv[]) {
 		switch (c) {
 		case OPT_CONFIG:
 		case 'c':
-			szConfig = my_optarg;
+			szConfig = optarg;
 			bExplicitConfig = true;
 			break;
 		case OPT_JUNK:
@@ -4132,9 +4132,9 @@ int main(int argc, char *argv[]) {
 
 		case OPT_FILE:
 		case 'f':				// use file as input
-			fp = fopen(my_optarg, "rb");
+			fp = fopen(optarg, "rb");
 			if(!fp) {
-				cerr << "Unable to open file '" << my_optarg << "' for reading" << endl;
+				cerr << "Unable to open file '" << optarg << "' for reading" << endl;
 				return EX_USAGE;
 			}
 			break;
@@ -4155,10 +4155,10 @@ int main(int argc, char *argv[]) {
 		
 		case OPT_HOST:
 		case 'h':				// 'host' (file:///var/run/zarafad/server.sock)
-			sDeliveryArgs.strPath = my_optarg;
+			sDeliveryArgs.strPath = optarg;
 			break;
 		case 'a':				// external autoresponder program
-			sDeliveryArgs.strAutorespond = my_optarg;
+			sDeliveryArgs.strAutorespond = optarg;
 			break;
 		case 'q':				// use qmail errors
 			qmail = true;
@@ -4180,15 +4180,15 @@ int main(int argc, char *argv[]) {
 			break;
 		case OPT_FOLDER:
 		case 'F':
-			sDeliveryArgs.strDeliveryFolder = convert_to<wstring>(my_optarg);
+			sDeliveryArgs.strDeliveryFolder = convert_to<wstring>(optarg);
 			break;
 		case OPT_PUBLIC:
 		case 'P':
 			sDeliveryArgs.ulDeliveryMode = DM_PUBLIC;
-			sDeliveryArgs.strDeliveryFolder = convert_to<wstring>(my_optarg);
+			sDeliveryArgs.strDeliveryFolder = convert_to<wstring>(optarg);
 			break;
 		case 'p':
-			sDeliveryArgs.szPathSeperator = my_optarg[0];
+			sDeliveryArgs.szPathSeperator = optarg[0];
 			break;
 		case OPT_CREATE:
 		case 'C':
@@ -4230,7 +4230,7 @@ int main(int argc, char *argv[]) {
 			int argidx = 0;			
 
 			// ParseParams always return true.
-			g_lpConfig->ParseParams(argc-my_optind, &argv[my_optind], &argidx);
+			g_lpConfig->ParseParams(argc - optind, &argv[optind], &argidx);
 			if (argidx > 0) {
 				// If one overrides the config, it is assumed that the
 				// config is explicit. This causes errors from
@@ -4241,15 +4241,15 @@ int main(int argc, char *argv[]) {
 			}
 
 			// ECConfig::ParseParams returns the index in the passed array,
-			// after some shuffling, where it stopped parsing. my_optind is
+			// after some shuffling, where it stopped parsing. optind is
 			// the index where my_getopt_long_permissive stopped parsing. So
-			// adding argidx to my_optind will result in the index after all
+			// adding argidx to optind will result in the index after all
 			// options are parsed.
-			my_optind += argidx;
+			optind += argidx;
 		}
 	}
 
-	if (!bListenLMTP && my_optind == argc) {
+	if (!bListenLMTP && optind == argc) {
 		cerr << "Not enough options given, need at least the username" << endl;
 		return EX_USAGE;
 	}
@@ -4341,7 +4341,7 @@ int main(int argc, char *argv[]) {
 			goto nonlmtpexit; // Error is logged in GetPluginObject
 		}
 
-		hr = deliver_recipient(ptrPyMapiPlugin, argv[my_optind], strip_email, fp, &sDeliveryArgs);
+		hr = deliver_recipient(ptrPyMapiPlugin, argv[optind], strip_email, fp, &sDeliveryArgs);
 		if (hr != hrSuccess)
 			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "main(): deliver_recipient failed %x", hr);
 

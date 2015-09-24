@@ -44,13 +44,13 @@
 #include <zarafa/platform.h>
 
 #include <iostream>
-#include <zarafa/my_getopt.h>
 #include <cerrno>
 #include <climits>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
+#include <getopt.h>
 #include <mapidefs.h>
 #include <mapispi.h>
 #include <mapix.h>
@@ -2521,12 +2521,12 @@ int main(int argc, char* argv[])
 
 	int c;
 	while (1) {
-		c = my_getopt_long(argc, argv, "VlLsc:u:d:U:Pp:f:e:a:h:g:G:b:B:i:I:n:v", long_options, NULL);
+		c = getopt_long(argc, argv, "VlLsc:u:d:U:Pp:f:e:a:h:g:G:b:B:i:I:n:v", long_options, NULL);
 		if (c == -1)
 			break;
 		switch (c) {
 			case OPT_VERBOSITY:
-				loglevel = strtoul(my_optarg, NULL, 0);
+				loglevel = strtoul(optarg, NULL, 0);
 				break;
 			case 'v':
 				if (loglevel < EC_LOGLEVEL_DEBUG + 1)
@@ -2540,96 +2540,96 @@ int main(int argc, char* argv[])
 				break;
 			case 'c':
 				mode = MODE_CREATE_USER;
-				username = validateInput(my_optarg);
+				username = validateInput(optarg);
 				break;
 			case 'u':
 				if (mode != MODE_HOOK_STORE)
 					mode = MODE_UPDATE_USER;
-				username = validateInput(my_optarg);
+				username = validateInput(optarg);
 				break;
 			case 'd':
 				mode = MODE_DELETE_USER;
-				username = validateInput(my_optarg);
+				username = validateInput(optarg);
 				break;
 			case 'g':
 				mode = MODE_CREATE_GROUP;
-				groupname = validateInput(my_optarg);
+				groupname = validateInput(optarg);
 				break;
 			case 'G':
 				mode = MODE_DELETE_GROUP;
-				groupname = validateInput(my_optarg);
+				groupname = validateInput(optarg);
 				break;
 			case 'L':
 				mode = MODE_LIST_GROUP;
 				break;
 			case 'b':
 				mode = MODE_ADDUSER_GROUP;
-				username = validateInput(my_optarg);
+				username = validateInput(optarg);
 				break;
 			case 'B':
 				mode = MODE_DELETEUSER_GROUP;
-				username = validateInput(my_optarg);
+				username = validateInput(optarg);
 				break;
 			case 'U':
-				new_username = validateInput(my_optarg);
+				new_username = validateInput(optarg);
 				break;
 			case 'P':
 				passprompt = 1;
 				break;
 			case 'p':
-				password = validateInput(my_optarg);
+				password = validateInput(optarg);
 				break;
 			case 'f':
-				fullname = validateInput(my_optarg);
+				fullname = validateInput(optarg);
 				break;
 			case 'e':
-				emailadr = validateInput(my_optarg);
+				emailadr = validateInput(optarg);
 				break;
 			case 'a':
-				isadmin = atoi(my_optarg);
+				isadmin = atoi(optarg);
 				if (isadmin == 0)
-					isadmin = parse_yesno(my_optarg);
+					isadmin = parse_yesno(optarg);
 				else
 					isadmin = min(2, isadmin);
 				break;
 			case 'n':
-				isnonactive = parse_yesno(my_optarg);
+				isnonactive = parse_yesno(optarg);
 				break;
 			case 'i':
-				groupname = validateInput(my_optarg);
+				groupname = validateInput(optarg);
 				break;
 			case 'I':
-				companyname = validateInput(my_optarg);
+				companyname = validateInput(optarg);
 				break;
 				// error handling?
 			case '?':
 				break;
 			case OPT_HOST:
 			case 'h':
-				path = validateInput(my_optarg);
+				path = validateInput(optarg);
 				break;
 			case OPT_HELP:
 				mode = MODE_HELP;
 				break;
 			case OPT_CREATE_STORE:
 				mode = MODE_CREATE_STORE;
-				username = validateInput(my_optarg);
+				username = validateInput(optarg);
 				break;
 			case OPT_DELETE_STORE:
 				mode = MODE_DELETE_STORE;
-				username = validateInput(my_optarg);
+				username = validateInput(optarg);
 				break;
 			case OPT_HOOK_STORE:
 				mode = MODE_HOOK_STORE;
-				storeguid = validateInput(my_optarg);
+				storeguid = validateInput(optarg);
 				break;
 			case OPT_UNHOOK_STORE:
 				mode = MODE_UNHOOK_STORE;
-				username = validateInput(my_optarg);
+				username = validateInput(optarg);
 				break;
 			case OPT_REMOVE_STORE:
 				mode = MODE_REMOVE_STORE;
-				storeguid = validateInput(my_optarg);
+				storeguid = validateInput(optarg);
 				break;
 			case OPT_COPYTO_PUBLIC:
 				bCopyToPublic = true;
@@ -2639,136 +2639,136 @@ int main(int argc, char* argv[])
 				break;
 			case OPT_DETAILS:
 				mode = MODE_DETAILS;
-				username = validateInput(my_optarg);
+				username = validateInput(optarg);
 				break;
 			case OPT_DETAILS_TYPE:
-				detailstype = validateInput(my_optarg);
+				detailstype = validateInput(optarg);
 				break;
 				// Make values from Mb to bytes which the server wants
 			case OPT_USER_QUOTA_HARD:
-				quotahard = _atoi64(my_optarg) *1024*1024;
+				quotahard = _atoi64(optarg) *1024*1024;
 				break;
 			case OPT_USER_QUOTA_SOFT:
-				quotasoft = _atoi64(my_optarg) *1024*1024;
+				quotasoft = _atoi64(optarg) *1024*1024;
 				break;
 			case OPT_USER_QUOTA_WARN:
-				quotawarn = _atoi64(my_optarg) *1024*1024;
+				quotawarn = _atoi64(optarg) *1024*1024;
 				break;
 			case OPT_USER_QUOTA_OVERRIDE:
-				quota = parse_yesno(my_optarg);
+				quota = parse_yesno(optarg);
 				break;
 			case OPT_USER_DEFAULT_QUOTA_HARD:
-				ud_quotahard = _atoi64(my_optarg) * 1024 * 1024;
+				ud_quotahard = _atoi64(optarg) * 1024 * 1024;
 				break;
 			case OPT_USER_DEFAULT_QUOTA_SOFT:
-				ud_quotasoft = _atoi64(my_optarg) * 1024 * 1024;
+				ud_quotasoft = _atoi64(optarg) * 1024 * 1024;
 				break;
 			case OPT_USER_DEFAULT_QUOTA_WARN:
-				ud_quotawarn = _atoi64(my_optarg) * 1024 * 1024;
+				ud_quotawarn = _atoi64(optarg) * 1024 * 1024;
 				break;
 			case OPT_USER_DEFAULT_QUOTA_OVERRIDE:
-				ud_quota = parse_yesno(my_optarg);
+				ud_quota = parse_yesno(optarg);
 				break;
 			case OPT_LANG:
 				// Use alternate language
-				lang = validateInput(my_optarg);
+				lang = validateInput(optarg);
 				break;
 			case OPT_MR_ACCEPT:
-				mr_accept = parse_yesno(my_optarg);
+				mr_accept = parse_yesno(optarg);
 				break;
 			case OPT_MR_DECLINE_CONFLICT:
-				mr_decline_conflict = parse_yesno(my_optarg);
+				mr_decline_conflict = parse_yesno(optarg);
 				break;
 			case OPT_MR_DECLINE_RECURRING:
-				mr_decline_recurring = parse_yesno(my_optarg);
+				mr_decline_recurring = parse_yesno(optarg);
 				break;
 			case OPT_LIST_SENDAS:
 				mode = MODE_LIST_SENDAS;
-				username = validateInput(my_optarg);
+				username = validateInput(optarg);
 				break;
 			case OPT_ADD_SENDAS:
-				sendas_user = validateInput(my_optarg);
+				sendas_user = validateInput(optarg);
 				sendas_action = 1;
 				break;
 			case OPT_DEL_SENDAS:
-				sendas_user = validateInput(my_optarg);
+				sendas_user = validateInput(optarg);
 				sendas_action = 0;
 				break;
 			case OPT_UPDATE_GROUP:
 				mode = MODE_UPDATE_GROUP;
-				groupname = validateInput(my_optarg);
+				groupname = validateInput(optarg);
 				break;
 			case OPT_CREATE_COMPANY:
 				mode = MODE_CREATE_COMPANY;
-				companyname = validateInput(my_optarg);
+				companyname = validateInput(optarg);
 				break;
 			case OPT_UPDATE_COMPANY:
 				mode = MODE_UPDATE_COMPANY;
-				companyname = validateInput(my_optarg);
+				companyname = validateInput(optarg);
 				break;
 			case OPT_DELETE_COMPANY:
 				mode = MODE_DELETE_COMPANY;
-				companyname = validateInput(my_optarg);
+				companyname = validateInput(optarg);
 				break;
 			case OPT_LIST_COMPANY:
 				mode = MODE_LIST_COMPANY;
 				break;
 			case OPT_ADD_VIEW:
 				mode = MODE_ADD_VIEW;
-				set_companyname = validateInput(my_optarg);
+				set_companyname = validateInput(optarg);
 				break;
 			case OPT_DEL_VIEW:
 				mode = MODE_DEL_VIEW;
-				set_companyname = validateInput(my_optarg);
+				set_companyname = validateInput(optarg);
 				break;
 			case OPT_LIST_VIEW:
 				mode = MODE_LIST_VIEW;
 				break;
 			case OPT_ADD_ADMIN:
 				mode = MODE_ADD_ADMIN;
-				username = validateInput(my_optarg);
+				username = validateInput(optarg);
 				break;
 			case OPT_DEL_ADMIN:
 				mode = MODE_DEL_ADMIN;
-				username = validateInput(my_optarg);
+				username = validateInput(optarg);
 				break;
 			case OPT_LIST_ADMIN:
 				mode = MODE_LIST_ADMIN;
 				break;
 			case OPT_SYSTEM_ADMIN:
 				mode = MODE_SYSTEM_ADMIN;
-				username = validateInput(my_optarg);
+				username = validateInput(optarg);
 				break;
 			case OPT_ADD_UQUOTA_RECIPIENT:
 				mode = MODE_ADD_USERQUOTA_RECIPIENT;
-				username = validateInput(my_optarg);
+				username = validateInput(optarg);
 				break;
 			case OPT_DEL_UQUOTA_RECIPIENT:
 				mode = MODE_DEL_USERQUOTA_RECIPIENT;
-				username = validateInput(my_optarg);
+				username = validateInput(optarg);
 				break;
 			case OPT_LIST_UQUOTA_RECIPIENT:
 				mode = MODE_LIST_USERQUOTA_RECIPIENT;
 				break;
 			case OPT_ADD_CQUOTA_RECIPIENT:
 				mode = MODE_ADD_COMPANYQUOTA_RECIPIENT;
-				username = validateInput(my_optarg);
+				username = validateInput(optarg);
 				break;
 			case OPT_DEL_CQUOTA_RECIPIENT:
 				mode = MODE_DEL_COMPANYQUOTA_RECIPIENT;
-				username = validateInput(my_optarg);
+				username = validateInput(optarg);
 				break;
 			case OPT_LIST_CQUOTA_RECIPIENT:
 				mode = MODE_LIST_COMPANYQUOTA_RECIPIENT;
 				break;
 			case OPT_PURGE_SOFTDELETE:
-				ulDays = atoui(my_optarg);
+				ulDays = atoui(optarg);
 				mode = MODE_PURGE_SOFTDELETE;
 				break;
 			case OPT_CLEAR_CACHE:
 				mode = MODE_CLEAR_CACHE;
-				if (my_optarg)
-					ulCachePurgeMode = strtol(my_optarg, NULL, 0);
+				if (optarg)
+					ulCachePurgeMode = strtol(optarg, NULL, 0);
 				break;
 			case OPT_PURGE_DEFERRED:
 				mode = MODE_PURGE_DEFERRED;
@@ -2777,7 +2777,7 @@ int main(int argc, char* argv[])
 				mode = MODE_LIST_ORPHANS;
 				break;
 			case OPT_CONFIG:
-				szConfig = validateInput(my_optarg);
+				szConfig = validateInput(optarg);
 				bExplicitConfig = true;
 				break;
 			case OPT_UTF8: {
@@ -2802,11 +2802,11 @@ int main(int argc, char* argv[])
 					       cerr << "Only one feature can be enabled/disabled at a time" << endl;
 					       break;
 				       }
-				       if (!isFeature(my_optarg)) {
-					       cerr << my_optarg << " is not a valid zarafa feature" << endl;
+				       if (!isFeature(optarg)) {
+					       cerr << optarg << " is not a valid zarafa feature" << endl;
 					       break;
 				       }
-				       feature = my_optarg;
+				       feature = optarg;
 				       bFeature = (c == OPT_ENABLE_FEATURE);
 				       break;
 			case OPT_VERSION:
@@ -2815,17 +2815,17 @@ int main(int argc, char* argv[])
 					       << "File version:\t\t" << PROJECT_SVN_REV_STR << endl;
 				       return EXIT_SUCCESS;
 			case OPT_SELECT_NODE:
-				       node = validateInput(my_optarg);
+				       node = validateInput(optarg);
 				       break;
 			case OPT_RESET_FOLDER_COUNT:
 				       mode = MODE_RESET_FOLDER_COUNT;
-				       username = validateInput(my_optarg);
+				       username = validateInput(optarg);
 				       break;
 			default:
 				       break;
 		};
 		if (validateInput.Failed()) {
-			cerr << "Invalid input '" << my_optarg << "' found." << endl;
+			cerr << "Invalid input '" << optarg << "' found." << endl;
 			// no need to return, later input checking will print an error too
 		}
 	}
@@ -2862,13 +2862,13 @@ int main(int argc, char* argv[])
 
 	// --force-resync takes all left over arguments as usernames
 	if (mode == MODE_FORCE_RESYNC) {
-		ASSERT(my_optind <= argc);
-		std::copy(argv + my_optind, argv + argc, std::back_inserter(lstUsernames));
-		my_optind = argc;
+		ASSERT(optind <= argc);
+		std::copy(argv + optind, argv + argc, std::back_inserter(lstUsernames));
+		optind = argc;
 	}
 
 	// check parameters
-	if (my_optind < argc) {
+	if (optind < argc) {
 		cerr << "Too many options given." << endl;
 		return 1;
 	}
