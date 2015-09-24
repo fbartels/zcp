@@ -177,7 +177,7 @@ def _stream(mapiobj, proptag):
     if proptag == PR_RTF_COMPRESSED:
         stream = WrapCompressedRTFStream(stream, 0)
 
-    block_size = 0x10000 # 1MB
+    block_size = 0x100000 # 1MB
 
     data = []
     while True:
