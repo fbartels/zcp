@@ -429,13 +429,10 @@ ECRESULT GetIndexerResults(ECDatabase *lpDatabase, ECConfig *lpConfig, ECLogger 
         }
 
 		lpLogger->Log(EC_LOGLEVEL_DEBUG, "Using index, %d index queries", (unsigned int)lstMultiSearches.size());
-        
-		gettimeofday(&tstart, NULL);
-
-        er = lpSearchClient->Query(guidServer, guidStore, lstFolders, lstMultiSearches, lstMatches);
-		
-		gettimeofday(&tend, NULL);
-		llelapsedtime = difftimeval(&tstart,&tend);
+		tstart = get_now_us();
+		er = lpSearchClient->Query(guidServer, guidStore, lstFolders, lstMultiSearches, lstMatches);
+		tend = get_now_us();
+		llelapsedtime = difftimeval(&tstart, &tend);
 		g_lpStatsCollector->Max(SCN_INDEXER_SEARCH_MAX, llelapsedtime);
 		g_lpStatsCollector->Avg(SCN_INDEXER_SEARCH_AVG, llelapsedtime);
 

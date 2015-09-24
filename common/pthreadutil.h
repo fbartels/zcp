@@ -44,23 +44,18 @@
 #ifndef PTHREADUTIL_H
 #define PTHREADUTIL_H
 
-inline int pthread_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex, int millis)
+#include <ctime>
+#include <pthread.h>
+#include <zarafa/platform.h>
+
+static inline int pthread_cond_timedwait(pthread_cond_t *cond,
+    pthread_mutex_t *mutex, int millis)
 {
-    struct timespec ts;
-    struct timeval tv;
+	if (millis == 0)
+		return pthread_cond_wait(cond, mutex);
 
-    gettimeofday(&tv, NULL);
-    ts.tv_sec = tv.tv_sec + millis/1000;
-    ts.tv_nsec = tv.tv_usec * 1000 + (millis % 1000)*1000;
-
-    // Normalize nsec
-    ts.tv_sec += ts.tv_nsec / 1000000000;
-    ts.tv_nsec = ts.tv_nsec % 1000000000;
-
-    if(millis)
-        return pthread_cond_timedwait(cond, mutex, &ts);
-    else
-        return pthread_cond_wait(cond, mutex);
+	struct timespec ts = GetDeadline(millis);
+	return pthread_cond_timedwait(cond, mutex, &ts);
 }
 
 #endif

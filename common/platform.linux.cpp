@@ -130,11 +130,13 @@ __int64_t Int32x32To64(ULONG a, ULONG b) {
 	return (__int64_t)a*(__int64_t)b;
 }
 
-void GetSystemTimeAsFileTime(FILETIME *ft) {
-	struct timeval now;
-	__int64_t l;
-	gettimeofday(&now,NULL); // null==timezone
-	l = ((__int64_t)now.tv_sec * 10000000) + ((__int64_t)now.tv_usec * 10) + (__int64_t)NANOSECS_BETWEEN_EPOCHS;
+void GetSystemTimeAsFileTime(FILETIME *ft)
+{
+	struct timeval now = get_now_us();
+
+	__int64_t l = static_cast<__int64_t>(now.tv_sec) * 10 * 1000 * 1000;
+	l += static_cast<__int64_t>(now.tv_usec) * 10;
+	l += static_cast<__int64_t>(NANOSECS_BETWEEN_EPOCHS);
 	ft->dwLowDateTime = (unsigned int)(l & 0xffffffff);
 	ft->dwHighDateTime = l >> 32;
 }

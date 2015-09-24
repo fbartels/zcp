@@ -1380,9 +1380,8 @@ wait:
 			}
 		}
 
-		gettimeofday(&now,NULL); // null==timezone
-		timeout.tv_sec = now.tv_sec + m_ulWaitTime;
-		timeout.tv_nsec = now.tv_usec * 1000;
+		clock_gettime(CLOCK_REALTIME, &timeout);
+		timeout.tv_sec += m_ulWaitTime;
 
 		WITH_LOCK(m_hMutex) {
 			lResult = pthread_cond_timedwait(&m_hExitSignal, &m_hMutex, &timeout);

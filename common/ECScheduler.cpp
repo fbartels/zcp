@@ -192,7 +192,6 @@ void* ECScheduler::ScheduleThread(void* lpTmpScheduler)
 	ECScheduler*		lpScheduler = (ECScheduler*)lpTmpScheduler;
 	int					lResult;
 	HRESULT*			lperThread = NULL;
-	struct timeval		now;
 	struct timespec		timeout;
 	pthread_t			hThread;
 
@@ -210,9 +209,8 @@ void* ECScheduler::ScheduleThread(void* lpTmpScheduler)
 			break;
 		}
 
-		gettimeofday(&now,NULL); // null==timezone
-		timeout.tv_sec = now.tv_sec + SCHEDULER_POLL_FREQUENCY;
-		timeout.tv_nsec = now.tv_usec * 1000;
+		clock_gettime(CLOCK_REALTIME, &timeout);
+		timeout.tv_sec += SCHEDULER_POLL_FREQUENCY;
 
 		lResult = pthread_cond_timedwait(&lpScheduler->m_hExitSignal, &lpScheduler->m_hExitMutex, &timeout);
 		if (lResult != ETIMEDOUT) {

@@ -906,12 +906,10 @@ static HRESULT ProcessQueue(const char *szSMTP, int ulPort, const char *szPath)
 		pthread_mutex_lock(&hMutexMessagesWaiting);
 		if(!bMessagesWaiting) {
 			struct timespec timeout;
-			struct timeval now;
 
 			// Wait for max 60 sec, then run queue anyway
-			gettimeofday(&now,NULL);
-			timeout.tv_sec = now.tv_sec + 60;
-			timeout.tv_nsec = now.tv_usec * 1000;
+			clock_gettime(CLOCK_REALTIME, &timeout);
+			timeout.tv_sec += 60;
 
 			while (!bMessagesWaiting) {
 				if (pthread_cond_timedwait(&hCondMessagesWaiting, &hMutexMessagesWaiting, &timeout) == ETIMEDOUT || bMessagesWaiting || bQuit || nReload)

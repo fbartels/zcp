@@ -141,6 +141,8 @@ struct timespec GetDeadline(unsigned int ulTimeoutMs);
 
 double timespec2dbl(timespec t);
 
+extern struct timeval get_now_us(void);
+
 bool operator ==(FILETIME a, FILETIME b);
 bool operator >(FILETIME a, FILETIME b);
 bool operator >=(FILETIME a, FILETIME b);

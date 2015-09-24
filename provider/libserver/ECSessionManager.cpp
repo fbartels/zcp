@@ -967,9 +967,8 @@ void* ECSessionManager::SessionCleaner(void *lpTmpSessionManager)
 			break;
 		}
 
-		gettimeofday(&now,NULL); // null==timezone
-		timeout.tv_sec = now.tv_sec + 5;
-		timeout.tv_nsec = now.tv_usec * 1000;
+		clock_gettime(CLOCK_REALTIME, &timeout);
+		timeout.tv_sec += 5;
 
 		lResult = pthread_cond_timedwait(&lpSessionManager->m_hExitSignal, &lpSessionManager->m_hExitMutex, &timeout);
 

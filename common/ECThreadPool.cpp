@@ -120,8 +120,7 @@ bool ECThreadPool::dispatch(ECTask *lpTask, bool bTakeOwnership)
 {
 	STaskInfo sTaskInfo = {lpTask, bTakeOwnership, {0, 0}};
 	
-	gettimeofday(&sTaskInfo.tvQueueTime, NULL);
-	
+	sTaskInfo.tvQueueTime = get_now_us();
 	pthread_mutex_lock(&m_hMutex);
 	m_listTasks.push_back(sTaskInfo);
 	pthread_cond_signal(&m_hCondition);
@@ -204,9 +203,7 @@ struct timeval ECThreadPool::queueAge() const
 	pthread_mutex_unlock(&m_hMutex);
 	
 	if (isSet(tvQueueTime)) {
-		struct timeval tvNow;
-		
-		gettimeofday(&tvNow, NULL);		
+		struct timeval tvNow = get_now_us();
 		tvAge = tvNow - tvQueueTime;
 	}
 	

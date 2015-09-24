@@ -406,22 +406,17 @@ double timespec2dbl(timespec t) {
     return (double)t.tv_sec + t.tv_nsec/1000000000.0;
 }
 
+#define MILLION (1000 * 1000)
+#define BILLION (1000 * MILLION)
+
 struct timespec GetDeadline(unsigned int ulTimeoutMs)
 {
-	struct timespec	deadline;
-	struct timeval	now;
-	gettimeofday(&now, NULL);
+	struct timespec deadline;
+	clock_gettime(CLOCK_REALTIME, &deadline);
 
-	now.tv_sec += ulTimeoutMs / 1000;
-	now.tv_usec += 1000 * (ulTimeoutMs % 1000);
-	if (now.tv_usec >= 1000000) {
-		now.tv_sec++;
-		now.tv_usec -= 1000000;
-	}
-
-	deadline.tv_sec = now.tv_sec;
-	deadline.tv_nsec = now.tv_usec * 1000;
-
+	uint64_t dummy = deadline.tv_sec * BILLION + deadline.tv_nsec + ulTimeoutMs * MILLION;
+	deadline.tv_nsec = dummy % BILLION;
+	deadline.tv_sec += dummy / BILLION;
 	return deadline;
 }
 
@@ -486,6 +481,15 @@ double GetTimeOfDay()
 	gettimeofday(&tv, NULL);
 
 	return (double)tv.tv_sec + ((double)tv.tv_usec / 1000000); // usec = microsec = 1 millionth of a second
+}
+
+struct timeval get_now_us(void)
+{
+	struct timespec ts;
+	clock_gettime(CLOCK_REALTIME, &ts);
+
+	struct timeval tv = {ts.tv_sec, ts.tv_nsec / 1000};
+	return tv;
 }
 
 void set_thread_name(pthread_t tid, const std::string & name)

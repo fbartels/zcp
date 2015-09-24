@@ -379,7 +379,6 @@ HRESULT ECXPLogon::SubmitMessage(ULONG ulFlags, LPMESSAGE lpMessage, ULONG * lpu
 	ULONG ulValue;
 	
 	struct timespec sTimeOut;
-	struct timeval sNow;
 
 	SizedSPropTagArray(6, sptExcludeProps) = {6,{PR_SENTMAIL_ENTRYID, PR_SOURCE_KEY, PR_CHANGE_KEY, PR_PREDECESSOR_CHANGE_LIST, PR_ENTRYID, PR_SUBMIT_FLAGS}};
 
@@ -499,7 +498,6 @@ HRESULT ECXPLogon::SubmitMessage(ULONG ulFlags, LPMESSAGE lpMessage, ULONG * lpu
 		goto exit;
 	}
 
-	gettimeofday(&sNow,NULL);
 	ulSize = sizeof(ULONG);
 	ulValue = 300; // Default wait for max 5 min
 #ifdef WIN32
@@ -512,11 +510,12 @@ HRESULT ECXPLogon::SubmitMessage(ULONG ulFlags, LPMESSAGE lpMessage, ULONG * lpu
 		}
 	}
 #endif /* WIN32 */
-	sTimeOut.tv_sec = sNow.tv_sec + ulValue;
-	sTimeOut.tv_nsec = sNow.tv_usec * 1000;
-	if(ETIMEDOUT == pthread_cond_timedwait(&m_hExitSignal, &m_hExitMutex, &sTimeOut)){
+
+	clock_gettime(CLOCK_REALTIME, &sTimeOut);
+	sTimeOut.tv_sec += ulValue;
+
+	if (pthread_cond_timedwait(&m_hExitSignal, &m_hExitMutex, &sTimeOut) == ETIMEDOUT)
 		m_bCancel = true;
-	}
 
 	lpOnlineStore->Unadvise(ulOnlineAdviseConnection);
 

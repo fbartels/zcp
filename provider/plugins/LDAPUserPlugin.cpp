@@ -484,10 +484,8 @@ void LDAPUserPlugin::InitPlugin() throw(exception)
 LDAP *LDAPUserPlugin::ConnectLDAP(const char *bind_dn, const char *bind_pw) throw(exception) {
 	int rc = -1;
 	LDAP *ld = NULL;
-	struct timeval tstart, tend;
+	struct timeval tstart = get_now_us(), tend;
 	LONGLONG llelapsedtime = 0;
-
-	gettimeofday(&tstart, NULL);
 
 	if ((bind_dn && bind_dn[0] != 0) && (bind_pw == NULL || bind_pw[0] == 0)) {
 		// Username specified, but no password. Apparently, OpenLDAP will attempt
@@ -582,8 +580,7 @@ LDAP *LDAPUserPlugin::ConnectLDAP(const char *bind_dn, const char *bind_pw) thro
 			throw ldap_error("Failure connecting any of the LDAP servers");
 	}
 
-	gettimeofday(&tend, NULL);
-
+	tend = get_now_us();
 	llelapsedtime = difftimeval(&tstart, &tend);
 
 	m_lpStatsCollector->Increment(SCN_LDAP_CONNECTS);
@@ -613,11 +610,9 @@ void LDAPUserPlugin::my_ldap_search_s(char *base, int scope, char *filter, char 
 {
 	int result=LDAP_SUCCESS;
 	string req;
-	struct timeval tstart, tend;
+	struct timeval tstart = get_now_us(), tend;
 	LONGLONG llelapsedtime;
 	auto_free_ldap_message res;
-
-	gettimeofday(&tstart, NULL);
 
 	if (attrs) {
 		for (unsigned int i = 0; attrs[i] != NULL; i++)
@@ -670,7 +665,7 @@ void LDAPUserPlugin::my_ldap_search_s(char *base, int scope, char *filter, char 
 		goto exit;
 	}
 
-	gettimeofday(&tend, NULL);
+	tend = get_now_us();
 	llelapsedtime = difftimeval(&tstart,&tend);
 
 	LOG_PLUGIN_DEBUG("ldaptiming [%08.2f] (\"%s\" \"%s\" %s), results: %d", llelapsedtime/1000000.0, base, filter, req.c_str(), ldap_count_entries(m_ldap, res));
@@ -1651,12 +1646,10 @@ objectsignature_t LDAPUserPlugin::resolveName(objectclass_t objclass, const stri
 
 objectsignature_t LDAPUserPlugin::authenticateUser(const string &username, const string &password, const objectid_t &company) throw(std::exception)
 {
-	struct timeval tstart, tend;
+	struct timeval tstart = get_now_us(), tend;
 	const char *authmethod = m_config->GetSetting("ldap_authentication_method");
 	objectsignature_t id;
 	LONGLONG	llelapsedtime;
-
-	gettimeofday(&tstart, NULL);
 
 	try {
 		if (!stricmp(authmethod, "password")) {
@@ -1669,7 +1662,7 @@ objectsignature_t LDAPUserPlugin::authenticateUser(const string &username, const
 		throw;
 	}
 
-	gettimeofday(&tend, NULL);
+	tend = get_now_us();
 	llelapsedtime = difftimeval(&tstart,&tend);
 
 	m_lpStatsCollector->Increment(SCN_LDAP_AUTH_LOGINS);
