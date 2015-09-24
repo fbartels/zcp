@@ -53,7 +53,7 @@
 #include <zarafa/charset/convert.h>
 #include <zarafa/ECTags.h>
 #include <zarafa/EMSAbTag.h>
-#include <zarafa/ECABEntryID.h>"
+#include <zarafa/ECABEntryID.h>
 
 #include <mapiguid.h>
 #include <zarafa/mapiguidext.h>

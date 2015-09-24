@@ -63,7 +63,7 @@
 #include <zarafa/CommonUtil.h>
 #include <zarafa/mapiext.h>
 #include <zarafa/stringutil.h>
-#include <zarafa/ECABEntryID.h>"
+#include <zarafa/ECABEntryID.h>
 #include "ECSyncLog.h"
 #include <zarafa/ECLogger.h>
 #include <zarafa/mapi_ptr.h>

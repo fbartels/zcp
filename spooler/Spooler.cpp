@@ -84,7 +84,7 @@
 #include <zarafa/ECGuid.h>
 #include <zarafa/EMSAbTag.h>
 #include <zarafa/ECTags.h>
-#include <zarafa/ECABEntryID.h>"
+#include <zarafa/ECABEntryID.h>
 #include <zarafa/CommonUtil.h>
 #include <zarafa/ECLogger.h>
 #include <zarafa/ECConfig.h>

@@ -67,7 +67,7 @@
 #include "mapicontact.h"
 #include <zarafa/mapiguidext.h>
 #include <zarafa/EMSAbTag.h>
-#include <zarafa/ECABEntryID.h>"
+#include <zarafa/ECABEntryID.h>
 #include <zarafa/ECGetText.h>
 
 #include <zarafa/charset/convert.h>

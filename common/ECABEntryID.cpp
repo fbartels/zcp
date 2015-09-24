@@ -42,7 +42,7 @@
  */
 
 #include <zarafa/platform.h>
-#include <zarafa/ECABEntryID.h>"
+#include <zarafa/ECABEntryID.h>
 #include <zarafa/ECGuid.h>
 
 #include <mapicode.h>
