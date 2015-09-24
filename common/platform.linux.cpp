@@ -249,14 +249,6 @@ time_t GetProcessTime()
 	return t;
 }
 
-void sleep_ms(unsigned int millis) 
-{
-	struct timeval tv;
-	tv.tv_sec = millis / 1000;
-	tv.tv_usec = millis * 1000;
-	select(0,NULL,NULL,NULL,&tv);
-}
-
 #if DEBUG_PTHREADS
 
 class Lock _zcp_final {

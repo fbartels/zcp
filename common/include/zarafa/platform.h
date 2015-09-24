@@ -164,8 +164,6 @@ void	rand_get(char *p, int n);
 
 char *	get_password(const char *prompt);
 
-void	sleep_ms(unsigned int millis);
-
 #if defined (WIN32) && !defined (IGNORE_EXPORTS)
  #ifdef ZARAFA_EXPORTS
   #define ZARAFA_API __declspec(dllexport)

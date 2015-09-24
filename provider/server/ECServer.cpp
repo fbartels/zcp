@@ -1528,7 +1528,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 			if (er != erSuccess) {
 				if (i < 29) {
 					g_lpLogger->Log(EC_LOGLEVEL_WARNING, "WARNING: Unable to determine if distributed features are allowed, waiting 2s for retry. (attempt %u/30)", i + 1);
-					sleep_ms(2000);
+					Sleep(2000);
 				} else {
 					g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Failed to determine if distributed features are allowed, assuming unavailable.");
 					retval = -1;

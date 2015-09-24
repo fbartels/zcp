@@ -731,7 +731,7 @@ HRESULT ECMAPIFolder::DeleteMessages(LPENTRYLIST lpMsgList, ULONG ulUIParam, LPM
 	hr = this->GetMsgStore()->lpTransport->HrDeleteObjects(ulFlags, lpMsgList, 0);	
 
 	if (hr == hrSuccess)
-		sleep_ms(1001);
+		Sleep(1001);
 
 exit:
 	return hr;
