@@ -121,11 +121,8 @@ void unix_coredump_enable(ECLogger *logger)
 
 	limit.rlim_cur = RLIM_INFINITY;
 	limit.rlim_max = RLIM_INFINITY;
-	if (setrlimit(RLIMIT_CORE, &limit) == 0)
-		return;
-	if (logger == NULL)
-		return;
-	logger->Log(EC_LOGLEVEL_FATAL, "Unable to raise coredump filesize limit");
+	if (setrlimit(RLIMIT_CORE, &limit) < 0 && logger != NULL)
+		logger->Log(EC_LOGLEVEL_ERROR, "Unable to raise coredump filesize limit: %s", strerror(errno));
 }
 
 int unix_create_pidfile(const char *argv0, ECConfig *lpConfig,
