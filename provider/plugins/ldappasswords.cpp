@@ -105,42 +105,10 @@ static void b64_encode(char *out, const unsigned char *in, unsigned int len) {
 	out[j++] = 0;
 }
 
-static bool p_rand_get(char *p, int n)
-{
-	int fd = open("/dev/urandom", O_RDONLY);
-	
-	if (fd == -1)
-		return false;
-
-	// handle EINTR
-	while(n > 0)
-	{
-		int rc = read(fd, p, n);
-
-		if (rc == 0)
-			return false;
-
-		if (rc == -1)
-		{
-			if (errno == EINTR)
-				continue;
-
-			return false;
-		}
-
-		p += rc;
-		n -= rc;
-	}
-
-	close(fd);
-
-	return true;
-}
-
 static char *password_encrypt_crypt(const char *data, unsigned int len) {
 	char salt[3];
-	if (!p_rand_get(salt, 2))
-		return NULL;
+	rand_get(salt, 2);
+	salt[2] = '\0';
 
 	char cryptbuf[32];
 	DES_fcrypt(data, salt, cryptbuf);
@@ -204,9 +172,7 @@ static char *password_encrypt_smd5(const char *data, unsigned int len) {
 	char b64_out[MD5_DIGEST_LENGTH * 4 / 3 + 4];
 	char *res;
 
-	if (!p_rand_get((char *)salt, 4))
-		return NULL;
-
+	rand_get(reinterpret_cast<char *>(salt), 4);
 	MD5_Init(&ctx);
 	MD5_Update(&ctx, data, len);
 	MD5_Update(&ctx, salt, 4);
@@ -253,10 +219,8 @@ static char *password_encrypt_ssha(const char *data, unsigned int len, bool bSal
 
 	pwd.assign(data, len);
 	if (bSalted) {
-		if (!p_rand_get((char *)salt, 4))
-			return NULL;
-
-		pwd.append((const char*)salt, 4);
+		rand_get(reinterpret_cast<char *>(salt), sizeof(salt));
+		pwd.append(reinterpret_cast<const char *>(salt), sizeof(salt));
 	}
 
 	SHA1((const unsigned char*)pwd.c_str(), pwd.length(), SHA_out);
