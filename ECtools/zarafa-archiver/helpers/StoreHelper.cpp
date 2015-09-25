@@ -44,7 +44,7 @@
 #include <zarafa/platform.h>
 #include <mapix.h>
 #include <mapiutil.h>
-#include <zarafa/restrictionutil.h>>
+#include <zarafa/restrictionutil.h>
 
 #include "StoreHelper.h"
 using namespace std;
