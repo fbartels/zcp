@@ -279,12 +279,8 @@ ECRESULT ECUserStoreTable::Load() {
 
 		lpDBLength = lpDatabase->FetchRowLengths(lpDBResult);
 
-		if (lpDBRow[OBJCLASS]) {
+		if (lpDBRow[OBJCLASS])
 			objclass = (objectclass_t)atoi(lpDBRow[OBJCLASS]);
-			if (objclass != ACTIVE_USER && objclass != NONACTIVE_USER &&
-				objclass != NONACTIVE_ROOM && objclass != NONACTIVE_EQUIPMENT)
-				continue;
-		}
 
 		if (lpDBRow[USERID]) {
 			sUserStore.ulUserId = atoi(lpDBRow[USERID]);
