@@ -1828,7 +1828,13 @@ HRESULT VConverter::HrSetTimeProperty(time_t tStamp, bool bDateOnly, icaltimezon
 	HRESULT hr = hrSuccess;
 	icaltimetype ittStamp;
 
-	if(bDateOnly && !lpicTZinfo) {
+	// if (bDateOnly && !lpicTZinfo)
+	/*
+	 * ZCP-12962: Disregarding tzinfo. Even a minor miscalculation can
+	 * cause a day shift; if possible, we should probably improve the
+	 * actual calculation when we encounter such a problem.
+	 */
+	if (bDateOnly) {
 		struct tm date;
 		// We have a problem now. This is a 'date' property type, so time information should not be sent. However,
 		// the timestamp in tStamp *does* have a time part, which is indicating the start of the day in GMT (so, this
