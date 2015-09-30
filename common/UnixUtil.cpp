@@ -60,48 +60,30 @@
 using namespace std;
 
 int unix_runas(ECConfig *lpConfig, ECLogger *lpLogger) {
-	if (strcmp(lpConfig->GetSetting("run_as_group"),"")) {
-		const struct group *gr = getgrnam(lpConfig->GetSetting("run_as_group"));
+	const char *group = lpConfig->GetSetting("run_as_group");
+	const char *user  = lpConfig->GetSetting("run_as_user");
+
+	if (group != NULL && *group != '\0') {
+		const struct group *gr = getgrnam(group);
 		if (!gr) {
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to run as group '%s'", lpConfig->GetSetting("run_as_group"));
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "Looking up group \"%s\" failed: %s", group, strerror(errno));
 			return -1;
 		}
-		if (getgid() != gr->gr_gid) {
-			if (setgid(gr->gr_gid) != 0) {
-				switch (errno) {
-				case EPERM:
-					lpLogger->Log(EC_LOGLEVEL_FATAL, "Not enough permissions to change to group '%s'.", gr->gr_name);
-					break;
-				default:
-					lpLogger->Log(EC_LOGLEVEL_FATAL, "Unknown error while setting user id: %d", errno);
-					break;
-				};
-				return -1;
-			}
+		if (getgid() != gr->gr_gid && setgid(gr->gr_gid) != 0) {
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "Changing to group \"%s\" failed: %s", gr->gr_name, strerror(errno));
+			return -1;
 		}
 	}
 
-	if (strcmp(lpConfig->GetSetting("run_as_user"),"")) {
-		const struct passwd *pw = getpwnam(lpConfig->GetSetting("run_as_user"));
+	if (user != NULL && *user != '\0') {
+		const struct passwd *pw = getpwnam(user);
 		if (!pw) {
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to run as user '%s'", lpConfig->GetSetting("run_as_user"));
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "Looking up user \"%s\" failed: %s", user, strerror(errno));
 			return -1;
 		}
-		if (getuid() != pw->pw_uid) {
-			if (setuid(pw->pw_uid) != 0) {
-				switch (errno) {
-				case EAGAIN:
-					lpLogger->Log(EC_LOGLEVEL_FATAL, "EGAIN error while setting user id.");
-					break;
-				case EPERM:
-					lpLogger->Log(EC_LOGLEVEL_FATAL, "Not enough permissions to change to user '%s'.", pw->pw_name);
-					break;
-				default:
-					lpLogger->Log(EC_LOGLEVEL_FATAL, "Unknown error while setting user id: %d", errno);
-					break;
-				};
-				return -1;
-			}
+		if (getuid() != pw->pw_uid && setuid(pw->pw_uid) != 0) {
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "Changing to user \"%s\" failed: %s", pw->pw_name, strerror(errno));
+			return -1;
 		}
 	}
 
