@@ -656,6 +656,7 @@ Looks at command-line to see if another server address or other related options 
         self.sa = self.mapistore.QueryInterface(IID_IECServiceAdmin)
         self.ems = self.mapistore.QueryInterface(IID_IExchangeManageStore)
         self.ab = self.mapisession.OpenAddressBook(0, None, 0) # XXX
+        self._gab = None
         entryid = HrGetOneProp(self.mapistore, PR_STORE_ENTRYID).Value
         self.pseudo_url = entryid[entryid.find('pseudo:'):-1] # XXX ECSERVER
         self.name = self.pseudo_url[9:] # XXX get this kind of stuff from pr_ec_statstable_servers..?
@@ -676,8 +677,7 @@ Looks at command-line to see if another server address or other related options 
                 pass
 
     def gab_table(self): # XXX separate addressbook class? useful to add to self.tables?
-        gab = self.ab.OpenEntry(self.ab.GetDefaultDir(), None, 0)
-        ct = gab.GetContentsTable(MAPI_DEFERRED_ERRORS)
+        ct = self.gab.GetContentsTable(MAPI_DEFERRED_ERRORS)
         return Table(self, ct, PR_CONTAINER_CONTENTS)
 
     def _archive_session(self, host):
@@ -690,18 +690,26 @@ Looks at command-line to see if another server address or other related options 
         return self._archive_sessions[host]
 
     @property
+    def gab(self):
+        """ Global Address Book """
+
+        if not self._gab:
+            self._gab = self.ab.OpenEntry(self.ab.GetDefaultDir(), None, 0)
+        return self._gab
+
+    @property
     def guid(self):
         """ Server GUID """
 
         return bin2hex(HrGetOneProp(self.mapistore, PR_MAPPING_SIGNATURE).Value)
 
-    def user(self, name, create=False):
+    def user(self, name=None, email=None, create=False):
         """ Return :class:`user <User>` with given name; raise exception if not found """
 
         try:
-            return User(name, self)
+            return User(name, email=email, server=self)
         except ZarafaNotFoundException:
-            if create:
+            if create and name:
                 return self.create_user(name)
             else:
                 raise
@@ -2703,14 +2711,22 @@ class Attachment(object):
 class User(object):
     """ User class """
 
-    def __init__(self, name, server=None):
+    def __init__(self, name=None, server=None, email=None):
         server = server or Server()
-        self._name = name = unicode(name)
         self.server = server
+
+        if email:
+            try:
+                self._name = unicode(server.gab.ResolveNames([PR_EMAIL_ADDRESS], MAPI_UNICODE | EMS_AB_ADDRESS_LOOKUP, [[SPropValue(PR_DISPLAY_NAME, unicode(email))]], [MAPI_UNRESOLVED])[0][0][1].Value)
+            except (MAPIErrorNotFound, MAPIErrorInvalidParameter):
+                raise ZarafaNotFoundException("no such user '%s'" % email)
+        else:
+            self._name = unicode(name)
+
         try:
             self._ecuser = self.server.sa.GetUser(self.server.sa.ResolveUserName(self._name, MAPI_UNICODE), MAPI_UNICODE)
         except (MAPIErrorNotFound, MAPIErrorInvalidParameter): # multi-tenant, but no '@' in username..
-            raise ZarafaNotFoundException("no such user: '%s'" % name)
+            raise ZarafaNotFoundException("no such user: '%s'" % self.name)
         self.mapiobj = self.server.mapisession.OpenEntry(self._ecuser.UserID, None, 0)
 
     @property
