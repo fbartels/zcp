@@ -204,21 +204,28 @@ static HRESULT CopyNotification(const NOTIFICATION *lpSrc, void *lpBase,
         case fnevTableModified:
             lpDst->info.tab.ulTableEvent = lpSrc->info.tab.ulTableEvent;
             lpDst->info.tab.hResult = lpSrc->info.tab.hResult;
-            Util::HrCopyProperty(&lpDst->info.tab.propPrior, &lpSrc->info.tab.propPrior, lpBase);
-            Util::HrCopyProperty(&lpDst->info.tab.propIndex, &lpSrc->info.tab.propIndex, lpBase);
+            hr = Util::HrCopyProperty(&lpDst->info.tab.propPrior, &lpSrc->info.tab.propPrior, lpBase);
+            if (hr != hrSuccess)
+		goto exit;
+            hr = Util::HrCopyProperty(&lpDst->info.tab.propIndex, &lpSrc->info.tab.propIndex, lpBase);
+            if (hr != hrSuccess)
+		goto exit;
             if ((hr = MAPIAllocateMore(lpSrc->info.tab.row.cValues * sizeof(SPropValue), lpBase, (void **)&lpDst->info.tab.row.lpProps)) != hrSuccess)
 		goto exit;
-            Util::HrCopyPropertyArray(lpSrc->info.tab.row.lpProps, lpSrc->info.tab.row.cValues, lpDst->info.tab.row.lpProps, lpBase);
+            hr = Util::HrCopyPropertyArray(lpSrc->info.tab.row.lpProps, lpSrc->info.tab.row.cValues, lpDst->info.tab.row.lpProps, lpBase);
+            if (hr != hrSuccess)
+                goto exit;
             lpDst->info.tab.row.cValues = lpSrc->info.tab.row.cValues;
             break;
         case fnevStatusObjectModified:
             MAPICopyMem(lpSrc->info.statobj.cbEntryID, 		lpSrc->info.statobj.lpEntryID, 		lpBase, &lpDst->info.statobj.cbEntryID, 	(void**)&lpDst->info.statobj.lpEntryID);
             if ((hr = MAPIAllocateMore(lpSrc->info.statobj.cValues * sizeof(SPropValue), lpBase, (void **)&lpDst->info.statobj.lpPropVals)) != hrSuccess)
 			goto exit;
-            Util::HrCopyPropertyArray(lpSrc->info.statobj.lpPropVals, lpSrc->info.statobj.cValues, lpDst->info.statobj.lpPropVals, lpBase);
+            hr = Util::HrCopyPropertyArray(lpSrc->info.statobj.lpPropVals, lpSrc->info.statobj.cValues, lpDst->info.statobj.lpPropVals, lpBase);
+            if (hr != hrSuccess)
+                goto exit;
             lpDst->info.statobj.cValues = lpSrc->info.statobj.cValues;
             break;
-        
     }
 
 exit:
