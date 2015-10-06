@@ -137,7 +137,7 @@ IMAP::IMAP(const char *szServerPath, ECChannel *lpChannel, ECLogger *lpLogger,
 
 	m_lpTable = NULL;
 	m_ulErrors = 0;
-	
+	bCurrentFolderReadOnly = false;
 	pthread_mutex_init(&m_mIdleLock, NULL);
 }
 
