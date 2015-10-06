@@ -587,7 +587,7 @@ HRESULT GetMailboxDataPerServer(ECLogger *lpLogger, IMAPISession *lpSession,
 	if (hr != hrSuccess)
 		goto exit;
 
-	lpCollector->GetRestriction(ptrStoreAdmin, &ptrRestriction);
+	hr = lpCollector->GetRestriction(ptrStoreAdmin, &ptrRestriction);
 	if (hr != hrSuccess)
 		goto exit;
 
