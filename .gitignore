@@ -9,6 +9,7 @@ Makefile.in
 *.mo
 *.o
 .dirstamp
+@
 
 # /
 /aclocal.m4

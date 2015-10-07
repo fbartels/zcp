@@ -808,6 +808,7 @@ AC_CONFIG_FILES([Makefile
 dnl non-oss files
 
 AC_OUTPUT
+ln -s "${abs_top_srcdir}" "@"
 
 AC_MSG_RESULT([
 Install prefix	:	$prefix
