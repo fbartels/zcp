@@ -709,7 +709,10 @@ HRESULT ECMAPIProp::SetSerializedACLData(LPSPropValue lpsPropValue)
 		soap.is = &is;
 		soap_set_imode(&soap, SOAP_C_UTFSTRING);
 		soap_begin(&soap);
-		soap_begin_recv(&soap);
+		if (soap_begin_recv(&soap) != 0) {
+			hr = MAPI_E_NETWORK_FAILURE;
+			goto exit;
+		}
 		if (!soap_get_rightsArray(&soap, &rights, "rights", "rightsArray")) {
 			hr = MAPI_E_CORRUPT_DATA;
 			goto exit;
