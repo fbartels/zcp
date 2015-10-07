@@ -19,11 +19,11 @@ AM_CPPFLAGS = ${ZCPPFLAGS} $(DEBUGFLAGS) \
 	-DSWIG_PYTHON_OUTPUT_TUPLE -DSWIG_TYPE_TABLE=MAPI
 
 libzcp_pyconv_la_SOURCES = conversion.cpp conversion.h
-libzcp_pyconv_la_LDFLAGS = -Wl,--version-script=${top_srcdir}/default.sym
+libzcp_pyconv_la_LDFLAGS = -Wl,--version-script=${top_builddir}/default.sym
 libzcp_pyconv_la_LIBADD  = ${PYTHON_LIBS} \
 	${top_builddir}/mapi4linux/src/libmapi.la
 libzcp_pydirector_la_SOURCES = ../director_util.cpp ../director_util.h
-libzcp_pydirector_la_LDFLAGS = -Wl,--version-script=${top_srcdir}/default.sym
+libzcp_pydirector_la_LDFLAGS = -Wl,--version-script=${top_builddir}/default.sym
 libzcp_pydirector_la_LIBADD  = -lpthread
 
 _MAPICore_la_CPPFLAGS = ${AM_CPPFLAGS} -I${top_srcdir}/zarafa-libsync
