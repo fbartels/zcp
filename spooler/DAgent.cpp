@@ -421,6 +421,35 @@ exit:
 }
 
 /**
+ * Checks whether hte message needs auto-processing
+ */
+static bool FNeedsAutoProcessing(IMsgStore *lpStore, LPMESSAGE lpMessage)
+{
+	HRESULT hr = hrSuccess;
+	SizedSPropTagArray(1, sptaProps) = { 1, { PR_MESSAGE_CLASS } };
+	LPSPropValue lpProps = NULL;
+	ULONG cValues = 0;
+
+	hr = lpMessage->GetProps((LPSPropTagArray)&sptaProps, 0, &cValues, &lpProps);
+	if (hr != hrSuccess) {
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "FNeedsAutoProcessing(): GetProps failed %x", hr);
+		goto exit;
+	}
+
+	if (wcsncasecmp(lpProps[0].Value.lpszW, L"IPM.Schedule.Meeting.", wcslen(L"IPM.Schedule.Meeting.")) != 0) {
+		hr = MAPI_E_NOT_FOUND;
+		goto exit;
+	}
+
+exit:
+	if(lpProps)
+		MAPIFreeBuffer(lpProps);
+
+	return hr == hrSuccess;
+}
+
+
+/**
  * Auto-respond to the passed message
  *
  * This function starts the external autoresponder. Since the external autoresponder needs to access a message,
@@ -521,6 +550,99 @@ exit:
 
 	return hr;
 }
+
+/**
+ * Auto-process the passed message
+ *
+ * @param lpLogger Logger
+ * @param lpMAPISession MAPI Session for the user in lpRecip
+ * @param lpRecip Recipient for whom lpMessage is being delivered
+ * @param lpStore Store in which lpMessage is being delivered
+ * @param lpMessage Message being delivered, should be a meeting request
+ *
+ * @return result
+ */
+static HRESULT HrAutoProcess(ECLogger *lpLogger, IMAPISession *lpMAPISession,
+    ECRecipient *lpRecip, IMsgStore *lpStore, LPMESSAGE lpMessage)
+{
+	HRESULT hr = hrSuccess;
+	IMAPIFolder *lpRootFolder = NULL;
+	IMessage *lpMessageCopy = NULL;
+	const char *autoprocessor = g_lpConfig->GetSetting("mr_autoprocessor");
+	std::string strEntryID, strCmdLine;
+	LPSPropValue lpEntryID = NULL;
+	ULONG ulType = 0;
+	ENTRYLIST sEntryList;
+
+	sc -> countInc("DAgent", "AutoProcess");
+
+	// Pass a copy to the external script
+	hr = lpStore->OpenEntry(0, NULL, NULL, MAPI_MODIFY, &ulType, (IUnknown **)&lpRootFolder);
+	if(hr != hrSuccess) {
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "HrAutoProcess(): OpenEntry failed %x", hr);
+		goto exit;
+	}
+
+	hr = lpRootFolder->CreateMessage(NULL, 0, &lpMessageCopy);
+	if(hr != hrSuccess) {
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "HrAutoProcess(): CreateMessage failed %x", hr);
+		goto exit;
+	}
+
+	hr = lpMessage->CopyTo(0, NULL, NULL, 0, NULL, &IID_IMessage, (LPVOID)lpMessageCopy, 0, NULL);
+	if(hr != hrSuccess) {
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "HrAutoProcess(): CopyTo failed %x", hr);
+		goto exit;
+	}
+
+	hr = lpMessageCopy->SaveChanges(0);
+	if(hr != hrSuccess) {
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "HrAutoProcess(): SaveChanges failed %x", hr);
+		goto exit;
+	}
+
+	hr = HrGetOneProp(lpMessageCopy, PR_ENTRYID, &lpEntryID);
+	if (hr != hrSuccess) {
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "HrAutoProcess(): HrGetOneProp failed %x", hr);
+		goto exit;
+	}
+
+	strEntryID = bin2hex(lpEntryID->Value.bin.cb, lpEntryID->Value.bin.lpb);
+
+	// We cannot rely on the 'current locale' to be able to represent the username in wstrUsername. We therefore
+	// force utf-8 output on the username. This means that the autoaccept script must also interpret the username
+	// in utf-8, *not* in the current locale.
+	strCmdLine = (std::string)autoprocessor + " \"" + convert_to<string>("UTF-8", lpRecip->wstrUsername, rawsize(lpRecip->wstrUsername), CHARSET_WCHAR) + "\" \"" + g_lpConfig->GetSettingsPath() + "\" \"" + strEntryID + "\"";
+
+#ifdef WIN32
+	g_lpLogger->Log(EC_LOGLEVEL_DEBUG, "No support for autoaccept with command line %s", strCmdLine.c_str());
+	hr = MAPI_E_NO_SUPPORT;
+#else
+	g_lpLogger->Log(EC_LOGLEVEL_DEBUG, "Starting autoaccept with command line %s", strCmdLine.c_str());
+	if(!unix_system(lpLogger, autoprocessor, strCmdLine.c_str(), (const char **)environ))
+		hr = MAPI_E_CALL_FAILED;
+#endif
+
+	// Delete the copy, irrespective of the outcome of the script.
+	sEntryList.cValues = 1;
+	sEntryList.lpbin = &lpEntryID->Value.bin;
+
+	lpRootFolder->DeleteMessages(&sEntryList, 0, NULL, 0);
+	// ignore error during delete; the autoaccept script may have already (re)moved the message
+
+exit:
+	if(lpRootFolder)
+		lpRootFolder->Release();
+
+	if(lpMessageCopy)
+		lpMessageCopy->Release();
+
+	if(lpEntryID)
+		MAPIFreeBuffer(lpEntryID);
+
+	return hr;
+}
+
 
 /**
  * Save copy of the raw message
