@@ -2,7 +2,8 @@
 
 SUBDIRS = include/zarafa zarafa
 
-SWIG_CXXFLAGS = -Wall -python -c++ -threads
+SWIG_CXXFLAGS = -Wall -python -c++ -threads \
+	-I${top_srcdir}/swig/include -I${srcdir}/include
 
 lib_LTLIBRARIES = libzcp_pyconv.la libzcp_pydirector.la
 pyexec_LTLIBRARIES = _MAPICore.la _inetmapi.la _icalmapi.la _licenseclient.la
@@ -138,21 +139,21 @@ _licenseclient_la_SOURCES = licenseclient_wrap.cxx licenseclient_conv.cpp licens
 _libfreebusy_la_SOURCES = libfreebusy_wrap.cxx libfreebusy_conv.h libfreebusy_conv.cpp
 
 
-EXTRA_DIST = typemap_python.i helpers_python.i setup.py $(BUILT_SOURCES) MAPICore.py inetmapi.py icalmapi.py licenseclient.py MAPI/Defs.py  MAPI/__init__.py  MAPI/Struct.py  MAPI/Tags.py  MAPI/Time.py MAPI/Util/__init__.py MAPI/Util/Generators.py MAPI/Util/Iterators.py MAPI/Util/AddressBook.py MAPI/Util/codepage.py archiver_python.i
+EXTRA_DIST = helpers_python.i setup.py $(BUILT_SOURCES) MAPICore.py inetmapi.py icalmapi.py licenseclient.py MAPI/Defs.py  MAPI/__init__.py  MAPI/Struct.py  MAPI/Tags.py  MAPI/Time.py MAPI/Util/__init__.py MAPI/Util/Generators.py MAPI/Util/Iterators.py MAPI/Util/AddressBook.py MAPI/Util/codepage.py archiver_python.i
 datadir = ${pythondir}
 data_DATA = MAPICore.py inetmapi.py icalmapi.py licenseclient.py
 noinst_datadir = libcommon.py RecurrenceState.py
 
 
 mapi_wrap.h: mapi_wrap.cxx
-mapi_wrap.cxx: ../mapi.i ../mapiutil.i ../mapidefs.i ../mapicode.i ../mapix.i ../mapinotifsink.i ../mapiutil.i ../typemap.i ../helpers.i ../edkmdb.i ../IECServiceAdmin.i ../ecdefs.i typemap_python.i helpers_python.i
+mapi_wrap.cxx: ../mapi.i ../mapiutil.i ../mapidefs.i ../mapicode.i ../mapix.i ../mapinotifsink.i ../mapiutil.i ../include/zarafa/typemap.i ../helpers.i ../edkmdb.i ../IECServiceAdmin.i ../ecdefs.i include/zarafa/typemap_python.i helpers_python.i
 	if test "x$(SWIG_EXEC)" = "x"; then echo "swig is required for 'make dist'"; exit 1; fi
 	${SWIG_EXEC} -I${top_srcdir}/swig -I${top_srcdir}/zarafa-libsync ${SWIG_FLAGS} ${SWIG_CXXFLAGS} -o $@ $<
 
-inetmapi_wrap.cxx: ../inetmapi.i ../typemap.i ../inetmapi.i typemap_python.i helpers_python.i
+inetmapi_wrap.cxx: ../inetmapi.i ../include/zarafa/typemap.i ../inetmapi.i include/zarafa/typemap_python.i helpers_python.i
 	${SWIG_EXEC} -I${top_srcdir}/swig ${SWIG_CXXFLAGS} -o $@ $<
 
-icalmapi_wrap.cxx: ../icalmapi.i ../typemap.i typemap_python.i helpers_python.i ../../libicalmapi/icalmapi.h
+icalmapi_wrap.cxx: ../icalmapi.i ../include/zarafa/typemap.i include/zarafa/typemap_python.i helpers_python.i ../../libicalmapi/icalmapi.h
 	${SWIG_EXEC} -I${top_srcdir}/libicalmapi -I${top_srcdir}/libfreebusy -I${top_srcdir/swig} ${SWIG_CXXFLAGS} -o $@ $<
 
 archiver_wrap.cxx: ../archiver.i archiver_python.i

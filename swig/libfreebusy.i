@@ -15,7 +15,7 @@
 
 %include "std_string.i"
 %include "cstring.i"
-%include "typemap.i"
+%include <zarafa/typemap.i>
 
 
 

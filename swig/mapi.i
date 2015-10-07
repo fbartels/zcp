@@ -37,7 +37,7 @@ HRESULT MAPIInitialize_Multithreaded() {
 
 %}
 
-%include "typemap.i"
+%include <zarafa/typemap.i>
 
 HRESULT MAPIInitialize_Multithreaded();
 

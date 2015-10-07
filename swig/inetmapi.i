@@ -9,7 +9,7 @@
 
 %include "std_string.i"
 %include "cstring.i"
-%include "typemap.i"
+%include <zarafa/typemap.i>
 
 %cstring_output_allocate(char** lppchardelete, delete []*$1);
 

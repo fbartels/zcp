@@ -21,7 +21,7 @@
 %include "cstring.i"
 %include "cwstring.i"
 %include "std_string.i"
-%include "typemap.i"
+%include <zarafa/typemap.i>
 
 class CHtmlToTextParser {
     public:

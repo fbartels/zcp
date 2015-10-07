@@ -478,7 +478,7 @@
 
 // Pull in the language-specific typemap
 #if SWIGPYTHON
-%include "python/typemap_python.i"
+%include <zarafa/typemap_python.i>
 #endif
 
 /////////////////////////////////////////////////

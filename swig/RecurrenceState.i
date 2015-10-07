@@ -13,7 +13,7 @@
 %include "std_string.i"
 %include "cstring.i"
 %include "cwstring.i"
-%include "typemap.i"
+%include <zarafa/typemap.i>
 %include "std_vector.i"
 %include "std_wstring.i"
 

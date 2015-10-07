@@ -14,9 +14,6 @@ EXTRA_DIST = edkmdb.i mapi.i mapiutil.i mapidefs.i mapicode.i mapix.i	\
 	libfreebusy.i zarafasync.i ECLogger.i RecurrenceState.i				\
 	RecurrenceState.swig.h
 
-nobase_pkginclude_HEADERS = \
-	typemap.i python/typemap_python.i
-
 check-syntax:
 	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) \
 		-fsyntax-only -fmessage-length=0 ${CHK_SOURCES} -Wall -Wformat=2
