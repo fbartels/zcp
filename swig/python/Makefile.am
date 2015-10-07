@@ -147,32 +147,32 @@ noinst_datadir = libcommon.py RecurrenceState.py
 mapi_wrap.h: mapi_wrap.cxx
 mapi_wrap.cxx: ../mapi.i ../mapiutil.i ../mapidefs.i ../mapicode.i ../mapix.i ../mapinotifsink.i ../mapiutil.i ../typemap.i ../helpers.i ../edkmdb.i ../IECServiceAdmin.i ../ecdefs.i typemap_python.i helpers_python.i
 	if test "x$(SWIG_EXEC)" = "x"; then echo "swig is required for 'make dist'"; exit 1; fi
-	${SWIG_EXEC} -I${top_srcdir}/swig -I${top_srcdir}/zarafa-libsync ${SWIG_FLAGS} ${SWIG_CXXFLAGS} -o ${top_builddir}/swig/python/mapi_wrap.cxx ${top_srcdir}/swig/mapi.i
+	${SWIG_EXEC} -I${top_srcdir}/swig -I${top_srcdir}/zarafa-libsync ${SWIG_FLAGS} ${SWIG_CXXFLAGS} -o $@ $<
 
-inetmapi_wrap.cxx: ../typemap.i ../inetmapi.i typemap_python.i helpers_python.i
-	${SWIG_EXEC} -I${top_srcdir}/swig ${SWIG_CXXFLAGS} -o ${top_builddir}/swig/python/inetmapi_wrap.cxx ${top_srcdir}/swig/inetmapi.i
+inetmapi_wrap.cxx: ../inetmapi.i ../typemap.i ../inetmapi.i typemap_python.i helpers_python.i
+	${SWIG_EXEC} -I${top_srcdir}/swig ${SWIG_CXXFLAGS} -o $@ $<
 
-icalmapi_wrap.cxx: ../typemap.i ../icalmapi.i typemap_python.i helpers_python.i ../../libicalmapi/icalmapi.h
-	${SWIG_EXEC} -I${top_srcdir}/libicalmapi -I${top_srcdir}/libfreebusy -I${top_srcdir/swig} ${SWIG_CXXFLAGS} -o ${top_builddir}/swig/python/icalmapi_wrap.cxx ${top_srcdir}/swig/icalmapi.i
+icalmapi_wrap.cxx: ../icalmapi.i ../typemap.i typemap_python.i helpers_python.i ../../libicalmapi/icalmapi.h
+	${SWIG_EXEC} -I${top_srcdir}/libicalmapi -I${top_srcdir}/libfreebusy -I${top_srcdir/swig} ${SWIG_CXXFLAGS} -o $@ $<
 
 archiver_wrap.cxx: ../archiver.i archiver_python.i
-	${SWIG_EXEC} -I${top_srcdir}/ECtools/zarafa-archiver ${SWIG_CXXFLAGS} -o ${top_builddir}/swig/python/archiver_wrap.cxx ${top_srcdir}/swig/archiver.i
+	${SWIG_EXEC} -I${top_srcdir}/ECtools/zarafa-archiver ${SWIG_CXXFLAGS} -o $@ $<
 
 libcommon_wrap.cxx: ../libcommon.i
-	${SWIG_EXEC} -I${top_srcdir}/common -I${top_srcdir}/m4lcommon -I${top_srcdir/swig} ${SWIG_CXXFLAGS} -o ${top_builddir}/swig/python/libcommon_wrap.cxx ${top_srcdir}/swig/libcommon.i
+	${SWIG_EXEC} -I${top_srcdir}/common -I${top_srcdir}/m4lcommon -I${top_srcdir/swig} ${SWIG_CXXFLAGS} -o $@ $<
 
 RecurrenceState_wrap.cxx: ../RecurrenceState.i
-	${SWIG_EXEC} -I${top_srcdir}/common -I${top_srcdir}/m4lcommon -I${top_srcdir/swig} ${SWIG_CXXFLAGS} -o ${top_builddir}/swig/python/RecurrenceState_wrap.cxx ${top_srcdir}/swig/RecurrenceState.i
+	${SWIG_EXEC} -I${top_srcdir}/common -I${top_srcdir}/m4lcommon -I${top_srcdir/swig} ${SWIG_CXXFLAGS} -o $@ $<
 
 licenseclient_wrap.cxx: ../licenseclient.i
-	${SWIG_EXEC} -I${top_srcdir}/provider/common -I${top_srcdir}/common -I${top_srcdir}/m4lcommon -I${top_srcdir/swig} ${SWIG_CXXFLAGS} -o ${top_builddir}/swig/python/licenseclient_wrap.cxx ${top_srcdir}/swig/licenseclient.i
+	${SWIG_EXEC} -I${top_srcdir}/provider/common -I${top_srcdir}/common -I${top_srcdir}/m4lcommon -I${top_srcdir/swig} ${SWIG_CXXFLAGS} -o $@ $<
 
 # make dist seems to want to create this file regardless of the OSS_ONLY flag.
 licensereq_wrap.cxx: ../licensereq.i
-	${SWIG_EXEC} -I${top_srcdir}/liblicense -I${top_srcdir/swig} ${SWIG_CXXFLAGS} -o ${top_builddir}/swig/python/licensereq_wrap.cxx ${top_srcdir}/swig/licensereq.i
+	${SWIG_EXEC} -I${top_srcdir}/liblicense -I${top_srcdir/swig} ${SWIG_CXXFLAGS} -o $@ $<
 
 libfreebusy_wrap.cxx: ../libfreebusy.i
-	${SWIG_EXEC} -I${top_srcdir}/libfreebusy -I${top_srcdir/swig} ${SWIG_CXXFLAGS} -o ${top_builddir}/swig/python/libfreebusy_wrap.cxx ${top_srcdir}/swig/libfreebusy.i
+	${SWIG_EXEC} -I${top_srcdir}/libfreebusy -I${top_srcdir/swig} ${SWIG_CXXFLAGS} -o $@ $<
 
 check-syntax:
 	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) \
