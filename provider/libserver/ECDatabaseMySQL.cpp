@@ -55,6 +55,7 @@
 #include "ECUserManagement.h"
 #include <zarafa/ECConfig.h>
 #include <zarafa/ECLogger.h>
+#include <zarafa/MAPIErrors.h>
 #include <zarafa/ZarafaCode.h>
 
 #include <zarafa/ecversion.h>
@@ -413,20 +414,53 @@ exit:
  *
  * Currently this means we're updating all the stored procedure definitions
  */
-ECRESULT ECDatabaseMySQL::InitializeDBState()
+ECRESULT ECDatabaseMySQL::InitializeDBState(void)
+{
+	ECRESULT ret = InitializeDBStateInner();
+
+#ifdef HAVE_OFFLINE_SUPPORT
+	/* Only do this recovery on the Windows thing */
+	if (ret == erSuccess)
+		return ret;
+
+	/* Start "repair" */
+	m_lpLogger->Log(EC_LOGLEVEL_ERROR, "InitializeDBState unsuccessful: %s (%d). Attempting drop, and retry.",
+		GetMAPIErrorMessage(ZarafaErrorToMAPIError(ret, hrSuccess)),
+		ret);
+	ret = DoUpdate("DROP TABLE mysql.proc");
+	if (ret != erSuccess)
+		goto exit;
+	ret = DoUpdate("DROP TABLE mysql.plugin");
+	if (ret != erSuccess)
+		goto exit;
+	ret = DoUpdate("DROP TABLE mysql.innodb_table_stats");
+	if (ret != erSuccess)
+		goto exit;
+	ret = DoUpdate("DROP TABLE mysql.innodb_index_stats");
+	if (ret != erSuccess)
+		goto exit;
+	return InitializeDBStateInner();
+ exit:
+	m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Error during drop");
+#endif
+
+	return ret;
+}
+
+ECRESULT ECDatabaseMySQL::InitializeDBStateInner()
 {
 	ECRESULT er = erSuccess;
 
 #ifdef HAVE_OFFLINE_SUPPORT
 	// Unsure the stored procedures table is available
 	
-	char *szProc = 
+	const char szProc[] =
 		"CREATE TABLE IF NOT EXISTS mysql.proc (db char(64) collate utf8_bin DEFAULT '' NOT NULL, name char(64) DEFAULT '' NOT NULL, type enum('FUNCTION','PROCEDURE') NOT NULL, specific_name char(64) DEFAULT '' NOT NULL, language enum('SQL') DEFAULT 'SQL' NOT NULL, sql_data_access enum( 'CONTAINS_SQL', 'NO_SQL', 'READS_SQL_DATA', 'MODIFIES_SQL_DATA') DEFAULT 'CONTAINS_SQL' NOT NULL, is_deterministic enum('YES','NO') DEFAULT 'NO' NOT NULL, security_type enum('INVOKER','DEFINER') DEFAULT 'DEFINER' NOT NULL, param_list blob NOT NULL, returns longblob NOT NULL, body longblob NOT NULL, definer char(141) collate utf8_bin DEFAULT '' NOT NULL, created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, modified timestamp NOT NULL DEFAULT '0000-00-00 00:00:00', sql_mode set( 'REAL_AS_FLOAT', 'PIPES_AS_CONCAT', 'ANSI_QUOTES', 'IGNORE_SPACE', 'IGNORE_BAD_TABLE_OPTIONS', 'ONLY_FULL_GROUP_BY', 'NO_UNSIGNED_SUBTRACTION', 'NO_DIR_IN_CREATE', 'POSTGRESQL', 'ORACLE', 'MSSQL', 'DB2', 'MAXDB', 'NO_KEY_OPTIONS', 'NO_TABLE_OPTIONS', 'NO_FIELD_OPTIONS', 'MYSQL323', 'MYSQL40', 'ANSI', 'NO_AUTO_VALUE_ON_ZERO', 'NO_BACKSLASH_ESCAPES', 'STRICT_TRANS_TABLES', 'STRICT_ALL_TABLES', 'NO_ZERO_IN_DATE', 'NO_ZERO_DATE', 'INVALID_DATES', 'ERROR_FOR_DIVISION_BY_ZERO', 'TRADITIONAL', 'NO_AUTO_CREATE_USER', 'HIGH_NOT_PRECEDENCE', 'NO_ENGINE_SUBSTITUTION', 'PAD_CHAR_TO_FULL_LENGTH') DEFAULT '' NOT NULL, comment text collate utf8_bin NOT NULL, character_set_client char(32) collate utf8_bin, collation_connection char(32) collate utf8_bin, db_collation char(32) collate utf8_bin, body_utf8 longblob, PRIMARY KEY (db,name,type)) engine=MyISAM character set utf8 comment='Stored Procedures';";
-	char *szPlugin =
+	const char szPlugin[] =
 		"CREATE TABLE IF NOT EXISTS mysql.plugin (name varchar(64) DEFAULT '' NOT NULL, dl varchar(128) DEFAULT '' NOT NULL, PRIMARY KEY (name)) engine=MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci comment='MySQL plugins';";
-	char *szInnoStats =
+	const char szInnoStats[] =
 		"CREATE TABLE IF NOT EXISTS mysql.innodb_table_stats ( database_name VARCHAR(64) NOT NULL, table_name VARCHAR(64) NOT NULL, last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, n_rows BIGINT UNSIGNED NOT NULL, clustered_index_size BIGINT UNSIGNED NOT NULL, sum_of_other_index_sizes BIGINT UNSIGNED NOT NULL, PRIMARY KEY (database_name, table_name)) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE=utf8_bin STATS_PERSISTENT=0;";
-	char *szInnoIndexStats =
+	const char szInnoIndexStats[] =
 		"CREATE TABLE IF NOT EXISTS mysql.innodb_index_stats ( database_name VARCHAR(64) NOT NULL, table_name VARCHAR(64) NOT NULL, index_name VARCHAR(64) NOT NULL, last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, stat_name VARCHAR(64) NOT NULL, stat_value BIGINT UNSIGNED NOT NULL, sample_size BIGINT UNSIGNED, stat_description VARCHAR(1024) NOT NULL, PRIMARY KEY (database_name, table_name, index_name, stat_name)) ENGINE=INNODB DEFAULT CHARSET=utf8 COLLATE=utf8_bin STATS_PERSISTENT=0;";
 
 	er = DoUpdate("CREATE DATABASE IF NOT EXISTS mysql");
@@ -459,11 +493,11 @@ ECRESULT ECDatabaseMySQL::InitializeDBState()
 		if(er != erSuccess) {
 			int err = mysql_errno(&m_lpMySQL);
 			if (err == ER_DBACCESS_DENIED_ERROR) {
-				m_lpLogger->Log(EC_LOGLEVEL_FATAL, "zarafa-server is not allowed to create stored procedures");
-				m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Please grant CREATE ROUTINE permissions to the mysql user '%s' on the '%s' database",
+				m_lpLogger->Log(EC_LOGLEVEL_ERROR, "zarafa-server is not allowed to create stored procedures");
+				m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Please grant CREATE ROUTINE permissions to the mysql user '%s' on the '%s' database",
 								m_lpConfig->GetSetting("mysql_user"), m_lpConfig->GetSetting("mysql_database"));
 			} else {
-				m_lpLogger->Log(EC_LOGLEVEL_FATAL, "zarafa-server is unable to create stored procedures, error %d", err);
+				m_lpLogger->Log(EC_LOGLEVEL_ERROR, "zarafa-server is unable to create stored procedures, error %d", err);
 			}
 			goto exit;
 		}
