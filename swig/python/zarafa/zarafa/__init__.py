@@ -196,7 +196,39 @@ def _stream(mapiobj, proptag):
 
     return data
 
+def _create_prop(self, mapiobj, proptag, value, proptype=None):
+    if isinstance(proptag, (int, long)):
+        if PROP_TYPE(proptag) == PT_SYSTIME:
+            value = MAPI.Time.unixtime(time.mktime(value.timetuple()))
+        # handle invalid type versus value. For example proptype=PT_UNICODE and value=True
+        try:
+            mapiobj.SetProps([SPropValue(proptag, value)])
+        except TypeError:
+            raise ZarafaException('Could not create property, type and value did not match')
+    else: # named prop
+        # XXX: code duplication from _prop()
+        namespace, name = proptag.split(':') # XXX syntax
+        if name.isdigit(): # XXX
+            name = int(name)
+
+        if proptype == PT_SYSTIME:
+            value = MAPI.Time.unixtime(time.mktime(value.timetuple()))
+        if not proptype:
+            raise ZarafaException('Missing type to create named Property') # XXX exception too general?
+
+        nameid = MAPINAMEID(NAMESPACE_GUID.get(namespace), MNID_ID if isinstance(name, int) else MNID_STRING, name)
+        lpname = mapiobj.GetIDsFromNames([nameid], 0)
+        proptag = CHANGE_PROP_TYPE(lpname[0], proptype)
+        # handle invalid type versus value. For example proptype=PT_UNICODE and value=True
+        try:
+            mapiobj.SetProps([SPropValue(proptag, value)])
+        except TypeError:
+            raise ZarafaException('Could not create property, type and value did not match')
+
+    return _prop(self, mapiobj, proptag)
+
 def _prop(self, mapiobj, proptag):
+
     if isinstance(proptag, (int, long)):
         try:
             sprop = HrGetOneProp(mapiobj, proptag)
@@ -208,6 +240,7 @@ def _prop(self, mapiobj, proptag):
         namespace, name = proptag.split(':') # XXX syntax
         if name.isdigit(): # XXX
             name = int(name)
+
         for prop in self.props(namespace=namespace): # XXX sloow, streaming
             if prop.name == name:
                 return prop
@@ -2026,6 +2059,10 @@ class Item(object):
 
         self.mapiobj.SetProps([SPropValue(PR_IMPORTANCE, value)])
         self.mapiobj.SaveChanges(KEEP_OPEN_READWRITE)
+
+    def create_prop(self, proptag, value, proptype=None):
+        return _create_prop(self, self.mapiobj, proptag, value, proptype)
+
 
     def prop(self, proptag):
         return _prop(self, self.mapiobj, proptag)
