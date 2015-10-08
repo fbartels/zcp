@@ -1,7 +1,10 @@
 #!/bin/bash
 
 if [ -f revision ]; then
-	svnrev="`cat revision | sed s/[^0-9]//g`"
+	svnrev=$(sed 's/[^0-9].*//g' <revision)
+	if [ -z "$svnrev" ]; then
+		svnrev=0
+	fi
 else
 	svnrev=$(svnversion -nc `dirname "$0"` | awk -F: '{print $NF}' | sed 's/[^0-9]//g')
 	if [ -z "$svnrev" ]; then
