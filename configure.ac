@@ -9,10 +9,6 @@ AC_CONFIG_MACRO_DIR([autoconf])
 AM_INIT_AUTOMAKE([1.10 foreign tar-ustar subdir-objects])
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
-# used in the pkgconfig file
-ZARAFA_VERSION=zarafa_version
-AC_SUBST(ZARAFA_VERSION)
-
 ECCLIENT_LIBRARY_VERSION=1:0:0
 AC_SUBST(ECCLIENT_LIBRARY_VERSION)
 
