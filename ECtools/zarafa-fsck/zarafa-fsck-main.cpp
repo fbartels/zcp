@@ -56,7 +56,8 @@
 
 #include "zarafa-fsck.h"
 
-static bool ReadYesNoMessage(string strMessage, string strAuto)
+static bool ReadYesNoMessage(const std::string &strMessage,
+    const std::string &strAuto)
 {
 	string strReply;
 
@@ -103,8 +104,8 @@ exit:
 	return hr;
 }
 
-static HRESULT FixProperty(LPMESSAGE lpMessage, string strName, ULONG ulTag,
-    __UPV Value)
+static HRESULT FixProperty(LPMESSAGE lpMessage, const std::string &strName,
+    ULONG ulTag, __UPV Value)
 {
 	HRESULT hr = hrSuccess;
 	SPropValue ErrorProp;
@@ -229,7 +230,7 @@ exit:
 }
 
 static HRESULT ProcessFolder(ZarafaFsck *lpFsck, LPMAPIFOLDER lpFolder,
-    string strName)
+    const std::string &strName)
 {
 	HRESULT hr = hrSuccess;
 	LPMAPITABLE lpTable = NULL;
@@ -304,7 +305,7 @@ ZarafaFsck::ZarafaFsck()
 }
 
 HRESULT ZarafaFsck::ValidateMessage(LPMESSAGE lpMessage,
-				    string strName, string strClass)
+    const std::string &strName, const std::string &strClass)
 {
 	HRESULT hr = hrSuccess;
 
@@ -318,7 +319,8 @@ HRESULT ZarafaFsck::ValidateMessage(LPMESSAGE lpMessage,
 	return hr;
 }
 
-HRESULT ZarafaFsck::ValidateFolder(LPMAPIFOLDER lpFolder, string strName)
+HRESULT ZarafaFsck::ValidateFolder(LPMAPIFOLDER lpFolder,
+    const std::string &strName)
 {
 	HRESULT hr = hrSuccess;
 
@@ -332,7 +334,8 @@ HRESULT ZarafaFsck::ValidateFolder(LPMAPIFOLDER lpFolder, string strName)
 	return hr;
 }
 
-HRESULT ZarafaFsck::AddMissingProperty(LPMESSAGE lpMessage, string strName, ULONG ulTag, __UPV Value)
+HRESULT ZarafaFsck::AddMissingProperty(LPMESSAGE lpMessage,
+    const std::string &strName, ULONG ulTag, __UPV Value)
 {
 	HRESULT hr = hrSuccess;
 
@@ -348,7 +351,9 @@ HRESULT ZarafaFsck::AddMissingProperty(LPMESSAGE lpMessage, string strName, ULON
 	return hr;
 }
 
-HRESULT ZarafaFsck::ReplaceProperty(LPMESSAGE lpMessage, string strName, ULONG ulTag, string strError, __UPV Value)
+HRESULT ZarafaFsck::ReplaceProperty(LPMESSAGE lpMessage,
+    const std::string &strName, ULONG ulTag, const std::string &strError,
+    __UPV Value)
 {
 	HRESULT hr = hrSuccess;
 
@@ -612,7 +617,8 @@ exit:
 		FreeProws(pRows);
 	return hr;
 }
-void ZarafaFsck::PrintStatistics(string title)
+
+void ZarafaFsck::PrintStatistics(const std::string &title)
 {
 	cout << title << endl;
 	cout << "\tFolders:\t" << ulFolders << endl;

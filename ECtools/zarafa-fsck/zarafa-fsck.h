@@ -66,20 +66,17 @@ private:
 	ULONG ulFixed;
 	ULONG ulDeleted;
 
-	virtual HRESULT ValidateItem(LPMESSAGE lpMessage, string strClass) = 0;
+	virtual HRESULT ValidateItem(LPMESSAGE lpMessage, const std::string &strClass) = 0;
 
 public:
 	ZarafaFsck();
 	virtual ~ZarafaFsck() { }
 
-	HRESULT ValidateMessage(LPMESSAGE lpMessage,
-				string strName, string strClass);
-	HRESULT ValidateFolder(LPMAPIFOLDER lpFolder, string strName);
+	HRESULT ValidateMessage(LPMESSAGE lpMessage, const std::string &strName, const std::string &strClass);
+	HRESULT ValidateFolder(LPMAPIFOLDER lpFolder, const std::string &strName);
 
-	HRESULT AddMissingProperty(LPMESSAGE lpMessage, std::string strName,
-				   ULONG ulTag,__UPV Value);
-	HRESULT ReplaceProperty(LPMESSAGE lpMessage, std::string strName,
-				ULONG ulTag, std::string strError, __UPV Value);
+	HRESULT AddMissingProperty(LPMESSAGE lpMessage, const std::string &strName, ULONG ulTag, __UPV Value);
+	HRESULT ReplaceProperty(LPMESSAGE lpMessage, const std::string &strName, ULONG ulTag, const std::string &strError, __UPV Value);
 
 	HRESULT DeleteRecipientList(LPMESSAGE lpMessage, std::list<unsigned int> &mapiReciptDel, bool &bChanged);
 
@@ -89,12 +86,12 @@ public:
 	HRESULT ValidateRecursiveDuplicateRecipients(LPMESSAGE lpMessage, bool &bChanged);
 	HRESULT ValidateDuplicateRecipients(LPMESSAGE lpMessage, bool &bChanged);
 
-	void PrintStatistics(string title);
+	void PrintStatistics(const std::string &title);
 };
 
 class ZarafaFsckCalendar : public ZarafaFsck {
 private:
-	HRESULT ValidateItem(LPMESSAGE lpMessage, string strClass);
+	HRESULT ValidateItem(LPMESSAGE lpMessage, const std::string &strClass);
 	HRESULT ValidateMinimalNamedFields(LPMESSAGE lpMessage);
 	HRESULT ValidateTimestamps(LPMESSAGE lpMessage);
 	HRESULT ValidateRecurrence(LPMESSAGE lpMessage);
@@ -102,13 +99,13 @@ private:
 
 class ZarafaFsckContact : public ZarafaFsck {
 private:
-	HRESULT ValidateItem(LPMESSAGE lpMessage, string strClass);
+	HRESULT ValidateItem(LPMESSAGE lpMessage, const std::string &strClass);
 	HRESULT ValidateContactNames(LPMESSAGE lpMessage);
 };
 
 class ZarafaFsckTask : public ZarafaFsck {
 private:
-	HRESULT ValidateItem(LPMESSAGE lpMessage, string strClass);
+	HRESULT ValidateItem(LPMESSAGE lpMessage, const std::string &strClass);
 	HRESULT ValidateMinimalNamedFields(LPMESSAGE lpMessage);
 	HRESULT ValidateTimestamps(LPMESSAGE lpMessage);
 	HRESULT ValidateCompletion(LPMESSAGE lpMessage);

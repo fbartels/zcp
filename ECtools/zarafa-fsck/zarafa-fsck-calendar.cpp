@@ -616,7 +616,8 @@ exit:
 	return hr;
 }
 
-HRESULT ZarafaFsckCalendar::ValidateItem(LPMESSAGE lpMessage, string strClass)
+HRESULT ZarafaFsckCalendar::ValidateItem(LPMESSAGE lpMessage,
+    const std::string &strClass)
 {
 	HRESULT hr = hrSuccess;
 	bool bChanged = false;

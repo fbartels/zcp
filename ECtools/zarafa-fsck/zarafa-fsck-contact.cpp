@@ -200,7 +200,8 @@ exit:
 	return hr;
 }
 
-HRESULT ZarafaFsckContact::ValidateItem(LPMESSAGE lpMessage, string strClass)
+HRESULT ZarafaFsckContact::ValidateItem(LPMESSAGE lpMessage,
+    const std::string &strClass)
 {
 	HRESULT hr = hrSuccess;
 
