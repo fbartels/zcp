@@ -415,7 +415,7 @@ static HRESULT RunStoreValidation(const char *strHost, const char *strUser,
 	if (strAltUser)
 		strwAltUsername = convert_to<wstring>(strAltUser);
 
-	hr = HrOpenECSession(lpLogger, &lpSession, "zarafa-fsck", PROJECT_SVN_REV_STR, strwUsername.c_str(), strwPassword.c_str(), (const char *)strHost, 0, NULL, NULL);
+	hr = HrOpenECSession(lpLogger, &lpSession, "zarafa-fsck", PROJECT_SVN_REV_STR, strwUsername.c_str(), strwPassword.c_str(), strHost, 0, NULL, NULL);
 	lpLogger->Release();
 	if(hr != hrSuccess) {
 		cout << "Wrong username or password." << endl;

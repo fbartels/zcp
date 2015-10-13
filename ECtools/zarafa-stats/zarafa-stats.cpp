@@ -600,9 +600,9 @@ int main(int argc, char *argv[])
 	IMAPISession *lpSession = NULL;
 	LPMDB lpStore = NULL;
 	eTableType eTable = INVALID_STATS;
-	char *user = NULL;
-	char *pass = NULL;
-	char *host = NULL;
+	const char *user = NULL;
+	const char *pass = NULL;
+	const char *host = NULL;
 	wstring strwUsername;
 	wstring strwPassword;
 	bool humanreadable(true);
@@ -668,9 +668,9 @@ int main(int argc, char *argv[])
 	strwUsername = convert_to<wstring>(user ? user : "SYSTEM");
 	strwPassword = convert_to<wstring>(pass ? pass : "");
 
-	hr = HrOpenECSession(lpLogger, &lpSession, "zarafa-stats", PROJECT_SVN_REV_STR, strwUsername.c_str(), strwPassword.c_str(), (const char *)host, EC_PROFILE_FLAGS_NO_NOTIFICATIONS | EC_PROFILE_FLAGS_NO_PUBLIC_STORE);
+	hr = HrOpenECSession(lpLogger, &lpSession, "zarafa-stats", PROJECT_SVN_REV_STR, strwUsername.c_str(), strwPassword.c_str(), host, EC_PROFILE_FLAGS_NO_NOTIFICATIONS | EC_PROFILE_FLAGS_NO_PUBLIC_STORE);
 	if (hr != hrSuccess) {
-		cout << "Cannot open admin session on host " << (host ? host : (char *)"localhost") << ", username " << (user ? user : (char *)"SYSTEM") << endl;
+		cout << "Cannot open admin session on host " << (host ? host : "localhost") << ", username " << (user ? user : "SYSTEM") << endl;
 		goto exit;
 	}
 
