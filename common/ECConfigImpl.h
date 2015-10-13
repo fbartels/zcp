@@ -100,7 +100,7 @@ typedef struct {
 
 class ECConfigImpl _zcp_final : public ECConfig {
 public:
-	ECConfigImpl(const configsetting_t *lpDefaults, const char **lpszDirectives);
+	ECConfigImpl(const configsetting_t *lpDefaults, const char *const *lpszDirectives);
 	~ECConfigImpl();
 
 	bool LoadSettings(const char *szFilename) _zcp_override;

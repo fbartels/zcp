@@ -67,11 +67,11 @@ struct configsetting_t {
 #define GetConfigSetting(_config, _name) ((_config)->GetSetting(_name))
 #endif
 
-static const char *lpszDEFAULTDIRECTIVES[] = { "include", NULL };
+static const char *const lpszDEFAULTDIRECTIVES[] = {"include", NULL};
 
 class ECConfig {
 public:
-	static ECConfig* Create(const configsetting_t *lpDefaults, const char **lpszDirectives = lpszDEFAULTDIRECTIVES);
+	static ECConfig *Create(const configsetting_t *lpDefaults, const char *const *lpszDirectives = lpszDEFAULTDIRECTIVES);
 	static const char* GetDefaultPath(const char* lpszBasename);
 
 	virtual ~ECConfig(void) {};

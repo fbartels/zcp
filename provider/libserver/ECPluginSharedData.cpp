@@ -109,7 +109,8 @@ void ECPluginSharedData::Release()
 	pthread_mutex_unlock(&m_SingletonLock);
 }
 
-ECConfig* ECPluginSharedData::CreateConfig(const configsetting_t *lpDefaults, const char **lpszDirectives)
+ECConfig *ECPluginSharedData::CreateConfig(const configsetting_t *lpDefaults,
+    const char *const *lpszDirectives)
 {
 	pthread_mutex_lock(&m_CreateConfigLock);
 
@@ -141,7 +142,7 @@ ECConfig* ECPluginSharedData::CreateConfig(const configsetting_t *lpDefaults, co
 			m_lpszDirectives[n] = NULL;
 		}
 
-		m_lpConfig = ECConfig::Create((const configsetting_t *)m_lpDefaults, (const char **)m_lpszDirectives);
+		m_lpConfig = ECConfig::Create(m_lpDefaults, m_lpszDirectives);
 		if (!m_lpConfig->LoadSettings(m_lpParentConfig->GetSetting("user_plugin_config")))
 			m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Failed to open plugin configuration file, using defaults.");
 		if (m_lpConfig->HasErrors() || m_lpConfig->HasWarnings()) {

@@ -51,7 +51,8 @@
 static const char THIS_FILE[] = __FILE__;
 #endif
 
-ECConfig* ECConfig::Create(const configsetting_t *lpDefaults, const char **lpszDirectives)
+ECConfig *ECConfig::Create(const configsetting_t *lpDefaults,
+    const char *const *lpszDirectives)
 {
 	return new ECConfigImpl(lpDefaults, lpszDirectives);
 }

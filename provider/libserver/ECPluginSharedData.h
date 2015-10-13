@@ -152,7 +152,7 @@ public:
 	 *					Supported configuration file directives.
 	 * @return The ECConfig pointer. NULL if configuration file could not be loaded.
 	 */
-	virtual ECConfig* CreateConfig(const configsetting_t *lpDefaults, const char **lpszDirectives = lpszDEFAULTDIRECTIVES);
+	virtual ECConfig *CreateConfig(const configsetting_t *lpDefaults, const char *const *lpszDirectives = lpszDEFAULTDIRECTIVES);
 
 	/**
 	 * Obtain the ECLogger
