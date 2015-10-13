@@ -2406,6 +2406,8 @@ class Recurrence:
         self.endtime_offset = _unpack_long(value, pos) # XXX: type?
         pos += LONG
 
+        self.start = datetime.datetime(self.start.year, self.start.month, self.start.day) + datetime.timedelta(minutes=self.startime_offset)
+        self.end = datetime.datetime(self.end.year, self.end.month, self.end.day) + datetime.timedelta(minutes=self.endtime_offset)
         
         # Exceptions
         self.exception_count = _unpack_short(value, pos)
@@ -2510,8 +2512,12 @@ class Recurrence:
             self.recurrences = rrule(MONTHLY, dtstart=self.start, until=self.end, bymonthday=self.pattern, interval=self.period)
             # self.pattern is either day of month or 
         elif self.patterntype == 3: # MONTHY, YEARLY
+            byweekday = () # Set
+            for index, week in rrule_weekdays.iteritems():
+                if (weekday >> index ) & 1:
+                    byweekday += (week(weeknumber),)
             # Yearly, the last XX of YY
-            self.recurrences = rrule(MONTHLY, dtstart=self.start, until=self.end, interval=self.period)
+            self.recurrences = rrule(MONTHLY, dtstart=self.start, until=self.end, interval=self.period, byweekday=byweekday)
 
     def __unicode__(self):
         return u'Recurrence(start=%s - end=%s)' % (self.start, self.end)
