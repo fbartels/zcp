@@ -179,14 +179,14 @@ HRESULT CopyMAPIPropValToSOAPPropVal(propVal *lpPropValDst,
 		lpPropValDst->Value.bin = new xsd__base64Binary;
 		lpPropValDst->Value.bin->__ptr = new unsigned char[sizeof(GUID)];
 		lpPropValDst->Value.bin->__size = sizeof(GUID);
-		memcpy((void *)lpPropValDst->Value.bin->__ptr, lpPropValSrc->Value.lpguid, sizeof(GUID));
+		memcpy(lpPropValDst->Value.bin->__ptr, lpPropValSrc->Value.lpguid, sizeof(GUID));
 		break;
 	case PT_BINARY:
 		lpPropValDst->__union = SOAP_UNION_propValData_bin;
 		lpPropValDst->Value.bin = new xsd__base64Binary;
 		lpPropValDst->Value.bin->__ptr = new unsigned char[lpPropValSrc->Value.bin.cb];
 		lpPropValDst->Value.bin->__size = lpPropValSrc->Value.bin.cb;
-		memcpy((void *)lpPropValDst->Value.bin->__ptr, lpPropValSrc->Value.bin.lpb, lpPropValSrc->Value.bin.cb);
+		memcpy(lpPropValDst->Value.bin->__ptr, lpPropValSrc->Value.bin.lpb, lpPropValSrc->Value.bin.cb);
 		break;
 	case PT_MV_I2:
 		lpPropValDst->__union = SOAP_UNION_propValData_mvi;
@@ -344,7 +344,7 @@ HRESULT CopyMAPIPropValToSOAPPropVal(propVal *lpPropValDst,
 
 					lpDstAction->act.reply.guid.__size = sizeof(GUID);
 					lpDstAction->act.reply.guid.__ptr = new unsigned char [ sizeof(GUID) ];
-					memcpy(lpDstAction->act.reply.guid.__ptr, (void *)&lpSrcAction->actReply.guidReplyTemplate, sizeof(GUID));
+					memcpy(lpDstAction->act.reply.guid.__ptr, &lpSrcAction->actReply.guidReplyTemplate, sizeof(GUID));
 
 					break;
 				case OP_DEFER_ACTION:
@@ -466,7 +466,7 @@ HRESULT CopySOAPPropValToMAPIPropVal(LPSPropValue lpPropValDst,
 	case PT_CLSID:
 		if(lpPropValSrc->__union && lpPropValSrc->Value.bin && lpPropValSrc->Value.bin->__size == sizeof(MAPIUID)) {
 			ECAllocateMore(lpPropValSrc->Value.bin->__size, lpBase, (void **) &lpPropValDst->Value.lpguid);
-			memcpy((void *)lpPropValDst->Value.lpguid, lpPropValSrc->Value.bin->__ptr, lpPropValSrc->Value.bin->__size);
+			memcpy(lpPropValDst->Value.lpguid, lpPropValSrc->Value.bin->__ptr, lpPropValSrc->Value.bin->__size);
 		} else {
 			lpPropValDst->ulPropTag = PROP_TAG(PT_ERROR, PROP_ID(lpPropValSrc->ulPropTag));
 			lpPropValDst->Value.err = MAPI_E_NOT_FOUND;
@@ -475,7 +475,7 @@ HRESULT CopySOAPPropValToMAPIPropVal(LPSPropValue lpPropValDst,
 	case PT_BINARY:
 		if(lpPropValSrc->__union && lpPropValSrc->Value.bin) {
 			ECAllocateMore(lpPropValSrc->Value.bin->__size, lpBase, (void **) &lpPropValDst->Value.bin.lpb);
-			memcpy((void *)lpPropValDst->Value.bin.lpb, lpPropValSrc->Value.bin->__ptr, lpPropValSrc->Value.bin->__size);
+			memcpy(lpPropValDst->Value.bin.lpb, lpPropValSrc->Value.bin->__ptr, lpPropValSrc->Value.bin->__size);
 			lpPropValDst->Value.bin.cb = lpPropValSrc->Value.bin->__size;
 		}else if(lpPropValSrc->__union == 0) {
 			lpPropValDst->Value.bin.lpb = NULL;
@@ -713,7 +713,7 @@ HRESULT CopySOAPPropValToMAPIPropVal(LPSPropValue lpPropValDst,
 							hr = MAPI_E_CORRUPT_DATA;
 							goto exit;
 						}
-						memcpy((void *)&lpDstAction->actReply.guidReplyTemplate, lpSrcAction->act.reply.guid.__ptr, lpSrcAction->act.reply.guid.__size);
+						memcpy(&lpDstAction->actReply.guidReplyTemplate, lpSrcAction->act.reply.guid.__ptr, lpSrcAction->act.reply.guid.__size);
 						break;
 					case OP_DEFER_ACTION:
 						ECAllocateMore(lpSrcAction->act.defer.bin.__size, lpBase, (void **)&lpDstAction->actDeferAction.pbData);

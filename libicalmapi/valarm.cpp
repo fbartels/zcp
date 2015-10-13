@@ -88,7 +88,7 @@ HRESULT HrParseReminder(LONG lRemindBefore, time_t ttReminderTime, bool bTask, i
 	if (lRemindBefore == 1525252321) // OL sets this value for default 15 mins time.
 		lRemindBefore = 15;
 
-	memset((void *) &sittTrigger, 0, sizeof(icaltriggertype));
+	memset(&sittTrigger, 0, sizeof(icaltriggertype));
 
 	if (ttReminderTime && bTask) {
 		sittTrigger.time = icaltime_from_timet(ttReminderTime, false);			// given in UTC

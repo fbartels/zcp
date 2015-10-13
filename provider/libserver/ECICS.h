@@ -78,7 +78,7 @@ public:
         // Use 22-byte sourcekeys (16 bytes GUID + 6 bytes counter)
         ulSize = sizeof(GUID) + 6;
         lpData = new char [ulSize]; 
-        memcpy(lpData, reinterpret_cast<const char *>(&guid), sizeof(guid)); 
+        memcpy(lpData, &guid, sizeof(guid));
         memcpy(lpData+sizeof(GUID), &ullId, ulSize - sizeof(GUID)); 
     }
     SOURCEKEY(struct xsd__base64Binary &sourcekey) {

@@ -644,8 +644,8 @@ bool HasDelegatePerm(IMsgStore *lpDefStore, IMsgStore *lpSharedStore)
 
 	for (ULONG i = 0; i < lpProp->Value.MVbin.cValues ; i++)
 	{
-		if (lpProp->Value.MVbin.lpbin[i].cb == lpMailBoxEid->Value.bin.cb
-			 && !memcmp((const void *) lpProp->Value.MVbin.lpbin[i].lpb, (const void *)lpMailBoxEid->Value.bin.lpb, lpMailBoxEid->Value.bin.cb))
+		if (lpProp->Value.MVbin.lpbin[i].cb == lpMailBoxEid->Value.bin.cb &&
+		    memcmp(lpProp->Value.MVbin.lpbin[i].lpb, lpMailBoxEid->Value.bin.lpb, lpMailBoxEid->Value.bin.cb) == 0)
 		{
 			blFound = true;
 			ulPos = i;

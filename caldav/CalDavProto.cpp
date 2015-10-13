@@ -1059,7 +1059,7 @@ HRESULT CalDAV::HrHandleDelete()
 	}
 
 	lpEntryList->lpbin[0].cb = sbEid.cb;
-	memcpy((void*)lpEntryList->lpbin[0].lpb, (const void*)sbEid.lpb, sbEid.cb);
+	memcpy(lpEntryList->lpbin[0].lpb, sbEid.lpb, sbEid.cb);
 
 	wstrFldTmpName = wstrFldName;
 	while (true) {
@@ -1189,7 +1189,7 @@ HRESULT CalDAV::HrMoveEntry(const std::string &strGuid, LPMAPIFOLDER lpDestFolde
 	}
 
 	lpEntryList->lpbin[0].cb = sbEid.cb;
-	memcpy((void*)lpEntryList->lpbin[0].lpb, (const void*)sbEid.lpb, sbEid.cb);
+	memcpy(lpEntryList->lpbin[0].lpb, sbEid.lpb, sbEid.cb);
 
 	hr = m_lpUsrFld->CopyMessages(lpEntryList, NULL, lpDestFolder, 0, NULL, MAPI_MOVE);
 	if (hr != hrSuccess)
@@ -1697,8 +1697,9 @@ nowaste:
 			if (lpDelHichyTable && lpRowsDeleted->cRows != 0 && ulDelEntries != lpRowsDeleted->cRows)
 			{
 				// @todo is this optimized, or just pure luck that this works? don't we need a loop?
-				ulCmp = memcmp((const void *)lpRowsALL->aRow[i].lpProps[0].Value.bin.lpb,
-							   (const void *)lpRowsDeleted->aRow[ulDelEntries].lpProps[0].Value.bin.lpb, lpRowsALL->aRow[i].lpProps[0].Value.bin.cb);
+				ulCmp = memcmp(lpRowsALL->aRow[i].lpProps[0].Value.bin.lpb,
+					       lpRowsDeleted->aRow[ulDelEntries].lpProps[0].Value.bin.lpb,
+					       lpRowsALL->aRow[i].lpProps[0].Value.bin.cb);
 				if(ulCmp == 0)
 				{
 					ulDelEntries++;

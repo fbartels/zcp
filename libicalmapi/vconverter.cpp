@@ -1117,7 +1117,7 @@ HRESULT VConverter::HrAddCategories(icalcomponent *lpicEvent, icalitem *lpIcalIt
 		if (hr != hrSuccess)
 			goto exit;
 
-		memcpy((void*)sPropVal.Value.MVszA.lppszA[i], iCats->c_str(), length);
+		memcpy(sPropVal.Value.MVszA.lppszA[i], iCats->c_str(), length);
 	}
 
 	sPropVal.ulPropTag = CHANGE_PROP_TYPE(m_lpNamedProps->aulPropTag[PROP_KEYWORDS], PT_MV_STRING8);
@@ -3175,7 +3175,7 @@ HRESULT VConverter::HrUpdateReminderTime(icalcomponent *lpicEvent, LONG lReminde
 		goto exit;
 	}
 
-	memset((void *) &sittTrigger, 0, sizeof(icaltriggertype));
+	memset(&sittTrigger, 0, sizeof(icaltriggertype));
 	sittTrigger.duration = icaldurationtype_from_int(-1 * lReminder * 60); // set seconds
 
 	lpicProp = icalcomponent_get_first_property(lpicAlarm, ICAL_TRIGGER_PROPERTY);

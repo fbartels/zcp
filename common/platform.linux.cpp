@@ -78,13 +78,13 @@
 static bool rand_init_done = false;
 
 bool operator!=(GUID a, GUID b) {
-	if (memcmp((void*)&a, (void*)&b, sizeof(GUID)) == 0)
+	if (memcmp(&a, &b, sizeof(GUID)) == 0)
 		return false;
 	return true;
 }
 
 bool operator==(REFIID a, GUID b) {
-	if (memcmp((void*)&a, (void*)&b, sizeof(GUID)) == 0)
+	if (memcmp(&a, &b, sizeof(GUID)) == 0)
 		return true;
 	return false;
 }

@@ -286,7 +286,7 @@ HRESULT iCal::HrHandleIcalPost()
 				sbEid.cb = lpRows->aRow[i].lpProps[0].Value.bin.cb;
 				if ((hr = MAPIAllocateBuffer(sbEid.cb,(void**)&sbEid.lpb)) != hrSuccess)
 					goto exit;
-				memcpy((void*)sbEid.lpb,lpRows->aRow[i].lpProps[0].Value.bin.lpb,sbEid.cb);
+				memcpy(sbEid.lpb, lpRows->aRow[i].lpProps[0].Value.bin.lpb, sbEid.cb);
 
 				strUidString =  bin2hex((ULONG)sbUid.cb,(LPBYTE)sbUid.lpb);
 			
@@ -540,7 +540,7 @@ HRESULT iCal::HrDelMessage(SBinary sbEid, bool blCensor)
 	if ((hr = MAPIAllocateMore(sbEid.cb, lpEntryList, (void**)&lpEntryList->lpbin[0].lpb)) != hrSuccess)
 		goto exit;
 
-	memcpy((void *)lpEntryList->lpbin[0].lpb,(const void *) sbEid.lpb,sbEid.cb);
+	memcpy(lpEntryList->lpbin[0].lpb, sbEid.lpb, sbEid.cb);
 				
 	hr = m_lpUsrFld->DeleteMessages(lpEntryList, 0, NULL, MESSAGE_DIALOG);
 	if(hr != hrSuccess)
