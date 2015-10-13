@@ -813,7 +813,7 @@ HRESULT CalDAV::HrHandlePropertySearch(WEBDAVRPTMGET *sWebRMGet, WEBDAVMULTISTAT
 		goto exit;
 	}
 
-	hr = m_lpSession->OpenEntry(sbEid.cb, (LPENTRYID)sbEid.lpb, NULL, 0, &ulObjType, (LPUNKNOWN *)&lpAbCont);
+	hr = m_lpSession->OpenEntry(sbEid.cb, reinterpret_cast<LPENTRYID>(sbEid.lpb), NULL, 0, &ulObjType, reinterpret_cast<LPUNKNOWN *>(&lpAbCont));
 	if (hr != hrSuccess) {
 		m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "CalDAV::HrHandlePropertySearch OpenEntry failed: 0x%08x %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
@@ -1614,7 +1614,7 @@ HRESULT CalDAV::HrListCalendar(WEBDAVREQSTPROPS *sDavProp, WEBDAVMULTISTATUS *lp
 
 	if (m_ulFolderFlag & SINGLE_FOLDER)
 	{
-		hr = m_lpUsrFld->GetProps(lpPropTagArr, 0, (ULONG *)&cbsize, &lpsPropSingleFld);
+		hr = m_lpUsrFld->GetProps(lpPropTagArr, 0, reinterpret_cast<ULONG *>(&cbsize), &lpsPropSingleFld);
 		if (FAILED(hr)) {
 			m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "CalDAV::HrListCalendar GetProps failed: 0x%x %s", hr, GetMAPIErrorMessage(hr));
 			goto exit;
@@ -1649,7 +1649,7 @@ HRESULT CalDAV::HrListCalendar(WEBDAVREQSTPROPS *sDavProp, WEBDAVMULTISTATUS *lp
 			goto nowaste;
 		}
 		
-		hr = m_lpActiveStore->OpenEntry(lpSpropWbEID->Value.bin.cb, (LPENTRYID)lpSpropWbEID->Value.bin.lpb, NULL, MAPI_BEST_ACCESS, &ulObjType, (LPUNKNOWN *)&lpWasteBox);
+		hr = m_lpActiveStore->OpenEntry(lpSpropWbEID->Value.bin.cb, (LPENTRYID)lpSpropWbEID->Value.bin.lpb, NULL, MAPI_BEST_ACCESS, &ulObjType, reinterpret_cast<LPUNKNOWN *>(&lpWasteBox));
 		if(hr != hrSuccess)
 		{
 			hr = hrSuccess;
@@ -2153,7 +2153,7 @@ HRESULT CalDAV::HrConvertToIcal(LPSPropValue lpEid, MapiToICal *lpMtIcal, ULONG 
 	IMessage *lpMessage = NULL;
 	ULONG ulObjType = 0;
 
-	hr = m_lpActiveStore->OpenEntry(lpEid->Value.bin.cb, (LPENTRYID)lpEid->Value.bin.lpb, NULL, MAPI_BEST_ACCESS, &ulObjType, (LPUNKNOWN *)&lpMessage);
+	hr = m_lpActiveStore->OpenEntry(lpEid->Value.bin.cb, reinterpret_cast<LPENTRYID>(lpEid->Value.bin.lpb), NULL, MAPI_BEST_ACCESS, &ulObjType, reinterpret_cast<LPUNKNOWN *>(&lpMessage));
 	if (hr != hrSuccess && ulObjType == MAPI_MESSAGE)
 	{
 		m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Error opening calendar entry, error code : 0x%x %s", hr, GetMAPIErrorMessage(hr));

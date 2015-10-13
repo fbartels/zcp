@@ -622,7 +622,7 @@ exit:
 static void *HandlerClient(void *lpArg)
 {
 	HRESULT hr = hrSuccess;
-	HandlerArgs *lpHandlerArgs = (HandlerArgs *) lpArg;
+	HandlerArgs *lpHandlerArgs = reinterpret_cast<HandlerArgs *>(lpArg);
 	ECChannel *lpChannel = lpHandlerArgs->lpChannel;
 	bool bUseSSL = lpHandlerArgs->bUseSSL;	
 

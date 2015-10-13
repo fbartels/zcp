@@ -145,7 +145,7 @@ static HRESULT UpdatePassword(const char *lpPath, const char *lpUsername,
 	if(hr != hrSuccess || !lpPropValue)
 		goto exit;
 
-	lpECMsgStore = (IECUnknown *)lpPropValue->Value.lpszA;
+	lpECMsgStore = reinterpret_cast<IECUnknown *>(lpPropValue->Value.lpszA);
 	if(!lpECMsgStore)
 		goto exit;
 
@@ -153,7 +153,7 @@ static HRESULT UpdatePassword(const char *lpPath, const char *lpUsername,
 
 	MAPIFreeBuffer(lpPropValue); lpPropValue = NULL;
 
-	hr = lpECMsgStore->QueryInterface(IID_IECServiceAdmin, (void**)&lpServiceAdmin);
+	hr = lpECMsgStore->QueryInterface(IID_IECServiceAdmin, reinterpret_cast<void **>(&lpServiceAdmin));
 	if(hr != hrSuccess)
 		goto exit;
 

@@ -102,7 +102,7 @@ public:
 	 *					Pointer to the entryid.
 	 */
 	entryid_t(ULONG cbEntryId, LPENTRYID lpEntryId)
-	: m_vEntryId((LPBYTE)lpEntryId, (LPBYTE)lpEntryId + cbEntryId)
+	: m_vEntryId(reinterpret_cast<LPBYTE>(lpEntryId), reinterpret_cast<LPBYTE>(lpEntryId) + cbEntryId)
 	{ }
 	
 	/**
@@ -134,7 +134,8 @@ public:
 	 *					Pointer to the entryid.
 	 */
 	void assign(ULONG cbEntryId, LPENTRYID lpEntryId) {
-		m_vEntryId.assign((LPBYTE)lpEntryId, (LPBYTE)lpEntryId + cbEntryId);
+		m_vEntryId.assign(reinterpret_cast<LPBYTE>(lpEntryId),
+		                  reinterpret_cast<LPBYTE>(lpEntryId) + cbEntryId);
 	}
 	
 	/**
@@ -173,19 +174,28 @@ public:
 	 * Return a pointer to the data as a BYTE pointer.
 	 * @return The entryid data.
 	 */
-	operator LPBYTE() const { return (LPBYTE)&m_vEntryId.front(); }
+	operator LPBYTE(void) const
+	{
+		return reinterpret_cast<LPBYTE>(const_cast<unsigned char *>(&m_vEntryId.front()));
+	}
 	
 	/**
 	 * Return a pointer to the data as an ENTRYID pointer.
 	 * @return The entryid data.
 	 */
-	operator LPENTRYID() const { return (LPENTRYID)&m_vEntryId.front(); }
+	operator LPENTRYID(void) const
+	{
+		return reinterpret_cast<LPENTRYID>(const_cast<unsigned char *>(&m_vEntryId.front()));
+	}
 	
 	/**
 	 * Return a pointer to the data as a VOID pointer.
 	 * @return The entryid data.
 	 */
-	operator LPVOID() const { return (LPVOID)&m_vEntryId.front(); }
+	operator LPVOID(void) const
+	{
+		return reinterpret_cast<LPVOID>(const_cast<unsigned char *>(&m_vEntryId.front()));
+	}
 	
 	/**
 	 * Copy operator
@@ -257,7 +267,7 @@ public:
 	 * @return The binary data as std::string
 	 */
 	std::string data() const {
-		return std::string((char *)&m_vEntryId.front(), m_vEntryId.size());
+		return std::string(reinterpret_cast<char *>(const_cast<unsigned char *>(&m_vEntryId.front())), m_vEntryId.size());
 	}
 	
 	/**
@@ -323,7 +333,7 @@ public:
 	 *					Pointer to the entryid.
 	 */
 	abentryid_t(ULONG cbEntryId, LPENTRYID lpEntryId)
-	: m_vEntryId((LPBYTE)lpEntryId, (LPBYTE)lpEntryId + cbEntryId)
+	: m_vEntryId(reinterpret_cast<LPBYTE>(lpEntryId), reinterpret_cast<LPBYTE>(lpEntryId) + cbEntryId)
 	{ }
 	
 	/**
@@ -355,7 +365,8 @@ public:
 	 *					Pointer to the entryid.
 	 */
 	void assign(ULONG cbEntryId, LPENTRYID lpEntryId) {
-		m_vEntryId.assign((LPBYTE)lpEntryId, (LPBYTE)lpEntryId + cbEntryId);
+		m_vEntryId.assign(reinterpret_cast<LPBYTE>(lpEntryId),
+		                  reinterpret_cast<LPBYTE>(lpEntryId) + cbEntryId);
 	}
 	
 	/**
@@ -394,19 +405,28 @@ public:
 	 * Return a pointer to the data as a BYTE pointer.
 	 * @return The entryid data.
 	 */
-	operator LPBYTE() const { return (LPBYTE)&m_vEntryId.front(); }
+	operator LPBYTE(void) const
+	{
+		return reinterpret_cast<LPBYTE>(const_cast<unsigned char *>(&m_vEntryId.front()));
+	}
 	
 	/**
 	 * Return a pointer to the data as an ENTRYID pointer.
 	 * @return The entryid data.
 	 */
-	operator LPENTRYID() const { return (LPENTRYID)&m_vEntryId.front(); }
+	operator LPENTRYID(void) const
+	{
+		return reinterpret_cast<LPENTRYID>(const_cast<unsigned char *>(&m_vEntryId.front()));
+	}
 	
 	/**
 	 * Return a pointer to the data as a VOID pointer.
 	 * @return The entryid data.
 	 */
-	operator LPVOID() const { return (LPVOID)&m_vEntryId.front(); }
+	operator LPVOID(void) const
+	{
+		return reinterpret_cast<LPVOID>(const_cast<unsigned char *>(&m_vEntryId.front()));
+	}
 	
 	/**
 	 * Copy operator

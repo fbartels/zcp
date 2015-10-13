@@ -1133,9 +1133,9 @@ static HRESULT OpenDeletedStoresFolder(LPMDB lpPublicStore,
 		if(hr != hrSuccess)
 			goto exit;
 
-		lpECFolder = (IECUnknown *)lpPropValue->Value.lpszA;
+		lpECFolder = reinterpret_cast<IECUnknown *>(lpPropValue->Value.lpszA);
 
-		hr = lpECFolder->QueryInterface(IID_IECSecurity, (void **)&lpSecurity);
+		hr = lpECFolder->QueryInterface(IID_IECSecurity, reinterpret_cast<void **>(&lpSecurity));
 		if (hr != hrSuccess)
 			goto exit;
 
@@ -1673,7 +1673,7 @@ static HRESULT print_details(LPMAPISESSION lpSession, IECUnknown *lpECMsgStore,
 					goto exit;
 				}
 
-				lpECRemoteAdminStore = (IECUnknown *)ptrPropValue->Value.lpszA;
+				lpECRemoteAdminStore = reinterpret_cast<IECUnknown *>(ptrPropValue->Value.lpszA);
 				print_archive_details(lpSession, lpECRemoteAdminStore, lpszName);
 				cout << endl;
 			}
@@ -3174,13 +3174,13 @@ int main(int argc, char* argv[])
 		goto exit;
 	}
 
-	lpECMsgStore = (IECUnknown *)lpPropValue->Value.lpszA;
+	lpECMsgStore = reinterpret_cast<IECUnknown *>(lpPropValue->Value.lpszA);
 	lpECMsgStore->AddRef();
 
 	MAPIFreeBuffer(lpPropValue);
 	lpPropValue = NULL;
 
-	hr = lpECMsgStore->QueryInterface(IID_IECServiceAdmin, (void**)&lpServiceAdmin);
+	hr = lpECMsgStore->QueryInterface(IID_IECServiceAdmin, reinterpret_cast<void **>(&lpServiceAdmin));
 	if(hr != hrSuccess) {
 		cerr << "Admin object query error." << endl;
 		goto exit;

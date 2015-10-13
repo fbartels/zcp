@@ -89,8 +89,7 @@ HRESULT IStreamAdapter::Write(const void *pv, ULONG cb, ULONG *pcbWritten)
 		m_str.resize(m_pos+cb);
 	}
 	
-	memcpy((void *)(m_str.data() + m_pos), pv, cb);
-	
+	memcpy(const_cast<char *>(m_str.data() + m_pos), pv, cb);
 	m_pos += cb;
 	
 	if(pcbWritten)

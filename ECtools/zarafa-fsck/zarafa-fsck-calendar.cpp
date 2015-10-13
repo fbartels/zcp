@@ -509,7 +509,7 @@ HRESULT ZarafaFsckCalendar::ValidateRecurrence(LPMESSAGE lpMessage)
         std::vector<RecurrenceState::ExtendedException>::iterator iEEx;
 		convert_context convertContext;
 
-	    switch(r.ParseBlob((char *)lpPropertyArray[E_RECURRENCE_STATE].Value.bin.lpb, lpPropertyArray[E_RECURRENCE_STATE].Value.bin.cb, RECURRENCE_STATE_CALENDAR)) {
+	    switch (r.ParseBlob(reinterpret_cast<char *>(lpPropertyArray[E_RECURRENCE_STATE].Value.bin.lpb), lpPropertyArray[E_RECURRENCE_STATE].Value.bin.cb, RECURRENCE_STATE_CALENDAR)) {
 	        case hrSuccess:
 	        case MAPI_W_ERRORS_RETURNED:
 	            // Recurrence state is readable, but may have errors.
@@ -575,7 +575,7 @@ HRESULT ZarafaFsckCalendar::ValidateRecurrence(LPMESSAGE lpMessage)
                 r.ulWriterVersion = 0x3004;
                 
                 r.GetBlob(&lpData, &ulLen);
-                Value.bin.lpb = (BYTE *)lpData;
+                Value.bin.lpb = reinterpret_cast<BYTE *>(lpData);
                 Value.bin.cb = ulLen;
     
                 // Update the recurrence if there is a change            

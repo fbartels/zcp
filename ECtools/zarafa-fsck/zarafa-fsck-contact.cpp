@@ -115,7 +115,7 @@ HRESULT ZarafaFsckContact::ValidateContactNames(LPMESSAGE lpMessage)
 			goto exit;
 		}
 
-		Value.lpszA = (char *)result[E_FULLNAME].c_str();
+		Value.lpszA = const_cast<char *>(result[E_FULLNAME].c_str());
 
 		hr = ReplaceProperty(lpMessage, "PR_DISPLAY_NAME", PR_DISPLAY_NAME_A, "No display name was provided", Value);
 		if (hr != hrSuccess)
@@ -125,7 +125,7 @@ HRESULT ZarafaFsckContact::ValidateContactNames(LPMESSAGE lpMessage)
 	if(result[E_SUBJECT].empty()) {
 		__UPV Value;
 		
-		Value.lpszA = (char *)result[E_FULLNAME].c_str();
+		Value.lpszA = const_cast<char *>(result[E_FULLNAME].c_str());
 
         hr = ReplaceProperty(lpMessage, "PR_SUBJECT", PR_SUBJECT_A, "No subject was provided", Value);
 		if (hr != hrSuccess)
@@ -177,13 +177,13 @@ HRESULT ZarafaFsckContact::ValidateContactNames(LPMESSAGE lpMessage)
 			result[E_LASTNAME] = result[E_FULLNAME].substr(pos, std::string::npos);
 		}
 
-		Value.lpszA = (char *)result[E_FIRSTNAME].c_str();
+		Value.lpszA = const_cast<char *>(result[E_FIRSTNAME].c_str());
 
 		hr = ReplaceProperty(lpMessage, "PR_GIVEN_NAME", PR_GIVEN_NAME_A, "No given name was provided", Value);
 		if (hr != hrSuccess)
 			goto exit;
 
-		Value.lpszA = (char *)result[E_LASTNAME].c_str();
+		Value.lpszA = const_cast<char *>(result[E_LASTNAME].c_str());
 
 		hr = ReplaceProperty(lpMessage, "PR_SURNAME", PR_SURNAME_A, "No surname was provided", Value);
 		if (hr != hrSuccess)
