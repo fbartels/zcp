@@ -1586,7 +1586,10 @@ ECRESULT ECGenericObjectTable::SetCollapseState(struct xsd__base64Binary sCollap
     xmlsoap.is = &is;
     
     soap_default_collapseState(&xmlsoap, lpCollapseState);
-    soap_begin_recv(&xmlsoap);
+    if (soap_begin_recv(&xmlsoap) != 0) {
+		er = ZARAFA_E_NETWORK_ERROR;
+		goto exit;
+    }
     soap_get_collapseState(&xmlsoap, lpCollapseState, "CollapseState", NULL);
     
     if(xmlsoap.error) {

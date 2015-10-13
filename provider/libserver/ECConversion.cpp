@@ -93,7 +93,10 @@ ECRESULT ConvertSearchCriteria52XTo6XX(ECDatabase *lpDatabase, char* lpData, str
 	xmlsoap.recvfd = -1;
 	xmlsoap.is = &xml;
 	soap_default_searchCriteria52X(&xmlsoap, lpSearchCriteria);
-	soap_begin_recv(&xmlsoap);
+	if (soap_begin_recv(&xmlsoap) != 0) {
+		er = ZARAFA_E_NETWORK_ERROR;
+		goto exit;
+	}
 	soap_get_searchCriteria52X(&xmlsoap, lpSearchCriteria, "SearchCriteria", NULL);
 
 	// We now have the object, allocated by xmlsoap object,

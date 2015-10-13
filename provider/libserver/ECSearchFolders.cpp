@@ -1785,7 +1785,10 @@ ECRESULT ECSearchFolders::LoadSearchCriteria(unsigned int ulStoreId, unsigned in
 
 		xmlsoap.is = &xml;
 		soap_default_searchCriteria(&xmlsoap, lpSearchCriteria);
-		soap_begin_recv(&xmlsoap);
+		if (soap_begin_recv(&xmlsoap) != 0) {
+			er = ZARAFA_E_NETWORK_ERROR;
+			goto exit;
+		}
 		soap_get_searchCriteria(&xmlsoap, lpSearchCriteria, "SearchCriteria", NULL);
 
 		// We now have the object, allocated by xmlsoap object,
