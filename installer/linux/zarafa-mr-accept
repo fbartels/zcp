@@ -276,47 +276,6 @@ function getPolicy($store)
     return $flags;
 }
 
-/**
-* Get the main calendar
-*/
-function getCalendar($store)
-{
-    $inbox = mapi_msgstore_getreceivefolder($store);
-    $inboxprops = mapi_getprops($inbox, array(PR_IPM_APPOINTMENT_ENTRYID));
-    
-    if(!isset($inboxprops[PR_IPM_APPOINTMENT_ENTRYID]))
-        return false;
-        
-    $calendar = mapi_msgstore_openentry($store, $inboxprops[PR_IPM_APPOINTMENT_ENTRYID]);
-    
-    return $calendar;
-}
-
-/**
-* Get the default store for this session
-*/
-function getDefaultStore($session)
-{
-    $msgstorestable = mapi_getmsgstorestable($session);
-
-    $msgstores = mapi_table_queryallrows($msgstorestable, array(PR_DEFAULT_STORE, PR_ENTRYID));
-
-    foreach ($msgstores as $row) {
-        if($row[PR_DEFAULT_STORE]) {
-            $storeentryid = $row[PR_ENTRYID];
-        }
-    }
-
-    if(!$storeentryid) {
-        print "Can't find default store\n";
-        return false;
-    }
-
-    $store = mapi_openmsgstore($session, $storeentryid);
-    
-    return $store;
-}
-
 function debuglog($message)
 {
     global $DEBUG;
@@ -500,33 +459,6 @@ function autoRespond($session, $store, $entryid, $capacity, $policy)
         debuglog("Removed canceled meeting\n");
         return true;
     }
-}
-
-function forceUTF8($category)
-{
-    $old_locale = setlocale($category, "");
-    if(!isset($old_locale) || !$old_locale) {
-        print "Unable to initialize locale\n";
-        exit(1);
-    }
-    $dot = strpos($old_locale, ".");
-    if($dot) {
-        if(strrchr($old_locale, ".") == ".UTF-8" || strrchr($old_locale, ".") == ".utf8")
-            return true;
-        $old_locale = substr($old_locale, 0, $dot);
-    }
-    $new_locale = $old_locale . ".UTF-8";
-    $old_locale = setlocale($category, $new_locale);
-    if(!$old_locale) {
-        $new_locale = "en_US.UTF-8";
-        $old_locale = setlocale($category, $new_locale);
-    }
-    if(!$old_locale) {
-        print "Unable to set locale $new_locale\n";
-        exit(1);
-    }
-    
-    return true;
 }
 
 // Since the username we are getting from the commandline is always in utf8, we have

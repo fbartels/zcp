@@ -1086,6 +1086,20 @@
           	</listitem>
 		  </varlistentry>
 
+          <varlistentry>
+          	<term><option>mr_autoprocessor</option></term>
+          	<listitem>
+              <para>Zarafa-dagent can auto-process meeting requests. When
+              this is
+              enabled and a meeting request, response or meeting cancellation is
+              received, this script is started with the following parameters:
+              /usr/bin/zarafa-mr-process &lt;username&gt;
+              &lt;/path/to/dagent.cfg&gt; [&lt;ENTRYID&gt;].</para>
+              <para>Default:
+              <replaceable>/usr/bin/zarafa-mr-process</replaceable></para>
+          	</listitem>
+		  </varlistentry>
+
 		  <varlistentry>
 			<term><option>plugin_enabled</option></term>
 			<listitem>
