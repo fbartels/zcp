@@ -413,7 +413,8 @@ HRESULT CreateSoapTransport(ULONG ulUIFlags,
 
 exit:
 	if (hr != hrSuccess && lpCmd) {
-		free((void*)lpCmd->endpoint);	// because of strdup()
+		/* strdup'd them earlier */
+		free(const_cast<char *>(lpCmd->endpoint));
 		delete lpCmd;
 	}
 
@@ -426,17 +427,14 @@ VOID DestroySoapTransport(ZarafaCmd *lpCmd)
 		return;
 
 	if (lpCmd->endpoint)
-		free((void *)lpCmd->endpoint);   // because of strdup()
-
+		/* strdup'd all of them earlier */
+		free(const_cast<char *>(lpCmd->endpoint));
 	if (lpCmd->soap->proxy_host)
-		free((void *)lpCmd->soap->proxy_host);
-
+		free(const_cast<char *>(lpCmd->soap->proxy_host));
 	if (lpCmd->soap->proxy_userid)
-		free((void *)lpCmd->soap->proxy_userid);
-
+		free(const_cast<char *>(lpCmd->soap->proxy_userid));
 	if (lpCmd->soap->proxy_passwd)
-		free((void *)lpCmd->soap->proxy_passwd);
-
+		free(const_cast<char *>(lpCmd->soap->proxy_passwd));
 	delete lpCmd;
 }
 

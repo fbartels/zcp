@@ -66,8 +66,8 @@ ECPluginSharedData::~ECPluginSharedData()
 	delete m_lpConfig;
 	if (m_lpDefaults) {
 		for (int n = 0; m_lpDefaults[n].szName; n++) {
-			free((void*)m_lpDefaults[n].szName);
-			free((void*)m_lpDefaults[n].szValue);
+			free(const_cast<char *>(m_lpDefaults[n].szName));
+			free(const_cast<char *>(m_lpDefaults[n].szValue));
 		}
 		delete [] m_lpDefaults;
 	}
