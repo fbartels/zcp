@@ -84,8 +84,6 @@
 #define PR_CONTENT_LENGTH                           PROP_TAG( PT_LONG,      0x0009)
 #define PR_CONTENT_RETURN_REQUESTED                 PROP_TAG( PT_BOOLEAN,   0x000A)
 
-
-
 #define PR_CONVERSATION_KEY                         PROP_TAG( PT_BINARY,    0x000B)
 
 #define PR_CONVERSION_EITS                          PROP_TAG( PT_BINARY,    0x000C)
@@ -107,10 +105,6 @@
 #define PR_MESSAGE_CLASS_A                          PROP_TAG( PT_STRING8,   0x001A)
 #define PR_MESSAGE_DELIVERY_ID                      PROP_TAG( PT_BINARY,    0x001B)
 
-
-
-
-
 #define PR_MESSAGE_SECURITY_LABEL                   PROP_TAG( PT_BINARY,    0x001E)
 #define PR_OBSOLETED_IPMS                           PROP_TAG( PT_BINARY,    0x001F)
 #define PR_ORIGINALLY_INTENDED_RECIPIENT_NAME       PROP_TAG( PT_BINARY,    0x0020)
@@ -119,12 +113,8 @@
 #define PR_ORIGINATOR_DELIVERY_REPORT_REQUESTED     PROP_TAG( PT_BOOLEAN,   0x0023)
 #define PR_ORIGINATOR_RETURN_ADDRESS                PROP_TAG( PT_BINARY,    0x0024)
 
-
-
 #define PR_PARENT_KEY                               PROP_TAG( PT_BINARY,    0x0025)
 #define PR_PRIORITY                                 PROP_TAG( PT_LONG,      0x0026)
-
-
 
 #define PR_ORIGIN_CHECK                             PROP_TAG( PT_BINARY,    0x0027)
 #define PR_PROOF_OF_SUBMISSION_REQUESTED            PROP_TAG( PT_BOOLEAN,   0x0028)
@@ -564,7 +554,6 @@
 
 /* Proptags 0x35E8-0x35FF reserved for folders "guaranteed" by PR_VALID_FOLDER_MASK */
 
-
 /*
  *  Folder and AB Container properties
  */
@@ -640,7 +629,6 @@
 #define PR_DISPLAY_TYPE                             PROP_TAG( PT_LONG,      0x3900)
 #define PR_TEMPLATEID                               PROP_TAG( PT_BINARY,    0x3902)
 #define PR_PRIMARY_CAPABILITY                       PROP_TAG( PT_BINARY,    0x3904)
-
 
 /*
  *  Mail user properties
@@ -793,14 +781,12 @@
 #define PR_BUSINESS_ADDRESS_POSTAL_CODE_W           PR_POSTAL_CODE_W
 #define PR_BUSINESS_ADDRESS_POSTAL_CODE_A           PR_POSTAL_CODE_A
 
-
 #define PR_POST_OFFICE_BOX                          PROP_TAG( PT_TSTRING,   0x3A2B)
 #define PR_POST_OFFICE_BOX_W                        PROP_TAG( PT_UNICODE,   0x3A2B)
 #define PR_POST_OFFICE_BOX_A                        PROP_TAG( PT_STRING8,   0x3A2B)
 #define PR_BUSINESS_ADDRESS_POST_OFFICE_BOX         PR_POST_OFFICE_BOX
 #define PR_BUSINESS_ADDRESS_POST_OFFICE_BOX_W       PR_POST_OFFICE_BOX_W
 #define PR_BUSINESS_ADDRESS_POST_OFFICE_BOX_A       PR_POST_OFFICE_BOX_A
-
 
 #define PR_TELEX_NUMBER                             PROP_TAG( PT_TSTRING,   0x3A2C)
 #define PR_TELEX_NUMBER_W                           PROP_TAG( PT_UNICODE,   0x3A2C)
@@ -821,7 +807,6 @@
 
 #define PR_WEDDING_ANNIVERSARY                      PROP_TAG( PT_SYSTIME, 0x3A41)
 #define PR_BIRTHDAY                                 PROP_TAG( PT_SYSTIME, 0x3A42)
-
 
 #define PR_HOBBIES                                  PROP_TAG( PT_TSTRING, 0x3A43)
 #define PR_HOBBIES_W                                PROP_TAG( PT_UNICODE, 0x3A43)
@@ -904,8 +889,6 @@
 #define PR_CHILDRENS_NAMES_W                        PROP_TAG( PT_MV_UNICODE, 0x3A58)
 #define PR_CHILDRENS_NAMES_A                        PROP_TAG( PT_MV_STRING8, 0x3A58)
 
-
-
 #define PR_HOME_ADDRESS_CITY                        PROP_TAG( PT_TSTRING, 0x3A59)
 #define PR_HOME_ADDRESS_CITY_W                      PROP_TAG( PT_UNICODE, 0x3A59)
 #define PR_HOME_ADDRESS_CITY_A                      PROP_TAG( PT_STRING8, 0x3A59)
@@ -953,7 +936,6 @@
 #define PR_OTHER_ADDRESS_POST_OFFICE_BOX            PROP_TAG( PT_TSTRING, 0x3A64)
 #define PR_OTHER_ADDRESS_POST_OFFICE_BOX_W          PROP_TAG( PT_UNICODE, 0x3A64)
 #define PR_OTHER_ADDRESS_POST_OFFICE_BOX_A          PROP_TAG( PT_STRING8, 0x3A64)
-
 
 /*
  *  Profile section properties
@@ -1037,6 +1019,5 @@
 
 #define PROP_ID_SECURE_MIN                          0x67F0
 #define PROP_ID_SECURE_MAX                          0x67FF
-
 
 #endif  /* MAPITAGS_H */
