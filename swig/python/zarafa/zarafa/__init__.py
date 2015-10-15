@@ -116,6 +116,7 @@ PSETID_Address = DEFINE_OLEGUID(0x00062004, 0, 0)
 PSETID_Common = DEFINE_OLEGUID(0x00062008, 0, 0)
 PSETID_Log = DEFINE_OLEGUID(0x0006200A, 0, 0)
 PSETID_Note = DEFINE_OLEGUID(0x0006200E, 0, 0)
+PSETID_Meeting = DEFINE_GUID(0x6ED8DA90, 0x450B, 0x101B,0x98, 0xDA, 0x00, 0xAA, 0x00, 0x3F, 0x13, 0x05)
 
 NAMED_PROPS_ARCHIVER = [MAPINAMEID(PSETID_Archive, MNID_STRING, u'store-entryids'), MAPINAMEID(PSETID_Archive, MNID_STRING, u'item-entryids'), MAPINAMEID(PSETID_Archive, MNID_STRING, u'stubbed'),]
 
@@ -127,8 +128,9 @@ GUID_NAMESPACE = {
     PSETID_Address: 'address',
     PSETID_Log: 'log',
     PS_INTERNET_HEADERS: 'internet_headers',
+    PSETID_Meeting: 'meeting',
 }
-NAMESPACE_GUID = dict((b,a) for (a,b) in GUID_NAMESPACE.items()) 
+NAMESPACE_GUID = dict((b,a) for (a,b) in GUID_NAMESPACE.items())
 
 # XXX copied from common/ECDefs.h
 def OBJECTCLASS(__type, __class):
