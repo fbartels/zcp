@@ -1506,9 +1506,9 @@ class Folder(object):
                 item.mapiobj = _openentry_raw(self.store.mapiobj, PpropFindProp(row, PR_ENTRYID).Value, MAPI_MODIFY | self.content_flag)
                 yield item
 
-    def occurrences(self):
+    def occurrences(self, start=None, end=None):
         for item in self:
-            for occurrence in item.occurrences():
+            for occurrence in item.occurrences(start=start, end=end):
                 yield occurrence
 
     def create_item(self, eml=None, ics=None, vcf=None, load=None, loads=None, **kwargs): # XXX associated
@@ -2106,13 +2106,17 @@ class Item(object):
     def recurrence(self):
         return Recurrence(self)
 
-    def occurrences(self):
+    def occurrences(self, start=None, end=None):
         try:
             if self.recurring:
                 for d in self.recurrence.recurrences:
-                    yield Occurrence(self, d, d+datetime.timedelta(hours=1)) # XXX
+                    occ = Occurrence(self, d, d+datetime.timedelta(hours=1)) # XXX
+                    if (not start or occ.start >= start) and (not end or occ.end < end): # XXX slow for now; overlaps with start, end?
+                        yield occ
             else:
-                yield Occurrence(self, self.start, self.end)
+                occ = Occurrence(self, self.start, self.end)
+                if (not start or occ.start >= start) and (not end or occ.end < end):
+                    yield occ
         except MAPIErrorNotFound: # XXX shouldn't happen
             pass
 
@@ -2335,7 +2339,7 @@ class Body:
     def __repr__(self):
         return unicode(self).encode(sys.stdout.encoding or 'utf8')
 
-class Occurrence:
+class Occurrence(object):
     def __init__(self, item, start, end):
         self.item = item
         self.start = start
@@ -2343,6 +2347,13 @@ class Occurrence:
 
     def __getattr__(self, x):
         return getattr(self.item, x)
+
+    def __unicode__(self):
+        return u'Occurrence(%s)' % self.subject
+
+    def __repr__(self):
+        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+
 
 class Recurrence:
     def __init__(self, item): # XXX just readable start/end for now
