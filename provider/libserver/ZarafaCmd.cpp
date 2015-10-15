@@ -2614,7 +2614,8 @@ exit:
 
 // You need to check the permissions before you call this function
 static ECRESULT DeleteProps(ECSession *lpecSession, ECDatabase *lpDatabase,
-    ULONG ulObjId, struct propTagArray *lpsPropTags)
+    ULONG ulObjId, struct propTagArray *lpsPropTags,
+    ECAttachmentStorage *at_storage)
 {
 	ECRESULT er = erSuccess;
 	int				i;
@@ -2647,6 +2648,13 @@ static ECRESULT DeleteProps(ECSession *lpecSession, ECDatabase *lpDatabase,
 			if(er != erSuccess)
 				goto exit;
 		}			
+
+		// Remove eml attachment
+		if (lpsPropTags->__ptr[i] == PR_EC_IMAP_EMAIL) {
+			std::list<ULONG> at_list;
+			at_list.push_back(ulObjId);
+			at_storage->DeleteAttachments(at_list);
+		}
 
 		// Update cache with NOT_FOUND for this property
 		key.ulObjId = ulObjId;
@@ -2765,7 +2773,7 @@ static unsigned int SaveObject(struct soap *soap, ECSession *lpecSession,
 
 	    // Don't delete properties if this is a new object: this avoids any delete queries that cause unneccessary locks on the tables
 		if (lpsSaveObj->delProps.__size > 0 && !fNewItem) {
-			er = DeleteProps(lpecSession, lpDatabase, lpsReturnObj->ulServerId, &lpsSaveObj->delProps);
+			er = DeleteProps(lpecSession, lpDatabase, lpsReturnObj->ulServerId, &lpsSaveObj->delProps, lpAttachmentStorage);
 			if (er != erSuccess)
 				goto exit;
 		}
