@@ -254,8 +254,8 @@ static void showtop(LPMDB lpStore, bool bLocal)
     double dblLast = 0, dblTime = 0;
 
 	// columns in sizes, not literal offsets
-	int cols[] = {0,4,21,8,25,16,20,8,8,7,7,5};
-	int ofs = 0;
+	static const unsigned int cols[] = {0, 4, 21, 8, 25, 16, 20, 8, 8, 7, 7, 5};
+	unsigned int ofs = 0;
 	bool bColumns[] = {false,false,true,true,true,true,true,true,true,true,true,true}; // key 1 through err?
 	SortFuncPtr fSort[] = {NULL,sort_sessionid,sort_version,sort_user,sort_ippeer,sort_app,NULL}; // key a through g
 	bool bReverse = false;
