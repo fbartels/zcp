@@ -79,24 +79,24 @@ install-data-hook:
 	install -d -m 755 ${DESTDIR}/${sysconf_configdir}/license
 	install -d -m 755 ${DESTDIR}/${localstatedir}/lib/zarafa/report
 	for f in ${DESTDIR}/${sysconf_rotatedir}/*.logrotate; do \
-		mv $$f $${f%.logrotate}; \
+		mv -v $$f $${f%.logrotate}; \
 	done
 	for f in ${DESTDIR}/${sysconf_crondir}/*.cron; do \
-		mv $$f $${f%.cron}; \
+		mv -v $$f $${f%.cron}; \
 	done
 	if test ${DISTRO} = "sles" -o ${DISTRO} = "suse"; then \
-		mv ${DESTDIR}${sysconf_sysconfigdir}/sysconfig.suse ${DESTDIR}${sysconf_sysconfigdir}/sysconfig.zarafa || true; \
+		mv -v ${DESTDIR}${sysconf_sysconfigdir}/sysconfig.suse ${DESTDIR}${sysconf_sysconfigdir}/sysconfig.zarafa || true; \
 	elif test ${DISTRO} = "rhel" -o ${DISTRO} = "alt"; then \
-		mv ${DESTDIR}${sysconf_sysconfigdir}/sysconfig.${DISTRO} ${DESTDIR}${sysconf_sysconfigdir}/zarafa || true; \
+		mv -v ${DESTDIR}${sysconf_sysconfigdir}/sysconfig.${DISTRO} ${DESTDIR}${sysconf_sysconfigdir}/zarafa || true; \
 	else \
 		true; \
 	fi
 	if test `ls -1A ${DESTDIR}${sysconf_initdir}/ | wc -l` -ne 0; then \
 		for f in ${DESTDIR}${sysconf_initdir}/*; do \
 			newf=`echo "$$f" | sed -e 's/\(zarafa-.*\).init.*/\1/'`; \
-			mv "$$f" "$$newf"; \
+			mv -v "$$f" "$$newf"; \
 		done \
 	fi
 	mkdir -p ${DESTDIR}/${docdir}/../zarafa-gateway
-	mv ${DESTDIR}/${docdir}/optimize-imap.py ${DESTDIR}/${docdir}/../zarafa-gateway
+	mv -v ${DESTDIR}/${docdir}/optimize-imap.py ${DESTDIR}/${docdir}/../zarafa-gateway
 	rm -f ${DESTDIR}/${sysconf_configdir}/example-msr.cfg
