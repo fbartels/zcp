@@ -219,7 +219,7 @@ exit:
  * 
  * @return Zarafa error code
  */
-ECRESULT ECAttachmentStorage::GetSingleInstanceIds(std::list<ULONG> &lstObjIds, std::list<ULONG> *lstAttachIds)
+ECRESULT ECAttachmentStorage::GetSingleInstanceIds(const std::list<ULONG> &lstObjIds, std::list<ULONG> *lstAttachIds)
 {
 	ECRESULT er = erSuccess;
 	std::string strQuery;
@@ -235,7 +235,8 @@ ECRESULT ECAttachmentStorage::GetSingleInstanceIds(std::list<ULONG> &lstObjIds, 
 		"SELECT DISTINCT `instanceid` "
 		"FROM `singleinstances` "
 		"WHERE `hierarchyid` IN (";
-	for (std::list<ULONG>::iterator i = lstObjIds.begin(); i != lstObjIds.end(); i++) {
+	for (std::list<ULONG>::const_iterator i = lstObjIds.begin();
+	     i != lstObjIds.end(); ++i) {
 		if (i != lstObjIds.begin())
 			strQuery += ",";
 		strQuery += stringify(*i);
@@ -394,7 +395,7 @@ exit:
  * 
  * @return 
  */
-ECRESULT ECAttachmentStorage::GetOrphanedSingleInstances(std::list<ULONG> &lstInstanceIds, std::list<ULONG> *lplstOrphanedInstanceIds)
+ECRESULT ECAttachmentStorage::GetOrphanedSingleInstances(const std::list<ULONG> &lstInstanceIds, std::list<ULONG> *lplstOrphanedInstanceIds)
 {
 	ECRESULT er = erSuccess;
 	std::string strQuery;
@@ -405,7 +406,8 @@ ECRESULT ECAttachmentStorage::GetOrphanedSingleInstances(std::list<ULONG> &lstIn
 		"SELECT DISTINCT `instanceid` "
 		"FROM `singleinstances` "
 		"WHERE `instanceid` IN ( ";
-	for (std::list<ULONG>::iterator i = lstInstanceIds.begin(); i != lstInstanceIds.end(); i++) {
+	for (std::list<ULONG>::const_iterator i = lstInstanceIds.begin();
+	     i != lstInstanceIds.end(); ++i) {
 		if (i != lstInstanceIds.begin())
 			strQuery += ",";
 		strQuery += stringify(*i);
@@ -718,7 +720,7 @@ exit:
  * 
  * @return Zarafa error code
  */
-ECRESULT ECAttachmentStorage::DeleteAttachments(std::list<ULONG> lstDeleteObjects)
+ECRESULT ECAttachmentStorage::DeleteAttachments(const std::list<ULONG> &lstDeleteObjects)
 {
 	ECRESULT er = erSuccess;
 	std::list<ULONG> lstAttachments;
@@ -746,7 +748,8 @@ ECRESULT ECAttachmentStorage::DeleteAttachments(std::list<ULONG> lstDeleteObject
 	strQuery =
 		"DELETE FROM `singleinstances` "
 		"WHERE `hierarchyid` IN (";
-	for (std::list<ULONG>::iterator i = lstDeleteObjects.begin(); i != lstDeleteObjects.end(); i++) {
+	for (std::list<ULONG>::const_iterator i = lstDeleteObjects.begin();
+	     i != lstDeleteObjects.end(); ++i) {
 		if (i != lstDeleteObjects.begin())
 			strQuery += ",";
 		strQuery += stringify(*i);
@@ -1161,10 +1164,10 @@ exit:
  * 
  * @return Zarafa error code
  */
-ECRESULT ECDatabaseAttachment::DeleteAttachmentInstances(std::list<ULONG> &lstDeleteInstances, bool bReplace)
+ECRESULT ECDatabaseAttachment::DeleteAttachmentInstances(const std::list<ULONG> &lstDeleteInstances, bool bReplace)
 {
 	ECRESULT er = erSuccess;
-	std::list<ULONG>::iterator iterDel;
+	std::list<ULONG>::const_iterator iterDel;
 	std::string strQuery;
 
 	strQuery = (std::string)"DELETE FROM lob WHERE instanceid IN (";
@@ -2020,11 +2023,11 @@ exit:
  * 
  * @return Zarafa error code
  */
-ECRESULT ECFileAttachment::DeleteAttachmentInstances(std::list<ULONG> &lstDeleteInstances, bool bReplace)
+ECRESULT ECFileAttachment::DeleteAttachmentInstances(const std::list<ULONG> &lstDeleteInstances, bool bReplace)
 {
 	ECRESULT er = erSuccess;
 	int errors = 0;
-	std::list<ULONG>::iterator iterDel;
+	std::list<ULONG>::const_iterator iterDel;
 
 	for (iterDel = lstDeleteInstances.begin(); iterDel != lstDeleteInstances.end(); iterDel++) {
 		er = this->DeleteAttachmentInstance(*iterDel, bReplace);

@@ -74,13 +74,13 @@ public:
 	ECRESULT SaveAttachment(ULONG ulObjId, ULONG ulPropId, bool bDeleteOld, size_t iSize, ECSerializer *lpSource, ULONG *lpulInstanceId);
 	ECRESULT SaveAttachment(ULONG ulObjId, ULONG ulPropId, bool bDeleteOld, ULONG ulInstanceId, ULONG *lpulInstanceId);
 	ECRESULT CopyAttachment(ULONG ulObjId, ULONG ulNewObjId);
-	ECRESULT DeleteAttachments(std::list<ULONG> lstDeleteObjects);
+	ECRESULT DeleteAttachments(const std::list<ULONG> &lstDeleteObjects);
 	ECRESULT DeleteAttachment(ULONG ulObjId, ULONG ulPropId);
 	ECRESULT GetSize(ULONG ulObjId, ULONG ulPropId, size_t *lpulSize);
 
 	/* Convert ObjectId (hierarchyid) into Instance Id */
 	ECRESULT GetSingleInstanceId(ULONG ulObjId, ULONG ulPropId, ULONG *lpulInstanceId);
-	ECRESULT GetSingleInstanceIds(std::list<ULONG> &lstObjIds, std::list<ULONG> *lstAttachIds);
+	ECRESULT GetSingleInstanceIds(const std::list<ULONG> &lstObjIds, std::list<ULONG> *lstAttachIds);
 
 	/* Request parents for a particular Single Instance Id */
 	ECRESULT GetSingleInstanceParents(ULONG ulInstanceId, std::list<ULONG> *lplstObjIds);
@@ -100,7 +100,7 @@ protected:
 	virtual ECRESULT LoadAttachmentInstance(ULONG ulInstanceId, size_t *lpiSize, ECSerializer *lpSink) = 0;
 	virtual ECRESULT SaveAttachmentInstance(ULONG ulInstanceId, ULONG ulPropId, size_t iSize, unsigned char *lpData) = 0;
 	virtual ECRESULT SaveAttachmentInstance(ULONG ulInstanceId, ULONG ulPropId, size_t iSize, ECSerializer *lpSource) = 0;
-	virtual ECRESULT DeleteAttachmentInstances(std::list<ULONG> &lstDeleteInstances, bool bReplace) = 0;
+	virtual ECRESULT DeleteAttachmentInstances(const std::list<ULONG> &lstDeleteInstances, bool bReplace) = 0;
 	virtual ECRESULT DeleteAttachmentInstance(ULONG ulInstanceId, bool bReplace) = 0;
 	virtual ECRESULT GetSizeInstance(ULONG ulInstanceId, size_t *lpulSize, bool *lpbCompressed = NULL) = 0;
 
@@ -110,7 +110,7 @@ private:
 
 	/* Count the number of times an attachment is referenced */
 	ECRESULT IsOrphanedSingleInstance(ULONG ulInstanceId, bool *bOrphan);
-	ECRESULT GetOrphanedSingleInstances(std::list<ULONG> &lstInstanceIds, std::list<ULONG> *lplstOrphanedInstanceIds);
+	ECRESULT GetOrphanedSingleInstances(const std::list<ULONG> &lstInstanceIds, std::list<ULONG> *lplstOrphanedInstanceIds);
 
 	ECRESULT DeleteAttachment(ULONG ulObjId, ULONG ulPropId, bool bReplace);
 
@@ -134,7 +134,7 @@ protected:
 	virtual ECRESULT LoadAttachmentInstance(ULONG ulInstanceId, size_t *lpiSize, ECSerializer *lpSink);
 	virtual ECRESULT SaveAttachmentInstance(ULONG ulInstanceId, ULONG ulPropId, size_t iSize, unsigned char *lpData);
 	virtual ECRESULT SaveAttachmentInstance(ULONG ulInstanceId, ULONG ulPropId, size_t iSize, ECSerializer *lpSource);
-	virtual ECRESULT DeleteAttachmentInstances(std::list<ULONG> &lstDeleteInstances, bool bReplace);
+	virtual ECRESULT DeleteAttachmentInstances(const std::list<ULONG> &lstDeleteInstances, bool bReplace);
 	virtual ECRESULT DeleteAttachmentInstance(ULONG ulInstanceId, bool bReplace);
 	virtual ECRESULT GetSizeInstance(ULONG ulInstanceId, size_t *lpulSize, bool *lpbCompressed = NULL);
 
@@ -158,7 +158,7 @@ protected:
 	virtual ECRESULT LoadAttachmentInstance(ULONG ulObjId, size_t *lpiSize, ECSerializer *lpSink);
 	virtual ECRESULT SaveAttachmentInstance(ULONG ulInstanceId, ULONG ulPropId, size_t iSize, unsigned char *lpData);
 	virtual ECRESULT SaveAttachmentInstance(ULONG ulObjId, ULONG ulPropId, size_t iSize, ECSerializer *lpSource);
-	virtual ECRESULT DeleteAttachmentInstances(std::list<ULONG> &lstDeleteInstances, bool bReplace);
+	virtual ECRESULT DeleteAttachmentInstances(const std::list<ULONG> &lstDeleteInstances, bool bReplace);
 	virtual ECRESULT DeleteAttachmentInstance(ULONG ulInstanceId, bool bReplace);
 	virtual ECRESULT GetSizeInstance(ULONG ulInstanceId, size_t *lpulSize, bool *lpbCompressed = NULL);
 
