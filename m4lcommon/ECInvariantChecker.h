@@ -56,10 +56,10 @@ private:
 };
 
 #ifdef DEBUG
-#define DEBUG_CHECK_INVARIANT	{this->CheckInvariant();}
+#define DEBUG_CHECK_INVARIANT	do { this->CheckInvariant(); } while (false)
 #define DEBUG_GUARD				guard __g(this);
 #else
-#define DEBUG_CHECK_INVARIANT	{}
+#define DEBUG_CHECK_INVARIANT	do { } while (false)
 #define DEBUG_GUARD
 #endif
 

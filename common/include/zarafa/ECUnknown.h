@@ -58,11 +58,13 @@
  * @note guid variable must be named 'refiid', return variable must be named lppInterface.
  */
 #define REGISTER_INTERFACE(_guid, _interface)	\
-	if (refiid == (_guid)) {				 	\
-		AddRef();								\
-		*lppInterface = (void*)(_interface);	\
-		return hrSuccess;						\
-	}
+	do { \
+		if (refiid == (_guid)) { \
+			AddRef(); \
+			*lppInterface = reinterpret_cast<void *>(_interface); \
+			return hrSuccess; \
+		} \
+	} while (false)
 
 /**
  * Return interface pointer on a specific interface query without incrementing the refcount.
@@ -70,12 +72,14 @@
  * @param[in]	_interface	The class which implements the interface
  * @note guid variable must be named 'refiid', return variable must be named lppInterface.
  */
-#define REGISTER_INTERFACE_NOREF(_guid, _interface)	\
-	if (refiid == (_guid)) {				 		\
-		AddRef();									\
-		*lppInterface = (void*)(_interface);		\
-		return hrSuccess;							\
-	}
+#define REGISTER_INTERFACE_NOREF(_guid, _interface) \
+	do { \
+		if (refiid == (_guid)) { \
+			AddRef(); \
+			*lppInterface = reinterpret_cast<void *>(_interface); \
+			return hrSuccess; \
+		} \
+	} while (false)
 
 class ECUnknown : public IECUnknown {
 public:

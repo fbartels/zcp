@@ -195,45 +195,45 @@ private:
     std::string m_strData;
 };
 
-#define READDATA(x, type) 	{ \
-                                if(data.Read##type(&x) < 0) \
-                                { \
-                                    hr = MAPI_E_NOT_FOUND; \
-                                    goto exit; \
-                                } \
-                                DEBUGPRINT("%s\n", #x); \
-                            }
+#define READDATA(x, type) \
+	do { \
+		if (data.Read##type(&(x)) < 0) { \
+			hr = MAPI_E_NOT_FOUND; \
+			goto exit; \
+		} \
+		DEBUGPRINT("%s\n", #x); \
+	} while (false)
 
-#define READSTRING(x, len) 	{ \
-                                if(data.ReadString(&x, len) < 0) \
-                                { \
-                                    hr = MAPI_E_NOT_FOUND; \
-                                    goto exit; \
-                                } \
-                                if(len > 0) \
-                                    DEBUGPRINT("%s\n", #x); \
-                            }
+#define READSTRING(x, len) \
+	do { \
+		if (data.ReadString(&(x), len) < 0) { \
+			hr = MAPI_E_NOT_FOUND; \
+			goto exit; \
+		} \
+		if (len > 0) \
+			DEBUGPRINT("%s\n", #x); \
+	} while (false)
                             
 #define READSHORT(x) READDATA(x, Short)
 #define READLONG(x) READDATA(x, Long)
 #define READBYTE(x) READDATA(x, Byte)
 
-#define WRITEBYTE(x) { \
-		DEBUGPRINT("%02X %10u %08X %s\n", x, x, x, #x);	\
+#define WRITEBYTE(x) do { \
+		DEBUGPRINT("%02X %10u %08X %s\n", (x), (x), (x), #x); \
 		data.WriteByte(x); \
-	}
-#define WRITESHORT(x) { \
-		DEBUGPRINT("%04X %10u %08X %s\n", htons(x), x, x, #x);	\
+	} while (false)
+#define WRITESHORT(x) do { \
+		DEBUGPRINT("%04X %10u %08X %s\n", htons(x), (x), (x), #x); \
 		data.WriteShort(x); \
-	}
-#define WRITELONG(x) { \
-		DEBUGPRINT("%08X %10u %08X %s\n", htonl(x), x, x, #x);	\
+	} while (false)
+#define WRITELONG(x) do { \
+		DEBUGPRINT("%08X %10u %08X %s\n", htonl(x), (x), (x), #x); \
 		data.WriteLong(x); \
-	}
-#define WRITESTRING(x, l) { \
-		DEBUGPRINT("%d\t%s\t%s\n", l, x, #x);	\
-		data.WriteString(x,l); \
-	}
+	} while (false)
+#define WRITESTRING(x, l) do { \
+		DEBUGPRINT("%d\t%s\t%s\n", (l), (x), #x); \
+		data.WriteString((x), (l)); \
+	} while (false)
 
 RecurrenceState::RecurrenceState()
 {

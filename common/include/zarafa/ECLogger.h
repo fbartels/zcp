@@ -85,8 +85,16 @@ static const unsigned int EC_LOGLEVEL_EXTENDED_MASK = 0xFFFF0000;
 #define _LOG_BUFSIZE		10240
 #define _LOG_TSSIZE			64
 
-#define LOG_DEBUG(_plog,_msg,...) if ((_plog)->Log(EC_LOGLEVEL_DEBUG)) (_plog)->Log(EC_LOGLEVEL_DEBUG, _msg, ##__VA_ARGS__)
-#define LOG_AUDIT(_plog,_msg,...) if ((_plog)) (_plog)->Log(EC_LOGLEVEL_FATAL, _msg, ##__VA_ARGS__)
+#define LOG_DEBUG(_plog, _msg, ...) \
+	do { \
+		if ((_plog)->Log(EC_LOGLEVEL_DEBUG)) \
+			(_plog)->Log(EC_LOGLEVEL_DEBUG, (_msg), ##__VA_ARGS__); \
+	} while (false)
+#define LOG_AUDIT(_plog, _msg, ...) \
+	do { \
+		if ((_plog) != NULL) \
+			(_plog)->Log(EC_LOGLEVEL_FATAL, (_msg), ##__VA_ARGS__); \
+	} while (false)
 
 #ifdef UNICODE
 #define TSTRING_PRINTF "%ls"
