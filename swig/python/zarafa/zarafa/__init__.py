@@ -1507,9 +1507,47 @@ class Folder(object):
                 yield item
 
     def occurrences(self, start=None, end=None):
-        for item in self:
-            for occurrence in item.occurrences(start=start, end=end):
-                yield occurrence
+        if start and end:
+            startstamp = time.mktime(start.timetuple())
+            endstamp = time.mktime(end.timetuple())
+
+            # XXX use shortcuts and default type (database) to avoid MAPI snake wrestling
+            NAMED_PROPS = [MAPINAMEID(PSETID_Appointment, MNID_ID, x) for x in (33293, 33294, 33315)]
+            ids = self.mapiobj.GetIDsFromNames(NAMED_PROPS, 0)
+            duedate = ids[0] | PT_SYSTIME
+            startdate = ids[1] | PT_SYSTIME
+            recurring = ids[2] | PT_BOOLEAN
+
+            # only look at non-recurring items which overlap and all recurring items
+            restriction = SOrRestriction([
+                SOrRestriction([
+                    SAndRestriction([
+                        SPropertyRestriction(RELOP_GT, duedate, SPropValue(duedate, MAPI.Time.unixtime(startstamp))),
+                        SPropertyRestriction(RELOP_LT, startdate, SPropValue(startdate, MAPI.Time.unixtime(endstamp))),
+                    ]),
+                    SAndRestriction([
+                        SPropertyRestriction(RELOP_EQ, startdate, SPropValue(startdate, MAPI.Time.unixtime(startstamp))),
+                        SPropertyRestriction(RELOP_EQ, duedate, SPropValue(duedate, MAPI.Time.unixtime(startstamp))),
+                    ]),
+                ]),
+                SAndRestriction([
+                    SPropertyRestriction(RELOP_EQ, recurring, SPropValue(recurring, True))
+                ])
+            ])
+
+            table = self.mapiobj.GetContentsTable(0)
+            table.SetColumns([PR_ENTRYID], 0)
+            table.Restrict(restriction, 0)
+            rows = table.QueryRows(-1, 0)
+            for row in rows:
+                entryid = row[0].Value.encode('hex')
+                for occurrence in self.item(entryid).occurrences(start, end):
+                    yield occurrence
+
+        else:
+            for item in self:
+                for occurrence in item.occurrences(start, end):
+                    yield occurrence
 
     def create_item(self, eml=None, ics=None, vcf=None, load=None, loads=None, **kwargs): # XXX associated
         item = Item(self, eml=eml, ics=ics, vcf=vcf, load=load, loads=loads, create=True)
@@ -2109,7 +2147,10 @@ class Item(object):
     def occurrences(self, start=None, end=None):
         try:
             if self.recurring:
-                for d in self.recurrence.recurrences:
+                recurrences = self.recurrence.recurrences
+                if start and end:
+                    recurrences = recurrences.between(start, end)
+                for d in recurrences:
                     occ = Occurrence(self, d, d+datetime.timedelta(hours=1)) # XXX
                     if (not start or occ.start >= start) and (not end or occ.end < end): # XXX slow for now; overlaps with start, end?
                         yield occ
