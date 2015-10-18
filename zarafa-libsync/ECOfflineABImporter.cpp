@@ -127,7 +127,7 @@ HRESULT OfflineABImporter::ImportABChange(ULONG ulObjType, ULONG cbObjId, LPENTR
 		ZLOG_DEBUG(m_lpLogger, "ImportABChange: GetUser type=MAPI_MAILUSER, id=%s", bin2hex(cbObjId, (LPBYTE)lpObjId).c_str());
 		hr = m_lpSrcServiceAdmin->GetUser(cbObjId, lpObjId, MAPI_UNICODE, &lpsSrcUser);
 		if (hr == MAPI_E_NOT_FOUND){
-			ZLOG_DEBUG(m_lpLogger, "%s", "ImportABChange: hr=MAPI_E_NOT_FOUND (deleted, so OK)");
+			ZLOG_DEBUG(m_lpLogger, "ImportABChange: hr=MAPI_E_NOT_FOUND (deleted, so OK)");
 			hr = hrSuccess; // we'll get a delete in a later change
 			goto exit;
 		}
@@ -150,7 +150,7 @@ HRESULT OfflineABImporter::ImportABChange(ULONG ulObjType, ULONG cbObjId, LPENTR
 		ZLOG_DEBUG(m_lpLogger, "ImportABChange: GetGroup type=MAPI_DISTLIST, id=%s", bin2hex(cbObjId, (LPBYTE)lpObjId).c_str());
 		hr = m_lpSrcServiceAdmin->GetGroup(cbObjId, lpObjId, MAPI_UNICODE, &lpsSrcGroup);
 		if (hr == MAPI_E_NOT_FOUND){
-			ZLOG_DEBUG(m_lpLogger, "%s", "ImportABChange: hr=MAPI_E_NOT_FOUND (deleted, so OK)");
+			ZLOG_DEBUG(m_lpLogger, "ImportABChange: hr=MAPI_E_NOT_FOUND (deleted, so OK)");
 			hr = hrSuccess; // we'll get a delete in a later change
 			goto exit;
 		}
@@ -169,7 +169,7 @@ HRESULT OfflineABImporter::ImportABChange(ULONG ulObjType, ULONG cbObjId, LPENTR
 		/* Sync group members */
 		
 		/* Get source members */
-		ZLOG_DEBUG(m_lpLogger, "%s", "ImportABChange: GetUserListOfGroup (from source)");
+		ZLOG_DEBUG(m_lpLogger, "ImportABChange: GetUserListOfGroup (from source)");
 		hr = m_lpSrcServiceAdmin->GetUserListOfGroup(cbObjId, lpObjId, MAPI_UNICODE, &cSrcUsers, &lpSrcUsers);
 		if(hr != hrSuccess) {
 			ZLOG_DEBUG(m_lpLogger, "ImportABChange: hr=%s", stringify(hr, true).c_str());
@@ -179,7 +179,7 @@ HRESULT OfflineABImporter::ImportABChange(ULONG ulObjType, ULONG cbObjId, LPENTR
 			
 		for (unsigned int i = 0; i < cSrcUsers; i++) {
 			if (GetNonPortableObjectType(lpSrcUsers[i].sUserId.cb, (LPENTRYID)lpSrcUsers[i].sUserId.lpb, &ulMemberObjType) != hrSuccess) {
-				ZLOG_DEBUG(m_lpLogger, "%s", "ImportABChange: GetNonPortableObjectType failed");
+				ZLOG_DEBUG(m_lpLogger, "ImportABChange: GetNonPortableObjectType failed");
 				continue;
 			}
 			if (ulMemberObjType != MAPI_MAILUSER) {
@@ -191,7 +191,7 @@ HRESULT OfflineABImporter::ImportABChange(ULONG ulObjType, ULONG cbObjId, LPENTR
 		}
 		
 		/* Get destination members */
-		ZLOG_DEBUG(m_lpLogger, "%s", "ImportABChange: GetUserListOfGroup (to destination)");
+		ZLOG_DEBUG(m_lpLogger, "ImportABChange: GetUserListOfGroup (to destination)");
 		hr = m_lpDstServiceAdmin->GetUserListOfGroup(lpsSrcGroup->sGroupId.cb, (LPENTRYID)lpsSrcGroup->sGroupId.lpb, MAPI_UNICODE, &cDstUsers, &lpDstUsers);
 		if(hr != hrSuccess) {
 			ZLOG_DEBUG(m_lpLogger, "ImportABChange: hr=%s", stringify(hr, true).c_str());
@@ -201,7 +201,7 @@ HRESULT OfflineABImporter::ImportABChange(ULONG ulObjType, ULONG cbObjId, LPENTR
 		
 		for (unsigned int i = 0; i < cDstUsers; i++) {
 			if (GetNonPortableObjectType(lpDstUsers[i].sUserId.cb, (LPENTRYID)lpDstUsers[i].sUserId.lpb, &ulMemberObjType) != hrSuccess) {
-				ZLOG_DEBUG(m_lpLogger, "%s", "ImportABChange: GetNonPortableObjectType failed");
+				ZLOG_DEBUG(m_lpLogger, "ImportABChange: GetNonPortableObjectType failed");
 				continue;
 			}
 			if (ulMemberObjType != MAPI_MAILUSER) {
@@ -276,14 +276,14 @@ HRESULT OfflineABImporter::ImportABChange(ULONG ulObjType, ULONG cbObjId, LPENTR
 		ZLOG_DEBUG(m_lpLogger, "ImportABChange: GetCompany (from source) type=MAPI_ABCONT, id=%s", bin2hex(cbObjId, (LPBYTE)lpObjId).c_str());
 		hr = m_lpSrcServiceAdmin->GetCompany(cbObjId, lpObjId, MAPI_UNICODE, &lpsSrcCompany);
 		if (hr == MAPI_E_NO_SUPPORT) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "ImportABChange: hr=MAPI_E_NO_SUPPORT. The container is an addresslist, not a company. Ignoring");
+			ZLOG_DEBUG(m_lpLogger, "ImportABChange: hr=MAPI_E_NO_SUPPORT. The container is an addresslist, not a company. Ignoring");
 			hr = hrSuccess;
 			goto exit;
 		} else if (hr == MAPI_E_NOT_FOUND) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "ImportABChange: hr=MAPI_E_NOT_FOUND. Checking destination.");
+			ZLOG_DEBUG(m_lpLogger, "ImportABChange: hr=MAPI_E_NOT_FOUND. Checking destination.");
 			hr = m_lpDstServiceAdmin->GetCompany(cbObjId, lpObjId, MAPI_UNICODE, &lpsSrcCompany);
 			if (hr == MAPI_E_NOT_FOUND) {
-				ZLOG_DEBUG(m_lpLogger, "%s", "ImportABChange: hr=MAPI_E_NOT_FOUND. So it doesn't exist on either side.");
+				ZLOG_DEBUG(m_lpLogger, "ImportABChange: hr=MAPI_E_NOT_FOUND. So it doesn't exist on either side.");
 				hr = hrSuccess;
 				goto exit; /* No need to sync anything */
 			} else if (hr != hrSuccess) {
@@ -304,7 +304,7 @@ HRESULT OfflineABImporter::ImportABChange(ULONG ulObjType, ULONG cbObjId, LPENTR
 				goto exit;
 			}
 
-			ZLOG_DEBUG(m_lpLogger, "%s", "ImportABChange: GetGroupList (from destination)");
+			ZLOG_DEBUG(m_lpLogger, "ImportABChange: GetGroupList (from destination)");
 			hr = m_lpDstServiceAdmin->GetGroupList(0, NULL, MAPI_UNICODE, &cDstGroups, &lpDstGroups);
 			if (hr != hrSuccess) {
 				ZLOG_DEBUG(m_lpLogger, "ImportABChange: hr=%s", stringify(hr, true).c_str());
@@ -325,7 +325,7 @@ HRESULT OfflineABImporter::ImportABChange(ULONG ulObjType, ULONG cbObjId, LPENTR
 				}
 			}
 	
-			ZLOG_DEBUG(m_lpLogger, "%s", "ImportABChange: GetUserList (from destination)");
+			ZLOG_DEBUG(m_lpLogger, "ImportABChange: GetUserList (from destination)");
 			hr = m_lpDstServiceAdmin->GetUserList(0, NULL, MAPI_UNICODE, &cDstUsers, &lpDstUsers);
 			if (hr != hrSuccess)
 				goto exit;
@@ -376,7 +376,7 @@ HRESULT OfflineABImporter::ImportABChange(ULONG ulObjType, ULONG cbObjId, LPENTR
 			* Sync users/groups by requesting the members of the company
 			* and calling ImportABChange recurively to add the members
 			*/
-			ZLOG_DEBUG(m_lpLogger, "%s", "ImportABChange: GetUserList (from source)");
+			ZLOG_DEBUG(m_lpLogger, "ImportABChange: GetUserList (from source)");
 			hr = m_lpSrcServiceAdmin->GetUserList(cbObjId, lpObjId, MAPI_UNICODE, &cSrcUsers, &lpSrcUsers);
 			if (hr != hrSuccess) {
 				ZLOG_DEBUG(m_lpLogger, "ImportABChange: hr=%s", stringify(hr, true).c_str());
@@ -393,7 +393,7 @@ HRESULT OfflineABImporter::ImportABChange(ULONG ulObjType, ULONG cbObjId, LPENTR
 				}
 			}
 
-			ZLOG_DEBUG(m_lpLogger, "%s", "ImportABChange: GetGroupList (from source)");
+			ZLOG_DEBUG(m_lpLogger, "ImportABChange: GetGroupList (from source)");
 			hr = m_lpSrcServiceAdmin->GetGroupList(cbObjId, lpObjId, MAPI_UNICODE, &cSrcGroups, &lpSrcGroups);
 			if (hr != hrSuccess) {
 				ZLOG_DEBUG(m_lpLogger, "ImportABChange: hr=%s", stringify(hr, true).c_str());

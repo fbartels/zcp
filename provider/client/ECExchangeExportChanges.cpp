@@ -262,14 +262,14 @@ HRESULT ECExchangeExportChanges::Config(LPSTREAM lpStream, ULONG ulFlags, LPUNKN
 
 	if(m_bConfiged){
 		hr = MAPI_E_UNCONFIGURED;
-		ZLOG_DEBUG(m_lpLogger, "%s", "Config() called twice");
+		ZLOG_DEBUG(m_lpLogger, "Config() called twice");
 		goto exit;
 	}
 
 	if(lpRestriction) {
 		hr = Util::HrCopySRestriction(&m_lpRestrict, lpRestriction);
 		if(hr != hrSuccess) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "Invalid restriction");
+			ZLOG_DEBUG(m_lpLogger, "Invalid restriction");
 	    	goto exit;
 		}
 	} else {
@@ -280,7 +280,7 @@ HRESULT ECExchangeExportChanges::Config(LPSTREAM lpStream, ULONG ulFlags, LPUNKN
 
 	if(! (ulFlags & SYNC_CATCHUP)) {
 		if(lpCollector == NULL) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "No importer to export to");
+			ZLOG_DEBUG(m_lpLogger, "No importer to export to");
 			hr = MAPI_E_INVALID_PARAMETER;
 			goto exit;
 		}
@@ -291,16 +291,16 @@ HRESULT ECExchangeExportChanges::Config(LPSTREAM lpStream, ULONG ulFlags, LPUNKN
 			if (hr == hrSuccess && lpSyncSettings->SyncStreamEnabled()) {
 				m_lpStore->lpTransport->HrCheckCapabilityFlags(ZARAFA_CAP_ENHANCED_ICS, &bCanStream);
 				if (bCanStream == TRUE) {
-					ZLOG_DEBUG(m_lpLogger, "%s", "Exporter supports enhanced ICS, checking importer...");
+					ZLOG_DEBUG(m_lpLogger, "Exporter supports enhanced ICS, checking importer...");
 					hr = lpCollector->QueryInterface(IID_IECImportContentsChanges, (LPVOID*) &m_lpImportStreamedContents);
 					if (hr == MAPI_E_INTERFACE_NOT_SUPPORTED) {
 						ASSERT(m_lpImportStreamedContents == NULL);
 						hr = hrSuccess;
-						ZLOG_DEBUG(m_lpLogger, "%s", "Importer doesn't support enhanced ICS");
+						ZLOG_DEBUG(m_lpLogger, "Importer doesn't support enhanced ICS");
 					} else
-						ZLOG_DEBUG(m_lpLogger, "%s", "Importer supports enhanced ICS");
+						ZLOG_DEBUG(m_lpLogger, "Importer supports enhanced ICS");
 				} else
-					ZLOG_DEBUG(m_lpLogger, "%s", "Exporter doesn't support enhanced ICS");
+					ZLOG_DEBUG(m_lpLogger, "Exporter doesn't support enhanced ICS");
 			}
 		}else if(m_ulSyncType == ICS_SYNC_HIERARCHY){
 			hr = lpCollector->QueryInterface(IID_IExchangeImportHierarchyChanges, (LPVOID*) &m_lpImportHierarchy);
@@ -316,10 +316,10 @@ HRESULT ECExchangeExportChanges::Config(LPSTREAM lpStream, ULONG ulFlags, LPUNKN
 		ULONG tmp[2] = { 0, 0 };
 		ULONG ulSize = 0;
 
-		ZLOG_DEBUG(m_lpLogger, "%s", "Creating new exporter stream");
+		ZLOG_DEBUG(m_lpLogger, "Creating new exporter stream");
 		hr = CreateStreamOnHGlobal(GlobalAlloc(GPTR, sizeof(tmp)), true, &m_lpStream);
 		if (hr != hrSuccess) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "Unable to create new exporter stream");
+			ZLOG_DEBUG(m_lpLogger, "Unable to create new exporter stream");
 			goto exit;
 		}
 
@@ -328,7 +328,7 @@ HRESULT ECExchangeExportChanges::Config(LPSTREAM lpStream, ULONG ulFlags, LPUNKN
 	} else {
 		hr = lpStream->QueryInterface(IID_IStream, (LPVOID*)&m_lpStream);
 		if (hr != hrSuccess) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "Passed state stream does not support IStream interface");
+			ZLOG_DEBUG(m_lpLogger, "Passed state stream does not support IStream interface");
 			goto exit;
 		}
 	}
@@ -530,7 +530,7 @@ HRESULT ECExchangeExportChanges::Synchronize(ULONG FAR * lpulSteps, ULONG FAR * 
 	PROCESSEDCHANGESSET::iterator iterProcessedChange;
 
 	if(!m_bConfiged){
-		ZLOG_DEBUG(m_lpLogger, "%s", "Config() not called before Synchronize()");
+		ZLOG_DEBUG(m_lpLogger, "Config() not called before Synchronize()");
 		hr = MAPI_E_UNCONFIGURED;
 		goto exit;
 	}
@@ -638,7 +638,7 @@ HRESULT ECExchangeExportChanges::UpdateState(LPSTREAM lpStream){
 	HRESULT hr = hrSuccess;
 
 	if(!m_bConfiged){
-		ZLOG_DEBUG(m_lpLogger, "%s", "Config() not called before UpdateState()");
+		ZLOG_DEBUG(m_lpLogger, "Config() not called before UpdateState()");
 		hr = MAPI_E_UNCONFIGURED;
 		goto exit;
 	}
@@ -661,7 +661,7 @@ HRESULT ECExchangeExportChanges::GetChangeCount(ULONG *lpcChanges) {
 	ULONG cChanges = 0;
 
 	if(!m_bConfiged){
-		ZLOG_DEBUG(m_lpLogger, "%s", "Config() not called before GetChangeCount()");
+		ZLOG_DEBUG(m_lpLogger, "Config() not called before GetChangeCount()");
 		hr = MAPI_E_UNCONFIGURED;
 		goto exit;
 	}
@@ -729,7 +729,7 @@ HRESULT ECExchangeExportChanges::ConfigSelective(ULONG ulPropTag, LPENTRYLIST lp
 	
 	if(m_bConfiged){
 		hr = MAPI_E_UNCONFIGURED;
-		ZLOG_DEBUG(m_lpLogger, "%s", "Config() called twice");
+		ZLOG_DEBUG(m_lpLogger, "Config() called twice");
 		goto exit;
 	}
 	
@@ -744,16 +744,16 @@ HRESULT ECExchangeExportChanges::ConfigSelective(ULONG ulPropTag, LPENTRYLIST lp
 	if (hr == hrSuccess && lpSyncSettings->SyncStreamEnabled()) {
 		m_lpStore->lpTransport->HrCheckCapabilityFlags(ZARAFA_CAP_ENHANCED_ICS, &bCanStream);
 		if (bCanStream == TRUE) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "Exporter supports enhanced ICS, checking importer...");
+			ZLOG_DEBUG(m_lpLogger, "Exporter supports enhanced ICS, checking importer...");
 			hr = lpCollector->QueryInterface(IID_IECImportContentsChanges, (LPVOID*) &m_lpImportStreamedContents);
 			if (hr == MAPI_E_INTERFACE_NOT_SUPPORTED) {
 				ASSERT(m_lpImportStreamedContents == NULL);
 				hr = hrSuccess;
-				ZLOG_DEBUG(m_lpLogger, "%s", "Importer doesn't support enhanced ICS");
+				ZLOG_DEBUG(m_lpLogger, "Importer doesn't support enhanced ICS");
 			} else
-				ZLOG_DEBUG(m_lpLogger, "%s", "Importer supports enhanced ICS");
+				ZLOG_DEBUG(m_lpLogger, "Importer supports enhanced ICS");
 		} else
-			ZLOG_DEBUG(m_lpLogger, "%s", "Exporter doesn't support enhanced ICS");
+			ZLOG_DEBUG(m_lpLogger, "Exporter doesn't support enhanced ICS");
 	}
 	
 	m_ulEntryPropTag = ulPropTag;
@@ -979,7 +979,7 @@ HRESULT ECExchangeExportChanges::ExportMessageChangesSlow() {
 			}
 			hr = lpSourceMessage->GetProps((LPSPropTagArray)&sptImportProps, 0, &ulCount, &lpPropArray);
 			if(FAILED(hr)) {
-				ZLOG_DEBUG(m_lpLogger, "%s", "Unable to get properties from source message");
+				ZLOG_DEBUG(m_lpLogger, "Unable to get properties from source message");
 				goto exit;
 			}
 
@@ -1016,7 +1016,7 @@ HRESULT ECExchangeExportChanges::ExportMessageChangesSlow() {
 		// TODO handle SYNC_E_OBJECT_DELETED, SYNC_E_CONFLICT, SYNC_E_NO_PARENT, SYNC_E_INCEST, SYNC_E_UNSYNCHRONIZED
 		}else if(hr != hrSuccess){
 			//m_lpLogger->Log(EC_LOGLEVEL_INFO, "change error: %s", stringify(hr, true).c_str());
-			ZLOG_DEBUG(m_lpLogger, "%s", "Error during message import");
+			ZLOG_DEBUG(m_lpLogger, "Error during message import");
 			goto exit;
 		}
 
@@ -1028,31 +1028,31 @@ HRESULT ECExchangeExportChanges::ExportMessageChangesSlow() {
 
 		hr = lpSourceMessage->CopyTo(0, NULL, (LPSPropTagArray)&sptMessageExcludes, 0, NULL, &IID_IMessage, lpDestMessage, 0, NULL);
 		if(hr != hrSuccess) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "Unable to copy to imported message");
+			ZLOG_DEBUG(m_lpLogger, "Unable to copy to imported message");
 			goto exit;
 		}
 
 		hr = lpSourceMessage->GetRecipientTable(0, &lpTable);
 		if(hr !=  hrSuccess) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "Unable to read source message's recipient table");
+			ZLOG_DEBUG(m_lpLogger, "Unable to read source message's recipient table");
 			goto exit;
 		}
 
 		hr = lpTable->QueryColumns(TBL_ALL_COLUMNS, &lpPropTagArray);
 		if (hr != hrSuccess) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "Unable to get column set from source message's recipient table");
+			ZLOG_DEBUG(m_lpLogger, "Unable to get column set from source message's recipient table");
 			goto exit;
 		}
 
 		hr = lpTable->SetColumns(lpPropTagArray, 0);
 		if (hr != hrSuccess) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "Unable to set column set for source message's recipient table");
+			ZLOG_DEBUG(m_lpLogger, "Unable to set column set for source message's recipient table");
 			goto exit;
 		}
 
 		hr = lpTable->QueryRows(0xFFFF, 0, &lpRows);
 		if(hr !=  hrSuccess) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "Unable to read recipients from source message");
+			ZLOG_DEBUG(m_lpLogger, "Unable to read recipients from source message");
 			goto exit;
 		}
 
@@ -1076,19 +1076,19 @@ HRESULT ECExchangeExportChanges::ExportMessageChangesSlow() {
 		//delete every attachment
 		hr = lpDestMessage->GetAttachmentTable(0, &lpTable);
 		if(hr !=  hrSuccess) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "Unable to get destination's attachment table");
+			ZLOG_DEBUG(m_lpLogger, "Unable to get destination's attachment table");
 			goto exit;
 		}
 
 		hr = lpTable->SetColumns((LPSPropTagArray)&sptAttach, 0);
 		if(hr !=  hrSuccess) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "Unable to set destination's attachment table's column set");
+			ZLOG_DEBUG(m_lpLogger, "Unable to set destination's attachment table's column set");
 			goto exit;
 		}
 
 		hr = lpTable->QueryRows(0xFFFF, 0, &lpRows);
 		if(hr !=  hrSuccess) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "Unable to read destination's attachment list");
+			ZLOG_DEBUG(m_lpLogger, "Unable to read destination's attachment list");
 			goto exit;
 		}
 
@@ -1132,19 +1132,19 @@ HRESULT ECExchangeExportChanges::ExportMessageChangesSlow() {
 
 			hr = lpDestMessage->CreateAttach(&IID_IAttachment, 0, &ulObjType, &lpDestAttach);
 			if(hr !=  hrSuccess) {
-				ZLOG_DEBUG(m_lpLogger, "%s", "Unable to create attachment");
+				ZLOG_DEBUG(m_lpLogger, "Unable to create attachment");
 				goto exit;
 			}
 
 			hr = lpSourceAttach->CopyTo(0, NULL, (LPSPropTagArray)&sptAttach, 0, NULL, &IID_IAttachment, lpDestAttach, 0, NULL);
 			if(hr !=  hrSuccess) {
-				ZLOG_DEBUG(m_lpLogger, "%s", "Unable to copy attachment");
+				ZLOG_DEBUG(m_lpLogger, "Unable to copy attachment");
 				goto exit;
 			}
 
 			hr = lpDestAttach->SaveChanges(0);
 			if(hr !=  hrSuccess) {
-				ZLOG_DEBUG(m_lpLogger, "%s", "SaveChanges() failed for destination attachment");
+				ZLOG_DEBUG(m_lpLogger, "SaveChanges() failed for destination attachment");
 				goto exit;
 			}
 
@@ -1176,19 +1176,19 @@ HRESULT ECExchangeExportChanges::ExportMessageChangesSlow() {
 
 		hr = lpSourceMessage->GetPropList(0, &lpPropTagArray);
 		if (hr != hrSuccess) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "Unable to get property list of source message");
+			ZLOG_DEBUG(m_lpLogger, "Unable to get property list of source message");
 			goto exit;
 		}
 
 		hr = Util::HrDeleteResidualProps(lpDestMessage, lpSourceMessage, lpPropTagArray);
 		if (hr != hrSuccess) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "Unable to remove old properties from destination message");
+			ZLOG_DEBUG(m_lpLogger, "Unable to remove old properties from destination message");
 			goto exit;
 		}
 
 		hr = lpDestMessage->SaveChanges(0);
 		if(hr != hrSuccess) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "SaveChanges failed for destination message");
+			ZLOG_DEBUG(m_lpLogger, "SaveChanges failed for destination message");
 			goto exit;
 		}
 
@@ -1430,7 +1430,7 @@ HRESULT ECExchangeExportChanges::ExportMessageFlags(){
 			hr = hrSuccess;
 		}
 		if(hr != hrSuccess) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "Read state change failed");
+			ZLOG_DEBUG(m_lpLogger, "Read state change failed");
 			goto exit;
 		}
 
@@ -1465,13 +1465,13 @@ HRESULT ECExchangeExportChanges::ExportMessageDeletes(){
 			hr = hrSuccess;
 		}
 		if(hr != hrSuccess) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "Message deletion import failed");
+			ZLOG_DEBUG(m_lpLogger, "Message deletion import failed");
 			goto exit;
 		}
 
 		hr = AddProcessedChanges(m_lstSoftDelete);
 		if (hr != hrSuccess) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "Unable to add processed soft deletion changes");
+			ZLOG_DEBUG(m_lpLogger, "Unable to add processed soft deletion changes");
 			goto exit;
 		}
 	}
@@ -1484,7 +1484,7 @@ HRESULT ECExchangeExportChanges::ExportMessageDeletes(){
 	if(!m_lstHardDelete.empty()){
 		hr = ChangesToEntrylist(&m_lstHardDelete, &lpEntryList);
 		if(hr != hrSuccess) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "Unable to create entry list");
+			ZLOG_DEBUG(m_lpLogger, "Unable to create entry list");
 			goto exit;
 		}
 
@@ -1493,13 +1493,13 @@ HRESULT ECExchangeExportChanges::ExportMessageDeletes(){
 			hr = hrSuccess;
 		}
 		if(hr != hrSuccess) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "Message hard deletion failed");
+			ZLOG_DEBUG(m_lpLogger, "Message hard deletion failed");
 			goto exit;
 		}
 
 		hr = AddProcessedChanges(m_lstHardDelete);
 		if (hr != hrSuccess) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "Unable to add processed hard deletion changes");
+			ZLOG_DEBUG(m_lpLogger, "Unable to add processed hard deletion changes");
 			goto exit;
 		}
 	}
@@ -1548,7 +1548,7 @@ HRESULT ECExchangeExportChanges::ExportFolderChanges(){
 
 			hr = HrGetAllProps(lpFolder, (m_ulFlags & SYNC_UNICODE ? MAPI_UNICODE : 0), &ulCount, &lpPropArray);
 			if(FAILED(hr)) {
-				ZLOG_DEBUG(m_lpLogger, "%s", "Unable to get source folder properties");
+				ZLOG_DEBUG(m_lpLogger, "Unable to get source folder properties");
 				goto exit;
 			}
 
@@ -1639,7 +1639,7 @@ HRESULT ECExchangeExportChanges::ExportFolderDeletes(){
 	if(!m_lstSoftDelete.empty()){
 		hr = ChangesToEntrylist(&m_lstSoftDelete, &lpEntryList);
 		if(hr != hrSuccess) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "Unable to create folder deletion entry list");
+			ZLOG_DEBUG(m_lpLogger, "Unable to create folder deletion entry list");
 			goto exit;
 		}
 
@@ -1648,13 +1648,13 @@ HRESULT ECExchangeExportChanges::ExportFolderDeletes(){
 			hr = hrSuccess;
 		}
 		if(hr != hrSuccess) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "Unable to import folder deletions");
+			ZLOG_DEBUG(m_lpLogger, "Unable to import folder deletions");
 			goto exit;
 		}
 
 		hr = AddProcessedChanges(m_lstSoftDelete);
 		if (hr != hrSuccess) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "Unable to add processed folder soft deletions");
+			ZLOG_DEBUG(m_lpLogger, "Unable to add processed folder soft deletions");
 			goto exit;
 		}
 	}
@@ -1667,7 +1667,7 @@ HRESULT ECExchangeExportChanges::ExportFolderDeletes(){
 	if(!m_lstHardDelete.empty()){
 		hr = ChangesToEntrylist(&m_lstHardDelete, &lpEntryList);
 		if(hr != hrSuccess) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "Unable to create folder hard delete entry list");
+			ZLOG_DEBUG(m_lpLogger, "Unable to create folder hard delete entry list");
 			goto exit;
 		}
 
@@ -1676,13 +1676,13 @@ HRESULT ECExchangeExportChanges::ExportFolderDeletes(){
 			hr = hrSuccess;
 		}
 		if(hr != hrSuccess) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "Hard delete folder import failed");
+			ZLOG_DEBUG(m_lpLogger, "Hard delete folder import failed");
 			goto exit;
 		}
 
 		hr = AddProcessedChanges(m_lstHardDelete);
 		if (hr != hrSuccess) {
-			ZLOG_DEBUG(m_lpLogger, "%s", "Unable to add processed folder hard deletions");
+			ZLOG_DEBUG(m_lpLogger, "Unable to add processed folder hard deletions");
 			goto exit;
 		}
 	}
@@ -1758,7 +1758,7 @@ HRESULT ECExchangeExportChanges::UpdateStream(LPSTREAM lpStream){
 
 exit:
 	if(hr != hrSuccess)
-		ZLOG_DEBUG(m_lpLogger, "%s", "Stream operation failed");
+		ZLOG_DEBUG(m_lpLogger, "Stream operation failed");
 
 	return hr;
 }
