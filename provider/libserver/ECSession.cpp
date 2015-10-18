@@ -1420,7 +1420,7 @@ ECRESULT ECAuthSession::ValidateSSOData_KRB5(struct soap* soap, const char* lpsz
 		goto exit;
 	} else if (retval != GSS_S_COMPLETE) {
 		LogKRB5Error("Unable to accept security context", retval, status);
-		LOG_AUDIT(m_lpSessionManager->GetAudit(), "authenticate failed user='%s' from='%s' method='kerberos sso' program='%s'",
+		ZLOG_AUDIT(m_lpSessionManager->GetAudit(), "authenticate failed user='%s' from='%s' method='kerberos sso' program='%s'",
 				  lpszName, PrettyIP(soap->ip).c_str(), szClientApp);
 		goto exit;
 	}
@@ -1447,11 +1447,11 @@ ECRESULT ECAuthSession::ValidateSSOData_KRB5(struct soap* soap, const char* lpsz
 		m_bValidated = true;
 		m_ulValidationMethod = METHOD_SSO;
 		m_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Kerberos Single signon: User Authenticated: %s", lpszName);
-		LOG_AUDIT(m_lpSessionManager->GetAudit(), "authenticate ok user='%s' from='%s' method='kerberos sso' program='%s'",
+		ZLOG_AUDIT(m_lpSessionManager->GetAudit(), "authenticate ok user='%s' from='%s' method='kerberos sso' program='%s'",
 				  lpszName, PrettyIP(soap->ip).c_str(), szClientApp);
 	} else {
 		m_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "Kerberos username %s authenticated, but user %s requested.", (char*)gssUserBuffer.value, lpszName);
-		LOG_AUDIT(m_lpSessionManager->GetAudit(), "authenticate spoofed user='%s' requested='%s' from='%s' method='kerberos sso' program='%s'",
+		ZLOG_AUDIT(m_lpSessionManager->GetAudit(), "authenticate spoofed user='%s' requested='%s' from='%s' method='kerberos sso' program='%s'",
 				  (char*)gssUserBuffer.value, lpszName, PrettyIP(soap->ip).c_str(), szClientApp);
 	}
 
@@ -1698,7 +1698,7 @@ retry:
 			// cannot open another user without password
 			// or should we check permissions ?
 			m_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_WARNING, "Single sign on: User %s Authenticated, but User %s requested.", strAnswer.c_str(), lpszName);
-			LOG_AUDIT(m_lpSessionManager->GetAudit(), "authenticate spoofed user='%s' requested='%s' from='%s' method='ntlm sso' program='%s'",
+			ZLOG_AUDIT(m_lpSessionManager->GetAudit(), "authenticate spoofed user='%s' requested='%s' from='%s' method='ntlm sso' program='%s'",
 			strAnswer.c_str(), lpszName, PrettyIP(soap->ip).c_str(), szClientApp);
 			er = ZARAFA_E_LOGON_FAILED;
 		} else {
@@ -1706,14 +1706,14 @@ retry:
 			m_ulValidationMethod = METHOD_SSO;
 			er = erSuccess;
 			m_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Single sign on: User Authenticated: %s", strAnswer.c_str());
-			LOG_AUDIT(m_lpSessionManager->GetAudit(), "authenticate ok user='%s' from='%s' method='ntlm sso' program='%s'",
+			ZLOG_AUDIT(m_lpSessionManager->GetAudit(), "authenticate ok user='%s' from='%s' method='ntlm sso' program='%s'",
 			lpszName, PrettyIP(soap->ip).c_str(), szClientApp);
 		}
 
 	} else if (buffer[0] == 'N' && buffer[1] == 'A') {
 		// Not Authenticated
 		m_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Requested user '%s' denied. Not Authenticated: %s", lpszName, strAnswer.c_str());
-		LOG_AUDIT(m_lpSessionManager->GetAudit(), "authenticate failed user='%s' from='%s' method='ntlm sso' program='%s'",
+		ZLOG_AUDIT(m_lpSessionManager->GetAudit(), "authenticate failed user='%s' from='%s' method='ntlm sso' program='%s'",
 		lpszName, PrettyIP(soap->ip).c_str(), szClientApp);
 		er = ZARAFA_E_LOGON_FAILED;
 	} else {

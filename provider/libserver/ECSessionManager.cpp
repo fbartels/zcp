@@ -671,7 +671,7 @@ ECRESULT ECSessionManager::CreateSession(struct soap *soap, char *szName, char *
 	m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Failed to authenticate user %s from %s using program %s",
 					szName, from.c_str(), szClientApp ? szClientApp : "<unknown>");
 
-	LOG_AUDIT(m_lpAudit, "authenticate failed user='%s' from='%s' program='%s'",
+	ZLOG_AUDIT(m_lpAudit, "authenticate failed user='%s' from='%s' program='%s'",
 			  szName, from.c_str(), szClientApp ? szClientApp : "<unknown>");
 
 	er = ZARAFA_E_LOGON_FAILED;			
@@ -683,7 +683,7 @@ authenticated:
 	m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "User %s from %s authenticated through %s using program %s", szName, from.c_str(), method, szClientApp ? szClientApp : "<unknown>");
 	if (strcmp(ZARAFA_SYSTEM_USER, szName) != 0) {
 		/* Do not log successful SYSTEM logins */
-		LOG_AUDIT(m_lpAudit, "authenticate ok user='%s' from='%s' method='%s' program='%s'",
+		ZLOG_AUDIT(m_lpAudit, "authenticate ok user='%s' from='%s' method='%s' program='%s'",
 				  szName, from.c_str(), method, szClientApp ? szClientApp : "<unknown>");
 	}
 
@@ -691,7 +691,7 @@ authenticated:
 	if (er != erSuccess) {
 		if (er == ZARAFA_E_NO_ACCESS && szImpersonateUser != NULL && *szImpersonateUser != '\0') {
 			m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Failed attempt to impersonate user %s by user %s", szImpersonateUser, szName);
-			LOG_AUDIT(m_lpAudit, "impersonate failed user='%s', from='%s' program='%s' impersonator='%s'",
+			ZLOG_AUDIT(m_lpAudit, "impersonate failed user='%s', from='%s' program='%s' impersonator='%s'",
 					  szImpersonateUser, from.c_str(), szClientApp ? szClientApp : "<unknown>", szName);
 		} else
 			m_lpLogger->Log(EC_LOGLEVEL_FATAL, "User %s authenticated, but failed to create session. Error 0x%08X", szName, er);
@@ -701,7 +701,7 @@ authenticated:
 		m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "User %s receives session %llu", szName, *lpSessionID);
 	else {
 		m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "User %s impersonated by %s receives session %llu", szImpersonateUser, szName, *lpSessionID);
-		LOG_AUDIT(m_lpAudit, "impersonate ok user='%s', from='%s' program='%s' impersonator='%s'",
+		ZLOG_AUDIT(m_lpAudit, "impersonate ok user='%s', from='%s' program='%s' impersonator='%s'",
 				  szImpersonateUser, from.c_str(), szClientApp ? szClientApp : "<unknown>", szName);
 	}
 

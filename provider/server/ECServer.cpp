@@ -185,7 +185,7 @@ void zarafa_get_server_stats(unsigned int *lpulQueueLength,
  */
 static void process_signal(int sig)
 {
-	LOG_AUDIT(g_lpAudit, "zarafa-server signalled sig=%d", sig);
+	ZLOG_AUDIT(g_lpAudit, "zarafa-server signalled sig=%d", sig);
 
 #ifdef LINUX
 	if (!m_bNPTL)

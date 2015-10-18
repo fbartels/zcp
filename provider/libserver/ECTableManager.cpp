@@ -409,9 +409,9 @@ static void AuditStatsAccess(ECSession *lpSession, const char *access, const cha
 		
 		lpSession->GetSecurity()->GetUsername(&strUsername);
 		if (lpSession->GetSecurity()->GetImpersonator(&strImpersonator) == erSuccess) {
-			LOG_AUDIT(lpSession->GetSessionManager()->GetAudit(), "access %s table='%s stats' username=%s impersonator=%s", access, table, strUsername.c_str(), strImpersonator.c_str());
+			ZLOG_AUDIT(lpSession->GetSessionManager()->GetAudit(), "access %s table='%s stats' username=%s impersonator=%s", access, table, strUsername.c_str(), strImpersonator.c_str());
 		} else {
-			LOG_AUDIT(lpSession->GetSessionManager()->GetAudit(), "access %s table='%s stats' username=%s", access, table, strUsername.c_str());
+			ZLOG_AUDIT(lpSession->GetSessionManager()->GetAudit(), "access %s table='%s stats' username=%s", access, table, strUsername.c_str());
 		}
 	}
 }

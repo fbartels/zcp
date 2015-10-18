@@ -531,7 +531,7 @@ HRESULT ECSync::HrLoadChangeNotificationStatusStreams(LPSTREAM *lppOnlineStream,
 	if (hr != hrSuccess)
 		goto exit;
 
-	LOG_DEBUG(m_lpLogger, "Loading change notification status streams");
+	ZLOG_DEBUG(m_lpLogger, "Loading change notification status streams");
 
 	if (lppOnlineStream)
 		hr = lpOfflineStore->OpenProperty(PR_EC_CHANGE_ONL_STATE, &IID_IStream, STGM_TRANSACTED, 0, (LPUNKNOWN*)&lpOnlineStream);
@@ -576,7 +576,7 @@ HRESULT ECSync::HrSaveChangeNotificationStatusStreams()
 {
 	ASSERT(m_lpOfflineContext != NULL);
 
-	LOG_DEBUG(m_lpLogger, "Saving change notification status streams");
+	ZLOG_DEBUG(m_lpLogger, "Saving change notification status streams");
 
 	if (m_lpOnlineContext)
 		HrSaveChangeNotificationStatusStream(m_lpOnlineContext, PR_EC_CHANGE_ONL_STATE);
@@ -645,7 +645,7 @@ HRESULT ECSync::HrAddFolderSyncStateToEntryList(ECSyncContext *lpContext, SBinar
 	if (hr != hrSuccess)
 		goto exit;
 
-	LOG_DEBUG(m_lpLogger, "%p: entryid=%s, syncid=%u, changeid=%u", lpContext, bin2hex(lpsEntryID->cb, lpsEntryID->lpb).c_str(), lpsSyncState->ulSyncId, lpsSyncState->ulChangeId);
+	ZLOG_DEBUG(m_lpLogger, "%p: entryid=%s, syncid=%u, changeid=%u", lpContext, bin2hex(lpsEntryID->cb, lpsEntryID->lpb).c_str(), lpsSyncState->ulSyncId, lpsSyncState->ulChangeId);
 
 	if (lpsSyncState->ulSyncId != 0) {
 		lpEntryList->lpbin[lpEntryList->cValues].cb = sizeof *lpsSyncState;
@@ -709,7 +709,7 @@ HRESULT ECSync::HrCreateChangeNotificationStatusStreams(LPSTREAM *lppOnlineStrea
 	SizedSPropTagArray(2, sptFolder) = {2, {PR_SOURCE_KEY, PR_FOLDER_TYPE}};
 
 	if (lppOnlineStream) {
-		LOG_DEBUG(m_lpLogger, "Creating new online change notification status stream");
+		ZLOG_DEBUG(m_lpLogger, "Creating new online change notification status stream");
 
 		hr = m_lpOnlineContext->HrGetChangeAdvisor(&lpOnlineChangeAdvisor);
 		if (hr == hrSuccess)
@@ -723,7 +723,7 @@ HRESULT ECSync::HrCreateChangeNotificationStatusStreams(LPSTREAM *lppOnlineStrea
 
 
 	if (lppOfflineStream) {
-		LOG_DEBUG(m_lpLogger, "Creating new offline change notification status stream");
+		ZLOG_DEBUG(m_lpLogger, "Creating new offline change notification status stream");
 
 		hr = m_lpOnlineContext->HrGetChangeAdvisor(&lpOfflineChangeAdvisor);
 		if (hr == hrSuccess)
@@ -2669,12 +2669,12 @@ HRESULT ECSync::HrLoadSyncStatusStream(ECSyncContext *lpContext, LPMDB lpStore, 
 	ASSERT(lpStore != NULL);
 	ASSERT(PROP_TYPE(ulPropTag) == PT_BINARY);
 
-	LOG_DEBUG(m_lpLogger, "Loading sync status stream from %s", PropNameFromPropTag(ulPropTag).c_str());
+	ZLOG_DEBUG(m_lpLogger, "Loading sync status stream from %s", PropNameFromPropTag(ulPropTag).c_str());
 
 	// FIXME read the stream directly
 	hr = HrGetOneBinProp(lpStore, ulPropTag, &lpSyncStatusProp);
 	if (hr == MAPI_E_NOT_FOUND){
-		LOG_DEBUG(m_lpLogger, "Status stream not found, creating new one");
+		ZLOG_DEBUG(m_lpLogger, "Status stream not found, creating new one");
 
 		lpContext->HrClearSyncStatus();
 		hr = hrSuccess;

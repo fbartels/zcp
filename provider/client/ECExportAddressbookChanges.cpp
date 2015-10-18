@@ -166,7 +166,7 @@ HRESULT	ECExportAddressbookChanges::Config(LPSTREAM lpStream, ULONG ulFlags, IEC
     if(hr != hrSuccess)
         goto exit;
 
-	LOG_DEBUG(m_lpLogger, "Got %u address book changes from server.", m_ulChanges);
+	ZLOG_DEBUG(m_lpLogger, "Got %u address book changes from server.", m_ulChanges);
 
 	if (m_ulChanges > 0) {
 		/*
@@ -214,10 +214,10 @@ HRESULT	ECExportAddressbookChanges::Config(LPSTREAM lpStream, ULONG ulFlags, IEC
 						// This shouldn't happen since apparently we have another change for the same object.
 						if (lpLastChange->ulChangeType == ICS_AB_DELETE) {
 							// user was deleted and re-created (probably as different object class), so keep both events
-							LOG_DEBUG(m_lpLogger, "Got an ICS_AB_NEW change for an object that was deleted, modifying into CHANGE. sourcekey=%s", bin2hex(m_lpRawChanges[i].sSourceKey.cb, m_lpRawChanges[i].sSourceKey.lpb).c_str());
+							ZLOG_DEBUG(m_lpLogger, "Got an ICS_AB_NEW change for an object that was deleted, modifying into CHANGE. sourcekey=%s", bin2hex(m_lpRawChanges[i].sSourceKey.cb, m_lpRawChanges[i].sSourceKey.lpb).c_str());
 							lpLastChange->ulChangeType = ICS_AB_CHANGE;
 						} else
-							LOG_DEBUG(m_lpLogger, "Got an ICS_AB_NEW change for an object we've seen before. sourcekey=%s", bin2hex(m_lpRawChanges[i].sSourceKey.cb, m_lpRawChanges[i].sSourceKey.lpb).c_str());
+							ZLOG_DEBUG(m_lpLogger, "Got an ICS_AB_NEW change for an object we've seen before. sourcekey=%s", bin2hex(m_lpRawChanges[i].sSourceKey.cb, m_lpRawChanges[i].sSourceKey.lpb).c_str());
 						break;
 
 					case ICS_AB_CHANGE:
@@ -225,27 +225,27 @@ HRESULT	ECExportAddressbookChanges::Config(LPSTREAM lpStream, ULONG ulFlags, IEC
 						// multiple changes and we can't change an object that was just deleted.
 						// We'll ignore this in any case.
 						if (lpLastChange->ulChangeType != ICS_AB_NEW)
-							LOG_DEBUG(m_lpLogger, "Got an ICS_AB_CHANGE with something else than a ICS_AB_NEW as the previous changes. prev_change=%04x, sourcekey=%s", lpLastChange->ulChangeType, bin2hex(m_lpRawChanges[i].sSourceKey.cb, m_lpRawChanges[i].sSourceKey.lpb).c_str());
-						LOG_DEBUG(m_lpLogger, "Ignoring ICS_AB_CHANGE due to previous ICS_AB_NEW. sourcekey=%s", bin2hex(m_lpRawChanges[i].sSourceKey.cb, m_lpRawChanges[i].sSourceKey.lpb).c_str());
+							ZLOG_DEBUG(m_lpLogger, "Got an ICS_AB_CHANGE with something else than a ICS_AB_NEW as the previous changes. prev_change=%04x, sourcekey=%s", lpLastChange->ulChangeType, bin2hex(m_lpRawChanges[i].sSourceKey.cb, m_lpRawChanges[i].sSourceKey.lpb).c_str());
+						ZLOG_DEBUG(m_lpLogger, "Ignoring ICS_AB_CHANGE due to previous ICS_AB_NEW. sourcekey=%s", bin2hex(m_lpRawChanges[i].sSourceKey.cb, m_lpRawChanges[i].sSourceKey.lpb).c_str());
 						break;
 
 					case ICS_AB_DELETE:
 						if (lpLastChange->ulChangeType == ICS_AB_NEW) {
-							LOG_DEBUG(m_lpLogger, "Ignoring previous ICS_AB_NEW due to current ICS_AB_DELETE. sourcekey=%s", bin2hex(m_lpRawChanges[i].sSourceKey.cb, m_lpRawChanges[i].sSourceKey.lpb).c_str());
+							ZLOG_DEBUG(m_lpLogger, "Ignoring previous ICS_AB_NEW due to current ICS_AB_DELETE. sourcekey=%s", bin2hex(m_lpRawChanges[i].sSourceKey.cb, m_lpRawChanges[i].sSourceKey.lpb).c_str());
 							lpLastChange = NULL;	// An add and a delete results in nothing.
 						}
 
 						else if (lpLastChange->ulChangeType == ICS_AB_CHANGE) {
 							// We'll ignore the previous change and write the delete now. This way we allow another object
 							// with the same ID to be added after this object.
-							LOG_DEBUG(m_lpLogger, "Replacing previous ICS_AB_CHANGE with current ICS_AB_DELETE. sourcekey=%s", bin2hex(m_lpRawChanges[i].sSourceKey.cb, m_lpRawChanges[i].sSourceKey.lpb).c_str());
+							ZLOG_DEBUG(m_lpLogger, "Replacing previous ICS_AB_CHANGE with current ICS_AB_DELETE. sourcekey=%s", bin2hex(m_lpRawChanges[i].sSourceKey.cb, m_lpRawChanges[i].sSourceKey.lpb).c_str());
 							m_lpChanges[n++] = m_lpRawChanges[i];
 							lpLastChange = NULL;
 						}
 						break;
 
 					default:
-						LOG_DEBUG(m_lpLogger, "Got an unknown change. change=%04x, sourcekey=%s", m_lpRawChanges[i].ulChangeType, bin2hex(m_lpRawChanges[i].sSourceKey.cb, m_lpRawChanges[i].sSourceKey.lpb).c_str());
+						ZLOG_DEBUG(m_lpLogger, "Got an unknown change. change=%04x, sourcekey=%s", m_lpRawChanges[i].ulChangeType, bin2hex(m_lpRawChanges[i].sSourceKey.cb, m_lpRawChanges[i].sSourceKey.lpb).c_str());
 						break;
 				}
 			}
@@ -258,7 +258,7 @@ HRESULT	ECExportAddressbookChanges::Config(LPSTREAM lpStream, ULONG ulFlags, IEC
 	}
 
 	m_ulChanges = n;
-	LOG_DEBUG(m_lpLogger, "Got %u address book changes after sorting/filtering.", m_ulChanges);
+	ZLOG_DEBUG(m_lpLogger, "Got %u address book changes after sorting/filtering.", m_ulChanges);
 
     // Next change is first one
     m_ulThisChange = 0;
@@ -282,7 +282,7 @@ HRESULT ECExportAddressbookChanges::Synchronize(ULONG *lpulSteps, ULONG *lpulPro
     }
 
 	eid = (PABEID)m_lpChanges[m_ulThisChange].sSourceKey.lpb;
-	LOG_DEBUG(m_lpLogger, "abchange type=%04x, sourcekey=%s", m_lpChanges[m_ulThisChange].ulChangeType, bin2hex(m_lpChanges[m_ulThisChange].sSourceKey.cb, m_lpChanges[m_ulThisChange].sSourceKey.lpb).c_str());
+	ZLOG_DEBUG(m_lpLogger, "abchange type=%04x, sourcekey=%s", m_lpChanges[m_ulThisChange].ulChangeType, bin2hex(m_lpChanges[m_ulThisChange].sSourceKey.cb, m_lpChanges[m_ulThisChange].sSourceKey.lpb).c_str());
 
 	switch(m_lpChanges[m_ulThisChange].ulChangeType) {
     case ICS_AB_CHANGE:
@@ -308,7 +308,7 @@ HRESULT ECExportAddressbookChanges::Synchronize(ULONG *lpulSteps, ULONG *lpulPro
 	}
 
 	else if (hr != hrSuccess) {
-		LOG_DEBUG(m_lpLogger, "failed type=%04x, hr=%s, sourcekey=%s", m_lpChanges[m_ulThisChange].ulChangeType, stringify(hr, true).c_str(), bin2hex(m_lpChanges[m_ulThisChange].sSourceKey.cb, m_lpChanges[m_ulThisChange].sSourceKey.lpb).c_str());
+		ZLOG_DEBUG(m_lpLogger, "failed type=%04x, hr=%s, sourcekey=%s", m_lpChanges[m_ulThisChange].ulChangeType, stringify(hr, true).c_str(), bin2hex(m_lpChanges[m_ulThisChange].sSourceKey.cb, m_lpChanges[m_ulThisChange].sSourceKey.lpb).c_str());
         goto exit;
 	}
 

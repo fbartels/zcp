@@ -680,7 +680,7 @@ HRESULT ECSyncContext::HrLoadSyncStatus(SBinary *lpsSyncState)
 
 	ulStatusCount = *((ULONG*)(lpsSyncState->lpb+4));
 
-	LOG_DEBUG(m_lpLogger, "Loading sync status stream: version=%u, items=%u", ulVersion, ulStatusCount);
+	ZLOG_DEBUG(m_lpLogger, "Loading sync status stream: version=%u, items=%u", ulVersion, ulStatusCount);
 
 	ulPos = 8;
 	for (ulStatusNumber = 0; ulStatusNumber < ulStatusCount; ++ulStatusNumber) {
@@ -702,7 +702,7 @@ HRESULT ECSyncContext::HrLoadSyncStatus(SBinary *lpsSyncState)
 			goto exit;
 		}
 
-		LOG_DEBUG(m_lpLogger, "  Stream %u: size=%u, sourcekey=%s", ulStatusNumber, ulSize, bin2hex(strSourceKey.size(), (unsigned char*)strSourceKey.data()).c_str());
+		ZLOG_DEBUG(m_lpLogger, "  Stream %u: size=%u, sourcekey=%s", ulStatusNumber, ulSize, bin2hex(strSourceKey.size(), (unsigned char*)strSourceKey.data()).c_str());
 
 		hr = CreateStreamOnHGlobal(GlobalAlloc(GPTR, ulSize), true, &lpStream);
 		if (hr != hrSuccess)
@@ -740,7 +740,7 @@ HRESULT ECSyncContext::HrSaveSyncStatus(LPSPropValue *lppSyncStatusProp)
 	ulSize = m_mapSyncStatus.size();
 	strSyncStatus.append((char*)&ulSize, 4);
 
-	LOG_DEBUG(m_lpLogger, "Saving sync status stream: items=%u", ulSize);
+	ZLOG_DEBUG(m_lpLogger, "Saving sync status stream: items=%u", ulSize);
 
 	for (iSyncStatus = m_mapSyncStatus.begin(); iSyncStatus != m_mapSyncStatus.end(); ++iSyncStatus) {
 		ulSize = iSyncStatus->first.size();
@@ -754,7 +754,7 @@ HRESULT ECSyncContext::HrSaveSyncStatus(LPSPropValue *lppSyncStatusProp)
 		ulSize = sStat.cbSize.LowPart;
 		strSyncStatus.append((char*)&ulSize, 4);
 
-		LOG_DEBUG(m_lpLogger, "  Stream: size=%u, sourcekey=%s", ulSize, bin2hex(iSyncStatus->first.size(), (unsigned char*)iSyncStatus->first.data()).c_str());
+		ZLOG_DEBUG(m_lpLogger, "  Stream: size=%u, sourcekey=%s", ulSize, bin2hex(iSyncStatus->first.size(), (unsigned char*)iSyncStatus->first.data()).c_str());
 
 		hr = iSyncStatus->second->Seek(liPos, STREAM_SEEK_SET, NULL);
 		if (hr != hrSuccess)

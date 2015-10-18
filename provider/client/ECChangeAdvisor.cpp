@@ -398,17 +398,17 @@ HRESULT ECChangeAdvisor::AddKeys(LPENTRYLIST lpEntryList)
 
 	pthread_mutex_lock(&m_hConnectionLock);
 
-	LOG_DEBUG(m_lpLogger, "Adding %u keys", lpEntryList->cValues);
+	ZLOG_DEBUG(m_lpLogger, "Adding %u keys", lpEntryList->cValues);
 	
 	for (ULONG i = 0; hr == hrSuccess && i < lpEntryList->cValues; ++i) {
 		if (lpEntryList->lpbin[i].cb >= sizeof(SSyncState)) {
 			lpsSyncState = (SSyncState*)lpEntryList->lpbin[i].lpb;
 
-			LOG_DEBUG(m_lpLogger, " - Key %u: syncid=%u, changeid=%u", i, lpsSyncState->ulSyncId, lpsSyncState->ulChangeId);
+			ZLOG_DEBUG(m_lpLogger, " - Key %u: syncid=%u, changeid=%u", i, lpsSyncState->ulSyncId, lpsSyncState->ulChangeId);
 
 			// Check if we don't have this sync state already
 			if (m_mapConnections.find(lpsSyncState->ulSyncId) != m_mapConnections.end()) {
-				LOG_DEBUG(m_lpLogger, " - Key %u: duplicate!", lpsSyncState->ulSyncId);
+				ZLOG_DEBUG(m_lpLogger, " - Key %u: duplicate!", lpsSyncState->ulSyncId);
 				continue;
 			}
 
