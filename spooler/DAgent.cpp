@@ -3930,7 +3930,7 @@ static void print_help(const char *name)
 	cout << "  -F foldername\t deliver in a subfolder of the store. Eg. 'Inbox\\sales'" << endl; 
 	cout << "  -P foldername\t deliver in a subfolder of the public store. Eg. 'sales\\incoming'" << endl;
 	cout << "  -p separator\t Override default path separator (\\). Eg. '-p % -F 'Inbox%dealers\\resellers'" << endl;
-	cout << "  -C\t\t Create the subfolder if it does not exists. Default behaviour is to revert to the normal Inbox folder" << endl;
+	cout << "  -C\t\t Create the subfolder if it does not exist. Default behaviour is to revert to the normal Inbox folder" << endl;
 	cout << endl;
 	cout << "  -s\t\t Make DAgent silent. No errors will be printed, except when the calling parameters are wrong." << endl;
 	cout << "  -v\t\t Make DAgent verbose. More information on processing email rules can be printed." << endl;

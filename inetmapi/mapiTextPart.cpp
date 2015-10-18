@@ -419,7 +419,7 @@ bool mapiTextPart::findPlainTextPart(const bodyPart& part, const bodyPart& paren
 				}
 
 				// If we don't have found the plain text part here, it means that
-				// it does not exists (the MUA which built this message probably
+				// it does not exist (the MUA which built this message probably
 				// did not include it...).
 				return found;
 			}

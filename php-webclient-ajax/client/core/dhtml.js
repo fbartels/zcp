@@ -190,7 +190,7 @@ DHTML.prototype.addTextNode = function(parent, value)
 /**
  * Function will check if the elements has an firstChild.nodeValue
  * @param element: html element
- * @param value(optional): string that will be returned when firstChild.nodeValue not exists
+ * @param value(optional): string that will be returned when firstChild.nodeValue does not exist
  * @return string of firstChild.nodeValue
  */
 DHTML.prototype.getTextNode = function(element, value)

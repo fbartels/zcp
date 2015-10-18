@@ -801,7 +801,7 @@ ListModule.prototype.deleteItems = function(action)
 		}
 	}
 	
-	// Select next (or if not exists the previous) message when that message is selected)
+	// Select next (or if that does not exist, the previous) message if that message is selected
 	if (isSelected){
 		var first_entryid = entryid[entryid.length - 1];
 		if(first_entryid && first_entryid.firstChild ) {

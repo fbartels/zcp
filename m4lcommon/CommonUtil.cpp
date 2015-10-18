@@ -386,7 +386,7 @@ HRESULT HrOpenECSession(ECLogger *const lpLogger, IMAPISession **lppSession, con
 			if (!ssltest) {
 				lpLogger->Log(EC_LOGLEVEL_FATAL, "Cannot access %s: %s", sslkey_file, strerror(errno));
 
-				// do not pass sslkey if the file does not exists
+				// do not pass sslkey if the file does not exist
 				// otherwise normal connections do not work either
 				sslkey_file = NULL;
 				sslkey_password = NULL;

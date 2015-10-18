@@ -818,7 +818,7 @@
 			$properties["subfolders"] = PR_SUBFOLDERS;
 
 //			$properties["parent_display_name"] = PR_DISPLAY_NAME; // will be filled in by module
-			$properties["message_size"] = PR_MESSAGE_SIZE; // will be filled in by module if not exists
+			$properties["message_size"] = PR_MESSAGE_SIZE; // will be filled in by module if it does not exist
 			
 			$properties["deleted_on"] = PR_DELETED_ON;
 
