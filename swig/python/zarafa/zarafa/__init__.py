@@ -1516,6 +1516,49 @@ class Folder(object):
                 item.mapiobj = _openentry_raw(self.store.mapiobj, PpropFindProp(row, PR_ENTRYID).Value, MAPI_MODIFY | self.content_flag)
                 yield item
 
+    def occurrences(self, start=None, end=None):
+        if start and end:
+            startstamp = time.mktime(start.timetuple())
+            endstamp = time.mktime(end.timetuple())
+
+            # XXX use shortcuts and default type (database) to avoid MAPI snake wrestling
+            NAMED_PROPS = [MAPINAMEID(PSETID_Appointment, MNID_ID, x) for x in (33293, 33294, 33315)]
+            ids = self.mapiobj.GetIDsFromNames(NAMED_PROPS, 0)
+            duedate = ids[0] | PT_SYSTIME
+            startdate = ids[1] | PT_SYSTIME
+            recurring = ids[2] | PT_BOOLEAN
+
+            # only look at non-recurring items which overlap and all recurring items
+            restriction = SOrRestriction([
+                SOrRestriction([
+                    SAndRestriction([
+                        SPropertyRestriction(RELOP_GT, duedate, SPropValue(duedate, MAPI.Time.unixtime(startstamp))),
+                        SPropertyRestriction(RELOP_LT, startdate, SPropValue(startdate, MAPI.Time.unixtime(endstamp))),
+                    ]),
+                    SAndRestriction([
+                        SPropertyRestriction(RELOP_EQ, startdate, SPropValue(startdate, MAPI.Time.unixtime(startstamp))),
+                        SPropertyRestriction(RELOP_EQ, duedate, SPropValue(duedate, MAPI.Time.unixtime(startstamp))),
+                    ]),
+                ]),
+                SAndRestriction([
+                    SPropertyRestriction(RELOP_EQ, recurring, SPropValue(recurring, True))
+                ])
+            ])
+
+            table = self.mapiobj.GetContentsTable(0)
+            table.SetColumns([PR_ENTRYID], 0)
+            table.Restrict(restriction, 0)
+            rows = table.QueryRows(-1, 0)
+            for row in rows:
+                entryid = row[0].Value.encode('hex')
+                for occurrence in self.item(entryid).occurrences(start, end):
+                    yield occurrence
+
+        else:
+            for item in self:
+                for occurrence in item.occurrences(start, end):
+                    yield occurrence
+
     def create_item(self, eml=None, ics=None, vcf=None, load=None, loads=None, **kwargs): # XXX associated
         item = Item(self, eml=eml, ics=ics, vcf=vcf, load=load, loads=loads, create=True)
         item.server = self.server
@@ -2111,6 +2154,23 @@ class Item(object):
     def recurrence(self):
         return Recurrence(self)
 
+    def occurrences(self, start=None, end=None):
+        try:
+            if self.recurring:
+                recurrences = self.recurrence.recurrences
+                if start and end:
+                    recurrences = recurrences.between(start, end)
+                for d in recurrences:
+                    occ = Occurrence(self, d, d+datetime.timedelta(hours=1)) # XXX
+                    if (not start or occ.start >= start) and (not end or occ.end < end): # XXX slow for now; overlaps with start, end?
+                        yield occ
+            else:
+                occ = Occurrence(self, self.start, self.end)
+                if (not start or occ.start >= start) and (not end or occ.end < end):
+                    yield occ
+        except MAPIErrorNotFound: # XXX shouldn't happen
+            pass
+
     @to.setter
     def to(self, addrs):
         if isinstance(addrs, (str, unicode)):
@@ -2330,6 +2390,22 @@ class Body:
     def __repr__(self):
         return unicode(self).encode(sys.stdout.encoding or 'utf8')
 
+class Occurrence(object):
+    def __init__(self, item, start, end):
+        self.item = item
+        self.start = start
+        self.end = end
+
+    def __getattr__(self, x):
+        return getattr(self.item, x)
+
+    def __unicode__(self):
+        return u'Occurrence(%s)' % self.subject
+
+    def __repr__(self):
+        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+
+
 class Recurrence:
     def __init__(self, item): # XXX just readable start/end for now
         from dateutil.rrule import WEEKLY, DAILY, MONTHLY, MO, TU, TH, FR, WE, SA, SU, rrule, rruleset
@@ -2392,6 +2468,8 @@ class Recurrence:
         self.endtime_offset = _unpack_long(value, pos) # XXX: type?
         pos += LONG
 
+        self.start = datetime.datetime(self.start.year, self.start.month, self.start.day) + datetime.timedelta(minutes=self.startime_offset)
+        self.end = datetime.datetime(self.end.year, self.end.month, self.end.day) + datetime.timedelta(minutes=self.endtime_offset)
         
         # Exceptions
         self.exception_count = _unpack_short(value, pos)
@@ -2460,11 +2538,11 @@ class Recurrence:
             self.exceptions.append(exception)
 
 
-        # FIXME: move to class Item?
-        self.clipend = item.prop('appointment:33334').value
-        self.clipstart = item.prop('appointment:33333').value 
+        # FIXME: move to class Item? XXX also some of these properties do not seem to exist when syncing over Z-push
+#        self.clipend = item.prop('appointment:33334').value
+#        self.clipstart = item.prop('appointment:33333').value
         self.recurrence_pattern = item.prop('appointment:33330').value
-        self.invited = item.prop('appointment:33321').value
+#        self.invited = item.prop('appointment:33321').value
 
         # FIXME; doesn't dateutil have a list of this?
         rrule_weekdays = {0: SU, 1: MO, 2: TU, 3: WE, 4: TH, 5: FR, 6: SA} # FIXME: remove above
@@ -2496,8 +2574,12 @@ class Recurrence:
             self.recurrences = rrule(MONTHLY, dtstart=self.start, until=self.end, bymonthday=self.pattern, interval=self.period)
             # self.pattern is either day of month or 
         elif self.patterntype == 3: # MONTHY, YEARLY
+            byweekday = () # Set
+            for index, week in rrule_weekdays.iteritems():
+                if (weekday >> index ) & 1:
+                    byweekday += (week(weeknumber),)
             # Yearly, the last XX of YY
-            self.recurrences = rrule(MONTHLY, dtstart=self.start, until=self.end, interval=self.period)
+            self.recurrences = rrule(MONTHLY, dtstart=self.start, until=self.end, interval=self.period, byweekday=byweekday)
 
     def __unicode__(self):
         return u'Recurrence(start=%s - end=%s)' % (self.start, self.end)
