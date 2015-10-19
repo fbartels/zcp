@@ -274,17 +274,13 @@ static HRESULT ProcessFolder(ZarafaFsck *lpFsck, LPMAPIFOLDER lpFolder,
 			}
 		}
 
-		if (lpRows) {
-			FreeProws(lpRows);
-			lpRows = NULL;
-		}
-	}
-
-exit:
-	if (lpRows) {
 		FreeProws(lpRows);
 		lpRows = NULL;
 	}
+
+exit:
+	if (lpRows)
+		FreeProws(lpRows);
 
 	if (lpTable)
 		lpTable->Release();
