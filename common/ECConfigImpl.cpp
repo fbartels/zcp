@@ -90,7 +90,7 @@ ECConfigImpl::ECConfigImpl(const configsetting_t *lpDefaults,
     const char *const *lpszDirectives)
 {
 	pthread_rwlock_init(&m_settingsRWLock, NULL);
-	
+	m_szConfigFile = NULL;
 	m_lpDefaults = lpDefaults;
 
 	// allowed directives in this config object
