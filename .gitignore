@@ -228,9 +228,6 @@ Makefile.in
 /php-webclient-ajax/tmp
 /php-webclient-ajax/config.php
 
-# /php-webclient-ajax/client/widgets/fckeditor/
-/php-webclient-ajax/client/widgets/fckeditor/editor
-
 # /php-webclient-ajax/server/language/da_DK.UTF-8/LC_MESSAGES/
 /php-webclient-ajax/server/language/da_DK.UTF-8/LC_MESSAGES/*.mo
 
