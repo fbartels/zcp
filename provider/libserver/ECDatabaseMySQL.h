@@ -137,8 +137,8 @@ private:
 	unsigned int GetInsertId();
 
 	// Datalocking methods
-	bool Lock();
-	bool UnLock();
+	void Lock();
+	void UnLock();
 
 	// Connection methods
 	bool isConnected();
@@ -159,7 +159,6 @@ private:
 	pthread_mutex_t		m_hMutexMySql;
 	bool				m_bAutoLock;
 	unsigned int 		m_ulMaxAllowedPacket;
-	bool				m_bLocked;
 	bool				m_bFirstResult;
 	static std::string	m_strDatabaseDir;
 	ECConfig *			m_lpConfig;

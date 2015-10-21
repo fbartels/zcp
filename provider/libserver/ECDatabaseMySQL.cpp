@@ -342,7 +342,6 @@ ECDatabaseMySQL::ECDatabaseMySQL(ECLogger *lpLogger, ECConfig *lpConfig)
 {
 	m_bMysqlInitialize	= false;
 	m_bConnected		= false;
-	m_bLocked			= false;
 	m_bAutoLock			= true;
 	m_lpLogger			= lpLogger;
 	m_lpConfig			= lpConfig;
@@ -765,24 +764,15 @@ ECRESULT ECDatabaseMySQL::Close()
 }
 
 // Get database ownership
-bool ECDatabaseMySQL::Lock()
+void ECDatabaseMySQL::Lock()
 {
-
 	pthread_mutex_lock(&m_hMutexMySql);
-
-	m_bLocked = true;
-
-	return m_bLocked;
 }
 
 // Release the database ownership
-bool ECDatabaseMySQL::UnLock()
+void ECDatabaseMySQL::UnLock()
 {
 	pthread_mutex_unlock(&m_hMutexMySql);
-
-	m_bLocked = false;
-		
-	return m_bLocked;
 }
 
 bool ECDatabaseMySQL::isConnected() {
