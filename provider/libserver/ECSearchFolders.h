@@ -438,7 +438,7 @@ private:
      * @param[in] bNotify TRUE on a live system, FALSE if only the database must be updated.
      * @return result
      */
-    virtual ECRESULT ProcessCandidateRows(ECDatabase *lpDatabase, ECSession *lpSession, struct restrictTable *lpRestrict, bool *lpbCancel, unsigned int ulStoreId, unsigned int ulFolderId, ECODStore *ecODStore, ECObjectTableList ecRows, struct propTagArray *lpPropTags, ECLocale locale, bool bNotify);
+    virtual ECRESULT ProcessCandidateRows(ECDatabase *lpDatabase, ECSession *lpSession, struct restrictTable *lpRestrict, bool *lpbCancel, unsigned int ulStoreId, unsigned int ulFolderId, ECODStore *ecODStore, ECObjectTableList ecRows, struct propTagArray *lpPropTags, const ECLocale &locale, bool bNotify);
 
     // Map StoreID -> SearchFolderId -> SearchCriteria
     // Because searchfolders only work within a store, this allows us to skip 99% of all

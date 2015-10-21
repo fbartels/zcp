@@ -976,7 +976,11 @@ exit:
  * @param[in] bNotify TRUE if we should notify tables in this function, see note about transactions above
  * @return result
  */
-ECRESULT ECSearchFolders::ProcessCandidateRows(ECDatabase *lpDatabase, ECSession *lpSession, struct restrictTable *lpRestrict, bool *lpbCancel, unsigned int ulStoreId, unsigned int ulFolderId, ECODStore *lpODStore, ECObjectTableList ecRows, struct propTagArray *lpPropTags, ECLocale locale, bool bNotify)
+ECRESULT ECSearchFolders::ProcessCandidateRows(ECDatabase *lpDatabase,
+    ECSession *lpSession, struct restrictTable *lpRestrict, bool *lpbCancel,
+    unsigned int ulStoreId, unsigned int ulFolderId, ECODStore *lpODStore,
+    ECObjectTableList ecRows, struct propTagArray *lpPropTags,
+    const ECLocale &locale, bool bNotify)
 {
     ECRESULT er = erSuccess;
 	ECObjectTableList::iterator iterRows;
