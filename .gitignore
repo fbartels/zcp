@@ -107,9 +107,6 @@ Makefile.in
 /php-webclient-ajax/tmp
 /php-webclient-ajax/config.php
 
-# /php-webclient-ajax/client/widgets/fckeditor/
-/php-webclient-ajax/client/widgets/fckeditor/editor
-
 ## /provider/ECProps/
 #/provider/ECProps/Debug
 #
