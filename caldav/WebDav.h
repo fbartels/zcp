@@ -180,7 +180,7 @@ private:
 	HRESULT RegisterNs(std::string strNs, std::string *strPrefix);
 	HRESULT WriteData(xmlTextWriterPtr xmlWriter, WEBDAVVALUE sWebVal,std::string *szNsPrefix);
 	HRESULT WriteNode(xmlTextWriterPtr xmlWriter, WEBDAVPROPNAME sWebPrName,std::string *szNsPrefix);
-	HRESULT HrWriteSResponse(xmlTextWriterPtr xmlWriter,std::string *lpstrNsPrefix, WEBDAVRESPONSE sResponse);
+	HRESULT HrWriteSResponse(xmlTextWriterPtr xmlWriter,std::string *lpstrNsPrefix, const WEBDAVRESPONSE &sResponse);
 	HRESULT HrWriteResponseProps(xmlTextWriterPtr xmlWriter, std::string *lpstrNsPrefix, std::list<WEBDAVPROPERTY> *lstProps);
 	HRESULT HrWriteSPropStat(xmlTextWriterPtr xmlWriter,std::string *lpstrNsPrefix, WEBDAVPROPSTAT sPropStat);
 	HRESULT HrWriteItems(xmlTextWriterPtr xmlWriter, std::string *lpstrNsPrefix,WEBDAVPROPERTY *lpsWebProprty);

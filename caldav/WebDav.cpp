@@ -998,7 +998,8 @@ HRESULT WebDav::GetNs(std::string * lpstrPrefx, std::string *lpstrNs)
  * @param[in]	sResponse		WEBDAVRESPONSE structure to be converted to xml data
  * @return		HRESULT 
  */
-HRESULT WebDav::HrWriteSResponse(xmlTextWriterPtr xmlWriter,std::string *lpstrNsPrefix ,WEBDAVRESPONSE sResponse)
+HRESULT WebDav::HrWriteSResponse(xmlTextWriterPtr xmlWriter,
+    std::string *lpstrNsPrefix, const WEBDAVRESPONSE &sResponse)
 {
 	HRESULT hr = hrSuccess;
 	WEBDAVRESPONSE sWebResp;
