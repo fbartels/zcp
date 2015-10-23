@@ -800,6 +800,8 @@ HRESULT HrListen(ECLogger *lpLogger, const char *szBind, int ulPort, int *lpulLi
 	*lpulListenSocket = fd;
 
 exit:
+	if (hr != hrSuccess)
+		close(fd);
 	return hr;
 }
 
