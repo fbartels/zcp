@@ -2211,6 +2211,10 @@ ECRESULT ECUserManagement::QueryContentsRowData(struct soap *soap, ECObjectTable
 	*lppRowSet = lpsRowSet;
 
 exit:
+	if (er != erSuccess && lpsRowSet != NULL) {
+		s_free(soap, lpsRowSet->__ptr);
+		s_free(soap, lpsRowSet);
+	}
 	return er;
 }
 
