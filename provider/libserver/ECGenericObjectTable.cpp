@@ -1675,9 +1675,13 @@ next:
         lpSortFlags = NULL;
     }
     
-    // We don't generate notifications for this event, just like ExpandRow and CollapseRow. You just need to reload the table yourself.
-    soap_end_recv(&xmlsoap);
-    
+	/*
+	 * We do not generate notifications for this event, just like
+	 * ExpandRow and CollapseRow. You just need to reload the table
+	 * yourself.
+	 */
+	if (soap_end_recv(&xmlsoap) != 0)
+		er = ZARAFA_E_NETWORK_ERROR;
     
 exit:
 	soap_destroy(&xmlsoap);

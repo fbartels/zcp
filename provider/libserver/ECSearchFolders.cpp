@@ -1796,15 +1796,18 @@ ECRESULT ECSearchFolders::LoadSearchCriteria(unsigned int ulStoreId, unsigned in
 		soap_get_searchCriteria(&xmlsoap, lpSearchCriteria, "SearchCriteria", NULL);
 
 		// We now have the object, allocated by xmlsoap object,
-		soap_end_recv(&xmlsoap);
-		
-        er = CopySearchCriteria(NULL, lpSearchCriteria, lppSearchCriteria);
+		if (soap_end_recv(&xmlsoap) != 0)
+			er = ZARAFA_E_NETWORK_ERROR;
+		else
+			er = CopySearchCriteria(NULL, lpSearchCriteria, lppSearchCriteria);
 
-        // we don't need the error here: lppSearchCriteria won't be touched, and we need to free the soap structs
-
-	soap_destroy(&xmlsoap);
-    	soap_end(&xmlsoap);
-        soap_done(&xmlsoap);
+		/*
+		 * We do not need the error here: lppSearchCriteria will not be
+		 * touched, and we need to free the soap structs.
+		 */
+		soap_destroy(&xmlsoap);
+		soap_end(&xmlsoap);
+		soap_done(&xmlsoap);
 	} else {
 		er = ZARAFA_E_NOT_FOUND;
 	}

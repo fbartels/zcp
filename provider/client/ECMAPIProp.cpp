@@ -717,7 +717,10 @@ HRESULT ECMAPIProp::SetSerializedACLData(LPSPropValue lpsPropValue)
 			hr = MAPI_E_CORRUPT_DATA;
 			goto exit;
 		}
-		soap_end_recv(&soap); 
+		if (soap_end_recv(&soap) != 0) {
+			hr = MAPI_E_NETWORK_ERROR;
+			goto exit;
+		}
 	}
 
 	hr = MAPIAllocateBuffer(rights.__size * sizeof(ECPERMISSION), &ptrPerms);

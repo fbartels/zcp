@@ -100,7 +100,10 @@ ECRESULT ConvertSearchCriteria52XTo6XX(ECDatabase *lpDatabase, char* lpData, str
 	soap_get_searchCriteria52X(&xmlsoap, lpSearchCriteria, "SearchCriteria", NULL);
 
 	// We now have the object, allocated by xmlsoap object,
-	soap_end_recv(&xmlsoap);
+	if (soap_end_recv(&xmlsoap) != 0) {
+		er = ZARAFA_E_NETWORK_ERROR;
+		goto exit;
+	}
 
 	lpNewSearchCriteria = new struct searchCriteria;
 	memset(lpNewSearchCriteria, 0, sizeof(struct searchCriteria));
