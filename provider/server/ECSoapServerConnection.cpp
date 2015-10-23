@@ -42,7 +42,7 @@
  */
 
 #include <zarafa/platform.h>
-
+#include <ctime>
 #include <zarafa/ECLogger.h>
 
 #ifdef HAVE_SYS_STAT_H
@@ -194,13 +194,17 @@ int relocate_fd(int fd, ECLogger *lpLogger)
 		 * The range start (typical_limit) was already >=RLIMIT_NOFILE.
 		 * Just stay silent.
 		 */
-		static bool warned_once = false;
+		static bool warned_once;
 		if (warned_once)
 			return fd;
 		warned_once = true;
 		lpLogger->Log(EC_LOGLEVEL_WARNING, "F_DUPFD yielded EINVAL\n");
 		return fd;
 	}
+	static time_t warned_last;
+	time_t now = time(NULL);
+	if (warned_last + 60 > now)
+		return fd;
 	lpLogger->Log(EC_LOGLEVEL_NOTICE,
 		"Relocation of FD %d into high range (%d+) could not be completed: "
 		"%s. Keeping old number.\n", fd, typical_limit, strerror(errno));
