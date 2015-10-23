@@ -412,7 +412,7 @@ ECRESULT ABIDToEntryID(struct soap *soap, unsigned int ulID, const objectid_t& s
 	lpUserEid->ulId = ulID;
 	er = TypeToMAPIType(sExternId.objclass, &lpUserEid->ulType);
 	if (er != erSuccess) {
-		free(lpUserEid);
+		s_free(soap, lpUserEid);
 		goto exit;				// 	or make default type user?
 	}
 
