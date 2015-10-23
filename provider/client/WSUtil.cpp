@@ -2264,7 +2264,8 @@ exit:
 	return hr;
 }
 
-HRESULT CreateSoapTransport(ULONG ulUIFlags, sGlobalProfileProps sProfileProps, ZarafaCmd **lppCmd)
+HRESULT CreateSoapTransport(ULONG ulUIFlags, const sGlobalProfileProps
+    &sProfileProps, ZarafaCmd **const lppCmd)
 {
 	return CreateSoapTransport(ulUIFlags,
 							sProfileProps.strServerPath,
