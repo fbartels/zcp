@@ -84,7 +84,7 @@ namespace details {
 #if WIN32
 		swprintf(szBuff, L"0x%p", lpVoid);
 #else
-		swprintf(szBuff, sizeof(szBuff), L"0x%p", lpVoid);
+		swprintf(szBuff, ARRAY_SIZE(szBuff), L"0x%p", lpVoid);
 #endif
 		return szBuff;
 	}
