@@ -738,7 +738,8 @@ HRESULT HrListen(ECLogger *lpLogger, const char *szPath, int *lpulListenSocket)
 exit:
 	if (prevmask)
 		umask(prevmask);
-
+	if (hr != hrSuccess && fd != -1)
+		close(fd);
 	return hr;
 #endif
 }
