@@ -193,7 +193,6 @@ HRESULT	UserListCollector<string_type, prAccount>::GetRequiredPropTags(LPMAPIPRO
 template<typename string_type, ULONG prAccount>
 HRESULT UserListCollector<string_type, prAccount>::CollectData(LPMAPITABLE lpStoreTable) {
 	HRESULT hr = hrSuccess;
-	std::list<string_type> lstUsers;
 
 	while (true) {
 		SRowSetPtr ptrRows;
@@ -224,9 +223,6 @@ HRESULT UserListCollector<string_type, prAccount>::CollectData(LPMAPITABLE lpSto
 		if (ptrRows.size() < 50)
 			break;
 	}
-
-	lstUsers.splice(m_lstUsers.end(), lstUsers);
-
 exit:
 	return hr;
 }
