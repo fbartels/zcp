@@ -107,15 +107,17 @@ static int gsoap_connect_pipe(struct soap *soap, const char *endpoint,
 
 	soap->socket = SOAP_INVALID_SOCKET;
 
-	if (strncmp(endpoint, "file://", 7) || strchr(endpoint+7,'/') == NULL)
-   	{
-      	return SOAP_EOF;
-	}
+	if (strncmp(endpoint, "file://", 7) != 0)
+		return SOAP_EOF;
+	const char *socket_name = strchr(endpoint + 7, '/');
+	if (socket_name == NULL ||
+	    strlen(socket_name) > sizeof(saddr.sun_path))
+		return SOAP_EOF;
 
 	fd = socket(PF_UNIX, SOCK_STREAM, 0);
 
 	saddr.sun_family = AF_UNIX;
-	strcpy(saddr.sun_path, strchr(endpoint+7,'/'));
+	strncpy(saddr.sun_path, socket_name, sizeof(saddr.sun_path));
 
 	connect(fd, (struct sockaddr *)&saddr, sizeof(struct sockaddr_un));
 
