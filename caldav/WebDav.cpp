@@ -213,8 +213,8 @@ HRESULT WebDav::RespStructToXml(WEBDAVMULTISTATUS *sDavMStatus, std::string *str
 	HRESULT hr = hrSuccess;
 	int ulRet = 0;
 	std::string strNsPrefix;
-	xmlTextWriterPtr xmlWriter = NULL;
-	xmlBufferPtr xmlBuff = NULL;
+	xmlTextWriter *xmlWriter = NULL;
+	xmlBuffer *xmlBuff = NULL;
 	std::list<WEBDAVRESPONSE>::iterator iterResp;
 	std::string strNs;	
 	std::map<std::string,std::string>::iterator iterMapNS;
@@ -863,8 +863,8 @@ exit:
  * @return		HRESULT
  * @retval		MAPI_E_CALL_FAILED	Unable to write xml data
  */
-HRESULT WebDav::WriteData(xmlTextWriterPtr xmlWriter,
-    const WEBDAVVALUE &sWebVal, std::string *szNsPrefix)
+HRESULT WebDav::WriteData(xmlTextWriter *xmlWriter, const WEBDAVVALUE &sWebVal,
+    std::string *szNsPrefix)
 {
 	std::string strNs;
 	int ulRet = 0;
@@ -914,7 +914,7 @@ exit:
  * @param[in]	lpstrNsPrefix	current namespace prefix
  * @return		HRESULT
  */
-HRESULT WebDav::WriteNode(xmlTextWriterPtr xmlWriter,
+HRESULT WebDav::WriteNode(xmlTextWriter *xmlWriter,
     const WEBDAVPROPNAME &sWebPropName, std::string *lpstrNsPrefix)
 {
 	std::string strNs;
@@ -1000,7 +1000,7 @@ HRESULT WebDav::GetNs(std::string * lpstrPrefx, std::string *lpstrNs)
  * @param[in]	sResponse		WEBDAVRESPONSE structure to be converted to xml data
  * @return		HRESULT 
  */
-HRESULT WebDav::HrWriteSResponse(xmlTextWriterPtr xmlWriter,
+HRESULT WebDav::HrWriteSResponse(xmlTextWriter *xmlWriter,
     std::string *lpstrNsPrefix, const WEBDAVRESPONSE &sResponse)
 {
 	HRESULT hr = hrSuccess;
@@ -1051,7 +1051,8 @@ HRESULT WebDav::HrWriteSResponse(xmlTextWriterPtr xmlWriter,
  * @param[in]	lplstProps		WEBDAVPROPERTY list to be converted to xml data
  * @return		HRESULT 
  */
-HRESULT WebDav::HrWriteResponseProps(xmlTextWriterPtr xmlWriter, std::string *lpstrNsPrefix, std::list<WEBDAVPROPERTY> *lplstProps)
+HRESULT WebDav::HrWriteResponseProps(xmlTextWriter *xmlWriter,
+    std::string *lpstrNsPrefix, std::list<WEBDAVPROPERTY> *lplstProps)
 {
 	HRESULT hr = hrSuccess;
 	std::list<WEBDAVPROPERTY>::iterator iterProp;
@@ -1107,7 +1108,7 @@ HRESULT WebDav::HrWriteResponseProps(xmlTextWriterPtr xmlWriter, std::string *lp
  * @param[in]	lpsPropStat		WEBDAVPROPSTAT structure to be converted to xml data
  * @return		HRESULT 
  */
-HRESULT WebDav::HrWriteSPropStat(xmlTextWriterPtr xmlWriter,
+HRESULT WebDav::HrWriteSPropStat(xmlTextWriter *xmlWriter,
     std::string *lpstrNsPrefix, const WEBDAVPROPSTAT &lpsPropStat)
 {
 	HRESULT hr = hrSuccess;
@@ -1190,7 +1191,8 @@ HRESULT WebDav::HrWriteSPropStat(xmlTextWriterPtr xmlWriter,
  * @param[in]	lpsWebProperty	WEBDAVPROPERTY structure containing the list of items
  * @return		HRESULT			Always returns hrSuccess
  */
-HRESULT WebDav::HrWriteItems(xmlTextWriterPtr xmlWriter, std::string *lpstrNsPrefix,WEBDAVPROPERTY *lpsWebProperty)
+HRESULT WebDav::HrWriteItems(xmlTextWriter *xmlWriter,
+    std::string *lpstrNsPrefix, WEBDAVPROPERTY *lpsWebProperty)
 {
 	HRESULT hr = hrSuccess;
 	WEBDAVITEM sDavItem;
@@ -1495,7 +1497,7 @@ HRESULT WebDav::HrMkCalendar()
 
 		// @todo we should have a generic xml to structs converter, this is *way* too hackish
 		if (sProperty.sPropName.strPropname.compare("supported-calendar-component-set") == 0) {
-			xmlNodePtr lpXmlChild = lpXmlNode->children;
+			xmlNode *lpXmlChild = lpXmlNode->children;
 			while (lpXmlChild) {
 				if (lpXmlChild->type == XML_ELEMENT_NODE && xmlStrcmp(lpXmlChild->name, (const xmlChar *)"comp") == 0) {
 					if (lpXmlChild->properties && lpXmlChild->properties->children && lpXmlChild->properties->children->content)
