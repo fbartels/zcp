@@ -178,17 +178,17 @@ private:
 	HRESULT RespStructToXml(WEBDAVMULTISTATUS *sDavMStatus, std::string *strXml);
 	HRESULT GetNs(std::string *szPrefx, std::string *strNs);
 	HRESULT RegisterNs(std::string strNs, std::string *strPrefix);
-	HRESULT WriteData(xmlTextWriterPtr xmlWriter, WEBDAVVALUE sWebVal,std::string *szNsPrefix);
-	HRESULT WriteNode(xmlTextWriterPtr xmlWriter, WEBDAVPROPNAME sWebPrName,std::string *szNsPrefix);
+	HRESULT WriteData(xmlTextWriterPtr xmlWriter, const WEBDAVVALUE &sWebVal, std::string *szNsPrefix);
+	HRESULT WriteNode(xmlTextWriterPtr xmlWriter, const WEBDAVPROPNAME &sWebPrName, std::string *szNsPrefix);
 	HRESULT HrWriteSResponse(xmlTextWriterPtr xmlWriter,std::string *lpstrNsPrefix, const WEBDAVRESPONSE &sResponse);
 	HRESULT HrWriteResponseProps(xmlTextWriterPtr xmlWriter, std::string *lpstrNsPrefix, std::list<WEBDAVPROPERTY> *lstProps);
-	HRESULT HrWriteSPropStat(xmlTextWriterPtr xmlWriter,std::string *lpstrNsPrefix, WEBDAVPROPSTAT sPropStat);
+	HRESULT HrWriteSPropStat(xmlTextWriterPtr xmlWriter,std::string *lpstrNsPrefix, const WEBDAVPROPSTAT &sPropStat);
 	HRESULT HrWriteItems(xmlTextWriterPtr xmlWriter, std::string *lpstrNsPrefix,WEBDAVPROPERTY *lpsWebProprty);
 
 	HRESULT HrSetDavPropName(WEBDAVPROPNAME *lpsDavPropName,xmlNode *lpXmlNode);
 protected:
-	HRESULT HrSetDavPropName(WEBDAVPROPNAME *lpsDavPropName,std::string strPropName,std::string strNs);
-	HRESULT HrSetDavPropName(WEBDAVPROPNAME *lpsDavPropName,std::string strPropName, std::string strPropAttribName, std::string strPropAttribValue, std::string strNs);
+	HRESULT HrSetDavPropName(WEBDAVPROPNAME *lpsDavPropName, const std::string &strPropName, const std::string &strNs);
+	HRESULT HrSetDavPropName(WEBDAVPROPNAME *lpsDavPropName, const std::string &strPropName, const std::string &strPropAttribName, const std::string &strPropAttribValue, const std::string &strNs);
 
 };
 

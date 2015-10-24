@@ -863,7 +863,8 @@ exit:
  * @return		HRESULT
  * @retval		MAPI_E_CALL_FAILED	Unable to write xml data
  */
-HRESULT WebDav::WriteData(xmlTextWriterPtr xmlWriter, WEBDAVVALUE sWebVal, std::string * szNsPrefix)
+HRESULT WebDav::WriteData(xmlTextWriterPtr xmlWriter,
+    const WEBDAVVALUE &sWebVal, std::string *szNsPrefix)
 {
 	std::string strNs;
 	int ulRet = 0;
@@ -913,7 +914,8 @@ exit:
  * @param[in]	lpstrNsPrefix	current namespace prefix
  * @return		HRESULT
  */
-HRESULT WebDav::WriteNode(xmlTextWriterPtr xmlWriter, WEBDAVPROPNAME sWebPropName, std::string * lpstrNsPrefix)
+HRESULT WebDav::WriteNode(xmlTextWriterPtr xmlWriter,
+    const WEBDAVPROPNAME &sWebPropName, std::string *lpstrNsPrefix)
 {
 	std::string strNs;
 	int ulRet = 0;
@@ -1105,7 +1107,8 @@ HRESULT WebDav::HrWriteResponseProps(xmlTextWriterPtr xmlWriter, std::string *lp
  * @param[in]	lpsPropStat		WEBDAVPROPSTAT structure to be converted to xml data
  * @return		HRESULT 
  */
-HRESULT WebDav::HrWriteSPropStat(xmlTextWriterPtr xmlWriter, std::string *lpstrNsPrefix, WEBDAVPROPSTAT lpsPropStat)
+HRESULT WebDav::HrWriteSPropStat(xmlTextWriterPtr xmlWriter,
+    std::string *lpstrNsPrefix, const WEBDAVPROPSTAT &lpsPropStat)
 {
 	HRESULT hr = hrSuccess;
 	WEBDAVPROPSTAT sWebPropStat;
@@ -1283,7 +1286,8 @@ HRESULT WebDav::HrSetDavPropName(WEBDAVPROPNAME *lpsDavPropName, xmlNode *lpXmlN
  *
  * @return		HRESULT		Always returns hrsuccess
  */
-HRESULT WebDav::HrSetDavPropName(WEBDAVPROPNAME *lpsDavPropName, std::string strPropName, std::string strNs)
+HRESULT WebDav::HrSetDavPropName(WEBDAVPROPNAME *lpsDavPropName,
+    const std::string &strPropName, const std::string &strNs)
 {
 	lpsDavPropName->strPropname.assign(strPropName);
 	lpsDavPropName->strNS.assign(strNs);
@@ -1308,7 +1312,9 @@ HRESULT WebDav::HrSetDavPropName(WEBDAVPROPNAME *lpsDavPropName, std::string str
  *
  * @return		HRESULT		Always returns hrsuccess
  */
-HRESULT WebDav::HrSetDavPropName(WEBDAVPROPNAME *lpsDavPropName,std::string strPropName, std::string strPropAttribName, std::string strPropAttribValue, std::string strNs)
+HRESULT WebDav::HrSetDavPropName(WEBDAVPROPNAME *lpsDavPropName,
+    const std::string &strPropName, const std::string &strPropAttribName,
+    const std::string &strPropAttribValue, const std::string &strNs)
 {
 	lpsDavPropName->strPropname.assign(strPropName);
 	lpsDavPropName->strNS.assign(strNs);
