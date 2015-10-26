@@ -101,7 +101,7 @@ if(!function_exists('hex2bin')){
     }
 }
 
-function debuglog($message)
+function debugLog($message)
 {
     global $DEBUG;
     

@@ -276,7 +276,7 @@ function getPolicy($store)
     return $flags;
 }
 
-function debuglog($message)
+function debugLog($message)
 {
     global $DEBUG;
     
@@ -333,7 +333,7 @@ function autoRespond($session, $store, $entryid, $capacity, $policy)
     $calendar = getCalendar($store);
     
     if(!$calendar) {
-        debuglog("Unable to open calendar.\n");
+        debugLog("Unable to open calendar.\n");
         return false;
     }
     
@@ -362,7 +362,7 @@ function autoRespond($session, $store, $entryid, $capacity, $policy)
         
         if(isset($props[$proptags['recurring']]) && $props[$proptags['recurring']] && ($policy & POLICY_DECLINE_RECURRING_MEETING_REQUESTS)) {
             $mr->doDecline(true, false, false, _("Recurring meetings are not allowed"));
-            debuglog("Declined due to recurrence against non-recurring policy.\n");
+            debugLog("Declined due to recurrence against non-recurring policy.\n");
             return true;
         }
         
@@ -393,15 +393,15 @@ function autoRespond($session, $store, $entryid, $capacity, $policy)
                 $start = $reqitem[$proptags['startdate']];
                 $end = $reqitem[$proptags['duedate']];
                 
-                debuglog("Checking availability from " . strftime("%x %X", $start) . " to " . strftime("%x %X", $end) . "\n");
+                debugLog("Checking availability from " . strftime("%x %X", $start) . " to " . strftime("%x %X", $end) . "\n");
                 
                 $items = intersectAppointmentWithList($reqitem, $possibleconflicts, $proptags);
                 
-                debuglog("Found " . count($items) . " overlapping records\n");
+                debugLog("Found " . count($items) . " overlapping records\n");
                 
                 $currentdepth = getOverlapDepth($items, $proptags, $props[$proptags['goid2']]);
                 
-                debuglog("Overlap depth is " . $currentdepth . "\n");
+                debugLog("Overlap depth is " . $currentdepth . "\n");
                 
                 if($currentdepth >= $capacity) {
                     $conflicts[] = $reqitem;
@@ -421,7 +421,7 @@ function autoRespond($session, $store, $entryid, $capacity, $policy)
                 }
                 
                 $mr->doDecline(true, false, false, $body);
-                debuglog("Declined due to capacity reached.\n");
+                debugLog("Declined due to capacity reached.\n");
                 return true;
             }
         }
@@ -429,10 +429,10 @@ function autoRespond($session, $store, $entryid, $capacity, $policy)
         // Checks passed, book the meeting
         $ceid = $mr->doAccept(false, true, true);
 		if ($ceid === false) {
-			debuglog("Failed to accept: " . sprintf("0x%X", mapi_last_hresult()) . "\n");
+			debugLog("Failed to accept: " . sprintf("0x%X", mapi_last_hresult()) . "\n");
 			return false;
 		}
-        debuglog("Accepted.\n");
+		debugLog("Accepted.\n");
 		// reopen entry to add self as BCC recipient for ZCP-9901
 		$calitem = mapi_msgstore_openentry($store, $ceid);
 		if ($calitem) {
@@ -448,15 +448,15 @@ function autoRespond($session, $store, $entryid, $capacity, $policy)
 			// not setting PidLidAllAttendees, not important
 			mapi_message_modifyrecipients($calitem, MODRECIP_ADD, array($recip));
 			mapi_message_savechanges($calitem);
-			debuglog("Accept updated.\n");
+			debugLog("Accept updated.\n");
 		} else {
-			debuglog("Unable to update accepted item.\n");
+			debugLog("Unable to update accepted item.\n");
 		}
         return true;
     } else if($mr->isMeetingCancellation()) {
         $mr->processMeetingCancellation();
         $mr->doRemoveFromCalendar();
-        debuglog("Removed canceled meeting\n");
+        debugLog("Removed canceled meeting\n");
         return true;
     }
 }
@@ -497,13 +497,13 @@ $store = GetDefaultStore($session);
 $capacity = getCapacity($session, $store);
 $policy = getPolicy($store);
 
-debuglog("Policy is " . $policy . "\n");
+debugLog("Policy is " . $policy . "\n");
 
 if(($policy & POLICY_PROCESS_MEETING_REQUESTS) == 0) {
-    debuglog("Policy auto-respond not set.\n");
+    debugLog("Policy auto-respond not set.\n");
 }
 
-debuglog("Resource capacity is $capacity\n");
+debugLog("Resource capacity is $capacity\n");
 
 $inbox = mapi_msgstore_getreceivefolder($store);
 
@@ -513,7 +513,7 @@ if(isset($entryid)) {
     $items = getUnresponded($inbox);
 }
 
-debuglog("Found " . count($items) . " items to process\n");
+debugLog("Found " . count($items) . " items to process\n");
 
 foreach ($items as $item) {
     autoRespond($session, $store, $item, $capacity, $policy);
