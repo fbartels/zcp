@@ -2967,7 +2967,7 @@ class User(object):
         self.server.sa.HookStore(ECSTORE_TYPE_PRIVATE, self.userid.decode('hex'), store.guid.decode('hex'))
 
     def unhook(self):
-        self.server.sa.UnhookStore(ECSTORE_TYPE_PRIVATE, self.userid.decode('hex'))
+        return self.server.sa.UnhookStore(ECSTORE_TYPE_PRIVATE, self.userid.decode('hex'))
 
     @property
     def active(self):
@@ -3041,11 +3041,12 @@ class User(object):
         admin = kwargs.get('admin', self._ecuser.IsAdmin)
 
         if self.active:
-            store = self.server.unhook_store(user=self)
+            store = self.store
+            self.unhook()
         usereid = self.server.sa.SetUser(ECUSER(Username=username, Password=password, Email=email, FullName=fullname,
                                          Class=user_class, UserID=self._ecuser.UserID, IsAdmin=admin), MAPI_UNICODE)
         if self.active:
-            storeguid = self.server.hook_store(store=store, user=self)
+            storeguid = self.hook(store=store)
         self._ecuser = self.server.sa.GetUser(self.server.sa.ResolveUserName(username, MAPI_UNICODE), MAPI_UNICODE)
         if self.name != username:
             self._name = username
