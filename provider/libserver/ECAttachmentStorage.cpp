@@ -996,7 +996,7 @@ ECRESULT ECDatabaseAttachment::LoadAttachmentInstance(struct soap *soap, ULONG u
 	*lppData = lpData;
 
 exit:
-	if (er != erSuccess && lpData && !soap)
+	if (er != erSuccess && !soap)
 		delete [] lpData;
 
 	if (lpDBResult)

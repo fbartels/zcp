@@ -184,9 +184,7 @@ public:
 	}
 
 	~ECsIndexProp() {
-		if(lpData) {
-			delete[] lpData;
-		}
+		delete[] lpData;
 	}
     
     ECsIndexProp(const ECsIndexProp &src) {
@@ -260,9 +258,7 @@ public:
 	}
 protected:
 	void Free() {
-		if(lpData) {
-			delete[] lpData;
-		}
+		delete[] lpData;
 		ulTag = 0; 
 		cbData = 0;
 		lpData = NULL;
@@ -430,14 +426,16 @@ public:
     };
     ECsACLs& operator=(const ECsACLs &src) {
 		if (this != &src) {
-			if(aACL) delete [] aACL;
+			delete[] aACL;
 			ulACLs = src.ulACLs;
 			aACL = new ACL[src.ulACLs];
 			memcpy(aACL, src.aACL, sizeof(ACL) * src.ulACLs);
 		}
 		return *this;
     };
-    ~ECsACLs() { if(aACL) delete [] aACL; }
+    ~ECsACLs() {
+		delete[] aACL;
+    }
     unsigned int 	ulACLs;
     struct ACL {
         unsigned int ulType;

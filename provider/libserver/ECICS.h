@@ -87,12 +87,12 @@ public:
         this->ulSize = sourcekey.__size;
     }
     ~SOURCEKEY() { 
-        if(lpData) delete [] lpData; 
+	delete[] lpData; 
     }
     
     SOURCEKEY&  operator= (const SOURCEKEY &s) { 
         if(&s == this) return *this; 
-        if(lpData) delete [] lpData; 
+        delete[] lpData; 
         lpData = new char[s.ulSize]; 
         memcpy(lpData, s.lpData, s.ulSize); 
         ulSize = s.ulSize; 

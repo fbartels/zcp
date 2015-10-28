@@ -387,9 +387,7 @@ void WSMAPIPropStorage::DeleteSoapObject(struct saveObject *lpSaveObj)
 		delete [] lpSaveObj->modProps.__ptr;
 	}
 
-	if (lpSaveObj->delProps.__ptr)
-		delete [] lpSaveObj->delProps.__ptr;
-
+	delete[] lpSaveObj->delProps.__ptr;
 	if (lpSaveObj->lpInstanceIds)
 		FreeEntryList(lpSaveObj->lpInstanceIds, true);
 }

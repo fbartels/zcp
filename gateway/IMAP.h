@@ -84,11 +84,11 @@ public:
     BinaryArray(BYTE *lpData, ULONG cbData, bool bcheap = false) {  this->bcheap = bcheap; if(cbData == 0) { cb = 0; lpb = NULL; } else { if(!bcheap){lpb = new BYTE[cbData]; memcpy(lpb, lpData, cbData);}else{lpb=lpData;} cb = cbData; } }
     BinaryArray(const BinaryArray &old)     { bcheap = false; if(old.cb == 0) { cb = 0; lpb = NULL; } else { cb = old.cb; lpb = new BYTE[cb]; memcpy(lpb, old.lpb, cb); } }
     BinaryArray(SBinary &bin) { bcheap = false; if(bin.cb == 0) { cb = 0; lpb = NULL; } else { lpb = new BYTE[bin.cb]; memcpy(lpb, bin.lpb, bin.cb); cb = bin.cb; } }
-    ~BinaryArray() { if(lpb && !bcheap) delete [] lpb; }
+    ~BinaryArray() { if (!bcheap) delete[] lpb; }
 
     bool operator == (const BinaryArray &b) { if(b.cb == 0 && this->cb == 0) return true; if(b.cb != this->cb) return false; else return memcmp(lpb, b.lpb, cb) == 0; }
 
-    BinaryArray& operator = (const BinaryArray &b) { BYTE *lpbPrev = lpb; if(b.cb == 0) {cb=0; lpb = NULL; } else { cb=b.cb; lpb = new BYTE[cb]; memcpy(lpb, b.lpb, cb); if(lpbPrev && !bcheap) delete [] lpbPrev; } bcheap = false; return *this; }
+    BinaryArray& operator = (const BinaryArray &b) { BYTE *lpbPrev = lpb; if(b.cb == 0) {cb=0; lpb = NULL; } else { cb=b.cb; lpb = new BYTE[cb]; memcpy(lpb, b.lpb, cb); if (!bcheap) delete[] lpbPrev; } bcheap = false; return *this; }
     
     BYTE *lpb;
     ULONG cb;

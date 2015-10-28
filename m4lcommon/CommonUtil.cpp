@@ -2722,8 +2722,8 @@ ECPropMapEntry::ECPropMapEntry(const ECPropMapEntry &other) {
 
 ECPropMapEntry::~ECPropMapEntry()
 {
-    if(m_sMAPINameId.ulKind == MNID_STRING && m_sMAPINameId.Kind.lpwstrName)
-        delete [] m_sMAPINameId.Kind.lpwstrName;
+	if (m_sMAPINameId.ulKind == MNID_STRING)
+		delete[] m_sMAPINameId.Kind.lpwstrName;
 }
     
 MAPINAMEID* ECPropMapEntry::GetMAPINameId() { 
