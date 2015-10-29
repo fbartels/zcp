@@ -2,7 +2,7 @@ ACLOCAL_AMFLAGS = -I autoconf
 
 
 SUBDIRS = . common m4lcommon mapi4linux libfreebusy zarafa-libsync \
-          $(PROSUBS) provider libicalmapi inetmapi
+          provider libicalmapi inetmapi
 if WITH_PHP
 SUBDIRS += php-ext
 endif
