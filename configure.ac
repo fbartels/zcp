@@ -71,7 +71,7 @@ AC_SUBST([ZPHPCXXFLAGS])
 # disable write-strings: too much complains about "" being 'cast' to char* (since const char* is not in the declarations) on g++-4.2 and higher
 ZCPPFLAGS="$BUILDOS -DHAVE_CONFIG_H -I\${top_srcdir}/common/include \
 	-I\${top_srcdir}/m4lcommon/include \
-	-I\${top_srcdir}/ECtools/zarafa-archiver/include \
+	-I\${top_srcdir}/ECtools/archiver/include \
 	-I\${top_srcdir}/inetmapi/include \
 	-I\${top_srcdir}/swig/include \
 	-I\${top_srcdir}/swig/python/include"
@@ -752,16 +752,16 @@ AC_CONFIG_FILES([Makefile
 		common/Makefile
 		common/include/zarafa/Makefile
 		ECtools/Makefile
-		ECtools/zarafa-admin/Makefile
-		ECtools/zarafa-passwd/Makefile
-		ECtools/zarafa-monitor/Makefile
-		ECtools/zarafa-fsck/Makefile
-		ECtools/zarafa-cfgchecker/Makefile
-		ECtools/zarafa-stats/Makefile
-		ECtools/zarafa-archiver/Makefile
-		ECtools/zarafa-archiver/include/zarafa/Makefile
-		ECtools/zarafa-search/Makefile
-		ECtools/zarafa-utils/Makefile
+		ECtools/admin/Makefile
+		ECtools/passwd/Makefile
+		ECtools/monitor/Makefile
+		ECtools/fsck/Makefile
+		ECtools/cfgchecker/Makefile
+		ECtools/stats/Makefile
+		ECtools/archiver/Makefile
+		ECtools/archiver/include/zarafa/Makefile
+		ECtools/search/Makefile
+		ECtools/utils/Makefile
 		installer/Makefile
 		installer/linux/Makefile
 		installer/userscripts/Makefile

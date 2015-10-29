@@ -55,11 +55,11 @@ _icalmapi_la_LIBADD = libzcp_pyconv.la \
 	${top_builddir}/libfreebusy/libfreebusy.la \
 	$(ICAL_LIBS) $(PROG_LIBS) $(PYTHON_LIBS)
 
-_archiver_la_CPPFLAGS = ${AM_CPPFLAGS} -I${top_srcdir}/ECtools/zarafa-archiver
+_archiver_la_CPPFLAGS = ${AM_CPPFLAGS} -I${top_srcdir}/ECtools/archiver
 _archiver_la_LDFLAGS = ${AM_LDFLAGS} -module -avoid-version -rpath '$(libdir)'
 _archiver_la_LIBADD = \
-	${top_builddir}/ECtools/zarafa-archiver/libzarafa-archiver.la \
-	${top_builddir}/ECtools/zarafa-archiver/libzarafa-archiver-core.la \
+	${top_builddir}/ECtools/archiver/libzarafa-archiver.la \
+	${top_builddir}/ECtools/archiver/libzarafa-archiver-core.la \
 	$(PROG_LIBS) $(PYTHON_LIBS)
 
 _licenseclient_la_CPPFLAGS = ${AM_CPPFLAGS} -I${top_srcdir}/provider/common -I${top_builddir}/provider/soap -I${top_srcdir}/provider/soap ${GSOAP_CFLAGS}
@@ -157,7 +157,7 @@ icalmapi_wrap.cxx: ../icalmapi.i ../include/zarafa/typemap.i include/zarafa/type
 	${SWIG_EXEC} -I${top_srcdir}/libicalmapi -I${top_srcdir}/libfreebusy -I${top_srcdir/swig} ${SWIG_CXXFLAGS} -o $@ $<
 
 archiver_wrap.cxx: ../archiver.i archiver_python.i
-	${SWIG_EXEC} -I${top_srcdir}/ECtools/zarafa-archiver ${SWIG_CXXFLAGS} -o $@ $<
+	${SWIG_EXEC} -I${top_srcdir}/ECtools/archiver ${SWIG_CXXFLAGS} -o $@ $<
 
 libcommon_wrap.cxx: ../libcommon.i
 	${SWIG_EXEC} -I${top_srcdir}/common -I${top_srcdir}/m4lcommon -I${top_srcdir/swig} ${SWIG_CXXFLAGS} -o $@ $<

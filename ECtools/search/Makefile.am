@@ -9,4 +9,4 @@ EXTRA_DIST = setup.py		\
 	zarafa_search/xmltotext.xslt
 
 install-exec-local:
-	cd ${top_srcdir}/ECtools/zarafa-search/ && ${PYTHON} setup.py install --root="${DESTDIR}" --prefix="${prefix}" --install-purelib ${pythondir}
+	cd ${top_srcdir}/ECtools/search/ && ${PYTHON} setup.py install --root="${DESTDIR}" --prefix="${prefix}" --install-purelib ${pythondir}

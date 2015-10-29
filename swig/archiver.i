@@ -2,7 +2,7 @@
 %module archiver
 
 %{
-	#include "../../ECtools/zarafa-archiver/Archiver.h"
+	#include "../../ECtools/archiver/Archiver.h"
 	#include <zarafa/charset/convert.h>
 	#define TO_LPTST(s) ((s) ? converter.convert_to<LPTSTR>(s) : NULL)
 
