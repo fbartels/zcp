@@ -58,8 +58,8 @@ _icalmapi_la_LIBADD = libzcp_pyconv.la \
 _archiver_la_CPPFLAGS = ${AM_CPPFLAGS} -I${top_srcdir}/ECtools/archiver
 _archiver_la_LDFLAGS = ${AM_LDFLAGS} -module -avoid-version -rpath '$(libdir)'
 _archiver_la_LIBADD = \
-	${top_builddir}/ECtools/archiver/libzarafa-archiver.la \
-	${top_builddir}/ECtools/archiver/libzarafa-archiver-core.la \
+	${top_builddir}/ECtools/libzarafa-archiver.la \
+	${top_builddir}/ECtools/libzarafa-archiver-core.la \
 	$(PROG_LIBS) $(PYTHON_LIBS)
 
 _licenseclient_la_CPPFLAGS = ${AM_CPPFLAGS} -I${top_srcdir}/provider/common -I${top_builddir}/provider/soap -I${top_srcdir}/provider/soap ${GSOAP_CFLAGS}

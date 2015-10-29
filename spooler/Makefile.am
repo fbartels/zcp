@@ -18,8 +18,8 @@ zarafa_dagent_LDADD = ${top_builddir}/inetmapi/libinetmapi.la \
 	${top_builddir}/common/libzcp_common_mapi.la \
 	${top_builddir}/common/libzcp_common_util.la \
 	${top_builddir}/common/libzcp_common_ssl.la \
-	${top_builddir}/ECtools/archiver/libzarafa-archiver.la \
-	${top_builddir}/ECtools/archiver/libzarafa-archiver-core.la \
+	${top_builddir}/ECtools/libzarafa-archiver.la \
+	${top_builddir}/ECtools/libzarafa-archiver-core.la \
 	$(PROG_LIBS) $(SSL_LIBS) $(PYTHON_LIBS) $(XML2_LIBS)
 
 zarafa_spooler_LDADD = ${top_builddir}/inetmapi/libinetmapi.la \
@@ -27,8 +27,8 @@ zarafa_spooler_LDADD = ${top_builddir}/inetmapi/libinetmapi.la \
 	${top_builddir}/common/libzcp_common_mapi.la \
 	${top_builddir}/common/libzcp_common_util.la \
 	${top_builddir}/common/libzcp_common_ssl.la \
-	${top_builddir}/ECtools/archiver/libzarafa-archiver.la \
-	${top_builddir}/ECtools/archiver/libzarafa-archiver-core.la \
+	${top_builddir}/ECtools/libzarafa-archiver.la \
+	${top_builddir}/ECtools/libzarafa-archiver-core.la \
 	$(PROG_LIBS) $(PYTHON_LIBS) $(XML2_LIBS)
 
 zarafa_dagent_SOURCES = \

@@ -28,28 +28,14 @@ Makefile.in
 
 /default.sym
 
-# /ECtools/admin/
-/ECtools/admin/zarafa-admin
-
-# /ECtools/archiver/
-/ECtools/archiver/zarafa-archiver
-
-# /ECtools/cfgchecker/
-/ECtools/cfgchecker/zarafa-cfgchecker
-
-# /ECtools/fsck/
-/ECtools/fsck/zarafa-fsck
-
-# /ECtools/monitor/
-/ECtools/monitor/zarafa-monitor
-
-# /ECtools/passwd/
-/ECtools/passwd/zarafa-passwd
-
+/ECtools/zarafa-admin
+/ECtools/zarafa-archiver
+/ECtools/zarafa-cfgchecker
+/ECtools/zarafa-fsck
+/ECtools/zarafa-monitor
+/ECtools/zarafa-passwd
 /ECtools/search/build/
-
-# /ECtools/stats/
-/ECtools/stats/zarafa-stats
+/ECtools/zarafa-stats
 
 # /autoconf/
 /autoconf/ltsugar.m4
