@@ -179,7 +179,6 @@ check-syntax:
 	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) \
 		-fsyntax-only -fmessage-length=0 ${CHK_SOURCES} -Wall -Wformat=2
 
-.NOTPARALLEL: install-exec-local
 install-exec-local:
 	test -n "$(DESTDIR)" && pyroot="--root=$(DESTDIR)"; \
 	test "$(DISTRO)" = "suse" -o "$(DISTRO)" = "sles" && pyrpm="--record-rpm=INSTALLED_FILES"; \

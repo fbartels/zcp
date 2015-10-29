@@ -8,6 +8,5 @@ EXTRA_DIST = setup.py		\
 	zarafa_search/plugin_xapian.py  \
 	zarafa_search/xmltotext.xslt
 
-.NOTPARALLEL: install-exec-local
 install-exec-local:
 	cd ${top_srcdir}/ECtools/zarafa-search/ && ${PYTHON} setup.py install --root="${DESTDIR}" --prefix="${prefix}" --install-purelib ${pythondir}
