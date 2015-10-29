@@ -388,8 +388,7 @@ int main(int argc, char **argv) {
 exit:
 
 #ifdef LINUX
-	if(st.ss_sp)
-		free(st.ss_sp);
+	free(st.ss_sp);
 #endif
 
 	ECChannel::HrFreeCtx();
