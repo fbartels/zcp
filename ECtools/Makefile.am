@@ -33,7 +33,7 @@ zarafa_admin_LDADD = \
 zarafa_archiver_SOURCES = \
 	archiver/main.cpp
 zarafa_archiver_CPPFLAGS = \
-	${AM_CPPFLAGS} -DARCHIVER_EXTRA -I${top_srcdir}/provider/client \
+	${AM_CPPFLAGS} -I${top_srcdir}/provider/client \
 	-I${top_srcdir}/provider/include -I${top_srcdir}/provider/soap \
 	-I${top_builddir}/provider/soap -I${top_srcdir}/ECtools/archiver \
 	${GSOAP_CFLAGS} ${MYSQL_INCLUDES}

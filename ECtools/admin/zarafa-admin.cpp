@@ -84,7 +84,6 @@
 #include <libintl.h>
 #include <pthread.h>	// localtime_r (windows)
 
-#define ARCHIVER_EXTRA
 #include "Archiver.h"
 
 #include <zarafa/MAPIErrors.h> // for declaration of GetMAPIErrorMessage()
