@@ -439,9 +439,7 @@ for boost_rtopt_ in $boost_rtopt '' -d; do
     # right so instead we'll try to a location based on where the headers are.
     boost_tmp_lib=$with_boost
     test x"$with_boost" = x && boost_tmp_lib=${boost_cv_inc_path%/include}
-    for boost_ldpath in "$boost_tmp_lib/lib" '' \
-             /opt/local/lib* /usr/local/lib* /opt/lib* /usr/lib* \
-             "$with_boost" C:/Boost/lib /lib*
+    for boost_ldpath in "$boost_tmp_lib/lib" '';
     do
       # Don't waste time with directories that don't exist.
       if test x"$boost_ldpath" != x && test ! -e "$boost_ldpath"; then
