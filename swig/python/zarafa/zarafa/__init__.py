@@ -379,6 +379,9 @@ class ZarafaConfigException(ZarafaException):
 class ZarafaNotFoundException(ZarafaException):
     pass
 
+class ZarafaLogonException(ZarafaException):
+    pass
+
 
 class SPropDelayedValue(SPropValue):
     def __init__(self, mapiobj, proptag):
@@ -649,6 +652,8 @@ Looks at command-line to see if another server address or other related options 
                         time.sleep(5)
                     else:
                         raise ZarafaException("could not connect to server at '%s'" % self.server_socket)
+                except MAPIErrorLogonFailed:
+                    raise ZarafaLogonException('Could not logon to server: username or password incorrect')
 
         # start talking dirty
         self.mapistore = GetDefaultStore(self.mapisession)
