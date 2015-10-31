@@ -5,8 +5,7 @@ AC_CONFIG_SRCDIR([provider/server/ECServer.cpp])
 AC_CONFIG_HEADERS([common/config.h])
 AC_CONFIG_AUX_DIR([autoconf])
 AC_CONFIG_MACRO_DIR([autoconf])
-# because webaccess has too deep dirs for default tar-v7, we need something "better"
-AM_INIT_AUTOMAKE([1.10 foreign tar-ustar subdir-objects])
+AM_INIT_AUTOMAKE([1.10 foreign subdir-objects])
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
 ECCLIENT_LIBRARY_VERSION=1:0:0
