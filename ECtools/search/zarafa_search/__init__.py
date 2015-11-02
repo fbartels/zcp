@@ -147,20 +147,22 @@ class IndexWorker(zarafa.Worker):
             changes = 0
             with log_exc(self.log):
                 (_, storeguid, folderid, reindex) = self.iqueue.get()
-                folder = zarafa.Folder(server.store(storeguid), folderid.decode('hex')) # XXX
-                self.log.info('syncing folder: %s %s' % (storeguid, folder.name))
-                importer = FolderImporter(server.guid, config, plugin, self.log)
-                state = db_get(state_db, folder.entryid) if not reindex else None
-                if state:
-                    self.log.info('found previous folder sync state: %s' % state)
-                t0 = time.time()
-                new_state = folder.sync(importer, state, log=self.log)
-                if new_state != state:
-                    plugin.commit()
-                    db_put(state_db, folder.entryid, new_state)
-                    self.log.info('saved folder sync state: %s' % new_state)
-                    changes = importer.changes + importer.deletes 
-                    self.log.info('syncing folder %s %s took %.2f seconds (%d changes, %d attachments)' % (storeguid, folder.name, time.time()-t0, changes, importer.attachments))
+                store = server.store(storeguid)
+                folder = zarafa.Folder(store, folderid.decode('hex')) # XXX
+                if folder not in (store.junk, store.outbox):
+                    self.log.info('syncing folder: %s %s' % (storeguid, folder.name))
+                    importer = FolderImporter(server.guid, config, plugin, self.log)
+                    state = db_get(state_db, folder.entryid) if not reindex else None
+                    if state:
+                        self.log.info('found previous folder sync state: %s' % state)
+                    t0 = time.time()
+                    new_state = folder.sync(importer, state, log=self.log)
+                    if new_state != state:
+                        plugin.commit()
+                        db_put(state_db, folder.entryid, new_state)
+                        self.log.info('saved folder sync state: %s' % new_state)
+                        changes = importer.changes + importer.deletes 
+                        self.log.info('syncing folder %s %s took %.2f seconds (%d changes, %d attachments)' % (storeguid, folder.name, time.time()-t0, changes, importer.attachments))
             self.oqueue.put(changes)
 
 class FolderImporter:

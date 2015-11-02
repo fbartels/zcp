@@ -1413,6 +1413,14 @@ class Store(object):
     def props(self):
         return _props(self.mapiobj)
 
+    def __eq__(self, s): # XXX check same server?
+        if isinstance(s, Store):
+            return self.guid == s.guid
+        return False
+
+    def __ne__(self, s):
+        return not self == s
+
     def __unicode__(self):
         return u"Store('%s')" % self.guid
 
@@ -1815,6 +1823,14 @@ class Folder(object):
     @property
     def deleted(self):
         return Folder(self.store, self._entryid, deleted=True)
+
+    def __eq__(self, f): # XXX check same store?
+        if isinstance(f, Folder):
+            return self._entryid == f._entryid
+        return False
+
+    def __ne__(self, f):
+        return not self == f
 
     def __iter__(self):
         return self.items()
@@ -3001,6 +3017,14 @@ class User(object):
 
     def rules(self):
         return self.inbox.rules()
+
+    def __eq__(self, u): # XXX check same server?
+        if isinstance(u, User):
+            return self.userid == u.userid
+        return False
+
+    def __ne__(self, u):
+        return not self == u
 
     def __unicode__(self):
         return u"User('%s')" % self._name
