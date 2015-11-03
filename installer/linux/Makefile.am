@@ -21,6 +21,10 @@ alt_initscript_files = \
 	zarafa-server.init.alt zarafa-spooler.init.alt \
 	zarafa-gateway.init.alt zarafa-monitor.init.alt \
 	zarafa-ical.init.alt zarafa-dagent.init.alt zarafa-search.init.alt
+debian_initscript_files = \
+	zarafa-server.init.debi zarafa-spooler.init.debi \
+	zarafa-gateway.init.debi zarafa-monitor.init.debi \
+	zarafa-ical.init.debi zarafa-dagent.init.debi zarafa-search.init.debi
 
 rhel_sysconfig_files = sysconfig.rhel
 suse_sysconfig_files = sysconfig.suse
