@@ -987,28 +987,19 @@ ECRESULT ECGetContentChangesHelper::Finalize(unsigned int *lpulMaxChange, icsCha
 			std::set<unsigned int> setDeleteIds;
 			std::set<unsigned int>::iterator iter;
 			
-			/* Remove obsolete states
-			 *
-			 * rules:
-			 * 1) Remove any states that are newer than the state that was requested
-			 *    We do this since if the client requests state X, it can never request state X+1
-			 *    later unless X+1 is the state that was generated from this request. We can therefore
-			 *    remove any state > X at this point, since state X+1 will be inserted later
-			 * 2) Remove any states that are older than the state that was requested minus two
-			 *    We cannot remove state X since the client may re-request this state (eg if the export
-			 *    failed due to network error, or if the export is interrupted before ending). We also
-			 *    do not remove state X-1 and X-2 so that we support some sort of rollback of the client.
-			 *    This may happen if the client is restored to an old state. In practice removing X-1 and
-			 *    X-2 will probably not cause any real problems though, and the number 2 is pretty
-			 *    arbitrary.
+			/*
+			 * Remove any states that are older than the state that
+			 * was requested minus two. We cannot remove state X
+			 * since the client may re-request this state (e.g. if
+			 * the export failed due to network error, or if the
+			 * export is interrupted before ending). We also do not
+			 * remove state X-1 and X-2 so that we support some
+			 * sort of rollback of the client. This may happen if
+			 * the client is restored to an old state. In practice,
+			 * removing X-1 and X-2 will probably not cause any
+			 * real problems though, and the number 2 is pretty
+			 * arbitrary.
 			 */
-
-			// Delete any message state that is higher than the changeset that changes were
-			// requested from (rule 1)
-			iter = setChangeIds.upper_bound(m_ulChangeId);
-			if (iter != setChangeIds.end()) {
-				std::copy(iter, setChangeIds.end(), std::inserter(setDeleteIds, setDeleteIds.begin()));
-			}
 
 			// Find all message states that are equal or lower than the changeset that changes were requested from
 			iter = setChangeIds.lower_bound(m_ulChangeId);
