@@ -2631,12 +2631,6 @@ class Recurrence:
             # But the recurrence is on 8:00 that day and we should include it.
             rule.rrule(rrule(WEEKLY, dtstart=self.start, until=self.end + timedelta(days=1), byweekday=byweekday))
 
-            # Remove deleted ocurrences
-            for del_date in self.del_recurrences:
-                # XXX: Somehow rule.rdate does not work in combination with rule.exdate
-                if not del_date in self.mod_recurrences:
-                    rule.exdate(del_date)
-
             self.recurrences = rule
             #self.recurrences = rrule(WEEKLY, dtstart=self.start, until=self.end, byweekday=byweekday)
         elif self.patterntype == 2: # MONTHLY
@@ -2651,6 +2645,18 @@ class Recurrence:
                     byweekday += (week(weeknumber),)
             # Yearly, the last XX of YY
             self.recurrences = rrule(MONTHLY, dtstart=self.start, until=self.end, interval=self.period, byweekday=byweekday)
+
+        # Remove deleted ocurrences
+        for del_date in self.del_recurrences:
+            # XXX: Somehow rule.rdate does not work in combination with rule.exdate
+            del_date = datetime.datetime(del_date.year, del_date.month, del_date.day, self.start.hour, self.start.minute)
+            if not del_date in self.mod_recurrences:
+                rule.exdate(del_date)
+
+        # add exceptions
+        for exception in self.exceptions:
+            rule.rdate(exception['startdatetime'])
+
 
     def __unicode__(self):
         return u'Recurrence(start=%s - end=%s)' % (self.start, self.end)
