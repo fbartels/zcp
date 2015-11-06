@@ -43,6 +43,11 @@ if [ $RESPOND -ne 1 ]; then
 	exit 0;
 fi
 
+# Check whether the recipient is blacklisted
+if echo "$AUTORESPOND_BLACKLIST" | grep -q -i "$TO"; then
+    exit 0;
+fi
+
 # Subject is required
 if [ -z "$SUBJECT" ]; then
     SUBJECT="Autoreply";

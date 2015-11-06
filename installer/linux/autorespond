@@ -9,6 +9,9 @@ AUTORESPOND_CC=0
 # Autorespond if we were not in the message at all
 AUTORESPOND_NORECIP=0
 
+# List of email adresses that should not receive out of office replies
+AUTORESPOND_BLACKLIST=
+
 # Only send reply to same e-mail address once per 24 hours
 TIMELIMIT=$[24*60*60]
 
