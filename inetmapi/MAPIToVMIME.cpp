@@ -2304,6 +2304,28 @@ exit:
 }
 
 /**
+ * check if named property exists which is used to hold voting options
+ */
+
+bool MAPIToVMIME::is_voting_request(IMessage *lpMessage)
+{
+	HRESULT hr = hrSuccess;
+	LPSPropTagArray lpPropTags = NULL;
+	LPSPropValue lpPropContentType = NULL;
+	MAPINAMEID mnNamedProps[1] = {{(LPGUID)&PSETID_Common, MNID_ID, {0x8520}}};
+	LPMAPINAMEID lppNames[1];
+	lppNames[0] = &mnNamedProps[0];
+
+	hr = lpMessage->GetIDsFromNames(1, lppNames, MAPI_CREATE, &lpPropTags);
+	if (hr != hrSuccess) {
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to read voting property. Error: 0x%08X", hr);
+		return false;
+	}
+
+	return HrGetOneProp(lpMessage, CHANGE_PROP_TYPE(lpPropTags->aulPropTag[0], PT_BINARY), &lpPropContentType) == hrSuccess;
+}
+
+/**
  * Adds a TNEF (winmail.dat) attachment to the message, if special
  * outlook data needs to be sent. May add iCal for calendar items
  * instead of TNEF.
@@ -2385,6 +2407,11 @@ HRESULT MAPIToVMIME::handleTNEF(IMessage* lpMessage, vmime::messageBuilder* lpVM
 		if (iUseTnef <= 0 && lpDelegateRule && lpDelegateRule->Value.b == TRUE) {
 			iUseTnef = 1;
 			strTnefReason = "Force TNEF because of delegation";
+		}
+
+		if(iUseTnef <= 0 && is_voting_request(lpMessage)) {
+			iUseTnef = 1;
+			strTnefReason = "Force TNEF because of voting request";
 		}
 
         /*

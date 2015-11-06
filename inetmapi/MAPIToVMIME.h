@@ -104,6 +104,8 @@ private:
 	void removeEnters(WCHAR *s);
 	vmime::text getVmimeTextFromWide(const WCHAR* lpszwInput, bool bWrapInWord = true);
 	vmime::text getVmimeTextFromWide(const std::wstring& strwInput, bool bWrapInWord = true);
+
+	bool is_voting_request(IMessage *lpMessage);
 };
 
 #endif
