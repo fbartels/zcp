@@ -42,6 +42,7 @@
  */
 
 #include <zarafa/platform.h>
+#include <zarafa/MAPIErrors.h>
 
 // Damn windows header defines max which break C++ header files
 #undef max
@@ -2312,17 +2313,19 @@ bool MAPIToVMIME::is_voting_request(IMessage *lpMessage)
 	HRESULT hr = hrSuccess;
 	LPSPropTagArray lpPropTags = NULL;
 	LPSPropValue lpPropContentType = NULL;
-	MAPINAMEID mnNamedProps[1] = {{(LPGUID)&PSETID_Common, MNID_ID, {0x8520}}};
-	LPMAPINAMEID lppNames[1];
-	lppNames[0] = &mnNamedProps[0];
+	MAPINAMEID named_prop = {(LPGUID)&PSETID_Common, MNID_ID, {0x8520}};
+	MAPINAMEID *named_proplist = &named_prop;
 
-	hr = lpMessage->GetIDsFromNames(1, lppNames, MAPI_CREATE, &lpPropTags);
-	if (hr != hrSuccess) {
-		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to read voting property. Error: 0x%08X", hr);
-		return false;
-	}
+	hr = lpMessage->GetIDsFromNames(1, &named_proplist, MAPI_CREATE, &lpPropTags);
+	if (hr != hrSuccess)
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to read voting property. Error: %s (0x%08X)",
+			GetMAPIErrorMessage(hr), hr);
+	else
+		hr = HrGetOneProp(lpMessage, CHANGE_PROP_TYPE(lpPropTags->aulPropTag[0], PT_BINARY), &lpPropContentType);
 
-	return HrGetOneProp(lpMessage, CHANGE_PROP_TYPE(lpPropTags->aulPropTag[0], PT_BINARY), &lpPropContentType) == hrSuccess;
+	MAPIFreeBuffer(lpPropTags);
+	MAPIFreeBuffer(lpPropContentType);
+	return hr == hrSuccess;
 }
 
 /**
