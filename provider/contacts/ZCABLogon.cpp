@@ -181,10 +181,8 @@ exit:
 HRESULT ZCABLogon::ClearFolderList()
 {
 	for (std::vector<zcabFolderEntry>::iterator i = m_lFolders.begin(); i != m_lFolders.end(); i++) {
-		if (i->lpStore)
-			MAPIFreeBuffer(i->lpStore);
-		if (i->lpFolder)
-			MAPIFreeBuffer(i->lpFolder);
+		MAPIFreeBuffer(i->lpStore);
+		MAPIFreeBuffer(i->lpFolder);
 	}
 	m_lFolders.clear();
 	return hrSuccess;
@@ -305,10 +303,7 @@ HRESULT ZCABLogon::OpenEntry(ULONG cbEntryID, LPENTRYID lpEntryID, LPCIID lpInte
 exit:
 	if (lpProfileSection)
 		lpProfileSection->Release();
-
-	if (lpFolderProps)
-		MAPIFreeBuffer(lpFolderProps);
-
+	MAPIFreeBuffer(lpFolderProps);
 	if (lpRootContainer)
 		lpRootContainer->Release();
 

@@ -71,8 +71,7 @@ ZCMAPIProp::ZCMAPIProp(ULONG ulObjType, const char *szClassName) :
 
 ZCMAPIProp::~ZCMAPIProp()
 {
-	if (m_base)
-		MAPIFreeBuffer(m_base);
+	MAPIFreeBuffer(m_base);
 }
 
 #define ADD_PROP_OR_EXIT(dest, src, base, propid) {						\
@@ -335,9 +334,7 @@ HRESULT ZCMAPIProp::ConvertProps(IMAPIProp *lpContact, ULONG cbEntryID, LPENTRYI
 		hr = ConvertDistList(ptrNameTags, cValues, ptrContactProps);
 
 exit:
-	if (lppNames)
-		MAPIFreeBuffer(lppNames);
-
+	MAPIFreeBuffer(lppNames);
 	return hr;
 }
 
@@ -482,9 +479,7 @@ HRESULT ZCMAPIProp::GetProps(LPSPropTagArray lpPropTagArray, ULONG ulFlags, ULON
 	lpProps = NULL;
 
 exit:
-	if (lpProps)
-		MAPIFreeBuffer(lpProps);
-
+	MAPIFreeBuffer(lpProps);
 	return hr;
 }
 

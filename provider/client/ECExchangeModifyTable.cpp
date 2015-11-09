@@ -308,13 +308,8 @@ HRESULT __stdcall ECExchangeModifyTable::ModifyTable(ULONG ulFlags, LPROWLIST lp
 				hr = m_ecTable->HrModifyRow(ulFlagsRow, lpFind, lpProps, cValues);
 				if(hr != hrSuccess)
 					goto exit;
-
-
-				if (lpPropRemove) {
-					MAPIFreeBuffer(lpPropRemove);
-					lpPropRemove = NULL;
-				}
-
+				MAPIFreeBuffer(lpPropRemove);
+				lpPropRemove = NULL;
 				break;
 			case ROW_REMOVE:
 				hr = m_ecTable->HrModifyRow(ECKeyTable::TABLE_ROW_DELETE, NULL, lpMods->aEntries[i].rgPropVals, lpMods->aEntries[i].cValues);
@@ -365,9 +360,7 @@ done:
 
 exit:
 	delete[] szXML;
-	if(lpPropRemove)
-		MAPIFreeBuffer(lpPropRemove);
-
+	MAPIFreeBuffer(lpPropRemove);
 	return hr;
 }
 
@@ -436,25 +429,19 @@ HRESULT ECExchangeModifyTable::OpenACLS(ECMAPIProp *lpecMapiProp, ULONG ulFlags,
 			hr = lpTable->HrModifyRow(ECKeyTable::TABLE_ROW_ADD, &lpsPropMember[0], lpsPropMember, 4);
 			if(hr != hrSuccess)
 				goto exit;
-
-			if (lpECUser) { MAPIFreeBuffer(lpECUser); lpECUser = NULL;}
-			if (lpECGroup) { MAPIFreeBuffer(lpECGroup); lpECGroup = NULL;}
+			MAPIFreeBuffer(lpECUser);
+			lpECUser = NULL;
+			MAPIFreeBuffer(lpECGroup);
+			lpECGroup = NULL;
 		}
 	}
 
 exit:
-	if (lpECPerms)
-		MAPIFreeBuffer(lpECPerms);
-
+	MAPIFreeBuffer(lpECPerms);
 	if (lpSecurity)
 		lpSecurity->Release();
-
-	if (lpECUser)
-		MAPIFreeBuffer(lpECUser);
-
-	if (lpECGroup) 
-		MAPIFreeBuffer(lpECGroup);
-
+	MAPIFreeBuffer(lpECUser);
+	MAPIFreeBuffer(lpECGroup);
 	return hr;
 }
 
@@ -552,19 +539,11 @@ HRESULT ECExchangeModifyTable::SaveACLS(ECMAPIProp *lpecMapiProp, ECMemTable *lp
 exit:
 	if (lpSecurity)
 		lpSecurity->Release();
-
-	if (lpECPermissions)
-		MAPIFreeBuffer(lpECPermissions);
-	
-	if(lpIDs)
-		MAPIFreeBuffer(lpIDs);
-
+	MAPIFreeBuffer(lpECPermissions);
+	MAPIFreeBuffer(lpIDs);
 	if(lpRowSet)
 		FreeProws(lpRowSet);
-
-	if(lpulStatus)
-		MAPIFreeBuffer(lpulStatus);
-
+	MAPIFreeBuffer(lpulStatus);
 	return hr;
 }
 
@@ -632,8 +611,7 @@ exit:
 		FreeRowSet(lpSOAPRowSet, true);
 	if(lpRowSet)
 		FreeProws(lpRowSet);
-	if(lpCols)
-		MAPIFreeBuffer(lpCols);
+	MAPIFreeBuffer(lpCols);
 	if(lpView)
 		lpView->Release();
 
@@ -709,10 +687,7 @@ HRESULT ECExchangeModifyTable::HrDeserializeTable(char *lpSerialized, ECMemTable
 exit:
 	if(lpsRowSet)
 		FreeProws(lpsRowSet);
-
-	if (lpProps)
-		MAPIFreeBuffer(lpProps);
-
+	MAPIFreeBuffer(lpProps);
 	soap_destroy(&soap);
 	soap_end(&soap); // clean up allocated temporaries 
 

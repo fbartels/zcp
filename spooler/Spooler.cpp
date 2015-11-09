@@ -447,9 +447,7 @@ static HRESULT GetErrorObjects(const SendData &sSendData,
 	}
 
 exit:
-	if (lpsProp)
-		MAPIFreeBuffer(lpsProp);
-
+	MAPIFreeBuffer(lpsProp);
 	if (lpServiceAdmin)
 		lpServiceAdmin->Release();
 
@@ -595,11 +593,8 @@ static HRESULT CleanFinishedMessages(IMAPISession *lpAdminSession,
 	if (lpAddrBook)
 		lpAddrBook->Release();
 
-		delete lpMailer;
-
-	if (lpUserAdmin)
-		MAPIFreeBuffer(lpUserAdmin);
-
+	delete lpMailer;
+	MAPIFreeBuffer(lpUserAdmin);
 	if (lpUserStore)
 		lpUserStore->Release();
 
@@ -792,10 +787,7 @@ static HRESULT GetAdminSpooler(IMAPISession *lpAdminSession,
 exit:
 	if (lpMDB)
 		lpMDB->Release();
-
-	if (lpsProp)
-		MAPIFreeBuffer(lpsProp);
-
+	MAPIFreeBuffer(lpsProp);
 	return hr;
 }
 

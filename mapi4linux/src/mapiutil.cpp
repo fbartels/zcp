@@ -179,10 +179,8 @@ void __stdcall FreeProws(LPSRowSet lpRows) {
 	if(lpRows == NULL)
 		return;
 
-	for(i=0;i<lpRows->cRows;i++) {
-		if(lpRows->aRow[i].lpProps != NULL)
-			MAPIFreeBuffer(lpRows->aRow[i].lpProps);
-	}
+	for (i = 0; i < lpRows->cRows; ++i)
+		MAPIFreeBuffer(lpRows->aRow[i].lpProps);
 	MAPIFreeBuffer(lpRows);
 	TRACE_MAPILIB(TRACE_RETURN, "FreeProws", "");
 }
@@ -1201,7 +1199,7 @@ HRESULT GetConnectionProperties(LPSPropValue lpServer, LPSPropValue lpUsername, 
 	*lppProps = lpProps;
 
 exit:
-	if (hr != hrSuccess && lpProps)
+	if (hr != hrSuccess)
 		MAPIFreeBuffer(lpProps);
 
 	return hr;

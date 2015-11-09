@@ -366,9 +366,7 @@ static HRESULT GetServiceName(IProviderAdmin *lpProviderAdmin,
 exit:
 	if(lpProfSect)
 		lpProfSect->Release();
-	if(lpProp)
-		MAPIFreeBuffer(lpProp);
-
+	MAPIFreeBuffer(lpProp);
 	return hr;
 #else
 	lpServiceName->assign("ZARAFA6");
@@ -686,8 +684,8 @@ HRESULT InitializeProvider(LPPROVIDERADMIN lpAdminProvider, IProfSect *lpProfSec
 	}
 exit:
 	//Free allocated memory
-	if(pABeid){ MAPIFreeBuffer(pABeid); pABeid = NULL; }
-
+	MAPIFreeBuffer(pABeid);
+	pABeid = NULL;
 	if (lpTransport)
 		lpTransport->Release();
 
@@ -1225,7 +1223,8 @@ extern "C" HRESULT __stdcall MSGServiceEntry(HINSTANCE hInst, LPMALLOC lpMalloc,
 						goto exit;
 					
 					//Free allocated memory
-					if(lpsPropValue){ MAPIFreeBuffer(lpsPropValue); lpsPropValue = NULL;}
+					MAPIFreeBuffer(lpsPropValue);
+					lpsPropValue = NULL;
 
 				}
 				break; // Everything is oke
@@ -1333,14 +1332,10 @@ exit:
 		}
 	}
 
-	if(lpDeligateStores)
-		MAPIFreeBuffer(lpDeligateStores);
-
+	MAPIFreeBuffer(lpDeligateStores);
 	if(lpTransport)
 		lpTransport->Release();
-
-    if(lpsPropValue)
-        MAPIFreeBuffer(lpsPropValue);
+	MAPIFreeBuffer(lpsPropValue);
 
 #ifdef _WIN32
 	if(lpECUser)

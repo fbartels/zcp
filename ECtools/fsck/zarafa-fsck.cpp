@@ -213,9 +213,7 @@ HRESULT ReadProperties(LPMESSAGE lpMessage, ULONG ulCount, ULONG *lpTag, LPSProp
 	}
 
 exit:
-	if (lpPropertyTagArray)
-		MAPIFreeBuffer(lpPropertyTagArray);
-
+	MAPIFreeBuffer(lpPropertyTagArray);
 	return hr;
 }
 
@@ -292,9 +290,7 @@ static HRESULT DetectFolderDetails(LPMAPIFOLDER lpFolder, string *lpName,
 		hr = hrSuccess;
 
 exit:
-	if (lpPropertyArray)
-		MAPIFreeBuffer(lpPropertyArray);
-
+	MAPIFreeBuffer(lpPropertyArray);
 	return hr;
 }
 
@@ -513,23 +509,18 @@ static HRESULT RunStoreValidation(const char *strHost, const char *strUser,
 	}
 
 exit:
-    if (lpUserStoreEntryID)
-        MAPIFreeBuffer(lpUserStoreEntryID);
+	MAPIFreeBuffer(lpUserStoreEntryID);
 
-    if (lpIEMS)
-        lpIEMS->Release();
+	if (lpIEMS)
+		lpIEMS->Release();
         
 	if (lpRows) {
 		FreeProws(lpRows);
 		lpRows = NULL;
 	}
 
-	if (lpEntryIDSrc)
-		MAPIFreeBuffer(lpEntryIDSrc);
-
-	if (lpAddRenProp)
-		MAPIFreeBuffer(lpAddRenProp);
-
+	MAPIFreeBuffer(lpEntryIDSrc);
+	MAPIFreeBuffer(lpAddRenProp);
 	if(lpHierarchyTable)
 		lpHierarchyTable->Release();
 

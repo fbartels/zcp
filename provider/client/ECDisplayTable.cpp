@@ -282,10 +282,7 @@ void TranslateDisplayTable(ITableData *lpTableData)
 		MAPIFreeBuffer(lpsRow);
 		lpsRow = NULL;
 	}
-
-	if(lpsRow)
-		MAPIFreeBuffer(lpsRow);
-
+	MAPIFreeBuffer(lpsRow);
 exit:
 	return;
 }
@@ -505,8 +502,7 @@ HRESULT ECDisplayTable::CreateTableFromProperty(ECABProp *lpABProp, LPCIID lpiid
 	}
 
 exit:
-	if (lpProps)
-		MAPIFreeBuffer(lpProps);
+	MAPIFreeBuffer(lpProps);
 	if (lpView)
 		lpView->Release();
 	if (lpTable)
@@ -727,9 +723,7 @@ HRESULT ECDisplayTable::ResolveFromName(IABContainer *lpABContainer, LPSPropValu
 exit:
 	if (lpResolve)
 		FreePadrlist(lpResolve);
-	if (lpResolveFlags)
-		MAPIFreeBuffer(lpResolveFlags);
-
+	MAPIFreeBuffer(lpResolveFlags);
 	return hr;
 }
 
@@ -778,8 +772,7 @@ HRESULT ECDisplayTable::ResolveFromProperty(ECABProp *lpABProp, ULONG ulPropTag,
 	}
 
 exit:
-	if (lpProps)
-		MAPIFreeBuffer(lpProps);
+	MAPIFreeBuffer(lpProps);
 	if (lpABContainer)
 		lpABContainer->Release();
 

@@ -136,9 +136,7 @@ exit:
 		lpTable->Release();
 
 	delete lpFreeBusy;
-	if(lpFBblocks)
-		MAPIFreeBuffer(lpFBblocks);
-
+	MAPIFreeBuffer(lpFBblocks);
 	if(lpNullLogger)
 		lpNullLogger->Release();
 
@@ -423,12 +421,8 @@ HRESULT PublishFreeBusy::HrProcessTable(IMAPITable *lpTable, FBBlock_1 **lppfbBl
 	}
 
 exit:
-	if (lpOccrInfo)
-		MAPIFreeBuffer(lpOccrInfo);
-
-	if (lpsPrpTagArr)
-		MAPIFreeBuffer(lpsPrpTagArr);
-
+	MAPIFreeBuffer(lpOccrInfo);
+	MAPIFreeBuffer(lpsPrpTagArr);
 	if (lpRowSet)
 		FreeProws(lpRowSet);
 
@@ -597,9 +591,7 @@ HRESULT PublishFreeBusy::HrPublishFBblocks(FBBlock_1 *lpfbBlocks, ULONG cValues)
 		goto exit;
 
 exit:
-	if(lpsPrpUsrMEid)
-		MAPIFreeBuffer(lpsPrpUsrMEid);
-
+	MAPIFreeBuffer(lpsPrpUsrMEid);
 	if(lpFBUpdate)
 		lpFBUpdate->Release();
 

@@ -1024,7 +1024,7 @@ HRESULT PHPArraytoRowList(zval *phpArray, void *lpBase, LPROWLIST *lppRowList TS
 	*lppRowList = lpRowList;
 
 exit:
-	if(lpRowList && MAPI_G(hr) != hrSuccess) 
+	if (MAPI_G(hr) != hrSuccess)
 		MAPIFreeBuffer(lpRowList);
 
 	return MAPI_G(hr);
@@ -1520,7 +1520,7 @@ HRESULT PHPArraytoSRestriction(zval *phpVal, void* lpBase, LPSRestriction *lppRe
 	*lppRes = lpRes;
 		
 exit:
-	if (MAPI_G(hr) != hrSuccess && lpBase == NULL && lpRes)
+	if (MAPI_G(hr) != hrSuccess && lpBase == NULL)
 		MAPIFreeBuffer(lpRes);
 
 	return MAPI_G(hr);
@@ -2170,7 +2170,7 @@ HRESULT PHPArraytoReadStateArray(zval *zvalReadStates, void *lpBase, ULONG *lpcV
 	*lpcValues = n;
 
 exit:
-	if (MAPI_G(hr) != hrSuccess && lpBase == NULL && lpReadStates)
+	if (MAPI_G(hr) != hrSuccess && lpBase == NULL)
 		MAPIFreeBuffer(lpReadStates);
 
 	return MAPI_G(hr);
@@ -2229,7 +2229,7 @@ HRESULT PHPArraytoGUIDArray(zval *phpVal, void *lpBase, ULONG *lpcValues, LPGUID
 	*lppGUIDs = lpGUIDs;
 	*lpcValues = n;
 exit:
-	if(MAPI_G(hr) != hrSuccess && lpBase == NULL && lpGUIDs != NULL)
+	if (MAPI_G(hr) != hrSuccess && lpBase == NULL)
 		MAPIFreeBuffer(lpGUIDs);
 	return MAPI_G(hr);
 }

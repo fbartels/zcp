@@ -292,10 +292,7 @@ exit:
 		
 	if(lpGroup)
 		lpGroup->Release();
-		
-	if(lpEmailAddress)
-		MAPIFreeBuffer(lpEmailAddress);
-		
+	MAPIFreeBuffer(lpEmailAddress);
 	return hr;
 }
 
@@ -341,9 +338,7 @@ HRESULT ECVMIMESender::HrMakeRecipientsList(LPADRBOOK lpAdrBook, LPMESSAGE lpMes
 		goto exit;
 	
 exit:
-	if (lpMessageFlags)
-		MAPIFreeBuffer(lpMessageFlags);
-
+	MAPIFreeBuffer(lpMessageFlags);
 	if (lpRTable)
 		lpRTable->Release();
 

@@ -865,11 +865,8 @@ LPSPropValue	List_to_LPSPropValue(PyObject *object, ULONG *cValues, ULONG ulFlag
 	*cValues = size;
 
 exit:
-	if(PyErr_Occurred()) {
-		if(lpProps && !lpBase)
-			MAPIFreeBuffer(lpProps);
-
-	}
+	if (PyErr_Occurred() && lpBase != NULL)
+		MAPIFreeBuffer(lpProps);
 	if(elem) {
 		Py_DECREF(elem);
 	}
@@ -922,8 +919,7 @@ LPSPropTagArray	List_to_LPSPropTagArray(PyObject *object, ULONG /*ulFlags*/)
 
 exit:
 	if(PyErr_Occurred()) {
-		if(lpPropTagArray)
-			MAPIFreeBuffer(lpPropTagArray);
+		MAPIFreeBuffer(lpPropTagArray);
 		lpPropTagArray = NULL;
 	}
 	if(iter) {
@@ -1687,8 +1683,7 @@ LPSSortOrderSet	Object_to_LPSSortOrderSet(PyObject *object)
 
 exit:
 	if(PyErr_Occurred()) {
-		if(lpsSortOrderSet)
-			MAPIFreeBuffer(lpsSortOrderSet);
+		MAPIFreeBuffer(lpsSortOrderSet);
 		lpsSortOrderSet = NULL;
 	}
 
@@ -1973,8 +1968,7 @@ exit:
 	}
 
 	if(PyErr_Occurred()) {
-		if(lpsProblems)
-			MAPIFreeBuffer(lpsProblems);
+		MAPIFreeBuffer(lpsProblems);
 		lpsProblems = NULL;
 	}
 
@@ -2146,8 +2140,7 @@ LPMAPINAMEID *	List_to_p_LPMAPINAMEID(PyObject *list, ULONG *lpcNames, ULONG /*u
 
 exit:
 	if(PyErr_Occurred()) {
-		if(lpNames)
-			MAPIFreeBuffer(lpNames);
+		MAPIFreeBuffer(lpNames);
 		lpNames = NULL;
 	}
 
@@ -2206,8 +2199,7 @@ LPENTRYLIST		List_to_LPENTRYLIST(PyObject *list)
 
 exit:
 	if(PyErr_Occurred()) {
-		if(lpEntryList)
-			MAPIFreeBuffer(lpEntryList);
+		MAPIFreeBuffer(lpEntryList);
 		lpEntryList = NULL;
 	}
 
@@ -2453,8 +2445,7 @@ NOTIFICATION *	Object_to_LPNOTIFICATION(PyObject *obj)
 
 exit:
 	if(PyErr_Occurred()) {
-		if(lpNotif)
-			MAPIFreeBuffer(lpNotif);
+		MAPIFreeBuffer(lpNotif);
 		lpNotif = NULL;
 	}
 
@@ -2496,8 +2487,7 @@ LPFlagList		List_to_LPFlagList(PyObject *list)
 
 exit:
 	if(PyErr_Occurred()) {
-		if(lpList)
-			MAPIFreeBuffer(lpList);
+		MAPIFreeBuffer(lpList);
 		lpList = NULL;
 	}
 	if(elem) {
@@ -2604,8 +2594,7 @@ LPREADSTATE		List_to_LPREADSTATE(PyObject *list, ULONG *lpcElements)
 
 exit:
 	if(PyErr_Occurred()) {
-		if(lpList)
-			MAPIFreeBuffer(lpList);
+		MAPIFreeBuffer(lpList);
 		lpList = NULL;
 	}
 
@@ -2707,8 +2696,7 @@ LPCIID			List_to_LPCIID(PyObject *list, ULONG *cInterfaces)
 
 exit:
 	if(PyErr_Occurred()) {
-		if(lpList)
-			MAPIFreeBuffer(lpList);
+		MAPIFreeBuffer(lpList);
 		lpList = NULL;
 	}
 	if(elem) {
@@ -2782,7 +2770,7 @@ LPECUSER Object_to_LPECUSER(PyObject *elem, ULONG ulFlags) {
 	process_conv_out_array(lpUser, elem, conv_info, lpUser, ulFlags);
 
 exit:
-	if (PyErr_Occurred() && lpUser) {
+	if (PyErr_Occurred()) {
 		MAPIFreeBuffer(lpUser);
 		lpUser = NULL;
 	}
@@ -2857,7 +2845,7 @@ LPECGROUP Object_to_LPECGROUP(PyObject *elem, ULONG ulFlags)
 	process_conv_out_array(lpGroup, elem, conv_info, lpGroup, ulFlags);
 
 exit:
-	if (PyErr_Occurred() && lpGroup) {
+	if (PyErr_Occurred()) {
 		MAPIFreeBuffer(lpGroup);
 		lpGroup = NULL;
 	}
@@ -2929,7 +2917,7 @@ LPECCOMPANY Object_to_LPECCOMPANY(PyObject *elem, ULONG ulFlags)
 	process_conv_out_array(lpCompany, elem, conv_info, lpCompany, ulFlags);
 
 exit:
-	if (PyErr_Occurred() && lpCompany) {
+	if (PyErr_Occurred()) {
 		MAPIFreeBuffer(lpCompany);
 		lpCompany = NULL;
 	}
@@ -3037,8 +3025,7 @@ LPROWLIST List_to_LPROWLIST(PyObject *object, ULONG ulFlags)
 
 exit:
 	if (PyErr_Occurred()) {
-		if (lpRowList)
-			MAPIFreeBuffer(lpRowList);
+		MAPIFreeBuffer(lpRowList);
 		lpRowList = NULL;
 	}
 	if (props)
@@ -3146,7 +3133,7 @@ LPECQUOTA Object_to_LPECQUOTA(PyObject *elem)
 	process_conv_out_array(lpQuota, elem, conv_info, lpQuota, 0);
 
 exit:
-	if (PyErr_Occurred() && lpQuota) {
+	if (PyErr_Occurred()) {
 		MAPIFreeBuffer(lpQuota);
 		lpQuota = NULL;
 	}
@@ -3214,8 +3201,7 @@ LPECSVRNAMELIST List_to_LPECSVRNAMELIST(PyObject *object)
 
 exit:
 	if(PyErr_Occurred()) {
-		if(lpSvrNameList)
-			MAPIFreeBuffer(lpSvrNameList);
+		MAPIFreeBuffer(lpSvrNameList);
 		lpSvrNameList = NULL;
 	}
 	if(elem) {

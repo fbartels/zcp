@@ -140,9 +140,7 @@ ECExchangeImportContentsChanges::ECExchangeImportContentsChanges(ECMAPIFolder *l
 ECExchangeImportContentsChanges::~ECExchangeImportContentsChanges(){
 	m_lpFolder->Release();
 	m_lpLogger->Release();
-
-	if (m_lpSourceKey)
-		MAPIFreeBuffer(m_lpSourceKey);
+	MAPIFreeBuffer(m_lpSourceKey);
 }
 
 HRESULT ECExchangeImportContentsChanges::Create(ECMAPIFolder *lpFolder, LPEXCHANGEIMPORTCONTENTSCHANGES* lppExchangeImportContentsChanges){
@@ -233,9 +231,7 @@ HRESULT ECExchangeImportContentsChanges::GetLastError(HRESULT hResult, ULONG ulF
 	*lppMAPIError = lpMapiError;
 
 exit:
-	if (lpszErrorMsg)
-		MAPIFreeBuffer(lpszErrorMsg);
-
+	MAPIFreeBuffer(lpszErrorMsg);
 	return hr;
 }
 
@@ -432,16 +428,9 @@ HRESULT ECExchangeImportContentsChanges::ImportMessageChange(ULONG cValue, LPSPr
 exit:
 	if(lpECMessage)
 		lpECMessage->Release();
-		
-	if(lpPropPCL)
-		MAPIFreeBuffer(lpPropPCL);
-
-	if(lpPropCK)
-		MAPIFreeBuffer(lpPropCK);
-
-	if(lpEntryId)
-		MAPIFreeBuffer(lpEntryId);
-
+	MAPIFreeBuffer(lpPropPCL);
+	MAPIFreeBuffer(lpPropCK);
+	MAPIFreeBuffer(lpEntryId);
 	return hr;
 }
 
@@ -503,17 +492,12 @@ HRESULT ECExchangeImportContentsChanges::ImportPerUserReadStateChange(ULONG cEle
 		hr = m_lpFolder->GetMsgStore()->lpTransport->HrSetReadFlag(cbEntryId, lpEntryId, lpReadState[ulSKNr].ulFlags & MSGFLAG_READ ? 0 : CLEAR_READ_FLAG, m_ulSyncId);
 		if(hr != hrSuccess)
 			goto exit;
-
-		if(lpEntryId){
-			MAPIFreeBuffer(lpEntryId);
-			lpEntryId = NULL;
-		}
+		MAPIFreeBuffer(lpEntryId);
+		lpEntryId = NULL;
 	}
 
 exit:
-	if(lpEntryId)
-		MAPIFreeBuffer(lpEntryId);
-
+	MAPIFreeBuffer(lpEntryId);
 	return hr;
 }
 
@@ -641,9 +625,7 @@ HRESULT ECExchangeImportContentsChanges::CreateConflictMessage(LPMESSAGE lpMessa
 
 
 exit:
-	if(lpConflictItems)
-		MAPIFreeBuffer(lpConflictItems);
-
+	MAPIFreeBuffer(lpConflictItems);
 	return hr;
 }
 
@@ -708,16 +690,10 @@ HRESULT ECExchangeImportContentsChanges::CreateConflictMessageOnly(LPMESSAGE lpM
 	hr = lpConflictMessage->SaveChanges(KEEP_OPEN_READWRITE);
 	if(hr != hrSuccess)
 		goto exit;
-
-	if(lpEntryIdProp){
-		MAPIFreeBuffer(lpEntryIdProp);
-		lpEntryIdProp = NULL;
-	}
-
-	if(lpConflictItems){
-		MAPIFreeBuffer(lpConflictItems);
-		lpConflictItems = NULL;
-	}
+	MAPIFreeBuffer(lpEntryIdProp);
+	lpEntryIdProp = NULL;
+	MAPIFreeBuffer(lpConflictItems);
+	lpConflictItems = NULL;
 
 	//add the entryid from the conflict message to the PR_CONFLICT_ITEMS of the original message
 	hr = HrGetOneProp(lpConflictMessage, PR_ENTRYID, &lpEntryIdProp);
@@ -762,16 +738,9 @@ exit:
 
 	if(lpConflictMessage)
 		lpConflictMessage->Release();
-
-	if(lpPropAdditionalREN)
-		MAPIFreeBuffer(lpPropAdditionalREN);
-
-	if(lpConflictItems)
-		MAPIFreeBuffer(lpConflictItems);
-
-	if(lpEntryIdProp)
-		MAPIFreeBuffer(lpEntryIdProp);
-
+	MAPIFreeBuffer(lpPropAdditionalREN);
+	MAPIFreeBuffer(lpConflictItems);
+	MAPIFreeBuffer(lpEntryIdProp);
 	return hr;
 }
 
@@ -891,15 +860,10 @@ exit:
 
 	if(lpConflictFolder)
 		lpConflictFolder->Release();
-	if(lpAdditionalREN)
-		MAPIFreeBuffer(lpAdditionalREN);
-	if(lpNewAdditionalREN)
-		MAPIFreeBuffer(lpNewAdditionalREN);
-	if(lpIPMSubTree)
-		MAPIFreeBuffer(lpIPMSubTree);
-	if(lpEntryId)
-		MAPIFreeBuffer(lpEntryId);
-
+	MAPIFreeBuffer(lpAdditionalREN);
+	MAPIFreeBuffer(lpNewAdditionalREN);
+	MAPIFreeBuffer(lpIPMSubTree);
+	MAPIFreeBuffer(lpEntryId);
 	return hr;
 }
 
@@ -944,10 +908,7 @@ HRESULT ECExchangeImportContentsChanges::CreateConflictFolder(LPTSTR lpszName, L
 exit:
 	if((hr != hrSuccess || lppConflictFolder == NULL) && lpConflictFolder)
 		lpConflictFolder->Release();
-	
-	if(lpEntryId)
-		MAPIFreeBuffer(lpEntryId);
-
+	MAPIFreeBuffer(lpEntryId);
 	return hr;
 }
 

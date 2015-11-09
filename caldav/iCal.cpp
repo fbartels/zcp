@@ -165,9 +165,7 @@ exit:
 	else
 		m_lpRequest->HrResponseHeader(500, "Internal Server Error");
 	
-	if (lpProp)
-		MAPIFreeBuffer(lpProp);
-
+	MAPIFreeBuffer(lpProp);
 	if (lpContents)
 		lpContents->Release();
 
@@ -392,10 +390,7 @@ exit:
 		m_lpRequest->HrResponseHeader(500,"Internal Server Error");
 
 	for( mpIterJ = mpSrvEntries.begin(); mpIterJ != mpSrvEntries.end() ; mpIterJ++ )
-	{
-		if(mpIterJ->second.lpb)
-			MAPIFreeBuffer(mpIterJ->second.lpb);
-	}
+		MAPIFreeBuffer(mpIterJ->second.lpb);
 	
 	if(lpContTable)
 		lpContTable->Release();
@@ -406,9 +401,7 @@ exit:
 	if(lpICalToMapi)
 		delete lpICalToMapi;
 	
-	if(lpPropTagArr)
-		MAPIFreeBuffer(lpPropTagArr);
-	
+	MAPIFreeBuffer(lpPropTagArr);
 	mpSrvEntries.clear();
 	mpIcalEntries.clear();
 	mpSrvTimes.clear();
@@ -550,9 +543,7 @@ HRESULT iCal::HrDelMessage(SBinary sbEid, bool blCensor)
 	}
 
 exit:
-	if (lpEntryList)
-		MAPIFreeBuffer(lpEntryList);
-
+	MAPIFreeBuffer(lpEntryList);
 	if(lpMessage)
 		lpMessage->Release();
 
@@ -782,12 +773,8 @@ exit:
 	else
 		m_lpRequest->HrResponseHeader(500,"Internal Server Error");
 
-	if (lpWstBoxEid)
-		MAPIFreeBuffer(lpWstBoxEid);
-
-	if (lpFldEid)
-		MAPIFreeBuffer(lpFldEid);
-
+	MAPIFreeBuffer(lpWstBoxEid);
+	MAPIFreeBuffer(lpFldEid);
 	if (lpWasteBoxFld)
 		lpWasteBoxFld->Release();
 

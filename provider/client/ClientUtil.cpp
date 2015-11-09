@@ -148,9 +148,7 @@ HRESULT ClientUtil::HrInitializeStatusRow (const char * lpszProviderDisplay, ULO
 	hResult = lpMAPISup->ModifyStatusRow(cCurVal, lpspvStatusRow, ulFlags);
 
 exit:
-	if(lpspvStatusRow)
-		MAPIFreeBuffer(lpspvStatusRow);
-
+	MAPIFreeBuffer(lpspvStatusRow);
 	return hResult;
 }
 
@@ -246,16 +244,9 @@ exit:
 		MAPIFreeBuffer(lpIdentityProps);
 		*lppIdentityProps = NULL;	// just to be sure...
 	}
-
-	if(lpEntryStore)
-		MAPIFreeBuffer(lpEntryStore);
-
-	if(lpEID)
-		MAPIFreeBuffer(lpEID);
-
-	if (lpUser)
-		MAPIFreeBuffer(lpUser);
-
+	MAPIFreeBuffer(lpEntryStore);
+	MAPIFreeBuffer(lpEID);
+	MAPIFreeBuffer(lpUser);
 	return hr;
 }
 
@@ -509,7 +500,8 @@ HRESULT ClientUtil::ReadReceipt(ULONG ulFlags, LPMESSAGE lpReadMessage, LPMESSAG
 
 		lpDestPropValue[ulCurDestValues++].ulPropTag = PR_CONVERSATION_INDEX;
 
-		if(lpByteTmp){ MAPIFreeBuffer(lpByteTmp); lpByteTmp = NULL;}
+		MAPIFreeBuffer(lpByteTmp);
+		lpByteTmp = NULL;
 	}
 
 	if(lpSrcPropValue[RR_IMPORTANCE].ulPropTag == PR_IMPORTANCE)
@@ -674,16 +666,9 @@ HRESULT ClientUtil::ReadReceipt(ULONG ulFlags, LPMESSAGE lpReadMessage, LPMESSAG
 exit:
 	if(lpBodyStream)
 		lpBodyStream->Release();
-
-	if(lpDestPropValue)
-		MAPIFreeBuffer(lpDestPropValue);
-	
-	if(lpSrcPropValue)
-		MAPIFreeBuffer(lpSrcPropValue);
-
-	if(lpByteTmp)
-		MAPIFreeBuffer(lpByteTmp);
-
+	MAPIFreeBuffer(lpDestPropValue);
+	MAPIFreeBuffer(lpSrcPropValue);
+	MAPIFreeBuffer(lpByteTmp);
 	if(lpMods)
 		FreePadrlist(lpMods);	
 
@@ -821,15 +806,9 @@ HRESULT ClientUtil::GetGlobalProfileProperties(LPPROFSECT lpGlobalProfSect, stru
 	hr = hrSuccess;
 
 exit:
-	if(lpPropEMS)
-		MAPIFreeBuffer(lpPropEMS);
-
-	if(lpsPropArray)
-		MAPIFreeBuffer(lpsPropArray);
-
-	if(lpsEMSPropArray)
-		MAPIFreeBuffer(lpsEMSPropArray);
-
+	MAPIFreeBuffer(lpPropEMS);
+	MAPIFreeBuffer(lpsPropArray);
+	MAPIFreeBuffer(lpsEMSPropArray);
 	return hr;
 }
 
@@ -868,9 +847,7 @@ HRESULT ClientUtil::GetGlobalProfileDeligateStoresProp(LPPROFSECT lpGlobalProfSe
 	hr = hrSuccess;
 
 exit:
-	if(lpsPropValue)
-		MAPIFreeBuffer(lpsPropValue);
-
+	MAPIFreeBuffer(lpsPropValue);
 	return hr;
 }
 
@@ -1048,7 +1025,7 @@ HRESULT ClientUtil::ConvertMSEMSProps(ULONG cValues, LPSPropValue pValues, ULONG
 	*lppProps = lpProps;
 
 exit:
-	if (hr != hrSuccess && lpProps)
+	if (hr != hrSuccess)
 		MAPIFreeBuffer(lpProps);
 	delete lpConfig;
 	return hr;

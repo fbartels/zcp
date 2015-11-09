@@ -132,7 +132,7 @@ HRESULT ECFreeBusySupport::Open(IMAPISession* lpMAPISession, IMsgStore* lpMsgSto
 	if (lpMsgStore) {
 		HrGetOneProp(lpMsgStore, PR_DISPLAY_NAME_A, &lpPropArray);
 		TRACE_MAPI(TRACE_ENTRY, "ECFreeBusySupport::Open", "Storename=%s", (lpPropArray && lpPropArray->ulPropTag == PR_DISPLAY_NAME_A) ? lpPropArray->Value.lpszA : "Error");
-		if (lpPropArray) MAPIFreeBuffer(lpPropArray);
+		MAPIFreeBuffer(lpPropArray);
 	}
 	}
 #endif

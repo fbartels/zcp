@@ -275,21 +275,14 @@ HRESULT ECQuotaMonitor::CheckQuota()
 check_stores:
 		/* Whatever the status of the company quota, we should also check the quota of the users */
 		CheckCompanyQuota(&lpsCompanyList[i]);
-
-		if (lpsQuotaStatus) {
-			MAPIFreeBuffer(lpsQuotaStatus);
-			lpsQuotaStatus = NULL;
-		}
-
+		MAPIFreeBuffer(lpsQuotaStatus);
+		lpsQuotaStatus = NULL;
 		if (lpMsgStore) {
 			lpMsgStore->Release();
 			lpMsgStore = NULL;
 		}
-
-		if (lpsQuota) {
-			MAPIFreeBuffer(lpsQuota);
-			lpsQuota = NULL;
-		}
+		MAPIFreeBuffer(lpsQuota);
+		lpsQuota = NULL;
 	}
 
 exit:
@@ -298,22 +291,12 @@ exit:
 
 	if (lpServiceAdmin)
 		lpServiceAdmin->Release();
-
-	if (lpsObject)
-		MAPIFreeBuffer(lpsObject);
-
-	if (lpsCompanyListAlloc)
-		 MAPIFreeBuffer(lpsCompanyListAlloc);
-
-	if (lpsQuotaStatus)
-		MAPIFreeBuffer(lpsQuotaStatus);
-
+	MAPIFreeBuffer(lpsObject);
+	MAPIFreeBuffer(lpsCompanyListAlloc);
+	MAPIFreeBuffer(lpsQuotaStatus);
 	if (lpMsgStore) 
 		lpMsgStore->Release();
-
-	if (lpsQuota) 
-		MAPIFreeBuffer(lpsQuota);
-
+	MAPIFreeBuffer(lpsQuota);
 	return hr;
 }
 
@@ -434,8 +417,7 @@ HRESULT ECQuotaMonitor::CheckCompanyQuota(LPECCOMPANY lpecCompany)
 			}
 
 next:
-			if (lpszConnection)
-				MAPIFreeBuffer(lpszConnection);
+			MAPIFreeBuffer(lpszConnection);
 			lpszConnection = NULL;
 
 			if (lpSession)
@@ -449,18 +431,11 @@ next:
 	}
 
 exit:
-	if (lpszConnection)
-		MAPIFreeBuffer(lpszConnection);
-
+	MAPIFreeBuffer(lpszConnection);
 	if(lpServiceAdmin)
 		lpServiceAdmin->Release();
-
-	if(lpsObject)
-		MAPIFreeBuffer(lpsObject);
-
-    if(lpsUserList)
-		MAPIFreeBuffer(lpsUserList);
-
+	MAPIFreeBuffer(lpsObject);
+	MAPIFreeBuffer(lpsUserList);
 	return hr;
 }
 
@@ -598,10 +573,7 @@ HRESULT ECQuotaMonitor::CheckServerQuota(ULONG cUsers, LPECUSER lpsUserList, LPE
 exit:
 	if (lpRowSet)
 		FreeProws(lpRowSet);
-
-	if (lpsRestriction)
-		MAPIFreeBuffer(lpsRestriction);
-
+	MAPIFreeBuffer(lpsRestriction);
 	if (lpTable)
 		lpTable->Release();
 
@@ -989,21 +961,12 @@ HRESULT ECQuotaMonitor::CreateMessageProperties(LPECUSER lpecToUser, LPECUSER lp
 	*lpcPropSize = ulPropArrayCur;
 
 exit:
-	if (hr != hrSuccess && lpPropArray)
+	if (hr != hrSuccess)
 		MAPIFreeBuffer(lpPropArray);
-
-	if (lpToEntryid)
-		MAPIFreeBuffer(lpToEntryid);
-
-	if (lpFromEntryid)
-		MAPIFreeBuffer(lpFromEntryid);
-
-	if (lpToSearchKey)
-		MAPIFreeBuffer(lpToSearchKey);
-
-	if(lpFromSearchKey)
-		MAPIFreeBuffer(lpFromSearchKey);
-
+	MAPIFreeBuffer(lpToEntryid);
+	MAPIFreeBuffer(lpFromEntryid);
+	MAPIFreeBuffer(lpToSearchKey);
+	MAPIFreeBuffer(lpFromSearchKey);
 	return hr;
 }
 
@@ -1085,27 +1048,17 @@ HRESULT ECQuotaMonitor::CreateRecipientList(ULONG cToUsers, LPECUSER lpToUsers, 
 		lpAddrList->aEntries[i].rgPropVals[6].Value.bin.cb = cbUserSearchKey;
 		memcpy(lpAddrList->aEntries[i].rgPropVals[6].Value.bin.lpb,
 			   lpUserSearchKey, cbUserSearchKey);
-
-		if (lpUserEntryid) {
-			MAPIFreeBuffer(lpUserEntryid);
-			lpUserEntryid = NULL;
-		}
-
-		if (lpUserSearchKey) {
-			MAPIFreeBuffer(lpUserSearchKey);
-			lpUserSearchKey = NULL;
-		}
+		MAPIFreeBuffer(lpUserEntryid);
+		lpUserEntryid = NULL;
+		MAPIFreeBuffer(lpUserSearchKey);
+		lpUserSearchKey = NULL;
 	}
 
 	*lppAddrList = lpAddrList;
 
 exit:		
-	if (lpUserEntryid)
-		MAPIFreeBuffer(lpUserEntryid);
-
-	if(lpUserSearchKey)
-		MAPIFreeBuffer(lpUserSearchKey);
-
+	MAPIFreeBuffer(lpUserEntryid);
+	MAPIFreeBuffer(lpUserSearchKey);
 	if (hr != hrSuccess && lpAddrList)
 		FreePadrlist(lpAddrList);
 
@@ -1181,10 +1134,7 @@ HRESULT ECQuotaMonitor::SendQuotaWarningMail(IMsgStore* lpMDB, ULONG cPropSize, 
 exit:
 	if (lpInbox)
 		lpInbox->Release();
-
-	if (lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
-
+	MAPIFreeBuffer(lpEntryID);
 	if(lpMessage)
 		lpMessage->Release();
 
@@ -1226,9 +1176,7 @@ HRESULT ECQuotaMonitor::CreateQuotaWarningMail(TemplateVariables *lpVars,
 	m_lpThreadMonitor->lpLogger->Log(EC_LOGLEVEL_NOTICE, "Mail delivered to user %s", (LPSTR)lpecToUser->lpszUsername);
 
 exit:
-	if (lpPropArray)
-		MAPIFreeBuffer(lpPropArray);
-
+	MAPIFreeBuffer(lpPropArray);
 	return hr;
 }
 
@@ -1463,23 +1411,14 @@ HRESULT ECQuotaMonitor::Notify(LPECUSER lpecUser, LPECCOMPANY lpecCompany, LPECQ
 		m_lpThreadMonitor->lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to update last mail quota timestamp: 0x%08X", hr);
 
 exit:
-	if (lpecFromUser)
-		MAPIFreeBuffer(lpecFromUser);
-
-	if (lpToUsers)
-		MAPIFreeBuffer(lpToUsers);
-
-	if (lpecQuota)
-		MAPIFreeBuffer(lpecQuota);
-
+	MAPIFreeBuffer(lpecFromUser);
+	MAPIFreeBuffer(lpToUsers);
+	MAPIFreeBuffer(lpecQuota);
 	if (lpAddrList)
 		FreePadrlist(lpAddrList);
 
 	if (lpServiceAdmin)
 		lpServiceAdmin->Release();
-
-	if(lpsObject)
-		MAPIFreeBuffer(lpsObject);
-
+	MAPIFreeBuffer(lpsObject);
 	return hr;
 }

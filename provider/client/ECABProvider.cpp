@@ -360,16 +360,9 @@ exit:
 	if (lpProfSectService)
 		lpProfSectService->Release();
 #endif
-
-	if (lpUidService)
-		MAPIFreeBuffer(lpUidService);
-
-	if (lpProviderUid)
-		MAPIFreeBuffer(lpProviderUid);
-
-	if (lpSectionUid)
-		MAPIFreeBuffer(lpSectionUid);
-
+	MAPIFreeBuffer(lpUidService);
+	MAPIFreeBuffer(lpProviderUid);
+	MAPIFreeBuffer(lpSectionUid);
 	if (lpProfSect)
 		lpProfSect->Release();
 

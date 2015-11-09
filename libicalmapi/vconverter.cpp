@@ -374,9 +374,7 @@ bool VConverter::bIsUserLoggedIn(const std::wstring &strUser)
 		blRetVal = true;
 	
 exit:
-	if (lpUserProp)
-		MAPIFreeBuffer(lpUserProp);
-
+	MAPIFreeBuffer(lpUserProp);
 	return blRetVal;
 }
 
@@ -498,21 +496,14 @@ HRESULT VConverter::HrResolveUser(void *base , std::list<icalrecip> *lplstIcalRe
 	}
 
 exit:
-	if (lpUsrEidProp)
-		MAPIFreeBuffer(lpUsrEidProp);
-
-	if (lpFlagList)
-		MAPIFreeBuffer(lpFlagList);
-
+	MAPIFreeBuffer(lpUsrEidProp);
+	MAPIFreeBuffer(lpFlagList);
 	if (lpAdrList)
 		FreeProws((LPSRowSet)lpAdrList);
 
 	if (lpAddrFolder)
 		lpAddrFolder->Release();
-
-	if (lpDDEntryID)
-		MAPIFreeBuffer(lpDDEntryID);
-
+	MAPIFreeBuffer(lpDDEntryID);
 	return hr;
 }
 
@@ -549,9 +540,7 @@ HRESULT VConverter::HrCompareUids(icalitem *lpIcalItem, icalcomponent *lpicEvent
 		hr = MAPI_E_BAD_VALUE;
 
 exit:
-	if (lpPropVal)
-		MAPIFreeBuffer(lpPropVal);
-
+	MAPIFreeBuffer(lpPropVal);
 	return hr;
 }
 
@@ -1381,12 +1370,8 @@ HRESULT VConverter::HrAddRecipients(icalcomponent *lpicEvent, icalitem *lpIcalIt
 	}
 
 exit:
-	if (lpsPropVal)
-		MAPIFreeBuffer(lpsPropVal);
-
-	if (lpEntryIDOneOff)
-		MAPIFreeBuffer(lpEntryIDOneOff);
-
+	MAPIFreeBuffer(lpsPropVal);
+	MAPIFreeBuffer(lpEntryIDOneOff);
 	return hr;
 }
 
@@ -1454,9 +1439,7 @@ HRESULT VConverter::HrAddReplyRecipients(icalcomponent *lpicEvent, icalitem *lpI
 	}
 
 exit:
-	if (lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
-
+	MAPIFreeBuffer(lpEntryID);
 	return hr;
 }
 
@@ -2120,9 +2103,7 @@ HRESULT VConverter::HrSetOrganizerAndAttendees(LPMESSAGE lpParentMsg, LPMESSAGE 
 	*lpicMethod = icMethod;
 
 exit:
-	if (lpSpropVal)
-		MAPIFreeBuffer (lpSpropVal);
-
+	MAPIFreeBuffer(lpSpropVal);
 	if (lpRows)
 		FreeProws(lpRows);
 
@@ -2353,9 +2334,7 @@ HRESULT VConverter::HrSetBusyStatus(LPMESSAGE lpMessage, ULONG ulBusyStatus, ica
 	
 	icalproperty_set_x_name(lpicProp, "X-MICROSOFT-CDO-INTENDEDSTATUS"); 
 	icalcomponent_add_property(lpicEvent, lpicProp);
-
-	if(lpSpropVal)
-		MAPIFreeBuffer(lpSpropVal);
+	MAPIFreeBuffer(lpSpropVal);
 	return hrSuccess;
 }
 
@@ -3140,13 +3119,8 @@ exit:
 
 	if (lpException)
 		lpException->Release();
-
-	if (lpSpropArray)
-		MAPIFreeBuffer(lpSpropArray);
-
-	if (lpPropTagArr)
-		MAPIFreeBuffer(lpPropTagArr);
-
+	MAPIFreeBuffer(lpSpropArray);
+	MAPIFreeBuffer(lpPropTagArr);
 	delete[] lpRecurrenceData;
 	if (lpStream)
 		lpStream->Release();
@@ -3265,10 +3239,7 @@ exit:
 
 	if (lpRows)
 		FreeProws(lpRows);
-
-	if (lpAttachRestrict)
-		MAPIFreeBuffer(lpAttachRestrict);
-
+	MAPIFreeBuffer(lpAttachRestrict);
 	if (lpAttachTable)
 		lpAttachTable->Release();
 
@@ -3457,12 +3428,8 @@ HRESULT VConverter::HrMAPI2ICal(LPMESSAGE lpMessage, icalproperty_method *lpicMe
 	*lpEventList = lstEvents;
 
 exit:
-	if (lpSpropValArray)
-		MAPIFreeBuffer(lpSpropValArray);
-
-	if (lpPropTagArray)
-		MAPIFreeBuffer(lpPropTagArray);
-
+	MAPIFreeBuffer(lpSpropValArray);
+	MAPIFreeBuffer(lpPropTagArray);
 	if (lpicEvent)
 		icalcomponent_free(lpicEvent);
 
@@ -3715,8 +3682,6 @@ HRESULT VConverter::HrMAPI2ICal(LPMESSAGE lpMessage, icalproperty_method *lpicMe
 		*lpstrTZid = strTZid;
 
 exit:
-	if (lpMsgProps)
-		MAPIFreeBuffer(lpMsgProps);
-
+	MAPIFreeBuffer(lpMsgProps);
 	return hr;
 }

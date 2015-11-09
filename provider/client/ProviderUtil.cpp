@@ -346,10 +346,7 @@ HRESULT GetMAPIUniqueProfileId(LPMAPISUP lpMAPISup, tstring* lpstrUniqueId)
 
 	*lpstrUniqueId = bin2hext(lpsPropValue->Value.bin.cb, lpsPropValue->Value.bin.lpb);
 exit:
-
-	if(lpsPropValue)
-		MAPIFreeBuffer(lpsPropValue);
-
+	MAPIFreeBuffer(lpsPropValue);
 	if(lpProfSect)
 		lpProfSect->Release();
 
@@ -461,9 +458,7 @@ HRESULT GetLastConnectionType(IMAPISupport *lpMAPISup, ULONG *lpulType) {
 		*lpulType = lpProp->Value.ul;
 
 exit:
-	if(lpProp)
-		MAPIFreeBuffer(lpProp);
-
+	MAPIFreeBuffer(lpProp);
 	if(lpProfSect)
 		lpProfSect->Release();
 #else

@@ -155,9 +155,7 @@ ECMessage::ECMessage(ECMsgStore *lpMsgStore, BOOL fNew, BOOL fModify, ULONG ulFl
 
 ECMessage::~ECMessage()
 {
-	if(m_lpParentID)
-		MAPIFreeBuffer(m_lpParentID);
-
+	MAPIFreeBuffer(m_lpParentID);
 	if(lpRecips)
 		lpRecips->Release();
 
@@ -1021,9 +1019,7 @@ HRESULT ECMessage::GetAttachmentTable(ULONG ulFlags, LPMAPITABLE *lppTable)
 	lpView->Release();
 
 exit:
-	if (lpPropTagArray)
-		MAPIFreeBuffer(lpPropTagArray);
-
+	MAPIFreeBuffer(lpPropTagArray);
 	pthread_mutex_unlock(&m_hMutexMAPIObject);
 
 	return hr;
@@ -1325,9 +1321,7 @@ HRESULT ECMessage::GetRecipientTable(ULONG ulFlags, LPMAPITABLE *lppTable)
 	lpView->Release();
 
 exit:
-	if (lpPropTagArray)
-		MAPIFreeBuffer(lpPropTagArray);
-
+	MAPIFreeBuffer(lpPropTagArray);
 	pthread_mutex_unlock(&m_hMutexMAPIObject);
 
 	return hr;
@@ -1779,13 +1773,8 @@ exit:
 
 	if(lpReadReceiptRequest)
 		ECFreeBuffer(lpReadReceiptRequest);
-
-	if(lpsPropUserName)
-		MAPIFreeBuffer(lpsPropUserName);
-
-	if(lpStoreID)
-		MAPIFreeBuffer(lpStoreID);
-
+	MAPIFreeBuffer(lpsPropUserName);
+	MAPIFreeBuffer(lpStoreID);
 	if(lpRootFolder)
 		lpRootFolder->Release();
 
@@ -2172,15 +2161,9 @@ HRESULT ECMessage::UpdateTable(ECMemTable *lpTable, ULONG ulObjType, ULONG ulObj
 		goto exit;
 
 exit:
-	if (lpAllProps)
-		MAPIFreeBuffer(lpAllProps);
-
-	if (lpNewProps)
-		MAPIFreeBuffer(lpNewProps);
-
-	if (lpProps)
-		MAPIFreeBuffer(lpProps);
-
+	MAPIFreeBuffer(lpAllProps);
+	MAPIFreeBuffer(lpNewProps);
+	MAPIFreeBuffer(lpProps);
 	pthread_mutex_unlock(&m_hMutexMAPIObject);
 
 	return hr;

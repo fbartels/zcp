@@ -153,8 +153,7 @@ ECMAPIProp::ECMAPIProp(void *lpProvider, ULONG ulObjType, BOOL fModify,
 ECMAPIProp::~ECMAPIProp()
 {
 	TRACE_MAPI(TRACE_ENTRY, "ECMAPIProp::~ECMAPIProp","");
-	if (m_lpParentID)
-		MAPIFreeBuffer(m_lpParentID);
+	MAPIFreeBuffer(m_lpParentID);
 }
 
 HRESULT ECMAPIProp::QueryInterface(REFIID refiid, void **lppInterface)

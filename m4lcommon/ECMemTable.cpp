@@ -207,14 +207,9 @@ exit:
 	pthread_mutex_unlock(&m_hDataMutex);
 
 	if (hr != hrSuccess) {
-		if (lpRowSet)
-			MAPIFreeBuffer(lpRowSet);
-
-		if (lpIDs)
-			MAPIFreeBuffer(lpIDs);
-
-		if (lpulStatus)
-			MAPIFreeBuffer(lpulStatus);
+		MAPIFreeBuffer(lpRowSet);
+		MAPIFreeBuffer(lpIDs);
+		MAPIFreeBuffer(lpulStatus);
 	}
 	return hr;
 }
@@ -290,12 +285,8 @@ HRESULT ECMemTable::HrGetRowData(LPSPropValue lpRow, ULONG *lpcValues, LPSPropVa
 	lpRowData = NULL;
 
 exit:
-	
 	pthread_mutex_unlock(&m_hDataMutex);
-
-	if (lpRowData)
-		MAPIFreeBuffer(lpRowData);
-
+	MAPIFreeBuffer(lpRowData);
 	return hr;
 }
 
@@ -317,11 +308,8 @@ HRESULT ECMemTable::HrSetClean()
 		iterNext++;
 
 		if(iterRows->second.fDeleted) {
-			if(iterRows->second.lpsID) 
-				MAPIFreeBuffer(iterRows->second.lpsID);
-			if(iterRows->second.lpsPropVal)
-				MAPIFreeBuffer(iterRows->second.lpsPropVal);
-
+			MAPIFreeBuffer(iterRows->second.lpsID);
+			MAPIFreeBuffer(iterRows->second.lpsPropVal);
 			mapRows.erase(iterRows);
 		} else {
 			iterRows->second.fDeleted = false;
@@ -357,9 +345,7 @@ HRESULT ECMemTable::HrUpdateRowID(LPSPropValue lpId, LPSPropValue lpProps, ULONG
         goto exit;
     }
     
-    if(iterRows->second.lpsID)
-        MAPIFreeBuffer(iterRows->second.lpsID);
-
+    MAPIFreeBuffer(iterRows->second.lpsID);
     hr = MAPIAllocateBuffer(sizeof(SPropValue), (void **)&iterRows->second.lpsID);
 	if(hr != hrSuccess)
 		goto exit;
@@ -553,10 +539,8 @@ HRESULT ECMemTable::HrClear()
 	pthread_mutex_lock(&m_hDataMutex);
 
 	for(iterRows = mapRows.begin(); iterRows != mapRows.end(); iterRows++) {
-		if(iterRows->second.lpsPropVal)
-			MAPIFreeBuffer(iterRows->second.lpsPropVal);
-		if(iterRows->second.lpsID)
-			MAPIFreeBuffer(iterRows->second.lpsID);
+		MAPIFreeBuffer(iterRows->second.lpsPropVal);
+		MAPIFreeBuffer(iterRows->second.lpsID);
 	}
 
 	// Clear list
@@ -625,8 +609,7 @@ ECMemTableView::~ECMemTableView()
 	delete[] this->lpsPropTags;
 	delete[] lpsSortOrderSet;
 	delete lpKeyTable;
-	if (this->lpsRestriction)
-		MAPIFreeBuffer(lpsRestriction);
+	MAPIFreeBuffer(lpsRestriction);
 }
 
 HRESULT ECMemTableView::Create(ECMemTable *lpMemTable, const ECLocale &locale, ULONG ulFlags, ECMemTableView **lppMemTableView)
@@ -783,9 +766,7 @@ HRESULT ECMemTableView::Notify(ULONG ulTableEvent, sObjectTableKey* lpsRowItem, 
 	}
 
 exit:
-	if (lpNotification)
-		MAPIFreeBuffer(lpNotification);
-
+	MAPIFreeBuffer(lpNotification);
 	if (lpRows)
 		FreeProws(lpRows);
 
@@ -1045,8 +1026,7 @@ HRESULT ECMemTableView::Restrict(LPSRestriction lpRestriction, ULONG ulFlags)
 {
 	HRESULT hr = hrSuccess;
 
-	if (this->lpsRestriction)
-		MAPIFreeBuffer(this->lpsRestriction);
+	MAPIFreeBuffer(this->lpsRestriction);
 	this->lpsRestriction = NULL;
 
 	if(lpRestriction)
@@ -1529,8 +1509,7 @@ HRESULT ECMemTableView::QueryRowData(ECObjectTableList *lpsRowList, LPSRowSet *l
 	*lppRows = lpRows;
 
 exit:
-
-	if (hr != hrSuccess && lpRows)
+	if (hr != hrSuccess)
 		MAPIFreeBuffer(lpRows);
 
 	return hr;

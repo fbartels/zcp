@@ -176,10 +176,8 @@ static HRESULT ExpandRecipientsRecursive(LPADRBOOK lpAddrBook,
 			lpContentsTable = NULL;
 		}
 		
-		if (lpSMTPAddress) {
-			MAPIFreeBuffer(lpSMTPAddress);
-			lpSMTPAddress = NULL;
-		}
+		MAPIFreeBuffer(lpSMTPAddress);
+		lpSMTPAddress = NULL;
 
 		/* Request group from table */
 		hr = lpTable->QueryRows(1, 0, &lpsRowSet);
@@ -304,9 +302,7 @@ remove_group:
 	}
 
 exit:
-	if (lpSMTPAddress)
-		MAPIFreeBuffer(lpSMTPAddress);
-		
+	MAPIFreeBuffer(lpSMTPAddress);
 	if (lpDistlist)
 		lpDistlist->Release();
 
@@ -437,13 +433,8 @@ exit:
 
 	if (lpTable)
 		lpTable->Release();
-
-	if (lpRestriction)
-		MAPIFreeBuffer(lpRestriction);
-
-	if (lpEntryRestriction)
-		MAPIFreeBuffer(lpEntryRestriction);
-
+	MAPIFreeBuffer(lpRestriction);
+	MAPIFreeBuffer(lpEntryRestriction);
 	return hr;
 }
 
@@ -598,34 +589,23 @@ static HRESULT RewriteRecipients(LPMAPISESSION lpMAPISession,
 
 nextfax:
 			hr = hrSuccess;
-
-			if (lpNewEntryID)
-				MAPIFreeBuffer(lpNewEntryID);
+			MAPIFreeBuffer(lpNewEntryID);
 			lpNewEntryID = NULL;
 
 			if (lpFaxMailuser)
 				lpFaxMailuser->Release();
 			lpFaxMailuser = NULL;
-
-			if (lpFaxNumbers)
-				MAPIFreeBuffer(lpFaxNumbers);
+			MAPIFreeBuffer(lpFaxNumbers);
 			lpFaxNumbers = NULL;
 		}
 	}
 
 exit:
-	if (lpNewEntryID)
-		MAPIFreeBuffer(lpNewEntryID);
-
+	MAPIFreeBuffer(lpNewEntryID);
 	if (lpFaxMailuser)
 		lpFaxMailuser->Release();
-
-	if (lpFaxNumbers)
-		MAPIFreeBuffer(lpFaxNumbers);
-
-	if (lpRecipColumns)
-		MAPIFreeBuffer(lpRecipColumns);
-
+	MAPIFreeBuffer(lpFaxNumbers);
+	MAPIFreeBuffer(lpRecipColumns);
 	if (lpRowSet)
 		FreeProws(lpRowSet);
 
@@ -1395,28 +1375,16 @@ exit:
 
 	if(lpTableMods)
 		lpTableMods->Release();
-
-	if (lpPropValue)
-		MAPIFreeBuffer(lpPropValue);
-
-	if(lpPropValueAttach)
-		MAPIFreeBuffer(lpPropValueAttach);
-
-	if(lpEntryIdSender)
-		MAPIFreeBuffer(lpEntryIdSender);
-
-	if(lpPropArrayOriginal)
-		MAPIFreeBuffer(lpPropArrayOriginal);
-
+	MAPIFreeBuffer(lpPropValue);
+	MAPIFreeBuffer(lpPropValueAttach);
+	MAPIFreeBuffer(lpEntryIdSender);
+	MAPIFreeBuffer(lpPropArrayOriginal);
 	if(lpRows)
 		FreeProws(lpRows);
 
 	if(lpMods)
 		FreePadrlist(lpMods);
-
-	if(lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
-
+	MAPIFreeBuffer(lpEntryID);
 	return hr;
 }
 
@@ -1521,18 +1489,10 @@ static HRESULT ContactToZarafa(IMsgStore *lpUserStore, LPADRBOOK lpAddrBook,
 	*lpulZarafaEID = lpEntryIds[lpContabEntryID->email_offset].Value.bin.cb;
 
 exit:
-	if (lpPropTags)
-		MAPIFreeBuffer(lpPropTags);
-
-	if (lppNames)
-		MAPIFreeBuffer(lppNames);
-
-	if (lpNames)
-		MAPIFreeBuffer(lpNames);
-
-	if (lpEntryIds)
-		MAPIFreeBuffer(lpEntryIds);
-
+	MAPIFreeBuffer(lpPropTags);
+	MAPIFreeBuffer(lppNames);
+	MAPIFreeBuffer(lpNames);
+	MAPIFreeBuffer(lpEntryIds);
 	if (lpContact)
 		lpContact->Release();
 
@@ -1771,16 +1731,10 @@ static HRESULT HrOpenRepresentStore(IAddrBook *lpAddrBook,
 exit:
 	if (lpRepresenting)
 		lpRepresenting->Release();
-
-	if (lpRepAccount)
-		MAPIFreeBuffer(lpRepAccount);
-
+	MAPIFreeBuffer(lpRepAccount);
 	if (lpExchangeManageStore)
 		lpExchangeManageStore->Release();
-
-	if (lpRepStoreEID)
-		MAPIFreeBuffer(lpRepStoreEID);
-
+	MAPIFreeBuffer(lpRepStoreEID);
 	if (lpRepStore)
 		lpRepStore->Release();
 
@@ -1963,16 +1917,9 @@ exit:
 		*lppRepStore = NULL;
 
 	*lpbAllowed = bAllowed;
-
-	if (sSpoofEID.Value.bin.lpb)
-		MAPIFreeBuffer(sSpoofEID.Value.bin.lpb);
-
-	if (lpOwnerProps)
-		MAPIFreeBuffer(lpOwnerProps);
-
-	if (lpRepresentProps)
-		MAPIFreeBuffer(lpRepresentProps);
-
+	MAPIFreeBuffer(sSpoofEID.Value.bin.lpb);
+	MAPIFreeBuffer(lpOwnerProps);
+	MAPIFreeBuffer(lpRepresentProps);
 	if (lpMailboxOwner)
 		lpMailboxOwner->Release();
 
@@ -2091,31 +2038,17 @@ exit:
 		*lppRepStore = lpRepStore;
 		lpRepStore = NULL;
 	}
-
-	if (sSpoofEID.Value.bin.lpb)
-		MAPIFreeBuffer(sSpoofEID.Value.bin.lpb);
-
+	MAPIFreeBuffer(sSpoofEID.Value.bin.lpb);
 	if (lpRepStore)
 		lpRepStore->Release();
-
-	if (lpRepOwnerName)
-		MAPIFreeBuffer(lpRepOwnerName);
-
-	if (lpUserOwnerName)
-		MAPIFreeBuffer(lpUserOwnerName);
-
+	MAPIFreeBuffer(lpRepOwnerName);
+	MAPIFreeBuffer(lpUserOwnerName);
 	if (lpRepSubtree)
 		lpRepSubtree->Release();
-
-	if (lpRepFBProp)
-		MAPIFreeBuffer(lpRepFBProp);
-
+	MAPIFreeBuffer(lpRepFBProp);
 	if (lpRepFBMessage)
 		lpRepFBMessage->Release();
-
-	if (lpDelegates)
-		MAPIFreeBuffer(lpDelegates);
-
+	MAPIFreeBuffer(lpDelegates);
 	return hr;
 }
 
@@ -2176,9 +2109,7 @@ static HRESULT CopyDelegateMessageToSentItems(LPMESSAGE lpMessage,
 	g_lpLogger->Log(EC_LOGLEVEL_INFO, "Copy placed in representee's sent items folder");
 
 exit:
-	if (lpSentItemsEntryID)
-		MAPIFreeBuffer(lpSentItemsEntryID);
-
+	MAPIFreeBuffer(lpSentItemsEntryID);
 	if (lpSentItems)
 		lpSentItems->Release();
 
@@ -2222,9 +2153,7 @@ static HRESULT PostSendProcessing(ULONG cbEntryId, const ENTRYID *lpEntryId,
 		g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Could not remove invalid message from queue, error code: 0x%08X", hr);
 
 exit:
-	if(lpObject)
-		MAPIFreeBuffer(lpObject);
-		
+	MAPIFreeBuffer(lpObject);
 	if(lpSpooler)
 		lpSpooler->Release();
 		
@@ -2660,60 +2589,31 @@ exit:
 
 	if (lpMessage)
 		lpMessage->Release();
-
-	if (lpUserAdmin)
-		MAPIFreeBuffer(lpUserAdmin);
-
+	MAPIFreeBuffer(lpUserAdmin);
 	if (lpRepMessage)
 		lpRepMessage->Release();
 
 	if (lpRepStore)
 		lpRepStore->Release();
-
-	if (lpAutoForward)
-		MAPIFreeBuffer(lpAutoForward);
-
-	if (lpMsgClass)
-		MAPIFreeBuffer(lpMsgClass);
-
-	if (lpOwner)
-		MAPIFreeBuffer(lpOwner);
-
-	if (lpPropOwner)
-		MAPIFreeBuffer(lpPropOwner);
-
-	if (lpMoveReprProps)
-		MAPIFreeBuffer(lpMoveReprProps);
+	MAPIFreeBuffer(lpAutoForward);
+	MAPIFreeBuffer(lpMsgClass);
+	MAPIFreeBuffer(lpOwner);
+	MAPIFreeBuffer(lpPropOwner);
+	MAPIFreeBuffer(lpMoveReprProps);
 
 	// Free checked properties
-	if (lpPropSRNam)
-		MAPIFreeBuffer(lpPropSRNam);
-
-	if (lpPropSREma)
-		MAPIFreeBuffer(lpPropSREma);
-
-	if (lpPropSREid)
-		MAPIFreeBuffer(lpPropSREid);
-
-	if (lpRepEntryID)
-		MAPIFreeBuffer(lpRepEntryID);
+	MAPIFreeBuffer(lpPropSRNam);
+	MAPIFreeBuffer(lpPropSREma);
+	MAPIFreeBuffer(lpPropSREid);
+	MAPIFreeBuffer(lpRepEntryID);
 
 	// Free everything else..
 	if (lpSecurity)
 		lpSecurity->Release();
-
-	if (lpUser)
-		MAPIFreeBuffer(lpUser);
-
-	if (lpSubject)
-		MAPIFreeBuffer(lpSubject);
-
-	if (lpMsgSize)
-		MAPIFreeBuffer(lpMsgSize);
-
-	if (lpDeferSendTime)
-		MAPIFreeBuffer(lpDeferSendTime);
-
+	MAPIFreeBuffer(lpUser);
+	MAPIFreeBuffer(lpSubject);
+	MAPIFreeBuffer(lpMsgSize);
+	MAPIFreeBuffer(lpDeferSendTime);
 	return hr;
 }
 
@@ -2850,16 +2750,10 @@ exit:
 
 	if (lpUserStore)
 		lpUserStore->Release();
-
-	if (lpUserAdmin)
-		MAPIFreeBuffer(lpUserAdmin);
-
+	MAPIFreeBuffer(lpUserAdmin);
 	if (lpMessage)
 		lpMessage->Release();
-
-	if (lpsProp)
-		MAPIFreeBuffer(lpsProp);
-
+	MAPIFreeBuffer(lpsProp);
 	if (lpServiceAdmin)
 		lpServiceAdmin->Release();
 

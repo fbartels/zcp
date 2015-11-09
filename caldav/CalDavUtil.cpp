@@ -118,9 +118,7 @@ HRESULT HrAddProperty(IMAPIProp *lpMapiProp, ULONG ulPropTag, bool bFldId, std::
 		wstrProperty->assign(lpMsgProp->Value.lpszW);
 
 exit:
-	if(lpMsgProp)
-		MAPIFreeBuffer(lpMsgProp);
-
+	MAPIFreeBuffer(lpMsgProp);
 	return hr;
 }
 
@@ -632,12 +630,8 @@ bool HasDelegatePerm(IMsgStore *lpDefStore, IMsgStore *lpSharedStore)
 	if (hr != hrSuccess)
 		goto exit;
 
-	if (lpProp)
-	{
-		MAPIFreeBuffer(lpProp);
-		lpProp = NULL;
-	}
-
+	MAPIFreeBuffer(lpProp);
+	lpProp = NULL;
 	hr = HrGetOneProp(lpFbMessage, PR_SCHDINFO_DELEGATE_ENTRYIDS, &lpProp);
 	if (hr != hrSuccess)
 		goto exit;
@@ -656,12 +650,8 @@ bool HasDelegatePerm(IMsgStore *lpDefStore, IMsgStore *lpSharedStore)
 	if (!blFound)
 		goto exit;
 	
-	if (lpProp)
-	{
-		MAPIFreeBuffer(lpProp);
-		lpProp = NULL;
-	}
-
+	MAPIFreeBuffer(lpProp);
+	lpProp = NULL;
 	hr = HrGetOneProp(lpFbMessage, PR_DELEGATE_FLAGS, &lpProp);
 	if (hr != hrSuccess)
 		goto exit;
@@ -672,12 +662,8 @@ bool HasDelegatePerm(IMsgStore *lpDefStore, IMsgStore *lpSharedStore)
 		blDelegatePerm = false;
 
 exit:
-	
-	if (lpMailBoxEid)
-		MAPIFreeBuffer(lpMailBoxEid);
-
-	if (lpProp)
-		MAPIFreeBuffer(lpProp);
+	MAPIFreeBuffer(lpMailBoxEid);
+	MAPIFreeBuffer(lpProp);
 
 	if (lpFbMessage)
 		lpFbMessage->Release();
@@ -708,10 +694,7 @@ bool IsPrivate(LPMESSAGE lpMessage, ULONG ulPropIDPrivate)
 		bIsPrivate = true;
 	
 exit:
-	
-	if(lpPropPrivate)
-		MAPIFreeBuffer(lpPropPrivate);
-
+	MAPIFreeBuffer(lpPropPrivate);
 	return bIsPrivate;
 }
 
@@ -1021,8 +1004,7 @@ next:
 			lpEnumBlock->Release();
 		lpEnumBlock = NULL;
 
-		if(lpsFBblks)
-			MAPIFreeBuffer(lpsFBblks);
+		MAPIFreeBuffer(lpsFBblks);
 		lpsFBblks = NULL;
 
 		lblkFetched = 0;
@@ -1031,9 +1013,7 @@ next:
 	hr = hrSuccess;
 
 exit:
-	if (lpUsers)
-		MAPIFreeBuffer(lpUsers);
-
+	MAPIFreeBuffer(lpUsers);
 	if (lpAdrList)
 		FreePadrlist(lpAdrList);
 	

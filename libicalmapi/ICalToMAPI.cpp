@@ -138,9 +138,7 @@ ICalToMapiImpl::ICalToMapiImpl(IMAPIProp *lpPropObj, LPADRBOOK lpAdrBook, bool b
 ICalToMapiImpl::~ICalToMapiImpl()
 {
 	Clean();
-
-	if (m_lpNamedProps)
-		MAPIFreeBuffer(m_lpNamedProps);
+	MAPIFreeBuffer(m_lpNamedProps);
 }
 
 /** 
@@ -589,10 +587,7 @@ exit:
 
 	if (lpRows)
 		FreeProws(lpRows);
-
-	if (lpsPTA)
-		MAPIFreeBuffer(lpsPTA);
-
+	MAPIFreeBuffer(lpsPTA);
 	if (lpAttach)
 		lpAttach->Release();
 
@@ -632,9 +627,7 @@ HRESULT ICalToMapiImpl::SaveProps(std::list<SPropValue> *lpPropList, LPMAPIPROP 
 		goto exit;
 
 exit:
-	if (lpsPropVals)
-		MAPIFreeBuffer(lpsPropVals);
-
+	MAPIFreeBuffer(lpsPropVals);
 	return hr;
 }
 
@@ -791,8 +784,6 @@ HRESULT ICalToMapiImpl::SaveAttendeesString(std::list<icalrecip> *lplstRecip, LP
 		goto exit;
 
 exit:
-	if(lpsPropValue)
-		MAPIFreeBuffer(lpsPropValue);
-
+	MAPIFreeBuffer(lpsPropValue);
 	return hr;
 }

@@ -64,10 +64,8 @@
 
 #define FREE_RESTRICTION(_lpRestriction) \
 	{\
-	if (_lpRestriction) {\
 		MAPIFreeBuffer(_lpRestriction);\
 		_lpRestriction = NULL;\
-	}\
 	}
 
 #define CREATE_RES_AND(_lpBase, _lpRestriction, _values) \
@@ -205,7 +203,8 @@
 \
 	DATA_RES_PROPERTY(_lpBase, _sRestriction, _ulRelop, _ulPropTag, _lpPropValue)\
 \
-	if (_lpPropValue) { MAPIFreeBuffer(_lpPropValue); _lpPropValue = NULL; }\
+	MAPIFreeBuffer(_lpPropValue); \
+	_lpPropValue = NULL; \
 	}
 
 #endif

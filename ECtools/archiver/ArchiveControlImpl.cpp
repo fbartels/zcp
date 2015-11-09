@@ -950,9 +950,7 @@ HRESULT ArchiveControlImpl::PurgeArchives(const ObjectEntryList &lstArchives)
 	}
 
 exit:
-	if (lpRestriction)
-		MAPIFreeBuffer(lpRestriction);
-
+	MAPIFreeBuffer(lpRestriction);
 	if (hr == hrSuccess && bErrorOccurred)
 		hr = MAPI_W_PARTIAL_COMPLETION;
 

@@ -435,9 +435,7 @@ next_item:
 		hr = MAPI_W_PARTIAL_COMPLETION;
 
 exit:
-	if (lpDeleteEntries)
-		MAPIFreeBuffer(lpDeleteEntries);
-
+	MAPIFreeBuffer(lpDeleteEntries);
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LMAPISupport::CopyMessages", "0x%08x", hr);
 	return hr;
 }
@@ -514,10 +512,7 @@ exit:
 
 	if (lpFolder)
 		lpFolder->Release();
-
-	if (lpSourceName)
-		MAPIFreeBuffer(lpSourceName);
-
+	MAPIFreeBuffer(lpSourceName);
 	if (lpSubFolder)
 		lpSubFolder->Release();
 

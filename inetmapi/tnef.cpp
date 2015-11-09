@@ -266,7 +266,7 @@ static HRESULT StreamToPropValue(IStream *lpStream, ULONG ulPropTag,
 	*lppPropValue = lpPropValue;
 
 exit:
-	if (hr != hrSuccess && lpPropValue)
+	if (hr != hrSuccess)
 		MAPIFreeBuffer(lpPropValue);
 
 	return hr;
@@ -339,8 +339,7 @@ HRESULT ECTNEF::AddProps(ULONG ulFlags, LPSPropTagArray lpPropList)
 				}
 			}
 
-			if (lpPropValue)
-				MAPIFreeBuffer(lpPropValue);
+			MAPIFreeBuffer(lpPropValue);
 			lpPropValue = NULL;
 		
 			hr = hrSuccess; // silently ignore the property
@@ -348,9 +347,7 @@ HRESULT ECTNEF::AddProps(ULONG ulFlags, LPSPropTagArray lpPropList)
 	}
 
 exit:
-	if(lpPropListMessage)
-		MAPIFreeBuffer(lpPropListMessage);
-
+	MAPIFreeBuffer(lpPropListMessage);
 	return hr;
 }
 
@@ -569,9 +566,7 @@ exit:
 	}
 
 	delete[] szSClass;
-	if(lpBuffer)
-		MAPIFreeBuffer(lpBuffer);
-
+	MAPIFreeBuffer(lpBuffer);
 	return hr;
 }
 
@@ -961,9 +956,7 @@ HRESULT ECTNEF::HrWriteSingleProp(IStream *lpStream, LPSPropValue lpProp)
 	}
 
 exit:
-	if (lppNames)
-		MAPIFreeBuffer(lppNames);
-
+	MAPIFreeBuffer(lppNames);
 	return hr;
 }
 
@@ -1458,14 +1451,9 @@ HRESULT ECTNEF::HrReadSingleProp(char *lpBuffer, ULONG ulSize, ULONG *lpulRead, 
 	*lppProp = lpProp;
 
 exit:
-	if(hr != hrSuccess) {
-		if(lpProp)
-			MAPIFreeBuffer(lpProp);
-	}
-
-	if(lpPropTags)
-		MAPIFreeBuffer(lpPropTags);
-
+	if (hr != hrSuccess)
+		MAPIFreeBuffer(lpProp);
+	MAPIFreeBuffer(lpPropTags);
 	return hr;
 }
 
@@ -1589,16 +1577,12 @@ HRESULT ECTNEF::FinishComponent(ULONG ulFlags, ULONG ulComponentID, LPSPropTagAr
 exit:
     if(lpStream)
         lpStream->Release();
-    if(lpsNewProp)
-        MAPIFreeBuffer(lpsNewProp);
+    MAPIFreeBuffer(lpsNewProp);
     delete[] lpData;
     if(lpAttach)
         lpAttach->Release();
-    if(lpProps)
-        MAPIFreeBuffer(lpProps);
-    if(lpAttachProps)
-        MAPIFreeBuffer(lpAttachProps);
-        
+    MAPIFreeBuffer(lpProps);
+    MAPIFreeBuffer(lpAttachProps);
     return hr;
 }
 

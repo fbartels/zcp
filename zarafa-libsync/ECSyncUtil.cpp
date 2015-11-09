@@ -218,7 +218,7 @@ HRESULT HrGetOneBinProp(IMAPIProp *lpProp, ULONG ulPropTag, LPSPropValue *lppPro
 	*lppPropValue = lpPropValue;
 
 exit:
-	if(hr != hrSuccess && lpPropValue)
+	if (hr != hrSuccess)
 		MAPIFreeBuffer(lpPropValue);
 
 	if(lpStream)

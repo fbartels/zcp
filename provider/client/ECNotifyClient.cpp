@@ -285,11 +285,9 @@ HRESULT ECNotifyClient::RegisterAdvise(ULONG cbKey, LPBYTE lpKey, ULONG ulEventM
 	*lpulConnection = ulConnection;
 exit:
 #ifdef NOTIFY_THROUGH_SUPPORT_OBJECT
-	if(lpKeySupport)
-		MAPIFreeBuffer(lpKeySupport);
+	MAPIFreeBuffer(lpKeySupport);
 #endif
-
-	if (pEcAdvise && hr != hrSuccess)
+	if (hr != hrSuccess)
 		MAPIFreeBuffer(pEcAdvise);
 
 	return hr;
@@ -344,7 +342,7 @@ HRESULT ECNotifyClient::RegisterChangeAdvise(ULONG ulSyncId, ULONG ulChangeId, L
 	*lpulConnection = ulConnection;
 
 exit:
-	if (pEcAdvise && hr != hrSuccess)
+	if (hr != hrSuccess)
 		MAPIFreeBuffer(pEcAdvise);
 
 	return hr;
@@ -705,18 +703,15 @@ HRESULT ECNotifyClient::Notify(ULONG ulConnection, const NOTIFYLIST &lNotificati
 				lpKey = NULL;
 			}
 
-			if(lpNotifs) {
-				MAPIFreeBuffer(lpNotifs);
-				lpNotifs = NULL;
-			}
+			MAPIFreeBuffer(lpNotifs);
+			lpNotifs = NULL;
 		}
 	}
 
 	pthread_mutex_unlock(&m_hMutex);
 
 exit:
-	if (lpNotifs)
-		MAPIFreeBuffer(lpNotifs);
+	MAPIFreeBuffer(lpNotifs);
 
 	/* Release all notifications */
 	for (iterNotification = notifications.begin(); iterNotification != notifications.end(); iterNotification++)
@@ -790,9 +785,7 @@ HRESULT ECNotifyClient::NotifyChange(ULONG ulConnection, const NOTIFYLIST &lNoti
 	pthread_mutex_unlock(&m_hMutex);
 
 exit:
-	if (lpSyncStates)
-		MAPIFreeBuffer(lpSyncStates);
-
+	MAPIFreeBuffer(lpSyncStates);
 	return hrSuccess;
 }
 

@@ -323,9 +323,7 @@ HRESULT	ECABContainer::DefaultABContainerGetProp(ULONG ulPropTag, void* lpProvid
 exit:
 	if(lpProfSect)
 		lpProfSect->Release();
-	if(lpSectionUid)
-		MAPIFreeBuffer(lpSectionUid);
-
+	MAPIFreeBuffer(lpSectionUid);
 	return hr;
 }
 

@@ -540,12 +540,8 @@ static HRESULT setQuota(IECServiceAdmin *lpServiceAdmin, ULONG cbEid,
 	}
 
 exit:
-	if (lpsQuota)
-		MAPIFreeBuffer(lpsQuota);
-
-	if (lpsQuotaStatus)
-		MAPIFreeBuffer(lpsQuotaStatus);
-
+	MAPIFreeBuffer(lpsQuota);
+	MAPIFreeBuffer(lpsQuotaStatus);
 	return hr;
 }
 
@@ -888,9 +884,7 @@ static void print_user_settings(IMsgStore *lpStore, const ECUSER *lpECUser,
 		else if (lpECUCUS->ulStatus == UPDATE_STATUS_UNKNOWN) cout << " Update: \t\tUnknown" << endl;
 		else cout << " Update:\t\tFailed" << endl;
 	}
-
-	if(lpProps)
-		MAPIFreeBuffer(lpProps);
+	MAPIFreeBuffer(lpProps);
 }
 
 /**
@@ -984,9 +978,7 @@ static HRESULT CreateOrphanStoreEntryID(const char *lpServerUrl,
 	hr = WrapStoreEntryID(0, (LPTSTR)"zarafa6client.dll", cbNewEntryID, lpNewEntryID, lpcbEntryID, lppEntryID);
 
 exit:
-	if (lpNewEntryID)
-		MAPIFreeBuffer(lpNewEntryID);
-
+	MAPIFreeBuffer(lpNewEntryID);
 	return hr;
 }
 
@@ -1161,15 +1153,9 @@ static HRESULT OpenDeletedStoresFolder(LPMDB lpPublicStore,
 	hr = lpFolderDeletedStores->QueryInterface(IID_IMAPIFolder, (void**)lppFolderStores);
 
 exit:
-	if (lpsPropSubTree)
-		MAPIFreeBuffer(lpsPropSubTree);
-
-	if (lpPropValue)
-		MAPIFreeBuffer(lpPropValue);
-
-	if (lpsPropMDB)
-		MAPIFreeBuffer(lpsPropMDB);
-
+	MAPIFreeBuffer(lpsPropSubTree);
+	MAPIFreeBuffer(lpPropValue);
+	MAPIFreeBuffer(lpsPropMDB);
 	if (lpFolderSubTree)
 		lpFolderSubTree->Release();
 
@@ -1225,9 +1211,7 @@ static HRESULT GetPublicStore(LPMAPISESSION lpSession, LPMDB lpMsgStore,
 	}
 
 exit:
-	if (lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
-
+	MAPIFreeBuffer(lpEntryID);
 	if (lpIEMS)
 		lpIEMS->Release();
 
@@ -1680,36 +1664,22 @@ static HRESULT print_details(LPMAPISESSION lpSession, IECUnknown *lpECMsgStore,
 	}
 
 exit:
-	if (lpECUser)
-		MAPIFreeBuffer(lpECUser);
-	if (lpECGroup)
-		MAPIFreeBuffer(lpECGroup);
-	if (lpECCompany)
-		MAPIFreeBuffer(lpECCompany);
-
-	if (lpECUsers)
-		MAPIFreeBuffer(lpECUsers);
-	if (lpECGroups)
-		MAPIFreeBuffer(lpECGroups);
-	if (lpECAdmins)
-		MAPIFreeBuffer(lpECAdmins);
-	if (lpECViews)
-		MAPIFreeBuffer(lpECViews);
-
-	if (lpsQuota)
-		MAPIFreeBuffer(lpsQuota);
-	if (lpsQuotaStatus)
-		MAPIFreeBuffer(lpsQuotaStatus);
-
+	MAPIFreeBuffer(lpECUser);
+	MAPIFreeBuffer(lpECGroup);
+	MAPIFreeBuffer(lpECCompany);
+	MAPIFreeBuffer(lpECUsers);
+	MAPIFreeBuffer(lpECGroups);
+	MAPIFreeBuffer(lpECAdmins);
+	MAPIFreeBuffer(lpECViews);
+	MAPIFreeBuffer(lpsQuota);
+	MAPIFreeBuffer(lpsQuotaStatus);
 	if (lpServiceAdmin)
 		lpServiceAdmin->Release();
 	if (lpIEMS)
 		lpIEMS->Release();
 	if (lpStore)
 		lpStore->Release();
-	if (lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
-
+	MAPIFreeBuffer(lpEntryID);
 	return hr;
 }
 
@@ -1738,9 +1708,7 @@ static HRESULT ListUsers(IECServiceAdmin *lpServiceAdmin,
 	cout << endl;
 
 exit:
-	if (lpECUsers)
-		MAPIFreeBuffer(lpECUsers);
-
+	MAPIFreeBuffer(lpECUsers);
 	return hr;
 }
 
@@ -1771,9 +1739,7 @@ static HRESULT ListGroups(IECServiceAdmin *lpServiceAdmin,
 	cout << endl;
 
 exit:
-	if (lpECGroups)
-		MAPIFreeBuffer(lpECGroups);
-
+	MAPIFreeBuffer(lpECGroups);
 	return hr;
 }
 
@@ -1854,12 +1820,8 @@ static HRESULT ForEachCompany(IECServiceAdmin *lpServiceAdmin,
 	}
 
 exit:
-	if (lpECCompaniesAlloc)
-		MAPIFreeBuffer(lpECCompaniesAlloc);
-
-	if (lpCompanyId)
-		MAPIFreeBuffer(lpCompanyId);
-
+	MAPIFreeBuffer(lpECCompaniesAlloc);
+	MAPIFreeBuffer(lpCompanyId);
 	return hr;
 }
 
@@ -4369,30 +4331,14 @@ int main(int argc, char* argv[])
 	};
 
 exit:
-	if (lpGUID)
-		MAPIFreeBuffer(lpGUID);
-
-	if (lpUserId)
-		MAPIFreeBuffer(lpUserId);
-
-	if (lpSenderId)
-		MAPIFreeBuffer(lpSenderId);
-
-	if (lpGroupId)
-		MAPIFreeBuffer(lpGroupId);
-
-	if (lpCompanyId)
-		MAPIFreeBuffer(lpCompanyId);
-
-	if (lpSetCompanyId)
-		MAPIFreeBuffer(lpSetCompanyId);
-
-	if (lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
-
-	if (lpUnWrappedEntry)
-		MAPIFreeBuffer(lpUnWrappedEntry);
-
+	MAPIFreeBuffer(lpGUID);
+	MAPIFreeBuffer(lpUserId);
+	MAPIFreeBuffer(lpSenderId);
+	MAPIFreeBuffer(lpGroupId);
+	MAPIFreeBuffer(lpCompanyId);
+	MAPIFreeBuffer(lpSetCompanyId);
+	MAPIFreeBuffer(lpEntryID);
+	MAPIFreeBuffer(lpUnWrappedEntry);
 	if (lpUserStore)
 		lpUserStore->Release();
 
@@ -4407,16 +4353,9 @@ exit:
 
 	if (lpIEMS)
 		lpIEMS->Release();
-
-	if (lpECUser)
-		MAPIFreeBuffer(lpECUser);
-
-	if (lpECGroups)
-		MAPIFreeBuffer(lpECGroups);
-
-	if (lpSenders)
-		MAPIFreeBuffer(lpSenders);
-
+	MAPIFreeBuffer(lpECUser);
+	MAPIFreeBuffer(lpECGroups);
+	MAPIFreeBuffer(lpSenders);
 	if (lpMsgStore)
 		lpMsgStore->Release();
 
@@ -4428,28 +4367,13 @@ exit:
 
 	if (lpSession)
 		lpSession->Release();
-
-	if (lpStoreId)
-		MAPIFreeBuffer(lpStoreId);
-
-	if (lpRootId)
-		MAPIFreeBuffer(lpRootId);
-
-	if (lpPropValue)
-		MAPIFreeBuffer(lpPropValue);
-
-	if (lpsQuota)
-		MAPIFreeBuffer(lpsQuota);
-
-	if (lpsQuotaStatus)
-		MAPIFreeBuffer(lpsQuotaStatus);
-
-	if (lpsServer)
-		MAPIFreeBuffer(lpsServer);
-
-	if(lpServerDetails)
-		MAPIFreeBuffer(lpServerDetails);
-
+	MAPIFreeBuffer(lpStoreId);
+	MAPIFreeBuffer(lpRootId);
+	MAPIFreeBuffer(lpPropValue);
+	MAPIFreeBuffer(lpsQuota);
+	MAPIFreeBuffer(lpsQuotaStatus);
+	MAPIFreeBuffer(lpsServer);
+	MAPIFreeBuffer(lpServerDetails);
 	MAPIUninitialize();
 	lpLogger->Release();
 	lpLogger = NULL;

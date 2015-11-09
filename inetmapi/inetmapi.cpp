@@ -278,14 +278,9 @@ INETMAPI_API HRESULT IMToINet(IMAPISession *lpSession, IAddrBook *lpAddrBook, IM
 	}
 	
 exit:
-	if (lpTime)
-		MAPIFreeBuffer(lpTime);
-
-	if (lpMessageId)
-		MAPIFreeBuffer(lpMessageId);
-	
+	MAPIFreeBuffer(lpTime);
+	MAPIFreeBuffer(lpMessageId);
 	delete mToVM;
-
 	return hr;
 }
 

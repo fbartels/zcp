@@ -227,7 +227,7 @@ HRESULT M4LMAPIProp::GetProps(LPSPropTagArray lpPropTagArray, ULONG ulFlags, ULO
 	*lppPropArray = props;
 
 exit:
-	if (FAILED(hr) && props)
+	if (FAILED(hr))
 		MAPIFreeBuffer(props);
 
 	TRACE_MAPILIB2(TRACE_RETURN, "IMAPIProp::GetProps", "%s\n%s", GetMAPIErrorDescription(hr).c_str(), PropNameFromPropArray(*lpcValues, *lppPropArray).c_str());
@@ -472,8 +472,7 @@ HRESULT M4LProfSect::SetProps(ULONG cValues, LPSPropValue lpPropArray, LPSPropPr
 
 #ifdef WIN32
 exit:
-	if (lpTmpProps) 
-		MAPIFreeBuffer(lpTmpProps);
+	MAPIFreeBuffer(lpTmpProps);
 #endif
 
 	return hr;
@@ -777,22 +776,14 @@ HRESULT M4LProviderAdmin::GetProviderTable(ULONG ulFlags, LPMAPITABLE* lppTable)
 	
 exit:
 	pthread_mutex_unlock(&msa->m_mutexserviceadmin);
-
-	if (lpPropTagArray)
-		MAPIFreeBuffer(lpPropTagArray);
-
+	MAPIFreeBuffer(lpPropTagArray);
 	if (lpTableView)
 		lpTableView->Release();
 
 	if (lpTable)
 		lpTable->Release();
-
-	if (lpDest)
-		MAPIFreeBuffer(lpDest);
-	
-	if (lpsProps)
-		MAPIFreeBuffer(lpsProps);
-	
+	MAPIFreeBuffer(lpDest);
+	MAPIFreeBuffer(lpsProps);
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LProviderAdmin::GetProviderTable", "0x%08x", hr);
 	return hr;
 }
@@ -934,11 +925,9 @@ exit:
 		delete entry;
 	}
 
-	if (lpsPropValProfileName)
-		MAPIFreeBuffer(lpsPropValProfileName);
-
+	MAPIFreeBuffer(lpsPropValProfileName);
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LProviderAdmin::CreateProvider", "0x%08x", hr);
-    return hr;
+	return hr;
 }
 
 HRESULT M4LProviderAdmin::DeleteProvider(LPMAPIUID lpUID) {
@@ -1233,9 +1222,7 @@ HRESULT M4LABContainer::GetHierarchyTable(ULONG ulFlags, LPMAPITABLE* lppTable) 
 		if (lpABHierarchy)
 			lpABHierarchy->Release();
 		lpABHierarchy = NULL;
-
-		if (lpPropArray)
-			MAPIFreeBuffer(lpPropArray);
+		MAPIFreeBuffer(lpPropArray);
 		lpPropArray = NULL;
 	}
 
@@ -1296,10 +1283,7 @@ HRESULT M4LABContainer::GetHierarchyTable(ULONG ulFlags, LPMAPITABLE* lppTable) 
 exit:
 	for (std::list<LPMAPITABLE>::iterator i = lHierarchies.begin(); i != lHierarchies.end(); i++)
 		(*i)->Release();
-
-	if (lpColumns)
-		MAPIFreeBuffer(lpColumns);
-
+	MAPIFreeBuffer(lpColumns);
 	if (lpTableView)
 		lpTableView->Release();
 

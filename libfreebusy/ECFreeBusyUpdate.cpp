@@ -229,11 +229,8 @@ HRESULT ECFreeBusyUpdate::SaveChanges(FILETIME ftStart, FILETIME ftEnd)
 		hr = m_lpMessage->SetProps(2, lpPropFBDataArray, NULL);
 		if(hr != hrSuccess)
 			goto exit;
-
-		if(lpPropFBDataArray){ 
-			MAPIFreeBuffer(lpPropFBDataArray); 
-			lpPropFBDataArray = NULL;
-		}
+		MAPIFreeBuffer(lpPropFBDataArray);
+		lpPropFBDataArray = NULL;
 	}
 
 	if(CreateFBProp(fbBusy, ulMonths, PR_FREEBUSY_BUSY_MONTHS, PR_FREEBUSY_BUSY_EVENTS, &m_fbBlockList, &lpPropFBDataArray) == hrSuccess)
@@ -241,11 +238,8 @@ HRESULT ECFreeBusyUpdate::SaveChanges(FILETIME ftStart, FILETIME ftEnd)
 		hr = m_lpMessage->SetProps(2, lpPropFBDataArray, NULL);
 		if(hr != hrSuccess)
 			goto exit;
-
-		if(lpPropFBDataArray){
-			MAPIFreeBuffer(lpPropFBDataArray);
-			lpPropFBDataArray = NULL;
-		}
+		MAPIFreeBuffer(lpPropFBDataArray);
+		lpPropFBDataArray = NULL;
 	}
 	
 	if(CreateFBProp(fbTentative, ulMonths, PR_FREEBUSY_TENTATIVE_MONTHS,PR_FREEBUSY_TENTATIVE_EVENTS, &m_fbBlockList, &lpPropFBDataArray) == hrSuccess)
@@ -253,8 +247,8 @@ HRESULT ECFreeBusyUpdate::SaveChanges(FILETIME ftStart, FILETIME ftEnd)
 		hr = m_lpMessage->SetProps(2, lpPropFBDataArray, NULL);
 		if(hr != hrSuccess)
 			goto exit;
-
-		if(lpPropFBDataArray){ MAPIFreeBuffer(lpPropFBDataArray); lpPropFBDataArray = NULL; }
+		MAPIFreeBuffer(lpPropFBDataArray);
+		lpPropFBDataArray = NULL;
 	}
 
 	if(CreateFBProp(fbOutOfOffice, ulMonths, PR_FREEBUSY_OOF_MONTHS,PR_FREEBUSY_OOF_EVENTS, &m_fbBlockList, &lpPropFBDataArray) == hrSuccess)
@@ -262,8 +256,8 @@ HRESULT ECFreeBusyUpdate::SaveChanges(FILETIME ftStart, FILETIME ftEnd)
 		hr = m_lpMessage->SetProps(2, lpPropFBDataArray, NULL);
 		if(hr != hrSuccess)
 			goto exit;
-
-		if(lpPropFBDataArray){ MAPIFreeBuffer(lpPropFBDataArray); lpPropFBDataArray = NULL; }
+		MAPIFreeBuffer(lpPropFBDataArray);
+		lpPropFBDataArray = NULL;
 	}
 
 	hr = m_lpMessage->SaveChanges(KEEP_OPEN_READWRITE);
@@ -272,13 +266,8 @@ HRESULT ECFreeBusyUpdate::SaveChanges(FILETIME ftStart, FILETIME ftEnd)
 
 exit:
 	m_fbBlockList.Reset();
-
-	if(lpPropArray)
-		MAPIFreeBuffer(lpPropArray);
-
-	if(lpPropFBDataArray)
-		MAPIFreeBuffer(lpPropFBDataArray);
-
+	MAPIFreeBuffer(lpPropArray);
+	MAPIFreeBuffer(lpPropFBDataArray);
 	return hr;
 }
 

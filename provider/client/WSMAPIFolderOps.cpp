@@ -550,13 +550,8 @@ HRESULT WSMAPIFolderOps::HrGetChangeInfo(ULONG cbEntryID, LPENTRYID lpEntryID, L
 
 exit:
 	UnLockSoap();
-
-	if (lpSPropValPCL)
-		MAPIFreeBuffer(lpSPropValPCL);
-
-	if (lpSPropValCK)
-		MAPIFreeBuffer(lpSPropValCK);
-
+	MAPIFreeBuffer(lpSPropValPCL);
+	MAPIFreeBuffer(lpSPropValCK);
 	return hr;
 }
 

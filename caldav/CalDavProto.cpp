@@ -122,9 +122,7 @@ static ULONG GetPropIDForXMLProp(LPMAPIPROP lpObj,
 	ulPropTag = PROP_TAG(PT_BINARY, PROP_ID(ptrPropTags->aulPropTag[0]));
 
 exit:
-	if (lpNameID)
-		MAPIFreeBuffer(lpNameID);
-
+	MAPIFreeBuffer(lpNameID);
 	return ulPropTag;
 }
 
@@ -305,13 +303,8 @@ HRESULT CalDAV::HrHandlePropfindRoot(WEBDAVREQSTPROPS *sDavReqstProps, WEBDAVMUL
 	lpsDavMulStatus->lstResp.push_back(sDavResp);
 
 exit:
-
-	if(lpPropTagArr)
-		MAPIFreeBuffer(lpPropTagArr);
-
-	if(lpSpropVal)
-		MAPIFreeBuffer(lpSpropVal);
-
+	MAPIFreeBuffer(lpPropTagArr);
+	MAPIFreeBuffer(lpSpropVal);
 	return hr;
 }
 
@@ -533,13 +526,9 @@ exit:
 	if (lpsRestriction)
 		FREE_RESTRICTION(lpsRestriction);
 
-	if (lpsPropVal)
-		MAPIFreeBuffer(lpsPropVal);
-
+	MAPIFreeBuffer(lpsPropVal);
 	delete lpMtIcal;
-
-	if(lpPropTagArr)
-		MAPIFreeBuffer(lpPropTagArr);
+	MAPIFreeBuffer(lpPropTagArr);
 
 	if(lpTable)
 		lpTable->Release();
@@ -547,9 +536,7 @@ exit:
 	if(lpRowSet)
 		FreeProws(lpRowSet);
 	
-	if (lpProps)
-			MAPIFreeBuffer(lpProps);
-
+	MAPIFreeBuffer(lpProps);
 	return hr;
 }
 
@@ -692,19 +679,14 @@ next:
 	hr = hrSuccess;
 
 exit:
-	
-	if(lpMtIcal)
-		delete lpMtIcal;
-
+	delete lpMtIcal;
 	if(lpsRoot)
 		FREE_RESTRICTION(lpsRoot);
 
 	if(lpTable)
 		lpTable->Release();
 
-	if(lpPropTagArr)
-		MAPIFreeBuffer(lpPropTagArr);
-	
+	MAPIFreeBuffer(lpPropTagArr);
 	return hr;
 }
 
@@ -953,11 +935,8 @@ exit:
 	if (lpTable)
 		lpTable->Release();
 
-	if (lpPropTagArr)
-		MAPIFreeBuffer(lpPropTagArr);
-
-	if (sbEid.lpb)
-		MAPIFreeBuffer(sbEid.lpb);
+	MAPIFreeBuffer(lpPropTagArr);
+	MAPIFreeBuffer(sbEid.lpb);
 
 	if (lpAbCont)
 		lpAbCont->Release();
@@ -1096,18 +1075,12 @@ exit:
 	else
 		m_lpRequest->HrResponseHeader(204, "No Content");
 	
-	if (lpPropWstBxEID)
-		MAPIFreeBuffer(lpPropWstBxEID);
-
+	MAPIFreeBuffer(lpPropWstBxEID);
 	if (lpWastBoxFld)
 		lpWastBoxFld->Release();
 
-	if (lpProps)
-		MAPIFreeBuffer(lpProps);
-		
-	if (lpEntryList)
-		MAPIFreeBuffer(lpEntryList);
-
+	MAPIFreeBuffer(lpProps);
+	MAPIFreeBuffer(lpEntryList);
 	return hr;
 }
 
@@ -1208,15 +1181,10 @@ HRESULT CalDAV::HrMoveEntry(const std::string &strGuid, LPMAPIFOLDER lpDestFolde
 	}
 
 exit:
-	if (lpProps)
-		MAPIFreeBuffer(lpProps);
-	
+	MAPIFreeBuffer(lpProps);
 	if (lpMessage)
 		lpMessage->Release();
-
-	if (lpEntryList)
-		MAPIFreeBuffer(lpEntryList);
-
+	MAPIFreeBuffer(lpEntryList);
 	return hr;
 }
 
@@ -1405,12 +1373,8 @@ exit:
 	else
 		m_lpRequest->HrResponseHeader(400, "Bad Request");
 	
-	if (lpsPropVal)
-		MAPIFreeBuffer(lpsPropVal);
-	
-	if(lpICalToMapi)
-		delete lpICalToMapi;
-
+	MAPIFreeBuffer(lpsPropVal);
+	delete lpICalToMapi;
 	if(lpMessage)
 		lpMessage->Release();
 
@@ -1464,9 +1428,7 @@ exit:
 	if (lpMessage)
 		lpMessage->Release();
 
-	if (lpProp)
-		MAPIFreeBuffer(lpProp);
-
+	MAPIFreeBuffer(lpProp);
 	return hr;
 }
 
@@ -1759,14 +1721,9 @@ exit:
 	if(lpDelHichyTable)
 		lpDelHichyTable->Release();
 
-	if(lpsPropSingleFld)
-		MAPIFreeBuffer(lpsPropSingleFld);
-
-	if(lpSpropWbEID)
-		MAPIFreeBuffer(lpSpropWbEID);
-
-	if(lpPropTagArr)
-		MAPIFreeBuffer(lpPropTagArr);
+	MAPIFreeBuffer(lpsPropSingleFld);
+	MAPIFreeBuffer(lpSpropWbEID);
+	MAPIFreeBuffer(lpPropTagArr);
 
 	if(lpRowsALL)
 		FreeProws(lpRowsALL);
@@ -2132,9 +2089,7 @@ exit:
 	if (lpOutbox)
 		lpOutbox->Release();
 
-	if (lpsGetPropVal)
-		MAPIFreeBuffer(lpsGetPropVal);
-
+	MAPIFreeBuffer(lpsGetPropVal);
 	return hr;
 }
 
@@ -2517,9 +2472,7 @@ HRESULT CalDAV::HrGetCalendarOrder(SBinary sbEid, std::string *lpstrCalendarOrde
 		lpstrCalendarOrder->assign("1");
 
 exit:
-	if (lpProp)
-		MAPIFreeBuffer(lpProp);
-
+	MAPIFreeBuffer(lpProp);
 	if (lpRootCont)
 		lpRootCont->Release();
 

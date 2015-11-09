@@ -152,9 +152,7 @@ HRESULT ECExchangeImportHierarchyChanges::GetLastError(HRESULT hResult, ULONG ul
 	*lppMAPIError = lpMapiError;
 
 exit:
-	if (lpszErrorMsg)
-		MAPIFreeBuffer(lpszErrorMsg);
-
+	MAPIFreeBuffer(lpszErrorMsg);
 	if( hr != hrSuccess && lpMapiError)
 		ECFreeBuffer(lpMapiError);
 
@@ -213,9 +211,7 @@ HRESULT ECExchangeImportHierarchyChanges::Config(LPSTREAM lpStream, ULONG ulFlag
 		
 	m_ulFlags = ulFlags;
 exit:	
-	if(lpPropSourceKey)
-		MAPIFreeBuffer(lpPropSourceKey);
-		
+	MAPIFreeBuffer(lpPropSourceKey);
 	return hrSuccess;
 }
 
@@ -324,10 +320,8 @@ HRESULT ECExchangeImportHierarchyChanges::ImportFolderChange(ULONG cValue, LPSPr
 	if(hr == MAPI_E_NOT_FOUND){
 		// Folder is not yet available in our store
 		if(lpPropParentSourceKey->Value.bin.cb > 0){
-			if(lpEntryId){
-				MAPIFreeBuffer(lpEntryId);
-				lpEntryId = NULL;
-			}
+			MAPIFreeBuffer(lpEntryId);
+			lpEntryId = NULL;
 			
 			// Find the parent folder in which the new folder is to be created
 			hr = m_lpFolder->GetMsgStore()->lpTransport->HrEntryIDFromSourceKey(m_lpFolder->GetMsgStore()->m_cbEntryId, m_lpFolder->GetMsgStore()->m_lpEntryId , lpPropParentSourceKey->Value.bin.cb, lpPropParentSourceKey->Value.bin.lpb, 0, NULL, &cbEntryId, &lpEntryId);
@@ -421,16 +415,12 @@ HRESULT ECExchangeImportHierarchyChanges::ImportFolderChange(ULONG cValue, LPSPr
 				goto exit;
 		}
 		
-		if(lpPropVal){
-			MAPIFreeBuffer(lpPropVal);
-			lpPropVal = NULL;
-		}
+		MAPIFreeBuffer(lpPropVal);
+		lpPropVal = NULL;
 	}
 	
-	if(lpEntryId){
-		MAPIFreeBuffer(lpEntryId);
-		lpEntryId = NULL;
-	}
+	MAPIFreeBuffer(lpEntryId);
+	lpEntryId = NULL;
 	
 	//ignore change if remote changekey is in local changelist
 	if(lpPropChangeKey && HrGetOneProp(lpFolder, PR_PREDECESSOR_CHANGE_LIST, &lpPropVal) == hrSuccess){
@@ -447,10 +437,8 @@ HRESULT ECExchangeImportHierarchyChanges::ImportFolderChange(ULONG cValue, LPSPr
 			}
 			ulPos += ulSize + 1;
 		}
-		if(lpPropVal){
-			MAPIFreeBuffer(lpPropVal);
-			lpPropVal = NULL;
-		}
+		MAPIFreeBuffer(lpPropVal);
+		lpPropVal = NULL;
 	}
 
 	//ignore change if local changekey in remote changelist
@@ -469,10 +457,8 @@ HRESULT ECExchangeImportHierarchyChanges::ImportFolderChange(ULONG cValue, LPSPr
 			}
 			ulPos += ulSize + 1;
 		}
-		if(lpPropVal){
-			MAPIFreeBuffer(lpPropVal);
-			lpPropVal = NULL;
-		}
+		MAPIFreeBuffer(lpPropVal);
+		lpPropVal = NULL;
 	}
 
 	if(bConflict){
@@ -523,15 +509,9 @@ HRESULT ECExchangeImportHierarchyChanges::ImportFolderChange(ULONG cValue, LPSPr
 
 
 exit:
-	if(lpPropVal)
-		MAPIFreeBuffer(lpPropVal);
-
-	if(lpEntryId)
-		MAPIFreeBuffer(lpEntryId);
-
-	if(lpDestEntryId)
-		MAPIFreeBuffer(lpDestEntryId);
-
+	MAPIFreeBuffer(lpPropVal);
+	MAPIFreeBuffer(lpEntryId);
+	MAPIFreeBuffer(lpDestEntryId);
 	if(lpFolder)
 		lpFolder->Release();
 
@@ -555,10 +535,8 @@ HRESULT ECExchangeImportHierarchyChanges::ImportFolderDeletion(ULONG ulFlags, LP
 	LPENTRYID lpEntryId = NULL;
 
 	for(ulSKNr = 0; ulSKNr < lpSourceEntryList->cValues; ulSKNr++){
-		if(lpEntryId){
-			MAPIFreeBuffer(lpEntryId);
-			lpEntryId = NULL;
-		}
+		MAPIFreeBuffer(lpEntryId);
+		lpEntryId = NULL;
 		hr = m_lpFolder->GetMsgStore()->lpTransport->HrEntryIDFromSourceKey(m_lpFolder->GetMsgStore()->m_cbEntryId, m_lpFolder->GetMsgStore()->m_lpEntryId, lpSourceEntryList->lpbin[ulSKNr].cb, lpSourceEntryList->lpbin[ulSKNr].lpb, 0, NULL, &cbEntryId, &lpEntryId);
 		if(hr == MAPI_E_NOT_FOUND){
 			hr = hrSuccess;
@@ -576,9 +554,7 @@ HRESULT ECExchangeImportHierarchyChanges::ImportFolderDeletion(ULONG ulFlags, LP
 		goto exit;
 
 exit:
-	if(lpEntryId)
-		MAPIFreeBuffer(lpEntryId);
-
+	MAPIFreeBuffer(lpEntryId);
 	return hr;
 }
 

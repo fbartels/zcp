@@ -93,9 +93,7 @@ static HRESULT DeleteEntry(LPMAPIFOLDER lpFolder, LPSPropValue lpItemProperty)
 	hr = lpFolder->DeleteMessages(lpEntryList, 0, NULL, 0);
 
 exit:
-	if (lpEntryList)
-		MAPIFreeBuffer(lpEntryList);
-
+	MAPIFreeBuffer(lpEntryList);
 	if (hr == hrSuccess)
 		cout << "Item deleted." << endl;
 	else
@@ -178,9 +176,7 @@ static HRESULT DetectFolderEntryDetails(LPMESSAGE lpMessage, string *lpName,
 		hr = hrSuccess;
 
 exit:
-	if (lpPropertyArray)
-		MAPIFreeBuffer(lpPropertyArray);
-
+	MAPIFreeBuffer(lpPropertyArray);
 	return hr;
 }
 
@@ -406,10 +402,7 @@ HRESULT ZarafaFsck::DeleteRecipientList(LPMESSAGE lpMessage, std::list<unsigned 
 		this->ulFixed++;
 	}
 exit:
-
-	if (lpMods)
-		MAPIFreeBuffer(lpMods);
-
+	MAPIFreeBuffer(lpMods);
 	return hr;
 }
 

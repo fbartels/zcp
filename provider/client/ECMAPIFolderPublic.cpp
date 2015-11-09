@@ -380,9 +380,7 @@ HRESULT ECMAPIFolderPublic::GetContentsTable(ULONG ulFlags, LPMAPITABLE *lppTabl
 	}
 
 exit:
-	if (lpPropTagArray)
-		MAPIFreeBuffer(lpPropTagArray);
-
+	MAPIFreeBuffer(lpPropTagArray);
 	if (lpMemTable)
 		lpMemTable->Release();
 
@@ -652,10 +650,7 @@ exit:
 
 	if (lpShortcutFolder)
 		lpShortcutFolder->Release();
-
-	if (lpProp)
-		MAPIFreeBuffer(lpProp);
-
+	MAPIFreeBuffer(lpProp);
 	return hr;
 }
 
@@ -706,10 +701,7 @@ HRESULT ECMAPIFolderPublic::CopyMessages(LPENTRYLIST lpMsgList, LPCIID lpInterfa
 exit:
 	if (lpMapiFolder)
 		lpMapiFolder->Release();
-
-	if(lpPropArray)
-		MAPIFreeBuffer(lpPropArray);
-
+	MAPIFreeBuffer(lpPropArray);
 	return hr;
 }
 

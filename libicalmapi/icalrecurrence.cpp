@@ -781,15 +781,9 @@ HRESULT ICalRecurrence::HrMakeMAPIRecurrence(recurrence *lpRecurrence, LPSPropTa
 		goto exit;
 
 exit:
-	if (lpPropVal)
-		MAPIFreeBuffer(lpPropVal);
-
-	if(lpRecBlob)
-		MAPIFreeBuffer(lpRecBlob);
-
-	if(lpsPropRecPattern)
-		MAPIFreeBuffer(lpsPropRecPattern);
-
+	MAPIFreeBuffer(lpPropVal);
+	MAPIFreeBuffer(lpRecBlob);
+	MAPIFreeBuffer(lpsPropRecPattern);
 	return hr;
 }
 
@@ -823,9 +817,7 @@ bool ICalRecurrence::HrValidateOccurrence(icalitem *lpItem, icalitem::exception 
 		bIsValid = true;
 
 exit:	
-	if (lpFBBlocksAll)
-		MAPIFreeBuffer(lpFBBlocksAll);
-
+	MAPIFreeBuffer(lpFBBlocksAll);
 	return bIsValid;
 }
 

@@ -128,9 +128,7 @@ MapiToICalImpl::~MapiToICalImpl()
 {
 	if (m_lpicCalender)
 		icalcomponent_free(m_lpicCalender);
-
-	if (m_lpNamedProps)
-		MAPIFreeBuffer(m_lpNamedProps);
+	MAPIFreeBuffer(m_lpNamedProps);
 }
 /**
  * Initialize ical component with basic ical info
@@ -214,8 +212,7 @@ HRESULT MapiToICalImpl::AddMessage(LPMESSAGE lpMessage, const std::string &strSr
 		m_icMethod = icMethod;
 
 exit:
-	if (lpMessageClass)
-		MAPIFreeBuffer(lpMessageClass);
+	MAPIFreeBuffer(lpMessageClass);
 	delete lpVEC;
 	return hr;
 }

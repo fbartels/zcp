@@ -288,9 +288,8 @@ HRESULT ECMemTablePublic::Init(ULONG ulFlags)
 			DATA_FP_RES_PROPERTY(lpRestriction, lpRestriction->res.resAnd.lpRes[0], RELOP_EQ, PR_FAV_PARENT_SOURCE_KEY, &m_lpECParentFolder->m_xMAPIFolder, PR_SOURCE_KEY);
 		}
 
-		if (lpPropTmp) { MAPIFreeBuffer(lpPropTmp); lpPropTmp = NULL; }
-
-
+		MAPIFreeBuffer(lpPropTmp);
+		lpPropTmp = NULL;
 		hr  = lpShortcutTable->Restrict(lpRestriction, MAPI_DEFERRED_ERRORS);
 		if (hr != hrSuccess)
 			goto exit;
@@ -333,21 +332,14 @@ HRESULT ECMemTablePublic::Init(ULONG ulFlags)
 	}
 
 exit:
-	if (lpPropTmp) 
-		MAPIFreeBuffer(lpPropTmp);
-
+	MAPIFreeBuffer(lpPropTmp);
 	if (lpShortcutTable)
 		lpShortcutTable->Release();
 
 	if (lpShortcutFolder)
 		lpShortcutFolder->Release();
-
-	if (lpRestriction)
-		MAPIFreeBuffer(lpRestriction);
-
-	if (lpPropTmp)
-		MAPIFreeBuffer(lpPropTmp);
-
+	MAPIFreeBuffer(lpRestriction);
+	MAPIFreeBuffer(lpPropTmp);
 	if (lpRows)
 		FreeProws(lpRows);
 
@@ -601,22 +593,12 @@ HRESULT ECMemTablePublic::ModifyRow(SBinary* lpInstanceKey, LPSRow lpsRow)
 	}
 
 exit:
-
-	if (lpRecordKeyID)
-		MAPIFreeBuffer(lpRecordKeyID);
-
+	MAPIFreeBuffer(lpRecordKeyID);
 	if (lpFolderReal)
 		lpFolderReal->Release(); 
-
-	if (lpPropsFolder) 
-		MAPIFreeBuffer(lpPropsFolder);
-
-	if (lpProps) 
-		MAPIFreeBuffer(lpProps);
-
-	if (lpFolderID) 
-		MAPIFreeBuffer(lpFolderID);
-
+	MAPIFreeBuffer(lpPropsFolder);
+	MAPIFreeBuffer(lpProps);
+	MAPIFreeBuffer(lpFolderID);
 	if (hr != hrSuccess && ulConnection > 0)
 		m_lpECParentFolder->GetMsgStore()->Unadvise(ulConnection);
 
@@ -677,8 +659,5 @@ void ECMemTablePublic::FreeRelation(t_sRelation* lpRelation)
 
 	if (lpRelation->lpAdviseSink)
 		lpRelation->lpAdviseSink->Release();
-
-	if (lpRelation->lpEntryID)
-		MAPIFreeBuffer(lpRelation->lpEntryID);
-
+	MAPIFreeBuffer(lpRelation->lpEntryID);
 }

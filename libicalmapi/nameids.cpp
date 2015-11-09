@@ -171,8 +171,6 @@ HRESULT HrLookupNames(IMAPIProp *lpPropObj, LPSPropTagArray *lppNamedProps)
 	hr = hrSuccess;
 
 exit:
-	if (lppNameIds)
-		MAPIFreeBuffer(lppNameIds);
-
+	MAPIFreeBuffer(lppNameIds);
 	return hr;
 }

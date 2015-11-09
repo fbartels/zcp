@@ -114,13 +114,8 @@ HRESULT ZarafaFsckCalendar::ValidateMinimalNamedFields(LPMESSAGE lpMessage)
 exit:
 	if (lppTagArray)
 		freeNamedIdList(lppTagArray);
-
-	if (lpPropertyArray)
-		MAPIFreeBuffer(lpPropertyArray);
-
-	if (lpPropertyTagArray)
-		MAPIFreeBuffer(lpPropertyTagArray);
-
+	MAPIFreeBuffer(lpPropertyArray);
+	MAPIFreeBuffer(lpPropertyTagArray);
 	return hr;
 }
 
@@ -325,13 +320,8 @@ HRESULT ZarafaFsckCalendar::ValidateTimestamps(LPMESSAGE lpMessage)
 exit:
 	if (lppTagArray)
 		freeNamedIdList(lppTagArray);
-
-	if (lpPropertyArray)
-		MAPIFreeBuffer(lpPropertyArray);
-
-	if (lpPropertyTagArray)
-		MAPIFreeBuffer(lpPropertyTagArray);
-
+	MAPIFreeBuffer(lpPropertyArray);
+	MAPIFreeBuffer(lpPropertyTagArray);
 	return hr;
 }
 
@@ -601,18 +591,11 @@ HRESULT ZarafaFsckCalendar::ValidateRecurrence(LPMESSAGE lpMessage)
     hr = hrSuccess;
 
 exit:
-    if (lpData)
-        MAPIFreeBuffer(lpData);
-        
+	MAPIFreeBuffer(lpData);
 	if (lppTagArray)
 		freeNamedIdList(lppTagArray);
-
-	if (lpPropertyArray)
-		MAPIFreeBuffer(lpPropertyArray);
-
-	if (lpPropertyTagArray)
-		MAPIFreeBuffer(lpPropertyTagArray);
-
+	MAPIFreeBuffer(lpPropertyArray);
+	MAPIFreeBuffer(lpPropertyTagArray);
 	return hr;
 }
 

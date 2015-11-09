@@ -236,10 +236,8 @@ public:
 
 	~ECRecipient()
 	{
-		if (sEntryId.lpb)
-			MAPIFreeBuffer(sEntryId.lpb);
-		if (sSearchKey.lpb)
-			MAPIFreeBuffer(sSearchKey.lpb);
+		MAPIFreeBuffer(sEntryId.lpb);
+		MAPIFreeBuffer(sSearchKey.lpb);
 	}
 
 	void combine(ECRecipient *lpRecip) {
@@ -414,9 +412,7 @@ static bool FNeedsAutoAccept(IMsgStore *lpStore, LPMESSAGE lpMessage)
 	}
 	
 exit:
-	if(lpProps)
-		MAPIFreeBuffer(lpProps);
-		
+	MAPIFreeBuffer(lpProps);
 	return hr == hrSuccess;
 }
 
@@ -442,9 +438,7 @@ static bool FNeedsAutoProcessing(IMsgStore *lpStore, LPMESSAGE lpMessage)
 	}
 
 exit:
-	if(lpProps)
-		MAPIFreeBuffer(lpProps);
-
+	MAPIFreeBuffer(lpProps);
 	return hr == hrSuccess;
 }
 
@@ -544,10 +538,7 @@ exit:
 		
 	if(lpMessageCopy)
 		lpMessageCopy->Release();
-		
-	if(lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
-
+	MAPIFreeBuffer(lpEntryID);
 	return hr;
 }
 
@@ -636,10 +627,7 @@ exit:
 
 	if(lpMessageCopy)
 		lpMessageCopy->Release();
-
-	if(lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
-
+	MAPIFreeBuffer(lpEntryID);
 	return hr;
 }
 
@@ -714,9 +702,7 @@ static HRESULT OpenResolveAddrFolder(LPADRBOOK lpAdrBook,
 	}
 
 exit:
-	if (lpEntryId)
-		MAPIFreeBuffer(lpEntryId);
-
+	MAPIFreeBuffer(lpEntryId);
 	return hr;
 }
 
@@ -923,10 +909,7 @@ static HRESULT ResolveUsers(const DeliveryArgs *lpArgs,
 exit:
 	if(lpAdrList)
 		FreeProws((LPSRowSet)lpAdrList);
-
-	if(lpFlagList)
-		MAPIFreeBuffer(lpFlagList);
-
+	MAPIFreeBuffer(lpFlagList);
 	return hr;
 }
 
@@ -1141,15 +1124,9 @@ static HRESULT ResolveServerToPath(IMAPISession *lpSession,
 	}
 
 exit:
-	if (lpSrvNameList)
-		MAPIFreeBuffer(lpSrvNameList);
-
-	if (lpSrvList)
-		MAPIFreeBuffer(lpSrvList);
-
-	if (lpsObject)
-		MAPIFreeBuffer(lpsObject);
-
+	MAPIFreeBuffer(lpSrvNameList);
+	MAPIFreeBuffer(lpSrvList);
+	MAPIFreeBuffer(lpsObject);
 	if (lpServiceAdmin)
 		lpServiceAdmin->Release();
 
@@ -1307,18 +1284,10 @@ static HRESULT HrGetDeliveryStoreAndFolder(IMAPISession *lpSession,
 	*lppFolder = lpDeliveryFolder;
 
 exit:
-	if (lpUserStoreEntryId)
-		MAPIFreeBuffer(lpUserStoreEntryId);
-
-	if (lpEntryId)
-		MAPIFreeBuffer(lpEntryId);
-
-	if (lpJunkProp)
-		MAPIFreeBuffer(lpJunkProp);
-
-	if (lpWritePerms)
-		MAPIFreeBuffer(lpWritePerms);
-
+	MAPIFreeBuffer(lpUserStoreEntryId);
+	MAPIFreeBuffer(lpEntryId);
+	MAPIFreeBuffer(lpJunkProp);
+	MAPIFreeBuffer(lpWritePerms);
 	if (lpIEMS)
 		lpIEMS->Release();
 
@@ -1479,13 +1448,8 @@ exit:
 
 	if (lpStream)
 		lpStream->Release();
-
-	if (lpPropValue)
-		MAPIFreeBuffer(lpPropValue);
-
-	if (lpAttPropValue)
-		MAPIFreeBuffer(lpAttPropValue);
-
+	MAPIFreeBuffer(lpPropValue);
+	MAPIFreeBuffer(lpAttPropValue);
 	return hr;
 }
 
@@ -1802,13 +1766,8 @@ exit:
 		unlink(szTemp);
 	if (!strTmpFile.empty())
 		unlink(strTmpFile.c_str());
-	
-	if (lpStoreProps)
-		MAPIFreeBuffer(lpStoreProps);
-		
-	if (lpMessageProps)
-		MAPIFreeBuffer(lpMessageProps);
-		
+	MAPIFreeBuffer(lpStoreProps);
+	MAPIFreeBuffer(lpMessageProps);
 	return hr;
 }
 #endif
@@ -1994,9 +1953,7 @@ static HRESULT HrMessageExpired(IMessage *lpMessage, bool *bExpired)
 	*bExpired = false;
 
 exit:
-	if (lpsExpiryTime)
-		MAPIFreeBuffer(lpsExpiryTime);
-
+	MAPIFreeBuffer(lpsExpiryTime);
 	sc -> countInc("DAgent", *bExpired ? "msg_expired" : "msg_not_expired");
 
 	return hr;
@@ -2203,9 +2160,7 @@ static HRESULT HrOverrideFallbackProps(IMessage *lpMessage,
 	}
 
 exit:
-	if (lpEntryIdSender)
-		MAPIFreeBuffer(lpEntryIdSender);
-
+	MAPIFreeBuffer(lpEntryIdSender);
 	return hr;
 }
 
@@ -2913,8 +2868,7 @@ static HRESULT ProcessDeliveryToServer(PyMapiPlugin *lppyMapiPlugin,
 					(*iter)->wstrUsername.c_str(),
 					(lpSubject != NULL) ? lpSubject->Value.lpszW : L"<none>",
 					wMessageId.c_str());
-				if (lpSubject != NULL)
-					MAPIFreeBuffer(lpSubject);
+				MAPIFreeBuffer(lpSubject);
 			}
 			// cancel already logged.
 			hr = hrSuccess;

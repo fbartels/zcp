@@ -549,27 +549,13 @@ HRESULT MAPIToVMIME::handleSingleAttachment(IMessage* lpMessage, LPSRow lpRow, v
 exit:
 	// ATTN: lpMapiAttach are linked in the VMMessageBuilder. The VMMessageBuilder will delete() it.
 	delete mapiical;
-	if (lpMIMETag)
-		MAPIFreeBuffer(lpMIMETag);
-
-	if (lpAMClass)
-		MAPIFreeBuffer(lpAMClass);
-
-	if (lpAMAttach)
-		MAPIFreeBuffer(lpAMAttach);
-
-	if (lpFilename)
-		MAPIFreeBuffer(lpFilename);
-
-	if (lpContentId)
-		MAPIFreeBuffer(lpContentId);
-
-	if (lpContentLocation)
-		MAPIFreeBuffer(lpContentLocation);
-		
-	if (lpHidden)
-		MAPIFreeBuffer(lpHidden);
-
+	MAPIFreeBuffer(lpMIMETag);
+	MAPIFreeBuffer(lpAMClass);
+	MAPIFreeBuffer(lpAMAttach);
+	MAPIFreeBuffer(lpFilename);
+	MAPIFreeBuffer(lpContentId);
+	MAPIFreeBuffer(lpContentLocation);
+	MAPIFreeBuffer(lpHidden);
 	if (lpStream)
 		lpStream->Release();
 
@@ -928,12 +914,8 @@ HRESULT MAPIToVMIME::BuildNoteMessage(IMessage *lpMessage, bool bSkipContent, vm
 	*lpvmMessage = vmMessage;
 
 exit:
-	if (lpTransportHeaders)
-		MAPIFreeBuffer(lpTransportHeaders);
-		
-	if (lpDeliveryDate)
-		MAPIFreeBuffer(lpDeliveryDate);
-
+	MAPIFreeBuffer(lpTransportHeaders);
+	MAPIFreeBuffer(lpDeliveryDate);
 	return hr;
 }
 
@@ -1120,19 +1102,11 @@ HRESULT MAPIToVMIME::BuildMDNMessage(IMessage *lpMessage, vmime::ref<vmime::mess
 exit:
 	if(lpBodyStream)
 		lpBodyStream->Release();
-
-	if(lpiNetMsgId)
-		MAPIFreeBuffer(lpiNetMsgId);
-	
-	if(lpMsgClass)
-		MAPIFreeBuffer(lpMsgClass);
-
+	MAPIFreeBuffer(lpiNetMsgId);
+	MAPIFreeBuffer(lpMsgClass);
 	if(lpRecipientTable)
 		lpRecipientTable->Release();
-
-	if(lpSubject)
-		MAPIFreeBuffer(lpSubject);
-
+	MAPIFreeBuffer(lpSubject);
 	if(pRows)
 		FreeProws(pRows);
 
@@ -1326,10 +1300,8 @@ HRESULT MAPIToVMIME::convertMAPIToVMIME(IMessage *lpMessage, vmime::ref<vmime::m
 			}
 
 			// Free Memory
-			if(lpNameID) {
-				MAPIFreeBuffer(lpNameID);
-				lpNameID = NULL;
-			}
+			MAPIFreeBuffer(lpNameID);
+			lpNameID = NULL;
 
 			if (HrGetOneProp(lpMessage, CHANGE_PROP_TYPE(lpPropTags->aulPropTag[0], PT_STRING8), &lpPropContentType) == hrSuccess) {
 				lpszContentType = lpPropContentType->Value.lpszA;
@@ -1339,9 +1311,7 @@ HRESULT MAPIToVMIME::convertMAPIToVMIME(IMessage *lpMessage, vmime::ref<vmime::m
 			}
 
 			vmMessage->getHeader()->ContentType()->parse(lpszContentType);
-
-			if (lpPropContentType)
-				MAPIFreeBuffer(lpPropContentType);
+			MAPIFreeBuffer(lpPropContentType);
 
 			// copy via string so we can set the size of the string since it's binary
 			vmime::string inString(lpszRawSMTP, (size_t)sStreamStat.cbSize.QuadPart);
@@ -1374,13 +1344,8 @@ exit:
 
 	if (lpAttachmentTable)
 		lpAttachmentTable->Release();
-
-	if (lpInternetCPID)
-		MAPIFreeBuffer(lpInternetCPID);
-
-	if(lpMsgClass)
-		MAPIFreeBuffer(lpMsgClass);
-
+	MAPIFreeBuffer(lpInternetCPID);
+	MAPIFreeBuffer(lpMsgClass);
 	return hr;
 }
 
@@ -1469,9 +1434,7 @@ HRESULT MAPIToVMIME::fillVMIMEMail(IMessage *lpMessage, bool bSkipContent, vmime
 	}
 
 exit:
-	if (lpSubject)
-		MAPIFreeBuffer(lpSubject);
-
+	MAPIFreeBuffer(lpSubject);
 	if (prows)
 		FreeProws(prows);
 
@@ -1787,18 +1750,10 @@ HRESULT MAPIToVMIME::handleXHeaders(IMessage *lpMessage, vmime::ref<vmime::heade
 	}
 
 exit:
-	if (lpPropArray)
-		MAPIFreeBuffer(lpPropArray);
-
-	if (lpsNamedTags)
-		MAPIFreeBuffer(lpsNamedTags);
-
-	if (lpsAllTags)
-		MAPIFreeBuffer(lpsAllTags);
-
-	if (lppNames)
-		MAPIFreeBuffer(lppNames);
-
+	MAPIFreeBuffer(lpPropArray);
+	MAPIFreeBuffer(lpsNamedTags);
+	MAPIFreeBuffer(lpsAllTags);
+	MAPIFreeBuffer(lppNames);
 	return hr;
 }
 
@@ -1912,27 +1867,13 @@ HRESULT MAPIToVMIME::handleExtraHeaders(IMessage *lpMessage, vmime::ref<vmime::h
 	}
 
 //exit:
-	if (lpExpiryTime)
-		MAPIFreeBuffer(lpExpiryTime);
-
-	if (lpImportance)
-		MAPIFreeBuffer(lpImportance);
-
-	if (lpPriority)
-		MAPIFreeBuffer(lpPriority);
-
-	if (lpSensitivity)
-		MAPIFreeBuffer(lpSensitivity);
-
-	if (lpConversationIndex)
-		MAPIFreeBuffer(lpConversationIndex);
-
-	if(lpConversationTopic)
-		MAPIFreeBuffer(lpConversationTopic);
-
-	if(lpNormSubject)
-		MAPIFreeBuffer(lpNormSubject);
-
+	MAPIFreeBuffer(lpExpiryTime);
+	MAPIFreeBuffer(lpImportance);
+	MAPIFreeBuffer(lpPriority);
+	MAPIFreeBuffer(lpSensitivity);
+	MAPIFreeBuffer(lpConversationIndex);
+	MAPIFreeBuffer(lpConversationTopic);
+	MAPIFreeBuffer(lpNormSubject);
 	return hr;
 }
 
@@ -2023,18 +1964,11 @@ HRESULT MAPIToVMIME::handleContactEntryID(ULONG cValues, LPSPropValue lpProps, w
 					  strName, strType, strEmail);
 
 exit:
-	if (lpNamedProps)
-		MAPIFreeBuffer(lpNamedProps);
-
-	if (lpNameTags)
-		MAPIFreeBuffer(lpNameTags);
-
+	MAPIFreeBuffer(lpNamedProps);
+	MAPIFreeBuffer(lpNameTags);
 	if (lpContact)
 		lpContact->Release();
-
-	if (lppNames)
-		MAPIFreeBuffer(lppNames);
-
+	MAPIFreeBuffer(lppNames);
 	return hr;
 }
 
@@ -2154,15 +2088,9 @@ HRESULT MAPIToVMIME::handleSenderInfo(IMessage *lpMessage, vmime::ref<vmime::hea
 	}
 
 exit:
-	if (lpPropTags)
-		MAPIFreeBuffer(lpPropTags);
-
-	if (lpProps)
-		MAPIFreeBuffer(lpProps);
-
-	if (lpReadReceipt)
-		MAPIFreeBuffer(lpReadReceipt);
-
+	MAPIFreeBuffer(lpPropTags);
+	MAPIFreeBuffer(lpProps);
+	MAPIFreeBuffer(lpReadReceipt);
 	return hr;
 }
 
@@ -2283,24 +2211,13 @@ HRESULT MAPIToVMIME::handleReplyTo(IMessage *lpMessage, vmime::ref<vmime::header
 	hr = hrSuccess;
 
 exit:
-	if (lpNames)
-		MAPIFreeBuffer(lpNames);
-
-	if (lppNames)
-		MAPIFreeBuffer(lppNames);
-
-	if (lpNameTagArray)
-		MAPIFreeBuffer(lpNameTagArray);
-
-	if (lpAddressProps)
-		MAPIFreeBuffer(lpAddressProps);
-
+	MAPIFreeBuffer(lpNames);
+	MAPIFreeBuffer(lppNames);
+	MAPIFreeBuffer(lpNameTagArray);
+	MAPIFreeBuffer(lpAddressProps);
 	if (lpContact)
 		lpContact->Release();
-
-	if (lpReplyTo)
-		MAPIFreeBuffer(lpReplyTo);
-
+	MAPIFreeBuffer(lpReplyTo);
 	return hr;
 }
 
@@ -2549,25 +2466,12 @@ exit:
 	delete mapiical;
 	if (lpStream)
 		lpStream->Release();
-
-	if (lpNames)
-		MAPIFreeBuffer(lpNames);
-
-	if (lpDelegateRule)
-		MAPIFreeBuffer(lpDelegateRule);
-
-	if (lpNameTagArray)
-		MAPIFreeBuffer(lpNameTagArray);
-
-	if (lpMessageClass)
-		MAPIFreeBuffer(lpMessageClass);
-
-	if (lpOutlookVersion)
-		MAPIFreeBuffer(lpOutlookVersion);
-
-	if (lpSendAsICal)
-		MAPIFreeBuffer(lpSendAsICal);
-
+	MAPIFreeBuffer(lpNames);
+	MAPIFreeBuffer(lpDelegateRule);
+	MAPIFreeBuffer(lpNameTagArray);
+	MAPIFreeBuffer(lpMessageClass);
+	MAPIFreeBuffer(lpOutlookVersion);
+	MAPIFreeBuffer(lpSendAsICal);
 	return hr;
 }
 

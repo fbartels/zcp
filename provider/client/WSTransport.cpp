@@ -1331,9 +1331,7 @@ HRESULT WSTransport::HrSubscribeMulti(const ECLISTSYNCADVISE &lstSyncAdvises, UL
 
 
 exit:
-	if (notSubscribeArray.__ptr)
-		MAPIFreeBuffer(notSubscribeArray.__ptr);
-
+	MAPIFreeBuffer(notSubscribeArray.__ptr);
 	UnLockSoap();
 
 	return hr;
@@ -5111,9 +5109,7 @@ HRESULT WSTransport::HrEnsureSession()
     if(hr != MAPI_E_NETWORK_ERROR && hr != MAPI_E_END_OF_SESSION)
         hr = hrSuccess;
 
-    if(szValue)
-        MAPIFreeBuffer(szValue);
-        
+    MAPIFreeBuffer(szValue);
     return hr;
 }
 

@@ -689,10 +689,7 @@ static HRESULT GetECObject(LPMAPIPROP lpMapiProp,
 
 	if (MAPI_G(hr) == hrSuccess)
 		*lppIECUnknown = (IECUnknown *)lpPropVal->Value.lpszA;
-
-	if (lpPropVal)
-		MAPIFreeBuffer(lpPropVal);
-
+	MAPIFreeBuffer(lpPropVal);
 	return MAPI_G(hr);
 }
 
@@ -842,10 +839,7 @@ ZEND_FUNCTION(mapi_createoneoff)
 
 exit:
 	// using RETVAL_* not RETURN_*, otherwise php will instantly return itself, and we won't be able to free...
-
-	if(lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
-	
+	MAPIFreeBuffer(lpEntryID);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -1244,9 +1238,7 @@ ZEND_FUNCTION(mapi_ab_getdefaultdir) {
 
 	RETVAL_STRINGL((char *)lpEntryID, cbEntryID, 1);
 exit:
-	if(lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
-
+	MAPIFreeBuffer(lpEntryID);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -1540,9 +1532,7 @@ ZEND_FUNCTION(mapi_folder_deletemessages)
 
 	RETVAL_TRUE;
 exit:
-	if(lpEntryList)
-		MAPIFreeBuffer(lpEntryList);
-
+	MAPIFreeBuffer(lpEntryList);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -1585,9 +1575,7 @@ ZEND_FUNCTION(mapi_folder_copymessages)
 	RETVAL_TRUE;
 
 exit:
-	if (lpEntryList)
-		MAPIFreeBuffer(lpEntryList);
-
+	MAPIFreeBuffer(lpEntryList);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -1633,9 +1621,7 @@ ZEND_FUNCTION(mapi_folder_setreadflags)
 	RETVAL_TRUE;
 
 exit:
-	if (lpEntryList)
-		MAPIFreeBuffer(lpEntryList);
-
+	MAPIFreeBuffer(lpEntryList);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -1831,10 +1817,7 @@ ZEND_FUNCTION(mapi_msgstore_createentryid)
 exit:
 	if (lpEMS)
 		lpEMS->Release();
-
-	if (lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
-
+	MAPIFreeBuffer(lpEntryID);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -1977,9 +1960,7 @@ ZEND_FUNCTION(mapi_msgstore_entryidfromsourcekey)
 	RETVAL_STRINGL((char *)lpEntryId, cbEntryId, 1);
 
 exit:
-	if(lpEntryId)
-		MAPIFreeBuffer(lpEntryId);
-
+	MAPIFreeBuffer(lpEntryId);
 	if(lpIEMS)
 		lpIEMS->Release();
 
@@ -2092,9 +2073,7 @@ ZEND_FUNCTION(mapi_sink_timedwait)
 	FREE_ZVAL(notifications);
 
 exit:
-	if(lpNotifs)
-		MAPIFreeBuffer(lpNotifs);
-
+	MAPIFreeBuffer(lpNotifs);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -2137,8 +2116,7 @@ ZEND_FUNCTION(mapi_table_queryallrows)
 		MAPI_G(hr) = PHPArraytoSRestriction(restrictionArray, /* result */lpRestrict, /* Base */lpRestrict TSRMLS_CC);
 		if (MAPI_G(hr) != hrSuccess) {
 			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Failed to convert the PHP srestriction array");
-			if (lpRestrict)
-				MAPIFreeBuffer(lpRestrict);
+			MAPIFreeBuffer(lpRestrict);
 			lpRestrict = NULL;
 			goto exit;
 		}
@@ -2169,12 +2147,8 @@ ZEND_FUNCTION(mapi_table_queryallrows)
 	FREE_ZVAL(rowset);
 
 exit:
-	if (lpTagArray != NULL)
-		MAPIFreeBuffer(lpTagArray);
-
-	if (lpRestrict != NULL)
-		MAPIFreeBuffer(lpRestrict);
-
+	MAPIFreeBuffer(lpTagArray);
+	MAPIFreeBuffer(lpRestrict);
 	if (pRowSet)
 		FreeProws(pRowSet);
 
@@ -2253,9 +2227,7 @@ ZEND_FUNCTION(mapi_table_queryrows)
 	FREE_ZVAL(rowset);
 
 exit:
-	if(lpTagArray)
-		MAPIFreeBuffer(lpTagArray);
-
+	MAPIFreeBuffer(lpTagArray);
 	if (pRowSet)
 		FreeProws(pRowSet);
 
@@ -2305,9 +2277,7 @@ ZEND_FUNCTION(mapi_table_setcolumns)
 
 	RETVAL_TRUE;
 exit:
-	if(lpTagArray)
-		MAPIFreeBuffer(lpTagArray);
-
+	MAPIFreeBuffer(lpTagArray);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -2386,9 +2356,7 @@ ZEND_FUNCTION(mapi_table_sort)
 
 	RETVAL_TRUE;
 exit:
-	if (lpSortCriteria)
-		MAPIFreeBuffer(lpSortCriteria);
-
+	MAPIFreeBuffer(lpSortCriteria);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -2468,9 +2436,7 @@ ZEND_FUNCTION(mapi_table_restrict)
 	RETVAL_TRUE;
 
 exit:
-	if (lpRestrict)
-		MAPIFreeBuffer(lpRestrict);
-
+	MAPIFreeBuffer(lpRestrict);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -2521,9 +2487,7 @@ ZEND_FUNCTION(mapi_table_findrow)
 	RETVAL_LONG(ulRow);
 
 exit:
-	if (lpRestrict)
-		MAPIFreeBuffer(lpRestrict);
-
+	MAPIFreeBuffer(lpRestrict);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -2640,9 +2604,7 @@ ZEND_FUNCTION(mapi_msgstore_getreceivefolder)
 	ZEND_REGISTER_RESOURCE(return_value, lpFolder, le_mapi_folder);
 
 exit:
-	if(lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
-
+	MAPIFreeBuffer(lpEntryID);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -2703,10 +2665,7 @@ ZEND_FUNCTION(mapi_msgstore_openmultistoretable)
 exit:
 	if (lpECMST)
 		lpECMST->Release();
-
-	if (lpEntryList)
-		MAPIFreeBuffer(lpEntryList);
-
+	MAPIFreeBuffer(lpEntryList);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -3423,12 +3382,8 @@ ZEND_FUNCTION(mapi_getidsfromnames)
 	}
 
 exit:
-	if (lppNamePropId)
-		MAPIFreeBuffer(lppNamePropId);
-
-	if (lpPropTagArray)
-		MAPIFreeBuffer(lpPropTagArray);
-
+	MAPIFreeBuffer(lppNamePropId);
+	MAPIFreeBuffer(lpPropTagArray);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -3481,9 +3436,7 @@ ZEND_FUNCTION(mapi_setprops)
 	RETVAL_TRUE;
 
 exit:
-	if(pPropValueArray)
-		MAPIFreeBuffer(pPropValueArray);
-
+	MAPIFreeBuffer(pPropValueArray);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -3569,11 +3522,8 @@ ZEND_FUNCTION(mapi_copyto)
 	RETVAL_TRUE;
 
 exit:
-	if (lpExcludeIIDs)
-		MAPIFreeBuffer((void*)lpExcludeIIDs);
-	if(lpExcludeProps)
-		MAPIFreeBuffer(lpExcludeProps);
-
+	MAPIFreeBuffer((void*)lpExcludeIIDs);
+	MAPIFreeBuffer(lpExcludeProps);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -3670,9 +3620,7 @@ ZEND_FUNCTION(mapi_deleteprops)
 
 	RETVAL_TRUE;
 exit:
-	if (lpTagArray)
-		MAPIFreeBuffer(lpTagArray);
-
+	MAPIFreeBuffer(lpTagArray);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -3879,11 +3827,8 @@ ZEND_FUNCTION(mapi_getprops)
 	FREE_ZVAL(zval_prop_value);
 
 exit:
-	if (lpPropValues)
-		MAPIFreeBuffer(lpPropValues);
-	if (lpTagArray)
-		MAPIFreeBuffer(lpTagArray);
-
+	MAPIFreeBuffer(lpPropValues);
+	MAPIFreeBuffer(lpTagArray);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -3951,12 +3896,8 @@ ZEND_FUNCTION(mapi_getnamesfromids)
 	}
 
 exit:
-	if (lpPropTags)
-		MAPIFreeBuffer(lpPropTags);
-
-	if (pPropNames)
-		MAPIFreeBuffer(pPropNames);
-
+	MAPIFreeBuffer(lpPropTags);
+	MAPIFreeBuffer(pPropNames);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -4104,11 +4045,8 @@ ZEND_FUNCTION(mapi_folder_getsearchcriteria) {
 	add_assoc_long(return_value, "searchstate", ulSearchState);
 
 exit:
-	if (lpRestriction)
-		MAPIFreeBuffer(lpRestriction);
-	if (lpFolderList)
-		MAPIFreeBuffer(lpFolderList);
-
+	MAPIFreeBuffer(lpRestriction);
+	MAPIFreeBuffer(lpFolderList);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -4148,12 +4086,8 @@ ZEND_FUNCTION(mapi_folder_setsearchcriteria) {
 	RETVAL_TRUE;
 
 exit:
-	if(lpRestriction)
-		MAPIFreeBuffer(lpRestriction);
-
-	if(lpFolderList)
-		MAPIFreeBuffer(lpFolderList);
-
+	MAPIFreeBuffer(lpRestriction);
+	MAPIFreeBuffer(lpFolderList);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -4331,9 +4265,7 @@ ZEND_FUNCTION(mapi_zarafa_createuser)
 	RETVAL_TRUE;
 
 exit:
-	if (lpUserId)
-		MAPIFreeBuffer(lpUserId);
-
+	MAPIFreeBuffer(lpUserId);
 	if(lpServiceAdmin)
 		lpServiceAdmin->Release();
 
@@ -4469,8 +4401,7 @@ ZEND_FUNCTION(mapi_zarafa_deleteuser)
 	RETVAL_TRUE;
 
 exit:
-	if (lpUserId)
-		MAPIFreeBuffer(lpUserId);
+	MAPIFreeBuffer(lpUserId);
 	if(lpServiceAdmin)
 		lpServiceAdmin->Release();
 
@@ -4527,12 +4458,8 @@ ZEND_FUNCTION(mapi_zarafa_createstore)
 	RETVAL_TRUE;
 
 exit:
-	if(lpStoreID)
-		MAPIFreeBuffer(lpStoreID);
-
-	if(lpRootID)
-		MAPIFreeBuffer(lpRootID);
-
+	MAPIFreeBuffer(lpStoreID);
+	MAPIFreeBuffer(lpRootID);
 	if(lpServiceAdmin)
 		lpServiceAdmin->Release();
 
@@ -4607,10 +4534,7 @@ ZEND_FUNCTION(mapi_zarafa_getuserlist)
 exit:
 	if (lpSecurity)
 		lpSecurity->Release();
-
-	if (lpUsers)
-		MAPIFreeBuffer(lpUsers);
-
+	MAPIFreeBuffer(lpUsers);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -4669,10 +4593,7 @@ ZEND_FUNCTION(mapi_zarafa_getquota)
 exit:
 	if (lpServiceAdmin)
 		lpServiceAdmin->Release();
-
-	if (lpQuota)
-		MAPIFreeBuffer(lpQuota);
-
+	MAPIFreeBuffer(lpQuota);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -4762,10 +4683,7 @@ ZEND_FUNCTION(mapi_zarafa_setquota)
 exit:
 	if (lpServiceAdmin)
 		lpServiceAdmin->Release();
-
-	if (lpQuota)
-		MAPIFreeBuffer(lpQuota);
-
+	MAPIFreeBuffer(lpQuota);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -4835,15 +4753,10 @@ ZEND_FUNCTION(mapi_zarafa_getuser_by_name)
 	add_assoc_long(return_value, "admin", lpUsers->ulIsAdmin);
 
 exit:
-	if (lpUserId)
-		MAPIFreeBuffer(lpUserId);
-
+	MAPIFreeBuffer(lpUserId);
 	if (lpServiceAdmin)
 		lpServiceAdmin->Release();
-
-	if (lpUsers)
-		MAPIFreeBuffer(lpUsers);
-
+	MAPIFreeBuffer(lpUsers);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -4905,10 +4818,7 @@ ZEND_FUNCTION(mapi_zarafa_getuser_by_id)
 exit:
 	if (lpServiceAdmin)
 		lpServiceAdmin->Release();
-
-	if (lpUsers)
-		MAPIFreeBuffer(lpUsers);
-
+	MAPIFreeBuffer(lpUsers);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -4958,9 +4868,7 @@ ZEND_FUNCTION(mapi_zarafa_creategroup)
 	RETVAL_STRINGL((char*)lpGroupId, cbGroupId, 1);
 
 exit:
-	if (lpGroupId)
-		MAPIFreeBuffer(lpGroupId);
-
+	MAPIFreeBuffer(lpGroupId);
 	if (lpServiceAdmin)
 		lpServiceAdmin->Release();
 
@@ -5015,9 +4923,7 @@ ZEND_FUNCTION(mapi_zarafa_deletegroup)
 	RETVAL_TRUE;
 
 exit:
-	if (lpGroupId)
-		MAPIFreeBuffer(lpGroupId);
-
+	MAPIFreeBuffer(lpGroupId);
 	if (lpServiceAdmin)
 		lpServiceAdmin->Release();
 
@@ -5213,9 +5119,7 @@ ZEND_FUNCTION(mapi_zarafa_getgroup_by_id)
 	add_assoc_string(return_value, "groupname", (char*)lpsGroup->lpszGroupname, 1);
 
 exit:
-	if (lpsGroup)
-		MAPIFreeBuffer(lpsGroup);
-
+	MAPIFreeBuffer(lpsGroup);
 	if (lpServiceAdmin)
 		lpServiceAdmin->Release();
 
@@ -5273,12 +5177,8 @@ ZEND_FUNCTION(mapi_zarafa_getgroup_by_name)
 	add_assoc_string(return_value, "groupname", (char*)lpsGroup->lpszGroupname, 1);
 
 exit:
-	if (lpGroupId)
-		MAPIFreeBuffer(lpGroupId);
-
-	if (lpsGroup)
-		MAPIFreeBuffer(lpsGroup);
-
+	MAPIFreeBuffer(lpGroupId);
+	MAPIFreeBuffer(lpsGroup);
 	if (lpServiceAdmin)
 		lpServiceAdmin->Release();
 
@@ -5339,8 +5239,7 @@ ZEND_FUNCTION(mapi_zarafa_getgrouplist)
 	}
 
 exit:
-	if (lpsGroups)
-		MAPIFreeBuffer(lpsGroups);
+	MAPIFreeBuffer(lpsGroups);
 	if (lpServiceAdmin)
 		lpServiceAdmin->Release();
 
@@ -5400,8 +5299,7 @@ ZEND_FUNCTION(mapi_zarafa_getgrouplistofuser)
 	}
 
 exit:
-	if (lpsGroups)
-		MAPIFreeBuffer(lpsGroups);
+	MAPIFreeBuffer(lpsGroups);
 	if (lpServiceAdmin)
 		lpServiceAdmin->Release();
 
@@ -5465,8 +5363,7 @@ ZEND_FUNCTION(mapi_zarafa_getuserlistofgroup)
 	}
 
 exit:
-	if (lpsUsers)
-		MAPIFreeBuffer(lpsUsers);
+	MAPIFreeBuffer(lpsUsers);
 	if (lpServiceAdmin)
 		lpServiceAdmin->Release();
 
@@ -5518,9 +5415,7 @@ ZEND_FUNCTION(mapi_zarafa_createcompany)
 	RETVAL_STRINGL((char*)lpCompanyId, cbCompanyId, 1);
 
 exit:
-	if (lpCompanyId)
-		MAPIFreeBuffer(lpCompanyId);
-
+	MAPIFreeBuffer(lpCompanyId);
 	if (lpServiceAdmin)
 		lpServiceAdmin->Release();
 
@@ -5576,9 +5471,7 @@ ZEND_FUNCTION(mapi_zarafa_deletecompany)
 	RETVAL_TRUE;
 
 exit:
-	if (lpCompanyId)
-		MAPIFreeBuffer(lpCompanyId);
-
+	MAPIFreeBuffer(lpCompanyId);
 	if (lpServiceAdmin)
 		lpServiceAdmin->Release();
 
@@ -5628,9 +5521,7 @@ ZEND_FUNCTION(mapi_zarafa_getcompany_by_id)
 	add_assoc_string(return_value, "companyname", (char*)lpsCompany->lpszCompanyname, 1);
 
 exit:
-	if (lpsCompany)
-		MAPIFreeBuffer(lpsCompany);
-
+	MAPIFreeBuffer(lpsCompany);
 	if (lpServiceAdmin)
 		lpServiceAdmin->Release();
 
@@ -5689,12 +5580,8 @@ ZEND_FUNCTION(mapi_zarafa_getcompany_by_name)
 	add_assoc_string(return_value, "companyname", (char*)lpsCompany->lpszCompanyname, 1);
 
 exit:
-	if (lpCompanyId)
-		MAPIFreeBuffer(lpCompanyId);
-
-	if (lpsCompany)
-		MAPIFreeBuffer(lpsCompany);
-
+	MAPIFreeBuffer(lpCompanyId);
+	MAPIFreeBuffer(lpsCompany);
 	if (lpServiceAdmin)
 		lpServiceAdmin->Release();
 
@@ -5752,10 +5639,7 @@ ZEND_FUNCTION(mapi_zarafa_getcompanylist)
 exit:
 	if (lpSecurity)
 		lpSecurity->Release();
-
-	if (lpCompanies)
-		MAPIFreeBuffer(lpCompanies);
-
+	MAPIFreeBuffer(lpCompanies);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -5903,8 +5787,7 @@ ZEND_FUNCTION(mapi_zarafa_get_remote_viewlist)
 	}
 
 exit:
-	if (lpsCompanies)
-		MAPIFreeBuffer(lpsCompanies);
+	MAPIFreeBuffer(lpsCompanies);
 	if (lpServiceAdmin)
 		lpServiceAdmin->Release();
 
@@ -6055,8 +5938,7 @@ ZEND_FUNCTION(mapi_zarafa_get_remote_adminlist)
 	}
 
 exit:
-	if (lpsUsers)
-		MAPIFreeBuffer(lpsUsers);
+	MAPIFreeBuffer(lpsUsers);
 	if (lpServiceAdmin)
 		lpServiceAdmin->Release();
 
@@ -6209,8 +6091,7 @@ ZEND_FUNCTION(mapi_zarafa_get_quota_recipientlist)
 	}
 
 exit:
-	if (lpsUsers)
-		MAPIFreeBuffer(lpsUsers);
+	MAPIFreeBuffer(lpsUsers);
 	if (lpServiceAdmin)
 		lpServiceAdmin->Release();
 
@@ -6259,9 +6140,7 @@ ZEND_FUNCTION(mapi_zarafa_check_license)
 	}
     
 exit:
-	if(lpszCapas)
-		MAPIFreeBuffer(lpszCapas);
-        
+	MAPIFreeBuffer(lpszCapas);
 	if(lpLicense)
 		lpLicense->Release();
 	
@@ -6306,9 +6185,7 @@ ZEND_FUNCTION(mapi_zarafa_getcapabilities)
 	}
     
 exit:
-	if(lpszCapas)
-		MAPIFreeBuffer(lpszCapas);
-        
+	MAPIFreeBuffer(lpszCapas);
 	if(lpLicense)
 		lpLicense->Release();
 		
@@ -6390,10 +6267,7 @@ ZEND_FUNCTION(mapi_zarafa_getpermissionrules)
 exit:
 	if (lpSecurity)
 		lpSecurity->Release();
-
-	if (lpECPerms)
-		MAPIFreeBuffer(lpECPerms);
-
+	MAPIFreeBuffer(lpECPerms);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -6515,10 +6389,7 @@ ZEND_FUNCTION(mapi_zarafa_setpermissionrules)
 exit:
 	if (lpSecurity)
 		lpSecurity->Release();
-
-	if (lpECPerms)
-		MAPIFreeBuffer(lpECPerms);
-
+	MAPIFreeBuffer(lpECPerms);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -6677,16 +6548,11 @@ ZEND_FUNCTION(mapi_freebusysupport_loaddata)
 	}
 
 exit:
-	if (lpUsers)
-		MAPIFreeBuffer(lpUsers);
-	if (lppFBData) {
-		// do not release fbdata, it's registered in the return_value array, but not addref'd
-		MAPIFreeBuffer(lppFBData);
-	}
-
+	MAPIFreeBuffer(lpUsers);
+	// do not release fbdata, it's registered in the return_value array, but not addref'd
+	MAPIFreeBuffer(lppFBData);
 	LOG_END();
-    THROW_ON_ERROR();
-    return;
+	THROW_ON_ERROR();
 }
 
 ZEND_FUNCTION(mapi_freebusysupport_loadupdate)
@@ -6764,12 +6630,8 @@ ZEND_FUNCTION(mapi_freebusysupport_loadupdate)
 	}
 
 exit:
-	if (lpUsers)
-		MAPIFreeBuffer(lpUsers);
-
-	if(lppFBUpdate)
-		MAPIFreeBuffer(lppFBUpdate);
-
+	MAPIFreeBuffer(lpUsers);
+	MAPIFreeBuffer(lppFBUpdate);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -6948,9 +6810,7 @@ ZEND_FUNCTION(mapi_freebusyenumblock_next)
 	}
 
 exit:
-	if(lpBlk)
-		MAPIFreeBuffer(lpBlk);
-
+	MAPIFreeBuffer(lpBlk);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -7089,9 +6949,7 @@ ZEND_FUNCTION(mapi_freebusyupdate_publish)
 	RETVAL_TRUE;
 
 exit:
-	if(lpBlocks)
-		MAPIFreeBuffer(lpBlocks);
-
+	MAPIFreeBuffer(lpBlocks);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -7286,13 +7144,9 @@ ZEND_FUNCTION(mapi_exportchanges_config)
 	RETVAL_TRUE;
 
 exit:
-	if(lpIncludeProps)
-		MAPIFreeBuffer(lpIncludeProps);
-	if(lpExcludeProps)
-		MAPIFreeBuffer(lpExcludeProps);
-	if(lpRestrict)
-		MAPIFreeBuffer(lpRestrict);
-
+	MAPIFreeBuffer(lpIncludeProps);
+	MAPIFreeBuffer(lpExcludeProps);
+	MAPIFreeBuffer(lpRestrict);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -7490,9 +7344,7 @@ ZEND_FUNCTION(mapi_importcontentschanges_importmessagechange)
 	RETVAL_TRUE;
 
 exit:
-	if(lpProps)
-		MAPIFreeBuffer(lpProps);
-
+	MAPIFreeBuffer(lpProps);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -7525,9 +7377,7 @@ ZEND_FUNCTION(mapi_importcontentschanges_importmessagedeletion)
 		goto exit;
 
 exit:
-	if(lpMessages)
-		MAPIFreeBuffer(lpMessages);
-
+	MAPIFreeBuffer(lpMessages);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -7562,9 +7412,7 @@ ZEND_FUNCTION(mapi_importcontentschanges_importperuserreadstatechange)
 	RETVAL_TRUE;
 
 exit:
-	if(lpReadStates)
-		MAPIFreeBuffer(lpReadStates);
-
+	MAPIFreeBuffer(lpReadStates);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -7698,9 +7546,7 @@ ZEND_FUNCTION(mapi_importhierarchychanges_importfolderchange)
 	RETVAL_TRUE;
 
 exit:
-	if(lpProps)
-		MAPIFreeBuffer(lpProps);
-
+	MAPIFreeBuffer(lpProps);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;
@@ -7737,8 +7583,7 @@ ZEND_FUNCTION(mapi_importhierarchychanges_importfolderdeletion)
 	RETVAL_TRUE;
 
 exit:
-	if(lpFolders)
-		MAPIFreeBuffer(lpFolders);
+	MAPIFreeBuffer(lpFolders);
 	LOG_END();
 	THROW_ON_ERROR();
 	return;

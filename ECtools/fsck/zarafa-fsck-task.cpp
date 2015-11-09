@@ -105,13 +105,8 @@ HRESULT ZarafaFsckTask::ValidateMinimalNamedFields(LPMESSAGE lpMessage)
 exit:
 	if (lppTagArray)
 		freeNamedIdList(lppTagArray);
-
-	if (lpPropertyArray)
-		MAPIFreeBuffer(lpPropertyArray);
-
-	if (lpPropertyTagArray)
-		MAPIFreeBuffer(lpPropertyTagArray);
-
+	MAPIFreeBuffer(lpPropertyArray);
+	MAPIFreeBuffer(lpPropertyTagArray);
 	return hr;
 }
 
@@ -180,13 +175,8 @@ HRESULT ZarafaFsckTask::ValidateTimestamps(LPMESSAGE lpMessage)
 exit:
 	if (lppTagArray)
 		freeNamedIdList(lppTagArray);
-
-	if (lpPropertyArray)
-		MAPIFreeBuffer(lpPropertyArray);
-
-	if (lpPropertyTagArray)
-		MAPIFreeBuffer(lpPropertyTagArray);
-
+	MAPIFreeBuffer(lpPropertyArray);
+	MAPIFreeBuffer(lpPropertyTagArray);
 	return hr;
 }
 
@@ -289,13 +279,8 @@ HRESULT ZarafaFsckTask::ValidateCompletion(LPMESSAGE lpMessage)
 exit:
 	if (lppTagArray)
 		freeNamedIdList(lppTagArray);
-
-	if (lpPropertyArray)
-		MAPIFreeBuffer(lpPropertyArray);
-
-	if (lpPropertyTagArray)
-		MAPIFreeBuffer(lpPropertyTagArray);
-	
+	MAPIFreeBuffer(lpPropertyArray);
+	MAPIFreeBuffer(lpPropertyTagArray);
 	return hr;
 }
 

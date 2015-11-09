@@ -194,9 +194,7 @@ HRESULT ZarafaFsckContact::ValidateContactNames(LPMESSAGE lpMessage)
 	hr = hrSuccess;
 
 exit:
-	if (lpPropertyArray)
-		MAPIFreeBuffer(lpPropertyArray);
-
+	MAPIFreeBuffer(lpPropertyArray);
 	return hr;
 }
 

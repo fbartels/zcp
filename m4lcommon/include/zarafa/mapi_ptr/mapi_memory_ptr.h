@@ -85,10 +85,8 @@ public:
 
 	// Destructor
 	~mapi_memory_ptr() {
-		if (m_lpMemory) {
-			MAPIFreeBuffer(m_lpMemory);
-			m_lpMemory = NULL;
-		}
+		MAPIFreeBuffer(m_lpMemory);
+		m_lpMemory = NULL;
 	}
 
 
@@ -112,10 +110,8 @@ public:
 	
 	// Utility
 	void free() {
-		if (m_lpMemory) {
-			MAPIFreeBuffer(m_lpMemory);
-			m_lpMemory = NULL;
-		}
+		MAPIFreeBuffer(m_lpMemory);
+		m_lpMemory = NULL;
 	}
 
 	void swap(mapi_memory_ptr &other) {
@@ -150,11 +146,8 @@ public:
 	operator const void*() const { return m_lpMemory; }
 
 	proxy operator&() {
-		if (m_lpMemory) {
-			MAPIFreeBuffer(m_lpMemory);
-			m_lpMemory = NULL;
-		}
-
+		MAPIFreeBuffer(m_lpMemory);
+		m_lpMemory = NULL;
 		return proxy(&m_lpMemory);
 	}
 
@@ -165,11 +158,8 @@ public:
 	const _U as() const { return (_U)m_lpMemory; }
 
 	operator void**() {
-		if (m_lpMemory) {
-			MAPIFreeBuffer(m_lpMemory);
-			m_lpMemory = NULL;
-		}
-
+		MAPIFreeBuffer(m_lpMemory);
+		m_lpMemory = NULL;
 		return (void**)&m_lpMemory;
 	}
 

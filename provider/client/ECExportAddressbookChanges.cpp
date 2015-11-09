@@ -78,14 +78,12 @@ ECExportAddressbookChanges::ECExportAddressbookChanges(ECMsgStore *lpStore) {
 }
 
 ECExportAddressbookChanges::~ECExportAddressbookChanges() {
-	if(m_lpRawChanges)
-		MAPIFreeBuffer(m_lpRawChanges);
-	if(m_lpChanges)
-		MAPIFreeBuffer(m_lpChanges);
+	MAPIFreeBuffer(m_lpRawChanges);
+	MAPIFreeBuffer(m_lpChanges);
 	if(m_lpImporter)
 		m_lpImporter->Release();
-    if(m_lpLogger)
-        m_lpLogger->Release();
+	if (m_lpLogger)
+		m_lpLogger->Release();
 }
 
 HRESULT ECExportAddressbookChanges::QueryInterface(REFIID refiid, void **lppInterface) {
@@ -154,12 +152,9 @@ HRESULT	ECExportAddressbookChanges::Config(LPSTREAM lpStream, ULONG ulFlags, IEC
 	abeid.ulId = 1; // 1 is the first container
     
     // The parent source key is the entryid of the AB container that we're sync'ing
-	if(m_lpChanges)
-		MAPIFreeBuffer(m_lpChanges);
+	MAPIFreeBuffer(m_lpChanges);
 	m_lpChanges = NULL;
-
-	if(m_lpRawChanges)
-		MAPIFreeBuffer(m_lpRawChanges);
+	MAPIFreeBuffer(m_lpRawChanges);
 	m_lpRawChanges = NULL;
 
     hr = m_lpMsgStore->lpTransport->HrGetChanges(std::string((char *)&abeid, sizeof(ABEID)), 0, m_ulChangeId, ICS_SYNC_AB, 0, NULL, &m_ulMaxChangeId, &m_ulChanges, &m_lpRawChanges);

@@ -165,9 +165,7 @@ void IMAP::CleanupObject()
 	if (lpAddrBook)
 		lpAddrBook->Release();
 	lpAddrBook = NULL;
-
-	if (m_lpsIMAPTags)
-		MAPIFreeBuffer(m_lpsIMAPTags);
+	MAPIFreeBuffer(m_lpsIMAPTags);
 	m_lpsIMAPTags = NULL;
 
 	if (lpSession)
@@ -1375,9 +1373,7 @@ HRESULT IMAP::HrCmdDelete(const string &strTag, const string &strFolderParam) {
 	hr = HrResponse(RESP_TAGGED_OK, strTag, "DELETE completed");
 
 exit:
-    if (lpEntryID)
-        MAPIFreeBuffer(lpEntryID);
-        
+	MAPIFreeBuffer(lpEntryID);
 	if (lpParentFolder)
 		lpParentFolder->Release();
 
@@ -1540,14 +1536,9 @@ HRESULT IMAP::HrCmdRename(const string &strTag, const string &strExistingFolderP
 	hr = HrResponse(RESP_TAGGED_OK, strTag, "RENAME completed");
 
 exit:
-	if (lppvFromEntryID)
-		MAPIFreeBuffer(lppvFromEntryID);
-
-	if (lppvDestEntryID)
-		MAPIFreeBuffer(lppvDestEntryID);
-
-	if (lpMovFolder)
-		MAPIFreeBuffer(lpMovFolder);
+	MAPIFreeBuffer(lppvFromEntryID);
+	MAPIFreeBuffer(lppvDestEntryID);
+	MAPIFreeBuffer(lpMovFolder);
 
 	if (lpParentFolder)
 		lpParentFolder->Release();
@@ -1629,9 +1620,7 @@ HRESULT IMAP::HrCmdSubscribe(const string &strTag, const string &strFolderParam,
 	hr = HrResponse(RESP_TAGGED_OK, strTag, strAction+" completed");
 
 exit:
-    if (lpEntryID)
-        MAPIFreeBuffer(lpEntryID);
-
+	MAPIFreeBuffer(lpEntryID);
 	if (hr2 != hrSuccess)
 		return hr2;
 	return hr;
@@ -1932,15 +1921,12 @@ HRESULT IMAP::HrCmdStatus(const string &strTag, const string &strFolder, string 
 		hr = HrResponse(RESP_TAGGED_OK, strTag, "STATUS completed");
 
 exit:
-    if (lpPropMaxID)
-        MAPIFreeBuffer(lpPropMaxID);
+	MAPIFreeBuffer(lpPropMaxID);
         
-    if (lpTable)
-        lpTable->Release();
+	if (lpTable)
+		lpTable->Release();
         
-	if (lpPropCounters)
-		MAPIFreeBuffer(lpPropCounters);
-
+	MAPIFreeBuffer(lpPropCounters);
 	if (lpStatusFolder)
 		lpStatusFolder->Release();
 
@@ -2052,8 +2038,7 @@ HRESULT IMAP::HrCmdAppend(const string &strTag, const string &strFolderParam, co
 		strFlag = lstFlags[ulCounter];
 
 		if (strFlag.compare("\\SEEN") == 0) {
-			if (lpPropVal)
-				MAPIFreeBuffer(lpPropVal);
+			MAPIFreeBuffer(lpPropVal);
 			lpPropVal = NULL;
 
 			if (HrGetOneProp(lpMessage, PR_MESSAGE_FLAGS, &lpPropVal) != hrSuccess) {
@@ -2068,8 +2053,7 @@ HRESULT IMAP::HrCmdAppend(const string &strTag, const string &strFolderParam, co
 			lpPropVal->Value.ul |= MSGFLAG_READ;
 			HrSetOneProp(lpMessage, lpPropVal);
 		} else if (strFlag.compare("\\DRAFT") == 0) {
-			if (lpPropVal)
-				MAPIFreeBuffer(lpPropVal);
+			MAPIFreeBuffer(lpPropVal);
 			lpPropVal = NULL;
 
 			if (HrGetOneProp(lpMessage, PR_MSG_STATUS, &lpPropVal) != hrSuccess) {
@@ -2113,8 +2097,7 @@ HRESULT IMAP::HrCmdAppend(const string &strTag, const string &strFolderParam, co
 			lpPropVal->Value.ul = 2;
 			HrSetOneProp(lpMessage, lpPropVal);
 		} else if (strFlag.compare("\\ANSWERED") == 0 || strFlag.compare("$FORWARDED") == 0) {
-			if (lpPropVal)
-				MAPIFreeBuffer(lpPropVal);
+			MAPIFreeBuffer(lpPropVal);
 			lpPropVal = NULL;
 
 			if (HrGetOneProp(lpMessage, PR_MSG_STATUS, &lpPropVal) != hrSuccess) {
@@ -2131,8 +2114,7 @@ HRESULT IMAP::HrCmdAppend(const string &strTag, const string &strFolderParam, co
 				HrSetOneProp(lpMessage, lpPropVal);
 			}
 
-			if (lpPropVal)
-				MAPIFreeBuffer(lpPropVal);
+			MAPIFreeBuffer(lpPropVal);
 			lpPropVal = NULL;
 
 			hr = MAPIAllocateBuffer(sizeof(SPropValue) * 3, (LPVOID *) & lpPropVal);
@@ -2156,8 +2138,7 @@ HRESULT IMAP::HrCmdAppend(const string &strTag, const string &strFolderParam, co
 			if (hr != hrSuccess)
 				goto exit;
 		} else if (strFlag.compare("\\DELETED") == 0) {
-			if (lpPropVal)
-				MAPIFreeBuffer(lpPropVal);
+			MAPIFreeBuffer(lpPropVal);
 			lpPropVal = NULL;
 
 			if (HrGetOneProp(lpMessage, PR_MSG_STATUS, &lpPropVal) != hrSuccess) {
@@ -2218,9 +2199,7 @@ HRESULT IMAP::HrCmdAppend(const string &strTag, const string &strFolderParam, co
 	hr = HrResponse(RESP_TAGGED_OK, strTag, strAppendUid+"APPEND completed");
 
 exit:
-	if (lpPropVal)
-		MAPIFreeBuffer(lpPropVal);
-
+	MAPIFreeBuffer(lpPropVal);
 	if (lpMessage)
 		lpMessage->Release();
 
@@ -3080,9 +3059,7 @@ HRESULT IMAP::HrPrintQuotaRoot(const string& strTag)
 		hr = HrResponse(RESP_UNTAGGED, "QUOTA \"\" (STORAGE "+stringify(lpProps[0].Value.li.QuadPart / 1024)+" "+stringify(lpProps[1].Value.ul)+")");
 
 exit:
-	if (lpProps)
-		MAPIFreeBuffer(lpProps);
-
+	MAPIFreeBuffer(lpProps);
 	if (hr2 != hrSuccess)
 		return hr2;
 	return hr;	
@@ -3324,9 +3301,7 @@ HRESULT IMAP::HrExpungeDeleted(const string &strTag, const string &strCommand, L
     }
 
 exit:
-	if (sEntryList.lpbin)
-		MAPIFreeBuffer(sEntryList.lpbin);
-
+	MAPIFreeBuffer(sEntryList.lpbin);
 	if (lpRootRestrict)
 		FREE_RESTRICTION(lpRootRestrict);
 
@@ -3385,11 +3360,8 @@ HRESULT IMAP::HrGetFolderList(list<SFolder> &lstFolders) {
 		}
 	}
 	
-	if (lpPropVal){
-		MAPIFreeBuffer(lpPropVal);
-		lpPropVal = NULL;
-	}
-
+	MAPIFreeBuffer(lpPropVal);
+	lpPropVal = NULL;
 	if(!lpPublicStore)
 		goto exit;
 
@@ -3408,12 +3380,8 @@ HRESULT IMAP::HrGetFolderList(list<SFolder> &lstFolders) {
 	}
 
 exit:
-	if (lpPropVal)
-		MAPIFreeBuffer(lpPropVal);
-
-	if (lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
-
+	MAPIFreeBuffer(lpPropVal);
+	MAPIFreeBuffer(lpEntryID);
 	return hr;
 }
 
@@ -3492,9 +3460,7 @@ exit:
 	if (lpInbox)
 		lpInbox->Release();
 
-	if (lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
-
+	MAPIFreeBuffer(lpEntryID);
 	return hr;
 }
 
@@ -3555,9 +3521,7 @@ exit:
 	if (lpInbox)
 		lpInbox->Release();
 
-	if (lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
-
+	MAPIFreeBuffer(lpEntryID);
 	return hr;
 }
 
@@ -3658,11 +3622,8 @@ HRESULT IMAP::HrMakeSpecialsList() {
 		lstSpecialEntryIDs.insert(BinaryArray(lpPropVal->Value.MVbin.lpbin[4].lpb, lpPropVal->Value.MVbin.lpbin[4].cb));
 	}
 	
-	if (lpPropVal){
-		MAPIFreeBuffer(lpPropVal);
-		lpPropVal = NULL;
-	}
-
+	MAPIFreeBuffer(lpPropVal);
+	lpPropVal = NULL;
 	if(!lpPublicStore)
 		goto exit;
 
@@ -3670,18 +3631,10 @@ HRESULT IMAP::HrMakeSpecialsList() {
 		lstSpecialEntryIDs.insert(BinaryArray(lpPropVal->Value.bin.lpb, lpPropVal->Value.bin.cb));
 
 exit:
-	if (lpPropArrayStore)
-		MAPIFreeBuffer(lpPropArrayStore);
-
-	if (lpPropArrayInbox)
-		MAPIFreeBuffer(lpPropArrayInbox);
-
-	if (lpPropVal)
-		MAPIFreeBuffer(lpPropVal);
-
-	if (lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
-
+	MAPIFreeBuffer(lpPropArrayStore);
+	MAPIFreeBuffer(lpPropArrayInbox);
+	MAPIFreeBuffer(lpPropVal);
+	MAPIFreeBuffer(lpEntryID);
 	if (lpInbox)
 		lpInbox->Release();
 
@@ -3891,9 +3844,7 @@ HRESULT IMAP::HrRefreshFolderMails(bool bInitialLoad, bool bResetRecent, bool bS
         *lpulUnseen = ulUnseen;
 
 exit:
-    if (lpFolderIDs)
-        MAPIFreeBuffer(lpFolderIDs);
-        
+	MAPIFreeBuffer(lpFolderIDs);
 	if (lpRows)
 		FreeProws(lpRows);
 
@@ -4350,12 +4301,8 @@ HRESULT IMAP::HrPropertyFetch(list<ULONG> &lstMails, vector<string> &lstDataItem
 	}
 
 exit:
-	if (lpEntryList)
-		MAPIFreeBuffer(lpEntryList);
-
-    if (lpPropTags)
-        MAPIFreeBuffer(lpPropTags);
-        
+	MAPIFreeBuffer(lpEntryList);
+	MAPIFreeBuffer(lpPropTags);
 	if (lpRows)
 		FreeProws(lpRows);
 
@@ -4829,10 +4776,7 @@ std::string IMAP::HrEnvelopeSender(LPMESSAGE lpMessage, ULONG ulTagName, ULONG u
 	}
 
 	strResponse += ")) ";
-
-	if (lpPropValues)
-		MAPIFreeBuffer(lpPropValues);
-
+	MAPIFreeBuffer(lpPropValues);
 	return strResponse;
 }
 
@@ -4885,8 +4829,7 @@ HRESULT IMAP::HrGetMessageEnvelope(string &strResponse, LPMESSAGE lpMessage) {
 		strResponse += "NIL ";
 	}
 
-	if (lpPropVal)
-		MAPIFreeBuffer(lpPropVal);
+	MAPIFreeBuffer(lpPropVal);
 	lpPropVal = NULL;
 
 	// subject
@@ -4925,8 +4868,7 @@ recipientsdone:
 		hr = hrSuccess;
 	}
 
-	if (lpPropVal)
-		MAPIFreeBuffer(lpPropVal);
+	MAPIFreeBuffer(lpPropVal);
 	lpPropVal = NULL;
 
 	// in reply to
@@ -4938,8 +4880,7 @@ recipientsdone:
 
 	strResponse += " ";
 
-	if (lpPropVal)
-		MAPIFreeBuffer(lpPropVal);
+	MAPIFreeBuffer(lpPropVal);
 	lpPropVal = NULL;
 
 	// internet message id
@@ -4958,12 +4899,8 @@ exit:
 	if (lpTable)
 		lpTable->Release();
 
-	if (lpPropVal)
-		MAPIFreeBuffer(lpPropVal);
-
-	if (lpInternetCPID)
-		MAPIFreeBuffer(lpInternetCPID);
-
+	MAPIFreeBuffer(lpPropVal);
+	MAPIFreeBuffer(lpInternetCPID);
 	return hr;
 }
 
@@ -4997,9 +4934,7 @@ HRESULT IMAP::HrGetMessageFlags(string &strResponse, LPMESSAGE lpMessage, bool b
 	strResponse += ")";
 
 exit:
-	if (lpProps)
-		MAPIFreeBuffer(lpProps);
-
+	MAPIFreeBuffer(lpProps);
 	return hr;
 }
 
@@ -5032,9 +4967,7 @@ HRESULT IMAP::HrGetMessageInterDate(string &strResponse, LPMESSAGE lpMessage) {
 	}
 
 exit:
-	if (lpPropVal)
-		MAPIFreeBuffer(lpPropVal);
-
+	MAPIFreeBuffer(lpPropVal);
 	return hr;
 }
 
@@ -5356,9 +5289,7 @@ HRESULT IMAP::HrSeqUidSetToRestriction(const string &strSeqSet, LPSRestriction *
 	lpRestriction = NULL;
 
 exit:
-	if (lpRestriction)
-		MAPIFreeBuffer(lpRestriction);
-
+	MAPIFreeBuffer(lpRestriction);
 	return hr;
 }
 
@@ -5532,8 +5463,7 @@ HRESULT IMAP::HrStore(const list<ULONG> &lstMails, string strMsgDataItemName, st
 					goto exit;
 			}
 
-			if (lpPropTagArray)
-				MAPIFreeBuffer(lpPropTagArray);
+			MAPIFreeBuffer(lpPropTagArray);
 			lpPropTagArray = NULL;
 
 			hr = MAPIAllocateBuffer(CbNewSPropTagArray(5), (void**)&lpPropTagArray);
@@ -5625,9 +5555,7 @@ HRESULT IMAP::HrStore(const list<ULONG> &lstMails, string strMsgDataItemName, st
 				} else if (lstFlags[ulCurrent].compare("\\DRAFT") == 0) {
 					// not allowed
 				} else if (lstFlags[ulCurrent].compare("\\FLAGGED") == 0) {
-					if (lpPropVal)
-						MAPIFreeBuffer(lpPropVal);
-
+					MAPIFreeBuffer(lpPropVal);
 					hr = MAPIAllocateBuffer(sizeof(SPropValue), (LPVOID *) &lpPropVal);
 					if (hr != hrSuccess)
 						goto exit;
@@ -5637,12 +5565,9 @@ HRESULT IMAP::HrStore(const list<ULONG> &lstMails, string strMsgDataItemName, st
 					HrSetOneProp(lpMessage, lpPropVal);
 					// TODO: set PR_FLAG_ICON here too?
 				} else if (lstFlags[ulCurrent].compare("\\ANSWERED") == 0 || lstFlags[ulCurrent].compare("$FORWARDED") == 0) {
-					if (lpPropVal)
-						MAPIFreeBuffer(lpPropVal);
+					MAPIFreeBuffer(lpPropVal);
 					lpPropVal = NULL;
-
-					if (lpPropTagArray)
-						MAPIFreeBuffer(lpPropTagArray);
+					MAPIFreeBuffer(lpPropTagArray);
 					lpPropTagArray = NULL;
 
 					hr = MAPIAllocateBuffer(CbNewSPropTagArray(4), (void**)&lpPropTagArray);
@@ -5685,8 +5610,7 @@ HRESULT IMAP::HrStore(const list<ULONG> &lstMails, string strMsgDataItemName, st
 					if (hr != hrSuccess)
 						goto exit;
 				} else if (lstFlags[ulCurrent].compare("\\DELETED") == 0) {
-					if (lpPropVal)
-						MAPIFreeBuffer(lpPropVal);
+					MAPIFreeBuffer(lpPropVal);
 					lpPropVal = NULL;
 
 					if (HrGetOneProp(lpMessage, PR_MSG_STATUS, &lpPropVal) != hrSuccess) {
@@ -5722,12 +5646,9 @@ HRESULT IMAP::HrStore(const list<ULONG> &lstMails, string strMsgDataItemName, st
 					lpPropVal->Value.ul = 0;
 					HrSetOneProp(lpMessage, lpPropVal);
 				} else if (lstFlags[ulCurrent].compare("\\ANSWERED") == 0 || lstFlags[ulCurrent].compare("$FORWARDED") == 0) {
-					if (lpPropVal)
-						MAPIFreeBuffer(lpPropVal);
+					MAPIFreeBuffer(lpPropVal);
 					lpPropVal = NULL;
-
-					if (lpPropTagArray)
-						MAPIFreeBuffer(lpPropTagArray);
+					MAPIFreeBuffer(lpPropTagArray);
 					lpPropTagArray = NULL;
 
 					hr = MAPIAllocateBuffer(CbNewSPropTagArray(4), (void**)&lpPropTagArray);
@@ -5762,8 +5683,7 @@ HRESULT IMAP::HrStore(const list<ULONG> &lstMails, string strMsgDataItemName, st
 					if (hr != hrSuccess)
 						goto exit;
 				} else if (lstFlags[ulCurrent].compare("\\DELETED") == 0) {
-					if (lpPropVal)
-						MAPIFreeBuffer(lpPropVal);
+					MAPIFreeBuffer(lpPropVal);
 					lpPropVal = NULL;
 
 					if (HrGetOneProp(lpMessage, PR_MSG_STATUS, &lpPropVal) != hrSuccess) {
@@ -5792,9 +5712,7 @@ HRESULT IMAP::HrStore(const list<ULONG> &lstMails, string strMsgDataItemName, st
 		if (lpMessage)
 			lpMessage->Release();
 		lpMessage = NULL;
-
-		if (lpPropVal)
-			MAPIFreeBuffer(lpPropVal);
+		MAPIFreeBuffer(lpPropVal);
 		lpPropVal = NULL;
 
 	} // loop on mails
@@ -5806,12 +5724,8 @@ HRESULT IMAP::HrStore(const list<ULONG> &lstMails, string strMsgDataItemName, st
 		*lpbDoDelete = bDelete;
 
 exit:
-	if (lpPropTagArray)
-		MAPIFreeBuffer(lpPropTagArray);
-
-	if (lpPropVal)
-		MAPIFreeBuffer(lpPropVal);
-
+	MAPIFreeBuffer(lpPropTagArray);
+	MAPIFreeBuffer(lpPropVal);
 	if (lpMessage)
 		lpMessage->Release();
 
@@ -5871,9 +5785,7 @@ HRESULT IMAP::HrCopy(const list<ULONG> &lstMails, const string &strFolderParam, 
 	hr = lpFromFolder->CopyMessages(&sEntryList, NULL, lpDestFolder, 0, NULL, bMove ? MESSAGE_MOVE : 0);
 
 exit:
-	if (sEntryList.lpbin)
-		MAPIFreeBuffer(sEntryList.lpbin);
-
+	MAPIFreeBuffer(sEntryList.lpbin);
 	if (lpFromFolder)
 		lpFromFolder->Release();
 
@@ -7017,9 +6929,7 @@ HRESULT IMAP::HrSearch(vector<string> &lstSearchCriteria, ULONG &ulStartCriteria
 	lstMailnr.sort();
 
 exit:
-	if (lpRootRestrict)
-		MAPIFreeBuffer(lpRootRestrict);
-
+	MAPIFreeBuffer(lpRootRestrict);
 	if (lpRows)
 		FreeProws(lpRows);
 
@@ -7582,10 +7492,8 @@ HRESULT IMAP::HrFindFolder(const wstring& strFolder, bool bReadOnly, IMAPIFolder
     *lppFolder = lpFolder;
     
 exit:
-    if(lpEntryID)
-        MAPIFreeBuffer(lpEntryID);
-        
-    return hr;
+	MAPIFreeBuffer(lpEntryID);
+	return hr;
 }
 
 /** 
@@ -7640,8 +7548,7 @@ HRESULT IMAP::HrFindFolderEntryID(const wstring& strFolder, ULONG *lpcbEntryID, 
     lpEntryID = NULL;
             
 exit:
-    if(lpEntryID)
-        MAPIFreeBuffer(lpEntryID);
+    MAPIFreeBuffer(lpEntryID);
         
     if(lpFolder)
         lpFolder->Release();
@@ -7770,8 +7677,7 @@ HRESULT IMAP::HrFindSubFolder(IMAPIFolder *lpFolder, const wstring& strFolder, U
 exit:
     if(lpSubTree)
         lpSubTree->Release();
-    if(lpProp)
-        MAPIFreeBuffer(lpProp);
+    MAPIFreeBuffer(lpProp);
     if(lpRowSet)
         FreeProws(lpRowSet);
     if(lpTable)
@@ -7847,15 +7753,11 @@ HRESULT IMAP::HrFindFolderPartial(const wstring& strFolder, IMAPIFolder **lppFol
     lpFolder = NULL;
     
 exit:
-    if(lpTree)
-        MAPIFreeBuffer(lpTree);
-    if(lpFolder)
-        lpFolder->Release();
-        
-    if(lpEntryID)
-        MAPIFreeBuffer(lpEntryID);
-        
-    return hr;
+	MAPIFreeBuffer(lpTree);
+	if (lpFolder)
+		lpFolder->Release();
+	MAPIFreeBuffer(lpEntryID);
+	return hr;
 }
 
 /** 
@@ -7878,10 +7780,8 @@ bool IMAP::IsSpecialFolder(IMAPIFolder *lpFolder)
     result = IsSpecialFolder(lpProp->Value.bin.cb, (LPENTRYID)lpProp->Value.bin.lpb);
     
 exit:
-    if(lpProp)
-        MAPIFreeBuffer(lpProp);
-        
-    return result;
+	MAPIFreeBuffer(lpProp);
+	return result;
 }
 
 /** 
@@ -7910,10 +7810,8 @@ bool IMAP::IsMailFolder(IMAPIFolder *lpFolder)
         result = true;
     
 exit:
-    if(lpProp)
-        MAPIFreeBuffer(lpProp);
-        
-    return result;
+	MAPIFreeBuffer(lpProp);
+	return result;
 }
 
 bool IMAP::IsSentItemFolder(IMAPIFolder *lpFolder)
@@ -7935,12 +7833,8 @@ bool IMAP::IsSentItemFolder(IMAPIFolder *lpFolder)
 	if (hr != hrSuccess)
 		goto exit;
 exit:
-	if(lpProp)
-		MAPIFreeBuffer(lpProp);
-
-	if(lpPropStore)
-		MAPIFreeBuffer(lpPropStore);
-
+	MAPIFreeBuffer(lpProp);
+	MAPIFreeBuffer(lpPropStore);
 	return ulResult;
 }
 
@@ -7999,10 +7893,8 @@ HRESULT IMAP::HrOpenParentFolder(IMAPIFolder *lpFolder, IMAPIFolder **lppFolder)
         goto exit;
     
 exit:
-    if(lpParent)
-        MAPIFreeBuffer(lpParent);
-        
-    return hr;
+	MAPIFreeBuffer(lpParent);
+	return hr;
 }
 
 /** @} */

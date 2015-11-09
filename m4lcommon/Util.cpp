@@ -193,9 +193,7 @@ bool Util::FHasHTML(IMAPIProp *lpProp)
 		hr = MAPI_E_NOT_FOUND;
 
 exit:
-	if(lpPropSupport)
-		MAPIFreeBuffer(lpPropSupport);
-
+	MAPIFreeBuffer(lpPropSupport);
 	return hr == hrSuccess;
 }
 
@@ -244,9 +242,7 @@ HRESULT	Util::HrMergePropertyArrays(const SPropValue *lpSrc, ULONG cValues,
 	lpProps = NULL;
 
 exit:
-	if (lpProps)
-		MAPIFreeBuffer(lpProps);
-
+	MAPIFreeBuffer(lpProps);
 	return hr;
 }
 
@@ -2786,9 +2782,7 @@ HRESULT Util::CopyRecipients(LPMESSAGE lpSrc, LPMESSAGE lpDest) {
 		goto exit;
 
 exit:
-	if (lpTableColumns)
-		MAPIFreeBuffer(lpTableColumns);
-
+	MAPIFreeBuffer(lpTableColumns);
 	if (lpRows)
 		FreeProws(lpRows);
 
@@ -2842,9 +2836,7 @@ exit:
 		lpSrcInstance->Release();
 	if (lpDstInstance)
 		lpDstInstance->Release();
-	if (lpInstanceID)
-		MAPIFreeBuffer(lpInstanceID);
-
+	MAPIFreeBuffer(lpInstanceID);
 	return hr;
 }
 
@@ -2982,12 +2974,8 @@ next_attach:
 		hr = MAPI_W_PARTIAL_COMPLETION;
 
 exit:
-	if (lpHasAttach)
-		MAPIFreeBuffer(lpHasAttach);
-
-	if (lpTableColumns)
-		MAPIFreeBuffer(lpTableColumns);
-
+	MAPIFreeBuffer(lpHasAttach);
+	MAPIFreeBuffer(lpTableColumns);
 	if (lpRows)
 		FreeProws(lpRows);
 
@@ -3226,9 +3214,7 @@ next_item:
 		hr = MAPI_W_PARTIAL_COMPLETION;
 
 exit:
-	if (lpDeleteEntries)
-		MAPIFreeBuffer(lpDeleteEntries);
-
+	MAPIFreeBuffer(lpDeleteEntries);
 	if (lpDestMessage)
 		lpDestMessage->Release();
 
@@ -3533,10 +3519,7 @@ exit:
 	// Partial warning when data was copied.
 	if (bPartial)
 		hr = MAPI_W_PARTIAL_COMPLETION;
-
-	if (lpSPropTagArray)
-		MAPIFreeBuffer(lpSPropTagArray);
-
+	MAPIFreeBuffer(lpSPropTagArray);
 	if (lpPropSrc)
 		lpPropSrc->Release();
 
@@ -3869,11 +3852,8 @@ next_include_check:
 					goto exit;
 			}
 
-			if (lpAttachMethod) {
-				MAPIFreeBuffer(lpAttachMethod);
-				lpAttachMethod = NULL;
-			}
-
+			MAPIFreeBuffer(lpAttachMethod);
+			lpAttachMethod = NULL;
 			if (lpDestStream) {
 				lpDestStream->Release();
 				lpDestStream = NULL;
@@ -4025,27 +4005,18 @@ exit:
 
 	if (hr != hrSuccess) {
 		// may not return a problem set when we have an warning/error code in hr
-		if (lpProblems)
-			MAPIFreeBuffer(lpProblems);
+		MAPIFreeBuffer(lpProblems);
 	} else {
 		if (lppProblems)
 			*lppProblems = lpProblems;
-		else if (lpProblems)
+		else
 			MAPIFreeBuffer(lpProblems);
 	}
 
-	if (lppNames)
-		MAPIFreeBuffer(lppNames);
-
-	if (lpsSrcNameTagArray)
-		MAPIFreeBuffer(lpsSrcNameTagArray);
-
-	if (lpsDestNameTagArray)
-		MAPIFreeBuffer(lpsDestNameTagArray);
-
-	if (lpsDestTagArray)
-		MAPIFreeBuffer(lpsDestTagArray);
-
+	MAPIFreeBuffer(lppNames);
+	MAPIFreeBuffer(lpsSrcNameTagArray);
+	MAPIFreeBuffer(lpsDestNameTagArray);
+	MAPIFreeBuffer(lpsDestTagArray);
 	if (lpSrcMessage)
 		lpSrcMessage->Release();
 
@@ -4057,28 +4028,17 @@ exit:
 
 	if (lpDestStream)
 		lpDestStream->Release();
-
-	if (lpAttachMethod)
-		MAPIFreeBuffer(lpAttachMethod);
-
+	MAPIFreeBuffer(lpAttachMethod);
 	if (lpSrcProp)
 		lpSrcProp->Release();
 
 	if (lpDestProp)
 		lpDestProp->Release();
-
-	if (lpProps)
-		MAPIFreeBuffer(lpProps);
-
-	if (lpsDestPropArray)
-		MAPIFreeBuffer(lpsDestPropArray);
-
+	MAPIFreeBuffer(lpProps);
+	MAPIFreeBuffer(lpsDestPropArray);
 	if (lpZarafa)
 		lpZarafa->Release();
-
-	if (lpZObj)
-		MAPIFreeBuffer(lpZObj);
-
+	MAPIFreeBuffer(lpZObj);
 	return hr;
 }
 
@@ -4134,10 +4094,7 @@ exit:
 
 	if (lpSrcStream)
 		lpSrcStream->Release();
-
-	if (lpIMAPProps)
-		MAPIFreeBuffer(lpIMAPProps);
-
+	MAPIFreeBuffer(lpIMAPProps);
 	return hr;
 }
 
@@ -4205,12 +4162,8 @@ HRESULT Util::HrGetQuotaStatus(IMsgStore *lpMsgStore, LPECQUOTA lpsQuota, LPECQU
 	lpsQuotaStatus = NULL;
 	
 exit:
-	if (lpsQuotaStatus)
-		MAPIFreeBuffer(lpsQuotaStatus);
-		
-	if (lpProps)
-		MAPIFreeBuffer(lpProps);
-
+	MAPIFreeBuffer(lpsQuotaStatus);
+	MAPIFreeBuffer(lpProps);
 	return hr;
 }
 
@@ -4299,18 +4252,10 @@ HRESULT Util::HrDeleteResidualProps(LPMESSAGE lpDestMsg, LPMESSAGE lpSourceMsg, 
 	hr = lpDestMsg->SaveChanges(KEEP_OPEN_READWRITE);
 
 exit:
-	if (lpsMappedPropArray)
-		MAPIFreeBuffer(lpsMappedPropArray);
-
-	if (lppPropNames)
-		MAPIFreeBuffer(lppPropNames);
-
-	if (lpsNamedPropArray)
-		MAPIFreeBuffer(lpsNamedPropArray);
-
-	if (lpsPropArray)
-		MAPIFreeBuffer(lpsPropArray);
-
+	MAPIFreeBuffer(lpsMappedPropArray);
+	MAPIFreeBuffer(lppPropNames);
+	MAPIFreeBuffer(lpsNamedPropArray);
+	MAPIFreeBuffer(lpsPropArray);
 	return hr;
 }
 

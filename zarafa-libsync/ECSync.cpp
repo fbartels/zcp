@@ -275,10 +275,7 @@ ECSync::~ECSync(){
 
 	if(m_lpSupport)
 		m_lpSupport->Release();
-
-	if(m_lpStoreID)
-		MAPIFreeBuffer(m_lpStoreID);
-
+	MAPIFreeBuffer(m_lpStoreID);
 	delete m_lpOfflineContext;
 	delete m_lpOnlineContext;
 
@@ -800,13 +797,8 @@ HRESULT ECSync::HrCreateChangeNotificationStatusStreams(LPSTREAM *lppOnlineStrea
 exit:
 	if (lpStore)
 		lpStore->Release();
-
-	if (sOfflineEntryList.lpbin)
-		MAPIFreeBuffer(sOfflineEntryList.lpbin);
-
-	if (sOnlineEntryList.lpbin)
-		MAPIFreeBuffer(sOnlineEntryList.lpbin);
-
+	MAPIFreeBuffer(sOfflineEntryList.lpbin);
+	MAPIFreeBuffer(sOnlineEntryList.lpbin);
 	if (lpRows)
 		FreeProws(lpRows);
 
@@ -1397,12 +1389,8 @@ wait:
 	}
 
 exit:
-	if(lpSyncTimeProp)
-		MAPIFreeBuffer(lpSyncTimeProp);
-
-	if(lpSyncOnDemand)
-		MAPIFreeBuffer(lpSyncOnDemand);
-
+	MAPIFreeBuffer(lpSyncTimeProp);
+	MAPIFreeBuffer(lpSyncOnDemand);
 	ReleaseChangeList(lstChanges);
 
 	if (m_lpOfflineContext && m_lpOfflineContext->SyncStatusLoaded())
@@ -1745,10 +1733,8 @@ HRESULT ECSync::MessageSync(std::list<SBinary> &lstChanges){
 			}
 
 nextdefaultfolder:
-			if (lpPropValue){
-				MAPIFreeBuffer(lpPropValue);
-				lpPropValue = NULL;
-			}
+			MAPIFreeBuffer(lpPropValue);
+			lpPropValue = NULL;
 		}
 	}
 
@@ -1766,10 +1752,7 @@ nextdefaultfolder:
 
 exit:
 	UpdateSyncStatus(0, EC_SYNC_STATUS_MESSAGE);
-
-	if (lpPropValue)
-		MAPIFreeBuffer(lpPropValue);
-
+	MAPIFreeBuffer(lpPropValue);
 	if(lpInboxFolder)
 		lpInboxFolder->Release();
 
@@ -2117,10 +2100,7 @@ HRESULT ECSync::MessageSyncFolderOneWay(LPMAPIFOLDER lpFromFolder, LPMAPIFOLDER 
 
 exit:
 	SaveSyncStatusStreams();	// Ignore errors
-
-	if(lpDisplayName)
-		MAPIFreeBuffer(lpDisplayName);
-
+	MAPIFreeBuffer(lpDisplayName);
 	if(lpECChanges)
 		lpECChanges->Release();
 
@@ -2207,9 +2187,7 @@ HRESULT ECSync::SyncStoreInfo(){
 		goto exit;
 
 exit:
-	if(lpPropVals)
-		MAPIFreeBuffer(lpPropVals);
-
+	MAPIFreeBuffer(lpPropVals);
 	if(lpOfflineRootFolder)
 		lpOfflineRootFolder->Release();
 
@@ -2499,37 +2477,16 @@ exit:
 
 	if(lpReminderFolder)
 		lpReminderFolder->Release();
-
-	if(lpRootRestriction)
-		MAPIFreeBuffer(lpRootRestriction);
-
-	if(lpContainerList)
-		MAPIFreeBuffer(lpContainerList);
-
-	if(lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
-
-	if(lpPropWasteBasket)
-		MAPIFreeBuffer(lpPropWasteBasket);
-
-	if(lpPropDrafts)
-		MAPIFreeBuffer(lpPropDrafts);
-
-	if(lpPropOutBox)
-		MAPIFreeBuffer(lpPropOutBox);
-
-	if(lpPropAdditionalREN)
-		MAPIFreeBuffer(lpPropAdditionalREN);
-
-	if(lpPropVal)
-		MAPIFreeBuffer(lpPropVal);
-
-	if(lpPropContainerClass)
-		MAPIFreeBuffer(lpPropContainerClass);
-
-	if(lpPropIPM)
-		MAPIFreeBuffer(lpPropIPM);
-
+	MAPIFreeBuffer(lpRootRestriction);
+	MAPIFreeBuffer(lpContainerList);
+	MAPIFreeBuffer(lpEntryID);
+	MAPIFreeBuffer(lpPropWasteBasket);
+	MAPIFreeBuffer(lpPropDrafts);
+	MAPIFreeBuffer(lpPropOutBox);
+	MAPIFreeBuffer(lpPropAdditionalREN);
+	MAPIFreeBuffer(lpPropVal);
+	MAPIFreeBuffer(lpPropContainerClass);
+	MAPIFreeBuffer(lpPropIPM);
 	return hr;
 }
 
@@ -2651,9 +2608,7 @@ HRESULT ECSync::SaveSyncStatusStreams(){
 	hr = HrSaveChangeNotificationStatusStreams();
 
 exit:
-	if (lpSyncStatusProp)
-		MAPIFreeBuffer(lpSyncStatusProp);
-
+	MAPIFreeBuffer(lpSyncStatusProp);
 	if (lpStore)
 		lpStore->Release();
 
@@ -2687,9 +2642,7 @@ HRESULT ECSync::HrLoadSyncStatusStream(ECSyncContext *lpContext, LPMDB lpStore, 
 		goto exit;
 
 exit:
-	if (lpSyncStatusProp)
-		MAPIFreeBuffer(lpSyncStatusProp);
-
+	MAPIFreeBuffer(lpSyncStatusProp);
 	return hr;
 }
 

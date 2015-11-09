@@ -71,8 +71,7 @@ ProtocolBase::ProtocolBase(Http *lpRequest, IMAPISession *lpSession, ECLogger *l
 
 ProtocolBase::~ProtocolBase()
 {
-	if (m_lpNamedProps)
-		MAPIFreeBuffer(m_lpNamedProps);
+	MAPIFreeBuffer(m_lpNamedProps);
 
 	if (m_lpLoginUser)
 		m_lpLoginUser->Release();
@@ -357,12 +356,8 @@ HRESULT ProtocolBase::HrInitializeClass()
 
 
 exit:
-	if(lpFldProp)
-		MAPIFreeBuffer(lpFldProp);
-
-	if(lpDefaultProp)
-		MAPIFreeBuffer(lpDefaultProp);
-
+	MAPIFreeBuffer(lpFldProp);
+	MAPIFreeBuffer(lpDefaultProp);
 	return hr;
 }
 

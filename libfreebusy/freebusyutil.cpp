@@ -151,9 +151,7 @@ HRESULT GetFreeBusyFolder(IMsgStore* lpPublicStore, IMAPIFolder** lppFreeBusyFol
 		goto exit;
 
 exit:
-	if (lpPropArrayFreeBusy)
-		MAPIFreeBuffer(lpPropArrayFreeBusy);
-
+	MAPIFreeBuffer(lpPropArrayFreeBusy);
 	if(lpMapiFolder)
 		lpMapiFolder->Release();
 
@@ -399,31 +397,17 @@ HRESULT GetFreeBusyMessage(IMAPISession* lpSession, IMsgStore* lpPublicStore, IM
 		goto exit;
 
 exit:
-
-	if(lpPropEmail)
-		MAPIFreeBuffer(lpPropEmail);
-	
-	if(lpPropName)
-		MAPIFreeBuffer(lpPropName);
-
+	MAPIFreeBuffer(lpPropEmail);
+	MAPIFreeBuffer(lpPropName);
 	if(lpMailUser)
 		lpMailUser->Release();
 
 	if(lpAdrBook)
 		lpAdrBook->Release();
-
-	if(lpInboxEntry)
-		MAPIFreeBuffer(lpInboxEntry);
-
-	if(lpPropfbEntryidsNew)
-		MAPIFreeBuffer(lpPropfbEntryidsNew);
-	
-	if(lpPropFBMessage)
-		MAPIFreeBuffer(lpPropFBMessage);
-
-	if(lpPropfbEntryids)
-		MAPIFreeBuffer(lpPropfbEntryids);
-
+	MAPIFreeBuffer(lpInboxEntry);
+	MAPIFreeBuffer(lpPropfbEntryidsNew);
+	MAPIFreeBuffer(lpPropFBMessage);
+	MAPIFreeBuffer(lpPropfbEntryids);
 	if(lpFolder)
 		lpFolder->Release();
 
@@ -602,9 +586,7 @@ HRESULT GetFreeBusyMessageData(IMessage* lpMessage, LONG* lprtmStart, LONG* lprt
 		*lprtmEnd = 0;
 
 exit:
-	if (lpPropArrayFBData)
-		MAPIFreeBuffer(lpPropArrayFBData);
-
+	MAPIFreeBuffer(lpPropArrayFBData);
 	return hr;
 }
 
@@ -800,7 +782,7 @@ HRESULT CreateFBProp(FBStatus fbStatus, ULONG ulMonths, ULONG ulPropMonths, ULON
 	*lppPropFBDataArray = lpPropFBDataArray;
 
 exit:
-	if(hr != hrSuccess && lpPropFBDataArray)
+	if (hr != hrSuccess)
 		MAPIFreeBuffer(lpPropFBDataArray);
 
 	return hr;
@@ -903,10 +885,7 @@ HRESULT HrAddFBBlock(OccrInfo sOccrInfo, OccrInfo **lppsOccrInfo, ULONG *lpcValu
 	*lppsOccrInfo = lpsNewOccrInfo;
 
 exit:
-
-	if(lpsInputOccrInfo)
-		MAPIFreeBuffer(lpsInputOccrInfo);
-
+	MAPIFreeBuffer(lpsInputOccrInfo);
 	return hr;
 }
 

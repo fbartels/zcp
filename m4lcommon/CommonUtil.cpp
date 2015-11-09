@@ -616,9 +616,7 @@ HRESULT GetProxyStoreObject(IMsgStore *lpMsgStore, IMsgStore **lppMsgStore)
 	}
 
 exit:
-	if (lpPropValue)
-		MAPIFreeBuffer(lpPropValue);
-
+	MAPIFreeBuffer(lpPropValue);
 	if (lpProxyStoreObject)
 		lpProxyStoreObject->Release();
 
@@ -642,9 +640,7 @@ HRESULT HrOpenDefaultStore(IMAPISession *lpMAPISession, ULONG ulFlags, IMsgStore
 	*lppMsgStore = lpMsgStore;
 
 exit:
-	if(lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
-
+	MAPIFreeBuffer(lpEntryID);
 	return hr;
 }
 
@@ -698,9 +694,7 @@ HRESULT HrOpenECPublicStore(IMAPISession *lpMAPISession, ULONG ulFlags, IMsgStor
 	*lppMsgStore = lpMsgStore;
 
 exit:
-	if(lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
-		
+	MAPIFreeBuffer(lpEntryID);
 	return hr;
 }
 
@@ -871,16 +865,9 @@ exit:
 
 	if(lpGlobalProfSect)
 		lpGlobalProfSect->Release();
-
-	if(lpsPropTagArray)
-		MAPIFreeBuffer(lpsPropTagArray);
-
-	if(lpGlobalProps)
-		MAPIFreeBuffer(lpGlobalProps);
-
-	if(lpNewProp)
-		MAPIFreeBuffer(lpNewProp);
-
+	MAPIFreeBuffer(lpsPropTagArray);
+	MAPIFreeBuffer(lpGlobalProps);
+	MAPIFreeBuffer(lpNewProp);
 	return hr;
 }
 
@@ -1382,9 +1369,7 @@ HRESULT HrNewMailNotification(IMsgStore* lpMDB, IMessage* lpMessage)
 
 exit:
 	// Newmail notify
-	if(lpNewMailPropArray)
-		MAPIFreeBuffer(lpNewMailPropArray);
-
+	MAPIFreeBuffer(lpNewMailPropArray);
 	return hr;
 }
 
@@ -1420,7 +1405,7 @@ HRESULT HrCreateEmailSearchKey(const char *lpszEmailType,
 	*lppByte = lpByte;
 	*cb = size;
 exit:
-	if(hr != hrSuccess && lpByte != NULL)
+	if (hr != hrSuccess)
 		MAPIFreeBuffer(lpByte);
 
 	return hr;
@@ -1520,9 +1505,7 @@ HRESULT HrGetAddress(IMAPISession *lpSession, IMessage *lpMessage, ULONG ulPropT
 	hr = HrGetAddress(lpSession, lpProps, cValues, ulPropTagEntryID, ulPropTagName, ulPropTagType, ulPropTagEmailAddress, strName, strType, strEmailAddress);
 
 exit:
-	if (lpProps)
-		MAPIFreeBuffer(lpProps);
-
+	MAPIFreeBuffer(lpProps);
 	return hr;
 }
 
@@ -1568,9 +1551,7 @@ HRESULT HrGetAddress(LPADRBOOK lpAdrBook, IMessage *lpMessage, ULONG ulPropTagEn
 	hr = HrGetAddress(lpAdrBook, lpProps, cValues, ulPropTagEntryID, ulPropTagName, ulPropTagType, ulPropTagEmailAddress, strName, strType, strEmailAddress);
 
 exit:
-	if (lpProps)
-		MAPIFreeBuffer(lpProps);
-
+	MAPIFreeBuffer(lpProps);
 	return hr;
 }
 
@@ -1661,19 +1642,15 @@ static HRESULT HrResolveToSMTP(LPADRBOOK lpAdrBook,
     }
     
 exit:
-    if(lpAdrList)
-        FreePadrlist(lpAdrList);
+	if (lpAdrList)
+		FreePadrlist(lpAdrList);
     
-    if(lpEmailAddress)
-        MAPIFreeBuffer(lpEmailAddress);
+	MAPIFreeBuffer(lpEmailAddress);
+	MAPIFreeBuffer(lpSMTPAddress);
+	if (lpMailUser)
+		lpMailUser->Release();
         
-    if(lpSMTPAddress)
-        MAPIFreeBuffer(lpSMTPAddress);
-        
-    if(lpMailUser)
-        lpMailUser->Release();
-        
-    return hr;
+	return hr;
 }
 
 /**
@@ -1813,10 +1790,7 @@ HRESULT HrGetAddress(LPADRBOOK lpAdrBook, LPENTRYID lpEntryID, ULONG cbEntryID, 
 exit:
 	if(lpMailUser)
 		lpMailUser->Release();
-
-	if(lpMailUserProps)
-		MAPIFreeBuffer(lpMailUserProps);
-
+	MAPIFreeBuffer(lpMailUserProps);
 	return hr;
 }
 
@@ -1909,10 +1883,7 @@ exit:
 
 	if(lpMDB)
 		lpMDB->Release();
-
-	if(lpPropValue)
-		MAPIFreeBuffer(lpPropValue);
-
+	MAPIFreeBuffer(lpPropValue);
 	return hr;
 }
 
@@ -2383,15 +2354,11 @@ exit:
 	delete lpRowWrapper;
 	if (lpRowSet)
 		FreeProws(lpRowSet);
-	if (lpTags)
-		MAPIFreeBuffer(lpTags);
+	MAPIFreeBuffer(lpTags);
 	if (lpTable)
 		lpTable->Release();
-	if (lpProp)
-		MAPIFreeBuffer(lpProp);
-	if (lpProp2)
-		MAPIFreeBuffer(lpProp2);
-
+	MAPIFreeBuffer(lpProp);
+	MAPIFreeBuffer(lpProp2);
 	if (fMatch)
 		return hrSuccess;
 	else if (hr == hrSuccess)
@@ -2605,13 +2572,8 @@ found:
 
 exit:
 	lpNullLogger->Release();
-
-	if (lpPropFolder)
-		MAPIFreeBuffer(lpPropFolder);
-
-	if (lpPropIPMSubtree)
-		MAPIFreeBuffer(lpPropIPMSubtree);
-
+	MAPIFreeBuffer(lpPropFolder);
+	MAPIFreeBuffer(lpPropIPMSubtree);
 	if (lpFoundFolder)
 		lpFoundFolder->Release();
 
@@ -2675,10 +2637,7 @@ HRESULT HrOpenUserMsgStore(LPMAPISESSION lpSession, LPMDB lpStore, WCHAR *lpszUs
 exit:
 	if (lpMsgStore)
 		lpMsgStore->Release();
-
-	if (lpStoreEntryID)
-		MAPIFreeBuffer(lpStoreEntryID);
-
+	MAPIFreeBuffer(lpStoreEntryID);
 	if (lpExchManageStore)
 		lpExchManageStore->Release();
 
@@ -2772,11 +2731,9 @@ HRESULT ECPropMap::Resolve(IMAPIProp *lpMAPIProp) {
     }
     
 exit:
-    if(lpPropTags)
-        MAPIFreeBuffer(lpPropTags);
-
-    delete[] lppNames;
-    return hr;        
+	MAPIFreeBuffer(lpPropTags);
+	delete[] lppNames;
+	return hr;
 }
 
 /**
@@ -2836,10 +2793,7 @@ exit:
 
 	if (lpRootFld)
 		lpRootFld->Release();
-
-	if (lpPropDefFld)
-		MAPIFreeBuffer(lpPropDefFld);
-	
+	MAPIFreeBuffer(lpPropDefFld);
 	return hr;
 }
 
@@ -2984,7 +2938,7 @@ HRESULT __stdcall UnWrapStoreEntryID(ULONG cbOrigEntry, LPENTRYID lpOrigEntry, U
 	*lppUnWrappedEntry = lpEntryID;
 
 exit:
-	if (hr!= hrSuccess && lpEntryID)
+	if (hr != hrSuccess)
 		MAPIFreeBuffer(lpEntryID);
 
 	return hr;
@@ -3329,21 +3283,14 @@ static HRESULT OpenLocalFBMessage(DGMessageType eDGMsgType,
 	*lppFBMessage = lpMessage;
 
 exit:
-	if(lpszExplicitClass)
-		MAPIFreeBuffer(lpszExplicitClass);
-
-	if(lpAppEntryID)
-		MAPIFreeBuffer(lpAppEntryID);
+	MAPIFreeBuffer(lpszExplicitClass);
+	MAPIFreeBuffer(lpAppEntryID);
 	if(lpRoot)
 		lpRoot->Release();
-	if(lpPropFB)
-		MAPIFreeBuffer(lpPropFB);
-	if(lpPropFBNew)
-		MAPIFreeBuffer(lpPropFBNew);
-	if(lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
-	if(lpEntryIDInbox)
-		MAPIFreeBuffer(lpEntryIDInbox);
+	MAPIFreeBuffer(lpPropFB);
+	MAPIFreeBuffer(lpPropFBNew);
+	MAPIFreeBuffer(lpEntryID);
+	MAPIFreeBuffer(lpEntryIDInbox);
 	if(lpInbox)
 		lpInbox->Release();
 
@@ -3470,8 +3417,7 @@ HRESULT GetAutoAcceptSettings(IMsgStore *lpMsgStore, bool *lpbAutoAccept, bool *
 	*lpbDeclineRecurring = bDeclineRecurring;
 
 exit:
-	if(lpProps)
-		MAPIFreeBuffer(lpProps);
+	MAPIFreeBuffer(lpProps);
 	if(lpLocalFBMessage)
 		lpLocalFBMessage->Release();
 

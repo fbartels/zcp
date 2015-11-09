@@ -904,8 +904,7 @@ HRESULT M4LMsgServiceAdmin::ConfigureMsgService(LPMAPIUID lpUID, ULONG ulUIParam
 exit:
 	pthread_mutex_unlock(&m_mutexserviceadmin);
 #if WIN32
-	if (lpTmpProps)
-		MAPIFreeBuffer(lpTmpProps);
+	MAPIFreeBuffer(lpTmpProps);
 #endif
 	if(lpProviderAdmin)
 		lpProviderAdmin->Release();
@@ -986,10 +985,7 @@ HRESULT M4LMsgServiceAdmin::OpenProfileSection(LPMAPIUID lpUID, LPCIID lpInterfa
 
 exit:
 	pthread_mutex_unlock(&m_mutexserviceadmin);
-
-	if (lpsPropVal)
-		MAPIFreeBuffer(lpsPropVal);
-
+	MAPIFreeBuffer(lpsPropVal);
 	if (lpMapiProp)
 		lpMapiProp->Release();
 
@@ -1141,22 +1137,14 @@ HRESULT M4LMsgServiceAdmin::GetProviderTable(ULONG ulFlags, LPMAPITABLE* lppTabl
 
 exit:
 	pthread_mutex_unlock(&m_mutexserviceadmin);
-
-	if (lpPropTagArray)
-		MAPIFreeBuffer(lpPropTagArray);
-
+	MAPIFreeBuffer(lpPropTagArray);
 	if (lpTableView)
 		lpTableView->Release();
 
 	if (lpTable)
 		lpTable->Release();
-
-	if (lpDest)
-		MAPIFreeBuffer(lpDest);
-
-	if (lpsProps)
-		MAPIFreeBuffer(lpsProps);
-
+	MAPIFreeBuffer(lpDest);
+	MAPIFreeBuffer(lpsProps);
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LMsgServiceAdmin::GetProviderTable", "0x%08x", hr);
 	return hr;
 }
@@ -1208,8 +1196,7 @@ M4LMAPISession::~M4LMAPISession() {
         iterStores->second->Release();
     }
 
-	if(m_lpPropsStatus)
-		MAPIFreeBuffer(m_lpPropsStatus);
+	MAPIFreeBuffer(m_lpPropsStatus);
 	pthread_mutex_destroy(&m_mutexStatusRow);
 
 	serviceAdmin->Release();
@@ -1314,11 +1301,9 @@ HRESULT M4LMAPISession::GetMsgStoresTable(ULONG ulFlags, LPMAPITABLE* lppTable) 
 		}
 
 next:
-		if (lpDest)
-			MAPIFreeBuffer(lpDest);
+		MAPIFreeBuffer(lpDest);
 		lpDest = NULL;
-		if (lpsProps)
-			MAPIFreeBuffer(lpsProps);
+		MAPIFreeBuffer(lpsProps);
 		lpsProps = NULL;
 	}
 	
@@ -1336,22 +1321,14 @@ next:
 	
 exit:
 	pthread_mutex_unlock(&serviceAdmin->m_mutexserviceadmin);
-
-	if (lpPropTagArray)
-		MAPIFreeBuffer(lpPropTagArray);
-
+	MAPIFreeBuffer(lpPropTagArray);
 	if (lpTableView)
 		lpTableView->Release();
 
 	if (lpTable)
 		lpTable->Release();
-	
-	if (lpDest)
-		MAPIFreeBuffer(lpDest);
-
-	if (lpsProps)
-		MAPIFreeBuffer(lpsProps);
-
+	MAPIFreeBuffer(lpDest);
+	MAPIFreeBuffer(lpsProps);
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LMAPISession::GetMsgStoresTable", "0x%08x", hr);
 	return hr;
 }
@@ -1484,13 +1461,8 @@ exit:
 
 	if (mdb)
 		mdb->Release();
-
-	if (pSpoolSec)
-		MAPIFreeBuffer(pSpoolSec); // we don't need this ...
-	
-	if (lpStoreEntryID)
-		MAPIFreeBuffer(lpStoreEntryID);
-		
+	MAPIFreeBuffer(pSpoolSec); // we don't need this ...
+	MAPIFreeBuffer(lpStoreEntryID);
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LMAPISession::OpenMsgStore", "0x%08x", hr);
 	return hr;
 }
@@ -1776,8 +1748,7 @@ HRESULT M4LMAPISession::OpenEntry(ULONG cbEntryID, LPENTRYID lpEntryID, LPCIID l
 	}
 
 exit:
-	if(lpUnWrappedID)
-		MAPIFreeBuffer(lpUnWrappedID);
+	MAPIFreeBuffer(lpUnWrappedID);
 
     if(lpsRows)
         FreeProws(lpsRows);
@@ -2017,9 +1988,7 @@ HRESULT M4LMAPISession::setStatusRow(ULONG cValues, LPSPropValue lpProps)
 	HRESULT hr = hrSuccess;
 
 	pthread_mutex_lock(&m_mutexStatusRow);
-
-	if (m_lpPropsStatus)
-		MAPIFreeBuffer(m_lpPropsStatus);
+	MAPIFreeBuffer(m_lpPropsStatus);
 	m_lpPropsStatus = NULL;
 	m_cValuesStatus = 0;
 
@@ -2083,12 +2052,8 @@ HRESULT M4LAddrBook::addProvider(const std::string &profilename, const std::stri
 	m_lABProviders.push_back(entry);
 
 exit:
-	if (lpSecurity)
-		MAPIFreeBuffer(lpSecurity);
-
-	if (lpMAPIError)
-		MAPIFreeBuffer(lpMAPIError);
-
+	MAPIFreeBuffer(lpSecurity);
+	MAPIFreeBuffer(lpMAPIError);
 	return hr;
 }
 
@@ -2147,9 +2112,7 @@ HRESULT M4LAddrBook::getDefaultSearchPath(ULONG ulFlags, LPSRowSet* lppSearchPat
 	}
 
 exit:
-	if (lpRes)
-		MAPIFreeBuffer(lpRes);
-
+	MAPIFreeBuffer(lpRes);
 	if (lpRoot)
 		lpRoot->Release();
 
@@ -2545,18 +2508,10 @@ HRESULT M4LAddrBook::ResolveName(ULONG ulUIParam, ULONG ulFlags, LPTSTR lpszNewE
 	}
 
 exit:
-	if (lpNewProps)
-		MAPIFreeBuffer(lpNewProps);
-
-	if (lpNewRow)
-		MAPIFreeBuffer(lpNewRow);
-
-	if (lpOneEntryID)
-		MAPIFreeBuffer(lpOneEntryID);
-
-	if (lpFlagList)
-		MAPIFreeBuffer(lpFlagList);
-
+	MAPIFreeBuffer(lpNewProps);
+	MAPIFreeBuffer(lpNewRow);
+	MAPIFreeBuffer(lpOneEntryID);
+	MAPIFreeBuffer(lpFlagList);
 	if (lpABContainer)
 		lpABContainer->Release();
 
@@ -2696,10 +2651,7 @@ exit:
 
 	if (lpTable)
 		lpTable->Release();
-
-	if (propEntryID)
-		MAPIFreeBuffer(propEntryID);
-
+	MAPIFreeBuffer(propEntryID);
 	if (lpABContainer)
 		lpABContainer->Release();
 
@@ -2841,9 +2793,7 @@ HRESULT M4LAddrBook::PrepareRecips(ULONG ulFlags, LPSPropTagArray lpPropTagArray
 		}
 
 		hr = hrSuccess;
-
-		if(lpRecipList->aEntries[i].rgPropVals)
-			MAPIFreeBuffer(lpRecipList->aEntries[i].rgPropVals);
+		MAPIFreeBuffer(lpRecipList->aEntries[i].rgPropVals);
 
 		if ((hr = MAPIAllocateBuffer(sizeof(SPropValue) * lpPropTagArray->cValues, (void **)&lpRecipList->aEntries[i].rgPropVals)) != hrSuccess)
 			goto exit;
@@ -2870,8 +2820,7 @@ HRESULT M4LAddrBook::PrepareRecips(ULONG ulFlags, LPSPropTagArray lpPropTagArray
 	}
 
 exit:
-	if(lpProps)
-		MAPIFreeBuffer(lpProps);
+	MAPIFreeBuffer(lpProps);
 	if(lpMailUser)
 		lpMailUser->Release();
 

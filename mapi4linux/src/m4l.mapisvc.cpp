@@ -345,8 +345,7 @@ SVCProvider::SVCProvider()
 
 SVCProvider::~SVCProvider()
 {
-	if (m_lpProps)
-		MAPIFreeBuffer(m_lpProps);
+	MAPIFreeBuffer(m_lpProps);
 }
 
 /** 
@@ -400,8 +399,7 @@ SVCService::~SVCService()
 	if (m_dl)
 		dlclose(m_dl);
 #endif
-	if (m_lpProps)
-		MAPIFreeBuffer(m_lpProps);
+	MAPIFreeBuffer(m_lpProps);
 	for (std::map<std::string, SVCProvider*>::iterator i = m_sProviders.begin(); i != m_sProviders.end(); i++)
 		delete i->second;
 }

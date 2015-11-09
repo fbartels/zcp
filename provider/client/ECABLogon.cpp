@@ -338,9 +338,7 @@ HRESULT ECABLogon::OpenEntry(ULONG cbEntryID, LPENTRYID lpEntryID, LPCIID lpInte
 		*lpulObjType = lpABeid->ulType;
 
 exit:
-	if(lpEntryIDServer)
-		MAPIFreeBuffer(lpEntryIDServer);
-
+	MAPIFreeBuffer(lpEntryIDServer);
 	if(lpABContainer)
 		lpABContainer->Release();
 

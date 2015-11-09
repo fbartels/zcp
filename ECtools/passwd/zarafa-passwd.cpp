@@ -180,12 +180,8 @@ static HRESULT UpdatePassword(const char *lpPath, const char *lpUsername,
 
 exit:
 	MAPIFreeBuffer(lpECUser);	// It's ok to pass a NULL pointer to MAPIFreeBuffer(). See http://msdn.microsoft.com/en-us/library/office/cc842298.aspx
-	if (lpUserId)
-		MAPIFreeBuffer(lpUserId);
-
-	if (lpPropValue)
-		MAPIFreeBuffer(lpPropValue);
-	
+	MAPIFreeBuffer(lpUserId);
+	MAPIFreeBuffer(lpPropValue);
 	if (lpMsgStore)
 		lpMsgStore->Release();
 

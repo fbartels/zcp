@@ -50,9 +50,7 @@ HRESULT UnwrapObject(IMAPIProp *lpWrapped, LPCIID USE_IID_FOR_OUTPUT, LPUNKNOWN*
 	}
 
 exit:
-	if (lpPropValue)
-		MAPIFreeBuffer(lpPropValue);
-
+	MAPIFreeBuffer(lpPropValue);
 	return hr;
 }
 %}

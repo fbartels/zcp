@@ -568,16 +568,9 @@ relogin:
 exit:
 	if (lppMAPIError)
 		*lppMAPIError = NULL;
-
-	if (lpsPropTagArray)
-		MAPIFreeBuffer(lpsPropTagArray);
-
-	if (lpsPropArray)
-		MAPIFreeBuffer(lpsPropArray);
-
-	if (lpProp)
-		MAPIFreeBuffer(lpProp);
-
+	MAPIFreeBuffer(lpsPropTagArray);
+	MAPIFreeBuffer(lpsPropArray);
+	MAPIFreeBuffer(lpProp);
 	if (lpProfSect)
 		lpProfSect->Release();
 
@@ -608,13 +601,8 @@ exit:
 	if (lpTmpStream)
 		lpTmpStream->Release();
 #endif
-
-    if (lpIdentityProps)
-        MAPIFreeBuffer(lpIdentityProps);
-
-	if (lpStoreID)
-		MAPIFreeBuffer(lpStoreID);
-
+	MAPIFreeBuffer(lpIdentityProps);
+	MAPIFreeBuffer(lpStoreID);
 	return hr;
 }
 

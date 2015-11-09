@@ -346,9 +346,7 @@ HRESULT ECXPLogon::ClearOldSubmittedMessages(LPMAPIFOLDER lpFolder)
 		hr = lpFolder->DeleteMessages(lpDeleteItemEntryList, 0, NULL, 0); //Delete message on the server
 
 exit:
-	if (lpDeleteItemEntryList)
-		MAPIFreeBuffer(lpDeleteItemEntryList);
-
+	MAPIFreeBuffer(lpDeleteItemEntryList);
 	return hr;
 }
 
@@ -575,10 +573,7 @@ HRESULT ECXPLogon::SubmitMessage(ULONG ulFlags, LPMESSAGE lpMessage, ULONG * lpu
 exit:
 	if (lpMsgStore)
 		lpMsgStore->Release();
-
-	if (lpECObject)
-		MAPIFreeBuffer(lpECObject);
-
+	MAPIFreeBuffer(lpECObject);
 	if (lpOnlineStore)
 		lpOnlineStore->Release();
 
@@ -593,10 +588,7 @@ exit:
 
 	if (lpSubmitFolder)
 		lpSubmitFolder->Release();
-
-	if(lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
-
+	MAPIFreeBuffer(lpEntryID);
 	if(lpRecipRows)
 		FreeProws (lpRecipRows);
 

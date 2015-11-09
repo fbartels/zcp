@@ -501,13 +501,8 @@ exit:
 
 	if(lpTransport)
 		lpTransport->Release();
-
-	if(lpsPropTagArray)
-		MAPIFreeBuffer(lpsPropTagArray);
-	
-	if(lpsPropArray)
-		MAPIFreeBuffer(lpsPropArray);
-
+	MAPIFreeBuffer(lpsPropTagArray);
+	MAPIFreeBuffer(lpsPropArray);
 #ifdef HAVE_OFFLINE_SUPPORT
 	if(lpTmpId)
 		ECFreeBuffer(lpTmpId);

@@ -247,10 +247,7 @@ HRESULT ECSyncContext::HrGetReceiveFolder(LPMAPIFOLDER *lppInboxFolder)
 exit:
 	if (lpInboxFolder)
 		lpInboxFolder->Release();
-
-	if (lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
-
+	MAPIFreeBuffer(lpEntryID);
 	return hr;
 }
 
@@ -549,10 +546,7 @@ exit:
 
 	if (lpStream)
 		lpStream->Release();
-
-	if (lpPropVal)
-		MAPIFreeBuffer(lpPropVal);
-
+	MAPIFreeBuffer(lpPropVal);
 	if (lpFolder)
 		lpFolder->Release();
 
@@ -786,9 +780,7 @@ HRESULT ECSyncContext::HrSaveSyncStatus(LPSPropValue *lppSyncStatusProp)
 	lpSyncStatusProp = NULL;
 
 exit:
-	if (lpSyncStatusProp)
-		MAPIFreeBuffer(lpSyncStatusProp);
-
+	MAPIFreeBuffer(lpSyncStatusProp);
 	delete[] lpszStream;
 	return hr;
 }
@@ -808,9 +800,7 @@ HRESULT ECSyncContext::HrGetSyncStatusStream(LPMAPIFOLDER lpFolder, LPSTREAM *lp
 		goto exit;
 
 exit:
-	if (lpPropVal)
-		MAPIFreeBuffer(lpPropVal);
-
+	MAPIFreeBuffer(lpPropVal);
 	return hr;
 }
 

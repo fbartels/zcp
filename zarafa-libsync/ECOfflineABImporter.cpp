@@ -422,30 +422,14 @@ HRESULT OfflineABImporter::ImportABChange(ULONG ulObjType, ULONG cbObjId, LPENTR
 	}
 
 exit:
-	if(lpsSrcUser)
-		MAPIFreeBuffer(lpsSrcUser);
-		
-	if(lpsSrcGroup)
-		MAPIFreeBuffer(lpsSrcGroup);
-		
-	if(lpsSrcCompany)
-		MAPIFreeBuffer(lpsSrcCompany);
-
-	if(lpsCheckDstCompany)
-		MAPIFreeBuffer(lpsCheckDstCompany);
-
-	if(lpDstUsers)
-		MAPIFreeBuffer(lpDstUsers);
-
-	if(lpSrcUsers)
-		MAPIFreeBuffer(lpSrcUsers);
-		
-	if(lpDstGroups)
-		MAPIFreeBuffer(lpDstGroups);
-
-	if(lpSrcGroups)
-		MAPIFreeBuffer(lpSrcGroups);
-
+	MAPIFreeBuffer(lpsSrcUser);
+	MAPIFreeBuffer(lpsSrcGroup);
+	MAPIFreeBuffer(lpsSrcCompany);
+	MAPIFreeBuffer(lpsCheckDstCompany);
+	MAPIFreeBuffer(lpDstUsers);
+	MAPIFreeBuffer(lpSrcUsers);
+	MAPIFreeBuffer(lpDstGroups);
+	MAPIFreeBuffer(lpSrcGroups);
 	return hr;
 }
 	

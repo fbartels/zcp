@@ -83,10 +83,8 @@ public:
 
 	// Destructor
 	~mapi_array_ptr() {
-		if (m_lpObject) {
-			MAPIFreeBuffer(m_lpObject);
-			m_lpObject = NULL;
-		}
+		MAPIFreeBuffer(m_lpObject);
+		m_lpObject = NULL;
 	}
 
 
@@ -114,11 +112,8 @@ public:
 	operator const void*() const { return m_lpObject; }
 
 	proxy operator&() {
-		if (m_lpObject) {
-			MAPIFreeBuffer(m_lpObject);
-			m_lpObject = NULL;
-		}
-
+		MAPIFreeBuffer(m_lpObject);
+		m_lpObject = NULL;
 		return proxy(&m_lpObject);
 	}
 
@@ -135,11 +130,8 @@ public:
 	const_pointer get() const { return m_lpObject; }
 
 	void** lppVoid() {
-		if (m_lpObject) {
-			MAPIFreeBuffer(m_lpObject);
-			m_lpObject = NULL;
-		}
-
+		MAPIFreeBuffer(m_lpObject);
+		m_lpObject = NULL;
 		return (void**)&m_lpObject;
 	}
 

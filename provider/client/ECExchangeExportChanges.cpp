@@ -121,9 +121,7 @@ ECExchangeExportChanges::ECExchangeExportChanges(ECMsgStore *lpStore, const std:
 }
 
 ECExchangeExportChanges::~ECExchangeExportChanges(){
-	if(m_lpChanges)
-		MAPIFreeBuffer(m_lpChanges);
-
+	MAPIFreeBuffer(m_lpChanges);
 	if(m_lpStore)
 		m_lpStore->Release();
 
@@ -138,10 +136,7 @@ ECExchangeExportChanges::~ECExchangeExportChanges(){
 
 	if(m_lpImportHierarchy)
 		m_lpImportHierarchy->Release();
-
-	if(m_lpRestrict)
-		MAPIFreeBuffer(m_lpRestrict);
-
+	MAPIFreeBuffer(m_lpRestrict);
 	if(m_lpLogger)
 		m_lpLogger->Release();
 }
@@ -233,9 +228,7 @@ HRESULT ECExchangeExportChanges::GetLastError(HRESULT hResult, ULONG ulFlags, LP
 	*lppMAPIError = lpMapiError;
 
 exit:
-	if (lpszErrorMsg)
-		MAPIFreeBuffer(lpszErrorMsg);
-
+	MAPIFreeBuffer(lpszErrorMsg);
 	if( hr != hrSuccess && lpMapiError)
 		ECFreeBuffer(lpMapiError);
 
@@ -368,10 +361,8 @@ HRESULT ECExchangeExportChanges::Config(LPSTREAM lpStream, ULONG ulFlags, LPUNKN
 		bForceImplicitStateUpdate = true;
 	}
 
-	if(m_lpChanges) {
-		MAPIFreeBuffer(m_lpChanges);
-		m_lpChanges = NULL;
-	}
+	MAPIFreeBuffer(m_lpChanges);
+	m_lpChanges = NULL;
 
 	hr = m_lpStore->lpTransport->HrGetChanges(sourcekey, ulSyncId, ulChangeId, m_ulSyncType, ulFlags, m_lpRestrict, &m_ulMaxChangeId, &m_ulChanges, &m_lpChanges);
 	if(hr != hrSuccess) {
@@ -1169,10 +1160,8 @@ HRESULT ECExchangeExportChanges::ExportMessageChangesSlow() {
 			lpTable = NULL;
 		}
 
-		if(lpPropTagArray){
-			MAPIFreeBuffer(lpPropTagArray);
-			lpPropTagArray = NULL;
-		}
+		MAPIFreeBuffer(lpPropTagArray);
+		lpPropTagArray = NULL;
 
 		hr = lpSourceMessage->GetPropList(0, &lpPropTagArray);
 		if (hr != hrSuccess) {
@@ -1198,10 +1187,8 @@ next:
 
 		m_setProcessedChanges.insert(std::pair<unsigned int, std::string>(m_lstChange.at(m_ulStep).ulChangeId, std::string((char *)m_lstChange.at(m_ulStep).sSourceKey.lpb, m_lstChange.at(m_ulStep).sSourceKey.cb)));
 
-		if(lpEntryID) {
-			MAPIFreeBuffer(lpEntryID);
-			lpEntryID = NULL;
-		}
+		MAPIFreeBuffer(lpEntryID);
+		lpEntryID = NULL;
 
 		if(lpRows){
 			FreeProws(lpRows);
@@ -1213,10 +1200,8 @@ next:
 			lpTable = NULL;
 		}
 
-		if(lpPropArray){
-			MAPIFreeBuffer(lpPropArray);
-			lpPropArray = NULL;
-		}
+		MAPIFreeBuffer(lpPropArray);
+		lpPropArray = NULL;
 
 		if(lpSourceAttach){
 			lpSourceAttach->Release();
@@ -1238,11 +1223,8 @@ next:
 			lpDestMessage = NULL;
 		}
 
-		if(lpPropTagArray){
-			MAPIFreeBuffer(lpPropTagArray);
-			lpPropTagArray = NULL;
-		}
-
+		MAPIFreeBuffer(lpPropTagArray);
+		lpPropTagArray = NULL;
 		m_ulStep++;
 		ulSteps++;
 	}
@@ -1252,10 +1234,7 @@ next:
 exit:
 	if(hr != hrSuccess && hr != SYNC_W_PROGRESS)
 		m_lpLogger->Log(EC_LOGLEVEL_INFO, "change error: %s", stringify(hr, true).c_str());
-
-	if(lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
-
+	MAPIFreeBuffer(lpEntryID);
 	if(lpRows)
 		FreeProws(lpRows);
 
@@ -1273,13 +1252,8 @@ exit:
 
 	if(lpSourceMessage)
 		lpSourceMessage->Release();
-
-	if(lpPropArray)
-		MAPIFreeBuffer(lpPropArray);
-
-	if(lpPropTagArray)
-			MAPIFreeBuffer(lpPropTagArray);
-
+	MAPIFreeBuffer(lpPropArray);
+	MAPIFreeBuffer(lpPropTagArray);
 	return hr;
 }
 
@@ -1443,10 +1417,7 @@ HRESULT ECExchangeExportChanges::ExportMessageFlags(){
 exit:
 	if (hr != hrSuccess)
 		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Failed to sync message flags, 0x%08X", hr);
-
-	if(lpReadState)
-		MAPIFreeBuffer(lpReadState);
-
+	MAPIFreeBuffer(lpReadState);
 	return hr;
 }
 
@@ -1476,10 +1447,8 @@ HRESULT ECExchangeExportChanges::ExportMessageDeletes(){
 		}
 	}
 
-	if(lpEntryList){
-		MAPIFreeBuffer(lpEntryList);
-		lpEntryList = NULL;
-	}
+	MAPIFreeBuffer(lpEntryList);
+	lpEntryList = NULL;
 
 	if(!m_lstHardDelete.empty()){
 		hr = ChangesToEntrylist(&m_lstHardDelete, &lpEntryList);
@@ -1505,8 +1474,7 @@ HRESULT ECExchangeExportChanges::ExportMessageDeletes(){
 	}
 
 exit:
-	if(lpEntryList)
-		MAPIFreeBuffer(lpEntryList);
+	MAPIFreeBuffer(lpEntryList);
 	return hr;
 }
 
@@ -1601,16 +1569,10 @@ next:
 			lpFolder = NULL;
 		}
 
-		if(lpPropArray){
-			MAPIFreeBuffer(lpPropArray);
-			lpPropArray = NULL;
-		}
-
-		if(lpEntryID) {
-			MAPIFreeBuffer(lpEntryID);
-			lpEntryID = NULL;
-		}
-
+		MAPIFreeBuffer(lpPropArray);
+		lpPropArray = NULL;
+		MAPIFreeBuffer(lpEntryID);
+		lpEntryID = NULL;
 		ulSteps++;
 		m_ulStep++;
 	}
@@ -1619,15 +1581,10 @@ next:
 		hr = SYNC_W_PROGRESS;
 
 exit:
-	if(lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
-
+	MAPIFreeBuffer(lpEntryID);
 	if(lpFolder)
 		lpFolder->Release();
-
-	if(lpPropArray)
-		MAPIFreeBuffer(lpPropArray);
-
+	MAPIFreeBuffer(lpPropArray);
 	return hr;
 }
 
@@ -1659,10 +1616,8 @@ HRESULT ECExchangeExportChanges::ExportFolderDeletes(){
 		}
 	}
 
-	if(lpEntryList){
-		MAPIFreeBuffer(lpEntryList);
-		lpEntryList = NULL;
-	}
+	MAPIFreeBuffer(lpEntryList);
+	lpEntryList = NULL;
 
 	if(!m_lstHardDelete.empty()){
 		hr = ChangesToEntrylist(&m_lstHardDelete, &lpEntryList);
@@ -1688,9 +1643,7 @@ HRESULT ECExchangeExportChanges::ExportFolderDeletes(){
 	}
 
 exit:
-	if(lpEntryList)
-		MAPIFreeBuffer(lpEntryList);
-
+	MAPIFreeBuffer(lpEntryList);
 	return hr;
 }
 
@@ -1795,7 +1748,7 @@ HRESULT ECExchangeExportChanges::ChangesToEntrylist(std::list<ICSCHANGE> * lpLst
 	*lppEntryList = lpEntryList;
 
 exit:
-	if(hr != hrSuccess && lpEntryList)
+	if (hr != hrSuccess)
 		MAPIFreeBuffer(lpEntryList);
 
 	return hr;

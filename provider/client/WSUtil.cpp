@@ -2532,9 +2532,7 @@ HRESULT CopySOAPNotificationToMAPINotification(void *lpProvider, struct notifica
 	lpNotification = NULL;
 
 exit:
-	if (lpNotification)
-		MAPIFreeBuffer(lpNotification);
-
+	MAPIFreeBuffer(lpNotification);
 	return hr;
 }
 
@@ -2567,9 +2565,7 @@ HRESULT CopySOAPChangeNotificationToSyncState(struct notification *lpSrc, LPSBin
 	lpSBinary = NULL;
 
 exit:
-    if (lpSBinary)
-		MAPIFreeBuffer(lpSBinary);
-
+	MAPIFreeBuffer(lpSBinary);
 	return hr;
 }
 
@@ -2637,9 +2633,7 @@ HRESULT CopyICSChangeToSOAPSourceKeys(ULONG cbChanges, ICSCHANGE *lpsChanges, so
 	lpsSKPA = NULL;
 
 exit:
-	if (lpsSKPA)
-		MAPIFreeBuffer(lpsSKPA);
-
+	MAPIFreeBuffer(lpsSKPA);
 	return hr;
 }
 
@@ -2675,9 +2669,7 @@ HRESULT CopyUserClientUpdateStatusFromSOAP(struct userClientUpdateStatusResponse
 	lpECUCUS = NULL;
 
 exit:
-	if (lpECUCUS)
-		MAPIFreeBuffer(lpECUCUS);
-
+	MAPIFreeBuffer(lpECUCUS);
 	return hr;
 }
 

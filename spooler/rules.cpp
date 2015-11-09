@@ -308,9 +308,7 @@ static HRESULT CreateOutboxMessage(LPMDB lpOrigStore, LPMESSAGE *lppMessage)
 		goto exit;
 
 exit:
-	if (lpOutboxEntryID)
-		MAPIFreeBuffer(lpOutboxEntryID);
-
+	MAPIFreeBuffer(lpOutboxEntryID);
 	if (lpOutbox)
 		lpOutbox->Release();
 
@@ -381,8 +379,7 @@ static HRESULT CreateReplyCopy(LPMAPISESSION lpSession, LPMDB lpOrigStore,
 				goto exit;
 		}
 	}
-	if (lpProp)
-		MAPIFreeBuffer(lpProp);
+	MAPIFreeBuffer(lpProp);
 	lpProp = NULL;
 	hr = hrSuccess;
 
@@ -393,8 +390,7 @@ static HRESULT CreateReplyCopy(LPMAPISESSION lpSession, LPMDB lpOrigStore,
 		if (hr != hrSuccess)
 			goto exit;
 	}
-	if (lpProp)
-		MAPIFreeBuffer(lpProp);
+	MAPIFreeBuffer(lpProp);
 	lpProp = NULL;
 	hr = hrSuccess;
 
@@ -468,19 +464,10 @@ static HRESULT CreateReplyCopy(LPMAPISESSION lpSession, LPMDB lpOrigStore,
 exit:
 	if (lpReplyMessage)
 		lpReplyMessage->Release();
-
-	if (lpProp)
-		MAPIFreeBuffer(lpProp);
-
-	if (lpSentMailEntryID)
-		MAPIFreeBuffer(lpSentMailEntryID);
-
-	if (lpFrom)
-		MAPIFreeBuffer(lpFrom);
-
-	if (lpReplyRecipient)
-		MAPIFreeBuffer(lpReplyRecipient);
-
+	MAPIFreeBuffer(lpProp);
+	MAPIFreeBuffer(lpSentMailEntryID);
+	MAPIFreeBuffer(lpFrom);
+	MAPIFreeBuffer(lpReplyRecipient);
 	return hr;
 }
 
@@ -581,10 +568,7 @@ static HRESULT CheckRecipients(ECLogger *lpLogger, LPADRBOOK lpAdrBook,
 exit:
 	if (lpRecipients)
 		FreeProws((LPSRowSet)lpRecipients);
-
-	if (lpMsgClass)
-		MAPIFreeBuffer(lpMsgClass);
-
+	MAPIFreeBuffer(lpMsgClass);
 	return hr;
 }
 
@@ -772,12 +756,8 @@ static HRESULT CreateForwardCopy(ECLogger *lpLogger, LPADRBOOK lpAdrBook,
 	*lppMessage = lpFwdMsg;
 
 exit:
-	if (lpSentMailEntryID)
-		MAPIFreeBuffer(lpSentMailEntryID);
-
-	if (lpOrigSubject)
-		MAPIFreeBuffer(lpOrigSubject);
-
+	MAPIFreeBuffer(lpSentMailEntryID);
+	MAPIFreeBuffer(lpOrigSubject);
 	if (lpRecipients && lpRecipients != lpRuleRecipients)
 		FreeProws((LPSRowSet)lpRecipients);
 
@@ -837,9 +817,7 @@ static HRESULT HrDelegateMessage(IMAPIProp *lpMessage)
 	hr = lpMessage->SaveChanges(KEEP_OPEN_READWRITE);
 
 exit:
-	if (lpProps)
-		MAPIFreeBuffer(lpProps);
-
+	MAPIFreeBuffer(lpProps);
 	return hr;
 }
 

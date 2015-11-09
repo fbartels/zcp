@@ -1030,12 +1030,9 @@ HRESULT VMIMEToMAPI::handleHeaders(vmime::ref<vmime::header> vmHeader, IMessage*
 			}
 
 next:
-			if (lpPropTags)
-				MAPIFreeBuffer(lpPropTags);
+			MAPIFreeBuffer(lpPropTags);
 			lpPropTags = NULL;
-
-			if (lpNameID)
-				MAPIFreeBuffer(lpNameID);
+			MAPIFreeBuffer(lpNameID);
 			lpNameID = NULL;
 		}
 	}
@@ -1056,27 +1053,13 @@ next:
 	}
 
 exit:
-	if (lpRecipProps)
-		MAPIFreeBuffer(lpRecipProps);
-
-	if(lpEntry)
-		MAPIFreeBuffer(lpEntry);
-
-	if(lpEntryList)
-		MAPIFreeBuffer(lpEntryList);
-
-	if(lpFromEntryID)
-		MAPIFreeBuffer(lpFromEntryID);
-
-	if(lpSenderEntryID)
-		MAPIFreeBuffer(lpSenderEntryID);
-
-	if(lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
-
-	if(lpPropNormalizedSubject)
-		MAPIFreeBuffer(lpPropNormalizedSubject);
-
+	MAPIFreeBuffer(lpRecipProps);
+	MAPIFreeBuffer(lpEntry);
+	MAPIFreeBuffer(lpEntryList);
+	MAPIFreeBuffer(lpFromEntryID);
+	MAPIFreeBuffer(lpSenderEntryID);
+	MAPIFreeBuffer(lpEntryID);
+	MAPIFreeBuffer(lpPropNormalizedSubject);
 	return hr;
 }
 
@@ -1391,19 +1374,15 @@ HRESULT VMIMEToMAPI::modifyRecipientList(LPADRLIST lpRecipients, vmime::ref<vmim
 			lpRecipients->aEntries[iRecipNum].rgPropVals[7].ulPropTag = PR_DISPLAY_TYPE;
 			lpRecipients->aEntries[iRecipNum].rgPropVals[7].Value.ul = DT_MAILUSER;			
 
-			if (lpEntryID) {
-				MAPIFreeBuffer(lpEntryID);
-				lpEntryID = NULL;
-			}
+			MAPIFreeBuffer(lpEntryID);
+			lpEntryID = NULL;
 		}
 
 		lpRecipients->cEntries++;
 	}
 
 exit:
-	if (lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
-
+	MAPIFreeBuffer(lpEntryID);
 	return hr;
 }
 
@@ -1609,12 +1588,8 @@ exit:
 	if (lpAdrList)
 		FreeProws((LPSRowSet)lpAdrList);
 
-	if (lpFlagList)
-		MAPIFreeBuffer(lpFlagList);
-
-	if (lpDDEntryID)
-		MAPIFreeBuffer(lpDDEntryID);
-
+	MAPIFreeBuffer(lpFlagList);
+	MAPIFreeBuffer(lpDDEntryID);
 	return hr;
 }
 
@@ -1832,10 +1807,8 @@ HRESULT VMIMEToMAPI::disectBody(vmime::ref<vmime::header> vmHeader, vmime::ref<v
 			pAtt->SaveChanges(0);
 
 next:
-			if (lpSubject) {
-				MAPIFreeBuffer(lpSubject);
-				lpSubject = NULL;
-			}
+			MAPIFreeBuffer(lpSubject);
+			lpSubject = NULL;
 
 			if (lpNewMessage) {
 				lpNewMessage->Release();
@@ -3181,18 +3154,10 @@ HRESULT VMIMEToMAPI::postWriteFixups(IMessage *lpMessage)
 	}
 
 exit:
-	if(lpRecProps)
-		MAPIFreeBuffer(lpRecProps);
-		
-	if(lpConversationIndex)
-		MAPIFreeBuffer(lpConversationIndex);
-
-	if(lpMessageClass)
-		MAPIFreeBuffer(lpMessageClass);
-
-	if(lpProps)
-		MAPIFreeBuffer(lpProps);
-
+	MAPIFreeBuffer(lpRecProps);
+	MAPIFreeBuffer(lpConversationIndex);
+	MAPIFreeBuffer(lpMessageClass);
+	MAPIFreeBuffer(lpProps);
 	return hr;
 }
 

@@ -513,12 +513,8 @@ HRESULT GetMailboxData(ECLogger *lpLogger, IMAPISession *lpMapiSession, const ch
 	}
 
 exit:
-	if (lpSrvNameList)
-		MAPIFreeBuffer(lpSrvNameList);
-
-	if (lpSrvList)
-		MAPIFreeBuffer(lpSrvList);
-
+	MAPIFreeBuffer(lpSrvNameList);
+	MAPIFreeBuffer(lpSrvList);
 	return hr;
 }
 

@@ -271,9 +271,7 @@ static HRESULT GetIMsgStoreObject(BOOL bOffline, std::string strProfname,
 		goto exit;
 
 exit:
-	if(lpsPropValue)
-		MAPIFreeBuffer(lpsPropValue);
-
+	MAPIFreeBuffer(lpsPropValue);
 	if(lpProfSect)
 		lpProfSect->Release();
 
@@ -974,10 +972,7 @@ exit:
 
 	if(lpPropStorage)
 		lpPropStorage->Release();
-
-	if(lpRootEntryID)
-		MAPIFreeBuffer(lpRootEntryID);
-
+	MAPIFreeBuffer(lpRootEntryID);
 	return hr;
 }
 
@@ -1127,9 +1122,7 @@ HRESULT ECMsgStore::GetReceiveFolderTable(ULONG ulFlags, LPMAPITABLE *lppTable)
 		goto exit;
 
 exit:
-	if (lpPropTagArray)
-		MAPIFreeBuffer(lpPropTagArray);
-
+	MAPIFreeBuffer(lpPropTagArray);
 	if(lpsRowSet)
 		FreeProws(lpsRowSet);
 
@@ -1542,10 +1535,7 @@ HRESULT	ECMsgStore::GetPropHandler(ULONG ulPropTag, void* lpProvider, ULONG ulFl
 exit:
 	if(lpProfSect)
 		lpProfSect->Release();
-
-	if(lpProp)
-		MAPIFreeBuffer(lpProp);
-
+	MAPIFreeBuffer(lpProp);
 	return hr;
 }
 
@@ -1726,10 +1716,7 @@ HRESULT ECMsgStore::CreateStoreEntryID(LPTSTR lpszMsgStoreDN, LPTSTR lpszMailbox
 exit:
 	if (lpTmpTransport)
 		lpTmpTransport->Release();
-
-	if(lpStoreEntryID)
-		MAPIFreeBuffer(lpStoreEntryID);
-
+	MAPIFreeBuffer(lpStoreEntryID);
 	return hr;
 }
 
@@ -1855,9 +1842,7 @@ HRESULT ECMsgStore::GetMailboxTable(LPTSTR lpszServerName, LPMAPITABLE *lppTable
 	lpMsgStore->AddChild(lpTable);
 
 exit:
-	if (lpEntryId)
-		MAPIFreeBuffer(lpEntryId);
-
+	MAPIFreeBuffer(lpEntryId);
 	if (lpMsgStoreOtherServer)
 		lpMsgStoreOtherServer->Release();
 
@@ -2157,9 +2142,7 @@ HRESULT ECMsgStore::AddRenAdditionalFolder(IMAPIFolder *lpFolder, ULONG ulType, 
 		goto exit;
 		
 exit:
-	if(lpRenEntryIDs)
-		MAPIFreeBuffer(lpRenEntryIDs);
-		
+	MAPIFreeBuffer(lpRenEntryIDs);
 	return hr;
 }
 
@@ -2228,9 +2211,7 @@ HRESULT ECMsgStore::CreateAdditionalFolder(IMAPIFolder *lpRootFolder,
 		goto exit;
 
 exit:
-	if (lpPropValueEID)
-		MAPIFreeBuffer(lpPropValueEID);
-		
+	MAPIFreeBuffer(lpPropValueEID);
 	if (lpMAPIFolder)
 		lpMAPIFolder->Release();
 		
@@ -2815,7 +2796,7 @@ HRESULT ECMsgStore::CreateEmptyStore(ULONG ulStoreType, ULONG cbUserId, LPENTRYI
 
 		hr = UnWrapServerClientStoreEntry(cbTmp, lpTmp, &cbStoreId, &lpStoreId);
 		if (hr != hrSuccess) {
-			if (lpTmp && lpTmp != *lppStoreId)
+			if (lpTmp != *lppStoreId)
 				MAPIFreeBuffer(lpTmp);
 			goto exit;
 		}
@@ -2849,9 +2830,9 @@ HRESULT ECMsgStore::CreateEmptyStore(ULONG ulStoreType, ULONG cbUserId, LPENTRYI
 	}
 
 exit:
-	if (*lpcbStoreId == 0 && lpStoreId)
+	if (*lpcbStoreId == 0)
 		MAPIFreeBuffer(lpStoreId);
-	if (*lpcbStoreId == 0 && lpRootId)
+	if (*lpcbStoreId == 0)
 		MAPIFreeBuffer(lpRootId);
 
 	return hr;
@@ -2897,9 +2878,7 @@ HRESULT ECMsgStore::ResolveStore(LPGUID lpGuid, ULONG *lpulUserID, ULONG* lpcbSt
 	hr = WrapStoreEntryID(0, (LPTSTR)ZARAFA_DLL_NAME, cbStoreEntryID, lpStoreEntryID, lpcbStoreID, lppStoreID);
 
 exit:
-	if(lpStoreEntryID)
-		MAPIFreeBuffer(lpStoreEntryID);
-
+	MAPIFreeBuffer(lpStoreEntryID);
 	return hr;
 }
 

@@ -100,16 +100,9 @@ ECMsgStorePublic::~ECMsgStorePublic(void)
 
 	if (m_lpIPMSubTree)
 		m_lpIPMSubTree->Release();
-
-	if (m_lpIPMSubTreeID)
-		MAPIFreeBuffer(m_lpIPMSubTreeID);
-
-	if (m_lpIPMFavoritesID)
-		MAPIFreeBuffer(m_lpIPMFavoritesID);
-
-	if (m_lpIPMPublicFoldersID)
-		MAPIFreeBuffer(m_lpIPMPublicFoldersID);
-
+	MAPIFreeBuffer(m_lpIPMSubTreeID);
+	MAPIFreeBuffer(m_lpIPMFavoritesID);
+	MAPIFreeBuffer(m_lpIPMPublicFoldersID);
 	TRACE_MAPI(TRACE_RETURN, "~ECMsgStorePublic::ECMsgStorePublic","");
 
 }
@@ -335,7 +328,8 @@ HRESULT ECMsgStorePublic::OpenEntry(ULONG cbEntryID, LPENTRYID lpEntryID, LPCIID
 		if(hr != hrSuccess)
 			goto exit;
 
-		if (lpsPropValue) { MAPIFreeBuffer(lpsPropValue); lpsPropValue = NULL; }
+		MAPIFreeBuffer(lpsPropValue);
+		lpsPropValue = NULL;
 
 		// Get the parent entryid of a folder an check if this is the online subtree entryid. When it is, 
 		// change the parent to the static parent entryid
@@ -352,10 +346,10 @@ HRESULT ECMsgStorePublic::OpenEntry(ULONG cbEntryID, LPENTRYID lpEntryID, LPCIID
 				lpMAPIFolder->SetParentID(this->m_cIPMPublicFoldersID, this->m_lpIPMPublicFoldersID);
 		}
 
-		if (lpParentProp) { MAPIFreeBuffer(lpParentProp); lpParentProp = NULL; }
-		if (lpsPropValue) { MAPIFreeBuffer(lpsPropValue); lpsPropValue = NULL; }
-
-
+		MAPIFreeBuffer(lpParentProp);
+		lpParentProp = NULL;
+		MAPIFreeBuffer(lpsPropValue);
+		lpsPropValue = NULL;
 		AddChild(lpMAPIFolder);
 
 		if(lpInterface)
@@ -388,16 +382,9 @@ exit:
 
 	if (lpPropStorage)
 		lpPropStorage->Release();
-
-	if (lpsPropValue)
-		MAPIFreeBuffer(lpsPropValue);
-
-	if (lpEntryIDIntern)
-		MAPIFreeBuffer(lpEntryIDIntern);
-
-	if (lpParentProp)
-		MAPIFreeBuffer(lpParentProp);
-
+	MAPIFreeBuffer(lpsPropValue);
+	MAPIFreeBuffer(lpEntryIDIntern);
+	MAPIFreeBuffer(lpParentProp);
 	return hr;
 }
 
@@ -758,9 +745,7 @@ HRESULT ECMsgStorePublic::BuildIPMSubTree()
 	m_lpIPMSubTree = lpIPMSubTree;
 
 exit:
-	if (lpProps)
-		MAPIFreeBuffer(lpProps);
-
+	MAPIFreeBuffer(lpProps);
 	return hr;
 }
 
@@ -833,16 +818,9 @@ exit:
 		lpTmpTransport->HrLogOff();
 		lpTmpTransport->Release();
 	}
-
-	if (lpStoreEntryID)
-		MAPIFreeBuffer(lpStoreEntryID);
-
-	if (lpEntryId)
-		MAPIFreeBuffer(lpEntryId);
-
-	if (lpPropValue)
-		MAPIFreeBuffer(lpPropValue);
-
+	MAPIFreeBuffer(lpStoreEntryID);
+	MAPIFreeBuffer(lpEntryId);
+	MAPIFreeBuffer(lpPropValue);
 	if (lpFolder)
 		lpFolder->Release();
 
@@ -882,8 +860,6 @@ HRESULT ECMsgStorePublic::Advise(ULONG cbEntryID, LPENTRYID lpEntryID, ULONG ulE
 	hr = ECMsgStore::Advise(cbEntryID, lpEntryID, ulEventMask, lpAdviseSink, lpulConnection);
 
 exit:
-	if (lpEntryIDIntern)
-		MAPIFreeBuffer(lpEntryIDIntern);
-
+	MAPIFreeBuffer(lpEntryIDIntern);
 	return hr;
 }

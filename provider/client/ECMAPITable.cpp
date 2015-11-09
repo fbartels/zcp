@@ -109,14 +109,11 @@ HRESULT ECMAPITable::FlushDeferred(LPSRowSet *lppRowSet)
     hr = lpTableOps->HrMulti(m_ulDeferredFlags, m_lpSetColumns, m_lpRestrict, m_lpSortTable, m_ulRowCount, m_ulFlags, lppRowSet);
 
     // Reset deferred items
-    if(m_lpSetColumns)
-        MAPIFreeBuffer(m_lpSetColumns);
+	MAPIFreeBuffer(m_lpSetColumns);
 	m_lpSetColumns = NULL;
-	if(m_lpRestrict)
-	    MAPIFreeBuffer(m_lpRestrict);
+	MAPIFreeBuffer(m_lpRestrict);
 	m_lpRestrict = NULL;
-	if(m_lpSortTable)
-	    MAPIFreeBuffer(m_lpSortTable);
+	MAPIFreeBuffer(m_lpSortTable);
 	m_lpSortTable = NULL;
 	m_ulRowCount = 0;
 	m_ulFlags = 0;
@@ -149,15 +146,9 @@ ECMAPITable::~ECMAPITable()
 	}
 
 	delete[] this->lpsPropTags;
-	if (m_lpRestrict)
-		MAPIFreeBuffer(m_lpRestrict);
-
-	if (m_lpSetColumns)
-		MAPIFreeBuffer(m_lpSetColumns);
-
-	if (m_lpSortTable)
-		MAPIFreeBuffer(m_lpSortTable);
-
+	MAPIFreeBuffer(m_lpRestrict);
+	MAPIFreeBuffer(m_lpSetColumns);
+	MAPIFreeBuffer(m_lpSortTable);
 	if(lpNotifyClient)
 		lpNotifyClient->Release();
 
@@ -298,9 +289,7 @@ HRESULT ECMAPITable::SetColumns(LPSPropTagArray lpPropTagArray, ULONG ulFlags)
 
 	lpsPropTags->cValues = lpPropTagArray->cValues;
 	memcpy(&lpsPropTags->aulPropTag, &lpPropTagArray->aulPropTag, lpPropTagArray->cValues * sizeof(ULONG));
-
-    if(m_lpSetColumns)
-        MAPIFreeBuffer(m_lpSetColumns);
+	MAPIFreeBuffer(m_lpSetColumns);
 	m_lpSetColumns = NULL;
 
     hr = MAPIAllocateBuffer(CbNewSPropTagArray(lpPropTagArray->cValues), (void **)&m_lpSetColumns);
@@ -464,9 +453,7 @@ HRESULT ECMAPITable::Restrict(LPSRestriction lpRestriction, ULONG ulFlags)
 	HRESULT hr = hrSuccess;
 
 	pthread_mutex_lock(&m_hLock);
-
-    if(m_lpRestrict)
-        MAPIFreeBuffer(m_lpRestrict);
+	MAPIFreeBuffer(m_lpRestrict);
     if(lpRestriction) {
         if ((hr = MAPIAllocateBuffer(sizeof(SRestriction), (void **)&m_lpRestrict)) != hrSuccess)
 		goto exit;
@@ -544,9 +531,7 @@ HRESULT ECMAPITable::SortTable(LPSSortOrderSet lpSortCriteria, ULONG ulFlags)
 	lpsSortOrderSet = (LPSSortOrderSet) new BYTE[CbSSortOrderSet(lpSortCriteria)];
 
 	memcpy(lpsSortOrderSet, lpSortCriteria, CbSSortOrderSet(lpSortCriteria));
-
-    if(m_lpSortTable)
-        MAPIFreeBuffer(m_lpSortTable);
+	MAPIFreeBuffer(m_lpSortTable);
     if ((hr = MAPIAllocateBuffer(CbSSortOrderSet(lpSortCriteria), (void **) &m_lpSortTable)) != hrSuccess)
 		goto exit;
     memcpy(m_lpSortTable, lpSortCriteria, CbSSortOrderSet(lpSortCriteria));

@@ -121,9 +121,7 @@ HRESULT GetShortcutFolder(LPMAPISESSION lpSession, LPTSTR lpszFolderName, LPTSTR
 		goto exit;
 
 exit:
-	if (lpPropValue)
-		MAPIFreeBuffer(lpPropValue);
-
+	MAPIFreeBuffer(lpPropValue);
 	if(lpFolder)
 		lpFolder->Release();
 
@@ -195,9 +193,7 @@ HRESULT CreateShortcutFolder(IMsgStore *lpMsgStore, LPTSTR lpszFolderName, LPTST
 		goto exit;
 
 exit:
-	if (lpProp)
-		MAPIFreeBuffer(lpProp);
-
+	MAPIFreeBuffer(lpProp);
 	if (lpFolder)
 		lpFolder->Release();
 
@@ -345,10 +341,7 @@ exit:
 
 	if (lpRows)
 		FreeProws(lpRows);
-
-	if (lpsMsgList)
-		MAPIFreeBuffer(lpsMsgList);
-
+	MAPIFreeBuffer(lpsMsgList);
 	return hr;
 }
 
@@ -454,10 +447,7 @@ HRESULT AddToFavorite(IMAPIFolder *lpShortcutFolder, ULONG ulLevel, LPCTSTR lpsz
 
 exit:
 	FREE_RESTRICTION(lpRestriction);
-
-	if (lpNewPropArray)
-		MAPIFreeBuffer(lpNewPropArray);
-
+	MAPIFreeBuffer(lpNewPropArray);
 	if (lpMessage)
 		lpMessage->Release();
 
@@ -509,8 +499,8 @@ HRESULT AddFavoriteFolder(LPMAPIFOLDER lpShortcutFolder, LPMAPIFOLDER lpFolder, 
 	if (hr != hrSuccess)
 		goto exit;
 
-	if (lpsPropArray) { MAPIFreeBuffer(lpsPropArray); lpsPropArray = NULL; }
-
+	MAPIFreeBuffer(lpsPropArray);
+	lpsPropArray = NULL;
 
 	if (ulFlags == FAVO_FOLDER_LEVEL_SUB) {
 		ulFolderFlags = CONVENIENT_DEPTH;
@@ -563,11 +553,7 @@ exit:
 
 	if (lpRows)
 		FreeProws(lpRows);
-
-	if (lpsPropArray)
-		MAPIFreeBuffer(lpsPropArray);
-
-
+	MAPIFreeBuffer(lpsPropArray);
 	return hr;
 }
 
@@ -638,12 +624,9 @@ HRESULT GetFavorite(IMAPIFolder *lpShortcutFolder, ULONG ulFlags, IMAPIFolder *l
 	*lppShortCutPropValues = lpShortCutPropValues;
 	*lpcValues = cShortCutValues;
 exit:
-	if (hr != hrSuccess && lpShortCutPropValues)
+	if (hr != hrSuccess)
 		MAPIFreeBuffer(lpShortCutPropValues);
-
-	if (lpPropSourceKey)
-		MAPIFreeBuffer(lpPropSourceKey);
-
+	MAPIFreeBuffer(lpPropSourceKey);
 	if (lpTable)
 		lpTable->Release();
 

@@ -132,8 +132,7 @@
   }
 }
 %typemap(freearg) (ULONG *OUTPUT, LPENTRYID *OUTPUT) {
-	if(*$2)
-		MAPIFreeBuffer(*$2);
+	MAPIFreeBuffer(*$2);
 }
 %apply (ULONG *OUTPUT, LPENTRYID *OUTPUT) {(ULONG* lpcbStoreId, LPENTRYID* lppStoreId), (ULONG* lpcbRootId, LPENTRYID *lppRootId), (ULONG *lpulOutput, LPBYTE *lpOutput)};
 
@@ -161,7 +160,7 @@
   }
 }
 %typemap(freearg) (ULONG *OPTINOUT, LPENTRYID *OPTINOUT) {
-	if(!lpOrig$argnum && $2 && *$2)
+	if(!lpOrig$argnum && $2)
 		MAPIFreeBuffer(*$2);
 }
 %apply (ULONG *OPTINOUT, LPENTRYID *OPTINOUT) {(ULONG* lpcbStoreId_oio, LPENTRYID* lppStoreId_oio), (ULONG* lpcbRootId_oio, LPENTRYID *lppRootId_oio)};
@@ -263,7 +262,6 @@
 	}
 }
 %typemap(freearg) LPTSTR *OUTPUT {
-  if(*$1)
 	MAPIFreeBuffer(*$1);
 }
 
@@ -277,7 +275,6 @@
     %append_output(SWIG_FromCharPtr((char*)*$1));
 }
 %typemap(freearg) char** OUTMAPICHAR {
-  if(*$1)
     MAPIFreeBuffer(*$1);
 }
 
@@ -355,8 +352,7 @@
 	"$1 = NULL;"
 %typemap(freearg)	MAPISTRUCT
 {
-	if($1)
-		MAPIFreeBuffer($1);
+	MAPIFreeBuffer($1);
 }
 
 /////////////////////////////////////////////
@@ -368,8 +364,7 @@
 	"$1 = NULL;"
 %typemap(freearg)	MAPISTRUCT_W_FLAGS
 {
-	if($1)
-		MAPIFreeBuffer($1);
+	MAPIFreeBuffer($1);
 }
 
 //////////////////////////////////////////////
@@ -381,8 +376,7 @@
 	"$1 = NULL;"
 %typemap(freearg)	MAPILIST
 {
-	if($1)
-		MAPIFreeBuffer($1);
+	MAPIFreeBuffer($1);
 }
 
 // Output
@@ -390,14 +384,12 @@
 	"temp = NULL; $1 = &temp;";
 %typemap(freearg) 	MAPILIST *, MAPISTRUCT *
 {
-	if(*$1)
-		MAPIFreeBuffer(*$1);
+	MAPIFreeBuffer(*$1);
 }
 
 %typemap(freearg) 	MAPILIST *INPUT
 {
-	if(*$1)
-		MAPIFreeBuffer(*$1);
+	MAPIFreeBuffer(*$1);
 }
 
 
@@ -428,8 +420,7 @@
 	"lp = NULL; $2 = &lp; c = 0; $1 = &c;";
 %typemap(freearg) (ULONG *, MAPIARRAY *)
 {
-	if(*$2)
-		MAPIFreeBuffer(*$2);
+	MAPIFreeBuffer(*$2);
 }
 
 %typemap(arginit) (ULONG, MAPIARRAY)
@@ -440,8 +431,7 @@
 
 %typemap(freearg) (ULONG, MAPIARRAY)
 {
-	if($2)
-		MAPIFreeBuffer((void *)$2);
+	MAPIFreeBuffer((void *)$2);
 }
 
 //////////////////

@@ -914,8 +914,7 @@ HRESULT POP3::HrLogin(const std::string &strUsername, const std::string &strPass
 	lpLogger->Log(EC_LOGLEVEL_ERROR, "POP3 Login from %s for user %s", lpChannel->GetIPAddress().c_str(), strUsername.c_str());
 
 exit:
-	if (lpEntryID)
-		MAPIFreeBuffer(lpEntryID);
+	MAPIFreeBuffer(lpEntryID);
 
 	if (hr != hrSuccess) {
 		if (lpInbox) {

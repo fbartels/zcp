@@ -113,10 +113,7 @@ ECGenericProp::~ECGenericProp()
 
 	if(lpStorage)
 		lpStorage->Release();
-
-	if(m_lpEntryId)
-		MAPIFreeBuffer(m_lpEntryId);
-
+	MAPIFreeBuffer(m_lpEntryId);
 	pthread_mutex_destroy(&m_hMutexMAPIObject);
 }
 
@@ -552,9 +549,7 @@ HRESULT ECGenericProp::GetLastError(HRESULT hResult, ULONG ulFlags, LPMAPIERROR 
 	*lppMAPIError = lpMapiError;
 
 exit:
-	if (lpszErrorMsg)
-		MAPIFreeBuffer(lpszErrorMsg);
-
+	MAPIFreeBuffer(lpszErrorMsg);
 	if( hr != hrSuccess && lpMapiError)
 		ECFreeBuffer(lpMapiError);
 
