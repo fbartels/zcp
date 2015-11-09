@@ -19,11 +19,12 @@ class BackupWorker(zarafa.Worker):
             changes = 0
             with log_exc(self.log):
                 (storeguid, username, path) = self.iqueue.get()
-                assert os.system('mkdir -p %s' % path) == 0
-                if username:
-                    file(path+'/user', 'w').write(dump_props(server.user(username).props()))
                 store = server.store(storeguid)
-                file(path+'/store', 'w').write(dump_props(store.props()))
+                assert os.system('mkdir -p %s' % path) == 0
+                if not self.service.options.folders:
+                    if username:
+                        file(path+'/user', 'w').write(dump_props(server.user(username).props()))
+                    file(path+'/store', 'w').write(dump_props(store.props()))
                 t0 = time.time()
                 self.log.info('backing up: %s' % path)
                 changes = self.backup_folder_rec(store, store.subtree, [], path, config)
@@ -32,13 +33,13 @@ class BackupWorker(zarafa.Worker):
 
     def backup_folder_rec(self, store, folder, path, basepath, config):
         changes = 0
+        filter_ = self.service.options.folders
         folder_path = os.path.join(basepath, *path)
-        assert os.system('mkdir -p %s/folders' % folder_path) == 0
         if path: # skip subtree folder itself
-            file(folder_path+'/path', 'w').write(folder.path)
-            file(folder_path+'/folder', 'w').write(dump_props(folder.props()))
-            filter_ = self.service.options.folders
             if not filter_ or folder.path in filter_:
+                assert os.system('mkdir -p %s/folders' % folder_path) == 0
+                file(folder_path+'/path', 'w').write(folder.path)
+                file(folder_path+'/folder', 'w').write(dump_props(folder.props()))
                 self.log.info('backing up folder: %s' % folder.path)
                 importer = FolderImporter(folder, folder_path, config, self.log)
                 statepath = '%s/state' % folder_path
@@ -57,10 +58,11 @@ class BackupWorker(zarafa.Worker):
             if self.service.options.skip_junk and not store.public and subfolder.sourcekey == store.junk.sourcekey:
                 continue
             changes += self.backup_folder_rec(store, subfolder, path+['folders', subfolder.sourcekey], basepath, config) # recursion
-        stored_sourcekeys = set([x for x in os.listdir(folder_path+'/folders')])
-        for sourcekey in stored_sourcekeys-sub_sourcekeys:
-            self.log.info('removing deleted subfolder: %s' % folder_path+'/folders/'+sourcekey)
-            assert os.system('rm -rf %s' % folder_path+'/folders/'+sourcekey) == 0
+        if not filter_:
+            stored_sourcekeys = set([x for x in os.listdir(folder_path+'/folders')])
+            for sourcekey in stored_sourcekeys-sub_sourcekeys:
+                self.log.info('removing deleted subfolder: %s' % folder_path+'/folders/'+sourcekey)
+                assert os.system('rm -rf %s' % folder_path+'/folders/'+sourcekey) == 0
         return changes
 
 class FolderImporter:
