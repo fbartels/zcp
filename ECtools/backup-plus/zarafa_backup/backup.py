@@ -35,7 +35,6 @@ class BackupWorker(zarafa.Worker):
         folder_path = os.path.join(basepath, *path)
         assert os.system('mkdir -p %s/folders' % folder_path) == 0
         if path: # skip subtree folder itself
-            assert os.system('mkdir -p %s/items' % folder_path) == 0
             file(folder_path+'/path', 'w').write(folder.path)
             file(folder_path+'/folder', 'w').write(dump_props(folder.props()))
             filter_ = self.service.options.folders
@@ -72,16 +71,20 @@ class FolderImporter:
     def update(self, item, flags):
         with log_exc(self.log):
             self.log.debug('folder %s: new/updated document with sourcekey %s' % (self.folder.sourcekey, item.sourcekey))
-            file(self.folder_path+'/items/'+item.sourcekey, 'w').write(item.dumps())
+            with closing(dbhash.open(self.folder_path+'/items', 'c')) as db:
+                db[item.sourcekey] = item.dumps()
             with closing(dbhash.open(self.folder_path+'/index', 'c')) as db:
-                db[item.sourcekey] = pickle.dumps((item.subject, item.last_modified))
+                db[item.sourcekey] = pickle.dumps({
+                    'subject': item.subject,
+                    'last_modified': item.last_modified,
+                })
             self.changes += 1
 
     def delete(self, item, flags):
         with log_exc(self.log):
             self.log.debug('folder %s: deleted document with sourcekey %s' % (self.folder.sourcekey, item.sourcekey))
-            path = self.folder_path+'/items/'+item.sourcekey
-            assert os.system('rm %s' % path) == 0
+            with closing(dbhash.open(self.folder_path+'/items', 'c')) as db:
+                del db[item.sourcekey]
             with closing(dbhash.open(self.folder_path+'/index', 'c')) as db:
                 del db[item.sourcekey]
             self.deletes += 1

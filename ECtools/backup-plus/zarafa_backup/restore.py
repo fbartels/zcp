@@ -44,15 +44,16 @@ class Service(zarafa.Service):
             subfolder = subtree.folder(xpath, create=True)
             with closing(dbhash.open(folder_path+'/index', 'c')) as db:
                 index = dict((a, pickle.loads(b)) for (a,b) in db.iteritems())
-            for sourcekey2 in os.listdir(folder_path+'/items'):
-                with log_exc(self.log):
-                    subject, last_modified = index[sourcekey2]
-                    if ((self.options.period_begin and last_modified < self.options.period_begin) or
-                        (self.options.period_end and last_modified >= self.options.period_end)):
-                        continue
-                    self.log.debug('restoring item with sourcekey %s' % sourcekey2)
-                    subfolder.create_item(loads=file(folder_path+'/items/'+sourcekey2).read())
-                    changes += 1
+            with closing(dbhash.open(folder_path+'/items', 'c')) as db:
+                for sourcekey2 in db.iterkeys():
+                    with log_exc(self.log):
+                        last_modified = index[sourcekey2]['last_modified']
+                        if ((self.options.period_begin and last_modified < self.options.period_begin) or
+                            (self.options.period_end and last_modified >= self.options.period_end)):
+                            continue
+                        self.log.debug('restoring item with sourcekey %s' % sourcekey2)
+                        subfolder.create_item(loads=db[sourcekey2])
+                        changes += 1
         return changes
 
 def main():
