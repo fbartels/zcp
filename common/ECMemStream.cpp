@@ -87,10 +87,8 @@ ECMemBlock::ECMemBlock(char *buffer, ULONG ulDataLen, ULONG ulFlags) : ECUnknown
 
 ECMemBlock::~ECMemBlock()
 {
-	if(lpCurrent)
-		free(lpCurrent);
-
-	if((ulFlags & STGM_TRANSACTED) && lpOriginal)
+	free(lpCurrent);
+	if (ulFlags & STGM_TRANSACTED)
 		free(lpOriginal);
 }
 
@@ -163,8 +161,7 @@ exit:
 HRESULT ECMemBlock::Commit()
 {
 	if(ulFlags & STGM_TRANSACTED) {
-		if(lpOriginal)
-			free(lpOriginal);
+		free(lpOriginal);
 		lpOriginal = NULL;
 
 		lpOriginal = (char *)malloc(cbCurrent);
@@ -181,8 +178,7 @@ HRESULT ECMemBlock::Commit()
 HRESULT ECMemBlock::Revert()
 {
 	if(ulFlags & STGM_TRANSACTED) {
-		if(lpCurrent)
-			free(lpCurrent);
+		free(lpCurrent);
 		lpCurrent = NULL;
 
 		lpCurrent = (char *)malloc(cbOriginal);
@@ -206,10 +202,7 @@ HRESULT ECMemBlock::SetSize(ULONG ulSize)
 
 	if(ulSize > cbCurrent)
 		memset(lpNew+cbCurrent, 0, ulSize-cbCurrent);
-
-	if(lpCurrent)
-		free(lpCurrent);
-
+	free(lpCurrent);
 	lpCurrent = lpNew;
 	cbCurrent = ulSize;
 	cbTotal = ulSize;

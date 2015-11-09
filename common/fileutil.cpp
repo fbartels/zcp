@@ -335,9 +335,7 @@ bool DuplicateFile(ECLogger *lpLogger, FILE *lpFile, std::string &strFileName)
 	}
 
 exit:
-	if (lpBuffer)
-		free(lpBuffer);
-
+	free(lpBuffer);
 	if (pfNew)
 		fclose(pfNew);
 

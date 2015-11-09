@@ -375,10 +375,7 @@ time_t timegm(struct tm *t) {
 		_tzset();
 	}
 #endif
-
-	if(s_tz)
-		free(s_tz);
-
+	free(s_tz);
 	return convert;
 }
 #endif

@@ -290,12 +290,8 @@ static HRESULT RTFCommitFunc(IStream *lpUncompressedStream, void *lpData)
 	}
 
 exit:
-	if(lpCompressed)
-		free(lpCompressed);
-
-	if(lpUncompressed)
-		free(lpUncompressed);
-
+	free(lpCompressed);
+	free(lpUncompressed);
 	return hr;
 }
 
@@ -375,13 +371,8 @@ HRESULT __stdcall WrapCompressedRTFStream(LPSTREAM lpCompressedRTFStream, ULONG 
 exit:
 	if(lpUncompressedStream)
 		lpUncompressedStream->Release();
-		
-	if(lpCompressed)
-		free(lpCompressed);
-		
-	if(lpUncompressed)
-		free(lpUncompressed);
-
+	free(lpCompressed);
+	free(lpUncompressed);
 	return hr;
 }
 

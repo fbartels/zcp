@@ -428,15 +428,11 @@ VOID DestroySoapTransport(ZarafaCmd *lpCmd)
 	if (!lpCmd)
 		return;
 
-	if (lpCmd->endpoint)
-		/* strdup'd all of them earlier */
-		free(const_cast<char *>(lpCmd->endpoint));
-	if (lpCmd->soap->proxy_host)
-		free(const_cast<char *>(lpCmd->soap->proxy_host));
-	if (lpCmd->soap->proxy_userid)
-		free(const_cast<char *>(lpCmd->soap->proxy_userid));
-	if (lpCmd->soap->proxy_passwd)
-		free(const_cast<char *>(lpCmd->soap->proxy_passwd));
+	/* strdup'd all of them earlier */
+	free(const_cast<char *>(lpCmd->endpoint));
+	free(const_cast<char *>(lpCmd->soap->proxy_host));
+	free(const_cast<char *>(lpCmd->soap->proxy_userid));
+	free(const_cast<char *>(lpCmd->soap->proxy_passwd));
 	delete lpCmd;
 }
 

@@ -1092,9 +1092,7 @@ userok:
 	m_ulConnectingPid = pid;
 
 exit:
-	if(localAdminUsers)
-		free(localAdminUsers);
-
+	free(localAdminUsers);
 	return er;
 }
 

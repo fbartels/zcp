@@ -1727,8 +1727,7 @@ exit:
 
 #ifdef LINUX
 	delete lpLicense;
-	if(st.ss_sp)
-		free(st.ss_sp);
+	free(st.ss_sp);
 #endif
 	delete lpDatabase;
 	delete lpDatabaseFactory;

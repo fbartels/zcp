@@ -709,8 +709,7 @@ M4LProviderAdmin::M4LProviderAdmin(M4LMsgServiceAdmin* new_msa, char *szService)
 }
 
 M4LProviderAdmin::~M4LProviderAdmin() {
-	if(szService)
-		free(szService);
+	free(szService);
 }
 
 HRESULT M4LProviderAdmin::GetLastError(HRESULT hResult, ULONG ulFlags, LPMAPIERROR* lppMAPIError) {

@@ -3768,8 +3768,7 @@ exit:
 #endif
 
 #ifdef LINUX
-	if(st.ss_sp)
-		free(st.ss_sp);
+	free(st.ss_sp);
 #endif
 	return hr;
 }

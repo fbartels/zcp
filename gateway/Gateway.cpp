@@ -844,8 +844,7 @@ exit:
 		pthread_attr_destroy(&ThreadAttr);
 
 #ifdef LINUX
-	if(st.ss_sp)
-		free(st.ss_sp);
+	free(st.ss_sp);
 #endif
 
 #ifdef WIN32

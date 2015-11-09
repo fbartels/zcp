@@ -1485,8 +1485,7 @@ exit:
 	DeleteLogger(g_lpLogger);
 
 #ifdef LINUX
-	if (st.ss_sp)
-		free(st.ss_sp);
+	free(st.ss_sp);
 #endif
 
 	switch(hr) {
