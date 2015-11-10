@@ -174,6 +174,19 @@ ARO_EXCEPTIONAL_BODY = 0x0200
 RSF_PID_RSS_SUBSCRIPTION = 0x8001
 RSF_PID_SUGGESTED_CONTACTS = 0x8008
 
+ENGLISH_FOLDER_MAP = { # XXX should we make the names pretty much identical, except for case?
+    'Inbox': 'inbox',
+    'Drafts': 'drafts',
+    'Outbox': 'outbox',
+    'Sent Items': 'sentmail',
+    'Deleted Items': 'wastebasket',
+    'Junk E-mail': 'junk',
+    'Calendar': 'calendar',
+    'Contacts': 'contacts',
+    'Tasks': 'tasks',
+    'Notes': 'notes',
+}
+
 def _stream(mapiobj, proptag):
     stream = mapiobj.OpenProperty(proptag, IID_IStream, 0, 0)
 
@@ -1356,8 +1369,7 @@ class Store(object):
 
         if len(key) == 96: # PR_ENTRYID is always 96
             try:
-                folder = Folder(self, key.decode('hex'))
-                return folder
+                return Folder(self, key.decode('hex'))
             except (MAPIErrorInvalidEntryid, MAPIErrorNotFound, TypeError):
                 pass
 
@@ -1741,11 +1753,10 @@ class Folder(object):
     def move(self, items, folder):
         self.copy(items, folder, _delete=True)
 
-    # XXX: almost equal to Store.folder, refactor?
     def folder(self, key, recurse=False, create=False): # XXX sloowowowww, see also Store.folder
         """ Return :class:`Folder` with given name or entryid; raise exception if not found
 
-            :param key: name or entryid
+            :param key: name, path or entryid
         """
 
         if '/' in key.replace('\\/', ''): # XXX MAPI folders may contain '/' (and '\') in their names..
@@ -1757,19 +1768,20 @@ class Folder(object):
 
         elif len(key) == 96:
             try:
-                folder = Folder(self, key.decode('hex')) # XXX: What about creat=True, do we want to check if it is a valid entryid and then create the folder?
-                return folder
+                return Folder(self, key.decode('hex'))
             except (MAPIErrorInvalidEntryid, MAPIErrorNotFound, TypeError):
                 pass
 
-        matches = [f for f in self.folders(recurse=recurse) if f.entryid == key or f.name == key]
+        if self == self.store.subtree and key in ENGLISH_FOLDER_MAP: # XXX depth==0?
+            key = getattr(self.store, ENGLISH_FOLDER_MAP[key]).name
+        matches = [f for f in self.folders(recurse=recurse) if f.name == key]
         if len(matches) == 0:
             if create:
-                return self.create_folder(key) # XXX assuming no entryid..
+                return self.create_folder(key)
             else:
                 raise ZarafaNotFoundException("no such folder: '%s'" % key)
         elif len(matches) > 1:
-            raise ZarafaNotFoundException("multiple folders with name/entryid '%s'" % key)
+            raise ZarafaNotFoundException("multiple folders with name '%s'" % key)
         else:
             return matches[0]
 
