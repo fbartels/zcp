@@ -5,6 +5,7 @@ import dbhash
 import os.path
 import time
 
+from MAPI.Util import PR_SOURCE_KEY, PR_ZC_ORIGINAL_SOURCE_KEY, MAPIErrorNotFound
 import zarafa
 from zarafa import log_exc
 
@@ -42,18 +43,28 @@ class Service(zarafa.Service):
                 continue
             self.log.info('restoring folder %s' % xpath)
             subfolder = subtree.folder(xpath, create=True)
+            existing = set()
+            for item in subfolder:
+                for proptag in (PR_SOURCE_KEY, PR_ZC_ORIGINAL_SOURCE_KEY):
+                    try:
+                        existing.add(item.prop(proptag).mapiobj.Value.encode('hex').upper())
+                    except MAPIErrorNotFound:
+                        pass
             with closing(dbhash.open(folder_path+'/index', 'c')) as db:
                 index = dict((a, pickle.loads(b)) for (a,b) in db.iteritems())
             with closing(dbhash.open(folder_path+'/items', 'c')) as db:
                 for sourcekey2 in db.iterkeys():
-                    with log_exc(self.log):
-                        last_modified = index[sourcekey2]['last_modified']
-                        if ((self.options.period_begin and last_modified < self.options.period_begin) or
-                            (self.options.period_end and last_modified >= self.options.period_end)):
-                            continue
-                        self.log.debug('restoring item with sourcekey %s' % sourcekey2)
-                        subfolder.create_item(loads=db[sourcekey2])
-                        changes += 1
+                        with log_exc(self.log):
+                            last_modified = index[sourcekey2]['last_modified']
+                            if ((self.options.period_begin and last_modified < self.options.period_begin) or
+                                (self.options.period_end and last_modified >= self.options.period_end)):
+                                continue
+                            if sourcekey2 in existing:
+                                self.log.warning('duplicate item with sourcekey %s' % sourcekey2)
+                            else:
+                                self.log.debug('restoring item with sourcekey %s' % sourcekey2)
+                                subfolder.create_item(loads=db[sourcekey2])
+                                changes += 1
         return changes
 
 def main():
