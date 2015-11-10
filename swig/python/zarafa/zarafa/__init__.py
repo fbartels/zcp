@@ -2359,6 +2359,8 @@ class Item(object):
             if nameid is not None:
                 proptag = self.mapiobj.GetIDsFromNames([nameid], MAPI_CREATE)[0] | (proptag & 0xffff)
             props.append(SPropValue(proptag, value))
+            if proptag == PR_SOURCE_KEY:
+                props.append(SPropValue(PR_ZC_ORIGINAL_SOURCE_KEY, value))
         self.mapiobj.SetProps(props)
 
         # recipients
