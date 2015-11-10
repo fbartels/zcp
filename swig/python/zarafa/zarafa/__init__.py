@@ -2296,7 +2296,7 @@ class Item(object):
             else:
                 props.append([searchkey, key, None])
 
-    def _dump(self):
+    def _dump(self, attachments=True):
         # props
         props = []
         tag_data = {}
@@ -2313,7 +2313,7 @@ class Item(object):
         self._convert_to_smtp(props, tag_data)
 
         # recipients
-        recipients = []
+        recs = []
         for row in self.table(PR_MESSAGE_RECIPIENTS):
             rprops = []
             tag_data = {}
@@ -2321,36 +2321,37 @@ class Item(object):
                 data = [prop.proptag, prop.mapiobj.Value, None]
                 rprops.append(data)
                 tag_data[prop.proptag] = data
-            recipients.append(rprops)
+            recs.append(rprops)
             self._convert_to_smtp(rprops, tag_data)
 
         # attachments
-        attachments = []
+        atts = []
         # XXX optimize by looking at PR_MESSAGE_FLAGS?
-        for row in self.table(PR_MESSAGE_ATTACHMENTS).dict_rows(): # XXX should we use GetAttachmentTable?
-            num = row[PR_ATTACH_NUM]
-            method = row[PR_ATTACH_METHOD] # XXX default
-            att = self.mapiobj.OpenAttach(num, IID_IAttachment, 0)
-            if method == ATTACH_EMBEDDED_MSG:
-                msg = att.OpenProperty(PR_ATTACH_DATA_OBJ, IID_IMessage, 0, MAPI_MODIFY | MAPI_DEFERRED_ERRORS)
-                item = Item(mapiobj=msg)
-                item.server = self.server # XXX
-                data = item._dump() # recursion
-            else:
-                data = _stream(att, PR_ATTACH_DATA_BIN)
-            attachments.append(([[a, b, None] for a, b in row.items()], data))
+        if attachments:
+            for row in self.table(PR_MESSAGE_ATTACHMENTS).dict_rows(): # XXX should we use GetAttachmentTable?
+                num = row[PR_ATTACH_NUM]
+                method = row[PR_ATTACH_METHOD] # XXX default
+                att = self.mapiobj.OpenAttach(num, IID_IAttachment, 0)
+                if method == ATTACH_EMBEDDED_MSG:
+                    msg = att.OpenProperty(PR_ATTACH_DATA_OBJ, IID_IMessage, 0, MAPI_MODIFY | MAPI_DEFERRED_ERRORS)
+                    item = Item(mapiobj=msg)
+                    item.server = self.server # XXX
+                    data = item._dump() # recursion
+                else:
+                    data = _stream(att, PR_ATTACH_DATA_BIN)
+                atts.append(([[a, b, None] for a, b in row.items()], data))
 
         return {
             'props': props,
-            'recipients': recipients,
-            'attachments': attachments,
+            'recipients': recs,
+            'attachments': atts,
         }
 
-    def dump(self, f):
-        pickle.dump(self._dump(), f, pickle.HIGHEST_PROTOCOL)
+    def dump(self, f, attachments=True):
+        pickle.dump(self._dump(attachments=attachments), f, pickle.HIGHEST_PROTOCOL)
 
-    def dumps(self):
-        return pickle.dumps(self._dump(), pickle.HIGHEST_PROTOCOL)
+    def dumps(self, attachments=True):
+        return pickle.dumps(self._dump(attachments=attachments), pickle.HIGHEST_PROTOCOL)
 
     def _load(self, d):
         # props
