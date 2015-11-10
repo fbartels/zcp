@@ -14,14 +14,14 @@ def dump_props(props):
 
 class BackupWorker(zarafa.Worker):
     def main(self):
-        config, server = self.service.config, self.service.server
+        config, server, options = self.service.config, self.service.server, self.service.options
         while True:
             changes = 0
             with log_exc(self.log):
                 (storeguid, username, path) = self.iqueue.get()
                 store = server.store(storeguid)
                 assert os.system('mkdir -p %s' % path) == 0
-                if not self.service.options.folders:
+                if not options.folders:
                     if username:
                         file(path+'/user', 'w').write(dump_props(server.user(username).props()))
                     file(path+'/store', 'w').write(dump_props(store.props()))
@@ -41,7 +41,7 @@ class BackupWorker(zarafa.Worker):
                 file(folder_path+'/path', 'w').write(folder.path)
                 file(folder_path+'/folder', 'w').write(dump_props(folder.props()))
                 self.log.info('backing up folder: %s' % folder.path)
-                importer = FolderImporter(folder, folder_path, config, self.log)
+                importer = FolderImporter(folder, folder_path, config, self.service.options, self.log)
                 statepath = '%s/state' % folder_path
                 state = None
                 if os.path.exists(statepath):
@@ -55,7 +55,9 @@ class BackupWorker(zarafa.Worker):
         sub_sourcekeys = set()
         for subfolder in folder.folders(recurse=False):
             sub_sourcekeys.add(subfolder.sourcekey)
-            if self.service.options.skip_junk and not store.public and subfolder.sourcekey == store.junk.sourcekey:
+            if (not store.public and \
+                (self.service.options.skip_junk and subfolder == store.junk) or \
+                (self.service.options.skip_deleted and subfolder == store.wastebasket)):
                 continue
             changes += self.backup_folder_rec(store, subfolder, path+['folders', subfolder.sourcekey], basepath, config) # recursion
         if not filter_:
@@ -67,14 +69,14 @@ class BackupWorker(zarafa.Worker):
 
 class FolderImporter:
     def __init__(self, *args):
-        self.folder, self.folder_path, self.config, self.log = args
+        self.folder, self.folder_path, self.config, self.options, self.log = args
         self.changes = self.deletes = 0
 
     def update(self, item, flags):
         with log_exc(self.log):
             self.log.debug('folder %s: new/updated document with sourcekey %s' % (self.folder.sourcekey, item.sourcekey))
             with closing(dbhash.open(self.folder_path+'/items', 'c')) as db:
-                db[item.sourcekey] = item.dumps()
+                db[item.sourcekey] = item.dumps(attachments=not self.options.skip_attachments)
             with closing(dbhash.open(self.folder_path+'/index', 'c')) as db:
                 db[item.sourcekey] = pickle.dumps({
                     'subject': item.subject,
@@ -132,7 +134,9 @@ class Service(zarafa.Service):
 def main():
     parser = zarafa.parser('ckpsufwUPCSlO')
     parser.add_option('-J', '--skip-junk', dest='skip_junk', action='store_true', help='do not backup junk mail')
+    parser.add_option('-D', '--skip-deleted', dest='skip_deleted', action='store_true', help='do not backup deleted mail')
     parser.add_option('-N', '--skip-public', dest='skip_public', action='store_true', help='do not backup public store')
+    parser.add_option('-A', '--skip-attachments', dest='skip_attachments', action='store_true', help='do not backup attachments')
     options, args = parser.parse_args()
     options.foreground = True
     Service('backup', options=options).start()
