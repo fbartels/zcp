@@ -551,31 +551,30 @@ private:
 public:
 	pmeasure(const std::string &whatIn)
 	{
-		if (perf_measure) {
-			what = whatIn;
-
-			struct timespec ts;
-			(void)clock_gettime(CLOCK_MONOTONIC, &ts);
-
-			start_ts = ts.tv_sec * 1000 * 1000 + ts.tv_nsec / 1000;
-		}
+		if (!perf_measure)
+			return;
+		what = whatIn;
+		struct timespec ts;
+		(void)clock_gettime(CLOCK_MONOTONIC, &ts);
+		start_ts = ts.tv_sec * 1000 * 1000 + ts.tv_nsec / 1000;
 	}
 
 	~pmeasure()
 	{
-		if (perf_measure) {
-			struct timespec ts;
-			(void)clock_gettime(CLOCK_MONOTONIC, &ts);
+		if (!perf_measure)
+			return;
+		struct timespec ts;
+		(void)clock_gettime(CLOCK_MONOTONIC, &ts);
 
-			FILE *fh = fopen(LOGFILE_PATH "/php-mapi-pm.log", "a+");
-			if (fh != NULL) {
-				unsigned long long int now = ts.tv_sec * 1000 * 1000 + ts.tv_nsec / 1000;
-				unsigned long long int tdiff = now - start_ts;
+		FILE *fh = fopen(LOGFILE_PATH "/php-mapi-pm.log", "a+");
+		if (fh == NULL)
+			return;
 
-				fprintf(fh, "%lld %s\n", tdiff, what.c_str());
-				fclose(fh);
-			}
-		}
+		unsigned long long int now = ts.tv_sec * 1000 * 1000 + ts.tv_nsec / 1000;
+		unsigned long long int tdiff = now - start_ts;
+
+		fprintf(fh, "%lld %s\n", tdiff, what.c_str());
+		fclose(fh);
 	}
 };
 
