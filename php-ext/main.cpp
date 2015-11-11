@@ -567,8 +567,11 @@ public:
 		(void)clock_gettime(CLOCK_MONOTONIC, &ts);
 
 		FILE *fh = fopen(LOGFILE_PATH "/php-mapi-pm.log", "a+");
-		if (fh == NULL)
+		if (fh == NULL) {
+			if (lpLogger != NULL)
+				lpLogger->Log(EC_LOGLEVEL_ERROR, "Cannot open %s/php-mapi-pm.log: %s", LOGFILE_PATH, strerror(errno));
 			return;
+		}
 
 		unsigned long long int now = ts.tv_sec * 1000 * 1000 + ts.tv_nsec / 1000;
 		unsigned long long int tdiff = now - start_ts;
@@ -588,10 +591,15 @@ PHP_MINIT_FUNCTION(mapi) {
 
 	{
 		struct stat st;
-		perf_measure = stat("/var/php-mapi-measure", &st) == 0;
 
-		if (perf_measure && lpLogger)
-			lpLogger->Log(EC_LOGLEVEL_INFO, "Performance measuring enabled");
+		if (stat("/var/php-mapi-measure", &st) == 0)
+			perf_measure = true;
+		else if (lpLogger != NULL)
+			lpLogger->Log(EC_LOGLEVEL_INFO, "/var/php-mapi-measure: %s", strerror(errno));
+
+		if (lpLogger != NULL)
+			lpLogger->Log(EC_LOGLEVEL_INFO, "Performance measuring %s",
+				perf_measure ? "enabled" : "disabled");
 	}
 
 	REGISTER_INI_ENTRIES();
