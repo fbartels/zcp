@@ -46,6 +46,7 @@
 #include <zarafa/platform.h>
 #include <zarafa/ecversion.h>
 #include <cstdio>
+#include <cstdlib>
 #include <syslog.h>
 #include <ctime>
 
@@ -169,13 +170,13 @@ ZEND_END_ARG_INFO()
 
 
 #define LOG_BEGIN() { \
-    if (INI_INT(const_cast<char *>("mapi.debug")) & 1) { \
+    if (mapi_debug & 1) { \
         php_error_docref(NULL TSRMLS_CC, E_NOTICE, "[IN] %s", __FUNCTION__); \
     } \
 }
 
 #define LOG_END()   { \
-    if (INI_INT(const_cast<char *>("mapi.debug")) & 2) { \
+    if (mapi_debug & 2) { \
         HRESULT hrx =  MAPI_G(hr); \
         php_error_docref(NULL TSRMLS_CC, E_NOTICE, "[OUT] %s hr=0x%08x", __FUNCTION__, hrx); \
     } \
@@ -267,6 +268,8 @@ static ECLogger *lpLogger = NULL;
 
 #define MAPI_ASSERT_EX
 
+static unsigned int mapi_debug;
+static char *perf_measure_file;
 static bool perf_measure = false;
 
 pmeasure::pmeasure(const std::string &whatIn)
@@ -523,10 +526,6 @@ zend_module_entry mapi_module_entry =
 	STANDARD_MODULE_PROPERTIES
 };
 
-PHP_INI_BEGIN()
-PHP_INI_ENTRY("mapi.debug", "0", PHP_INI_ALL, NULL)
-PHP_INI_END()
-
 #if COMPILE_DL_MAPI
 BEGIN_EXTERN_C()
 	ZEND_GET_MODULE(mapi)
@@ -546,7 +545,7 @@ PHP_MINFO_FUNCTION(mapi)
 	php_info_print_table_end();
 }
 
-static int InitLogfile(void)
+static int LoadSettingsFile(void)
 {
 #ifdef LINUX 
 	const char *const cfg_file = ECConfig::GetDefaultPath("php-mapi.cfg"); 
@@ -561,7 +560,10 @@ static int InitLogfile(void)
 			{ "log_file", LOGFILE_PATH "/php-mapi.log" },
 			{ "log_level", "2", CONFIGSETTING_RELOADABLE },
 			{ "log_timestamp", "0" },
-		{ "log_buffer_size",	"4096" },
+			{ "log_buffer_size", "4096" },
+			{ "log_buffer_size", "4096" },
+			{ "php_mapi_performance_trace_file", "" },
+			{ "php_mapi_debug", "0" },
 			{ NULL, NULL }
 		};
 
@@ -571,6 +573,16 @@ static int InitLogfile(void)
 
                 if (cfg->LoadSettings(cfg_file))
 			lpLogger = CreateLogger(cfg, "php-mapi", "PHPMapi");
+
+		const char *temp = cfg->GetSetting("php_mapi_performance_trace_file");
+		if (temp != NULL) {
+			perf_measure_file = strdup(temp);
+			lpLogger->Log(EC_LOGLEVEL_INFO, "Performance measuring enabled");
+		}
+
+		temp = cfg->GetSetting("php_mapi_debug");
+		if (temp != NULL)
+			mapi_debug = strtoul(temp, NULL, 0);
 
 		delete cfg;
 	}
@@ -583,6 +595,8 @@ static int InitLogfile(void)
 	lpLogger->Log(EC_LOGLEVEL_INFO, "PHP-Mapi instantiated " PROJECT_VERSION_EXT_STR);
 
 	HrSetLogger(lpLogger);
+	if (mapi_debug)
+		lpLogger->Log(EC_LOGLEVEL_INFO, "PHP-MAPI trace level set to %d", mapi_debug);
 	return SUCCESS;
 }
 
@@ -590,25 +604,10 @@ static int InitLogfile(void)
 * Initfunction for the module, will be called once at server startup
 */
 PHP_MINIT_FUNCTION(mapi) {
-	int ret = InitLogfile();
+	int ret = LoadSettingsFile();
 	if (ret != SUCCESS)
 		return ret;
 
-	{
-		struct stat st;
-
-		if (stat("/var/php-mapi-measure", &st) == 0)
-			perf_measure = true;
-		else if (lpLogger != NULL)
-			lpLogger->Log(EC_LOGLEVEL_INFO, "/var/php-mapi-measure: %s", strerror(errno));
-
-		if (lpLogger != NULL)
-			lpLogger->Log(EC_LOGLEVEL_INFO, "Performance measuring %s",
-				perf_measure ? "enabled" : "disabled");
-	}
-
-	REGISTER_INI_ENTRIES();
-    
 	le_mapi_session = zend_register_list_destructors_ex(_php_free_mapi_session, NULL, const_cast<char *>(name_mapi_session), module_number);
 	le_mapi_table = zend_register_list_destructors_ex(_php_free_mapi_object, NULL, const_cast<char *>(name_mapi_table), module_number);
 	le_mapi_rowset = zend_register_list_destructors_ex(_php_free_mapi_rowset, NULL, const_cast<char *>(name_mapi_rowset), module_number);
@@ -671,6 +670,9 @@ PHP_MINIT_FUNCTION(mapi) {
 PHP_MSHUTDOWN_FUNCTION(mapi)
 {
 	UNREGISTER_INI_ENTRIES();
+
+	free(perf_measure_file);
+	perf_measure_file = NULL;
     
 	if (lpLogger)
 		lpLogger->Log(EC_LOGLEVEL_INFO, "php-mapi shutdown");
