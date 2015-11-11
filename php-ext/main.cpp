@@ -581,6 +581,8 @@ public:
 	}
 };
 
+#define PMEASURE_FUNC pmeasure __pmobject(__PRETTY_FUNCTION__);
+
 /**
 * Initfunction for the module, will be called once at server startup
 */
@@ -706,7 +708,7 @@ PHP_RSHUTDOWN_FUNCTION(mapi) {
 
 static void _php_free_mapi_session(zend_rsrc_list_entry *rsrc TSRMLS_DC)
 {
-	pmeasure pm("_php_free_mapi_session");
+	PMEASURE_FUNC;
 
 	IMAPISession *lpSession = (IMAPISession *)rsrc->ptr;
 	if(lpSession) lpSession->Release();
@@ -740,7 +742,7 @@ static void _php_free_fb_object(zend_rsrc_list_entry *rsrc TSRMLS_DC)
 static HRESULT GetECObject(LPMAPIPROP lpMapiProp,
     IECUnknown **lppIECUnknown TSRMLS_DC)
 {
-	pmeasure pm("GetECObject");
+	PMEASURE_FUNC;
 
 	LPSPropValue	lpPropVal = NULL;
 
@@ -846,7 +848,7 @@ ZEND_FUNCTION(mapi_prop_tag)
 
 ZEND_FUNCTION(mapi_createoneoff)
 {
-	pmeasure pm("mapi_createoneoff");
+	PMEASURE_FUNC;
 
 	LOG_BEGIN();
 	// params
@@ -908,7 +910,7 @@ exit:
 
 ZEND_FUNCTION(mapi_parseoneoff)
 {
-	pmeasure pm("mapi_parseoneoff");
+	PMEASURE_FUNC;
 
 	LOG_BEGIN();
 	// params
@@ -968,7 +970,7 @@ exit:
 
 ZEND_FUNCTION(mapi_logon_zarafa)
 {
-	pmeasure pm("mapi_logon_zarafa");
+	PMEASURE_FUNC;
 
 	LOG_BEGIN();
 	// params
@@ -1072,7 +1074,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_openentry)
 {
-	pmeasure pm("mapi_openentry");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*res;
@@ -1118,7 +1120,7 @@ exit:
 // This function cannot be used, since you currently can't create profiles directly in php
 ZEND_FUNCTION(mapi_logon)
 {
-	pmeasure pm("mapi_logon");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	const char *profilename = "";
@@ -1159,7 +1161,7 @@ exit:
 // must have valid session
 ZEND_FUNCTION(mapi_openaddressbook)
 {
-	pmeasure pm("mapi_openaddressbook");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval *res;
@@ -1188,7 +1190,7 @@ exit:
 }
 
 ZEND_FUNCTION(mapi_ab_openentry) {
-	pmeasure pm("mapi_ab_openentry");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*res;
@@ -1237,7 +1239,7 @@ exit:
 }
 
 ZEND_FUNCTION(mapi_ab_resolvename) {
-	pmeasure pm("mapi_ab_resolvename");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*res;
@@ -1285,7 +1287,7 @@ exit:
 }
 
 ZEND_FUNCTION(mapi_ab_getdefaultdir) {
-	pmeasure pm("mapi_ab_getdefaultdir");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*res;
@@ -1323,7 +1325,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_getmsgstorestable)
 {
-	pmeasure pm("mapi_getmsgstorestable");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval *res = NULL;
@@ -1360,7 +1362,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_openmsgstore)
 {
-	pmeasure pm("mapi_openmsgstore");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	ULONG		cbEntryID	= 0;
@@ -1403,7 +1405,7 @@ exit:
  */
 ZEND_FUNCTION(mapi_openprofilesection)
 {
-	pmeasure pm("mapi_openprofilesection");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval *res;
@@ -1445,7 +1447,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_folder_gethierarchytable)
 {
-	pmeasure pm("mapi_folder_gethierarchytable");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval	*res;
@@ -1497,7 +1499,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_folder_getcontentstable)
 {
-	pmeasure pm("mapi_folder_getcontentstable");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval			*res	= NULL;
@@ -1546,7 +1548,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_folder_createmessage)
 {
-	pmeasure pm("mapi_folder_createmessage");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval * res;
@@ -1581,7 +1583,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_folder_deletemessages)
 {
-	pmeasure pm("mapi_folder_deletemessages");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	LPMAPIFOLDER	pFolder = NULL;
@@ -1623,7 +1625,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_folder_copymessages)
 {
-	pmeasure pm("mapi_folder_copymessages");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	LPMAPIFOLDER	lpSrcFolder = NULL, lpDestFolder = NULL;
@@ -1667,7 +1669,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_folder_setreadflags)
 {
-	pmeasure pm("mapi_folder_setreadflags");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval			*res = NULL, *entryArray = NULL;
@@ -1708,7 +1710,7 @@ exit:
 }
 
 ZEND_FUNCTION(mapi_folder_createfolder) {
-	pmeasure pm("mapi_folder_createfolder");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	LPMAPIFOLDER lpSrcFolder = NULL;
@@ -1751,7 +1753,7 @@ exit:
 
 ZEND_FUNCTION(mapi_folder_deletefolder)
 {
-	pmeasure pm("mapi_folder_deletefolder");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	ENTRYID			*lpEntryID = NULL;
@@ -1782,7 +1784,7 @@ exit:
 
 ZEND_FUNCTION(mapi_folder_emptyfolder)
 {
-	pmeasure pm("mapi_folder_emptyfolder");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval			*res;
@@ -1815,7 +1817,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_folder_copyfolder)
 {
-	pmeasure pm("mapi_folder_copyfolder");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval			*zvalSrcFolder, *zvalDestFolder;
@@ -1867,7 +1869,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_msgstore_createentryid)
 {
-	pmeasure pm("mapi_msgstore_createentryid");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*res;
@@ -1920,7 +1922,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_msgstore_getarchiveentryid)
 {
-	pmeasure pm("mapi_msgstore_getarchiveentryid");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*res;
@@ -1969,7 +1971,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_msgstore_openentry)
 {
-	pmeasure pm("mapi_msgstore_openentry");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*res;
@@ -2016,7 +2018,7 @@ exit:
 
 ZEND_FUNCTION(mapi_msgstore_entryidfromsourcekey)
 {
-	pmeasure pm("mapi_msgstore_entryidfromsourcekey");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval	*resStore = NULL;
 	BYTE 	*lpSourceKeyMessage = NULL;
@@ -2059,7 +2061,7 @@ exit:
 
 ZEND_FUNCTION(mapi_msgstore_advise)
 {
-	pmeasure pm("mapi_msgstore_advise");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval	*resStore = NULL;
 	zval	*resSink = NULL;
@@ -2095,7 +2097,7 @@ exit:
 
 ZEND_FUNCTION(mapi_msgstore_unadvise)
 {
-	pmeasure pm("mapi_msgstore_unadvise");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval	*resStore = NULL;
 	LPMDB	lpMsgStore = NULL;
@@ -2122,7 +2124,7 @@ exit:
 
 ZEND_FUNCTION(mapi_sink_create)
 {
-	pmeasure pm("mapi_sink_create");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	MAPINotifSink *lpSink = NULL;
 	RETVAL_FALSE;
@@ -2135,7 +2137,7 @@ ZEND_FUNCTION(mapi_sink_create)
 
 ZEND_FUNCTION(mapi_sink_timedwait)
 {
-	pmeasure pm("mapi_sink_timedwait");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval *resSink = NULL;
 	zval *notifications = NULL;
@@ -2179,7 +2181,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_table_queryallrows)
 {
-	pmeasure pm("mapi_table_queryallrows");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval			*res				= NULL;
@@ -2260,7 +2262,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_table_queryrows)
 {
-	pmeasure pm("mapi_table_queryrows");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*res	= NULL;
@@ -2339,7 +2341,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_table_setcolumns)
 {
-	pmeasure pm("mapi_table_setcolumns");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*res	= NULL;
@@ -2388,7 +2390,7 @@ exit:
  */
 ZEND_FUNCTION(mapi_table_seekrow)
 {
-	pmeasure pm("mapi_table_seekrow");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*res	= NULL;
@@ -2426,7 +2428,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_table_sort)
 {
-	pmeasure pm("mapi_table_sort");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval * res;
@@ -2466,7 +2468,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_table_getrowcount)
 {
-	pmeasure pm("mapi_table_getrowcount");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval *res;
@@ -2499,7 +2501,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_table_restrict)
 {
-	pmeasure pm("mapi_table_restrict");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval			*res;
@@ -2543,7 +2545,7 @@ exit:
 
 ZEND_FUNCTION(mapi_table_findrow)
 {
-	pmeasure pm("mapi_table_findrow");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval			*res;
@@ -2601,7 +2603,7 @@ exit:
  */
 ZEND_FUNCTION(mapi_table_createbookmark)
 {
-	pmeasure pm("mapi_table_createbookmark");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*res	= NULL;
@@ -2640,7 +2642,7 @@ exit:
  */
 ZEND_FUNCTION(mapi_table_freebookmark)
 {
-	pmeasure pm("mapi_table_freebookmark");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*res	= NULL;
@@ -2675,7 +2677,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_msgstore_getreceivefolder)
 {
-	pmeasure pm("mapi_msgstore_getreceivefolder");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval			*res;
@@ -2723,7 +2725,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_msgstore_openmultistoretable)
 {
-	pmeasure pm("mapi_msgstore_openmultistoretable");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval			*res;
@@ -2783,7 +2785,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_message_modifyrecipients)
 {
-	pmeasure pm("mapi_message_modifyrecipients");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval			*res, *adrlist;
@@ -2828,7 +2830,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_message_submitmessage)
 {
-	pmeasure pm("mapi_message_submitmessage");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval * res;
@@ -2860,7 +2862,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_message_getattachmenttable)
 {
-	pmeasure pm("mapi_message_getattachmenttable");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval * res = NULL;
@@ -2895,7 +2897,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_message_openattach)
 {
-	pmeasure pm("mapi_message_openattach");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*res		= NULL;
@@ -2927,7 +2929,7 @@ exit:
 
 ZEND_FUNCTION(mapi_message_createattach)
 {
-	pmeasure pm("mapi_message_createattach");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*zvalMessage = NULL;
@@ -2959,7 +2961,7 @@ exit:
 
 ZEND_FUNCTION(mapi_message_deleteattach)
 {
-	pmeasure pm("mapi_message_deleteattach");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*zvalMessage = NULL;
@@ -2988,7 +2990,7 @@ exit:
 
 ZEND_FUNCTION(mapi_stream_read)
 {
-	pmeasure pm("mapi_stream_read");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*res	= NULL;
@@ -3022,7 +3024,7 @@ exit:
 
 ZEND_FUNCTION(mapi_stream_seek)
 {
-	pmeasure pm("mapi_stream_seek");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*res = NULL;
@@ -3055,7 +3057,7 @@ exit:
 
 ZEND_FUNCTION(mapi_stream_setsize)
 {
-	pmeasure pm("mapi_stream_setsize");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*res = NULL;
@@ -3088,7 +3090,7 @@ exit:
 
 ZEND_FUNCTION(mapi_stream_commit)
 {
-	pmeasure pm("mapi_stream_commit");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*res = NULL;
@@ -3115,7 +3117,7 @@ exit:
 
 ZEND_FUNCTION(mapi_stream_write)
 {
-	pmeasure pm("mapi_stream_write");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*res = NULL;
@@ -3147,7 +3149,7 @@ exit:
 // FIXME: Add more output in the array
 ZEND_FUNCTION(mapi_stream_stat)
 {
-	pmeasure pm("mapi_stream_stat");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*res = NULL;
@@ -3185,7 +3187,7 @@ exit:
  */
 ZEND_FUNCTION(mapi_stream_create)
 {
-	pmeasure pm("mapi_stream_create");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	ECMemStream *lpStream = NULL;
 	IStream *lpIStream =  NULL;
@@ -3223,7 +3225,7 @@ exit:
 
 ZEND_FUNCTION(mapi_openpropertytostream)
 {
-	pmeasure pm("mapi_openpropertytostream");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*res		= NULL;
@@ -3287,7 +3289,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_message_getrecipienttable)
 {
-	pmeasure pm("mapi_message_getrecipienttable");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval *res;
@@ -3316,7 +3318,7 @@ exit:
 
 ZEND_FUNCTION(mapi_message_setreadflag)
 {
-	pmeasure pm("mapi_message_setreadflag");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval *res = NULL;
@@ -3349,7 +3351,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_attach_openobj)
 {
-	pmeasure pm("mapi_attach_openobj");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*res	= NULL;
@@ -3386,7 +3388,7 @@ ZEND_FUNCTION(mapi_attach_openobj)
 */
 ZEND_FUNCTION(mapi_getidsfromnames)
 {
-	pmeasure pm("mapi_getidsfromnames");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval	*messageStore	= NULL;
@@ -3513,7 +3515,7 @@ exit:
 
 ZEND_FUNCTION(mapi_setprops)
 {
-	pmeasure pm("mapi_setprops");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval *res = NULL, *propValueArray = NULL;
@@ -3567,7 +3569,7 @@ exit:
 
 ZEND_FUNCTION(mapi_copyto)
 {
-	pmeasure pm("mapi_copyto");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	LPSPropTagArray lpExcludeProps = NULL;
 	LPMAPIPROP lpSrcObj = NULL;
@@ -3655,7 +3657,7 @@ exit:
 
 ZEND_FUNCTION(mapi_savechanges)
 {
-	pmeasure pm("mapi_savechanges");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*res = NULL;
@@ -3704,7 +3706,7 @@ exit:
 
 ZEND_FUNCTION(mapi_deleteprops)
 {
-	pmeasure pm("mapi_deleteprops");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*res = NULL, *propTagArray = NULL;
@@ -3754,7 +3756,7 @@ exit:
 
 ZEND_FUNCTION(mapi_openproperty)
 {
-	pmeasure pm("mapi_openproperty");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*res		= NULL;
@@ -3885,7 +3887,7 @@ it will use it to do a getProps.
 */
 ZEND_FUNCTION(mapi_getprops)
 {
-	pmeasure pm("mapi_getprops");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	LPMAPIPROP lpMapiProp = NULL;
@@ -3964,7 +3966,7 @@ exit:
 
 ZEND_FUNCTION(mapi_getnamesfromids)
 {
-	pmeasure pm("mapi_getnamesfromids");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval	*res, *array;
@@ -4039,7 +4041,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_decompressrtf)
 {
-	pmeasure pm("mapi_decompressrtf");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	char * rtfBuffer = NULL;
@@ -4109,7 +4111,7 @@ exit:
 *
 */
 ZEND_FUNCTION(mapi_folder_openmodifytable) {
-	pmeasure pm("mapi_folder_openmodifytable");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval *res;
@@ -4138,7 +4140,7 @@ exit:
 }
 
 ZEND_FUNCTION(mapi_folder_getsearchcriteria) {
-	pmeasure pm("mapi_folder_getsearchcriteria");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval *res = NULL;
@@ -4185,7 +4187,7 @@ exit:
 }
 
 ZEND_FUNCTION(mapi_folder_setsearchcriteria) {
-	pmeasure pm("mapi_folder_setsearchcriteria");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// param
 	zval *res = NULL;
@@ -4232,7 +4234,7 @@ exit:
 *
 */
 ZEND_FUNCTION(mapi_rules_gettable) {
-	pmeasure pm("mapi_rules_gettable");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval *res;
@@ -4294,7 +4296,7 @@ exit:
 *
 */
 ZEND_FUNCTION(mapi_rules_modifytable) {
-	pmeasure pm("mapi_rules_modifytable");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval *res;
@@ -4334,7 +4336,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_createuser)
 {
-	pmeasure pm("mapi_zarafa_createuser");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval			*res = NULL;
@@ -4413,7 +4415,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_setuser)
 {
-	pmeasure pm("mapi_zarafa_setuser");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 
@@ -4490,7 +4492,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_deleteuser)
 {
-	pmeasure pm("mapi_zarafa_deleteuser");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval			*res = NULL;
@@ -4550,7 +4552,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_createstore)
 {
-	pmeasure pm("mapi_zarafa_createstore");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval			*res = NULL;
@@ -4615,7 +4617,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_zarafa_getuserlist)
 {
-	pmeasure pm("mapi_zarafa_getuserlist");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval			*res = NULL;
@@ -4688,7 +4690,7 @@ exit:
  */
 ZEND_FUNCTION(mapi_zarafa_getquota)
 {
-	pmeasure pm("mapi_zarafa_getquota");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval            *res = NULL;
@@ -4749,7 +4751,7 @@ exit:
  */
 ZEND_FUNCTION(mapi_zarafa_setquota)
 {
-	pmeasure pm("mapi_zarafa_setquota");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval            *res = NULL;
@@ -4840,7 +4842,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_zarafa_getuser_by_name)
 {
-	pmeasure pm("mapi_zarafa_getuser_by_name");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval		*res = NULL;
@@ -4913,7 +4915,7 @@ exit:
 */
 ZEND_FUNCTION(mapi_zarafa_getuser_by_id)
 {
-	pmeasure pm("mapi_zarafa_getuser_by_id");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval			*res = NULL;
@@ -4970,7 +4972,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_creategroup)
 {
-	pmeasure pm("mapi_zarafa_creategroup");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval			*res = NULL;
@@ -5024,7 +5026,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_deletegroup)
 {
-	pmeasure pm("mapi_zarafa_deletegroup");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval			*res = NULL;
@@ -5080,7 +5082,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_addgroupmember)
 {
-	pmeasure pm("mapi_zarafa_addgroupmember");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval 			*res = NULL;
@@ -5128,7 +5130,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_deletegroupmember)
 {
-	pmeasure pm("mapi_zarafa_deletegroupmember");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval 			*res = NULL;
@@ -5176,7 +5178,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_setgroup)
 {
-	pmeasure pm("mapi_zarafa_setgroup");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval			*res = NULL;
@@ -5230,7 +5232,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_getgroup_by_id)
 {
-	pmeasure pm("mapi_zarafa_getgroup_by_id");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval			*res = NULL;
@@ -5280,7 +5282,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_getgroup_by_name)
 {
-	pmeasure pm("mapi_zarafa_getgroup_by_name");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval			*res = NULL;
@@ -5340,7 +5342,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_getgrouplist)
 {
-	pmeasure pm("mapi_zarafa_getgrouplist");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval			*res = NULL;
@@ -5402,7 +5404,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_getgrouplistofuser)
 {
-	pmeasure pm("mapi_zarafa_getgrouplistofuser");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval			*res = NULL;
@@ -5463,7 +5465,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_getuserlistofgroup)
 {
-	pmeasure pm("mapi_zarafa_getuserlistofgroup");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval			*res = NULL;
@@ -5528,7 +5530,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_createcompany)
 {
-	pmeasure pm("mapi_zarafa_createcompany");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval *res = NULL;
@@ -5581,7 +5583,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_deletecompany)
 {
-	pmeasure pm("mapi_zarafa_deletecompany");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval *res = NULL;
@@ -5638,7 +5640,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_getcompany_by_id)
 {
-	pmeasure pm("mapi_zarafa_getcompany_by_id");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval			*res = NULL;
@@ -5689,7 +5691,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_getcompany_by_name)
 {
-	pmeasure pm("mapi_zarafa_getcompany_by_name");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval *res = NULL;
@@ -5750,7 +5752,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_getcompanylist)
 {
-	pmeasure pm("mapi_zarafa_getcompanylist");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval *res = NULL;
@@ -5806,7 +5808,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_add_company_remote_viewlist)
 {
-	pmeasure pm("mapi_zarafa_add_company_remote_viewlist");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval			*res = NULL;
 	LPENTRYID		lpSetCompanyId = NULL;
@@ -5854,7 +5856,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_del_company_remote_viewlist)
 {
-	pmeasure pm("mapi_zarafa_del_company_remote_viewlist");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval			*res = NULL;
 	LPENTRYID		lpSetCompanyId = NULL;
@@ -5902,7 +5904,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_get_remote_viewlist)
 {
-	pmeasure pm("mapi_zarafa_get_remote_viewlist");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval			*res = NULL;
 	LPENTRYID		lpCompanyId = NULL;
@@ -5960,7 +5962,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_add_user_remote_adminlist)
 {
-	pmeasure pm("mapi_zarafa_add_user_remote_adminlist");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval			*res = NULL;
 	LPENTRYID		lpUserId = NULL;
@@ -6008,7 +6010,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_del_user_remote_adminlist)
 {
-	pmeasure pm("mapi_zarafa_del_user_remote_adminlist");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval			*res = NULL;
 	LPENTRYID		lpUserId = NULL;
@@ -6056,7 +6058,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_get_remote_adminlist)
 {
-	pmeasure pm("mapi_zarafa_get_remote_adminlist");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval			*res = NULL;
 	LPENTRYID		lpCompanyId = NULL;
@@ -6114,7 +6116,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_add_quota_recipient)
 {
-	pmeasure pm("mapi_zarafa_add_quota_recipient");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval			*res = NULL;
 	LPENTRYID		lpRecipientId = NULL;
@@ -6163,7 +6165,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_del_quota_recipient)
 {
-	pmeasure pm("mapi_zarafa_del_quota_recipient");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval			*res = NULL;
 	LPENTRYID		lpRecipientId = NULL;
@@ -6212,7 +6214,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_get_quota_recipientlist)
 {
-	pmeasure pm("mapi_zarafa_get_quota_recipientlist");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval			*res = NULL;
 	LPENTRYID		lpObjectId = NULL;
@@ -6270,7 +6272,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_check_license)
 {
-	pmeasure pm("mapi_zarafa_check_license");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval *res = NULL;
 	IMsgStore *lpMsgStore = NULL;
@@ -6320,7 +6322,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_getcapabilities)
 {
-	pmeasure pm("mapi_zarafa_getcapabilities");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval *res = NULL;
 	IMsgStore *lpMsgStore = NULL;
@@ -6366,7 +6368,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_getpermissionrules)
 {
-	pmeasure pm("mapi_zarafa_getpermissionrules");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval *res = NULL;
@@ -6446,7 +6448,7 @@ exit:
 
 ZEND_FUNCTION(mapi_zarafa_setpermissionrules)
 {
-	pmeasure pm("mapi_zarafa_setpermissionrules");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval *res = NULL;
@@ -6569,7 +6571,7 @@ exit:
 
 ZEND_FUNCTION(mapi_freebusysupport_open)
 {
-	pmeasure pm("mapi_freebusysupport_open");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// local
 	ECFreeBusySupport*	lpecFBSupport = NULL;
@@ -6622,7 +6624,7 @@ exit:
 
 ZEND_FUNCTION(mapi_freebusysupport_close)
 {
-	pmeasure pm("mapi_freebusysupport_close");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// Extern
 	IFreeBusySupport*	lpFBSupport = NULL;
@@ -6649,7 +6651,7 @@ exit:
 
 ZEND_FUNCTION(mapi_freebusysupport_loaddata)
 {
-	pmeasure pm("mapi_freebusysupport_close");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	HashTable*			target_hash = NULL;
 	ULONG				i, j;
@@ -6732,7 +6734,7 @@ exit:
 
 ZEND_FUNCTION(mapi_freebusysupport_loadupdate)
 {
-	pmeasure pm("mapi_freebusysupport_loadupdate");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	HashTable*			target_hash = NULL;
 	ULONG				i, j;
@@ -6815,7 +6817,7 @@ exit:
 
 ZEND_FUNCTION(mapi_freebusydata_enumblocks)
 {
-	pmeasure pm("mapi_freebusydata_enumblocks");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	IFreeBusyData*		lpFBData = NULL;
 	zval*				resFBData = NULL;
@@ -6850,7 +6852,7 @@ exit:
 
 ZEND_FUNCTION(mapi_freebusydata_getpublishrange)
 {
-	pmeasure pm("mapi_freebusydata_getpublishrange");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	IFreeBusyData*		lpFBData = NULL;
 	zval*				resFBData = NULL;
@@ -6886,7 +6888,7 @@ exit:
 
 ZEND_FUNCTION(mapi_freebusydata_setrange)
 {
-	pmeasure pm("mapi_freebusydata_setrange");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	IFreeBusyData*		lpFBData = NULL;
 	zval*				resFBData = NULL;
@@ -6920,7 +6922,7 @@ exit:
 
 ZEND_FUNCTION(mapi_freebusyenumblock_reset)
 {
-	pmeasure pm("mapi_freebusyenumblock_reset");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	IEnumFBBlock*		lpEnumBlock = NULL;
 	zval*				resEnumBlock = NULL;
@@ -6945,7 +6947,7 @@ exit:
 
 ZEND_FUNCTION(mapi_freebusyenumblock_next)
 {
-	pmeasure pm("mapi_freebusyenumblock_next");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	IEnumFBBlock*		lpEnumBlock = NULL;
 	zval*				resEnumBlock = NULL;
@@ -7000,7 +7002,7 @@ exit:
 
 ZEND_FUNCTION(mapi_freebusyenumblock_skip)
 {
-	pmeasure pm("mapi_freebusyenumblock_skip");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	IEnumFBBlock*		lpEnumBlock = NULL;
 	zval*				resEnumBlock = NULL;
@@ -7026,7 +7028,7 @@ exit:
 
 ZEND_FUNCTION(mapi_freebusyenumblock_restrict)
 {
-	pmeasure pm("mapi_freebusyenumblock_restrict");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	IEnumFBBlock*		lpEnumBlock = NULL;
 	zval*				resEnumBlock = NULL;
@@ -7060,7 +7062,7 @@ exit:
 
 ZEND_FUNCTION(mapi_freebusyupdate_publish)
 {
-	pmeasure pm("mapi_freebusyupdate_publish");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval*				resFBUpdate = NULL;
@@ -7141,7 +7143,7 @@ exit:
 
 ZEND_FUNCTION(mapi_freebusyupdate_reset)
 {
-	pmeasure pm("mapi_freebusyupdate_reset");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	IFreeBusyUpdate*	lpFBUpdate = NULL;
 	zval*				resFBUpdate = NULL;
@@ -7167,7 +7169,7 @@ exit:
 
 ZEND_FUNCTION(mapi_freebusyupdate_savechanges)
 {
-	pmeasure pm("mapi_freebusyupdate_savechanges");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval*				resFBUpdate = NULL;
@@ -7201,7 +7203,7 @@ exit:
 
 ZEND_FUNCTION(mapi_favorite_add)
 {
-	pmeasure pm("mapi_favorite_add");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	// params
 	zval *				resSession = NULL;
@@ -7251,7 +7253,7 @@ exit:
 
 ZEND_FUNCTION(mapi_exportchanges_config)
 {
-	pmeasure pm("mapi_exportchanges_config");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	IUnknown *			lpImportChanges = NULL; // may be contents or hierarchy
 	IExchangeExportChanges *lpExportChanges = NULL;
@@ -7342,7 +7344,7 @@ exit:
 
 ZEND_FUNCTION(mapi_exportchanges_synchronize)
 {
-	pmeasure pm("mapi_exportchanges_synchronize");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval *					resExportChanges = NULL;
 	IExchangeExportChanges *lpExportChanges = NULL;
@@ -7377,7 +7379,7 @@ exit:
 
 ZEND_FUNCTION(mapi_exportchanges_updatestate)
 {
-	pmeasure pm("mapi_exportchanges_updatestate");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval *					resExportChanges = NULL;
 	zval *					resStream = NULL;
@@ -7406,7 +7408,7 @@ exit:
 
 ZEND_FUNCTION(mapi_exportchanges_getchangecount)
 {
-	pmeasure pm("mapi_exportchanges_getchangecount");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval *					resExportChanges = NULL;
 	IExchangeExportChanges *lpExportChanges = NULL;
@@ -7442,7 +7444,7 @@ exit:
 
 ZEND_FUNCTION(mapi_importcontentschanges_config)
 {
-	pmeasure pm("mapi_importcontentschanges_config");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval *					resImportContentsChanges = NULL;
 	zval *					resStream = NULL;
@@ -7473,7 +7475,7 @@ exit:
 
 ZEND_FUNCTION(mapi_importcontentschanges_updatestate)
 {
-	pmeasure pm("mapi_importcontentschanges_updatestate");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval *							resImportContentsChanges = NULL;
 	zval *							resStream = NULL;
@@ -7504,7 +7506,7 @@ exit:
 
 ZEND_FUNCTION(mapi_importcontentschanges_importmessagechange)
 {
-	pmeasure pm("mapi_importcontentschanges_importmessagechange");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval *					resImportContentsChanges = NULL;
 	zval *					resProps = NULL;
@@ -7546,7 +7548,7 @@ exit:
 
 ZEND_FUNCTION(mapi_importcontentschanges_importmessagedeletion)
 {
-	pmeasure pm("mapi_importcontentschanges_importmessagedeletion");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval *			resMessages;
 	zval *			resImportContentsChanges;
@@ -7580,7 +7582,7 @@ exit:
 
 ZEND_FUNCTION(mapi_importcontentschanges_importperuserreadstatechange)
 {
-	pmeasure pm("mapi_importcontentschanges_importperuserreadstatechange");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval *			resReadStates;
 	zval *			resImportContentsChanges;
@@ -7616,7 +7618,7 @@ exit:
 
 ZEND_FUNCTION(mapi_importcontentschanges_importmessagemove)
 {
-	pmeasure pm("mapi_importcontentschanges_importmessagemove");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	ULONG			cbSourceKeySrcFolder = 0;
 	BYTE *			pbSourceKeySrcFolder = NULL;
@@ -7656,7 +7658,7 @@ exit:
 
 ZEND_FUNCTION(mapi_importhierarchychanges_config)
 {
-	pmeasure pm("mapi_importhierarchychanges_config");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval *					resImportHierarchyChanges = NULL;
 	zval *					resStream = NULL;
@@ -7686,7 +7688,7 @@ exit:
 
 ZEND_FUNCTION(mapi_importhierarchychanges_updatestate)
 {
-	pmeasure pm("mapi_importhierarchychanges_updatestate");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval *							resImportHierarchyChanges = NULL;
 	zval *							resStream = NULL;
@@ -7717,7 +7719,7 @@ exit:
 
 ZEND_FUNCTION(mapi_importhierarchychanges_importfolderchange)
 {
-	pmeasure pm("mapi_importhierarchychanges_importfolderchange");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval *					resImportHierarchyChanges = NULL;
 	zval *					resProps = NULL;
@@ -7755,7 +7757,7 @@ exit:
 
 ZEND_FUNCTION(mapi_importhierarchychanges_importfolderdeletion)
 {
-	pmeasure pm("mapi_importhierarchychanges_importfolderdeletion");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	zval *					resImportHierarchyChanges = NULL;
 	zval *					resFolders = NULL;
@@ -7808,7 +7810,7 @@ exit:
 
 ZEND_FUNCTION(mapi_wrap_importcontentschanges)
 {
-	pmeasure pm("mapi_wrap_importcontentschanges");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
     zval *							objImportContentsChanges = NULL;
     ECImportContentsChangesProxy *	lpImportContentsChanges = NULL;
@@ -7832,7 +7834,7 @@ ZEND_FUNCTION(mapi_wrap_importcontentschanges)
 // Same for IExchangeImportHierarchyChanges
 ZEND_FUNCTION(mapi_wrap_importhierarchychanges)
 {
-	pmeasure pm("mapi_wrap_importhierarchychanges");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
     zval *							objImportHierarchyChanges = NULL;
     ECImportHierarchyChangesProxy *	lpImportHierarchyChanges = NULL;
@@ -7855,7 +7857,7 @@ ZEND_FUNCTION(mapi_wrap_importhierarchychanges)
 
 ZEND_FUNCTION(mapi_inetmapi_imtoinet)
 {
-	pmeasure pm("mapi_inetmapi_imtoinet");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
     zval *resSession;
     zval *resAddrBook;
@@ -7913,7 +7915,7 @@ exit:
 
 ZEND_FUNCTION(mapi_inetmapi_imtomapi)
 {
-	pmeasure pm("mapi_inetmapi_imtomapi");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
     zval *resSession;
     zval *resStore;
@@ -7965,7 +7967,7 @@ exit:
 #if SUPPORT_EXCEPTIONS
 ZEND_FUNCTION(mapi_enable_exceptions)
 {
-	pmeasure pm("mapi_enable_exceptions");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	ULONG			cbExClass = 0;
 	char *			szExClass = NULL;
@@ -7989,7 +7991,7 @@ ZEND_FUNCTION(mapi_enable_exceptions)
 // Can be queried by client applications to check whether certain API features are supported or not.
 ZEND_FUNCTION(mapi_feature)
 {
-	pmeasure pm("mapi_feature");
+	PMEASURE_FUNC;
 	LOG_BEGIN();
 	static const char *const features[] =
 		{"LOGONFLAGS", "NOTIFICATIONS", "INETMAPI_IMTOMAPI"};
