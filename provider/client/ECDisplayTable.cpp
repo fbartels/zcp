@@ -284,7 +284,6 @@ void TranslateDisplayTable(ITableData *lpTableData)
 	}
 	MAPIFreeBuffer(lpsRow);
 exit:
-	return;
 }
 
 HRESULT ECDisplayTable::CreateDisplayTable(ULONG ulPages, DTPAGE *lpPages, IMAPITable **lppTable)

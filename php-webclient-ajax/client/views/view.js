@@ -131,7 +131,6 @@ View.prototype.setCursorPosition = function(id)
 
 View.prototype.getCursorPosition = function()
 {
-	return;
 }
 
 /*
@@ -143,16 +142,13 @@ View.prototype.setData = function(data)
 
 View.prototype.getRowNumber = function(elemid)
 {
-	return;
 }
 
 View.prototype.getElemIdByRowNumber = function(rownum)
 {
-	return;
 }
 
 View.prototype.getRowCount = function()
 {
-	return;
 }
 

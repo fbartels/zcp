@@ -355,8 +355,6 @@ void CHtmlToTextParser::parseAttributes(const WCHAR* &lpwHTML)
 	}
 
 	stackAttrs.push(mapAttrs);
-
-	return;
 }
 
 void CHtmlToTextParser::parseTagP()

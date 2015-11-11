@@ -1096,8 +1096,6 @@ DHTML.prototype.scrollFrame = function(iframe, id)
 		return;
 		
 	frame.contentWindow.document.body.scrollTop = el.offsetTop;
-	
-	return;
 }
 
 /**
