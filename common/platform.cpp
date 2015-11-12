@@ -56,6 +56,7 @@
 #include <pthread.h>
 
 #include <sys/stat.h>
+#include <sys/time.h> /* gettimeofday */
 
 #include "TmpPath.h"
 

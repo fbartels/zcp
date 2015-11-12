@@ -62,6 +62,11 @@
 #include <string>
 #include <map>
 
+#ifndef HAVE_UUID_CREATE
+#	include <uuid/uuid.h>
+#else
+#	include <uuid.h>
+#endif
 #include "TmpPath.h"
 
 #ifdef __APPLE__

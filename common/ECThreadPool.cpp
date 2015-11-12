@@ -46,6 +46,7 @@
 #include <zarafa/threadutil.h>
 
 #include <algorithm>
+#include <sys/time.h> /* gettimeofday */
 
 /**
  * Check if a timeval was set.

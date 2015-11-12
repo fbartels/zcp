@@ -53,6 +53,7 @@
 
 #include <cerrno>
 #include <cassert>
+#include <sys/time.h> /* gettimeofday */
 #ifdef HAVE_MALLOC_H
 #include <malloc.h>
 #endif

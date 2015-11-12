@@ -74,12 +74,6 @@
   #include <unistd.h>
 #endif
 
-#ifndef HAVE_UUID_CREATE
-  #include <uuid/uuid.h>
-#else
-  #include <uuid.h>
-#endif
-
 #ifndef UNUSED_VAR
 #define UNUSED_VAR __attribute__((unused))
 #endif

@@ -47,6 +47,7 @@
 // ETIMEDOUT in linux is in errno, windows has this though pthread.h
 #include <cerrno>
 #endif
+#include <sys/time.h> /* gettimeofday */
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

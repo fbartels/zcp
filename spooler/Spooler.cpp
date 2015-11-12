@@ -65,6 +65,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <csignal>
+#include <sys/time.h> /* gettimeofday */
 
 #define USES_IID_IMAPIFolder
 #define USES_IID_IMessage
