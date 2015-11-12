@@ -52,6 +52,7 @@
 #include <Cryptuiapi.h>
 #endif
 
+#include <openssl/ssl.h>
 #include "soapZarafaCmdProxy.h"
 
 int ssl_verify_callback_zarafa_silent(int ok, X509_STORE_CTX *store);

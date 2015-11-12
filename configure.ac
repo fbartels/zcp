@@ -139,17 +139,6 @@ fi
 DISTRO=$with_distro
 AC_SUBST(DISTRO)
 
-AC_ARG_ENABLE(oss, AC_HELP_STRING([--enable-oss],[enable opensource mode]),
-  [want_oss=${enableval}],[want_oss=no])
-AC_MSG_CHECKING([non-oss distro files])
-if test "$want_oss" = "no" -a ! -d `dirname $0`/licensed; then
-   AC_MSG_RESULT([not found])
-   want_oss="yes"
-else
-   AC_MSG_RESULT([ok])
-fi
-AM_CONDITIONAL([OSS_ONLY], [test "$want_oss" = yes])
-
 AC_ARG_ENABLE(debug, AC_HELP_STRING([--enable-debug],[enable debug mode (Adds debug code)]),
   [want_debug=${enableval}],[want_debug=no])
 if test "$want_debug" = "yes"; then
@@ -179,15 +168,10 @@ AC_ARG_ENABLE(coverage,
     ])
 
 # test offline possibility
-AC_DEFUN([OFFLINE_CONFIG],[
   AC_ARG_ENABLE(offline, AC_HELP_STRING([--enable-offline],[Compile zarafa-server as the offline server]),
   [
   	ZCPPFLAGS="$ZCPPFLAGS -DHAVE_OFFLINE_SUPPORT"
   ])
-])
-if ! test "$want_oss" = "yes"; then
-   OFFLINE_CONFIG
-fi
 
 # MAPI config files
 AC_ARG_WITH(mapi-configdir,
@@ -219,19 +203,6 @@ AC_ARG_WITH(searchscripts-prefix,
   [SEARCHSCRIPTSDIR=${withval}],[SEARCHSCRIPTSDIR=/etc/zarafa/searchscripts])
 AC_SUBST(SEARCHSCRIPTSDIR)
 
-#
-# find required headers and functions
-#
-
-AC_HEADER_STDC
-
-# Checks for typedefs, structures, and compiler characteristics.
-AC_HEADER_STDBOOL
-AC_TYPE_SIZE_T
-AC_TYPE_SSIZE_T
-AC_HEADER_TIME
-AC_STRUCT_TM
-
 # zarafa-stats requires ncurses(w) for --top
 # check wide version before non-wide version
 AC_DEFUN([LIBNCURSES_WITH_CONFIG],[
@@ -258,17 +229,7 @@ AC_DEFUN([LIBNCURSES_WITH_CONFIG],[
 ])
 LIBNCURSES_WITH_CONFIG
 
-AC_CHECK_HEADERS([memory.h stddef.h stdlib.h string.h sys/timeb.h wchar.h syslog.h sys/un.h sys/ucred.h sys/stat.h openssl/ssl.h zlib.h])
-
-# Checks for library functions.
-AC_FUNC_MALLOC
-AC_FUNC_MEMCMP
-AC_FUNC_MKTIME
-AC_FUNC_REALLOC
-AC_FUNC_STRFTIME
-AC_FUNC_STRTOD
-AC_FUNC_VPRINTF
-AC_TYPE_SIGNAL
+AC_CHECK_HEADERS([syslog.h sys/un.h sys/stat.h])
 AC_CHECK_FUNCS([timegm getpeereid getpwnam_r vsyslog vsnprintf_l])
 
 
@@ -441,7 +402,9 @@ AC_ARG_WITH(vmime-prefix,
 AC_SUBST(VMIME_CFLAGS)
 AC_SUBST(VMIME_LIBS)
 
-GSOAP_CFLAGS="-DWITH_OPENSSL -DWITH_GZIP"
+dnl Stupid gsoap not abstracting properly! If our -Ds do not match with what
+dnl gsoap was compiled with, we are in trouble.
+GSOAP_CFLAGS="-DWITH_OPENSSL -DWITH_GZIP -DHAVE_OPENSSL_SSL_H -DHAVE_ZLIB_H"
 GSOAP_LIBS="-lgsoapssl++"
 AC_MSG_CHECKING([gsoap])
 AC_ARG_WITH(gsoap-prefix,

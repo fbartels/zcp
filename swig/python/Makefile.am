@@ -168,10 +168,6 @@ RecurrenceState_wrap.cxx: ../RecurrenceState.i
 licenseclient_wrap.cxx: ../licenseclient.i
 	${SWIG_EXEC} -I${top_srcdir}/provider/common -I${top_srcdir}/common -I${top_srcdir}/m4lcommon -I${top_srcdir/swig} ${SWIG_CXXFLAGS} -o $@ $<
 
-# make dist seems to want to create this file regardless of the OSS_ONLY flag.
-licensereq_wrap.cxx: ../licensereq.i
-	${SWIG_EXEC} -I${top_srcdir}/liblicense -I${top_srcdir/swig} ${SWIG_CXXFLAGS} -o $@ $<
-
 libfreebusy_wrap.cxx: ../libfreebusy.i
 	${SWIG_EXEC} -I${top_srcdir}/libfreebusy -I${top_srcdir/swig} ${SWIG_CXXFLAGS} -o $@ $<
 
