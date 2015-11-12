@@ -105,7 +105,7 @@ int relocate_fd(int fd, ECLogger *lpLogger);
 
 // possible missing ssl function
 #ifndef HAVE_EVP_PKEY_CMP
-int EVP_PKEY_cmp(EVP_PKEY *a, EVP_PKEY *b)
+static int EVP_PKEY_cmp(EVP_PKEY *a, EVP_PKEY *b)
     {
     if (a->type != b->type)
         return -1;
