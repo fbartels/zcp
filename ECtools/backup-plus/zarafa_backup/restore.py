@@ -30,14 +30,14 @@ class Service(zarafa.Service):
             store = self._store(username)
         self.log.info('restoring to store %s' % store.guid)
         t0 = time.time()
-        changes = self.restore_rec(self.data_path, store.subtree)
-        self.log.info('restore completed in %.2f seconds (%d changes, ~%.2f/sec)' % (time.time()-t0, changes, changes/(time.time()-t0)))
+        stats = {'changes': 0, 'errors': 0}
+        self.restore_rec(self.data_path, store.subtree, stats)
+        self.log.info('restore completed in %.2f seconds (%d changes, ~%.2f/sec, %d errors)' % (time.time()-t0, stats['changes'], stats['changes']/(time.time()-t0), stats['errors']))
 
-    def restore_rec(self, path, subtree):
-        changes = 0
+    def restore_rec(self, path, subtree, stats):
         for sourcekey in os.listdir(path+'/folders'):
             folder_path = path+'/folders/'+sourcekey
-            changes += self.restore_rec(folder_path, subtree) # recursion
+            self.restore_rec(folder_path, subtree, stats) # recursion
             xpath = file(folder_path+'/path').read()
             if self.options.folders and xpath not in self.options.folders:
                 continue
@@ -54,18 +54,17 @@ class Service(zarafa.Service):
                 index = dict((a, pickle.loads(b)) for (a,b) in db.iteritems())
             with closing(dbhash.open(folder_path+'/items', 'c')) as db:
                 for sourcekey2 in db.iterkeys():
-                        with log_exc(self.log):
-                            last_modified = index[sourcekey2]['last_modified']
-                            if ((self.options.period_begin and last_modified < self.options.period_begin) or
-                                (self.options.period_end and last_modified >= self.options.period_end)):
-                                continue
-                            if sourcekey2 in existing:
-                                self.log.warning('duplicate item with sourcekey %s' % sourcekey2)
-                            else:
-                                self.log.debug('restoring item with sourcekey %s' % sourcekey2)
-                                subfolder.create_item(loads=db[sourcekey2])
-                                changes += 1
-        return changes
+                    with log_exc(self.log, stats):
+                        last_modified = index[sourcekey2]['last_modified']
+                        if ((self.options.period_begin and last_modified < self.options.period_begin) or
+                            (self.options.period_end and last_modified >= self.options.period_end)):
+                            continue
+                        if sourcekey2 in existing:
+                            self.log.warning('duplicate item with sourcekey %s' % sourcekey2)
+                        else:
+                            self.log.debug('restoring item with sourcekey %s' % sourcekey2)
+                            subfolder.create_item(loads=db[sourcekey2])
+                            stats['changes'] += 1
 
 def main():
     options, args = zarafa.parser('ckpsufUPlSbe', usage='zarafa-restore PATH [options]').parse_args()
