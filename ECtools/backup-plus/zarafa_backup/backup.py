@@ -61,10 +61,11 @@ class BackupWorker(zarafa.Worker):
                 continue
             changes += self.backup_folder_rec(store, subfolder, path+['folders', subfolder.sourcekey], basepath, config) # recursion
         if not filter_:
-            stored_sourcekeys = set([x for x in os.listdir(folder_path+'/folders')])
-            for sourcekey in stored_sourcekeys-sub_sourcekeys:
-                self.log.info('removing deleted subfolder: %s' % folder_path+'/folders/'+sourcekey)
-                assert os.system('rm -rf %s' % folder_path+'/folders/'+sourcekey) == 0
+            if os.path.exists(folder_path+'/folders'):
+                stored_sourcekeys = set([x for x in os.listdir(folder_path+'/folders')])
+                for sourcekey in stored_sourcekeys-sub_sourcekeys:
+                    self.log.info('removing deleted subfolder: %s' % folder_path+'/folders/'+sourcekey)
+                    assert os.system('rm -rf %s' % folder_path+'/folders/'+sourcekey) == 0
         return changes
 
 class FolderImporter:
