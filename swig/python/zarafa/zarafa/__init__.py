@@ -269,8 +269,8 @@ def _state(mapiobj, associated=False):
     stream.Seek(0, MAPI.STREAM_SEEK_SET)
     return bin2hex(stream.Read(0xFFFFF))
 
-def _sync(server, syncobj, importer, state, log, max_changes, associated=False, window=None):
-    importer = TrackingContentsImporter(server, importer, log)
+def _sync(server, syncobj, importer, state, log, max_changes, associated=False, window=None, stats=None):
+    importer = TrackingContentsImporter(server, importer, log, stats)
     exporter = syncobj.OpenProperty(PR_CONTENTS_SYNCHRONIZER, IID_IExchangeExportChanges, 0, 0)
 
     stream = IStream()
@@ -317,6 +317,8 @@ def _sync(server, syncobj, importer, state, log, max_changes, associated=False, 
             else:
                 if log:
                     log.error("Too many retries, skipping change")
+                if stats:
+                    stats['errors'] += 1
 
                 importer.skip = True # in case of a timeout or other issue, try to skip the change after trying several times
 
@@ -965,7 +967,7 @@ Looks at command-line to see if another server address or other related options 
 
         return _state(self.mapistore)
 
-    def sync(self, importer, state, log=None, max_changes=None, window=None):
+    def sync(self, importer, state, log=None, max_changes=None, window=None, stats=None):
         """ Perform synchronization against server node
 
         :param importer: importer instance with callbacks to process changes
@@ -974,7 +976,7 @@ Looks at command-line to see if another server address or other related options 
         """
 
         importer.store = None
-        return _sync(self, self.mapistore, importer, state, log or self.log, max_changes, window=window)
+        return _sync(self, self.mapistore, importer, state, log or self.log, max_changes, window=window, stats=stats)
 
     def __unicode__(self):
         return u'Server(%s)' % self.server_socket
@@ -1779,7 +1781,7 @@ class Folder(object):
 
         return _state(self.mapiobj, self.content_flag == MAPI_ASSOCIATED)
 
-    def sync(self, importer, state=None, log=None, max_changes=None, associated=False, window=None):
+    def sync(self, importer, state=None, log=None, max_changes=None, associated=False, window=None, stats=None):
         """ Perform synchronization against folder
 
         :param importer: importer instance with callbacks to process changes
@@ -1790,7 +1792,7 @@ class Folder(object):
         if state is None:
             state = (8*'\0').encode('hex').upper()
         importer.store = self.store
-        return _sync(self.store.server, self.mapiobj, importer, state, log, max_changes, associated, window=window)
+        return _sync(self.store.server, self.mapiobj, importer, state, log, max_changes, associated, window=window, stats=stats)
 
     def readmbox(self, location):
         for message in mailbox.mbox(location):
@@ -3153,11 +3155,12 @@ class Rule:
 
 
 class TrackingContentsImporter(ECImportContentsChanges):
-    def __init__(self, server, importer, log):
+    def __init__(self, server, importer, log, stats):
         ECImportContentsChanges.__init__(self, [IID_IExchangeImportContentsChanges, IID_IECImportContentsChanges])
         self.server = server
         self.importer = importer
         self.log = log
+        self.stats = stats
         self.skip = False
 
     def ImportMessageChangeAsAStream(self, props, flags):
@@ -3195,6 +3198,8 @@ class TrackingContentsImporter(ECImportContentsChanges):
                 self.log.error(traceback.format_exc(e))
             else:
                 traceback.print_exc(e)
+            if self.stats:
+                self.stats['errors'] += 1
         raise MAPIError(SYNC_E_IGNORE)
 
     def ImportMessageDeletion(self, flags, entries):
@@ -3213,6 +3218,8 @@ class TrackingContentsImporter(ECImportContentsChanges):
                 self.log.error(traceback.format_exc(e))
             else:
                 traceback.print_exc(e)
+            if self.stats:
+                self.stats['errors'] += 1
 
     def ImportPerUserReadStateChange(self, states):
         pass
@@ -3433,7 +3440,7 @@ Available options:
     return parser
 
 @contextlib.contextmanager # it logs errors, that's all you need to know :-)
-def log_exc(log):
+def log_exc(log, stats=None):
     """
 Context-manager to log any exception in sub-block to given logger instance
 
@@ -3446,7 +3453,10 @@ Example usage::
 
 """
     try: yield
-    except Exception, e: log.error(traceback.format_exc(e))
+    except Exception, e:
+        log.error(traceback.format_exc(e))
+        if stats:
+            stats['errors'] += 1
 
 def _bytes_to_human(b):
     suffixes = ['b', 'kb', 'mb', 'gb', 'tb', 'pb']
