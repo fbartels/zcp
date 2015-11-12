@@ -27,11 +27,11 @@ class BackupWorker(zarafa.Worker):
                     file(path+'/store', 'w').write(dump_props(store.props()))
                 t0 = time.time()
                 self.log.info('backing up: %s' % path)
-                stats = {'changes': 0, 'deletes': 0}
+                stats = {'changes': 0, 'deletes': 0, 'errors': 0}
                 self.backup_folder_rec(store, store.subtree, [], path, config, stats)
                 changes = stats['changes'] + stats['deletes']
-                self.log.info('backing up %s took %.2f seconds (%d changes, ~%.2f/sec)' % (path, time.time()-t0, changes, changes/(time.time()-t0)))
-            self.oqueue.put(changes)
+                self.log.info('backing up %s took %.2f seconds (%d changes, ~%.2f/sec, %d errors)' % (path, time.time()-t0, changes, changes/(time.time()-t0), stats['errors']))
+            self.oqueue.put(stats)
 
     def backup_folder_rec(self, store, folder, path, basepath, config, stats):
         filter_ = self.service.options.folders
@@ -48,7 +48,7 @@ class BackupWorker(zarafa.Worker):
                 if os.path.exists(statepath):
                     state = file(statepath).read()
                     self.log.info('found previous folder sync state: %s' % state)
-                new_state = folder.sync(importer, state, log=self.log)
+                new_state = folder.sync(importer, state, log=self.log, stats=stats)
                 if new_state != state:
                     file(statepath, 'w').write(new_state)
                     self.log.info('saved folder sync state: %s' % new_state)
@@ -72,7 +72,7 @@ class FolderImporter:
         self.folder, self.folder_path, self.config, self.options, self.log, self.stats = args
 
     def update(self, item, flags):
-        with log_exc(self.log):
+        with log_exc(self.log, self.stats):
             self.log.debug('folder %s: new/updated document with sourcekey %s' % (self.folder.sourcekey, item.sourcekey))
             with closing(dbhash.open(self.folder_path+'/items', 'c')) as db:
                 db[item.sourcekey] = item.dumps(attachments=not self.options.skip_attachments)
@@ -84,7 +84,7 @@ class FolderImporter:
             self.stats['changes'] += 1
 
     def delete(self, item, flags):
-        with log_exc(self.log):
+        with log_exc(self.log, self.stats):
             self.log.debug('folder %s: deleted document with sourcekey %s' % (self.folder.sourcekey, item.sourcekey))
             with closing(dbhash.open(self.folder_path+'/items', 'c')) as db:
                 del db[item.sourcekey]
@@ -103,8 +103,10 @@ class Service(zarafa.Service):
             self.iqueue.put(job)
         self.log.info('queued %d store(s) for parallel backup (%s processes)' % (len(jobs), len(workers)))
         t0 = time.time()
-        changes = sum([self.oqueue.get() for i in range(len(jobs))]) # blocking
-        self.log.info('queue processed in %.2f seconds (%d changes, ~%.2f/sec)' % (time.time()-t0, changes, changes/(time.time()-t0)))
+        stats = [self.oqueue.get() for i in range(len(jobs))] # blocking
+        changes = sum(s['changes'] + s['deletes'] for s in stats)
+        errors = sum(s['errors'] for s in stats)
+        self.log.info('queue processed in %.2f seconds (%d changes, ~%.2f/sec, %d errors)' % (time.time()-t0, changes, changes/(time.time()-t0), errors))
 
     def create_jobs(self):
         output_dir = self.options.output_dir or ''
