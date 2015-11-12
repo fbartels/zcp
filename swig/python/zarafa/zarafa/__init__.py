@@ -53,6 +53,7 @@ import cPickle as pickle
 import csv
 import daemon
 import errno
+import fnmatch
 import lockfile
 import daemon.pidlockfile
 import datetime
@@ -771,7 +772,14 @@ Looks at command-line to see if another server address or other related options 
 
         if parse and getattr(self.options, 'users', None):
             for username in self.options.users:
-                yield User(username.decode(sys.stdin.encoding), self) # XXX can optparse output unicode?
+                if '*' in username or '?' in username: # XXX unicode.. need to use something like boost::wregex in ZCP?
+                    regex = username.replace('*', '.*').replace('?', '.')
+                    restriction = SPropertyRestriction(RELOP_RE, PR_DISPLAY_NAME_A, SPropValue(PR_DISPLAY_NAME_A, regex))
+                    for match in AddressBook.GetAbObjectList(self.mapisession, restriction):
+                        if fnmatch.fnmatch(match, username):
+                            yield User(match, self)
+                else:
+                    yield User(username.decode(sys.stdin.encoding), self) # XXX can optparse output unicode?
             return
         try:
             for name in self._companylist():
