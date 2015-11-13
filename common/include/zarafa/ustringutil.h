@@ -51,17 +51,8 @@
 #if HAVE_ICU
 #include <unicode/coll.h>
 #include <unicode/sortkey.h>
-/* With typedefs, our ABI would always change */
-class ECLocale _zcp_final : public Locale {
-	public:
-	ECLocale(void) : Locale() {};
-	ECLocale(const Locale &s) : Locale(s) {};
-};
-class ECSortKey _zcp_final : public CollationKey {
-	public:
-	ECSortKey(void) : CollationKey() {};
-	ECSortKey(const CollationKey &s) : CollationKey(s) {};
-};
+typedef Locale ECLocale;
+typedef CollationKey ECSortKey;
 #else
 
 //typedef locale_t ECLocale;
