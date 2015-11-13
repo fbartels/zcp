@@ -117,19 +117,18 @@ class Service(zarafa.Service):
                 for user in company.users():
                     jobs.append((user.store, user.name, os.path.join(output_dir, companyname, user.name)))
                 if not self.options.skip_public:
-                    target = companyname+'@'+companyname if companyname else 'Public'
+                    target = 'public@'+companyname if companyname else 'public'
                     jobs.append((company.public_store, None, os.path.join(output_dir, companyname, target)))
-        for username in self.options.users:
-            if username == 'Public':
-                jobs.append((self.server.public_store, None, os.path.join(output_dir, 'Public')))
-            elif '@' in username and username.split('@')[0] == username.split('@')[1]: # XXX
-                u, c = username.split('@')
-                jobs.append((self.server.company(c).public_store, None, os.path.join(output_dir, username)))
-            else:
-                user = self.server.user(username)
-                jobs.append((user.store, user.name, os.path.join(output_dir, username)))
-        for storeguid in self.options.stores:
-            jobs.append((self.server.store(storeguid), None, os.path.join(output_dir, storeguid)))
+        if self.options.users:
+            for user in self.server.users():
+                jobs.append((user.store, user.name, os.path.join(output_dir, user.name)))
+        if self.options.stores:
+            for store in self.server.stores():
+                if store.public:
+                    target = 'public' + ('@'+store.company.name if store.company.name != 'Default' else '')
+                else:
+                    target = store.guid
+                jobs.append((store, None, os.path.join(output_dir, target)))
         return [(job[0].guid,)+job[1:] for job in sorted(jobs, reverse=True, key=lambda x: x[0].size)]
 
 def main():
