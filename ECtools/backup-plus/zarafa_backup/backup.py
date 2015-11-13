@@ -29,27 +29,27 @@ class BackupWorker(zarafa.Worker):
                 t0 = time.time()
                 self.log.info('backing up: %s' % path)
                 stats = {'changes': 0, 'deletes': 0, 'errors': 0}
-                self.backup_folder_rec(store, store.subtree, [], path, config, stats)
+                self.backup_folder_rec(store, store.subtree, [], path, config, options, stats)
                 changes = stats['changes'] + stats['deletes']
                 self.log.info('backing up %s took %.2f seconds (%d changes, ~%.2f/sec, %d errors)' % (path, time.time()-t0, changes, changes/(time.time()-t0), stats['errors']))
             self.oqueue.put(stats)
 
-    def backup_folder_rec(self, store, folder, path, basepath, config, stats):
-        filter_ = self.service.options.folders
+    def backup_folder_rec(self, store, folder, path, basepath, config, options, stats):
+        filter_ = options.folders
         folder_path = os.path.join(basepath, *path)
         if path: # skip subtree folder itself
             if not filter_ or folder.path in filter_:
                 assert os.system('mkdir -p %s/folders' % folder_path) == 0
-                file(folder_path+'/path', 'w').write(folder.path)
+                file(folder_path+'/path', 'w').write(folder.path.encode('utf8'))
                 file(folder_path+'/folder', 'w').write(dump_props(folder.props()))
                 self.log.info('backing up folder: %s' % folder.path)
-                importer = FolderImporter(folder, folder_path, config, self.service.options, self.log, stats)
+                importer = FolderImporter(folder, folder_path, config, options, self.log, stats)
                 statepath = '%s/state' % folder_path
                 state = None
                 if os.path.exists(statepath):
                     state = file(statepath).read()
                     self.log.info('found previous folder sync state: %s' % state)
-                new_state = folder.sync(importer, state, log=self.log, stats=stats)
+                new_state = folder.sync(importer, state, log=self.log, stats=stats, begin=options.period_begin, end=options.period_end)
                 if new_state != state:
                     file(statepath, 'w').write(new_state)
                     self.log.info('saved folder sync state: %s' % new_state)
@@ -57,10 +57,10 @@ class BackupWorker(zarafa.Worker):
         for subfolder in folder.folders(recurse=False):
             sub_sourcekeys.add(subfolder.sourcekey)
             if (not store.public and \
-                (self.service.options.skip_junk and subfolder == store.junk) or \
-                (self.service.options.skip_deleted and subfolder == store.wastebasket)):
+                (options.skip_junk and subfolder == store.junk) or \
+                (options.skip_deleted and subfolder == store.wastebasket)):
                 continue
-            self.backup_folder_rec(store, subfolder, path+['folders', subfolder.sourcekey], basepath, config, stats) # recursion
+            self.backup_folder_rec(store, subfolder, path+['folders', subfolder.sourcekey], basepath, config, options, stats) # recursion
         if not filter_:
             if os.path.exists(folder_path+'/folders'):
                 stored_sourcekeys = set([x for x in os.listdir(folder_path+'/folders')])
@@ -133,7 +133,7 @@ class Service(zarafa.Service):
         return [(job[0].guid,)+job[1:] for job in sorted(jobs, reverse=True, key=lambda x: x[0].size)]
 
 def main():
-    parser = zarafa.parser('ckpsufwUPCSlO')
+    parser = zarafa.parser('ckpsufwUPCSlObe')
     parser.add_option('-J', '--skip-junk', dest='skip_junk', action='store_true', help='do not backup junk mail')
     parser.add_option('-D', '--skip-deleted', dest='skip_deleted', action='store_true', help='do not backup deleted mail')
     parser.add_option('-N', '--skip-public', dest='skip_public', action='store_true', help='do not backup public store')

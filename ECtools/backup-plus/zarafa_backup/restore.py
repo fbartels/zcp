@@ -39,7 +39,7 @@ class Service(zarafa.Service):
         for sourcekey in os.listdir(path+'/folders'):
             folder_path = path+'/folders/'+sourcekey
             self.restore_rec(folder_path, subtree, stats) # recursion
-            xpath = file(folder_path+'/path').read()
+            xpath = file(folder_path+'/path').read().decode('utf8')
             if self.options.folders and xpath not in self.options.folders:
                 continue
             self.log.info('restoring folder %s' % xpath)
