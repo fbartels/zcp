@@ -4,6 +4,7 @@ import cPickle as pickle
 import dbhash
 import os.path
 import time
+import zlib
 
 from MAPI.Util import PR_SOURCE_KEY, PR_ZC_ORIGINAL_SOURCE_KEY, MAPIErrorNotFound
 import zarafa
@@ -63,7 +64,7 @@ class Service(zarafa.Service):
                             self.log.warning('duplicate item with sourcekey %s' % sourcekey2)
                         else:
                             self.log.debug('restoring item with sourcekey %s' % sourcekey2)
-                            subfolder.create_item(loads=db[sourcekey2])
+                            subfolder.create_item(loads=zlib.decompress(db[sourcekey2]))
                             stats['changes'] += 1
 
 def main():

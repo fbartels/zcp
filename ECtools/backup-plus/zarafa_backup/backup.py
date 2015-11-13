@@ -5,6 +5,7 @@ import dbhash
 from multiprocessing import Queue
 import os.path
 import time
+import zlib
 
 import zarafa
 from zarafa import log_exc
@@ -75,7 +76,7 @@ class FolderImporter:
         with log_exc(self.log, self.stats):
             self.log.debug('folder %s: new/updated document with sourcekey %s' % (self.folder.sourcekey, item.sourcekey))
             with closing(dbhash.open(self.folder_path+'/items', 'c')) as db:
-                db[item.sourcekey] = item.dumps(attachments=not self.options.skip_attachments)
+                db[item.sourcekey] = zlib.compress(item.dumps(attachments=not self.options.skip_attachments))
             with closing(dbhash.open(self.folder_path+'/index', 'c')) as db:
                 db[item.sourcekey] = pickle.dumps({
                     'subject': item.subject,
