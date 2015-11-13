@@ -42,7 +42,7 @@ class Service(zarafa.Service):
             if self.options.folders and xpath not in self.options.folders:
                 continue
             self.log.info('restoring folder %s' % xpath)
-            subfolder = subtree.folder(xpath, create=True)
+            subfolder = subtree.folder(self.options.target_folder or xpath, create=True)
             existing = set()
             for item in subfolder:
                 for proptag in (PR_SOURCE_KEY, PR_ZC_ORIGINAL_SOURCE_KEY):
@@ -67,7 +67,9 @@ class Service(zarafa.Service):
                             stats['changes'] += 1
 
 def main():
-    options, args = zarafa.parser('ckpsufUPlSbe', usage='zarafa-restore PATH [options]').parse_args()
+    parser = zarafa.parser('ckpsufUPlSbe', usage='zarafa-restore PATH [options]')
+    parser.add_option('-t', '--target-folder', dest='target_folder', help='restore items to specific folder', metavar='PATH')
+    options, args = parser.parse_args()
     options.foreground = True
     Service('backup', options=options, args=args, logname='restore').start()
     
