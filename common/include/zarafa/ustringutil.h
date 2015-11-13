@@ -44,11 +44,12 @@
 #ifndef ustringutil_INCLUDED
 #define ustringutil_INCLUDED
 
+#include <zarafa/zconfig.h>
 #include <zarafa/zcdefs.h>
 #include <zarafa/ZarafaCode.h>
 #include <string>
 
-#if HAVE_ICU
+#ifdef ZCP_USES_ICU
 #include <unicode/coll.h>
 #include <unicode/sortkey.h>
 typedef Locale ECLocale;

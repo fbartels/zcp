@@ -2,7 +2,7 @@ AC_PREREQ(2.60)
 m4_define([zarafa_version], esyscmd(tr -d '\n' <version.in))
 AC_INIT([Zarafa], [zarafa_version], [zarafa-dev@zarafa.com])
 AC_CONFIG_SRCDIR([provider/server/ECServer.cpp])
-AC_CONFIG_HEADERS([common/config.h])
+AC_CONFIG_HEADERS([common/config.h common/include/zarafa/zconfig.h])
 AC_CONFIG_AUX_DIR([autoconf])
 AC_CONFIG_MACRO_DIR([autoconf])
 AM_INIT_AUTOMAKE([1.10 foreign subdir-objects])
@@ -665,12 +665,16 @@ if test "$want_icu" = "no"; then
 elif test "$want_icu" = "auto"; then
 	AC_CHECK_ICU([3.4],
 		[ have_icu=1 
-		  AC_DEFINE([HAVE_ICU], [1], [Defined if the requested minimum ICU version is satisfied]) ],
+		  AC_DEFINE([HAVE_ICU], [1], [Defined if the requested minimum ICU version is satisfied])
+		  AC_DEFINE([ZCP_USES_ICU], [1], [Defined if ZCP was built with ICU])
+		],
 		[ have_icu=0 ])
 elif test "$want_icu" = "yes"; then
 	AC_CHECK_ICU([3.4],
 		[ have_icu=1 
-		  AC_DEFINE([HAVE_ICU], [1], [Defined if the requested minimum ICU version is satisfied]) ])
+		  AC_DEFINE([HAVE_ICU], [1], [Defined if the requested minimum ICU version is satisfied])
+		  AC_DEFINE([ZCP_USES_ICU], [1], [Defined if ZCP was built with ICU])
+		])
 fi
 AM_CONDITIONAL([HAVE_ICU], [ test "$have_icu" -eq 1 ])
 

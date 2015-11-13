@@ -9,6 +9,8 @@ Makefile.in
 *.mo
 *.o
 .dirstamp
+stamp-h1
+stamp-h2
 @
 
 # /
@@ -59,7 +61,7 @@ Makefile.in
 /common/config.h*
 /common/ecversion.h
 /common/include/zarafa/ecversion.h
-/common/stamp-h1
+/common/include/zarafa/zconfig.h
 /common/zarafa.pc
 
 # /doc/
