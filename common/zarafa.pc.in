@@ -8,4 +8,4 @@ Description: Zarafa custom development
 Version: @PACKAGE_VERSION@
 Requires:
 Libs: -L${libdir} -lmapi
-Cflags: -I${includedir} -I${includedir}/mapi4linux -DUNICODE
+Cflags: -I${includedir} -I${includedir}/mapi4linux -DUNICODE @ICU_CFLAGS@
