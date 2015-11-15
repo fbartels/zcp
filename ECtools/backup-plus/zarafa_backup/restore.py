@@ -67,12 +67,45 @@ class Service(zarafa.Service):
                             subfolder.create_item(loads=zlib.decompress(db[sourcekey2]))
                             stats['changes'] += 1
 
+def show_contents_rec(data_path, options):
+    if os.path.exists(data_path+'/path'):
+        path = file(data_path+'/path').read()
+        if not options.folders or path in options.folders:
+            name = path.split('/')[-1]
+            if options.stats:
+                count = 0
+                if os.path.exists(data_path+'/index'):
+                    with closing(dbhash.open(data_path+'/index', 'c')) as db:
+                        count = len(db.keys())
+                print path+' '+str(count)
+            if options.index:
+                print path
+                if os.path.exists(data_path+'/index'):
+                    with closing(dbhash.open(data_path+'/index', 'c')) as db:
+                        items = []
+                        for key, value in db.iteritems():
+                            d = pickle.loads(value)
+                            items.append((key, d))
+                        items.sort(key=lambda (k, d): d['last_modified'])
+                        for key, d in items:
+                            print key, d['last_modified'], d['subject']
+    for f in os.listdir(data_path+'/folders'):
+        d = data_path+'/folders/'+f
+        if os.path.isdir(d):
+            show_contents_rec(d, options)
+
 def main():
     parser = zarafa.parser('ckpsufUPlSbe', usage='zarafa-restore PATH [options]')
     parser.add_option('-t', '--target-folder', dest='target_folder', help='restore items to specific folder', metavar='PATH')
+    parser.add_option('', '--stats', dest='stats', action='store_true', help='show statistics for backup')
+    parser.add_option('', '--index', dest='index', action='store_true', help='show index for backup')
     options, args = parser.parse_args()
     options.foreground = True
-    Service('backup', options=options, args=args, logname='restore').start()
+
+    if options.stats or options.index:
+        show_contents_rec(args[0], options)
+    else:
+        Service('backup', options=options, args=args, logname='restore').start()
     
 if __name__ == '__main__':
     main()
