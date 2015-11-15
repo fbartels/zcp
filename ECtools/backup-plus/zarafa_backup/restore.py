@@ -74,24 +74,22 @@ def show_contents_rec(data_path, options):
     if os.path.exists(data_path+'/path'):
         path = file(data_path+'/path').read()
         if not options.folders or path in options.folders:
-            name = path.split('/')[-1]
+            items = []
+            if os.path.exists(data_path+'/index'):
+                with closing(dbhash.open(data_path+'/index', 'c')) as db:
+                    for key, value in db.iteritems():
+                        d = pickle.loads(value)
+                        if ((options.period_begin and d['last_modified'] < options.period_begin) or
+                            (options.period_end and d['last_modified'] >= options.period_end)):
+                            continue
+                        items.append((key, d))
             if options.stats:
-                count = 0
-                if os.path.exists(data_path+'/index'):
-                    with closing(dbhash.open(data_path+'/index', 'c')) as db:
-                        count = len(db.keys())
-                print path+' '+str(count)
-            if options.index:
+                print path, len(items)
+            elif options.index:
+                items.sort(key=lambda (k, d): d['last_modified'])
                 print path
-                if os.path.exists(data_path+'/index'):
-                    with closing(dbhash.open(data_path+'/index', 'c')) as db:
-                        items = []
-                        for key, value in db.iteritems():
-                            d = pickle.loads(value)
-                            items.append((key, d))
-                        items.sort(key=lambda (k, d): d['last_modified'])
-                        for key, d in items:
-                            print key, d['last_modified'], d['subject']
+                for key, d in items:
+                    print key, d['last_modified'], d['subject']
     for f in os.listdir(data_path+'/folders'):
         d = data_path+'/folders/'+f
         if os.path.isdir(d):
