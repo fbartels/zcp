@@ -54,7 +54,10 @@ class Service(zarafa.Service):
             with closing(dbhash.open(folder_path+'/index', 'c')) as db:
                 index = dict((a, pickle.loads(b)) for (a,b) in db.iteritems())
             with closing(dbhash.open(folder_path+'/items', 'c')) as db:
-                for sourcekey2 in db.iterkeys():
+                sourcekeys = db.keys()
+                if self.options.sourcekeys:
+                    sourcekeys = [sk for sk in sourcekeys if sk in self.options.sourcekeys]
+                for sourcekey2 in sourcekeys:
                     with log_exc(self.log, stats):
                         last_modified = index[sourcekey2]['last_modified']
                         if ((self.options.period_begin and last_modified < self.options.period_begin) or
@@ -99,9 +102,9 @@ def main():
     parser.add_option('-t', '--target-folder', dest='target_folder', help='restore items to specific folder', metavar='PATH')
     parser.add_option('', '--stats', dest='stats', action='store_true', help='show statistics for backup')
     parser.add_option('', '--index', dest='index', action='store_true', help='show index for backup')
+    parser.add_option('', '--sourcekey', dest='sourcekeys', action='append', help='restore specific sourcekey')
     options, args = parser.parse_args()
     options.foreground = True
-
     if options.stats or options.index:
         show_contents_rec(args[0], options)
     else:
