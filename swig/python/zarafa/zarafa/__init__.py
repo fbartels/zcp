@@ -2114,7 +2114,7 @@ class Item(object):
         stream.Commit(0)
         attach.SaveChanges(KEEP_OPEN_READWRITE)
         self.mapiobj.SaveChanges(KEEP_OPEN_READWRITE) # XXX needed?
-        # XXX return attachment..
+        return Attachment(attach)
 
     def header(self, name):
         """ Return transport message header with given name """
