@@ -167,6 +167,10 @@ class Service(zarafa.Service):
             xpath = file(folder_path+'/path').read().decode('utf8')
             if self.options.folders and xpath not in self.options.folders:
                 continue
+            if self.options.sourcekeys:
+                with closing(dbhash.open(folder_path+'/items', 'c')) as db:
+                    if not [sk for sk in self.options.sourcekeys if sk in db]:
+                        continue
             self.log.info('restoring folder %s' % xpath)
             restore_path = self.options.restore_root+'/'+xpath if self.options.restore_root else xpath
             subfolder = subtree.folder(restore_path, create=True)
