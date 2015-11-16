@@ -1506,7 +1506,7 @@ class Folder(object):
         """ Folder name """
 
         try:
-            return self.prop(PR_DISPLAY_NAME_W).value
+            return self.prop(PR_DISPLAY_NAME_W).value.replace('/', '\\/')
         except MAPIErrorNotFound:
             if self.entryid == self.store.root.entryid: # Root folder's PR_DISPLAY_NAME_W is never set
                 return u'ROOT'
@@ -1712,18 +1712,19 @@ class Folder(object):
             :param key: name or entryid
         """
 
-        if len(key) == 96:
+        if '/' in key.replace('\\/', ''): # XXX MAPI folders may contain '/' (and '\') in their names..
+            subfolder = self
+            for name in key.replace('\\/', '\\SLASH\\').split('/'): # XXX SLASH, unicode?
+                name = name.replace('\\SLASH\\', '\\/')
+                subfolder = subfolder.folder(name, create=create, recurse=False)
+            return subfolder
+
+        elif len(key) == 96:
             try:
                 folder = Folder(self, key.decode('hex')) # XXX: What about creat=True, do we want to check if it is a valid entryid and then create the folder?
                 return folder
             except (MAPIErrorInvalidEntryid, MAPIErrorNotFound, TypeError):
                 pass
-
-        elif '/' in key: # XXX MAPI folders may contain '/' (and '\') in their names..
-            subfolder = self
-            for name in key.split('/'):
-                subfolder = subfolder.folder(name, create=create, recurse=False)
-            return subfolder
 
         matches = [f for f in self.folders(recurse=recurse) if f.entryid == key or f.name == key]
         if len(matches) == 0:
@@ -1768,6 +1769,7 @@ class Folder(object):
                     yield subfolder
 
     def create_folder(self, name, **kwargs):
+        name = name.replace('\\/', '/')
         mapifolder = self.mapiobj.CreateFolder(FOLDER_GENERIC, unicode(name), u'', None, MAPI_UNICODE)
         folder = Folder(self.store, HrGetOneProp(mapifolder, PR_ENTRYID).Value)
         for key, val in kwargs.items():
