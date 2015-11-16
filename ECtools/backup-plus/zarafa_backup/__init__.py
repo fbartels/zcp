@@ -61,8 +61,8 @@ class BackupWorker(zarafa.Worker):
         for subfolder in folder.folders(recurse=False):
             sub_sourcekeys.add(subfolder.sourcekey)
             if (not store.public and \
-                (options.skip_junk and subfolder == store.junk) or \
-                (options.skip_deleted and subfolder == store.wastebasket)):
+                ((options.skip_junk and subfolder == store.junk) or \
+                 (options.skip_deleted and subfolder == store.wastebasket))):
                 continue
             self.backup_folder_rec(store, subfolder, path+['folders', subfolder.sourcekey], basepath, config, options, stats) # recursion
         if not filter_:
@@ -132,7 +132,7 @@ class Service(zarafa.Service):
         self.log.info('restoring to store %s' % store.guid)
         t0 = time.time()
         stats = {'changes': 0, 'errors': 0}
-        self.restore_rec(self.data_path, store.subtree, stats)
+        self.restore_rec(store, self.data_path, store.subtree, stats)
         self.log.info('restore completed in %.2f seconds (%d changes, ~%.2f/sec, %d errors)' % (time.time()-t0, stats['changes'], stats['changes']/(time.time()-t0), stats['errors']))
 
     def create_jobs(self):
@@ -158,10 +158,10 @@ class Service(zarafa.Service):
                 jobs.append((store, None, os.path.join(output_dir, target)))
         return [(job[0].guid,)+job[1:] for job in sorted(jobs, reverse=True, key=lambda x: x[0].size)]
 
-    def restore_rec(self, path, subtree, stats):
+    def restore_rec(self, store, path, subtree, stats):
         for sourcekey in os.listdir(path+'/folders'):
             folder_path = path+'/folders/'+sourcekey
-            self.restore_rec(folder_path, subtree, stats) # recursion
+            self.restore_rec(store, folder_path, subtree, stats) # recursion
             if not os.path.exists(folder_path+'/path'):
                 continue
             xpath = file(folder_path+'/path').read().decode('utf8')
@@ -171,9 +171,13 @@ class Service(zarafa.Service):
                 with closing(dbhash.open(folder_path+'/items', 'c')) as db:
                     if not [sk for sk in self.options.sourcekeys if sk in db]:
                         continue
-            self.log.info('restoring folder %s' % xpath)
             restore_path = self.options.restore_root+'/'+xpath if self.options.restore_root else xpath
             subfolder = subtree.folder(restore_path, create=True)
+            if (not store.public and \
+                ((self.options.skip_junk and subfolder == store.junk) or \
+                (self.options.skip_deleted and subfolder == store.wastebasket))):
+                    continue
+            self.log.info('restoring folder %s' % restore_path)
             existing = set()
             for item in subfolder:
                 for proptag in (PR_SOURCE_KEY, PR_ZC_ORIGINAL_SOURCE_KEY):
