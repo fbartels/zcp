@@ -2058,13 +2058,13 @@ ECRESULT ECFileAttachment::MarkAttachmentForDeletion(ULONG ulInstanceId)
 	string filename = CreateAttachmentFilename(ulInstanceId, m_bFileCompression);
 
 	if(rename(filename.c_str(), string(filename+".deleted").c_str()) == 0)
-		goto exit; /* successed */
+		goto exit; /* succeeded */
 
 	if (errno == ENOENT) {
 		// retry with another filename
 		filename = CreateAttachmentFilename(ulInstanceId, !m_bFileCompression);
 		if(rename(filename.c_str(), string(filename+".deleted").c_str()) == 0)
-			goto exit; /* successed */		
+			goto exit; /* succeeded */
 	}
 
 	// FIXME log in all errno cases
@@ -2094,13 +2094,13 @@ ECRESULT ECFileAttachment::RestoreMarkedAttachment(ULONG ulInstanceId)
 	string filename = CreateAttachmentFilename(ulInstanceId, m_bFileCompression);
 
 	if(rename(string(filename+".deleted").c_str(), filename.c_str()) == 0)
-        goto exit; /* successed */
+        goto exit; /* succeeded */
 
 	if (errno == ENOENT) {
 		// retry with another filename
 		filename = CreateAttachmentFilename(ulInstanceId, !m_bFileCompression);
 		if(rename(string(filename+".deleted").c_str(), filename.c_str()) == 0)
-			goto exit; /* successed */
+			goto exit; /* succeeded */
 	}
 	
     if (errno == EACCES || errno == EPERM)
