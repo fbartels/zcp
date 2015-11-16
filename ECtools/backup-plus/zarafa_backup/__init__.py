@@ -201,7 +201,8 @@ class Service(zarafa.Service):
                             self.log.warning('duplicate item with sourcekey %s' % sourcekey2)
                         else:
                             self.log.debug('restoring item with sourcekey %s' % sourcekey2)
-                            subfolder.create_item(loads=zlib.decompress(db[sourcekey2]))
+                            item = subfolder.create_item()
+                            item.loads(zlib.decompress(db[sourcekey2]), attachments=not self.options.skip_attachments)
                             stats['changes'] += 1
 
     def _store(self, username):
