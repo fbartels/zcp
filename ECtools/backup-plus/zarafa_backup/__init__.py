@@ -118,7 +118,7 @@ class Service(zarafa.Service):
         self.log.info('queue processed in %.2f seconds (%d changes, ~%.2f/sec, %d errors)' % (time.time()-t0, changes, changes/(time.time()-t0), errors))
 
     def restore(self):
-        self.data_path = self.args[0] # XXX
+        self.data_path = self.args[0]
         self.log.info('starting restore of %s' % self.data_path)
         username = os.path.split(self.data_path)[1]
         if self.options.users:
@@ -225,7 +225,7 @@ def show_contents_rec(data_path, options):
             show_contents_rec(d, options)
 
 def main():
-    parser = zarafa.parser('ckpsufwUPCSlObe')
+    parser = zarafa.parser('ckpsufwUPCSlObe', usage='zarafa-backup [PATH] [options]')
     parser.add_option('-J', '--skip-junk', dest='skip_junk', action='store_true', help='do not backup junk mail')
     parser.add_option('-D', '--skip-deleted', dest='skip_deleted', action='store_true', help='do not backup deleted mail')
     parser.add_option('-N', '--skip-public', dest='skip_public', action='store_true', help='do not backup public store')
@@ -237,6 +237,8 @@ def main():
     parser.add_option('', '--sourcekey', dest='sourcekeys', action='append', help='restore specific sourcekey', metavar='SOURCEKEY')
     options, args = parser.parse_args()
     options.foreground = True
+    if options.restore or options.stats or options.index:
+        assert (len(args) == 1 and os.path.isdir(args[0])), 'please specify path to backup data'
     if options.stats or options.index:
         show_contents_rec(args[0], options)
     else:
