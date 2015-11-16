@@ -2273,21 +2273,18 @@ class InputValidator {
 		 * @return validated input or NULL
 		 */
 		char* operator()(char *szInput) {
+			m_bFailure = true;
 			wstring strInput;
 
 			if (!szInput)
 				return NULL;
 
-			if (TryConvert(szInput, strInput) != hrSuccess) {
-				m_bFailure = true;
+			if (TryConvert(szInput, strInput) != hrSuccess)
 				return NULL;
-			}
 
 			for (wstring::const_iterator i = strInput.begin(); i != strInput.end(); ++i)
-				if (!iswprint(*i)) {
-					m_bFailure = true;
+				if (!iswprint(*i))
 					return NULL;
-				}
 			m_bFailure = false;
 			return szInput;
 		}
