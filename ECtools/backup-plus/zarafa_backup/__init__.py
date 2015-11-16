@@ -217,9 +217,8 @@ def show_contents_rec(data_path, options):
                 print path, len(items)
             elif options.index:
                 items.sort(key=lambda (k, d): d['last_modified'])
-                print path
                 for key, d in items:
-                    print key, d['last_modified'], d['subject']
+                    print path, key, d['last_modified'], d['subject']
     for f in os.listdir(data_path+'/folders'):
         d = data_path+'/folders/'+f
         if os.path.isdir(d):
