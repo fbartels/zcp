@@ -2376,7 +2376,7 @@ class Item(object):
     def dumps(self, attachments=True):
         return pickle.dumps(self._dump(attachments=attachments), pickle.HIGHEST_PROTOCOL)
 
-    def _load(self, d):
+    def _load(self, d, attachments):
         # props
         props = []
         for proptag, value, nameid in d['props']:
@@ -2392,26 +2392,27 @@ class Item(object):
         self.mapiobj.ModifyRecipients(0, recipients)
 
         # attachments
-        for props, data in d['attachments']:
-            props = [SPropValue(proptag, value) for (proptag, value, nameid) in props]
-            (id_, attach) = self.mapiobj.CreateAttach(None, 0)
-            attach.SetProps(props)
-            if isinstance(data, dict):
-                msg = attach.OpenProperty(PR_ATTACH_DATA_OBJ, IID_IMessage, 0, MAPI_CREATE | MAPI_MODIFY)
-                item = Item(mapiobj=msg)
-                item._load(data) # recursion
-            else:
-                stream = attach.OpenProperty(PR_ATTACH_DATA_BIN, IID_IStream, STGM_WRITE|STGM_TRANSACTED, MAPI_MODIFY | MAPI_CREATE)
-                stream.Write(data)
-                stream.Commit(0)
-            attach.SaveChanges(KEEP_OPEN_READWRITE)
+        if attachments: # XXX breaks embedded msg
+            for props, data in d['attachments']:
+                props = [SPropValue(proptag, value) for (proptag, value, nameid) in props]
+                (id_, attach) = self.mapiobj.CreateAttach(None, 0)
+                attach.SetProps(props)
+                if isinstance(data, dict):
+                    msg = attach.OpenProperty(PR_ATTACH_DATA_OBJ, IID_IMessage, 0, MAPI_CREATE | MAPI_MODIFY)
+                    item = Item(mapiobj=msg)
+                    item._load(data, attachments) # recursion
+                else:
+                    stream = attach.OpenProperty(PR_ATTACH_DATA_BIN, IID_IStream, STGM_WRITE|STGM_TRANSACTED, MAPI_MODIFY | MAPI_CREATE)
+                    stream.Write(data)
+                    stream.Commit(0)
+                attach.SaveChanges(KEEP_OPEN_READWRITE)
         self.mapiobj.SaveChanges(KEEP_OPEN_READWRITE) # XXX needed?
 
-    def load(self, f):
-        self._load(pickle.load(f))
+    def load(self, f, attachments=True):
+        self._load(pickle.load(f), attachments)
 
-    def loads(self, s):
-        self._load(pickle.loads(s))
+    def loads(self, s, attachments=True):
+        self._load(pickle.loads(s), attachments)
 
     def __unicode__(self):
         return u'Item(%s)' % self.subject
