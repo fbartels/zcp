@@ -1,9 +1,11 @@
 #!/usr/bin/env python
+import csv
 from contextlib import closing
 import cPickle as pickle
 import dbhash
 from multiprocessing import Queue
 import os.path
+import sys
 import time
 import zlib
 
@@ -160,6 +162,8 @@ class Service(zarafa.Service):
         for sourcekey in os.listdir(path+'/folders'):
             folder_path = path+'/folders/'+sourcekey
             self.restore_rec(folder_path, subtree, stats) # recursion
+            if not os.path.exists(folder_path+'/path'):
+                continue
             xpath = file(folder_path+'/path').read().decode('utf8')
             if self.options.folders and xpath not in self.options.folders:
                 continue
@@ -201,6 +205,7 @@ class Service(zarafa.Service):
         else: return self.server.user(username).store
 
 def show_contents_rec(data_path, options):
+    writer = csv.writer(sys.stdout)
     if os.path.exists(data_path+'/path'):
         path = file(data_path+'/path').read()
         if not options.folders or path in options.folders:
@@ -214,11 +219,11 @@ def show_contents_rec(data_path, options):
                             continue
                         items.append((key, d))
             if options.stats:
-                print path, len(items)
+                writer.writerow([path, len(items)])
             elif options.index:
                 items.sort(key=lambda (k, d): d['last_modified'])
                 for key, d in items:
-                    print path, key, d['last_modified'], d['subject']
+                    writer.writerow([key, path, d['last_modified'], d['subject'].encode(sys.stdout.encoding or 'utf8')])
     for f in os.listdir(data_path+'/folders'):
         d = data_path+'/folders/'+f
         if os.path.isdir(d):
