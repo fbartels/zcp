@@ -3,4 +3,4 @@ import sys
 import zarafa_backup.backup
 
 if __name__ == '__main__':
-    sys.exit(zarafa_backup.backup.main())
+    sys.exit(zarafa_backup.main())

@@ -1,11 +1,9 @@
 # -*- Makefile -*-
 
-noinst_SCRIPTS = zarafa-backup zarafa-restore
+noinst_SCRIPTS = zarafa-backup
 
 EXTRA_DIST = setup.py \
-	zarafa_backup/__init__.py \
-	zarafa_backup/backup.py \
-	zarafa_backup/restore.py
+	zarafa_backup/__init__.py
 
 #install-exec-local:
 #	cd ${srcdir} && ${PYTHON} setup.py install -f \
