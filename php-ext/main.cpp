@@ -249,6 +249,18 @@ ZEND_END_ARG_INFO()
 #include <zarafa/charset/utf8string.h>
 #include "charset/localeutil.h"
 
+#define PMEASURE_FUNC pmeasure __pmobject(__PRETTY_FUNCTION__);
+
+class pmeasure {
+public:
+	pmeasure(const std::string &);
+	~pmeasure(void);
+
+private:
+	std::string what;
+	unsigned long long start_ts;
+};
+
 using namespace std;
 
 static ECLogger *lpLogger = NULL;
@@ -256,6 +268,37 @@ static ECLogger *lpLogger = NULL;
 #define MAPI_ASSERT_EX
 
 static bool perf_measure = false;
+
+pmeasure::pmeasure(const std::string &whatIn)
+{
+	if (!perf_measure)
+		return;
+	what = whatIn;
+	struct timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	start_ts = ts.tv_sec * 1000 * 1000 + ts.tv_nsec / 1000;
+}
+
+pmeasure::~pmeasure(void)
+{
+	if (!perf_measure)
+		return;
+	struct timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+
+	FILE *fh = fopen(LOGFILE_PATH "/php-mapi-pm.log", "a+");
+	if (fh == NULL) {
+		if (lpLogger != NULL)
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "Cannot open %s/php-mapi-pm.log: %s", LOGFILE_PATH, strerror(errno));
+		return;
+	}
+
+	unsigned long long int now = ts.tv_sec * 1000 * 1000 + ts.tv_nsec / 1000;
+	unsigned long long int tdiff = now - start_ts;
+
+	fprintf(fh, "%lld %s\n", tdiff, what.c_str());
+	fclose(fh);
+}
 
 /* function list so that the Zend engine will know what's here */
 zend_function_entry mapi_functions[] =
@@ -542,46 +585,6 @@ static int InitLogfile(void)
 	HrSetLogger(lpLogger);
 	return SUCCESS;
 }
-
-class pmeasure {
-private:
-	std::string what;
-	unsigned long long start_ts;
-
-public:
-	pmeasure(const std::string &whatIn)
-	{
-		if (!perf_measure)
-			return;
-		what = whatIn;
-		struct timespec ts;
-		(void)clock_gettime(CLOCK_MONOTONIC, &ts);
-		start_ts = ts.tv_sec * 1000 * 1000 + ts.tv_nsec / 1000;
-	}
-
-	~pmeasure()
-	{
-		if (!perf_measure)
-			return;
-		struct timespec ts;
-		(void)clock_gettime(CLOCK_MONOTONIC, &ts);
-
-		FILE *fh = fopen(LOGFILE_PATH "/php-mapi-pm.log", "a+");
-		if (fh == NULL) {
-			if (lpLogger != NULL)
-				lpLogger->Log(EC_LOGLEVEL_ERROR, "Cannot open %s/php-mapi-pm.log: %s", LOGFILE_PATH, strerror(errno));
-			return;
-		}
-
-		unsigned long long int now = ts.tv_sec * 1000 * 1000 + ts.tv_nsec / 1000;
-		unsigned long long int tdiff = now - start_ts;
-
-		fprintf(fh, "%lld %s\n", tdiff, what.c_str());
-		fclose(fh);
-	}
-};
-
-#define PMEASURE_FUNC pmeasure __pmobject(__PRETTY_FUNCTION__);
 
 /**
 * Initfunction for the module, will be called once at server startup
