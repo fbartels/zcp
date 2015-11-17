@@ -168,7 +168,8 @@ enum {
 	OPT_ENABLE_FEATURE,
 	OPT_DISABLE_FEATURE,
 	OPT_SELECT_NODE,
-	OPT_RESET_FOLDER_COUNT
+	OPT_RESET_FOLDER_COUNT,
+	OPT_VERSION,
 };
 
 static const struct option long_options[] = {
@@ -228,6 +229,7 @@ static const struct option long_options[] = {
 	{ "disable-feature", 1, NULL, OPT_DISABLE_FEATURE },
 	{ "node", 1, NULL, OPT_SELECT_NODE },
 	{ "reset-folder-count", 1, NULL, OPT_RESET_FOLDER_COUNT },
+	{ "version", no_argument, NULL, OPT_VERSION },
 	{ NULL, 0, NULL, 0 }
 };
 
@@ -356,6 +358,7 @@ static void print_help(const char *name)
 	ct.AddColumn(0, "-h path"); ct.AddColumn(1, "Connect through <path>, e.g. file:///var/run/socket");
 	ct.AddColumn(0, "--node name"); ct.AddColumn(1, "Execute the command on cluster node <name>");
 	ct.AddColumn(0, "-V"); ct.AddColumn(1, "Print version info.");
+	ct.AddColumn(0, "--version"); ct.AddColumn(1, "Print version info.");
 	ct.AddColumn(0, "--help"); ct.AddColumn(1, "Show this help text.");
 	ct.PrintTable();
 	cout << endl;
@@ -2789,6 +2792,7 @@ int main(int argc, char* argv[])
 				       feature = my_optarg;
 				       bFeature = (c == OPT_ENABLE_FEATURE);
 				       break;
+			case OPT_VERSION:
 			case 'V':
 				       cout << "Product version:\t" << PROJECT_VERSION_PROFADMIN_STR << endl
 					       << "File version:\t\t" << PROJECT_SVN_REV_STR << endl;
