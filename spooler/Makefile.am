@@ -20,7 +20,7 @@ zarafa_dagent_LDADD = ${top_builddir}/inetmapi/libinetmapi.la \
 	${top_builddir}/common/libzcp_common_ssl.la \
 	${top_builddir}/ECtools/libzarafa-archiver.la \
 	${top_builddir}/ECtools/libzarafa-archiver-core.la \
-	$(PROG_LIBS) $(SSL_LIBS) $(PYTHON_LIBS) $(XML2_LIBS)
+	$(PROG_LIBS) $(SSL_LIBS) $(PYTHON_LIBS) $(XML2_LIBS) ${icu_uc_LIBS}
 
 zarafa_spooler_LDADD = ${top_builddir}/inetmapi/libinetmapi.la \
 	${top_builddir}/mapi4linux/src/libmapi.la \
