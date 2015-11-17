@@ -9,7 +9,7 @@ import sys
 import time
 import zlib
 
-from MAPI.Util import PR_SOURCE_KEY, PR_ZC_ORIGINAL_SOURCE_KEY, MAPIErrorNotFound
+from MAPI.Util import PR_SOURCE_KEY, PR_EC_BACKUP_SOURCE_KEY, MAPIErrorNotFound
 
 import zarafa
 from zarafa import log_exc
@@ -180,7 +180,7 @@ class Service(zarafa.Service):
             self.log.info('restoring folder %s' % restore_path)
             existing = set()
             for item in subfolder:
-                for proptag in (PR_SOURCE_KEY, PR_ZC_ORIGINAL_SOURCE_KEY):
+                for proptag in (PR_SOURCE_KEY, PR_EC_BACKUP_SOURCE_KEY):
                     try:
                         existing.add(item.prop(proptag).mapiobj.Value.encode('hex').upper())
                     except MAPIErrorNotFound:
