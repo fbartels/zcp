@@ -41,6 +41,7 @@
  *
  */
 
+#include "config.h"
 #include <zarafa/platform.h>
 #include "mapidefs.h"
 #include <zarafa/ECChannel.h>
@@ -73,7 +74,7 @@ using namespace std;
 #include <zarafa/UnixUtil.h>
 #endif
 
-#if HAVE_ICU
+#ifdef ZCP_USES_ICU
 #include <unicode/uclean.h>
 #endif
 
@@ -405,7 +406,7 @@ exit:
 	// Cleanup libxml2 library
 	xmlCleanupParser();
 
-#if HAVE_ICU
+#ifdef ZCP_USES_ICU
 	// cleanup ICU data so valgrind is happy
 	u_cleanup();
 #endif

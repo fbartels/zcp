@@ -41,6 +41,7 @@
  *
  */
 
+#include "config.h"
 #include <zarafa/platform.h>
 #include <csignal>
 
@@ -87,7 +88,7 @@
 #include <zarafa/UnixUtil.h>
 #endif
 
-#if HAVE_ICU
+#ifdef ZCP_USES_ICU
 #include <unicode/uclean.h>
 #endif
 
@@ -851,7 +852,7 @@ exit:
 	WSACleanup();
 #endif
 
-#if HAVE_ICU
+#ifdef ZCP_USES_ICU
 	// cleanup ICU data so valgrind is happy
 	u_cleanup();
 #endif

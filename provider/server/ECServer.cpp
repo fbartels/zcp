@@ -41,6 +41,7 @@
  *
  */
 
+#include "config.h"
 #include <zarafa/platform.h>
 #include <zarafa/ecversion.h>
 #include <zarafa/stringutil.h>
@@ -94,7 +95,7 @@
 #include "ECProcessPriority.h"
 #endif
 
-#if HAVE_ICU
+#ifdef ZCP_USES_ICU
 #include <unicode/uclean.h>
 #endif
 
@@ -1752,7 +1753,7 @@ exit:
 	if (g_lpAudit)
 		g_lpAudit->Release();
 
-#if HAVE_ICU
+#ifdef ZCP_USES_ICU
 	// cleanup ICU data so valgrind is happy
 	u_cleanup();
 #endif
