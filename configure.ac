@@ -20,6 +20,7 @@ AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PATH_PROG(PROG_XMLTO, xmlto)	# not an error if not found, just no manual pages
 AC_PATH_PROG(PROG_ANT, ant)		# not an error if not found, no 'make dist' (waxt package)
+PKG_PROG_PKG_CONFIG
 
 AC_PATH_PROG([SWIG_EXEC], [swig])
 AS_IF([test "x$SWIG_EXEC" = "x"], [AC_MSG_ERROR([Cannot find swig binary])])
@@ -659,25 +660,32 @@ BOOST_SMART_PTR
 BOOST_FILESYSTEM([mt])
 BOOST_DATE_TIME([mt])
 
+dnl The "Locale" class is in icu-uc.
+dnl The "CollationKey" class is in icu-i18n.
+have_icu_uc=0
+have_icu_i18n=0
 AC_ARG_ENABLE(icu, AC_HELP_STRING([--enable-icu],[enable icu support]), [want_icu=${enableval}],[want_icu=auto])
-if test "$want_icu" = "no"; then
-	have_icu=0
-elif test "$want_icu" = "auto"; then
-	AC_CHECK_ICU([3.4],
-		[ have_icu=1 
-		  AC_DEFINE([ZCP_USES_ICU], [1], [Defined if ZCP was built with ICU])
-		],
-		[ have_icu=0 ])
-elif test "$want_icu" = "yes"; then
-	AC_CHECK_ICU([3.4],
-		[ have_icu=1 
-		  AC_DEFINE([ZCP_USES_ICU], [1], [Defined if ZCP was built with ICU])
-		])
-fi
+AS_IF(
+	[test "$want_icu" = "auto"], [
+		PKG_CHECK_MODULES([icu_uc], [icu-uc], [have_icu_uc=1], [])
+		PKG_CHECK_MODULES([icu_i18n], [icu-i18n], [have_icu_i18n=1], [])
+	],
+	[test "$want_icu" = "yes"], [
+		PKG_CHECK_MODULES([icu_uc], [icu-uc])
+		PKG_CHECK_MODULES([icu_i18n], [icu-i18n])
+		have_icu_uc=1
+		have_icu_i18n=1
+	]
+)
+AS_IF([test "$have_icu_uc" = 1 && test "$have_icu_i18n" = 1], [
+	have_icu=1
+	AC_DEFINE([ZCP_USES_ICU], [1], [Defined if ZCP was built with ICU])
+])
 AM_CONDITIONAL([HAVE_ICU], [ test "$have_icu" -eq 1 ])
+ZCPPFLAGS="$ZCPPFLAGS $icu_uc_CFLAGS $icu_i18n_CFLAGS"
 
 # all libs for programs, because functions are in static common stuff
-PROG_LIBS="$UUID_LIBS $INTL_LIBS $ICONV_LIBS $GZ_LIBS $ICU_LIBS"
+PROG_LIBS="$UUID_LIBS $INTL_LIBS $ICONV_LIBS $GZ_LIBS"
 AC_SUBST(PROG_LIBS)
 
 # done testing C++ requirements
@@ -800,7 +808,7 @@ Boost		:
  Flags		:	$BOOST_CPPFLAGS
  FS ldflags	:	$BOOST_FILESYSTEM_LDFLAGS
  FS libs	:	$BOOST_FILESYSTEM_LIBS
-ICU libs	:	$ICU_LIBS
+ICU libs	:	$icu_uc_LIBS $icu_i18n_LIBS
 Python flags	:	$PYTHON_INCLUDES
 Python libs	:	$PYTHON_LIBS
 ])

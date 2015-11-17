@@ -14,7 +14,7 @@ zarafa_gateway_LDADD = ${top_builddir}/inetmapi/libinetmapi.la \
 	${top_builddir}/common/libzcp_common_mapi.la \
 	${top_builddir}/common/libzcp_common_util.la \
 	${top_builddir}/common/libzcp_common_ssl.la \
-	${PROG_LIBS} ${CRYPTO_LIBS} ${SSL_LIBS} ${XML2_LIBS}
+	${PROG_LIBS} ${CRYPTO_LIBS} ${SSL_LIBS} ${XML2_LIBS} ${icu_uc_LIBS}
 
 zarafa_gateway_SOURCES = Gateway.cpp POP3.cpp POP3.h IMAP.cpp IMAP.h ClientProto.h
 

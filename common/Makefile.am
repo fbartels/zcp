@@ -47,7 +47,7 @@ EXTRA_libzcp_common_util_la_DEPENDENCIES = ${top_builddir}/default.sym
 
 if HAVE_ICU
 libzcp_common_util_la_SOURCES += ustringutil/utfutil.cpp
-libzcp_common_util_la_LIBADD += ${ICU_LIBS}
+libzcp_common_util_la_LIBADD += ${icu_uc_LIBS} ${icu_i18n_LIBS}
 endif
 
 #

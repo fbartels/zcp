@@ -22,7 +22,7 @@ zarafa_server_LDADD = \
 	${top_builddir}/common/libzcp_common_util.la \
 	${top_builddir}/common/libzcp_common_mapi.la \
 	${top_builddir}/common/libzcp_common_ssl.la \
-	$(PROG_LIBS)															\
+	$(PROG_LIBS) ${icu_uc_LIBS} \
 	$(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS) $(ICU_LIBS) $(DL_LIBS)	\
 	$(MYSQL_LIBS) $(SSL_LIBS) $(PAM_LIBS) $(KRB5_LIBS) $(TCMALLOC_LIBS) -lrt
 
