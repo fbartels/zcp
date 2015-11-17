@@ -2374,6 +2374,16 @@ exit:
 	return hr;
 }
 
+static void missing_quota(int hard, int warn, int soft)
+{
+	if (hard == -1)
+		cerr << " hard quota (--qh)";
+	if (warn == -1)
+		cerr << " warn quota (--qw)";
+	if (soft == -1)
+		cerr << " soft quota (--qs)";
+}
+
 int main(int argc, char* argv[])
 {
 	HRESULT hr = hrSuccess;
@@ -2822,19 +2832,19 @@ int main(int argc, char* argv[])
 
 	// check empty input
 	if (username && username[0] == 0x00) {
-		cerr << "Username cannot be empty" << endl;
+		cerr << "Username (-u) cannot be empty" << endl;
 		return 1;
 	}
 	if (username && stricmp(username, "SYSTEM")==0) {
-		cerr << "Username cannot be SYSTEM" << endl;
+		cerr << "Username (-u) cannot be SYSTEM" << endl;
 		return 1;
 	}
 	if (password && password[0] == 0x00) {
-		cerr << "Password cannot be empty" << endl;
+		cerr << "Password (-p) cannot be empty" << endl;
 		return 1;
 	}
 	if (companyname && companyname[0] == 0x00){
-		cerr << "Companyname cannot be empty" << endl;
+		cerr << "Companyname (-I) cannot be empty" << endl;
 		return 1;
 	}
 	if (groupname && groupname[0] == 0x00) {
@@ -2842,11 +2852,11 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 	if (fullname && fullname[0] == 0x00) {
-		cerr << "Fullname cannot be empty" << endl;
+		cerr << "Fullname (-f) cannot be empty" << endl;
 		return 1;
 	}
 	if (emailadr && emailadr[0] == 0x00) {
-		cerr << "Email address cannot be empty" << endl;
+		cerr << "Email address (-e) cannot be empty" << endl;
 		return 1;
 	}
 
@@ -2864,13 +2874,13 @@ int main(int argc, char* argv[])
 	}
 
 	if (mode == MODE_INVALID) {
-		cerr << "No correct command given." << endl;
+		cerr << "No correct command (e.g. -c for create user) given." << endl;
 		return 1;
 	}
 
 	if (mode == MODE_HELP) {
 		print_help(argv[0]);
-		cout << endl << "Please read zarafa-admin(8) for detailed information by typing 'man zarafa-admin'." << endl << endl;
+		cout << endl << "Please read zarafa-admin(8) for detailed information. Enter `man zarafa-admin` to view it." << endl << endl;
 		return 0;
 	}
 
@@ -2912,7 +2922,9 @@ int main(int argc, char* argv[])
 	}
 	if (mode == MODE_CREATE_USER && quota == 1 && (quotahard == -1 || quotawarn == -1 || quotasoft == -1)) {
 		cerr << "Not all user specific quota levels are given." << endl;
-		cerr << "Missing information to create user." << endl;
+		cerr << "Missing information to create user:";
+		missing_quota(quotahard, quotawarn, quotasoft);
+		cerr << endl;
 		return 1;
 	}
 
@@ -2920,12 +2932,18 @@ int main(int argc, char* argv[])
 			((quota == 1 && quotawarn == -1) ||
 			 (ud_quota == 1 && (ud_quotahard == -1 || ud_quotasoft == -1 || ud_quotawarn == -1)))) {
 		cerr << "Not all company specific quota levels are given." << endl;
-		cerr << "Missing information to create company." << endl;
+		cerr << "Missing information to create company:";
+
+		if (quota == 1 && quotawarn == -1)
+			cerr << " warn quota (--qw)";
+		if (ud_quota == 1)
+			missing_quota(ud_quotahard, ud_quotawarn, ud_quotasoft);
+		cerr << endl;
 		return 1;
 	}
 
 	if (mode == MODE_CREATE_STORE && username == NULL) {
-		cerr << "Missing information to create store." << endl;
+		cerr << "Missing username (-u) to be able to create store." << endl;
 		return 1;
 	}
 
@@ -2935,17 +2953,22 @@ int main(int argc, char* argv[])
 	}
 
 	if (mode == MODE_HOOK_STORE && (storeguid == NULL || (username == NULL && bCopyToPublic == false) ) ) {
-		cerr << "Missing information to hook store." << endl;
+		cerr << "Missing information to hook store:";
+		if (storeguid == NULL)
+			cerr << " store GUID (--hook-store)";
+		if (username == NULL && bCopyToPublic == false)
+			cerr << " username (-u)";
+		cerr << endl;
 		return 1;
 	}
 
 	if (mode == MODE_UNHOOK_STORE && username == NULL) {
-		cerr << "Missing information to unhook store." << endl;
+		cerr << "Missing username (-u) to unhook store for." << endl;
 		return 1;
 	}
 
 	if (mode == MODE_REMOVE_STORE && storeguid == NULL) {
-		cerr << "Missing information to remove store." << endl;
+		cerr << "Missing guid (--remove-store) to remove store for." << endl;
 		return 1;
 	}
 
@@ -2954,91 +2977,111 @@ int main(int argc, char* argv[])
 			quota == -1 && quotahard == -1 && quotasoft == -1 && quotawarn == -1 &&
 			mr_accept == -1 && mr_decline_conflict == -1 && mr_decline_recurring == -1 &&
 			sendas_user == NULL && isnonactive == -1 && feature == NULL) {
-		cerr << "Missing information to update user." << endl;
+		cerr << "Missing information to update user (e.g. password, quota, see --help)." << endl;
 		return 1;
 	}
 
 	if (mode == MODE_DELETE_USER && username == NULL) {
-		cerr << "Missing information to delete user." << endl;
+		cerr << "Missing username (-u) to delete." << endl;
 		return 1;
 	}
 
 	if (mode == MODE_CREATE_GROUP && groupname == NULL) {
-		cerr << "Missing information to create group." << endl;
+		cerr << "Missing name of group (-g) to create." << endl;
 		return 1;
 	}
 
 	if (mode == MODE_UPDATE_GROUP && (groupname == NULL || (emailadr == NULL && sendas_user == NULL) ) ) {
-		cerr << "Missing information to update group." << endl;
+		cerr << "Missing information to update group:";
+		if (!groupname)
+			cerr << " group name";
+		if (!emailadr && !sendas_user)
+			cerr << " either e-mail address (-e) or \"send-as user\" (--add-sendas)";
+		cerr << endl;
 		return 1;
 	}
 
 	if (mode == MODE_DELETE_GROUP && groupname == NULL) {
-		cerr << "Missing information to delete group." << endl;
+		cerr << "Missing name of group (-G) to delete." << endl;
 		return 1;
 	}
 
 	if (mode == MODE_ADDUSER_GROUP && (groupname == NULL || username == NULL)) {
-		cerr << "Missing information to add user to group." << endl;
+		cerr << "Missing information to add user to group:";
+		if (!groupname)
+			cerr << " group name (-i)";
+		if (!username)
+			cerr << " user name";
+		cerr << endl;
 		return 1;
 	}
 
 	if (mode == MODE_DELETEUSER_GROUP && (groupname == NULL || username == NULL)) {
-		cerr << "Missing information to remove user from group." << endl;
+		cerr << "Missing information to remove user from group:";
+		if (!groupname)
+			cerr << " group name (-i)";
+		if (!username)
+			cerr << " user name";
+		cerr << endl;
 		return 1;
 	}
 
 	if (mode == MODE_CREATE_COMPANY && companyname == NULL) {
-		cerr << "Missing information to create company" << endl;
+		cerr << "Missing name of company to create." << endl;
 		return 1;
 	}
 
 	if (mode == MODE_UPDATE_COMPANY &&
 			((quota == 1 && quotawarn == -1) ||
 			 (ud_quota == 1 && (ud_quotahard == -1 || ud_quotasoft == -1 || ud_quotawarn == -1)))) {
-		cerr << "Missing information to update company." << endl;
+		cerr << "Missing information to update company:";
+		if (quota == 1 && quotawarn == -1)
+			cerr << " warn quota (--qw)";
+		if (ud_quota == 1)
+			missing_quota(ud_quotahard, ud_quotawarn, ud_quotasoft);
+		cerr << endl;
 		return 1;
 	}
 
 	if (mode == MODE_DELETE_COMPANY && companyname == NULL) {
-		cerr << "Missing information to delete company" << endl;
+		cerr << "Missing name of company to delete." << endl;
 		return 1;
 	}
 
 	if (mode == MODE_ADD_VIEW && set_companyname == NULL) {
-		cerr << "Missing information to add remote view privilege" << endl;
+		cerr << "Missing company name to add remote view privilege to." << endl;
 		return 1;
 	}
 
 	if (mode == MODE_DEL_VIEW && set_companyname == NULL) {
-		cerr << "Missing information to delete remote view privilege" << endl;
+		cerr << "Missing company name to delete remote view privilege to." << endl;
 		return 1;
 	}
 
 	if (mode == MODE_ADD_ADMIN && username == NULL) {
-		cerr << "Missing information to add remote administrator" << endl;
+		cerr << "Missing username to add remote administrator to." << endl;
 		return 1;
 	}
 
 	if (mode == MODE_DEL_ADMIN && username == NULL) {
-		cerr << "Missing information to delete remote administrator" << endl;
+		cerr << "Missing username to delete remote administration privilege for." << endl;
 		return 1;
 	}
 
 	if (mode == MODE_SYSTEM_ADMIN && username == NULL) {
-		cerr << "Missing information to set system administrator" << endl;
+		cerr << "Missing username to set system administrator privilege for." << endl;
 		return 1;
 	}
 
 	if ((mode == MODE_ADD_USERQUOTA_RECIPIENT || mode == MODE_DEL_USERQUOTA_RECIPIENT ||
 				mode == MODE_ADD_COMPANYQUOTA_RECIPIENT || mode == MODE_DEL_COMPANYQUOTA_RECIPIENT) &&
 			username == NULL) {
-		cerr << "Missing information to edit quota recipients" << endl;
+		cerr << "Missing username to edit quota recipients for." << endl;
 		return 1;
 	}
 
 	if (mode == MODE_RESET_FOLDER_COUNT && username == NULL) {
-		cerr << "Missing information to reset folder counts" << endl;
+		cerr << "Missing username to reset folder counts for." << endl;
 		return 1;
 	}
 
@@ -3052,7 +3095,7 @@ int main(int argc, char* argv[])
 
 	// check warnings
 	if (new_username != NULL && mode != MODE_UPDATE_USER) {
-		cerr << "WARNING: new username '" << new_username << "' will be ignored."  << endl;
+		cerr << "WARNING: new username \"" << new_username << "\" will be ignored (only used for -U)."  << endl;
 	}
 
 	if ((quota == 0 && (quotawarn >= 0 || quotasoft >= 0 || quotahard >= 0)) ||
@@ -3436,7 +3479,7 @@ int main(int argc, char* argv[])
 						cerr << "Unable to copy the store to the public," << getMapiCodeString(hr) << endl;
 						goto exit;
 					} else if (hr != hrSuccess) {
-						cerr << "Warning, the copy succeeded, but not all entries were copied" << endl;
+						cerr << "Warning, the copy succeeded, but not all entries were copied (" << getMapiCodeString(hr) << ")" << endl;
 						break;
 					} else {
 						cerr << "Copy succeeded" << endl;
