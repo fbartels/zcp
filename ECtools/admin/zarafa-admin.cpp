@@ -2888,9 +2888,27 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	if (mode == MODE_CREATE_USER && (username == NULL || (password == NULL && passprompt == 0 && isnonactive < 1) || emailadr == NULL || fullname == NULL) ) {
-		cerr << "Missing information to create user." << endl;
-		return 1;
+	if (mode == MODE_CREATE_USER) {
+		bool has_username = username != NULL;
+		bool has_password = !(password == NULL && passprompt == 0 && isnonactive < 1);
+		bool has_emailaddr = emailadr != NULL;
+		bool has_fullname = fullname != NULL;
+
+		if (!has_username || !has_password || !has_emailaddr || !has_fullname) {
+			cerr << "Missing information to create user:";
+
+			if (!has_username)
+				cerr << " username (-u)";
+			if (!has_password)
+				cerr << " password (-p)";
+			if (!has_emailaddr)
+				cerr << " email address (-e)";
+			if (!has_fullname)
+				cerr << " full name (-f)";
+
+			cerr << endl;
+			return EXIT_FAILURE;
+		}
 	}
 	if (mode == MODE_CREATE_USER && quota == 1 && (quotahard == -1 || quotawarn == -1 || quotasoft == -1)) {
 		cerr << "Not all user specific quota levels are given." << endl;
@@ -3293,6 +3311,7 @@ int main(int argc, char* argv[])
 			hr = lpServiceAdmin->CreateUser(&sECUser, 0, &cbUserId, &lpUserId);
 			if(hr != hrSuccess) {
 				cerr << "Unable to create user, " << getMapiCodeString(hr, username) << endl;
+				cerr << "Check server.log for details." << endl;
 				goto exit;
 			}
 
