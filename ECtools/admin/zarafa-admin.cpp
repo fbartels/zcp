@@ -94,8 +94,6 @@
 
 using namespace std;
 
-static bool verbose = false;
-
 enum modes {
 	MODE_INVALID = 0, MODE_LIST_USERS, MODE_CREATE_PUBLIC,
 	MODE_CREATE_USER, MODE_CREATE_STORE, MODE_HOOK_STORE, MODE_UNHOOK_STORE,
@@ -169,6 +167,7 @@ enum {
 	OPT_DISABLE_FEATURE,
 	OPT_SELECT_NODE,
 	OPT_RESET_FOLDER_COUNT,
+	OPT_VERBOSITY,
 	OPT_VERSION,
 };
 
@@ -229,6 +228,7 @@ static const struct option long_options[] = {
 	{ "disable-feature", 1, NULL, OPT_DISABLE_FEATURE },
 	{ "node", 1, NULL, OPT_SELECT_NODE },
 	{ "reset-folder-count", 1, NULL, OPT_RESET_FOLDER_COUNT },
+	{ "verbose", required_argument, NULL, OPT_VERBOSITY },
 	{ "version", no_argument, NULL, OPT_VERSION },
 	{ NULL, 0, NULL, 0 }
 };
@@ -357,6 +357,8 @@ static void print_help(const char *name)
 	ct.Resize(4,2);
 	ct.AddColumn(0, "-h path"); ct.AddColumn(1, "Connect through <path>, e.g. file:///var/run/socket");
 	ct.AddColumn(0, "--node name"); ct.AddColumn(1, "Execute the command on cluster node <name>");
+	ct.AddColumn(0, "-v"); ct.AddColumn(1, "Increase verbosity. A maximum of 7 is possible where 1=fatal errors only, 6=debug and 7=everything.");
+	ct.AddColumn(0, "--verbosity x"); ct.AddColumn(1, "Set verbosity to value 'x': 0...7 (0 = disable)");
 	ct.AddColumn(0, "-V"); ct.AddColumn(1, "Print version info.");
 	ct.AddColumn(0, "--version"); ct.AddColumn(1, "Print version info.");
 	ct.AddColumn(0, "--help"); ct.AddColumn(1, "Show this help text.");
@@ -2474,6 +2476,7 @@ int main(int argc, char* argv[])
 	IMAPIFolder *lpRootFolder = NULL;
 	ULONG ulObjType = 0;
 	ULONG ulCachePurgeMode = PURGE_CACHE_ALL;
+	unsigned int loglevel = EC_LOGLEVEL_NONE;
 
 	ECLogger *lpLogger = NULL;
 
@@ -2512,8 +2515,12 @@ int main(int argc, char* argv[])
 		if (c == -1)
 			break;
 		switch (c) {
+			case OPT_VERBOSITY:
+				loglevel = strtoul(my_optarg, NULL, 0);
+				break;
 			case 'v':
-				verbose = true;
+				if (loglevel < EC_LOGLEVEL_DEBUG + 1)
+					++loglevel;
 				break;
 			case 'l':
 				mode = MODE_LIST_USERS;
@@ -3089,8 +3096,10 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	if (verbose)
-		lpLogger = new ECLogger_File(EC_LOGLEVEL_FATAL, 0, "-", false);
+	if (loglevel > EC_LOGLEVEL_DEBUG)
+		loglevel = EC_LOGLEVEL_ALWAYS;
+	if (loglevel > EC_LOGLEVEL_NONE)
+		lpLogger = new ECLogger_File(loglevel, 0, "-", false);
 	else
 		lpLogger = new ECLogger_Null();
 
