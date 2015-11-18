@@ -690,10 +690,10 @@ Looks at command-line to see if another server address or other related options 
 
         # start talking dirty
         self.mapistore = GetDefaultStore(self.mapisession)
-        self.admin_store = Store(self, self.mapistore)
         self.sa = self.mapistore.QueryInterface(IID_IECServiceAdmin)
         self.ems = self.mapistore.QueryInterface(IID_IExchangeManageStore)
-        self.ab = self.mapisession.OpenAddressBook(0, None, 0) # XXX
+        self._ab = None
+        self._admin_store = None
         self._gab = None
         entryid = HrGetOneProp(self.mapistore, PR_STORE_ENTRYID).Value
         self.pseudo_url = entryid[entryid.find('pseudo:'):-1] # XXX ECSERVER
@@ -726,6 +726,19 @@ Looks at command-line to see if another server address or other related options 
                 self._archive_sessions[host] = None # XXX avoid subsequent timeouts for now
                 raise ZarafaException("could not connect to server at '%s'" % host)
         return self._archive_sessions[host]
+
+    @property
+    def ab(self):
+        """ Address Book """
+        if not self._ab:
+            self._ab = self.mapisession.OpenAddressBook(0, None, 0) # XXX
+        return self._ab
+
+    @property
+    def admin_store(self):
+        if not self._admin_store:
+            self._admin_store = Store(self, self.mapistore)
+        return self._admin_store
 
     @property
     def gab(self):
