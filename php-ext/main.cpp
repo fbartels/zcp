@@ -545,6 +545,9 @@ PHP_MINFO_FUNCTION(mapi)
 	php_info_print_table_end();
 }
 
+#define CE_PHP_MAPI_PERFORMANCE_TRACE_FILE "php_mapi_performance_trace_file"
+#define CE_PHP_MAPI_DEBUG "php_mapi_debug"
+
 static int LoadSettingsFile(void)
 {
 #ifdef LINUX 
@@ -562,8 +565,8 @@ static int LoadSettingsFile(void)
 			{ "log_timestamp", "0" },
 			{ "log_buffer_size", "4096" },
 			{ "log_buffer_size", "4096" },
-			{ "php_mapi_performance_trace_file", "" },
-			{ "php_mapi_debug", "0" },
+			{ CE_PHP_MAPI_PERFORMANCE_TRACE_FILE, "" },
+			{ CE_PHP_MAPI_DEBUG, "0" },
 			{ NULL, NULL }
 		};
 
@@ -574,13 +577,13 @@ static int LoadSettingsFile(void)
                 if (cfg->LoadSettings(cfg_file))
 			lpLogger = CreateLogger(cfg, "php-mapi", "PHPMapi");
 
-		const char *temp = cfg->GetSetting("php_mapi_performance_trace_file");
+		const char *temp = cfg->GetSetting(CE_PHP_MAPI_PERFORMANCE_TRACE_FILE);
 		if (temp != NULL) {
 			perf_measure_file = strdup(temp);
 			lpLogger->Log(EC_LOGLEVEL_INFO, "Performance measuring enabled");
 		}
 
-		temp = cfg->GetSetting("php_mapi_debug");
+		temp = cfg->GetSetting(CE_PHP_MAPI_DEBUG);
 		if (temp != NULL)
 			mapi_debug = strtoul(temp, NULL, 0);
 
