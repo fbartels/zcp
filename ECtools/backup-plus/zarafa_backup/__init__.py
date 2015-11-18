@@ -132,8 +132,56 @@ class Service(zarafa.Service):
         self.log.info('restoring to store %s' % store.guid)
         t0 = time.time()
         stats = {'changes': 0, 'errors': 0}
-        self.restore_rec(store, self.data_path, store.subtree, stats)
+        path_folder = folder_struct(self.data_path, self.options)
+        paths = self.options.folders or sorted(path_folder.keys())
+        for path in paths:
+            if path not in path_folder:
+                self.log.error('no such folder: %s' % path)
+                stats['errors'] += 1
+            else:
+                data_path = path_folder[path]
+                self.restore_folder(path, data_path, store, store.subtree, stats)
         self.log.info('restore completed in %.2f seconds (%d changes, ~%.2f/sec, %d errors)' % (time.time()-t0, stats['changes'], stats['changes']/(time.time()-t0), stats['errors']))
+
+    def restore_folder(self, path, data_path, store, subtree, stats):
+        if self.options.sourcekeys:
+            with closing(dbhash.open(data_path+'/items', 'c')) as db:
+                if not [sk for sk in self.options.sourcekeys if sk in db]:
+                    return
+        restore_path = self.options.restore_root+'/'+path if self.options.restore_root else path
+        subfolder = subtree.folder(restore_path, create=True)
+        if (not store.public and \
+            ((self.options.skip_junk and subfolder == store.junk) or \
+            (self.options.skip_deleted and subfolder == store.wastebasket))):
+                return
+        if not self.options.sourcekeys:
+            self.log.info('restoring folder %s' % restore_path)
+        existing = set()
+        for item in subfolder:
+            for proptag in (PR_SOURCE_KEY, PR_EC_BACKUP_SOURCE_KEY):
+                try:
+                    existing.add(item.prop(proptag).mapiobj.Value.encode('hex').upper())
+                except MAPIErrorNotFound:
+                    pass
+        with closing(dbhash.open(data_path+'/index', 'c')) as db:
+            index = dict((a, pickle.loads(b)) for (a,b) in db.iteritems())
+        with closing(dbhash.open(data_path+'/items', 'c')) as db:
+            sourcekeys = db.keys()
+            if self.options.sourcekeys:
+                sourcekeys = [sk for sk in sourcekeys if sk in self.options.sourcekeys]
+            for sourcekey2 in sourcekeys:
+                with log_exc(self.log, stats):
+                    last_modified = index[sourcekey2]['last_modified']
+                    if ((self.options.period_begin and last_modified < self.options.period_begin) or
+                        (self.options.period_end and last_modified >= self.options.period_end)):
+                        continue
+                    if sourcekey2 in existing:
+                        self.log.warning('duplicate item with sourcekey %s' % sourcekey2)
+                    else:
+                        self.log.debug('restoring item with sourcekey %s' % sourcekey2)
+                        item = subfolder.create_item()
+                        item.loads(zlib.decompress(db[sourcekey2]), attachments=not self.options.skip_attachments)
+                        stats['changes'] += 1
 
     def create_jobs(self):
         output_dir = self.options.output_dir or ''
@@ -157,53 +205,6 @@ class Service(zarafa.Service):
                     target = store.guid
                 jobs.append((store, None, os.path.join(output_dir, target)))
         return [(job[0].guid,)+job[1:] for job in sorted(jobs, reverse=True, key=lambda x: x[0].size)]
-
-    def restore_rec(self, store, path, subtree, stats):
-        for sourcekey in os.listdir(path+'/folders'):
-            folder_path = path+'/folders/'+sourcekey
-            self.restore_rec(store, folder_path, subtree, stats) # recursion
-            if not os.path.exists(folder_path+'/path'):
-                continue
-            xpath = file(folder_path+'/path').read().decode('utf8')
-            if self.options.folders and xpath not in self.options.folders:
-                continue
-            if self.options.sourcekeys:
-                with closing(dbhash.open(folder_path+'/items', 'c')) as db:
-                    if not [sk for sk in self.options.sourcekeys if sk in db]:
-                        continue
-            restore_path = self.options.restore_root+'/'+xpath if self.options.restore_root else xpath
-            subfolder = subtree.folder(restore_path, create=True)
-            if (not store.public and \
-                ((self.options.skip_junk and subfolder == store.junk) or \
-                (self.options.skip_deleted and subfolder == store.wastebasket))):
-                    continue
-            self.log.info('restoring folder %s' % restore_path)
-            existing = set()
-            for item in subfolder:
-                for proptag in (PR_SOURCE_KEY, PR_EC_BACKUP_SOURCE_KEY):
-                    try:
-                        existing.add(item.prop(proptag).mapiobj.Value.encode('hex').upper())
-                    except MAPIErrorNotFound:
-                        pass
-            with closing(dbhash.open(folder_path+'/index', 'c')) as db:
-                index = dict((a, pickle.loads(b)) for (a,b) in db.iteritems())
-            with closing(dbhash.open(folder_path+'/items', 'c')) as db:
-                sourcekeys = db.keys()
-                if self.options.sourcekeys:
-                    sourcekeys = [sk for sk in sourcekeys if sk in self.options.sourcekeys]
-                for sourcekey2 in sourcekeys:
-                    with log_exc(self.log, stats):
-                        last_modified = index[sourcekey2]['last_modified']
-                        if ((self.options.period_begin and last_modified < self.options.period_begin) or
-                            (self.options.period_end and last_modified >= self.options.period_end)):
-                            continue
-                        if sourcekey2 in existing:
-                            self.log.warning('duplicate item with sourcekey %s' % sourcekey2)
-                        else:
-                            self.log.debug('restoring item with sourcekey %s' % sourcekey2)
-                            item = subfolder.create_item()
-                            item.loads(zlib.decompress(db[sourcekey2]), attachments=not self.options.skip_attachments)
-                            stats['changes'] += 1
 
     def _store(self, username):
         if '@' in username: # XXX
