@@ -213,30 +213,41 @@ class Service(zarafa.Service):
         elif username == 'Public': return self.server.public_store
         else: return self.server.user(username).store
 
-def show_contents_rec(data_path, options):
-    writer = csv.writer(sys.stdout)
+def folder_struct(data_path, options, mapper={}):
     if os.path.exists(data_path+'/path'):
         path = file(data_path+'/path').read()
-        if not options.folders or path in options.folders:
-            items = []
-            if os.path.exists(data_path+'/index'):
-                with closing(dbhash.open(data_path+'/index', 'c')) as db:
-                    for key, value in db.iteritems():
-                        d = pickle.loads(value)
-                        if ((options.period_begin and d['last_modified'] < options.period_begin) or
-                            (options.period_end and d['last_modified'] >= options.period_end)):
-                            continue
-                        items.append((key, d))
-            if options.stats:
-                writer.writerow([path, len(items)])
-            elif options.index:
-                items.sort(key=lambda (k, d): d['last_modified'])
-                for key, d in items:
-                    writer.writerow([key, path, d['last_modified'], d['subject'].encode(sys.stdout.encoding or 'utf8')])
+        mapper[path] = data_path
     for f in os.listdir(data_path+'/folders'):
         d = data_path+'/folders/'+f
         if os.path.isdir(d):
-            show_contents_rec(d, options)
+            folder_struct(d, options, mapper)
+    return mapper
+
+def show_contents(data_path, options):
+    writer = csv.writer(sys.stdout)
+    path_folder = folder_struct(data_path, options)
+    paths = options.folders or sorted(path_folder.keys())
+    for path in paths:
+        if path not in path_folder:
+            print 'no such folder:', path
+            sys.exit(-1)
+    for path in paths:
+        data_path = path_folder[path]
+        items = []
+        if os.path.exists(data_path+'/index'):
+            with closing(dbhash.open(data_path+'/index', 'c')) as db:
+                for key, value in db.iteritems():
+                    d = pickle.loads(value)
+                    if ((options.period_begin and d['last_modified'] < options.period_begin) or
+                        (options.period_end and d['last_modified'] >= options.period_end)):
+                        continue
+                    items.append((key, d))
+        if options.stats:
+            writer.writerow([path, len(items)])
+        elif options.index:
+            items.sort(key=lambda (k, d): d['last_modified'])
+            for key, d in items:
+                writer.writerow([key, path, d['last_modified'], d['subject'].encode(sys.stdout.encoding or 'utf8')])
 
 def main():
     parser = zarafa.parser('ckpsufwUPCSlObe', usage='zarafa-backup [PATH] [options]')
@@ -254,7 +265,7 @@ def main():
     if options.restore or options.stats or options.index:
         assert (len(args) == 1 and os.path.isdir(args[0])), 'please specify path to backup data'
     if options.stats or options.index:
-        show_contents_rec(args[0], options)
+        show_contents(args[0], options)
     else:
         Service('backup', options=options, args=args).start()
 
