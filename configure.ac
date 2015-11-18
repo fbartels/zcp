@@ -662,23 +662,30 @@ BOOST_DATE_TIME([mt])
 
 dnl The "Locale" class is in icu-uc.
 dnl The "CollationKey" class is in icu-i18n.
-have_icu_uc=0
-have_icu_i18n=0
+req_icu_uc="icu-uc"
+req_icu_i18n="icu-i18n"
 AC_ARG_ENABLE(icu, AC_HELP_STRING([--enable-icu],[enable icu support]), [want_icu=${enableval}],[want_icu=auto])
+PKG_CHECK_EXISTS([icu-uc], [have_icu=1], [have_icu=0])
+PKG_CHECK_EXISTS([icu-i18n], [have_icu=1], [have_icu=0])
+AS_IF([test "$have_icu" = 0], [
+	dnl RHEL 6 / icu 4.x
+	PKG_CHECK_EXISTS([icu], [
+		req_icu_uc="icu"
+		req_icu_i18n="icu"
+	])
+])
 AS_IF(
 	[test "$want_icu" = "auto"], [
-		PKG_CHECK_MODULES([icu_uc], [icu-uc], [have_icu_uc=1], [])
-		PKG_CHECK_MODULES([icu_i18n], [icu-i18n], [have_icu_i18n=1], [])
+		PKG_CHECK_MODULES([icu_uc], [$req_icu_uc], [have_icu=1], [have_icu=0])
+		PKG_CHECK_MODULES([icu_i18n], [$req_icu_i18n], [have_icu=1], [have_icu=0])
 	],
 	[test "$want_icu" = "yes"], [
-		PKG_CHECK_MODULES([icu_uc], [icu-uc])
-		PKG_CHECK_MODULES([icu_i18n], [icu-i18n])
-		have_icu_uc=1
-		have_icu_i18n=1
+		PKG_CHECK_MODULES([icu_uc], [$req_icu_uc])
+		PKG_CHECK_MODULES([icu_i18n], [$req_icu])
+		have_icu=1
 	]
 )
-AS_IF([test "$have_icu_uc" = 1 && test "$have_icu_i18n" = 1], [
-	have_icu=1
+AS_IF([test "$have_icu" = 1], [
 	AC_DEFINE([ZCP_USES_ICU], [1], [Defined if ZCP was built with ICU])
 ])
 AM_CONDITIONAL([HAVE_ICU], [ test "$have_icu" -eq 1 ])
