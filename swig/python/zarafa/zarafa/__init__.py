@@ -1353,7 +1353,7 @@ class Store(object):
         filter_names = None
         if parse and getattr(self.server.options, 'folders', None):
             for path in self.server.options.folders:
-                yield self.folder(path.decode(sys.stdin.encoding)) # XXX can optparse output unicode?
+                yield self.folder(path.decode(sys.stdin.encoding or 'utf8')) # XXX can optparse output unicode?
             return
 
         for folder in self.subtree.folders(recurse=recurse):
@@ -2383,8 +2383,6 @@ class Item(object):
             if nameid is not None:
                 proptag = self.mapiobj.GetIDsFromNames([nameid], MAPI_CREATE)[0] | (proptag & 0xffff)
             props.append(SPropValue(proptag, value))
-            if proptag == PR_SOURCE_KEY:
-                props.append(SPropValue(PR_ZC_ORIGINAL_SOURCE_KEY, value))
         self.mapiobj.SetProps(props)
 
         # recipients
