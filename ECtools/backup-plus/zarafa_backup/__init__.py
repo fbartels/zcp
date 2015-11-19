@@ -9,7 +9,7 @@ import sys
 import time
 import zlib
 
-from MAPI.Util import PR_SOURCE_KEY, PR_EC_BACKUP_SOURCE_KEY, MAPIErrorNotFound
+from MAPI.Util import PR_SOURCE_KEY, PR_EC_BACKUP_SOURCE_KEY, MAPIErrorNotFound, PT_ERROR, PROP_TYPE, SPropValue
 
 import zarafa
 from zarafa import log_exc
@@ -176,12 +176,13 @@ class Service(zarafa.Service):
         else:
             self.log.info('restoring folder %s' % path)
         existing = set()
-        for item in folder:
-            for proptag in (PR_SOURCE_KEY, PR_EC_BACKUP_SOURCE_KEY):
-                try:
-                    existing.add(item.prop(proptag).mapiobj.Value.encode('hex').upper())
-                except MAPIErrorNotFound:
-                    pass
+        table = folder.mapiobj.GetContentsTable(0)
+        table.SetColumns([PR_SOURCE_KEY, PR_EC_BACKUP_SOURCE_KEY], 0)
+        for row in table.QueryRows(-1, 0):
+            if PROP_TYPE(row[1].ulPropTag) != PT_ERROR:
+                existing.add(row[1].Value)
+            else:
+                existing.add(row[0].Value)
         with closing(dbhash.open(data_path+'/index', 'c')) as db:
             index = dict((a, pickle.loads(b)) for (a,b) in db.iteritems())
         with closing(dbhash.open(data_path+'/items', 'c')) as db:
@@ -194,12 +195,17 @@ class Service(zarafa.Service):
                     if ((self.options.period_begin and last_modified < self.options.period_begin) or
                         (self.options.period_end and last_modified >= self.options.period_end)):
                         continue
-                    if sourcekey2 in existing:
+                    if sourcekey2.decode('hex') in existing:
                         self.log.warning('skipping duplicate item with sourcekey %s' % sourcekey2)
                     else:
                         self.log.debug('restoring item with sourcekey %s' % sourcekey2)
                         item = folder.create_item()
                         item.loads(zlib.decompress(db[sourcekey2]), attachments=not self.options.skip_attachments)
+                        try:
+                            item.prop(PR_EC_BACKUP_SOURCE_KEY)
+                        except MAPIErrorNotFound:
+                            item.mapiobj.SetProps([SPropValue(PR_EC_BACKUP_SOURCE_KEY, sourcekey2.decode('hex'))])
+                            item.mapiobj.SaveChanges(0)
                         stats['changes'] += 1
 
     def _store(self, username):
