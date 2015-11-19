@@ -1484,7 +1484,8 @@ class Folder(object):
     @property
     def parent(self):
         """Return :class:`parent <Folder>` or None"""
-        # PR_PARENT_ENTRYID for the message store root folder is its own PR_ENTRYID
+        if self.entryid == self.store.root.entryid:
+            return None
         try:
             return Folder(self.store, self.prop(PR_PARENT_ENTRYID).value)
         except MAPIErrorNotFound: # XXX: Should not happen
