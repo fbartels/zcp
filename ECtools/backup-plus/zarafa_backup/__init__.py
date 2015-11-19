@@ -34,7 +34,10 @@ class BackupWorker(zarafa.Worker):
                 self.log.info('backing up: %s' % path)
                 stats = {'changes': 0, 'deletes': 0, 'errors': 0}
                 paths = set()
-                for folder in list(store.folders()):
+                folders = list(store.folders())
+                if options.recursive:
+                    folders = sum([[f]+list(f.folders()) for f in folders], [])
+                for folder in folders:
                     if (not store.public and \
                         ((options.skip_junk and folder == store.junk) or \
                          (options.skip_deleted and folder == store.wastebasket))):
@@ -46,7 +49,6 @@ class BackupWorker(zarafa.Worker):
                     for fpath in set(path_folder) - paths:
                         self.log.info('removing deleted folder: %s' % fpath)
                         assert os.system('rm -rf %s' % path_folder[fpath]) == 0
-
                 changes = stats['changes'] + stats['deletes']
                 self.log.info('backing up %s took %.2f seconds (%d changes, ~%.2f/sec, %d errors)' % (path, time.time()-t0, changes, changes/(time.time()-t0), stats['errors']))
             self.oqueue.put(stats)
@@ -130,6 +132,8 @@ class Service(zarafa.Service):
         stats = {'changes': 0, 'errors': 0}
         path_folder = folder_struct(self.data_path, self.options)
         paths = self.options.folders or sorted(path_folder.keys())
+        if self.options.recursive:
+            paths = [path2 for path2 in path_folder for path in paths if path2.startswith(path+'/')]
         for path in paths:
             if path not in path_folder:
                 self.log.error('no such folder: %s' % path)
@@ -238,7 +242,7 @@ def folder_path(folder, subtree):
 def show_contents(data_path, options):
     writer = csv.writer(sys.stdout)
     path_folder = folder_struct(data_path, options)
-    paths = options.folders or sorted(path_folder.keys())
+    paths = options.folders or sorted(path_folder)
     for path in paths:
         if path not in path_folder:
             print 'no such folder:', path
@@ -272,6 +276,7 @@ def main():
     parser.add_option('', '--stats', dest='stats', action='store_true', help='show statistics for backup')
     parser.add_option('', '--index', dest='index', action='store_true', help='show index for backup')
     parser.add_option('', '--sourcekey', dest='sourcekeys', action='append', help='restore specific sourcekey', metavar='SOURCEKEY')
+    parser.add_option('', '--recursive', dest='recursive', action='store_true', help='backup/restore folders recursively')
     options, args = parser.parse_args()
     options.foreground = True
     if options.restore or options.stats or options.index:
