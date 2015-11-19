@@ -417,6 +417,9 @@ def _extract_ipm_ol2007_entryids(blob, offset):
         else:
             pos += totallen
 
+def _encode(s):
+    return s.encode(sys.stdout.encoding or 'utf8')
+
 class ZarafaException(Exception):
     pass
 
@@ -542,7 +545,7 @@ Wrapper around MAPI properties
 
     # TODO: check if data is binary and convert it to hex
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
 class Table(object):
     """
@@ -1001,7 +1004,7 @@ Looks at command-line to see if another server address or other related options 
         return u'Server(%s)' % self.server_socket
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
 class Group(object):
     def __init__(self, name, server=None):
@@ -1077,7 +1080,7 @@ class Group(object):
         return u"Group('%s')" % self.name
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
 
 class Company(object):
@@ -1181,7 +1184,7 @@ class Company(object):
         return u"Company('%s')" % self._name
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
 class Store(object):
     """ 
@@ -1446,7 +1449,7 @@ class Store(object):
         return u"Store('%s')" % self.guid
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
 class Folder(object):
     """
@@ -1862,7 +1865,7 @@ class Folder(object):
         return u'Folder(%s)' % self.name
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
 class Item(object):
     """ Item """
@@ -2416,7 +2419,7 @@ class Item(object):
         return u'Item(%s)' % self.subject
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
 class Body:
     """ Body """
@@ -2471,7 +2474,7 @@ class Body:
         return u'Body()'
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
 class Occurrence(object):
     def __init__(self, item, start, end):
@@ -2486,7 +2489,7 @@ class Occurrence(object):
         return u'Occurrence(%s)' % self.subject
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
 
 class Recurrence:
@@ -2668,7 +2671,7 @@ class Recurrence:
         return u'Recurrence(start=%s - end=%s)' % (self.start, self.end)
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
 
 class Outofoffice(object):
@@ -2763,7 +2766,7 @@ class Outofoffice(object):
         return u'Outofoffice(%s)' % self.subject
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
     def update(self, **kwargs):
         """ Update function for outofoffice """
@@ -2804,7 +2807,7 @@ class Address:
         return u'Address(%s)' % (self._name or self.email)
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
 class Attachment(object):
     """ Attachment """
@@ -3055,7 +3058,7 @@ class User(object):
         return u"User('%s')" % self._name
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
     def _update(self, **kwargs):
         username = kwargs.get('username', self.name)
@@ -3160,7 +3163,7 @@ class Quota(object):
         return u'Quota(warning=%s, soft=%s, hard=%s)' % (_bytes_to_human(self.warning_limit), _bytes_to_human(self.soft_limit), _bytes_to_human(self.hard_limit))
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
 class Rule:
     def __init__(self, name, state): # XXX fix args
@@ -3171,7 +3174,7 @@ class Rule:
         return u"Rule('%s')" % self.name
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
 
 class TrackingContentsImporter(ECImportContentsChanges):
