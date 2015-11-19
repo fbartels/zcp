@@ -33,44 +33,39 @@ class BackupWorker(zarafa.Worker):
                 t0 = time.time()
                 self.log.info('backing up: %s' % path)
                 stats = {'changes': 0, 'deletes': 0, 'errors': 0}
-                self.backup_folder_rec(store, store.subtree, [], path, config, options, stats)
+                for folder in list(store.folders()):
+                    if (not store.public and \
+                        ((options.skip_junk and folder == store.junk) or \
+                         (options.skip_deleted and folder == store.wastebasket))):
+                        continue
+                    self.backup_folder(path, folder, store.subtree, config, options, stats)
+                path_folder = folder_struct(path, options)
+        #if not filter_:
+        #    if os.path.exists(folder_path+'/folders'):
+        #        stored_sourcekeys = set([x for x in os.listdir(folder_path+'/folders')])
+        #        for sourcekey in stored_sourcekeys-sub_sourcekeys:
+        #            self.log.info('removing deleted subfolder: %s' % folder_path+'/folders/'+sourcekey)
+        #            assert os.system('rm -rf %s' % folder_path+'/folders/'+sourcekey) == 0
                 changes = stats['changes'] + stats['deletes']
                 self.log.info('backing up %s took %.2f seconds (%d changes, ~%.2f/sec, %d errors)' % (path, time.time()-t0, changes, changes/(time.time()-t0), stats['errors']))
             self.oqueue.put(stats)
 
-    def backup_folder_rec(self, store, folder, path, basepath, config, options, stats):
-        filter_ = options.folders
-        folder_path = os.path.join(basepath, *path)
-        if path: # skip subtree folder itself
-            if not filter_ or folder.path in filter_:
-                assert os.system('mkdir -p %s/folders' % folder_path) == 0
-                file(folder_path+'/path', 'w').write(folder.path.encode('utf8'))
-                file(folder_path+'/folder', 'w').write(dump_props(folder.props()))
-                self.log.info('backing up folder: %s' % folder.path)
-                importer = FolderImporter(folder, folder_path, config, options, self.log, stats)
-                statepath = '%s/state' % folder_path
-                state = None
-                if os.path.exists(statepath):
-                    state = file(statepath).read()
-                    self.log.info('found previous folder sync state: %s' % state)
-                new_state = folder.sync(importer, state, log=self.log, stats=stats, begin=options.period_begin, end=options.period_end)
-                if new_state != state:
-                    file(statepath, 'w').write(new_state)
-                    self.log.info('saved folder sync state: %s' % new_state)
-        sub_sourcekeys = set()
-        for subfolder in folder.folders(recurse=False):
-            sub_sourcekeys.add(subfolder.sourcekey)
-            if (not store.public and \
-                ((options.skip_junk and subfolder == store.junk) or \
-                 (options.skip_deleted and subfolder == store.wastebasket))):
-                continue
-            self.backup_folder_rec(store, subfolder, path+['folders', subfolder.sourcekey], basepath, config, options, stats) # recursion
-        if not filter_:
-            if os.path.exists(folder_path+'/folders'):
-                stored_sourcekeys = set([x for x in os.listdir(folder_path+'/folders')])
-                for sourcekey in stored_sourcekeys-sub_sourcekeys:
-                    self.log.info('removing deleted subfolder: %s' % folder_path+'/folders/'+sourcekey)
-                    assert os.system('rm -rf %s' % folder_path+'/folders/'+sourcekey) == 0
+    def backup_folder(self, path, folder, subtree, config, options, stats):
+        data_path = path+'/'+folder_path(folder, subtree)
+        assert os.system('mkdir -p %s/folders' % data_path) == 0
+        file(data_path+'/path', 'w').write(folder.path.encode('utf8'))
+        file(data_path+'/folder', 'w').write(dump_props(folder.props()))
+        self.log.info('backing up folder: %s' % folder.path)
+        importer = FolderImporter(folder, data_path, config, options, self.log, stats)
+        statepath = '%s/state' % data_path
+        state = None
+        if os.path.exists(statepath):
+            state = file(statepath).read()
+            self.log.info('found previous folder sync state: %s' % state)
+        new_state = folder.sync(importer, state, log=self.log, stats=stats, begin=options.period_begin, end=options.period_end)
+        if new_state != state:
+            file(statepath, 'w').write(new_state)
+            self.log.info('saved folder sync state: %s' % new_state)
 
 class FolderImporter:
     def __init__(self, *args):
@@ -143,6 +138,29 @@ class Service(zarafa.Service):
                 self.restore_folder(path, data_path, store, store.subtree, stats)
         self.log.info('restore completed in %.2f seconds (%d changes, ~%.2f/sec, %d errors)' % (time.time()-t0, stats['changes'], stats['changes']/(time.time()-t0), stats['errors']))
 
+    def create_jobs(self):
+        output_dir = self.options.output_dir or ''
+        jobs = []
+        if self.options.companies or not (self.options.users or self.options.stores):
+            for company in self.server.companies():
+                companyname = company.name if company.name != 'Default' else ''
+                for user in company.users():
+                    jobs.append((user.store, user.name, os.path.join(output_dir, companyname, user.name)))
+                if not self.options.skip_public:
+                    target = 'public@'+companyname if companyname else 'public'
+                    jobs.append((company.public_store, None, os.path.join(output_dir, companyname, target)))
+        if self.options.users:
+            for user in self.server.users():
+                jobs.append((user.store, user.name, os.path.join(output_dir, user.name)))
+        if self.options.stores:
+            for store in self.server.stores():
+                if store.public:
+                    target = 'public' + ('@'+store.company.name if store.company.name != 'Default' else '')
+                else:
+                    target = store.guid
+                jobs.append((store, None, os.path.join(output_dir, target)))
+        return [(job[0].guid,)+job[1:] for job in sorted(jobs, reverse=True, key=lambda x: x[0].size)]
+
     def restore_folder(self, path, data_path, store, subtree, stats):
         if self.options.sourcekeys:
             with closing(dbhash.open(data_path+'/items', 'c')) as db:
@@ -183,29 +201,6 @@ class Service(zarafa.Service):
                         item.loads(zlib.decompress(db[sourcekey2]), attachments=not self.options.skip_attachments)
                         stats['changes'] += 1
 
-    def create_jobs(self):
-        output_dir = self.options.output_dir or ''
-        jobs = []
-        if self.options.companies or not (self.options.users or self.options.stores):
-            for company in self.server.companies():
-                companyname = company.name if company.name != 'Default' else ''
-                for user in company.users():
-                    jobs.append((user.store, user.name, os.path.join(output_dir, companyname, user.name)))
-                if not self.options.skip_public:
-                    target = 'public@'+companyname if companyname else 'public'
-                    jobs.append((company.public_store, None, os.path.join(output_dir, companyname, target)))
-        if self.options.users:
-            for user in self.server.users():
-                jobs.append((user.store, user.name, os.path.join(output_dir, user.name)))
-        if self.options.stores:
-            for store in self.server.stores():
-                if store.public:
-                    target = 'public' + ('@'+store.company.name if store.company.name != 'Default' else '')
-                else:
-                    target = store.guid
-                jobs.append((store, None, os.path.join(output_dir, target)))
-        return [(job[0].guid,)+job[1:] for job in sorted(jobs, reverse=True, key=lambda x: x[0].size)]
-
     def _store(self, username):
         if '@' in username: # XXX
             u, c = username.split('@')
@@ -218,11 +213,20 @@ def folder_struct(data_path, options, mapper={}):
     if os.path.exists(data_path+'/path'):
         path = file(data_path+'/path').read()
         mapper[path] = data_path
-    for f in os.listdir(data_path+'/folders'):
-        d = data_path+'/folders/'+f
-        if os.path.isdir(d):
-            folder_struct(d, options, mapper)
+    if os.path.exists(data_path+'/folders'):
+        for f in os.listdir(data_path+'/folders'):
+            d = data_path+'/folders/'+f
+            if os.path.isdir(d):
+                folder_struct(d, options, mapper)
     return mapper
+
+def folder_path(folder, subtree):
+    path = ''
+    parent = folder
+    while parent and parent != subtree:
+        path = '/folders/'+parent.sourcekey+path
+        parent = parent.parent
+    return path[1:]
 
 def show_contents(data_path, options):
     writer = csv.writer(sys.stdout)
