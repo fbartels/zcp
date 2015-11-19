@@ -135,8 +135,14 @@ class Service(zarafa.Service):
                 self.log.error('no such folder: %s' % path)
                 stats['errors'] += 1
             else:
+                restore_path = self.options.restore_root+'/'+path if self.options.restore_root else path
+                folder = store.subtree.folder(restore_path, create=True)
+                if (not store.public and \
+                    ((self.options.skip_junk and folder == store.junk) or \
+                    (self.options.skip_deleted and folder == store.wastebasket))):
+                        continue
                 data_path = path_folder[path]
-                self.restore_folder(path, data_path, store, store.subtree, stats)
+                self.restore_folder(folder, path, data_path, store, store.subtree, stats)
         self.log.info('restore completed in %.2f seconds (%d changes, ~%.2f/sec, %d errors)' % (time.time()-t0, stats['changes'], stats['changes']/(time.time()-t0), stats['errors']))
 
     def create_jobs(self):
@@ -162,21 +168,15 @@ class Service(zarafa.Service):
                 jobs.append((store, None, os.path.join(output_dir, target)))
         return [(job[0].guid,)+job[1:] for job in sorted(jobs, reverse=True, key=lambda x: x[0].size)]
 
-    def restore_folder(self, path, data_path, store, subtree, stats):
+    def restore_folder(self, folder, path, data_path, store, subtree, stats):
         if self.options.sourcekeys:
             with closing(dbhash.open(data_path+'/items', 'c')) as db:
                 if not [sk for sk in self.options.sourcekeys if sk in db]:
                     return
-        restore_path = self.options.restore_root+'/'+path if self.options.restore_root else path
-        subfolder = subtree.folder(restore_path, create=True)
-        if (not store.public and \
-            ((self.options.skip_junk and subfolder == store.junk) or \
-            (self.options.skip_deleted and subfolder == store.wastebasket))):
-                return
-        if not self.options.sourcekeys:
-            self.log.info('restoring folder %s' % restore_path)
+        else:
+            self.log.info('restoring folder %s' % path)
         existing = set()
-        for item in subfolder:
+        for item in folder:
             for proptag in (PR_SOURCE_KEY, PR_EC_BACKUP_SOURCE_KEY):
                 try:
                     existing.add(item.prop(proptag).mapiobj.Value.encode('hex').upper())
@@ -198,7 +198,7 @@ class Service(zarafa.Service):
                         self.log.warning('skipping duplicate item with sourcekey %s' % sourcekey2)
                     else:
                         self.log.debug('restoring item with sourcekey %s' % sourcekey2)
-                        item = subfolder.create_item()
+                        item = folder.create_item()
                         item.loads(zlib.decompress(db[sourcekey2]), attachments=not self.options.skip_attachments)
                         stats['changes'] += 1
 
