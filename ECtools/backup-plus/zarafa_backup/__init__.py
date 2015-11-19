@@ -33,19 +33,20 @@ class BackupWorker(zarafa.Worker):
                 t0 = time.time()
                 self.log.info('backing up: %s' % path)
                 stats = {'changes': 0, 'deletes': 0, 'errors': 0}
+                paths = set()
                 for folder in list(store.folders()):
                     if (not store.public and \
                         ((options.skip_junk and folder == store.junk) or \
                          (options.skip_deleted and folder == store.wastebasket))):
                         continue
+                    paths.add(folder.path)
                     self.backup_folder(path, folder, store.subtree, config, options, stats)
                 path_folder = folder_struct(path, options)
-        #if not filter_:
-        #    if os.path.exists(folder_path+'/folders'):
-        #        stored_sourcekeys = set([x for x in os.listdir(folder_path+'/folders')])
-        #        for sourcekey in stored_sourcekeys-sub_sourcekeys:
-        #            self.log.info('removing deleted subfolder: %s' % folder_path+'/folders/'+sourcekey)
-        #            assert os.system('rm -rf %s' % folder_path+'/folders/'+sourcekey) == 0
+                if not options.folders:
+                    for fpath in set(path_folder) - paths:
+                        self.log.info('removing deleted folder: %s' % fpath)
+                        assert os.system('rm -rf %s' % path_folder[fpath]) == 0
+
                 changes = stats['changes'] + stats['deletes']
                 self.log.info('backing up %s took %.2f seconds (%d changes, ~%.2f/sec, %d errors)' % (path, time.time()-t0, changes, changes/(time.time()-t0), stats['errors']))
             self.oqueue.put(stats)
@@ -194,7 +195,7 @@ class Service(zarafa.Service):
                         (self.options.period_end and last_modified >= self.options.period_end)):
                         continue
                     if sourcekey2 in existing:
-                        self.log.warning('duplicate item with sourcekey %s' % sourcekey2)
+                        self.log.warning('skipping duplicate item with sourcekey %s' % sourcekey2)
                     else:
                         self.log.debug('restoring item with sourcekey %s' % sourcekey2)
                         item = subfolder.create_item()
