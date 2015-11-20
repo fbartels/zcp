@@ -3,6 +3,7 @@ import csv
 from contextlib import closing
 import cPickle as pickle
 import dbhash
+import shutil
 from multiprocessing import Queue
 import os.path
 import sys
@@ -25,7 +26,8 @@ class BackupWorker(zarafa.Worker):
             with log_exc(self.log):
                 (storeguid, username, path) = self.iqueue.get()
                 store = server.store(storeguid)
-                assert os.system('mkdir -p %s' % path) == 0
+                if not os.path.isdir(path):
+                    os.makedirs(path)
                 if not options.folders:
                     if username:
                         file(path+'/user', 'w').write(dump_props(server.user(username).props()))
@@ -48,14 +50,16 @@ class BackupWorker(zarafa.Worker):
                 if not options.folders:
                     for fpath in set(path_folder) - paths:
                         self.log.info('removing deleted folder: %s' % fpath)
-                        assert os.system('rm -rf %s' % path_folder[fpath]) == 0
+                        shutil.rmtree(path_folder[fpath])
                 changes = stats['changes'] + stats['deletes']
-                self.log.info('backing up %s took %.2f seconds (%d changes, ~%.2f/sec, %d errors)' % (path, time.time()-t0, changes, changes/(time.time()-t0), stats['errors']))
+                self.log.info('backing up %s took %.2f seconds (%d changes, ~%.2f/sec, %d errors)' %
+                    (path, time.time()-t0, changes, changes/(time.time()-t0), stats['errors']))
             self.oqueue.put(stats)
 
     def backup_folder(self, path, folder, subtree, config, options, stats):
         data_path = path+'/'+folder_path(folder, subtree)
-        assert os.system('mkdir -p %s/folders' % data_path) == 0
+        if not os.path.isdir('%s/folders' % data_path):
+            os.makedirs('%s/folders' % data_path)
         file(data_path+'/path', 'w').write(folder.path.encode('utf8'))
         file(data_path+'/folder', 'w').write(dump_props(folder.props()))
         self.log.info('backing up folder: %s' % folder.path)
@@ -104,7 +108,8 @@ class Service(zarafa.Service):
 
     def backup(self):
         self.iqueue, self.oqueue = Queue(), Queue()
-        workers = [BackupWorker(self, 'backup%d'%i, nr=i, iqueue=self.iqueue, oqueue=self.oqueue) for i in range(self.config['worker_processes'])]
+        workers = [BackupWorker(self, 'backup%d'%i, nr=i, iqueue=self.iqueue, oqueue=self.oqueue)
+                       for i in range(self.config['worker_processes'])]
         for worker in workers:
             worker.start()
         jobs = self.create_jobs()
@@ -115,7 +120,8 @@ class Service(zarafa.Service):
         stats = [self.oqueue.get() for i in range(len(jobs))] # blocking
         changes = sum(s['changes'] + s['deletes'] for s in stats)
         errors = sum(s['errors'] for s in stats)
-        self.log.info('queue processed in %.2f seconds (%d changes, ~%.2f/sec, %d errors)' % (time.time()-t0, changes, changes/(time.time()-t0), errors))
+        self.log.info('queue processed in %.2f seconds (%d changes, ~%.2f/sec, %d errors)' %
+            (time.time()-t0, changes, changes/(time.time()-t0), errors))
 
     def restore(self):
         self.data_path = self.args[0]
@@ -147,7 +153,8 @@ class Service(zarafa.Service):
                         continue
                 data_path = path_folder[path]
                 self.restore_folder(folder, path, data_path, store, store.subtree, stats)
-        self.log.info('restore completed in %.2f seconds (%d changes, ~%.2f/sec, %d errors)' % (time.time()-t0, stats['changes'], stats['changes']/(time.time()-t0), stats['errors']))
+        self.log.info('restore completed in %.2f seconds (%d changes, ~%.2f/sec, %d errors)' %
+            (time.time()-t0, stats['changes'], stats['changes']/(time.time()-t0), stats['errors']))
 
     def create_jobs(self):
         output_dir = self.options.output_dir or ''
