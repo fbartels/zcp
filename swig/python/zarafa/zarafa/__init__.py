@@ -2323,7 +2323,7 @@ class Item(object):
             else:
                 props.append([searchkey, key, None])
 
-    def _dump(self, attachments=True):
+    def _dump(self, attachments=True, archiver=True):
         # props
         props = []
         tag_data = {}
@@ -2333,6 +2333,8 @@ class Item(object):
                 continue
             if prop.id_ >= 0x8000: # named prop: prop.id_ system dependant..
                 data = [prop.proptag, prop.mapiobj.Value, self.mapiobj.GetNamesFromIDs([prop.proptag], None, 0)[0]]
+                if not archiver and data[2].guid == PSETID_Archive:
+                    continue
             else:
                 data = [prop.proptag, prop.mapiobj.Value, None]
             props.append(data)
@@ -2374,11 +2376,11 @@ class Item(object):
             'attachments': atts,
         }
 
-    def dump(self, f, attachments=True):
-        pickle.dump(self._dump(attachments=attachments), f, pickle.HIGHEST_PROTOCOL)
+    def dump(self, f, attachments=True, archiver=True):
+        pickle.dump(self._dump(attachments=attachments, archiver=archiver), f, pickle.HIGHEST_PROTOCOL)
 
-    def dumps(self, attachments=True):
-        return pickle.dumps(self._dump(attachments=attachments), pickle.HIGHEST_PROTOCOL)
+    def dumps(self, attachments=True, archiver=True):
+        return pickle.dumps(self._dump(attachments=attachments, archiver=archiver), pickle.HIGHEST_PROTOCOL)
 
     def _load(self, d, attachments):
         # props
