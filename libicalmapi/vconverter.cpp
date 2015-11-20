@@ -1838,7 +1838,7 @@ HRESULT VConverter::HrSetTimeProperty(time_t tStamp, bool bDateOnly, icaltimezon
 		}
 	}
 	
-	if (lpicTZinfo)
+	if (!bDateOnly && lpicTZinfo != NULL)
 		ittStamp = icaltime_from_timet_with_zone(tStamp, bDateOnly, lpicTZinfo);
 	else
 		ittStamp = icaltime_from_timet_with_zone(tStamp, bDateOnly, icaltimezone_get_utc_timezone());
