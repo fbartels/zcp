@@ -303,7 +303,7 @@ def _sync(server, syncobj, importer, state, log, max_changes, associated=False, 
             if (steps == step) or (max_changes and changes >= max_changes):
                 break
 
-        except MAPIError, e:
+        except MAPIError as e:
             if log:
                 log.warn("Received a MAPI error or timeout (error=0x%x, retry=%d/5)" % (e.hr, retry))
 
@@ -3199,7 +3199,7 @@ class TrackingContentsImporter(ECImportContentsChanges):
             except (MAPIErrorNotFound, MAPIErrorNoAccess): # XXX, mail already deleted, can we do this in a cleaner way?
                 if self.log:
                     self.log.debug('received change for entryid %s, but it could not be opened' % bin2hex(entryid.Value))
-        except Exception, e:
+        except Exception as e:
             if self.log:
                 self.log.error('could not process change for entryid %s (%r):' % (bin2hex(entryid.Value), props))
                 self.log.error(traceback.format_exc(e))
@@ -3217,7 +3217,7 @@ class TrackingContentsImporter(ECImportContentsChanges):
                 item._sourcekey = bin2hex(entry)
                 if hasattr(self.importer, 'delete'):
                     self.importer.delete(item, flags)
-        except Exception, e:
+        except Exception as e:
             if self.log:
                 self.log.error('could not process delete for entries: %s' % [bin2hex(entry) for entry in entries])
                 self.log.error(traceback.format_exc(e))
@@ -3282,7 +3282,7 @@ def daemonize(func, options=None, foreground=False, args=[], log=None, config=No
             elif oldpid:
                 try:
                     cmdline = open('/proc/%u/cmdline' % oldpid).read().split('\0')
-                except IOError, error:
+                except IOError as error:
                     if error.errno != errno.ENOENT:
                         raise
                     # errno.ENOENT indicates that no process with pid=oldpid exists, which is ok
@@ -3456,7 +3456,7 @@ Example usage::
 
 """
     try: yield
-    except Exception, e: log.error(traceback.format_exc(e))
+    except Exception as e: log.error(traceback.format_exc(e))
 
 def _bytes_to_human(b):
     suffixes = ['b', 'kb', 'mb', 'gb', 'tb', 'pb']
@@ -3582,7 +3582,7 @@ Example::
                         else:
                             try:
                                 self.data[key] = self.config[key].parse(key, value)
-                            except ZarafaConfigException, e:
+                            except ZarafaConfigException as e:
                                 if service:
                                     self.errors.append(e.message)
                                 else:
