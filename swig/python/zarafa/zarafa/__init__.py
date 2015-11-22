@@ -1155,10 +1155,10 @@ class Company(object):
     def groups(self):
         if self.name == u'Default': # XXX
             for ecgroup in self.server.sa.GetGroupList(None, MAPI_UNICODE):
-                yield Group(ecgroup.Groupname, self)
+                yield Group(ecgroup.Groupname, self.server)
         else:
             for ecgroup in self.server.sa.GetGroupList(self._eccompany.CompanyID, MAPI_UNICODE):
-                yield Group(ecgroup.Groupname, self)
+                yield Group(ecgroup.Groupname, self.server)
 
     @property
     def quota(self):
