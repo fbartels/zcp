@@ -418,7 +418,7 @@ def _extract_ipm_ol2007_entryids(blob, offset):
             pos += totallen
 
 def _encode(s):
-    return s.encode(sys.stdout.encoding or 'utf8')
+    return s.encode(getattr(sys.stdout, 'encoding', 'utf8') or 'utf8') # sys.stdout can be StringIO (nosetests)
 
 class ZarafaException(Exception):
     pass
