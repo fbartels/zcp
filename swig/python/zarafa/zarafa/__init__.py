@@ -2428,6 +2428,18 @@ class Item(object):
     def loads(self, s, attachments=True):
         self._load(pickle.loads(s), attachments)
 
+    @property
+    def embedded(self): # XXX multiple?
+        for row in self.table(PR_MESSAGE_ATTACHMENTS).dict_rows(): # XXX should we use GetAttachmentTable?
+            num = row[PR_ATTACH_NUM]
+            method = row[PR_ATTACH_METHOD] # XXX default
+            if method == ATTACH_EMBEDDED_MSG:
+                att = self.mapiobj.OpenAttach(num, IID_IAttachment, 0)
+                msg = att.OpenProperty(PR_ATTACH_DATA_OBJ, IID_IMessage, 0, MAPI_MODIFY | MAPI_DEFERRED_ERRORS)
+                item = Item(mapiobj=msg)
+                item.server = self.server # XXX
+                return item
+
     def __unicode__(self):
         return u'Item(%s)' % self.subject
 
