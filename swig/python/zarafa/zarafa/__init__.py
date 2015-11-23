@@ -2259,22 +2259,32 @@ class Item(object):
     @to.setter
     def to(self, addrs):
         if isinstance(addrs, (str, unicode)):
-            addrs2 = []
-            for addr in unicode(addrs).split(';'): # XXX use python email module here?
-                if '<' in addr:
-                    name = addr[:addr.find('<')].strip()
-                    email = addr[addr.find('<')+1:addr.find('>')].strip()
-                    addrs2.append(Address(name=name, email=email))
-                else:
-                    addrs2.append(Address(email=addr.strip()))
+            addrs = unicode(addrs).split(';')
+        elif isinstance(addrs, User):
+            adders = [addrs]
         names = []
-        for addr in addrs2:
+        for addr in addrs:
+            if isinstance(addr, User):
+                pr_addrtype = 'ZARAFA'
+                pr_dispname = addr.name
+                pr_email = addr.email
+                pr_entryid = addr.userid.decode('hex')
+            else:
+                addr = unicode(addr)
+                pr_addrtype = 'SMTP'
+                if '<' in addr: # XXX standard email lib?
+                    pr_dispname = addr[:addr.find('<')].strip()
+                    pr_email = addr[addr.find('<')+1:addr.find('>')].strip()
+                else:
+                    pr_dispname = u'nobody' # XXX
+                    pr_email  = addr.strip()
+                pr_entryid = self.server.ab.CreateOneOff(pr_dispname, u'SMTP', unicode(pr_email), MAPI_UNICODE)
             names.append([
                 SPropValue(PR_RECIPIENT_TYPE, MAPI_TO), 
-                SPropValue(PR_DISPLAY_NAME_W, addr.name or u'nobody'), 
-                SPropValue(PR_ADDRTYPE, 'SMTP'), 
-                SPropValue(PR_EMAIL_ADDRESS, unicode(addr.email)),
-                SPropValue(PR_ENTRYID, self.server.ab.CreateOneOff(addr.name or u'nobody', u'SMTP', unicode(addr.email), MAPI_UNICODE)),
+                SPropValue(PR_DISPLAY_NAME_W, pr_dispname),
+                SPropValue(PR_ADDRTYPE, pr_addrtype),
+                SPropValue(PR_EMAIL_ADDRESS, pr_email),
+                SPropValue(PR_ENTRYID, pr_entryid),
             ])
         self.mapiobj.ModifyRecipients(0, names)
         self.mapiobj.SaveChanges(KEEP_OPEN_READWRITE) # XXX needed?
