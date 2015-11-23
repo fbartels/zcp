@@ -2879,6 +2879,12 @@ class Attachment(object):
     def props(self):
         return _props(self.att)
 
+    def __unicode__(self):
+        return u'Attachment("%s")' % self.name
+
+    def __repr__(self):
+        return _encode(unicode(self))
+
 class User(object):
     """ User class """
 
