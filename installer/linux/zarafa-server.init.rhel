@@ -52,6 +52,7 @@ pidfile=/var/run/$server.pid
 start() {
 	# Start in background, always succeeds
 	echo -n $"Starting $server: "
+	install -dm0775 -o zarafa -g zarafa /var/run/zarafad
 	export LC_ALL=$ZARAFA_LOCALE
 	export LANG=$ZARAFA_LOCALE
 	daemon $SERVERPROGRAM $SERVERCONFIG_OPT

@@ -47,6 +47,7 @@ pidfile=/var/run/$spooler.pid
 start() {
 	# Start in background, always succeeds
 	echo -n $"Starting $spooler: "
+	install -dm0775 -o zarafa -g zarafa /var/run/zarafad
 	export LC_ALL=$ZARAFA_LOCALE
 	export LANG=$ZARAFA_LOCALE
 	daemon $SPOOLERPROGRAM $SPOOLERCONFIG_OPT

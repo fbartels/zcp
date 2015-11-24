@@ -45,6 +45,7 @@ pidfile=/var/run/$gateway.pid
 start() {
 	# Start in background, always succeeds
 	echo -n $"Starting $gateway: "
+	install -dm0775 -o zarafa -g zarafa /var/run/zarafad
 	export LC_ALL=$ZARAFA_LOCALE
 	export LANG=$ZARAFA_LOCALE
 	daemon $GATEWAYPROGRAM $GATEWAYCONFIG_OPT
