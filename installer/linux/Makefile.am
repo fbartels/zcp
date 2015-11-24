@@ -26,11 +26,6 @@ debian_initscript_files = \
 	zarafa-gateway.init.debi zarafa-monitor.init.debi \
 	zarafa-ical.init.debi zarafa-dagent.init.debi zarafa-search.init.debi
 
-rhel_sysconfig_files = sysconfig.rhel
-suse_sysconfig_files = sysconfig.suse
-sles_sysconfig_files = ${suse_sysconfig_files}
-alt_sysconfig_files = sysconfig.alt
-
 data_configdir = ${docdir}/example-config
 dist_data_config_DATA = ${config_files}
 
@@ -85,7 +80,7 @@ sysconf_certdir = ${sysconfdir}/zarafa/report-ca
 config_files += $(BUILT_SOURCES)
 EXTRA_DIST = $(BUILT_SOURCES) \
 	$(rhel_initscript_files) $(suse_initscript_files) $(cbs4_initscript_files) $(alt_initscript_files) \
-	$(rhel_sysconfig_files) $(suse_sysconfig_files) $(alt_sysconfig_files)
+	sysconfig.txt
 
 install-data-hook:
 	install -d -m 755 ${DESTDIR}/${sysconf_configdir}/license
@@ -93,9 +88,9 @@ install-data-hook:
 	mv -v ${DESTDIR}${sysconf_rotatedir}/zarafa.logrotate ${DESTDIR}${sysconf_rotatedir}/zarafa
 	mv -v ${DESTDIR}${sysconf_crondir}/zarafa-client-update.cron ${DESTDIR}${sysconf_crondir}/zarafa-client-update
 	if test ${DISTRO} = "sles" -o ${DISTRO} = "suse"; then \
-		mv -v ${DESTDIR}${sysconf_sysconfigdir}/sysconfig.suse ${DESTDIR}${sysconf_sysconfigdir}/sysconfig.zarafa || true; \
+		mv -v ${DESTDIR}${sysconf_sysconfigdir}/sysconfig.txt ${DESTDIR}${sysconf_sysconfigdir}/sysconfig.zarafa || true; \
 	elif test ${DISTRO} = "rhel" -o ${DISTRO} = "alt"; then \
-		mv -v ${DESTDIR}${sysconf_sysconfigdir}/sysconfig.${DISTRO} ${DESTDIR}${sysconf_sysconfigdir}/zarafa || true; \
+		mv -v ${DESTDIR}${sysconf_sysconfigdir}/sysconfig.txt ${DESTDIR}${sysconf_sysconfigdir}/zarafa || true; \
 	else \
 		true; \
 	fi
