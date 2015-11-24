@@ -878,7 +878,11 @@ Looks at command-line to see if another server address or other related options 
         """
         if parse and getattr(self.options, 'companies', None):
             for name in self.options.companies:
-                yield Company(self, name.decode(sys.stdin.encoding)) # XXX can optparse output unicode?
+                name = name.decode(sys.stdin.encoding) # can optparse give us unicode?
+                try:
+                    yield Company(self, name)
+                except MAPIErrorNoSupport:
+                    raise ZarafaNotFoundException('no such company: %s' % name)
             return
         try:
             for name in self._companylist():
