@@ -907,7 +907,7 @@ Looks at command-line to see if another server address or other related options 
         table.Restrict(SPropertyRestriction(RELOP_EQ, PR_STORE_RECORD_KEY, SPropValue(PR_STORE_RECORD_KEY, storeid)), TBL_BATCH)
         for row in table.QueryRows(-1, 0):
             return self.mapisession.OpenMsgStore(0, row[0].Value, None, MDB_WRITE)
-        raise ZarafaException("no such store: '%s'" % guid)
+        raise ZarafaNotFoundException("no such store: '%s'" % guid)
 
     def groups(self):
         for name in MAPI.Util.AddressBook.GetGroupList(self.mapisession, None, MAPI_UNICODE):
