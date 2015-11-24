@@ -7,7 +7,7 @@
 #              through all objects (including attachments)
 # processname: /usr/sbin/zarafa-search
 # config: /etc/zarafa/search.cfg
-# pidfile: /var/run/zarafa-search.pid
+# pidfile: /var/run/zarafad/search.pid
 
 ### BEGIN INIT INFO
 # Provides: zarafa-search
@@ -40,7 +40,7 @@ fi
 RETVAL=0
 search=`basename $SEARCHPROGRAM`
 lockfile=/var/lock/subsys/$search
-pidfile=/var/run/$search.pid
+pidfile=/var/run/zarafad/search.pid
 
 start() {
 	# Start in background, always succeeds

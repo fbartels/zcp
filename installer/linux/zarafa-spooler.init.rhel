@@ -8,7 +8,7 @@
 #              using your MTA as configured.
 # processname: /usr/sbin/zarafa-spooler
 # config: /etc/zarafa/spooler.cfg
-# pidfile: /var/run/zarafa-spooler.pid
+# pidfile: /var/run/zarafad/spooler.pid
 
 ### BEGIN INIT INFO
 # Provides: zarafa-spooler
@@ -42,7 +42,7 @@ fi
 RETVAL=0
 spooler=`basename $SPOOLERPROGRAM`
 lockfile=/var/lock/subsys/$spooler
-pidfile=/var/run/$spooler.pid
+pidfile=/var/run/zarafad/spooler.pid
 
 start() {
 	# Start in background, always succeeds

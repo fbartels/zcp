@@ -188,7 +188,7 @@ int main(int argc, char *argv[]) {
 #ifdef LINUX
 		{ "run_as_user", "" },
 		{ "run_as_group", "" },
-		{ "pid_file", "/var/run/zarafa-monitor.pid" },
+		{ "pid_file", "/var/run/zarafad/monitor.pid" },
 		{ "running_path", "/" },
 #endif		
 		{ "log_method","file" },

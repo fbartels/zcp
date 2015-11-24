@@ -7,7 +7,7 @@
 #              to access their calender using the iCal or CalDAV protocol.
 # processname: /usr/sbin/zarafa-ical
 # config: /etc/zarafa/ical.cfg
-# pidfile: /var/run/zarafa-ical.pid
+# pidfile: /var/run/zarafad/ical.pid
 
 ### BEGIN INIT INFO
 # Provides: zarafa-ical
@@ -27,7 +27,7 @@ ICALCONFIG=/etc/zarafa/ical.cfg
 ICALPROGRAM=/usr/sbin/zarafa-ical
 ical=`basename $ICALPROGRAM`
 LOCKFILE=/var/lock/subsys/$ical
-PIDFILE=/var/run/$ical.pid
+PIDFILE=/var/run/zarafad/ical.pid
 RETVAL=0
 
 # Sanity checks.

@@ -21,7 +21,7 @@ SERVER=/usr/sbin/zarafa-server
 DESC="Zarafa server"
 NAME=`basename $SERVER`
 #QUIETDAEMON=--quiet
-PIDFILE=/var/run/$NAME.pid
+PIDFILE=/var/run/zarafad/server.pid
 
 test -x $SERVER || exit 0
 

@@ -3265,7 +3265,7 @@ def daemonize(func, options=None, foreground=False, args=[], log=None, config=No
         working_directory = '/'
         pidfile = None
         if args:
-            pidfile = '/var/run/zarafa-%s.pid' % args[0].name
+            pidfile = '/var/run/zarafad/%s.pid' % args[0].name
         if config:
             working_directory = config.get('running_path')
             pidfile = config.get('pid_file')

@@ -8,7 +8,7 @@
 #              Agent can also be used as a standalone program.
 # processname: /usr/sbin/zarafa-dagent
 # config: /etc/zarafa/dagent.cfg
-# pidfile: /var/run/zarafa-dagent.pid
+# pidfile: /var/run/zarafad/dagent.pid
 
 ### BEGIN INIT INFO
 # Provides: zarafa-dagent
@@ -43,7 +43,7 @@ fi
 RETVAL=0
 dagent=`basename $DAGENTPROGRAM`
 lockfile=/var/lock/subsys/$dagent
-pidfile=/var/run/$dagent.pid
+pidfile=/var/run/zarafad/dagent.pid
 
 start() {
 	# Start in background, always succeeds

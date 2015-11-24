@@ -18,7 +18,7 @@ ICAL=/usr/sbin/zarafa-ical
 DESC="Zarafa ical gateway"
 NAME=`basename $ICAL`
 #QUIETDAEMON=--quiet
-PIDFILE=/var/run/zarafa-ical.pid
+PIDFILE=/var/run/zarafad/ical.pid
 
 test -x $ICAL || exit 0
 

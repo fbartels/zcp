@@ -192,7 +192,7 @@ int main(int argc, char **argv) {
 #ifdef LINUX
 		{ "run_as_user", "" },
 		{ "run_as_group", "" },
-		{ "pid_file", "/var/run/zarafa-ical.pid" },
+		{ "pid_file", "/var/run/zarafad/ical.pid" },
 		{ "running_path", "/" },
 		{ "process_model", "fork" },
 #endif

@@ -18,7 +18,7 @@ GATEWAY=/usr/sbin/zarafa-gateway
 DESC="Zarafa gateway"
 NAME=`basename $GATEWAY`
 #QUIETDAEMON=--quiet
-PIDFILE=/var/run/zarafa-gateway.pid
+PIDFILE=/var/run/zarafad/gateway.pid
 
 test -x $GATEWAY || exit 0
 

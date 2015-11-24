@@ -19,7 +19,7 @@ SPOOLER=/usr/sbin/zarafa-spooler
 DESC="Zarafa spooler"
 NAME=`basename $SPOOLER`
 #QUIETDAEMONDAEMON=--quiet
-PIDFILE=/var/run/zarafa-spooler.pid
+PIDFILE=/var/run/zarafad/spooler.pid
 
 test -x $SPOOLER || exit 0
 

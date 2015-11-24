@@ -3987,7 +3987,7 @@ int main(int argc, char *argv[]) {
 #ifdef LINUX
 		{ "run_as_user", "" },
 		{ "run_as_group", "" },
-		{ "pid_file", "/var/run/zarafa-dagent.pid" },
+		{ "pid_file", "/var/run/zarafad/dagent.pid" },
 		{ "coredump_enabled", "no" },
 #endif
 		{ "lmtp_port", "2003" },
