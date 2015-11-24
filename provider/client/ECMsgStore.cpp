@@ -2929,7 +2929,8 @@ HRESULT ECMsgStore::SetSpecialEntryIdOnFolder(LPMAPIFOLDER lpFolder, ECMAPIProp 
 
 		// Set the property into the right folder
 		hr = lpFolderPropSet->SetProps(1, lpPropMVValueNew, NULL);
-		if(hr != hrSuccess)
+		ECFreeBuffer(lpPropMVValueNew);
+		if (hr != hrSuccess)
 			goto exit;
 	}else{
 		// Set the property tag value
