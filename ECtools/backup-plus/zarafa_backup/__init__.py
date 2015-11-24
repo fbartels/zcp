@@ -227,7 +227,9 @@ class Service(zarafa.Service):
         elif username == 'Public': return self.server.public_store
         else: return self.server.user(username).store
 
-def folder_struct(data_path, options, mapper={}):
+def folder_struct(data_path, options, mapper=None):
+    if mapper is None:
+        mapper = {}
     if os.path.exists(data_path+'/path'):
         path = file(data_path+'/path').read()
         mapper[path] = data_path
