@@ -135,7 +135,7 @@ static int create_pipe_socket(const char *unix_socket, ECConfig *lpConfig,
 	}
 #endif
 	
-	if(listen(s,8) == -1) {
+	if (listen(s, SOMAXCONN) == -1) {
 		lpLogger->Log(EC_LOGLEVEL_FATAL, "Can't listen on unix socket %s", unix_socket);
 		closesocket(s);
 		return -1;
