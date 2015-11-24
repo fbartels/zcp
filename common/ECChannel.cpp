@@ -779,7 +779,7 @@ exit:
 }
 
 HRESULT HrListen(ECLogger *lpLogger, const char *szBind, uint16_t ulPort,
-    int *lpulListenSocket)
+    int *lpulListenSocket, const char *intf)
 {
 	HRESULT hr = hrSuccess;
 	int fd = -1, opt = 1, ret;
@@ -834,6 +834,14 @@ HRESULT HrListen(ECLogger *lpLogger, const char *szBind, uint16_t ulPort,
 			lpLogger->Log(EC_LOGLEVEL_WARNING,
 				"Unable to set reuseaddr socket option: %s",
 				strerror(errno));
+		if (intf != NULL &&
+		    setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, intf,
+		    strlen(intf)) < 0) {
+			lpLogger->Log(EC_LOGLEVEL_ERROR,
+				"Unable to bind to interface %s: %s",
+				intf, strerror(errno));
+			break;
+		}
 
 		ret = bind(fd, sock_addr->ai_addr, sock_addr->ai_addrlen);
 		if (ret < 0 && errno == EADDRINUSE) {

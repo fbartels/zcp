@@ -3569,7 +3569,9 @@ static HRESULT running_service(const char *servicename, bool bDaemonize,
 #endif
 	
 	// Setup sockets
-	hr = HrListen(g_lpLogger, g_lpConfig->GetSetting("server_bind"), atoi(g_lpConfig->GetSetting("lmtp_port")), &ulListenLMTP);
+	hr = HrListen(g_lpLogger, g_lpConfig->GetSetting("server_bind"),
+	              atoi(g_lpConfig->GetSetting("lmtp_port")), &ulListenLMTP,
+	              g_lpConfig->GetSetting("server_bind_intf"));
 	if (hr != hrSuccess) {
 		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "running_service(): HrListen failed %x", hr);
 		goto exit;
@@ -3975,7 +3977,8 @@ int main(int argc, char *argv[]) {
 
 	// Default settings
 	static const configsetting_t lpDefaults[] = {
-		{ "server_bind", "127.0.0.1" },
+		{ "server_bind", "" },
+		{ "server_bind_intf", "lo" },
 #ifdef LINUX
 		{ "run_as_user", "" },
 		{ "run_as_group", "" },
