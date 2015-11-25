@@ -69,6 +69,7 @@
 #include "ECSessionManager.h"
 #include "ECStatsCollector.h"
 #include "ECStatsTables.h"
+#include <climits>
 #include <csignal>
 
 #ifdef LINUX
@@ -753,7 +754,7 @@ int main(int argc, char* argv[])
 	const char *default_config = config;
 
 	enum {
-		OPT_HELP = 1,
+		OPT_HELP = UCHAR_MAX + 1,
 		OPT_CONFIG,
 		OPT_RESTART_SEARCHES,
 		OPT_IGNORE_DATABASE_VERSION_CONFLICT,

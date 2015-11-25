@@ -45,6 +45,7 @@
 
 #include <iostream>
 #include <map>
+#include <climits>
 
 #include <zarafa/CommonUtil.h>
 #include <zarafa/mapiext.h>
@@ -76,7 +77,7 @@ typedef map<string, ZarafaFsck* > CHECKMAP;
 typedef map<string, ZarafaFsck* >::iterator CHECKMAP_I;
 
 enum {
-	OPT_HELP = 129,
+	OPT_HELP = UCHAR_MAX + 1,
 	OPT_HOST,
 	OPT_PASS,
 	OPT_USER,

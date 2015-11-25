@@ -49,7 +49,7 @@
 #ifdef _WIN32
 	#include "ECNTService.h"
 #endif
-
+#include <climits>
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
@@ -215,7 +215,7 @@ int main(int argc, char *argv[]) {
 	};
 
 	enum {
-		OPT_HELP,
+		OPT_HELP = UCHAR_MAX + 1,
 		OPT_HOST,
 		OPT_CONFIG,
 		OPT_FOREGROUND,

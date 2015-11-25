@@ -43,6 +43,7 @@
 
 #include "config.h"
 #include <zarafa/platform.h>
+#include <climits>
 #include "mapidefs.h"
 #include <zarafa/ECChannel.h>
 #include <mapix.h>
@@ -230,7 +231,7 @@ int main(int argc, char **argv) {
 		{ NULL, NULL },
 	};
 	enum {
-		OPT_IGNORE_UNKNOWN_CONFIG_OPTIONS
+		OPT_IGNORE_UNKNOWN_CONFIG_OPTIONS = UCHAR_MAX + 1,
 	};
 
 	static const struct option long_options[] = {

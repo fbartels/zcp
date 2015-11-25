@@ -72,6 +72,7 @@
  * see rfc.
  */
 #include <zarafa/platform.h>
+#include <climits>
 #include <cstdio>
 #include <cstdlib>
 
@@ -3941,7 +3942,7 @@ int main(int argc, char *argv[]) {
 #endif
 
 	enum {
-		OPT_HELP,
+		OPT_HELP = UCHAR_MAX + 1,
 		OPT_CONFIG,
 		OPT_JUNK,
 		OPT_FILE,

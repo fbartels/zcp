@@ -60,7 +60,7 @@
 #endif
 
 #include "mailer.h"
-
+#include <climits>
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
@@ -1133,7 +1133,7 @@ int main(int argc, char *argv[]) {
 
 	// options
 	enum {
-		OPT_HELP,
+		OPT_HELP = UCHAR_MAX + 1,
 		OPT_CONFIG,
 		OPT_HOST,
 		OPT_FOREGROUND,

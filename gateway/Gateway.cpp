@@ -43,6 +43,7 @@
 
 #include "config.h"
 #include <zarafa/platform.h>
+#include <climits>
 #include <csignal>
 
 #ifdef WIN32
@@ -367,7 +368,7 @@ int main(int argc, char *argv[]) {
 		{ NULL, NULL },
 	};
 	enum {
-		OPT_HELP,
+		OPT_HELP = UCHAR_MAX + 1,
 		OPT_HOST,
 		OPT_CONFIG,
 		OPT_FOREGROUND,

@@ -43,6 +43,7 @@
 
 #include <zarafa/platform.h>
 #include <iostream>
+#include <climits>
 #include <zarafa/stringutil.h>
 #include <zarafa/my_getopt.h>
 #include <zarafa/archiver-common.h>
@@ -200,7 +201,7 @@ static std::string args_to_cmdline(int argc, const char * const argv[])
 }
 
 enum cmdOptions {
-    OPT_USER = 129,
+    OPT_USER = UCHAR_MAX + 1,
     OPT_ATTACH,
     OPT_DETACH,
     OPT_DETACH_IDX,
