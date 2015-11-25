@@ -1198,6 +1198,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 		g_lpLogger = new ECLogger_File(EC_LOGLEVEL_INFO, 0, "-", false, 0); // create info logger without a timestamp to stderr
 #endif
 		LogConfigErrors(g_lpConfig, g_lpLogger);
+		er = MAPI_E_UNCONFIGURED;
 		goto exit;
 #endif
 	}
@@ -1206,6 +1207,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 	g_lpLogger = CreateLogger(g_lpConfig, szName, "ZarafaServer");
 	if (!g_lpLogger) {
 		fprintf(stderr, "Error in log configuration, unable to resume.\n");
+		er = MAPI_E_UNCONFIGURED;
 		goto exit;
 	}
 
@@ -1237,21 +1239,25 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 		// directory will be created using startup (probably root) and then chowned to the new 'runas' username
 		if (CreatePath(g_lpConfig->GetSetting("attachment_path")) != 0) {
 			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create attachment directory '%s'", g_lpConfig->GetSetting("attachment_path"));
+			er = ZARAFA_E_DATABASE_ERROR;
 			goto exit;
 		}
 #ifdef LINUX
 		if (stat(g_lpConfig->GetSetting("attachment_path"), &dir) != 0) {
 			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to stat attachment directory '%s', error: %s", g_lpConfig->GetSetting("attachment_path"), strerror(errno));
+			er = ZARAFA_E_DATABASE_ERROR;
 			goto exit;
 		}
 		runasUser = getpwnam(g_lpConfig->GetSetting("run_as_user","","root"));
 		if (runasUser == NULL) {
 			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Fatal: run_as_user '%s' is unknown", g_lpConfig->GetSetting("run_as_user","","root"));
+			er = MAPI_E_UNCONFIGURED;
 			goto exit;
 		}
 		if (runasUser->pw_uid != dir.st_uid) {
 			if (unix_chown(g_lpConfig->GetSetting("attachment_path"), g_lpConfig->GetSetting("run_as_user"), g_lpConfig->GetSetting("run_as_group")) != 0) {
 				g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to change ownership for attachment directory '%s'", g_lpConfig->GetSetting("attachment_path"));
+				er = ZARAFA_E_DATABASE_ERROR;
 				goto exit;
 			}
 		}
@@ -1274,6 +1280,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 	if (lpTmp == NULL) {
 		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to getenv value ZARAFA_DB_PATH");
 		retval = -1;
+		er = MAPI_E_UNCONFIGURED;
 		goto exit;
 	}
 
@@ -1284,6 +1291,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 	if (lpTmp == NULL) {
 		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to getenv value ZARAFA_UNIQUEID");
 		retval = -1;
+		er = MAPI_E_UNCONFIGURED;
 		goto exit;
 	}
 
@@ -1310,6 +1318,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 	if (lpTmp == NULL) {
 		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to getenv value ZARAFA_DB_CONFIG_NAME");
 		retval = -1;
+		er = MAPI_E_UNCONFIGURED;
 		goto exit;
 	}
 
@@ -1444,12 +1453,14 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 	// fork if needed and drop privileges as requested.
 	// this must be done before we do anything with pthreads
 	if (daemonize && unix_daemonize(g_lpConfig, g_lpLogger)) {
+		er = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
 	if (!daemonize)
 		setsid();
 	unix_create_pidfile(szName, g_lpConfig, g_lpLogger);
 	if (unix_runas(g_lpConfig, g_lpLogger)) {
+		er = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
 #endif
@@ -1524,6 +1535,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 			} else {
 				if (!bLicensed) {
 					g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Your license key does not allow the usage of the distributed features.");
+					er = MAPI_E_UNCONFIGURED;
 					goto exit;
 				}
 				break;
@@ -1664,7 +1676,8 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 
 	//Init the main system, now you can use the values like session manager
 	// This also starts several threads, like SessionCleaner, NotificationThread and TPropsPurge.
-	if(zarafa_init(g_lpConfig, g_lpLogger, g_lpAudit, hosted, distributed) != erSuccess) {		// create SessionManager
+	er = zarafa_init(g_lpConfig, g_lpLogger, g_lpAudit, hosted, distributed);
+	if (er != erSuccess) { // create SessionManager
 		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to initialize zarafa session manager");
 		goto exit;
 	}
@@ -1720,6 +1733,22 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 #endif
 	
 exit:
+	if (er != erSuccess || retval != 0) {
+		std::string msg;
+
+		if (er != erSuccess)
+			msg = format("An error occured (%x).", er);
+		else
+			msg = "An error occurred.";
+
+		if (g_lpConfig)
+			msg += format(" Please check %s for details.", g_lpConfig->GetSetting("log_file"));
+		else
+			msg += " Please check logfile for details.";
+
+		fprintf(stderr, "\n%s\n\n", msg.c_str());
+	}
+
 	if (g_lpAudit)
 		g_lpAudit->Log(EC_LOGLEVEL_ALWAYS, "zarafa-server shutdown in progress");
 
