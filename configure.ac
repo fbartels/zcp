@@ -181,12 +181,6 @@ AC_ARG_WITH(mapi-configdir,
   [MAPICONFIGDIR=${withval}],[MAPICONFIGDIR=/etc/mapi])
 AC_SUBST(MAPICONFIGDIR)
 
-# Timezones
-AC_ARG_WITH(mapi-timezonedir,
-  AS_HELP_STRING([--with-mapi-timezonedir=PATH], [path to install MAPI timezone definition files (default /usr/share/zarafa/timezones)]),
-  [TIMEZONEDIR=${withval}],[TIMEZONEDIR=/usr/share/zarafa/timezones])
-AC_SUBST(TIMEZONEDIR)
-
 # user create scripts location
 AC_ARG_WITH(userscript-prefix,
   AS_HELP_STRING([--with-userscript-prefix=PATH], [path to install the userscripts in (default /etc/zarafa/userscripts)]),
