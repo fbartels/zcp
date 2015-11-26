@@ -918,8 +918,12 @@ namespace PrivatePipe {
 		// we need to stop fetching signals
 		kill(getpid(), SIGPIPE);
 
-		if (bNPTL)
+		if (bNPTL) {
 			pthread_join(signal_thread, NULL);
+		} else {
+			signal(SIGHUP, SIG_DFL);
+			signal(SIGPIPE, SIG_DFL);
+		}
 		m_lpFileLogger->Log(EC_LOGLEVEL_INFO, "[%5d] Log process is done", getpid());
 		return ret;
 	}
