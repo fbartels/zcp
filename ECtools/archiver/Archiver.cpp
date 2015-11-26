@@ -96,7 +96,7 @@ const configsetting_t* Archiver::GetConfigDefaults()
 		{ "log_file",		"-" },
 		{ "log_level",		"2", CONFIGSETTING_RELOADABLE },
 		{ "log_timestamp",	"yes" },
-		{ "log_buffer_size",	"4096" },
+		{ "log_buffer_size",    "0" },
 
 		{ "mysql_host",		"localhost" },
 		{ "mysql_port",		"3306" },

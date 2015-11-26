@@ -3997,7 +3997,7 @@ int main(int argc, char *argv[]) {
 		{ "log_file", "-" },
 		{ "log_level", "2", CONFIGSETTING_RELOADABLE },
 		{ "log_timestamp", "0" },
-		{ "log_buffer_size",	"4096" },
+		{ "log_buffer_size", "0" },
 		{ "server_socket", CLIENT_ADMIN_SOCKET },
 		{ "sslkey_file", "" },
 		{ "sslkey_pass", "", CONFIGSETTING_EXACT },

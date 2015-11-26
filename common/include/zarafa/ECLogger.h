@@ -259,8 +259,6 @@ class ECLogger_File _zcp_final : public ECLogger {
 
 		char *logname;
 		bool timestamp;
-
-		char *buffer;
 		size_t buffer_size;
 
 		open_func fnOpen;
@@ -277,10 +275,11 @@ class ECLogger_File _zcp_final : public ECLogger {
 		std::string DoPrefix();
 
 	public:
-		ECLogger_File(const unsigned int max_ll, const bool add_timestamp, const char *const filename, const bool compress, const size_t buffer_size);
+		ECLogger_File(const unsigned int max_ll, const bool add_timestamp, const char *const filename, const bool compress);
 		~ECLogger_File();
 
 		std::string EmitLevel(const unsigned int loglevel);
+		void reinit_buffer(size_t size);
 
 		virtual void Reset(void) _zcp_override;
 		virtual void Log(unsigned int loglevel, const std::string &message) _zcp_override;

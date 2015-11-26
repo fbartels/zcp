@@ -3029,7 +3029,7 @@ int main(int argc, char* argv[])
 		if ((!bHaveConfig && bExplicitConfig) || (bHaveConfig && !bExplicitConfig && lpsConfig->HasErrors())) {
 			cerr << "Error while reading configuration file " << szConfig << endl;
 			// create fatal logger without a timestamp to stderr
-			lpLogger = new ECLogger_File(EC_LOGLEVEL_FATAL, 0, "-", false, 0);
+			lpLogger = new ECLogger_File(EC_LOGLEVEL_FATAL, 0, "-", false);
 			LogConfigErrors(lpsConfig, lpLogger);
 			lpLogger->Release();
 			return 1;
@@ -3047,7 +3047,7 @@ int main(int argc, char* argv[])
 	}
 
 	if (verbose)
-		lpLogger = new ECLogger_File(EC_LOGLEVEL_FATAL, 0, "-", false, 0);
+		lpLogger = new ECLogger_File(EC_LOGLEVEL_FATAL, 0, "-", false);
 	else
 		lpLogger = new ECLogger_Null();
 

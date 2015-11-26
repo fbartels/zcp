@@ -199,7 +199,7 @@ int main(int argc, char *argv[]) {
 #endif
 		{ "log_level","2", CONFIGSETTING_RELOADABLE },
 		{ "log_timestamp","1" },
-		{ "log_buffer_size",	"4096" },
+		{ "log_buffer_size", "0" },
 		{ "sslkey_file", "" },
 		{ "sslkey_pass", "", CONFIGSETTING_EXACT },
 		{ "quota_check_interval", "15" },
@@ -276,7 +276,7 @@ int main(int argc, char *argv[]) {
 #ifdef WIN32
 		m_lpThreadMonitor->lpLogger = new ECLogger_Eventlog(EC_LOGLEVEL_INFO, "ZarafaMonitor");
 #else
-		m_lpThreadMonitor->lpLogger = new ECLogger_File(EC_LOGLEVEL_INFO, 0, "-", false, 0); // create fatal logger without a timestamp to stderr
+		m_lpThreadMonitor->lpLogger = new ECLogger_File(EC_LOGLEVEL_INFO, 0, "-", false); // create fatal logger without a timestamp to stderr
 #endif
 		LogConfigErrors(m_lpThreadMonitor->lpConfig, m_lpThreadMonitor->lpLogger);
 		hr = E_FAIL;

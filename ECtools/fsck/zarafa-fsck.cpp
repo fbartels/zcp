@@ -396,7 +396,7 @@ static HRESULT RunStoreValidation(const char *strHost, const char *strUser,
 	LPSPropValue lpAddRenProp = NULL;
 	ULONG cbEntryIDSrc = 0;
 	LPENTRYID lpEntryIDSrc = NULL;
-	ECLogger *const lpLogger = new ECLogger_File(EC_LOGLEVEL_FATAL, 0, "-", false, 0);
+	ECLogger *const lpLogger = new ECLogger_File(EC_LOGLEVEL_FATAL, 0, "-", false);
 
 	hr = MAPIInitialize(NULL);
 	if (hr != hrSuccess) {
