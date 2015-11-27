@@ -45,6 +45,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <zarafa/platform.h>
+#include <new>
 
 #ifdef DEBUG
 #ifdef WIN32
@@ -880,7 +881,7 @@ ECRESULT ECAuthSession::CreateECSession(ECSESSIONGROUPID ecSessionGroupId, std::
 	CreateSessionID(m_ulClientCapabilities, &newSID);
 
 	// ECAuthSessionOffline creates offline version .. no bOverrideClass construction
-	lpSession = new ECSession(m_strSourceAddr, newSID, ecSessionGroupId, m_lpDatabaseFactory, m_lpSessionManager, m_ulClientCapabilities, false, m_ulValidationMethod, m_ulConnectingPid, strClientVersion, strClientApp, strClientAppVersion, strClientAppMisc);
+	lpSession = new(std::nothrow) ECSession(m_strSourceAddr, newSID, ecSessionGroupId, m_lpDatabaseFactory, m_lpSessionManager, m_ulClientCapabilities, false, m_ulValidationMethod, m_ulConnectingPid, strClientVersion, strClientApp, strClientAppVersion, strClientAppMisc);
 	if (!lpSession) {
 		er = ZARAFA_E_NOT_ENOUGH_MEMORY;
 		goto exit;
@@ -1933,7 +1934,7 @@ ECRESULT ECAuthSessionOffline::CreateECSession(ECSESSIONGROUPID ecSessionGroupId
 	CreateSessionID(m_ulClientCapabilities, &newSID);
 
 	// Offline version
-	lpSession = new ECSession(m_strSourceAddr, newSID, ecSessionGroupId, m_lpDatabaseFactory, m_lpSessionManager, m_ulClientCapabilities, true, m_ulValidationMethod, m_ulConnectingPid, strClientVersion, strClientApp, strClientAppVersion, strClientAppMisc);
+	lpSession = new(std::nothrow) ECSession(m_strSourceAddr, newSID, ecSessionGroupId, m_lpDatabaseFactory, m_lpSessionManager, m_ulClientCapabilities, true, m_ulValidationMethod, m_ulConnectingPid, strClientVersion, strClientApp, strClientAppVersion, strClientAppMisc);
 	if (!lpSession) {
 		er = ZARAFA_E_NOT_ENOUGH_MEMORY;
 		goto exit;

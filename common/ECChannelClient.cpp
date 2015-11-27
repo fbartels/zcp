@@ -42,6 +42,7 @@
  */
 
 #include <zarafa/platform.h>
+#include <new>
 
 #include <mapidefs.h>
 #include <mapiutil.h>
@@ -158,7 +159,7 @@ ECRESULT ECChannelClient::ConnectSocket()
 		goto exit;
 	}
 
-	m_lpChannel = new ECChannel(fd);
+	m_lpChannel = new(std::nothrow) ECChannel(fd);
 	if (!m_lpChannel) {
 		er = ZARAFA_E_NOT_ENOUGH_MEMORY;
 		goto exit;
@@ -220,7 +221,7 @@ ECRESULT ECChannelClient::ConnectHttp()
 		goto exit;
 	}
 
-	m_lpChannel = new ECChannel(fd);
+	m_lpChannel = new(std::nothrow) ECChannel(fd);
 	if (!m_lpChannel) {
 		er = ZARAFA_E_NOT_ENOUGH_MEMORY;
 		goto exit;
