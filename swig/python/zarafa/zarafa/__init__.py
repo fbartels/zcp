@@ -797,7 +797,7 @@ Looks at command-line to see if another server address or other related options 
             return
         try:
             for name in self._companylist():
-                for user in Company(self, name).users(): # XXX remote/system check
+                for user in Company(name, self).users(): # XXX remote/system check
                     yield user
         except MAPIErrorNoSupport:
             for username in AddressBook.GetUserList(self.mapisession, None, MAPI_UNICODE):
@@ -848,7 +848,7 @@ Looks at command-line to see if another server address or other related options 
         """ Return :class:`company <Company>` with given name; raise exception if not found """
 
         try:
-            return Company(self, name)
+            return Company(name, self)
         except ZarafaNotFoundException:
             if create:
                 return self.create_company(name)
@@ -880,15 +880,15 @@ Looks at command-line to see if another server address or other related options 
             for name in self.options.companies:
                 name = name.decode(sys.stdin.encoding) # can optparse give us unicode?
                 try:
-                    yield Company(self, name)
+                    yield Company(name, self)
                 except MAPIErrorNoSupport:
                     raise ZarafaNotFoundException('no such company: %s' % name)
             return
         try:
             for name in self._companylist():
-                yield Company(self, name)
+                yield Company(name, self)
         except MAPIErrorNoSupport:
-            yield Company(self, u'Default')
+            yield Company(u'Default', self)
 
     def create_company(self, name): # XXX deprecated because of company(create=True)?
         name = unicode(name)
@@ -1090,9 +1090,9 @@ class Group(object):
 class Company(object):
     """ Company class """
 
-    def __init__(self, server, name): # XXX Company(name)
+    def __init__(self, name, server=None):
         self._name = name = unicode(name)
-        self.server = server
+        self.server = server or Server()
         if name != u'Default': # XXX
             try:
                 self._eccompany = self.server.sa.GetCompany(self.server.sa.ResolveCompanyName(self._name, MAPI_UNICODE), MAPI_UNICODE)
@@ -2987,9 +2987,9 @@ class User(object):
         """ :class:`Company` the user belongs to """
         
         try:
-            return Company(self.server, HrGetOneProp(self.mapiobj, PR_EC_COMPANY_NAME_W).Value)
+            return Company(HrGetOneProp(self.mapiobj, PR_EC_COMPANY_NAME_W).Value, self.server)
         except MAPIErrorNoSupport:
-            return Company(self.server, u'Default')
+            return Company(u'Default', self.server)
 
     @property # XXX
     def local(self):
