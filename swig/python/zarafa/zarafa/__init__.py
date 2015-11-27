@@ -1156,8 +1156,13 @@ class Company(object):
         except ZarafaException:
             pass
 
-    def users(self):
+    def users(self, parse=True):
         """ Return all :class:`users <User>` within company """
+
+        if parse and getattr(self.server.options, 'users', None):
+            for username in self.server.options.users:
+                yield User(username, self.server)
+            return
 
         for username in AddressBook.GetUserList(self.server.mapisession, self._name if self._name != u'Default' else None, MAPI_UNICODE): # XXX serviceadmin?
             if username != 'SYSTEM':

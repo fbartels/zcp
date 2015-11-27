@@ -7,12 +7,13 @@
 import zarafa
 
 server = zarafa.Server()
-for company in server.companies(): # checks -c/--company commond-line option
+for company in server.companies(): # checks -c/--company command-line option
     print company
     for user in company.users(): # checks -u/--user command-line option
-         print user
+                                 # server.users() gives all users
+         print '  ' + user.name
          for folder in user.store.folders():
-             indent = (folder.depth+1)*'  '
+             indent = (folder.depth + 2) * '  '
              print indent + unicode(folder)
              for item in folder:
                  print indent + '  ' + unicode(item)
