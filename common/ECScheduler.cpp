@@ -101,6 +101,7 @@ ECScheduler::~ECScheduler(void)
 	//pthread_mutex_lock(&m_hSchedulerMutex);
 	
 	//Clean up something
+	m_lpLogger->Release();
 
 	// Unlock whole Scheduler
 	//pthread_mutex_unlock(&m_hSchedulerMutex);

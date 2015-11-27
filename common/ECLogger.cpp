@@ -834,6 +834,7 @@ namespace PrivatePipe {
 
 		m_lpConfig = lpConfig;
 		m_lpFileLogger = lpFileLogger;
+		m_lpFileLogger->AddRef();
 
 		if (bNPTL) {
 			sigemptyset(&signal_mask);
@@ -925,6 +926,7 @@ namespace PrivatePipe {
 			signal(SIGPIPE, SIG_DFL);
 		}
 		m_lpFileLogger->Log(EC_LOGLEVEL_INFO, "[%5d] Log process is done", getpid());
+		m_lpFileLogger->Release();
 		return ret;
 	}
 }

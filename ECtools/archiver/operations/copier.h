@@ -89,6 +89,7 @@ public:
 	{
 	public:
 		Helper(ArchiverSessionPtr ptrSession, ECLogger *lpLogger, const InstanceIdMapperPtr &ptrMapper, LPSPropTagArray lpExcludeProps, LPMAPIFOLDER lpFolder);
+		~Helper(void);
 
 		/**
 		 * Create a copy of a message in the archive, effectively archiving the message.

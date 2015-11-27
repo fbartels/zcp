@@ -884,10 +884,12 @@ exit:
 ECDatabaseAttachment::ECDatabaseAttachment(ECDatabase *lpDatabase, ECLogger *lpLogger)
 	: ECAttachmentStorage(lpDatabase, 0),  m_lpLogger(lpLogger)
 {
+	m_lpLogger->AddRef();
 }
 
 ECDatabaseAttachment::~ECDatabaseAttachment()
 {
+	m_lpLogger->Release();
 }
 
 /** 

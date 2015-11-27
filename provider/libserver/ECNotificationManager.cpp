@@ -96,6 +96,7 @@ ECNotificationManager::ECNotificationManager(ECLogger *lpLogger, ECConfig *lpCon
     pthread_mutex_init(&m_mutexSessions, NULL);
     pthread_mutex_init(&m_mutexRequests, NULL);
     pthread_cond_init(&m_condSessions, NULL);
+    m_lpLogger->AddRef();
     
     pthread_create(&m_thread, NULL, Thread, this);
     set_thread_name(m_thread, "NotificationManager");
@@ -123,6 +124,7 @@ ECNotificationManager::~ECNotificationManager()
 		soap_free(iterRequest->second.soap);
     }
     
+    m_lpLogger->Release();
     pthread_mutex_destroy(&m_mutexSessions);
     pthread_mutex_destroy(&m_mutexRequests);
     pthread_cond_destroy(&m_condSessions);
