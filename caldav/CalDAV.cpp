@@ -196,7 +196,7 @@ int main(int argc, char **argv) {
 		{ "running_path", "/" },
 		{ "process_model", "fork" },
 #endif
-		{ "server_bind", "0.0.0.0" },
+		{ "server_bind", "" },
 		{ "ical_port", "8080" },
 		{ "ical_enable", "yes" },
 		{ "icals_port", "8443" },

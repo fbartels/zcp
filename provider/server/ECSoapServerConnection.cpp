@@ -135,7 +135,7 @@ static int create_pipe_socket(const char *unix_socket, ECConfig *lpConfig,
 	}
 #endif
 	
-	if(listen(s,8) == -1) {
+	if (listen(s, SOMAXCONN) == -1) {
 		lpLogger->Log(EC_LOGLEVEL_FATAL, "Can't listen on unix socket %s", unix_socket);
 		closesocket(s);
 		return -1;
@@ -399,7 +399,7 @@ ECRESULT ECSoapServerConnection::ListenTCP(const char* lpServerName, int nServer
 	lpsSoap->bind_flags = SO_REUSEADDR;
 #endif
 
-        lpsSoap->socket = socket = soap_bind(lpsSoap, lpServerName, nServerPort, 100);
+	lpsSoap->socket = socket = soap_bind(lpsSoap, *lpServerName == '\0' ? NULL : lpServerName, nServerPort, 100);
         if (socket == -1) {
                 m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to bind to port %d: %s. This is usually caused by another process (most likely another zarafa-server) already using this port. This program will terminate now.", nServerPort, lpsSoap->fault->faultstring);
 #ifdef LINUX
@@ -542,7 +542,7 @@ ECRESULT ECSoapServerConnection::ListenSSL(const char* lpServerName, int nServer
 	lpsSoap->bind_flags = SO_REUSEADDR;
 #endif
 
-        lpsSoap->socket = socket = soap_bind(lpsSoap, lpServerName, nServerPort, 100);
+	lpsSoap->socket = socket = soap_bind(lpsSoap, *lpServerName == '\0' ? NULL : lpServerName, nServerPort, 100);
         if (socket == -1) {
                 m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to bind to port %d: %s (SSL). This is usually caused by another process (most likely another zarafa-server) already using this port. This program will terminate now.", nServerPort, lpsSoap->fault->faultstring);
 #ifdef LINUX

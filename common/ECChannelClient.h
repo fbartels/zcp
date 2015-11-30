@@ -47,6 +47,7 @@
 #include <string>
 #include <vector>
 
+#include <zarafa/platform.h>
 #include <zarafa/ZarafaCode.h>
 
 class ECChannel;
@@ -69,7 +70,7 @@ private:
 	std::string m_strTokenizer;
 	std::string m_strPath;
 	bool m_bSocket;
-	unsigned int m_ulPort;
+	uint16_t m_ulPort;
 	ECChannel *m_lpChannel;
 };
 

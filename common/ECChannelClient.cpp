@@ -48,6 +48,7 @@
 #include <mapix.h>
 
 #ifdef LINUX
+#include <netdb.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/un.h>
@@ -174,13 +175,10 @@ exit:
 ECRESULT ECChannelClient::ConnectHttp()
 {
 	ECRESULT er = erSuccess;
-	int fd = -1;
-	struct sockaddr_in saddr;
-
-	memset(&saddr, 0, sizeof(saddr));
-	saddr.sin_family = AF_INET;
-	saddr.sin_addr.s_addr = inet_addr(m_strPath.c_str());
-	saddr.sin_port = htons(m_ulPort);
+	int fd = -1, ret;
+	struct addrinfo *sock_res, sock_hints;
+	const struct addrinfo *sock_addr;
+	char port_string[sizeof("65536")];
 
 #ifdef WIN32
 	WSAData wsaData;
@@ -190,12 +188,34 @@ ECRESULT ECChannelClient::ConnectHttp()
 	}
 #endif
 
-	if ((fd = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
+	snprintf(port_string, sizeof(port_string), "%u", m_ulPort);
+	memset(&sock_hints, 0, sizeof(sock_hints));
+	sock_hints.ai_socktype = SOCK_STREAM;
+	ret = getaddrinfo(m_strPath.c_str(), port_string, &sock_hints,
+	      &sock_res);
+	if (ret != 0) {
 		er = ZARAFA_E_NETWORK_ERROR;
 		goto exit;
 	}
 
-	if (connect(fd, (struct sockaddr *)&saddr, sizeof(saddr)) < 0) {
+	for (sock_addr = sock_res; sock_addr != NULL;
+	     sock_addr = sock_addr->ai_next)
+	{
+		fd = socket(sock_addr->ai_family, sock_addr->ai_socktype,
+		     sock_addr->ai_protocol);
+		if (fd < 0)
+			continue;
+
+		if (connect(fd, sock_addr->ai_addr,
+		    sock_addr->ai_addrlen) < 0) {
+			int saved_errno = errno;
+			closesocket(fd);
+			fd = -1;
+			errno = saved_errno;
+			continue;
+		}
+	}
+	if (fd < 0) {
 		er = ZARAFA_E_NETWORK_ERROR;
 		goto exit;
 	}
@@ -207,6 +227,8 @@ ECRESULT ECChannelClient::ConnectHttp()
 	}
 
 exit:
+	if (sock_res != NULL)
+		freeaddrinfo(sock_res);
 	if (er != erSuccess && fd != -1)
 		closesocket(fd);
 
