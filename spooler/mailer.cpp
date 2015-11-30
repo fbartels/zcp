@@ -1421,7 +1421,6 @@ static HRESULT ContactToZarafa(IMsgStore *lpUserStore, LPADRBOOK lpAddrBook,
 		lpContabEntryID->email_offset > 2)
 	{
 		hr = MAPI_E_NOT_FOUND;
-		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "ContactToZarafa(): parameters incorrect? %x", hr);
 		goto exit;
 	}
 
