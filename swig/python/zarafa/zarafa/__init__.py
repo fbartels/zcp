@@ -1793,7 +1793,13 @@ class Folder(object):
         rule_table = self.mapiobj.OpenProperty(PR_RULES_TABLE, IID_IExchangeModifyTable, 0, 0)
         table = Table(self.server, rule_table.GetTable(0), PR_RULES_TABLE)
         for row in table.dict_rows():
-            yield Rule(row[PR_RULE_NAME], row[PR_RULE_STATE]) # XXX fix args
+            yield Rule(row)
+
+    def acls(self):
+        rule_table = self.mapiobj.OpenProperty(PR_ACL_TABLE, IID_IExchangeModifyTable, 0, 0)
+        table = Table(self.server, rule_table.GetTable(0), PR_ACL_TABLE)
+        for row in table.dict_rows():
+            yield ACL(row, self.server)
 
     def prop(self, proptag):
         return _prop(self, self.mapiobj, proptag)
@@ -3206,7 +3212,9 @@ class Quota(object):
         return _encode(unicode(self))
 
 class Rule:
-    def __init__(self, name, state): # XXX fix args
+    def __init__(self, mapirow):
+        self.mapirow = mapirow
+        name, state = mapirow[PR_RULE_NAME], mapirow[PR_RULE_STATE]
         self.name = unicode(name)
         self.active = bool(state & ST_ENABLED)
 
@@ -3216,6 +3224,24 @@ class Rule:
     def __repr__(self):
         return _encode(unicode(self))
 
+class ACL:
+    def __init__(self, mapirow, server): # XXX fix args
+        self.mapirow = mapirow
+        self.server = server
+
+    @property
+    def name(self):
+        return self.mapirow[PR_MEMBER_NAME]
+
+    @property
+    def member(self): # XXX non-user
+        return self.server.user(self.name)
+
+    def __unicode__(self):
+        return u"ACL('%s')" % self.name
+
+    def __repr__(self):
+        return _encode(unicode(self))
 
 class TrackingContentsImporter(ECImportContentsChanges):
     def __init__(self, server, importer, log, stats):
