@@ -42,6 +42,7 @@
  */
 
 #include <zarafa/platform.h>
+#include <new>
 #include "m4l.mapidefs.h"
 #include "m4l.mapix.h"
 #include "m4l.debug.h"
@@ -835,7 +836,7 @@ HRESULT M4LProviderAdmin::CreateProvider(LPTSTR lpszProvider, ULONG cValues, LPS
 
 	entry = new providerEntry;
 
-	entry->profilesection = new M4LProfSect();
+	entry->profilesection = new(std::nothrow) M4LProfSect();
 	if(!entry->profilesection) {
 		delete entry;
 		entry = NULL;

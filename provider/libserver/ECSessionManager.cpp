@@ -48,6 +48,7 @@
  
  
 #include <algorithm>
+#include <new>
 #include <typeinfo>
 
 #include <mapidefs.h>
@@ -605,7 +606,7 @@ ECRESULT ECSessionManager::CreateAuthSession(struct soap *soap, unsigned int ulC
 
 	CreateSessionID(ulCapabilities, &newSessionID);
 
-	lpAuthSession = new ECAuthSession(GetSourceAddr(soap), newSessionID, m_lpDatabaseFactory, this, ulCapabilities);
+	lpAuthSession = new(std::nothrow) ECAuthSession(GetSourceAddr(soap), newSessionID, m_lpDatabaseFactory, this, ulCapabilities);
 	if (lpAuthSession) {
 	    if (bLockSession) {
 	        lpAuthSession->Lock();
@@ -754,7 +755,7 @@ ECRESULT ECSessionManager::CreateSessionInternal(ECSession **lppSession, unsigne
 
 	CreateSessionID(ZARAFA_CAP_LARGE_SESSIONID, &newSID);
 
-	lpSession = new ECSession("<internal>", newSID, 0, m_lpDatabaseFactory, this, 0, false, ECSession::METHOD_NONE, 0, "internal", "zarafa-server", "", "");
+	lpSession = new(std::nothrow) ECSession("<internal>", newSID, 0, m_lpDatabaseFactory, this, 0, false, ECSession::METHOD_NONE, 0, "internal", "zarafa-server", "", "");
 	if(lpSession == NULL) {
 		er = ZARAFA_E_LOGON_FAILED;
 		goto exit;

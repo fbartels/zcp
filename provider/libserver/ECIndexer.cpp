@@ -55,6 +55,7 @@
 #include "ECIndexer.h"
 
 #include <map>
+#include <new>
 #include <string>
 #include <list>
 #include <boost/algorithm/string/join.hpp>
@@ -391,7 +392,7 @@ ECRESULT GetIndexerResults(ECDatabase *lpDatabase, ECConfig *lpConfig, ECLogger 
 	if(parseBool(lpConfig->GetSetting("search_enabled")) == true &&
 		strlen(szSocket) > 0)
 	{
-		lpSearchClient = new ECSearchClient(szSocket, atoui(lpConfig->GetSetting("search_timeout")) );
+		lpSearchClient = new(std::nothrow) ECSearchClient(szSocket, atoui(lpConfig->GetSetting("search_timeout")) );
 		if (!lpSearchClient) {
 			er = ZARAFA_E_NOT_ENOUGH_MEMORY;
 			goto exit;

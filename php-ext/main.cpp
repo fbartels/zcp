@@ -45,6 +45,7 @@
 
 #include <zarafa/platform.h>
 #include <zarafa/ecversion.h>
+#include <new>
 #include <cstdio>
 #include <cstdlib>
 #include <syslog.h>
@@ -588,7 +589,7 @@ static int LoadSettingsFile(void)
 	}
 
 	if (!lpLogger)
-		lpLogger = new ECLogger_Null();
+		lpLogger = new(std::nothrow) ECLogger_Null();
 	if (lpLogger == NULL)
 		return FAILURE;
 

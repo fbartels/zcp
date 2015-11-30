@@ -42,7 +42,7 @@
  */
 
 #include <zarafa/platform.h>
-
+#include <new>
 #include <cstdlib>
 #include <cmath> // for pow() 
 
@@ -199,7 +199,7 @@ HRESULT __stdcall HrAllocAdviseSink(LPNOTIFCALLBACK lpFunction, void *lpContext,
 	HRESULT hr = hrSuccess;
 	IMAPIAdviseSink *lpSink = NULL;
 
-	lpSink = new M4LMAPIAdviseSink(lpFunction, lpContext);
+	lpSink = new(std::nothrow) M4LMAPIAdviseSink(lpFunction, lpContext);
 	if (!lpSink) {
 		hr = MAPI_E_NOT_ENOUGH_MEMORY;
 		goto exit;
