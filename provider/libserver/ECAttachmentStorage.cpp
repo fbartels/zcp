@@ -884,10 +884,12 @@ exit:
 ECDatabaseAttachment::ECDatabaseAttachment(ECDatabase *lpDatabase, ECLogger *lpLogger)
 	: ECAttachmentStorage(lpDatabase, 0),  m_lpLogger(lpLogger)
 {
+	m_lpLogger->AddRef();
 }
 
 ECDatabaseAttachment::~ECDatabaseAttachment()
 {
+	m_lpLogger->Release();
 }
 
 /** 
@@ -1266,6 +1268,7 @@ ECRESULT ECDatabaseAttachment::Rollback()
 ECFileAttachment::ECFileAttachment(ECDatabase *lpDatabase, std::string basepath, unsigned int ulCompressionLevel, ECLogger *lpLogger, const bool force_changes_to_disk) : ECAttachmentStorage(lpDatabase, ulCompressionLevel) {
 	m_basepath = basepath;
 	m_lpLogger = lpLogger;
+	m_lpLogger->AddRef();
 
 	if (m_basepath.empty())
 #ifdef WIN32
@@ -1302,6 +1305,7 @@ ECFileAttachment::ECFileAttachment(ECDatabase *lpDatabase, std::string basepath,
 
 ECFileAttachment::~ECFileAttachment()
 {
+	m_lpLogger->Release();
 #ifndef WIN32
 	if (m_dirp != NULL)
 		closedir(m_dirp);

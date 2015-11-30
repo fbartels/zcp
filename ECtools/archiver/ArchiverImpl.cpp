@@ -116,6 +116,8 @@ eResult ArchiverImpl::Init(const char *lpszAppName, const char *lpszConfig, cons
 			m_lpLogLogger->Release();
 			m_lpLogLogger = new ECLogger_Null();
 		}
+		if (m_lpLogger != NULL)
+			m_lpLogger->Release();
 		m_lpLogger = m_lpLogLogger;
 		m_lpLogger->AddRef();
 	} else if (ulFlags & AttachStdErr) {

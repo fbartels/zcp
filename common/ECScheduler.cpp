@@ -69,6 +69,7 @@ ECScheduler::ECScheduler(ECLogger *lpLogger)
 {
 	m_bExit = FALSE;
 	m_lpLogger = lpLogger;
+	m_lpLogger->AddRef();
 
 	// Create a mutex with no initial owner.
 	pthread_mutexattr_t mattr;
@@ -88,6 +89,7 @@ ECScheduler::ECScheduler(ECLogger *lpLogger)
 
 ECScheduler::~ECScheduler(void)
 {
+	m_lpLogger->Release();
 	pthread_mutex_lock( &m_hExitMutex);
 	m_bExit = TRUE;
 	pthread_cond_signal(&m_hExitSignal);
@@ -99,6 +101,7 @@ ECScheduler::~ECScheduler(void)
 	//pthread_mutex_lock(&m_hSchedulerMutex);
 	
 	//Clean up something
+	m_lpLogger->Release();
 
 	// Unlock whole Scheduler
 	//pthread_mutex_unlock(&m_hSchedulerMutex);

@@ -184,6 +184,7 @@ ECSyncContext::ECSyncContext(LPMDB lpStore, ECLogger *lpLogger)
 {
 	pthread_mutex_init(&m_hMutex, NULL);
 
+	m_lpLogger->AddRef();
 	m_lpStore->AddRef();
 
 	if (m_lpSettings->ChangeNotificationsEnabled())
@@ -201,6 +202,7 @@ ECSyncContext::~ECSyncContext()
 	if (m_lpStore)
 		m_lpStore->Release();
 
+	m_lpLogger->Release();
 	pthread_mutex_destroy(&m_hMutex);
 }
 

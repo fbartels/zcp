@@ -54,6 +54,7 @@ ProtocolBase::ProtocolBase(Http *lpRequest, IMAPISession *lpSession, ECLogger *l
 	m_lpRequest = lpRequest;
 	m_lpSession = lpSession;
 	m_lpLogger  = lpLogger;
+	m_lpLogger->AddRef();
 
 	m_lpUsrFld = NULL;
 	m_lpIPMSubtree = NULL;
@@ -93,6 +94,7 @@ ProtocolBase::~ProtocolBase()
 
 	if (m_lpActiveStore)
 		m_lpActiveStore->Release();
+	m_lpLogger->Release();
 }
 
 /**

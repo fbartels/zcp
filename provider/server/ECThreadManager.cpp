@@ -121,9 +121,10 @@ int relocate_fd(int fd, ECLogger *lpLogger);
 
 ECWorkerThread::ECWorkerThread(ECLogger *lpLogger, ECThreadManager *lpManager, ECDispatcher *lpDispatcher, bool bDoNotStart)
 {
-    m_lpLogger = lpLogger;
-    m_lpManager = lpManager;
-    m_lpDispatcher = lpDispatcher;
+	m_lpLogger = lpLogger;
+	m_lpLogger->AddRef();
+	m_lpManager = lpManager;
+	m_lpDispatcher = lpDispatcher;
 
 	if (!bDoNotStart) {
 		if(pthread_create(&m_thread, NULL, ECWorkerThread::Work, this) != 0) {
@@ -153,6 +154,7 @@ ECPriorityWorkerThread::~ECPriorityWorkerThread()
 
 ECWorkerThread::~ECWorkerThread()
 {
+	m_lpLogger->Release();
 }
 
 void *ECWorkerThread::Work(void *lpParam)
@@ -305,6 +307,7 @@ done:
 ECThreadManager::ECThreadManager(ECLogger *lpLogger, ECDispatcher *lpDispatcher, unsigned int ulThreads)
 {
     m_lpLogger = lpLogger;
+    m_lpLogger->AddRef();
     m_lpDispatcher = lpDispatcher;
     m_ulThreads = ulThreads;
 
@@ -339,8 +342,8 @@ ECThreadManager::~ECThreadManager()
             break;
     }    
 	delete m_lpPrioWorker;
-    
-    pthread_mutex_destroy(&m_mutexThreads);
+	m_lpLogger->Release();
+	pthread_mutex_destroy(&m_mutexThreads);
 }
     
 ECRESULT ECThreadManager::ForceAddThread(int nThreads)
@@ -425,6 +428,7 @@ ECWatchDog::ECWatchDog(ECConfig *lpConfig, ECLogger *lpLogger, ECDispatcher *lpD
 {
     m_lpConfig = lpConfig;
     m_lpLogger = lpLogger;
+    m_lpLogger->AddRef();
     m_lpDispatcher = lpDispatcher;
     m_lpThreadManager = lpThreadManager;
     m_bExit = false;
@@ -453,6 +457,7 @@ ECWatchDog::~ECWatchDog()
     
     pthread_mutex_destroy(&m_mutexExit);
     pthread_cond_destroy(&m_condExit);
+    m_lpLogger->Release();
 }
 
 void *ECWatchDog::Watch(void *lpParam)
@@ -494,8 +499,9 @@ void *ECWatchDog::Watch(void *lpParam)
 
 ECDispatcher::ECDispatcher(ECLogger *lpLogger, ECConfig *lpConfig, CREATEPIPESOCKETCALLBACK lpCallback, void *lpParam)
 {
-    m_lpLogger = lpLogger;
-    m_lpConfig = lpConfig;
+	m_lpLogger = lpLogger;
+	m_lpLogger->AddRef();
+	m_lpConfig = lpConfig;
 
 	// Default socket settings
 	m_nMaxKeepAlive = atoi(m_lpConfig->GetSetting("server_max_keep_alive_requests"));
@@ -524,6 +530,7 @@ ECDispatcher::~ECDispatcher()
     pthread_mutex_destroy(&m_mutexIdle);
     pthread_cond_destroy(&m_condItems);
     pthread_cond_destroy(&m_condPrioItems);
+    m_lpLogger->Release();
 }
 
 ECRESULT ECDispatcher::GetThreadCount(unsigned int *lpulThreads, unsigned int *lpulIdleThreads)

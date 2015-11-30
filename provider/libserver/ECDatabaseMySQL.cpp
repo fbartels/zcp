@@ -344,6 +344,7 @@ ECDatabaseMySQL::ECDatabaseMySQL(ECLogger *lpLogger, ECConfig *lpConfig)
 	m_bConnected		= false;
 	m_bAutoLock			= true;
 	m_lpLogger			= lpLogger;
+	m_lpLogger->AddRef();
 	m_lpConfig			= lpConfig;
 	m_bSuppressLockErrorLogging = false;
 
@@ -362,6 +363,7 @@ ECDatabaseMySQL::ECDatabaseMySQL(ECLogger *lpLogger, ECConfig *lpConfig)
 ECDatabaseMySQL::~ECDatabaseMySQL()
 {
 	Close();
+	m_lpLogger->Release();
 
 	// Close the mutex handle of mysql
 	pthread_mutex_destroy(&m_hMutexMySql);
