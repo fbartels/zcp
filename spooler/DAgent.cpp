@@ -3569,13 +3569,19 @@ static HRESULT running_service(const char *servicename, bool bDaemonize,
 	
 	// Setup sockets
 	hr = HrListen(g_lpLogger, g_lpConfig->GetSetting("server_bind"),
-	              atoi(g_lpConfig->GetSetting("lmtp_port")), &ulListenLMTP,
-	              g_lpConfig->GetSetting("server_bind_intf"));
+	              atoi(g_lpConfig->GetSetting("lmtp_port")), &ulListenLMTP);
 	if (hr != hrSuccess) {
 		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "running_service(): HrListen failed %x", hr);
 		goto exit;
 	}
 		
+	err = zcp_bindtodevice(g_lpLogger, ulListenLMTP,
+	      g_lpConfig->GetSetting("server_bind_intf"));
+	if (err < 0) {
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "SO_BINDTODEVICE: %s",
+			strerror(-err));
+		goto exit;
+	}
 	g_lpLogger->Log(EC_LOGLEVEL_INFO, "Listening on port %s for LMTP", g_lpConfig->GetSetting("lmtp_port"));
 	pCloseFDs[nCloseFDs++] = ulListenLMTP;
 
