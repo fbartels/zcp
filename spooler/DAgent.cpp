@@ -3985,8 +3985,8 @@ int main(int argc, char *argv[]) {
 		{ "server_bind", "" },
 		{ "server_bind_intf", "lo" },
 #ifdef LINUX
-		{ "run_as_user", "" },
-		{ "run_as_group", "" },
+		{ "run_as_user", "zarafa" },
+		{ "run_as_group", "zarafa" },
 		{ "pid_file", "/var/run/zarafad/dagent.pid" },
 		{ "coredump_enabled", "no" },
 #endif

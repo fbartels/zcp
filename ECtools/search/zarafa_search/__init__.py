@@ -59,6 +59,8 @@ CONFIG = {
     'optimize_age': Config.ignore(),
     'optimize_start': Config.ignore(),
     'optimize_stop': Config.ignore(),
+    'run_as_user': Config.string(default="zarafa"),
+    'run_as_group': Config.string(default="zarafa"),
     'search_engine': Config.string(default='xapian'),
     'server_bind_name': Config.string(default='file:///var/run/zarafa-search'),
     'ssl_private_key_file': Config.path(default=None, check=False), # XXX don't check when default=None?

@@ -186,8 +186,8 @@ int main(int argc, char *argv[]) {
 		{ "smtp_server","localhost" },
 		{ "server_socket", CLIENT_ADMIN_SOCKET },
 #ifdef LINUX
-		{ "run_as_user", "" },
-		{ "run_as_group", "" },
+		{ "run_as_user", "zarafa" },
+		{ "run_as_group", "zarafa" },
 		{ "pid_file", "/var/run/zarafad/monitor.pid" },
 		{ "running_path", "/" },
 #endif		

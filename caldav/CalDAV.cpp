@@ -190,8 +190,8 @@ int main(int argc, char **argv) {
 #endif
 	static const configsetting_t lpDefaults[] = {
 #ifdef LINUX
-		{ "run_as_user", "" },
-		{ "run_as_group", "" },
+		{ "run_as_user", "zarafa" },
+		{ "run_as_group", "zarafa" },
 		{ "pid_file", "/var/run/zarafad/ical.pid" },
 		{ "running_path", "/" },
 		{ "process_model", "fork" },
