@@ -3249,64 +3249,55 @@ def daemon_helper(func, service, log):
 def daemonize(func, options=None, foreground=False, args=[], log=None, config=None, service=None):
     if log and service:
         log.info('starting %s', service.logname or service.name)
-    if foreground or (options and options.foreground):
-        try:
-            if isinstance(service, Service): # XXX
-                service.log_queue = Queue()
-                service.ql = QueueListener(service.log_queue, *service.log.handlers)
-                service.ql.start()
-            func(*args)
-        finally:
-            # XXX why not stop service.ql here..?
-            if log and service:
-                log.info('stopping %s', service.logname or service.name)
-    else:
-        uid = gid = None
-        working_directory = '/'
-        pidfile = None
-        if args:
-            pidfile = '/var/run/zarafad/%s.pid' % args[0].name
-        if config:
-            working_directory = config.get('running_path')
-            pidfile = config.get('pid_file')
-            if config.get('run_as_user'):
-                uid = pwd.getpwnam(config.get('run_as_user')).pw_uid
-            if config.get('run_as_group'):
-                gid = grp.getgrnam(config.get('run_as_group')).gr_gid
-        if pidfile: # following checks copied from zarafa-ws
-            pidfile = daemon.pidlockfile.TimeoutPIDLockFile(pidfile, 10)
-            oldpid = pidfile.read_pid()
-            if oldpid is None:
-                # there was no pidfile, remove the lock if it's there
+    uid = gid = None
+    working_directory = '/'
+    pidfile = None
+    if args:
+        pidfile = '/var/run/zarafad/%s.pid' % args[0].name
+    if config:
+        working_directory = config.get('running_path')
+        pidfile = config.get('pid_file')
+        if config.get('run_as_user'):
+            uid = pwd.getpwnam(config.get('run_as_user')).pw_uid
+        if config.get('run_as_group'):
+            gid = grp.getgrnam(config.get('run_as_group')).gr_gid
+    if pidfile: # following checks copied from zarafa-ws
+        pidfile = daemon.pidlockfile.TimeoutPIDLockFile(pidfile, 10)
+        oldpid = pidfile.read_pid()
+        if oldpid is None:
+            # there was no pidfile, remove the lock if it's there
+            pidfile.break_lock()
+        elif oldpid:
+            try:
+                cmdline = open('/proc/%u/cmdline' % oldpid).read().split('\0')
+            except IOError as error:
+                if error.errno != errno.ENOENT:
+                    raise
+                # errno.ENOENT indicates that no process with pid=oldpid exists, which is ok
                 pidfile.break_lock()
-            elif oldpid:
-                try:
-                    cmdline = open('/proc/%u/cmdline' % oldpid).read().split('\0')
-                except IOError as error:
-                    if error.errno != errno.ENOENT:
-                        raise
-                    # errno.ENOENT indicates that no process with pid=oldpid exists, which is ok
-                    pidfile.break_lock()
-#                else: # XXX can we do this in general? are there libraries to avoid having to deal with this? daemonrunner? 
-#                    # A process exists with pid=oldpid, check if it's a zarafa-ws instance.
-#                    # sys.argv[0] contains the script name, which matches cmdline[1]. But once compiled
-#                    # sys.argv[0] is probably the executable name, which will match cmdline[0].
-#                    if not sys.argv[0] in cmdline[:2]:
-#                        # break the lock if it's another process
-#                        pidfile.break_lock()
-        if uid is not None and gid is not None:
-            for h in log.handlers:
-                if isinstance(h, logging.handlers.WatchedFileHandler):
-                    os.chown(h.baseFilename, uid, gid)
-        with daemon.DaemonContext(
-                pidfile=pidfile,
-                uid=uid,
-                gid=gid,
-                working_directory=working_directory,
-                files_preserve=[h.stream for h in log.handlers if isinstance(h, logging.handlers.WatchedFileHandler)] if log else None,
-                prevent_core=False,
-            ):
-            daemon_helper(func, service, log)
+#            else: # XXX can we do this in general? are there libraries to avoid having to deal with this? daemonrunner?
+#                # A process exists with pid=oldpid, check if it's a zarafa-ws instance.
+#                # sys.argv[0] contains the script name, which matches cmdline[1]. But once compiled
+#                # sys.argv[0] is probably the executable name, which will match cmdline[0].
+#                if not sys.argv[0] in cmdline[:2]:
+#                    # break the lock if it's another process
+#                    pidfile.break_lock()
+    if uid is not None and gid is not None:
+        for h in log.handlers:
+            if isinstance(h, logging.handlers.WatchedFileHandler):
+                os.chown(h.baseFilename, uid, gid)
+    if options and options.foreground:
+        foreground = options.foreground
+    with daemon.DaemonContext(
+            pidfile=pidfile,
+            uid=uid,
+            gid=gid,
+            working_directory=working_directory,
+            files_preserve=[h.stream for h in log.handlers if isinstance(h, logging.handlers.WatchedFileHandler)] if log else None,
+            prevent_core=False,
+            detach_process=not foreground,
+        ):
+        daemon_helper(func, service, log)
 
 def _loglevel(options, config):
     if options and getattr(options, 'loglevel', None):
