@@ -10,4 +10,6 @@ EXTRA_DIST = setup.py		\
 	zarafa/daemon/version/version_info.py
 
 install-exec-local:
-	cd ${top_srcdir}/swig/python/zarafa/ && ${PYTHON} setup.py install --root="${DESTDIR}" --prefix="${prefix}" --install-purelib ${pythondir}
+	cd ${srcdir} && ${PYTHON} setup.py install -f \
+		$${DESTDIR+--root=${DESTDIR}} \
+		--prefix="${prefix}" --install-purelib ${pythondir}
