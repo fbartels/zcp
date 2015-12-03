@@ -1,8 +1,6 @@
 [Unit]
 Description=Zarafa Collaboration Platform Spooler
 Documentation=man:zarafa-spooler(8) man:zarafa-spooler.cfg(5)
-Wants=zarafa-server.service
-After=zarafa-server.service
 
 [Service]
 Type=simple
