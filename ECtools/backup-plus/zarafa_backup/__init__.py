@@ -206,8 +206,9 @@ class Service(zarafa.Service):
 
         # if not at the folder-level, restore webapp settings from store props
         if not self.options.folders and os.path.exists('%s/store' % self.data_path):
-            settings = pickle.loads(file('%s/store' % self.data_path).read())[0x6772001f] # XXX PR_EC_WEBACCESS_SETTINGS_JSON
-            store.create_prop(PR_EC_WEBACCESS_SETTINGS_JSON, settings)
+            settings = pickle.loads(file('%s/store' % self.data_path).read()).get(0x6772001f) # XXX PR_EC_WEBACCESS_SETTINGS_JSON
+            if settings:
+                store.create_prop(PR_EC_WEBACCESS_SETTINGS_JSON, settings)
 
         # determine stored and specified folders
         path_folder = folder_struct(self.data_path, self.options)
