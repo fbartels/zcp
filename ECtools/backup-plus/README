@@ -13,6 +13,9 @@ BACKUP
   'index': key-value store containinfg subjects and dates for every item (for performance)
   'state': ICS state
   'path': folder path, for example 'Inbox/subfolder'
+  'meta': contains rules, acls, delegates for this folder
+  'folder': contains folder properties
+-for each user/store, the properties are also stored globally as 'user'/'store'
 -only a certain period may be backed up (-b, -e), though this may give weird effects when
  combining with incremental backup
 -there are certain options to skip e.g. attachments, junk mail, deleted items..
@@ -30,6 +33,8 @@ RESTORE
 -there are certain options to skip e.g. attachments, junk mail, deleted items..
 -it should be mostly possible to restore on a different server, though this may result in minor data loss
 -it is not parallelized at this point, but could be in the future
+-when restoring items, they get a new sourcekey. but we'd like to check for duplicates, so we restore the
+ original sourcekey as PR_EC_BACKUP_SOURCEKEY
 
 STATS/INDEX
 -zarafa-backup --stats gives a high-level summary of the contents of a backup directory
