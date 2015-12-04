@@ -8,15 +8,13 @@ from multiprocessing import Queue
 import os.path
 import sys
 import time
+from xml.etree import ElementTree
 import zlib
 
-from MAPI.Util import PR_SOURCE_KEY, PR_EC_BACKUP_SOURCE_KEY, MAPIErrorNotFound, PT_ERROR, PROP_TYPE, SPropValue
+from MAPI.Util import *
 
 import zarafa
 from zarafa import log_exc
-
-def dump_props(props):
-    return pickle.dumps(dict((prop.proptag, prop.mapiobj.Value) for prop in props))
 
 class BackupWorker(zarafa.Worker):
     def main(self):
@@ -28,9 +26,10 @@ class BackupWorker(zarafa.Worker):
                 store = server.store(storeguid)
                 if not os.path.isdir(path):
                     os.makedirs(path)
+                user = store.user
                 if not options.folders:
-                    if username:
-                        file(path+'/user', 'w').write(dump_props(server.user(username).props()))
+                    if user:
+                        file(path+'/user', 'w').write(dump_props(user.props()))
                     file(path+'/store', 'w').write(dump_props(store.props()))
                 t0 = time.time()
                 self.log.info('backing up: %s' % path)
@@ -45,7 +44,7 @@ class BackupWorker(zarafa.Worker):
                          (options.skip_deleted and folder == store.wastebasket))):
                         continue
                     paths.add(folder.path)
-                    self.backup_folder(path, folder, store.subtree, config, options, stats)
+                    self.backup_folder(path, folder, store.subtree, config, options, stats, user, server)
                 path_folder = folder_struct(path, options)
                 if not options.folders:
                     for fpath in set(path_folder) - paths:
@@ -56,13 +55,14 @@ class BackupWorker(zarafa.Worker):
                     (path, time.time()-t0, changes, changes/(time.time()-t0), stats['errors']))
             self.oqueue.put(stats)
 
-    def backup_folder(self, path, folder, subtree, config, options, stats):
+    def backup_folder(self, path, folder, subtree, config, options, stats, user, server):
+        self.log.info('backing up folder: %s' % folder.path)
         data_path = path+'/'+folder_path(folder, subtree)
         if not os.path.isdir('%s/folders' % data_path):
             os.makedirs('%s/folders' % data_path)
         file(data_path+'/path', 'w').write(folder.path.encode('utf8'))
         file(data_path+'/folder', 'w').write(dump_props(folder.props()))
-        self.log.info('backing up folder: %s' % folder.path)
+        file(data_path+'/meta', 'w').write(dump_meta(folder, user, server))
         importer = FolderImporter(folder, data_path, config, options, self.log, stats)
         statepath = '%s/state' % data_path
         state = None
@@ -133,6 +133,7 @@ class Service(zarafa.Service):
             store = self.server.store(self.options.stores[0])
         else:
             store = self._store(username)
+        user = store.user
         self.log.info('restoring to store %s' % store.guid)
         t0 = time.time()
         stats = {'changes': 0, 'errors': 0}
@@ -152,7 +153,7 @@ class Service(zarafa.Service):
                     (self.options.skip_deleted and folder == store.wastebasket))):
                         continue
                 data_path = path_folder[path]
-                self.restore_folder(folder, path, data_path, store, store.subtree, stats)
+                self.restore_folder(folder, path, data_path, store, store.subtree, stats, user, self.server)
         self.log.info('restore completed in %.2f seconds (%d changes, ~%.2f/sec, %d errors)' %
             (time.time()-t0, stats['changes'], stats['changes']/(time.time()-t0), stats['errors']))
 
@@ -179,13 +180,14 @@ class Service(zarafa.Service):
                 jobs.append((store, None, os.path.join(output_dir, target)))
         return [(job[0].guid,)+job[1:] for job in sorted(jobs, reverse=True, key=lambda x: x[0].size)]
 
-    def restore_folder(self, folder, path, data_path, store, subtree, stats):
+    def restore_folder(self, folder, path, data_path, store, subtree, stats, user, server):
         if self.options.sourcekeys:
             with closing(dbhash.open(data_path+'/items', 'c')) as db:
                 if not [sk for sk in self.options.sourcekeys if sk in db]:
                     return
         else:
             self.log.info('restoring folder %s' % path)
+            load_meta(folder, user, server, file(data_path+'/meta').read())
         existing = set()
         table = folder.mapiobj.GetContentsTable(0)
         table.SetColumns([PR_SOURCE_KEY, PR_EC_BACKUP_SOURCE_KEY], 0)
@@ -273,6 +275,87 @@ def show_contents(data_path, options):
             items.sort(key=lambda (k, d): d['last_modified'])
             for key, d in items:
                 writer.writerow([key, path, d['last_modified'], d['subject'].encode(sys.stdout.encoding or 'utf8')])
+
+def dump_props(props):
+    return pickle.dumps(dict((prop.proptag, prop.mapiobj.Value) for prop in props))
+
+def dump_meta(folder, user, server):
+    # XXX no user, only store..? (public)
+    data = {}
+
+    # rules
+    try:
+        ruledata = folder.prop(PR_RULES_DATA).value
+    except MAPIErrorNotFound:
+        ruledata = None
+    else:
+        etxml = ElementTree.fromstring(ruledata)
+        for actions in etxml.findall('./item/item/actions'):
+            for movecopy in actions.findall('.//moveCopy'):
+                f = movecopy.findall('folder')[0]
+                path = user.folder(f.text.decode('base64').encode('hex')).path
+                f.text = path
+        ruledata = ElementTree.tostring(etxml)
+    data['rules'] = ruledata
+
+    # acl XXX groups/distlists
+    data['acl'] = []
+    acl_table = folder.mapiobj.OpenProperty(PR_ACL_TABLE, IID_IExchangeModifyTable, 0, 0)
+    table = acl_table.GetTable(0)
+    for row in table.QueryRows(-1,0):
+        row[1].Value = server.sa.GetUser(row[1].Value, MAPI_UNICODE).Username
+        data['acl'].append(row)
+
+    # delegates
+    fbeid = user.root.prop(PR_FREEBUSY_ENTRYIDS).value[1] # XXX only store globally; backup more props
+    fbf = user.store.mapiobj.OpenEntry(fbeid, None, 0)
+    try:
+        delegate_uids = HrGetOneProp(fbf, PR_SCHDINFO_DELEGATE_ENTRYIDS).Value
+    except MAPIErrorNotFound:
+        delegate_uids = []
+    data['delegate_users'] = [server.sa.GetUser(uid, MAPI_UNICODE).Username for uid in delegate_uids]
+    sec = folder.mapiobj.QueryInterface(IID_IECSecurity)
+    ecperms = sec.GetPermissionRules(ACCESS_TYPE_GRANT)
+    for p in ecperms:
+        p.UserID = server.sa.GetUser(p.UserID, MAPI_UNICODE).Username
+    data['delegate_perms'] = ecperms
+
+    return pickle.dumps(data)
+
+def load_meta(folder, user, server, data):
+    #u2.store.create_prop(PR_EC_WEBACCESS_SETTINGS_JSON, settings) # XXX elsewhere
+    data = pickle.loads(data)
+
+    # rules
+    ruledata = data['rules']
+    if ruledata:
+        etxml = ElementTree.fromstring(ruledata)
+        for actions in etxml.findall('./item/item/actions'):
+            for movecopy in actions.findall('.//moveCopy'):
+                store = movecopy.findall('store')[0]
+                store.text = user.store.entryid.decode('hex').encode('base64').strip() # XXX resolve other users
+                f = movecopy.findall('folder')[0]
+                f.text = user.folder(f.text).entryid.decode('hex').encode('base64').strip()
+        ruledata = ElementTree.tostring(etxml)
+        folder.create_prop(PR_RULES_DATA, ruledata)
+
+    # acl
+    for row in data['acl']:
+        row[1].Value = server.user(row[1].Value).userid.decode('hex')
+    acltab = folder.mapiobj.OpenProperty(PR_ACL_TABLE, IID_IExchangeModifyTable, 0, MAPI_MODIFY)
+    acltab.ModifyTable(0, [ROWENTRY(ROW_ADD, row) for row in data['acl']])
+
+    # delegates
+    for p in data['delegate_perms']:
+        p.UserID = server.user(p.UserID).userid.decode('hex')
+        p.ulState = 1 # RIGHT_NEW
+    sec = folder.mapiobj.QueryInterface(IID_IECSecurity)
+    if data['delegate_perms']: # XXX why needed?
+        sec.SetPermissionRules(data['delegate_perms'])
+    fbeid = user.root.prop(PR_FREEBUSY_ENTRYIDS).value[1]
+    fbf = user.store.mapiobj.OpenEntry(fbeid, None, MAPI_MODIFY)
+    fbf.SetProps([SPropValue(PR_SCHDINFO_DELEGATE_ENTRYIDS, [server.user(name).userid.decode('hex') for name in data['delegate_users']])])
+    fbf.SaveChanges(0)
 
 def main():
     parser = zarafa.parser('ckpsufwUPCSlObe', usage='zarafa-backup [PATH] [options]')
