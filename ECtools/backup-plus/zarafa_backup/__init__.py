@@ -135,6 +135,9 @@ class Service(zarafa.Service):
             store = self._store(username)
         user = store.user
         self.log.info('restoring to store %s' % store.guid)
+        if not self.options.folders and os.path.exists('%s/store' % self.data_path):
+            settings = pickle.loads(file('%s/store' % self.data_path).read())[0x6772001f] # XXX PR_EC_WEBACCESS_SETTINGS_JSON
+            store.create_prop(PR_EC_WEBACCESS_SETTINGS_JSON, settings)
         t0 = time.time()
         stats = {'changes': 0, 'errors': 0}
         path_folder = folder_struct(self.data_path, self.options)
@@ -279,8 +282,10 @@ def show_contents(data_path, options):
 def dump_props(props):
     return pickle.dumps(dict((prop.proptag, prop.mapiobj.Value) for prop in props))
 
+
 def dump_meta(folder, user, server):
     # XXX no user, only store..? (public)
+    # XXX move serialization code to python-zarafa once stabilized
     data = {}
 
     # rules
@@ -323,7 +328,8 @@ def dump_meta(folder, user, server):
     return pickle.dumps(data)
 
 def load_meta(folder, user, server, data):
-    #u2.store.create_prop(PR_EC_WEBACCESS_SETTINGS_JSON, settings) # XXX elsewhere
+    # XXX move serialization code to python-zarafa once stabilized
+
     data = pickle.loads(data)
 
     # rules
@@ -352,7 +358,7 @@ def load_meta(folder, user, server, data):
     sec = folder.mapiobj.QueryInterface(IID_IECSecurity)
     if data['delegate_perms']: # XXX why needed?
         sec.SetPermissionRules(data['delegate_perms'])
-    fbeid = user.root.prop(PR_FREEBUSY_ENTRYIDS).value[1]
+    fbeid = user.root.prop(PR_FREEBUSY_ENTRYIDS).value[1] # XXX backup everything here?
     fbf = user.store.mapiobj.OpenEntry(fbeid, None, MAPI_MODIFY)
     fbf.SetProps([SPropValue(PR_SCHDINFO_DELEGATE_ENTRYIDS, [server.user(name).userid.decode('hex') for name in data['delegate_users']])])
     fbf.SaveChanges(0)
