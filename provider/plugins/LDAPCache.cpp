@@ -229,9 +229,7 @@ std::auto_ptr<dn_list_t> LDAPCache::getChildrenForDN(const std::auto_ptr<dn_cach
 std::string LDAPCache::getDNForObject(const std::auto_ptr<dn_cache_t> &lpCache, const objectid_t &externid)
 {
 	dn_cache_t::iterator it = lpCache->find(externid);
-	if (it != lpCache->end())
-		return it->second;
-	return std::string();
+	return it == lpCache->end() ? std::string() : it->second;
 }
 
 bool LDAPCache::isDNInList(const std::auto_ptr<dn_list_t> &lpList, const std::string &dn)

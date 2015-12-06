@@ -369,12 +369,7 @@ ECRESULT ECSecurity::HaveObjectPermission(unsigned int ulObjId, unsigned int ulA
 	unsigned int	ulRights = 0;
 
 	GetObjectPermission(ulObjId, &ulRights);
-
-	if((ulRights & ulACLMask) > 0) {
-		return erSuccess;
-	} else {
-		return ZARAFA_E_NO_ACCESS;
-	}
+	return (ulRights & ulACLMask) ? erSuccess : ZARAFA_E_NO_ACCESS;
 }
 
 /** 
@@ -392,16 +387,7 @@ ECRESULT ECSecurity::IsOwner(unsigned int ulObjId)
 	unsigned int	ulOwner = 0;
 
 	er = GetOwner(ulObjId, &ulOwner);
-	if (er != erSuccess || ulOwner != m_ulUserID)
-	{
-		er = ZARAFA_E_NO_ACCESS;
-		goto exit;
-	}
-
-	er = erSuccess;
-
-exit:
-	return er;
+	return er != erSuccess || ulOwner != m_ulUserID ? ZARAFA_E_NO_ACCESS : erSuccess;
 }
 
 /** 
@@ -420,14 +406,7 @@ ECRESULT ECSecurity::GetOwner(unsigned int ulObjId, unsigned int *lpulOwnerId)
 	*lpulOwnerId = 0;
 
 	er = m_lpSession->GetSessionManager()->GetCacheManager()->GetOwner(ulObjId, lpulOwnerId);
-	if (er != erSuccess)
-	{
-		er = ZARAFA_E_NOT_FOUND;
-		goto exit;
-	}
-
-exit:
-	return er;
+	return er != erSuccess ? ZARAFA_E_NOT_FOUND : er;
 }
 
 /** 

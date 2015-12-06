@@ -108,9 +108,7 @@ bool ECConfigImpl::LoadSettings(const char *szFilename)
 
 static int tounderscore(int c)
 {
-	if(c == '-')
-		return '_';
-	return c;
+	return c == '-' ? '_' : c;
 }
 
 /**

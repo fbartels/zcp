@@ -127,30 +127,22 @@ objectdetails_t::objectdetails_t(const objectdetails_t &objdetails) {
 
 unsigned int objectdetails_t::GetPropInt(const property_key_t &propname) const {
 	property_map::const_iterator item = m_mapProps.find(propname);
-    if(item != m_mapProps.end()) {
-        return atoi(item->second.c_str());
-    } else return 0;
+	return item == m_mapProps.end() ? 0 : atoi(item->second.c_str());
 }
 
 bool objectdetails_t::GetPropBool(const property_key_t &propname) const {
 	property_map::const_iterator item = m_mapProps.find(propname);
-    if(item != m_mapProps.end()) {
-        return atoi(item->second.c_str());
-    } else return false;
+	return item == m_mapProps.end() ? false : atoi(item->second.c_str());
 }
 
 std::string	objectdetails_t::GetPropString(const property_key_t &propname) const {
 	property_map::const_iterator item = m_mapProps.find(propname);
-    if(item != m_mapProps.end()) {
-        return item->second;
-    } else return std::string();
+	return item == m_mapProps.end() ? std::string() : item->second;
 }
 
 objectid_t objectdetails_t::GetPropObject(const property_key_t &propname) const {
 	property_map::const_iterator item = m_mapProps.find(propname);
-	if (item != m_mapProps.end()) {
-		return objectid_t(item->second);
-	} else return objectid_t();
+	return item == m_mapProps.end() ? objectid_t() : objectid_t(item->second);
 }
 
 void objectdetails_t::SetPropInt(const property_key_t &propname, unsigned int value) {
