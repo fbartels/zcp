@@ -39,7 +39,7 @@ rhel_sysconfig_path = ${sysconfdir}/sysconfig
 suse_sysconfig_path = ${localstatedir}/adm/fillup-templates
 sles_sysconfig_path = ${localstatedir}/adm/fillup-templates
 sysconf_sysconfigdir = ${@DISTRO@_sysconfig_path}
-sysconf_sysconfig_DATA = ${@DISTRO@_sysconfig_files}
+sysconf_sysconfig_DATA = sysconfig.txt
 alt_sysconfig_path = ${sysconfdir}/sysconfig
 
 dist_doc_DATA = \
@@ -88,11 +88,9 @@ install-data-hook:
 	mv -v ${DESTDIR}${sysconf_rotatedir}/zarafa.logrotate ${DESTDIR}${sysconf_rotatedir}/zarafa
 	mv -v ${DESTDIR}${sysconf_crondir}/zarafa-client-update.cron ${DESTDIR}${sysconf_crondir}/zarafa-client-update
 	if test ${DISTRO} = "sles" -o ${DISTRO} = "suse"; then \
-		mv -v ${DESTDIR}${sysconf_sysconfigdir}/sysconfig.txt ${DESTDIR}${sysconf_sysconfigdir}/sysconfig.zarafa || true; \
+		mv -v ${DESTDIR}${sysconf_sysconfigdir}/sysconfig.txt ${DESTDIR}${sysconf_sysconfigdir}/sysconfig.zarafa; \
 	elif test ${DISTRO} = "rhel" -o ${DISTRO} = "alt"; then \
-		mv -v ${DESTDIR}${sysconf_sysconfigdir}/sysconfig.txt ${DESTDIR}${sysconf_sysconfigdir}/zarafa || true; \
-	else \
-		true; \
+		mv -v ${DESTDIR}${sysconf_sysconfigdir}/sysconfig.txt ${DESTDIR}${sysconf_sysconfigdir}/zarafa; \
 	fi
 	for f in ${sysconf_init_SCRIPTS}; do \
 		newf=`echo "$$f" | sed -e 's/\(zarafa-.*\).init.*/\1/'`; \
