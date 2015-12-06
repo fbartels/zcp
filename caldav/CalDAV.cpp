@@ -182,7 +182,7 @@ int main(int argc, char **argv) {
 #endif
 
 	// Configuration
-	char opt = '\0';
+	int opt = 0;
 #ifdef WIN32
 	const char *lpszCfg = "ical.cfg";
 #else
