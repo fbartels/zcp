@@ -179,12 +179,12 @@ void objectdetails_t::AddPropObject(const property_key_t &propname, const object
 
 std::list<unsigned int> objectdetails_t::GetPropListInt(const property_key_t &propname) const {
 	property_mv_map::const_iterator mvitem = m_mapMVProps.find(propname);
-	if (mvitem != m_mapMVProps.end()) {
-		std::list<unsigned int> l;
-		for (std::list<std::string>::const_iterator i = mvitem->second.begin(); i != mvitem->second.end(); i++)
-			l.push_back(atoui(i->c_str()));
-		return l;
-	} else return std::list<unsigned int>();
+	if (mvitem == m_mapMVProps.end())
+		return std::list<unsigned int>();
+	std::list<unsigned int> l;
+	for (std::list<std::string>::const_iterator i = mvitem->second.begin(); i != mvitem->second.end(); ++i)
+		l.push_back(atoui(i->c_str()));
+	return l;
 }
 
 std::list<std::string> objectdetails_t::GetPropListString(const property_key_t &propname) const {
@@ -195,12 +195,12 @@ std::list<std::string> objectdetails_t::GetPropListString(const property_key_t &
 
 std::list<objectid_t> objectdetails_t::GetPropListObject(const property_key_t &propname) const {
 	property_mv_map::const_iterator mvitem = m_mapMVProps.find(propname);
-	if (mvitem != m_mapMVProps.end()) {
-		std::list<objectid_t> l;
-		for (std::list<std::string>::const_iterator i = mvitem->second.begin(); i != mvitem->second.end(); i++)
-			l.push_back(objectid_t(*i));
-		return l;
-	} else return std::list<objectid_t>();
+	if (mvitem == m_mapMVProps.end())
+		return std::list<objectid_t>();
+	std::list<objectid_t> l;
+	for (std::list<std::string>::const_iterator i = mvitem->second.begin(); i != mvitem->second.end(); ++i)
+		l.push_back(objectid_t(*i));
+	return l;
 }
 
 property_map objectdetails_t::GetPropMapAnonymous() const {
