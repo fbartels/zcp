@@ -2067,7 +2067,7 @@ HRESULT MAPIToVMIME::handleSenderInfo(IMessage *lpMessage, vmime::ref<vmime::hea
 	}
 
 	// read receipt request
-	if ((HrGetOneProp(lpMessage, PR_READ_RECEIPT_REQUESTED, &lpReadReceipt) == hrSuccess) && (lpReadReceipt->Value.b == TRUE)) {
+	if (HrGetOneProp(lpMessage, PR_READ_RECEIPT_REQUESTED, &lpReadReceipt) == hrSuccess && lpReadReceipt->Value.b == TRUE) {
 		vmime::mailboxList mbl;
 		if (!strResEmail.empty() && strResEmail != strEmail) {
 			// use user added from address

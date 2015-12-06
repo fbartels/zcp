@@ -54,7 +54,7 @@ static const char THIS_FILE[] = __FILE__;
 static const std::string base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 static inline bool is_base64(unsigned char c) {
-    return (isalnum(c) || (c == '+') || (c == '/'));
+	return isalnum(c) || c == '+' || c == '/';
 }
 
 std::string base64_encode(unsigned char const* bytes_to_encode, unsigned int in_len) {

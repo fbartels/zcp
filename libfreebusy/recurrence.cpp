@@ -1153,12 +1153,11 @@ time_t recurrence::calcStartDate()
 				count = m_sRecState.ulPeriod;
 			} else if (m_sRecState.ulRecurFrequency == RF_YEARLY) {
 
-				if ( ( getMonth()-1 < tm.tm_mon) || ( getMonth()-1 == tm.tm_mon && m_sRecState.ulDayOfMonth < tm.tm_mday) ) {
+				if (getMonth() - 1 < tm.tm_mon || (getMonth() - 1 == tm.tm_mon && m_sRecState.ulDayOfMonth < tm.tm_mday))
 					// Yearly, go to next occurrence in 'everyn' months minus difference in first occurence and original date
 					count = (m_sRecState.ulPeriod - (tm.tm_mon - (getMonth()-1)));
-				} else if (getMonth()-1 > tm.tm_mon) {
+				else if (getMonth()-1 > tm.tm_mon)
 					count = (getMonth()-1) - tm.tm_mon;
-				}
 			}
 
 			int curmonth = tm.tm_mon + 1;

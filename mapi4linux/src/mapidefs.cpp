@@ -112,13 +112,13 @@ HRESULT M4LMAPIProp::GetProps(LPSPropTagArray lpPropTagArray, ULONG ulFlags, ULO
 
 		for (c = 0, i = properties.begin(); i != properties.end(); i++, c++) {
 			// perform unicode conversion if required
-			if ((ulFlags & MAPI_UNICODE) && (PROP_TYPE((*i)->ulPropTag) == PT_STRING8)) {
+			if ((ulFlags & MAPI_UNICODE) && PROP_TYPE((*i)->ulPropTag) == PT_STRING8) {
 				sConvert.ulPropTag = CHANGE_PROP_TYPE((*i)->ulPropTag, PT_UNICODE);
 				unicode = converter.convert_to<wstring>((*i)->Value.lpszA);
 				sConvert.Value.lpszW = (WCHAR*)unicode.c_str();
 
 				lpCopy = &sConvert;
-			} else if (((ulFlags & MAPI_UNICODE) == 0) && (PROP_TYPE((*i)->ulPropTag) == PT_UNICODE)) {
+			} else if ((ulFlags & MAPI_UNICODE) == 0 && PROP_TYPE((*i)->ulPropTag) == PT_UNICODE) {
 				sConvert.ulPropTag = CHANGE_PROP_TYPE((*i)->ulPropTag, PT_STRING8);
 				ansi = converter.convert_to<string>((*i)->Value.lpszW);
 				sConvert.Value.lpszA = (char*)ansi.c_str();
@@ -372,7 +372,7 @@ ULONG M4LMAPIProp::Release() {
 HRESULT M4LMAPIProp::QueryInterface(REFIID refiid, void **lpvoid) {
 	TRACE_MAPILIB(TRACE_ENTRY, "IMAPIProp::QueryInterface", "");
 	HRESULT hr = hrSuccess;
-	if ((refiid == IID_IMAPIProp) || (refiid == IID_IUnknown)) {
+	if (refiid == IID_IMAPIProp || refiid == IID_IUnknown) {
 		AddRef();
 		*lpvoid = (IMAPIProp *)this;
 		hr = hrSuccess;
@@ -514,7 +514,7 @@ HRESULT M4LProfSect::QueryInterface(REFIID refiid, void **lpvoid) {
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LProfSect::QueryInterface", "");
 	HRESULT hr = hrSuccess;
 
-	if ((refiid == IID_IProfSect) || (refiid == IID_IMAPIProp) || (refiid == IID_IUnknown)) {
+	if (refiid == IID_IProfSect || refiid == IID_IMAPIProp || refiid == IID_IUnknown) {
 		AddRef();
 		*lpvoid = (IProfSect *)this;
 		hr = hrSuccess;
@@ -686,7 +686,7 @@ HRESULT M4LMAPITable::QueryInterface(REFIID refiid, void **lpvoid) {
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LMAPITable::QueryInterface", "");
 	HRESULT hr = hrSuccess;
 
-	if ((refiid == IID_IMAPITable) || (refiid == IID_IUnknown)) {
+	if (refiid == IID_IMAPITable || refiid == IID_IUnknown) {
 		AddRef();
 		*lpvoid = (IMAPITable *)this;
 		hr = hrSuccess;
@@ -991,7 +991,7 @@ HRESULT M4LProviderAdmin::QueryInterface(REFIID refiid, void **lpvoid) {
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LProviderAdmin::QueryInterface", "");
 	HRESULT hr = hrSuccess;
 
-	if ((refiid == IID_IProviderAdmin) || (refiid == IID_IUnknown)) {
+	if (refiid == IID_IProviderAdmin || refiid == IID_IUnknown) {
 		AddRef();
 		*lpvoid = (IProviderAdmin *)this;
 		hr = hrSuccess;
@@ -1030,7 +1030,7 @@ ULONG M4LMAPIAdviseSink::Release() {
 HRESULT M4LMAPIAdviseSink::QueryInterface(REFIID refiid, void **lpvoid) {
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LMAPIAdviseSink::QueryInterface", "");
 	HRESULT hr = hrSuccess;
-	if ((refiid == IID_IMAPIAdviseSink) || (refiid == IID_IUnknown)) {
+	if (refiid == IID_IMAPIAdviseSink || refiid == IID_IUnknown) {
 		AddRef();
 		*lpvoid = (IMAPIAdviseSink *)this;
 		hr = hrSuccess;
@@ -1130,7 +1130,7 @@ ULONG M4LMAPIContainer::Release() {
 HRESULT M4LMAPIContainer::QueryInterface(REFIID refiid, void **lpvoid) {
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LMAPIContainer::QueryInterface", "");
 	HRESULT hr = hrSuccess;
-	if ((refiid == IID_IMAPIContainer) || (refiid == IID_IMAPIProp) || (refiid == IID_IUnknown)) {
+	if (refiid == IID_IMAPIContainer || refiid == IID_IMAPIProp || refiid == IID_IUnknown) {
 		AddRef();
 		*lpvoid = (IMAPIContainer *)this;
 		hr = hrSuccess;
@@ -1395,7 +1395,7 @@ ULONG M4LABContainer::Release() {
 HRESULT M4LABContainer::QueryInterface(REFIID refiid, void **lpvoid) {
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LABContainer::QueryInterface", "");
 	HRESULT hr = hrSuccess;
-	if ((refiid == IID_IABContainer) || (refiid == IID_IMAPIContainer) || (refiid == IID_IMAPIProp) || (refiid == IID_IUnknown)) {
+	if (refiid == IID_IABContainer || refiid == IID_IMAPIContainer || refiid == IID_IMAPIProp || refiid == IID_IUnknown) {
 		AddRef();
 		*lpvoid = (IABContainer *)this;
 		hr = hrSuccess;

@@ -1167,7 +1167,7 @@ HRESULT M4LMsgServiceAdmin::QueryInterface(REFIID refiid, void **lpvoid) {
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LMsgServiceAdmin::QueryInterface", "");
 	HRESULT hr = hrSuccess;
 
-	if ((refiid == IID_IMsgServiceAdmin) || (refiid == IID_IUnknown)) {
+	if (refiid == IID_IMsgServiceAdmin || refiid == IID_IUnknown) {
 		AddRef();
 		*lpvoid = (IMsgServiceAdmin *)this;
 	} else
@@ -1973,7 +1973,7 @@ HRESULT M4LMAPISession::QueryInterface(REFIID refiid, void **lpvoid) {
 	TRACE_MAPILIB1(TRACE_ENTRY, "M4LMAPISession::QueryInterface", "%s", bin2hex(sizeof(GUID), (BYTE *)&refiid).c_str());
 	HRESULT hr = hrSuccess;
 
-	if ((refiid == IID_IMAPISession) || (refiid == IID_IUnknown)) {
+	if (refiid == IID_IMAPISession || refiid == IID_IUnknown) {
 		AddRef();
 		*lpvoid = (IMAPISession *)this;
 	} else {
@@ -2935,7 +2935,7 @@ HRESULT M4LAddrBook::QueryInterface(REFIID refiid, void **lpvoid) {
     TRACE_MAPILIB(TRACE_ENTRY, "M4LAddrBook::QueryInterface", "");
 	HRESULT hr = hrSuccess;
 
-	if ((refiid == IID_IAddrBook) || (refiid == IID_IMAPIProp) || (refiid == IID_IUnknown)) {
+	if (refiid == IID_IAddrBook || refiid == IID_IMAPIProp || refiid == IID_IUnknown) {
 		AddRef();
 		*lpvoid = (IAddrBook *)this;
 	} else

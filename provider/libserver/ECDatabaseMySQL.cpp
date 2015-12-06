@@ -729,7 +729,7 @@ ECRESULT ECDatabaseMySQL::Connect()
 		// The following code may look funny, but it is correct, see http://www.cplusplus.com/reference/cstdlib/strtol/
 		long int majorversion = strtol(m_lpMySQL.server_version, NULL, 10);
 		// Check for over/underflow and version.
-		if ((errno != ERANGE) && (majorversion >= 5)) {
+		if (errno != ERANGE && majorversion >= 5) {
 			// this option was introduced in mysql 5.0, so let's not even try on 4.1 servers
 			strQuery = "SET SESSION sql_mode = 'STRICT_ALL_TABLES,NO_UNSIGNED_SUBTRACTION'";
 			Query(strQuery); // ignore error

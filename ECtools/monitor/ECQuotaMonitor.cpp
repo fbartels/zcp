@@ -373,7 +373,7 @@ HRESULT ECQuotaMonitor::CheckCompanyQuota(LPECCOMPANY lpecCompany)
 
 		for (iServers = setServers.begin(); iServers != setServers.end(); iServers++)
 		{
-                        if(!setServersConfig.empty() && (setServersConfig.find((*iServers).c_str()) == setServersConfig.end()))
+                        if(!setServersConfig.empty() && setServersConfig.find((*iServers).c_str()) == setServersConfig.end())
                                 continue;
  
 			hr = lpServiceAdmin->ResolvePseudoUrl((char*)string("pseudo://"+ (*iServers)).c_str(), &lpszConnection, &bIsPeer);

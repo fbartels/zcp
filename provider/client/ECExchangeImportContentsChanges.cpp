@@ -352,7 +352,7 @@ HRESULT ECExchangeImportContentsChanges::ImportMessageChange(ULONG cValue, LPSPr
 		hr = MAPI_E_NOT_FOUND;
 	}
 
-	if((hr == MAPI_E_NOT_FOUND) && ((ulFlags & SYNC_NEW_MESSAGE) == 0)) {
+	if (hr == MAPI_E_NOT_FOUND && (ulFlags & SYNC_NEW_MESSAGE) == 0) {
 		// This is a change, but we don't already have the item. This can only mean
 		// that the item has been deleted on our side. 
 		hr = SYNC_E_OBJECT_DELETED;

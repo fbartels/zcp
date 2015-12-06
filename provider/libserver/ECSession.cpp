@@ -1895,7 +1895,7 @@ ECRESULT ECAuthSession::ProcessImpersonation(const char* lpszImpersonateUser)
 {
 	ECRESULT er = erSuccess;
 
-	if ((!lpszImpersonateUser) || (*lpszImpersonateUser == '\0')) {
+	if (lpszImpersonateUser == NULL || *lpszImpersonateUser == '\0') {
 		m_ulImpersonatorID = EC_NO_IMPERSONATOR;
 		goto exit;
 	}

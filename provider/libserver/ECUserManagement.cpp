@@ -1466,7 +1466,7 @@ ECRESULT ECUserManagement::GetLocalObjectDetails(unsigned int ulId, objectdetail
 		sDetails = objectdetails_t(DISTLIST_SECURITY);
 		sDetails.SetPropString(OB_PROP_S_LOGIN, ZARAFA_ACCOUNT_EVERYONE);
 		sDetails.SetPropString(OB_PROP_S_FULLNAME, ZARAFA_FULLNAME_EVERYONE);
-		sDetails.SetPropBool(OB_PROP_B_AB_HIDDEN, parseBool(m_lpConfig->GetSetting("hide_everyone")) && (lpSecurity->GetAdminLevel() == 0));
+		sDetails.SetPropBool(OB_PROP_B_AB_HIDDEN, parseBool(m_lpConfig->GetSetting("hide_everyone")) && lpSecurity->GetAdminLevel() == 0);
 	
 		if (m_lpSession->GetSessionManager()->IsDistributedSupported()) {
 			if (GetPublicStoreDetails(&sPublicStoreDetails) == erSuccess)

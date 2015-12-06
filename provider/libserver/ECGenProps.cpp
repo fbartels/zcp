@@ -390,7 +390,7 @@ ECRESULT ECGenProps::GetPropComputed(struct soap *soap, unsigned int ulObjType, 
 			{
 				lpszColon++; // skip ':'
 				size_t newlength = strlen(lpszColon);
-				if ((newlength > 0) && (lpszColon[0] == ' '))
+				if (newlength > 0 && lpszColon[0] == ' ')
 				{
 					lpszColon++; // skip space
 					newlength--; // adjust length

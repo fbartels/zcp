@@ -102,12 +102,12 @@ static const char THIS_FILE[] = __FILE__;
 
 bool operator ==(SBinary left, SBinary right)
 {
-	return (left.cb == right.cb && memcmp(left.lpb, right.lpb, left.cb) == 0);
+	return left.cb == right.cb && memcmp(left.lpb, right.lpb, left.cb) == 0;
 }
 
 bool operator <(SBinary left, SBinary right)
 {
-	return ((left.cb < right.cb) || (left.cb == right.cb && memcmp(left.lpb, right.lpb, left.cb) < 0));
+	return left.cb < right.cb || (left.cb == right.cb && memcmp(left.lpb, right.lpb, left.cb) < 0);
 }
 
 const char *GetServerUnixSocket(const char *szPreferred)

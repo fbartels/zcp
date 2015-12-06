@@ -85,7 +85,7 @@ HRESULT M4LMAPIGetSession::QueryInterface(REFIID refiid, void **lpvoid) {
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LMAPISupport::QueryInterface", "");
 	HRESULT hr = hrSuccess;
 
-    if ((refiid == IID_IMAPIGetSession) || (refiid == IID_IUnknown)) {
+	if (refiid == IID_IMAPIGetSession || refiid == IID_IUnknown) {
 		AddRef();
 		*lpvoid = (IMAPISupport *)this;
 		hr = hrSuccess;
@@ -801,7 +801,7 @@ HRESULT M4LMAPISupport::QueryInterface(REFIID refiid, void **lpvoid) {
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LMAPISupport::QueryInterface", "");
 	HRESULT hr = hrSuccess;
 
-    if ((refiid == IID_IMAPISup) || (refiid == IID_IUnknown)) {
+	if (refiid == IID_IMAPISup || refiid == IID_IUnknown) {
 		AddRef();
 		*lpvoid = (IMAPISupport *)this;
 		hr = hrSuccess;
