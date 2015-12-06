@@ -270,11 +270,10 @@ static ECLogger *lpLogger = NULL;
 
 static unsigned int mapi_debug;
 static char *perf_measure_file;
-static bool perf_measure = false;
 
 pmeasure::pmeasure(const std::string &whatIn)
 {
-	if (!perf_measure)
+	if (perf_measure_file == NULL)
 		return;
 	what = whatIn;
 	struct timespec ts;
@@ -284,15 +283,15 @@ pmeasure::pmeasure(const std::string &whatIn)
 
 pmeasure::~pmeasure(void)
 {
-	if (!perf_measure)
+	if (perf_measure_file == NULL)
 		return;
 	struct timespec ts;
 	clock_gettime(CLOCK_MONOTONIC, &ts);
 
-	FILE *fh = fopen(LOGFILE_PATH "/php-mapi-pm.log", "a+");
+	FILE *fh = fopen(perf_measure_file, "a+");
 	if (fh == NULL) {
 		if (lpLogger != NULL)
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "Cannot open %s/php-mapi-pm.log: %s", LOGFILE_PATH, strerror(errno));
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "Cannot open %s: %s", perf_measure_file, strerror(errno));
 		return;
 	}
 
