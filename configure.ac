@@ -76,11 +76,6 @@ ZCPPFLAGS="$BUILDOS -DHAVE_CONFIG_H -I\${top_srcdir}/common/include \
 	-I\${top_srcdir}/swig/include \
 	-I\${top_srcdir}/swig/python/include"
 ZCXXFLAGS="-Wall -Wmissing-declarations -Wno-write-strings"
-if ! test "$want_release" = "yes"; then
-# when using -pedantic, -Wno-long-long is required
-# only add -pedantic in non-release mode, since a header in php5 contains a , too much in an enum, which triggers a compile error.
-  ZCXXFLAGS="$ZCXXFLAGS -pedantic -Wno-long-long"
-fi
 
 # programs that use files >2gb need 64bit file support
 LFS_CFLAGS=`getconf LFS_CFLAGS`
@@ -111,6 +106,7 @@ if test "$want_release" = "yes"; then
 else
 # -fPIC must be present on x86_64 when -O2 isn't used
     ZCXXFLAGS="$ZCXXFLAGS -fPIC"
+    ZCXXFLAGS="$ZCXXFLAGS -pedantic -Wno-long-long"
 fi
 
 AC_ARG_ENABLE([unicode], AS_HELP_STRING([--enable-unicode], [enable unicode mode (compile flags -DUNICODE)]),
