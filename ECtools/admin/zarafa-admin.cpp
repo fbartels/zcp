@@ -4374,10 +4374,7 @@ exit:
 	MAPIUninitialize();
 	lpLogger->Release();
 	lpLogger = NULL;
-
-	if (lpsConfig)
-		delete lpsConfig;
-
+	delete lpsConfig;
 	SSL_library_cleanup();
 
 	return hr == hrSuccess ? 0 : 1;

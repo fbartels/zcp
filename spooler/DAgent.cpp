@@ -181,8 +181,7 @@ public:
 
 	~DeliveryArgs()
 	{
-		if (lpChannel)
-			delete lpChannel;
+		delete lpChannel;
 	}
 
 	/* Channel for communication from MTA */
