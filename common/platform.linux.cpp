@@ -256,7 +256,7 @@ time_t GetProcessTime()
 
 class Lock _zcp_final {
 public:
-       Lock() { locks = 0; busy = 0; dblTime = 0; };
+	Lock() : locks(0), busy(0), dblTime(0) {}
        ~Lock() {};
 
        std::string strLocation;
