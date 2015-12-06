@@ -44,6 +44,7 @@
 #include <string>
 #include <list>
 #include <memory>
+#include <new>
 #include <ostream>
 #include "ArchiveManage.h"
 #include "ArchiveManageImpl.h"
@@ -140,7 +141,7 @@ ArchiveManageImpl::ArchiveManageImpl(ArchiverSessionPtr ptrSession, ECConfig *lp
 	m_lpConfig(lpConfig),
 	m_strUser(strUser)
 {
-	m_lpLogger = new ECArchiverLogger(lpLogger);
+	m_lpLogger = new(std::nothrow) ECArchiverLogger(lpLogger);
 	if (m_lpLogger) {
 		m_lpLogger->SetUser(strUser);
 		if (lpConfig) {

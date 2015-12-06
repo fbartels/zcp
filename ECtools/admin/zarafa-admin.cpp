@@ -45,7 +45,7 @@
 
 #include <iostream>
 #include <zarafa/my_getopt.h>
-
+#include <climits>
 #include <cmath>
 #include <mapidefs.h>
 #include <mapispi.h>
@@ -109,7 +109,7 @@ enum modes {
 };
 
 enum {
-	OPT_CREATE_STORE = 129,  // high to avoid clashes with modes
+	OPT_CREATE_STORE = UCHAR_MAX + 1, // high to avoid clashes with modes
 	OPT_DELETE_STORE,
 	OPT_HOOK_STORE,
 	OPT_UNHOOK_STORE,

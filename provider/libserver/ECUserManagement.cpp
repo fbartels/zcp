@@ -225,6 +225,7 @@ ECUserManagement::ECUserManagement(BTSession *lpSession, ECPluginFactory *lpPlug
 	this->m_lpPluginFactory = lpPluginFactory;
 	this->m_lpConfig = lpConfig;
 	this->m_lpLogger = lpLogger;
+	this->m_lpLogger->AddRef();
 
 	pthread_mutexattr_t attr;
 	pthread_mutexattr_init(&attr);
@@ -235,7 +236,9 @@ ECUserManagement::ECUserManagement(BTSession *lpSession, ECPluginFactory *lpPlug
 	pthread_mutexattr_destroy(&attr);
 }
 
-ECUserManagement::~ECUserManagement() {
+ECUserManagement::~ECUserManagement(void)
+{
+	m_lpLogger->Release();
 	pthread_mutex_destroy(&m_hMutex);
 }
 

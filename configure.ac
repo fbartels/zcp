@@ -103,7 +103,7 @@ AC_CHECK_LIB([pthread], [pthread_create], [ZCXXFLAGS="$ZCXXFLAGS -pthread"], AC_
 # enable/disable options
 #
 
-AC_ARG_ENABLE(release, AC_HELP_STRING([--enable-release],[enable release mode (compile flags -O2 and no DEBUG defines)]),
+AC_ARG_ENABLE([release], AS_HELP_STRING([--enable-release], [enable release mode (compile flags -O2 and no DEBUG defines)]),
   [want_release=${enableval}],[want_release=no])
 if test "$want_release" = "yes"; then
     ZCPPFLAGS="$ZCPPFLAGS -DNDEBUG -DFORCE_CHARSET_CONVERSION"
@@ -113,7 +113,7 @@ else
     ZCXXFLAGS="$ZCXXFLAGS -fPIC"
 fi
 
-AC_ARG_ENABLE(unicode, AC_HELP_STRING([--enable-unicode],[enable unicode mode (compile flags -DUNICODE)]),
+AC_ARG_ENABLE([unicode], AS_HELP_STRING([--enable-unicode], [enable unicode mode (compile flags -DUNICODE)]),
   [want_unicode=${enableval}],[want_unicode=yes])
 SWIG_FLAGS=""
 if test "$want_unicode" = "yes"; then
@@ -122,25 +122,26 @@ if test "$want_unicode" = "yes"; then
 fi
 AC_SUBST([SWIG_FLAGS])
 
-AC_ARG_ENABLE(tcmalloc, AC_HELP_STRING([--enable-tcmalloc],[enable use of tcmalloc minimal lib]),
+AC_ARG_ENABLE([tcmalloc], AS_HELP_STRING([--enable-tcmalloc], [enable use of tcmalloc minimal lib]),
   [want_tcmalloc=${enableval}],[want_tcmalloc=no])
 
-AC_ARG_ENABLE(sparsehash, AC_HELP_STRING([--enable-sparsehash],[enable use of sparsehash]),
+AC_ARG_ENABLE([sparsehash], AS_HELP_STRING([--enable-sparsehash], [enable use of sparsehash]),
   [want_sparsehash=${enableval}],[want_sparsehash=no])
 
 AC_MSG_CHECKING([specified Linux distribution name])
-AC_ARG_WITH(distro, AC_HELP_STRING([--with-distro],[set distribution name, used for sysconfig and initscripts only. available: rhel, alt, suse or sles]),
+AC_ARG_WITH([distro], AS_HELP_STRING([--with-distro], [set distribution name, used for sysconfig and initscripts only. available: rhel, alt, suse or sles]),
   [with_distro=${withval}],[with_distro=rhel])
-if test "$with_distro" != "rhel" -a "$with_distro" != "suse" -a "$with_distro" != "sles" -a "$with_distro" != "alt" -a "$with_distro" != "cbs4"; then
-   AC_MSG_RESULT([unknown distro, using rhel instead])
-   with_distro=rhel
+if test "$with_distro" != "rhel" -a "$with_distro" != "suse" -a \
+   "$with_distro" != "sles" -a "$with_distro" != "alt" -a \
+   "$with_distro" != "cbs4" -a "$with_distro" != "debian"; then
+	AC_MSG_ERROR([unknown distro])
 else
-   AC_MSG_RESULT([using $with_distro])
+	AC_MSG_RESULT([using $with_distro])
 fi
 DISTRO=$with_distro
 AC_SUBST(DISTRO)
 
-AC_ARG_ENABLE(debug, AC_HELP_STRING([--enable-debug],[enable debug mode (Adds debug code)]),
+AC_ARG_ENABLE([debug], AS_HELP_STRING([--enable-debug], [enable debug mode (Adds debug code)]),
   [want_debug=${enableval}],[want_debug=no])
 if test "$want_debug" = "yes"; then
     DEBUGFLAGS="-DDEBUG"
@@ -153,7 +154,7 @@ AC_SUBST(DEBUGFLAGS)
 
 # profiling
 AC_ARG_ENABLE(profiling,
-  AC_HELP_STRING([--enable-profiling], [enable profiling (-pg)]),
+  AS_HELP_STRING([--enable-profiling], [enable profiling (-pg)]),
     [ if test "${enableval}" = "yes"; then
 		ZCXXFLAGS="$ZCXXFLAGS -pg"
 		ZLDFLAGS="$LDFLAGS -pg"
@@ -161,7 +162,7 @@ AC_ARG_ENABLE(profiling,
     ])
 
 AC_ARG_ENABLE(coverage,
-  AC_HELP_STRING([--enable-coverage], [enable coverage (--coverage)]),
+  AS_HELP_STRING([--enable-coverage], [enable coverage (--coverage)]),
     [ if test "${enableval}" = "yes"; then
 		ZCXXFLAGS="$ZCXXFLAGS -g --coverage -fprofile-arcs -ftest-coverage"
 		ZLDFLAGS="$LDFLAGS -lgcov"
@@ -169,38 +170,32 @@ AC_ARG_ENABLE(coverage,
     ])
 
 # test offline possibility
-  AC_ARG_ENABLE(offline, AC_HELP_STRING([--enable-offline],[Compile zarafa-server as the offline server]),
+  AC_ARG_ENABLE([offline], AS_HELP_STRING([--enable-offline], [Compile zarafa-server as the offline server]),
   [
   	ZCPPFLAGS="$ZCPPFLAGS -DHAVE_OFFLINE_SUPPORT"
   ])
 
 # MAPI config files
 AC_ARG_WITH(mapi-configdir,
-  AC_HELP_STRING([--with-mapi-configdir=PATH],[path to install the libmapi config (provider) files (default /etc/mapi)]),
+  AS_HELP_STRING([--with-mapi-configdir=PATH], [path to install the libmapi config (provider) files (default /etc/mapi)]),
   [MAPICONFIGDIR=${withval}],[MAPICONFIGDIR=/etc/mapi])
 AC_SUBST(MAPICONFIGDIR)
 
-# Timezones
-AC_ARG_WITH(mapi-timezonedir,
-  AC_HELP_STRING([--with-mapi-timezonedir=PATH],[path to install MAPI timezone definition files (default /usr/share/zarafa/timezones)]),
-  [TIMEZONEDIR=${withval}],[TIMEZONEDIR=/usr/share/zarafa/timezones])
-AC_SUBST(TIMEZONEDIR)
-
 # user create scripts location
 AC_ARG_WITH(userscript-prefix,
-  AC_HELP_STRING([--with-userscript-prefix=PATH],[path to install the userscripts in (default /etc/zarafa/userscripts)]),
+  AS_HELP_STRING([--with-userscript-prefix=PATH], [path to install the userscripts in (default /etc/zarafa/userscripts)]),
   [USERSCRIPTDIR=${withval}],[USERSCRIPTDIR=/etc/zarafa/userscripts])
 AC_SUBST(USERSCRIPTDIR)
 
 # quota warning templates location
 AC_ARG_WITH(quotatemplate-prefix,
-  AC_HELP_STRING([--with-quotatemplate-prefix=PATH],[path to install the quota warning templates in (default /etc/zarafa/quotamail)]),
+  AS_HELP_STRING([--with-quotatemplate-prefix=PATH], [path to install the quota warning templates in (default /etc/zarafa/quotamail)]),
   [QUOTATEMPLATEDIR=${withval}],[QUOTATEMPLATEDIR=/etc/zarafa/quotamail])
 AC_SUBST(QUOTATEMPLATEDIR)
 
 # search scripts location
 AC_ARG_WITH(searchscripts-prefix,
-  AC_HELP_STRING([--with-searchscripts-prefix=PATH],[path to install the search scripts in (default /etc/zarafa/searchscripts)]),
+  AS_HELP_STRING([--with-searchscripts-prefix=PATH], [path to install the search scripts in (default /etc/zarafa/searchscripts)]),
   [SEARCHSCRIPTSDIR=${withval}],[SEARCHSCRIPTSDIR=/etc/zarafa/searchscripts])
 AC_SUBST(SEARCHSCRIPTSDIR)
 
@@ -249,7 +244,7 @@ AS_IF([test "$with_php" != "no"], [
 
 # Checks for libxml2
 AC_DEFUN([LIBXML_WITH_XML2_CONFIG],[
-  AC_ARG_WITH(xml2-config, AC_HELP_STRING([--with-xml2-config=PATH],[path to the xml2-config script of libxml2]),
+  AC_ARG_WITH([xml2-config], AS_HELP_STRING([--with-xml2-config=PATH], [path to the xml2-config script of libxml2]),
     [XML2_CONFIG=${withval}],[XML2_CONFIG=xml2-config])
 
   AC_MSG_CHECKING([for xml2-config presence])
@@ -286,10 +281,10 @@ AM_CONDITIONAL([WITH_XML2], [test "$XML2_CONFIG" != "" -a -x "`which $XML2_CONFI
 
 # Checks for MySQL 4.1 or better
 AC_DEFUN([MYSQL_WITH_MYSQL_CONFIG],[
-  AC_ARG_WITH(mysql-config, AC_HELP_STRING([--with-mysql-config=PATH], [path to the mysql-config script of mysql 4.1]),
+  AC_ARG_WITH([mysql-config], AS_HELP_STRING([--with-mysql-config=PATH], [path to the mysql-config script of mysql 4.1]),
     [MYSQL_CONFIG=${withval}],[MYSQL_CONFIG=mysql_config])
 
-  AC_ARG_ENABLE(embedded-mysql, AC_HELP_STRING([--enable-embedded-mysql],[Compile zarafa-server with the embedded MySQL server]),
+  AC_ARG_ENABLE([embedded-mysql], AS_HELP_STRING([--enable-embedded-mysql], [Compile zarafa-server with the embedded MySQL server]),
   [
 	EMBEDDED=1
 	ZCPPFLAGS="$ZCPPFLAGS -DEMBEDDED_MYSQL"
@@ -394,7 +389,7 @@ VMIME_CFLAGS=""
 VMIME_LIBS="-lvmime"
 
 AC_ARG_WITH(vmime-prefix,
-  AC_HELP_STRING([--with-vmime-prefix=PATH],[libvmime prefix, e.g. /usr/local, default /usr]),
+  AS_HELP_STRING([--with-vmime-prefix=PATH], [libvmime prefix, e.g. /usr/local, default /usr]),
   [
   VMIME_PREFIX="$withval"
   VMIME_CFLAGS="$VMIME_CFLAGS -I$VMIME_PREFIX/include"
@@ -409,7 +404,7 @@ GSOAP_CFLAGS="-DWITH_OPENSSL -DWITH_GZIP -DHAVE_OPENSSL_SSL_H -DHAVE_ZLIB_H"
 GSOAP_LIBS="-lgsoapssl++"
 AC_MSG_CHECKING([gsoap])
 AC_ARG_WITH(gsoap-prefix,
-  AC_HELP_STRING([--with-gsoap-prefix=PATH],[gsoap prefix, e.g. /usr/local, default /usr]),
+  AS_HELP_STRING([--with-gsoap-prefix=PATH], [gsoap prefix, e.g. /usr/local, default /usr]),
   [
   GSOAP_PREFIX="$withval"
   GSOAP_SOAPCPP2="$GSOAP_PREFIX/bin/soapcpp2"
@@ -432,7 +427,7 @@ AC_SUBST(GSOAP_SOAPCPP2)
 ICAL_CFLAGS=""
 ICAL_LIBS="-lical -licalss"
 AC_ARG_WITH(ical-prefix,
-  AC_HELP_STRING([--with-ical-prefix=PATH],[libical prefix, e.g. /usr/local, default /usr]),
+  AS_HELP_STRING([--with-ical-prefix=PATH], [libical prefix, e.g. /usr/local, default /usr]),
   [
   ICAL_PREFIX="${withval}"
   ICAL_CFLAGS="$ICAL_CFLAGS -I$ICAL_PREFIX/include"
@@ -568,7 +563,7 @@ AM_CONDITIONAL([WITH_PAM], [test "$PAM_LIBS" != ""])
 
 # Check for kerberos library (optional)
 AC_DEFUN([LIBKRB5_WITH_KRB5_CONFIG],[
-  AC_ARG_WITH(krb5-config, AC_HELP_STRING([--with-krb5-config=PATH],[path to the krb5-config script of libkrb5]),
+  AC_ARG_WITH([krb5-config], AS_HELP_STRING([--with-krb5-config=PATH], [path to the krb5-config script of libkrb5]),
     [KRB5_CONFIG=${withval}],[KRB5_CONFIG=krb5-config])
 
   AC_MSG_CHECKING([for krb5-config presence])
@@ -644,7 +639,7 @@ AC_CHECK_FUNCS([gettext], INTL_LIBS="", dnl gettext in libc
 AC_SUBST(INTL_LIBS)
 
 # check epoll support
-AC_ARG_ENABLE(epoll, AC_HELP_STRING([--enable-epoll], [enable building epoll socket handling]), [want_epoll=${enableval}], [want_epoll=no])
+AC_ARG_ENABLE([epoll], AS_HELP_STRING([--enable-epoll], [enable building epoll socket handling]), [want_epoll=${enableval}], [want_epoll=no])
 AM_CONDITIONAL(WITH_EPOLL, test "$want_epoll" = "yes")
 if test "$want_epoll" = "yes"; then
 AC_CHECK_FUNCS([epoll_create])
@@ -664,7 +659,7 @@ dnl The "Locale" class is in icu-uc.
 dnl The "CollationKey" class is in icu-i18n.
 req_icu_uc="icu-uc"
 req_icu_i18n="icu-i18n"
-AC_ARG_ENABLE(icu, AC_HELP_STRING([--enable-icu],[enable icu support]), [want_icu=${enableval}],[want_icu=auto])
+AC_ARG_ENABLE([icu], AS_HELP_STRING([--enable-icu], [enable icu support]), [want_icu=${enableval}], [want_icu=auto])
 PKG_CHECK_EXISTS([icu-uc], [have_icu=1], [have_icu=0])
 PKG_CHECK_EXISTS([icu-i18n], [have_icu=1], [have_icu=0])
 AS_IF([test "$have_icu" = 0], [
@@ -772,7 +767,7 @@ AC_CONFIG_FILES([Makefile
 dnl non-oss files
 
 AC_OUTPUT
-ln -Tsv "${abs_top_srcdir}" "@"
+ln -Tfsv "${abs_top_srcdir}" "@"
 
 AC_MSG_RESULT([
 Install prefix	:	$prefix

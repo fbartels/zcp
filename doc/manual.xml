@@ -830,8 +830,8 @@
 		  <varlistentry>
 			<term><option>server_bind</option></term>
 			<listitem>
-			  <para>IP address to bind to. 0.0.0.0 for any address.</para>
-			  <para>Default: <replaceable>0.0.0.0</replaceable></para>
+			  <para>Bind to a particular IP address. Leave empty to bind to all addresses.</para>
+			  <para>Default: (empty)</para>
 			</listitem>
 		  </varlistentry>
 
@@ -3665,12 +3665,12 @@
 		  <varlistentry>
 			<term><option>server_bind</option></term>
 			<listitem>
-			  <para>IP address to bind to. 0.0.0.0 for any
-			  address. Keep in mind that both Webaccess and Outlook
-			  should be able to connect. The Webaccess normally
-			  connects on 127.0.0.1, and Outlook over the
-			  network.</para>
-			  <para>Default: <replaceable>0.0.0.0</replaceable></para>
+			  <para>IP address to bind to. Leave empty to bind to
+			  all addresses. Keep in mind that both Webaccess and Outlook
+			  must be able to connect. The Webaccess normally
+			  connects on ::1/127.0.0.1, and Outlook from remote
+			  networks.</para>
+			  <para>Default: (empty)</para>
 			</listitem>
 		  </varlistentry>
 
@@ -7680,8 +7680,8 @@
 		  <varlistentry>
 			<term><option>server_bind</option></term>
 			<listitem>
-			  <para>IP address to bind to. 0.0.0.0 for any address.</para>
-			  <para>Default: <replaceable>0.0.0.0</replaceable></para>
+			  <para>IP address to bind to. Leave empty to bind to all addresses.</para>
+			  <para>Default: (empty)</para>
 			</listitem>
 		  </varlistentry>
 
@@ -9144,8 +9144,8 @@
 		  <varlistentry>
 			<term><option>server_bind</option></term>
 			<listitem>
-			  <para>IP address to bind to. 0.0.0.0 for any address.</para>
-			  <para>Default: <replaceable>0.0.0.0</replaceable></para>
+			  <para>IP address to bind to. Leave empty to bind to all addresses.</para>
+			  <para>Default: (empty)</para>
 			</listitem>
 		  </varlistentry>
 
@@ -10191,7 +10191,7 @@
 			  connect with the zarafa-search for performing search
 			  queries.</para><para>Use
 			  <replaceable>http://0.0.0.0:port</replaceable> to listen
-			  as an HTTP service on all network interfaces on the
+			  as an HTTP service on all IPv4 interfaces on the
 			  given <replaceable>port</replaceable> number.</para>
 			  <para>Default: <replaceable>file:///var/run/zarafa-search</replaceable></para>
 			</listitem>

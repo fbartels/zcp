@@ -42,6 +42,7 @@
  */
 
 #include <zarafa/platform.h>
+#include <new>
 #include "m4l.mapix.h"
 #include "m4l.mapispi.h"
 #include "m4l.debug.h"
@@ -355,7 +356,7 @@ HRESULT M4LProfAdmin::CreateProfile(LPTSTR lpszProfileName, LPTSTR lpszPassword,
 		goto exit;
 	}
 
-    entry->serviceadmin = new M4LMsgServiceAdmin(profilesection);
+    entry->serviceadmin = new(std::nothrow) M4LMsgServiceAdmin(profilesection);
     if (!entry->serviceadmin) {
 		delete entry;
 		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LProfAdmin::CreateProfile(): M4LMsgServiceAdmin failed");
@@ -731,7 +732,7 @@ HRESULT M4LMsgServiceAdmin::CreateMsgService(LPTSTR lpszService, LPTSTR lpszDisp
 		goto exit;
 	}
 
-	entry->provideradmin = new M4LProviderAdmin(this, (char*)lpszService);
+	entry->provideradmin = new(std::nothrow) M4LProviderAdmin(this, reinterpret_cast<char *>(lpszService));
 	if (!entry->provideradmin) {
 		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::CreateMsgService(): ENOMEM(2)");
 		delete entry;
@@ -1490,14 +1491,14 @@ HRESULT M4LMAPISession::OpenAddressBook(ULONG ulUIParam, LPCIID lpInterface, ULO
 	SPropValue sProps[1];
 	list<serviceEntry*>::const_iterator iService;
 
-	lpMAPISup = new M4LMAPISupport(this, NULL, NULL);
+	lpMAPISup = new(std::nothrow) M4LMAPISupport(this, NULL, NULL);
 	if (!lpMAPISup) {
 		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenAddressBook(): ENOMEM");
 		hr = MAPI_E_NOT_ENOUGH_MEMORY;
 		goto exit;
 	}
 
-	myAddrBook = new M4LAddrBook(serviceAdmin, lpMAPISup);
+	myAddrBook = new(std::nothrow) M4LAddrBook(serviceAdmin, lpMAPISup);
 	lpAddrBook = myAddrBook;
 	if (!lpAddrBook) {
 		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenAddressBook(): ENOMEM(2)");
@@ -3220,7 +3221,7 @@ HRESULT __stdcall MAPILogonEx(ULONG ulUIParam, LPTSTR lpszProfileName, LPTSTR lp
 		goto exit;
 	}
 
-	ms = new M4LMAPISession(lpszProfileName,(M4LMsgServiceAdmin *)sa);
+	ms = new(std::nothrow) M4LMAPISession(lpszProfileName,(M4LMsgServiceAdmin *)sa);
 	if (!ms) {
 		hr = MAPI_E_NOT_ENOUGH_MEMORY;
 		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "MAPILogonEx(): M4LMAPISession fail %x: %s", hr, GetMAPIErrorMessage(hr));

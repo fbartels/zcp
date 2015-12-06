@@ -43,6 +43,7 @@
 
 #include "config.h"
 #include <zarafa/platform.h>
+#include <climits>
 #include "mapidefs.h"
 #include <zarafa/ECChannel.h>
 #include <mapix.h>
@@ -195,7 +196,7 @@ int main(int argc, char **argv) {
 		{ "running_path", "/" },
 		{ "process_model", "fork" },
 #endif
-		{ "server_bind", "0.0.0.0" },
+		{ "server_bind", "" },
 		{ "ical_port", "8080" },
 		{ "ical_enable", "yes" },
 		{ "icals_port", "8443" },
@@ -230,7 +231,7 @@ int main(int argc, char **argv) {
 		{ NULL, NULL },
 	};
 	enum {
-		OPT_IGNORE_UNKNOWN_CONFIG_OPTIONS
+		OPT_IGNORE_UNKNOWN_CONFIG_OPTIONS = UCHAR_MAX + 1,
 	};
 
 	static const struct option long_options[] = {

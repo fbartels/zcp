@@ -158,6 +158,7 @@ PublishFreeBusy::PublishFreeBusy(IMAPISession *lpSession, IMsgStore *lpDefStore,
 	m_lpSession = lpSession;
 	m_lpDefStore = lpDefStore;
 	m_lpLogger = lpLogger;
+	m_lpLogger->AddRef();
 	m_tsStart = tsStart;
 	m_tsEnd = tsStart + (ulMonths * (30*24*60*60));
 
@@ -167,6 +168,7 @@ PublishFreeBusy::PublishFreeBusy(IMAPISession *lpSession, IMsgStore *lpDefStore,
 
 PublishFreeBusy::~PublishFreeBusy()
 {
+	m_lpLogger->Release();
 }
 
 /** 

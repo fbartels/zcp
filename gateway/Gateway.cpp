@@ -43,6 +43,7 @@
 
 #include "config.h"
 #include <zarafa/platform.h>
+#include <climits>
 #include <csignal>
 
 #ifdef WIN32
@@ -320,7 +321,7 @@ int main(int argc, char *argv[]) {
 #endif
 
 	static const configsetting_t lpDefaults[] = {
-		{ "server_bind", "0.0.0.0" },
+		{ "server_bind", "" },
 #ifdef LINUX
 		{ "run_as_user", "" },
 		{ "run_as_group", "" },
@@ -367,7 +368,7 @@ int main(int argc, char *argv[]) {
 		{ NULL, NULL },
 	};
 	enum {
-		OPT_HELP,
+		OPT_HELP = UCHAR_MAX + 1,
 		OPT_HOST,
 		OPT_CONFIG,
 		OPT_FOREGROUND,

@@ -46,7 +46,7 @@
 #include <iostream>
 #include <zarafa/my_getopt.h>
 #include <zarafa/charset/convert.h>
-
+#include <climits>
 #include <cmath>
 #include <mapidefs.h>
 #include <mapispi.h>
@@ -73,7 +73,7 @@ enum modes {
 };
 
 enum {
-	OPT_HELP = 129,  // high to avoid clashes with modes
+	OPT_HELP = UCHAR_MAX + 1, // high to avoid clashes with modes
 	OPT_HOST
 };
 

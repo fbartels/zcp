@@ -47,6 +47,7 @@
 #include <zarafa/stringutil.h>
 #include <csignal>
 #ifdef LINUX
+#include <netdb.h>
 #include <sys/types.h>
 #include <sys/select.h>
 #include <sys/socket.h>
@@ -674,6 +675,39 @@ const std::string& ECChannel::GetIPAddress() const
 	return strIP;
 }
 
+/**
+ * getaddrinfo() adheres to the preference weights given in /etc/gai.conf,
+ * but only for connect sockets. For AI_PASSIVE, sockets may be returned in
+ * any order. This function will reorder an addrinfo linked list and place
+ * IPv6 in the front.
+ */
+static struct addrinfo *reorder_addrinfo_ipv6(struct addrinfo *node)
+{
+	struct addrinfo v6head, othead;
+	v6head.ai_next = NULL;
+	othead.ai_next = node;
+	struct addrinfo *v6tail = &v6head, *prev = &othead;
+
+	while (node != NULL) {
+		if (node->ai_family != AF_INET6) {
+			prev = node;
+			node = node->ai_next;
+			continue;
+		}
+		/* disconnect current node (INET6) */
+		prev->ai_next = node->ai_next;
+		node->ai_next = NULL;
+		/* - reattach to v6 list */
+		v6tail->ai_next = node;
+		v6tail = node;
+		/* continue in ot list */
+		node = prev->ai_next;
+	}
+	/* join list */
+	v6tail->ai_next = othead.ai_next;
+	return v6head.ai_next;
+}
+
 HRESULT HrListen(ECLogger *lpLogger, const char *szPath, int *lpulListenSocket)
 {
 #ifdef WIN32
@@ -744,20 +778,19 @@ exit:
 #endif
 }
 
-HRESULT HrListen(ECLogger *lpLogger, const char *szBind, int ulPort, int *lpulListenSocket)
+HRESULT HrListen(ECLogger *lpLogger, const char *szBind, uint16_t ulPort,
+    int *lpulListenSocket, const char *intf)
 {
 	HRESULT hr = hrSuccess;
-	int fd = -1, opt = 1;
-	struct sockaddr_in sin_addr;
+	int fd = -1, opt = 1, ret;
+	struct addrinfo *sock_res = NULL, sock_hints;
+	const struct addrinfo *sock_addr, *sock_last = NULL;
+	char port_string[sizeof("65535")];
 
 	if (lpulListenSocket == NULL || ulPort == 0 || szBind == NULL) {
 		hr = MAPI_E_INVALID_PARAMETER;
 		goto exit;
 	}
-
-	sin_addr.sin_family = AF_INET;
-	sin_addr.sin_addr.s_addr = inet_addr(szBind);
-	sin_addr.sin_port = htons(ulPort);
 
 #ifdef WIN32
 	WSAData wsaData;
@@ -769,30 +802,93 @@ HRESULT HrListen(ECLogger *lpLogger, const char *szBind, int ulPort, int *lpulLi
 	}
 #endif
 
-	if ((fd = socket(PF_INET, SOCK_STREAM, 0)) == -1) {
-		if (lpLogger)
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create TCP socket.");
-		hr = MAPI_E_NETWORK_ERROR;
+	snprintf(port_string, sizeof(port_string), "%u", ulPort);
+	memset(&sock_hints, 0, sizeof(sock_hints));
+	/*
+	 * AI_NUMERICHOST is reflected in the zarafa documentation:
+	 * an address is required for the "server_bind" parameter.
+	 */
+	sock_hints.ai_flags = AI_NUMERICHOST | AI_NUMERICSERV | AI_PASSIVE;
+	sock_hints.ai_socktype = SOCK_STREAM;
+	ret = getaddrinfo(*szBind == '\0' ? NULL : szBind,
+	      port_string, &sock_hints, &sock_res);
+	if (ret != 0) {
+		hr = MAPI_E_INVALID_PARAMETER;
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "getaddrinfo(%s,%u): %s", szBind, ulPort, gai_strerror(ret));
 		goto exit;
 	}
+	sock_res = reorder_addrinfo_ipv6(sock_res);
 
-		// TODO: should be configurable?
-		if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char *>(&opt), sizeof(opt)) == -1)
-			lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to set reuseaddr socket option: %s", strerror(errno));
+	errno = 0;
+	for (sock_addr = sock_res; sock_addr != NULL;
+	     sock_addr = sock_addr->ai_next)
+	{
+		sock_last = sock_addr;
+		fd = socket(sock_addr->ai_family, sock_addr->ai_socktype,
+		     sock_addr->ai_protocol);
+		if (fd < 0)
+			continue;
 
-		if (bind(fd, (struct sockaddr *)&sin_addr, sizeof(sin_addr)) == -1) {
-			if (lpLogger)
-				lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to bind to port %d (%s). This is usually caused by another process (most likely another zarafa-server) already using this port. This program will terminate now.", ulPort, strerror(errno));
-#ifdef LINUX
-		kill(0, SIGTERM);
-#endif
-		exit(1);
+		if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR,
+		    reinterpret_cast<const char *>(&opt), sizeof(opt)) < 0)
+			lpLogger->Log(EC_LOGLEVEL_WARNING,
+				"Unable to set reuseaddr socket option: %s",
+				strerror(errno));
+		if (intf != NULL &&
+		    setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, intf,
+		    strlen(intf)) < 0) {
+			lpLogger->Log(EC_LOGLEVEL_ERROR,
+				"Unable to bind to interface %s: %s",
+				intf, strerror(errno));
+			break;
+		}
+
+		ret = bind(fd, sock_addr->ai_addr, sock_addr->ai_addrlen);
+		if (ret < 0 && errno == EADDRINUSE) {
+			/*
+			 * If the port is used, drop out early. Do not let it
+			 * happen that we move to an AF where it happens to be
+			 * unused.
+			 */
+			int saved_errno = errno;
+			close(fd);
+			fd = -1;
+			errno = saved_errno;
+			break;
+		}
+		if (ret < 0) {
+			int saved_errno = errno;
+			close(fd);
+			fd = -1;
+			errno = saved_errno;
+			continue;
+		}
+
+		if (listen(fd, SOMAXCONN) < 0) {
+			lpLogger->Log(EC_LOGLEVEL_ERROR,
+				"Unable to start listening on port %d: %s",
+				ulPort, strerror(errno));
+			hr = MAPI_E_NETWORK_ERROR;
+			goto exit;
+		}
+
+		/*
+		 * Function signature currently only permits a single fd, so if
+		 * we have a good socket, try no more. The IPv6 socket is
+		 * generally returned first, and is also IPv4-capable
+		 * (through mapped addresses).
+		 */
+		break;
 	}
-
-	// TODO: backlog of SOMAXCONN should be configurable
-	if (listen(fd, SOMAXCONN) == -1) {
-		if (lpLogger)
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to start listening on port %d.", ulPort);
+	if (fd < 0 && sock_last != NULL) {
+		lpLogger->Log(EC_LOGLEVEL_ERROR,
+			"Unable to create socket(%u,%u,%u): %s",
+			sock_last->ai_family, sock_last->ai_socktype,
+			sock_last->ai_protocol, strerror(errno));
+		hr = MAPI_E_NETWORK_ERROR;
+		goto exit;
+	} else if (fd < 0) {
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "no sockets proposed");
 		hr = MAPI_E_NETWORK_ERROR;
 		goto exit;
 	}
@@ -800,8 +896,10 @@ HRESULT HrListen(ECLogger *lpLogger, const char *szBind, int ulPort, int *lpulLi
 	*lpulListenSocket = fd;
 
 exit:
-	if (hr != hrSuccess)
-		close(fd);
+	if (sock_res != NULL)
+		freeaddrinfo(sock_res);
+	if (hr != hrSuccess && fd >= 0)
+		closesocket(fd);
 	return hr;
 }
 

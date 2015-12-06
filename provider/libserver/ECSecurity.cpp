@@ -111,6 +111,7 @@ ECSecurity::ECSecurity(ECSession *lpSession, ECConfig *lpConfig, ECLogger *lpLog
 	m_lpSession = lpSession;
 	m_lpConfig = lpConfig;
 	m_lpLogger = lpLogger;
+	m_lpLogger->AddRef();
 	m_lpAudit = lpAudit;
 	m_lpGroups = NULL;
 	m_lpViewCompanies = NULL;
@@ -126,6 +127,7 @@ ECSecurity::~ECSecurity()
 	delete m_lpGroups;
 	delete m_lpViewCompanies;
 	delete m_lpAdminCompanies;
+	m_lpLogger->Release();
 }
 
 /** 

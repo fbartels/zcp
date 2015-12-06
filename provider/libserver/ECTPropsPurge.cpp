@@ -65,6 +65,7 @@ ECTPropsPurge::ECTPropsPurge(ECConfig *lpConfig, ECLogger *lpLogger, ECDatabaseF
     
     m_lpConfig = lpConfig;
     m_lpLogger = lpLogger;
+    m_lpLogger->AddRef();
     m_lpDatabaseFactory = lpDatabaseFactory;
     m_bExit = false;
     
@@ -75,6 +76,8 @@ ECTPropsPurge::ECTPropsPurge(ECConfig *lpConfig, ECLogger *lpLogger, ECDatabaseF
 
 ECTPropsPurge::~ECTPropsPurge()
 {
+	m_lpLogger->Release();
+
 	// Signal thread to exit
 	pthread_mutex_lock(&m_hMutexExit);
 	m_bExit = true;

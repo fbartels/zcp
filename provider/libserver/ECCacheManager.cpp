@@ -127,6 +127,7 @@ ECCacheManager::ECCacheManager(ECConfig *lpConfig, ECDatabaseFactory *lpDatabase
  	/* Initialization of constants */
  	m_lpDatabaseFactory = lpDatabaseFactory;
  	m_lpLogger = lpLogger;
+	m_lpLogger->AddRef();
  	
  	m_bCellCacheDisabled = false;
 
@@ -149,6 +150,7 @@ ECCacheManager::ECCacheManager(ECConfig *lpConfig, ECDatabaseFactory *lpDatabase
 ECCacheManager::~ECCacheManager()
 {
 	PurgeCache(PURGE_CACHE_ALL);
+	m_lpLogger->Release();
 
 	pthread_mutex_destroy(&m_hCacheIndPropMutex);
 	pthread_mutex_destroy(&m_hCacheMutex);

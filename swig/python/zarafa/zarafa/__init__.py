@@ -3792,7 +3792,7 @@ class _ZSocket: # XXX megh, double wrapper
         self.ssl_cert = ssl_cert
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.s.bind(addr)
-        self.s.listen(5)
+        self.s.listen(socket.SOMAXCONN)
 
     def accept(self):
         newsocket, fromaddr = self.s.accept()
@@ -3806,7 +3806,7 @@ def server_socket(addr, ssl_key=None, ssl_cert=None, log=None): # XXX https, mer
         s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         os.system('rm -f %s' % addr2)
         s.bind(addr2)
-        s.listen(5)
+        s.listen(socket.SOMAXCONN)
     elif addr.startswith('https://'):
         addr2 = addr.replace('https://', '').split(':')
         addr2 = (addr2[0], int(addr2[1]))
@@ -3816,7 +3816,7 @@ def server_socket(addr, ssl_key=None, ssl_cert=None, log=None): # XXX https, mer
         addr2 = (addr2[0], int(addr2[1]))
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.bind(addr2)
-        s.listen(5)
+        s.listen(socket.SOMAXCONN)
     if log:
         log.info('listening on socket %s', addr)
     return s

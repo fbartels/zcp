@@ -42,6 +42,7 @@
  */
 
 #include <zarafa/platform.h>
+#include <new>
 
 #include "ECSecurity.h"
 #include "ECSessionManagerOffline.h"
@@ -68,7 +69,7 @@ ECRESULT ECSessionManagerOffline::CreateAuthSession(struct soap *soap, unsigned 
 
 	newSessionID = rand_mt();
 
-	lpAuthSession = new ECAuthSessionOffline(GetSourceAddr(soap), newSessionID, m_lpDatabaseFactory, this, ulCapabilities);
+	lpAuthSession = new(std::nothrow) ECAuthSessionOffline(GetSourceAddr(soap), newSessionID, m_lpDatabaseFactory, this, ulCapabilities);
 	if (lpAuthSession) {
 	    if (bLockSession) {
 	        lpAuthSession->Lock();
