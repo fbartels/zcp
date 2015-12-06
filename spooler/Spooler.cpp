@@ -1000,9 +1000,8 @@ static void process_signal(int sig)
 
 	case SIGCHLD:
 		pthread_mutex_lock(&hMutexFinished);
-		while ((pid = waitpid (-1, &stat, WNOHANG)) > 0) {
+		while ((pid = waitpid (-1, &stat, WNOHANG)) > 0)
 			mapFinished[pid] = stat;
-		}
 		pthread_mutex_unlock(&hMutexFinished);
 		// Trigger condition so the messages get cleaned from the queue
 		pthread_mutex_lock(&hMutexMessagesWaiting);

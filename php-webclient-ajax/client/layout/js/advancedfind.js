@@ -530,9 +530,8 @@ function advFindPagingElement(moduleObject, totalrowcount, rowcount, rowstart) {
 
 	// Number of pages
 	var pages = Math.floor(totalrowcount / rowcount);
-	if((totalrowcount % rowcount) > 0) {
+	if ((totalrowcount % rowcount) > 0)
 		pages += 1;
-	}
 
 	// current page
 	var currentPage = Math.floor(rowstart / rowcount);

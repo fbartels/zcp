@@ -3564,9 +3564,8 @@ unsigned int ECCategory::GetObjectSize()
 	if (m_cProps > 0) {
 		ulSize += sizeof(struct propVal) * m_cProps;
 
-		for(i=0; i<m_cProps; i++) {
+		for (i = 0; i < m_cProps; ++i)
 			ulSize += PropSize(&m_lpProps[i]);
-		}
 	}
 
 	if (m_lpParent)
@@ -3590,13 +3589,12 @@ ECRESULT ECGenericObjectTable::GetComputedDepth(struct soap *soap, ECSession *lp
 	lpProp->__union = SOAP_UNION_propValData_ul;
 	lpProp->ulPropTag = PR_DEPTH;
 
-	if(m_ulObjType == MAPI_MESSAGE) {
+	if (m_ulObjType == MAPI_MESSAGE)
 		// For contents tables, depth is equal to number of categories
 		lpProp->Value.ul = GetCategories();
-	} else {
+	else
 		// For hierarchy tables, depth is 1 (see ECConvenientDepthTable.cpp for exception)
 		lpProp->Value.ul = 1;
-	}
 		
 	return erSuccess;
 }

@@ -734,9 +734,9 @@ static void print_company_settings(const ECCOMPANY *lpECCompany,
 {
 	cout << "Companyname:\t\t" << (LPSTR)lpECCompany->lpszCompanyname << endl;
 	cout << "Sysadmin:\t\t" << (LPSTR)lpECAdministrator->lpszUsername << endl;
-	if (lpECCompany->lpszServername != NULL && strlen((LPSTR)lpECCompany->lpszServername) > 0) {
+	if (lpECCompany->lpszServername != NULL && strlen((LPSTR)lpECCompany->lpszServername) > 0)
 		cout << "Home server:\t\t" << (LPSTR)lpECCompany->lpszServername << endl;
-	}
+
 	cout << "Address book:\t\t" << (lpECCompany->ulIsABHidden ? "Hidden" : "Visible") << endl;
 
 	print_extra_settings(&lpECCompany->sPropmap, &lpECCompany->sMVPropmap);
@@ -826,9 +826,9 @@ static void print_user_settings(IMsgStore *lpStore, const ECUSER *lpECUser,
 		cout << "Decline dbl meetingreq:\t" << (bDeclineConflict ? "yes" : "no") << endl;
 		cout << "Decline recur meet.req:\t" << (bDeclineRecur ? "yes" : "no") << endl;
 	}
-	if (lpECUser->lpszServername != NULL && strlen((LPSTR)lpECUser->lpszServername) > 0) {
+	if (lpECUser->lpszServername != NULL && strlen((LPSTR)lpECUser->lpszServername) > 0)
 		cout << "Home server:\t\t" << (LPSTR)lpECUser->lpszServername << endl;
-	}
+
 	if (lpProps) {
 		time_t logon = 0, logoff = 0;
 		char d[64];
