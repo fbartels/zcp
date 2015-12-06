@@ -822,7 +822,11 @@ exit:
 }
 
 // lpMessage: gets EntryID, maybe pass this and close message in DAgent.cpp
-HRESULT HrProcessRules(PyMapiPlugin *pyMapiPlugin, LPMAPISESSION lpSession, LPADRBOOK lpAdrBook, LPMDB lpOrigStore, LPMAPIFOLDER lpOrigInbox, IMessage **lppMessage, ECLogger *lpLogger, StatsClient *const sc) {
+HRESULT HrProcessRules(const std::string &recip, PyMapiPlugin *pyMapiPlugin,
+    LPMAPISESSION lpSession, LPADRBOOK lpAdrBook, LPMDB lpOrigStore,
+    LPMAPIFOLDER lpOrigInbox, IMessage **lppMessage, ECLogger *lpLogger,
+    StatsClient *const sc)
+{
 	HRESULT hr = hrSuccess;
     IExchangeModifyTable *lpTable = NULL;
     IMAPITable *lpView = NULL;
@@ -918,6 +922,7 @@ HRESULT HrProcessRules(PyMapiPlugin *pyMapiPlugin, LPMAPISESSION lpSession, LPAD
 		else
 			strRule = "(no name)";
 
+		lpLogger->Log(EC_LOGLEVEL_DEBUG, "Processing rule %s for %s", strRule.c_str(), recip.c_str());
 		lpRuleState = PpropFindProp(lpRowSet->aRow[0].lpProps, lpRowSet->aRow[0].cValues, PR_RULE_STATE);
 		if (lpRuleState) {
 			if (!(lpRuleState->Value.i & ST_ENABLED)) {
