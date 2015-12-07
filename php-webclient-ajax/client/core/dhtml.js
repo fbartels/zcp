@@ -446,9 +446,8 @@ DHTML.prototype.removeEvents = function(element)
 				childElement.events = null;
 			}
 			
-			if(childElement.childNodes && childElement.childNodes.length > 0) {
+			if (childElement.childNodes && childElement.childNodes.length > 0)
 				dhtml.removeEvents(childElement);
-			}
 		}
 	}
 }
@@ -545,9 +544,8 @@ DHTML.prototype.deselectElement = function(id, className)
 {
 	var element = this.getElementById(id);
 
-	if(element && element.className.indexOf(className) > 0) {
+	if (element && element.className.indexOf(className) > 0)
 		element.className = element.className.substring(0, element.className.indexOf(className));
-	}
 }
 
 /**

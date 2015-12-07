@@ -2000,7 +2000,7 @@ HRESULT VConverter::HrSetOrganizerAndAttendees(LPMESSAGE lpParentMsg, LPMESSAGE 
 			icalproperty_add_parameter(lpicProp, icalparameter_new_cn(m_converter.convert_to<string>(m_strCharset.c_str(), wstrBuf, rawsize(wstrBuf), CHARSET_WCHAR).c_str()));
 		
 		wstrBuf = L"mailto:" + strSenderEmailAddr;
-		if (!strSenderEmailAddr.empty() && (strSenderEmailAddr != strRepsSenderEmailAddr))
+		if (!strSenderEmailAddr.empty() && strSenderEmailAddr != strRepsSenderEmailAddr)
 			icalproperty_add_parameter(lpicProp, icalparameter_new_sentby(m_converter.convert_to<string>(wstrBuf).c_str()));
 
 		icalcomponent_add_property(lpicEvent, lpicProp);
@@ -2090,7 +2090,7 @@ HRESULT VConverter::HrSetOrganizerAndAttendees(LPMESSAGE lpParentMsg, LPMESSAGE 
 				icalproperty_add_parameter(lpicProp, icalparameter_new_cn(m_converter.convert_to<string>(m_strCharset.c_str(), wstrBuf, rawsize(wstrBuf), CHARSET_WCHAR).c_str()) );
 
 			wstrBuf = L"mailto:" + strSenderEmailAddr;
-			if(!strSenderEmailAddr.empty() && (strSenderEmailAddr != strRepsSenderEmailAddr) )
+			if (!strSenderEmailAddr.empty() && strSenderEmailAddr != strRepsSenderEmailAddr)
 				icalproperty_add_parameter(lpicProp, icalparameter_new_sentby(m_converter.convert_to<string>(m_strCharset.c_str(), wstrBuf, rawsize(wstrBuf), CHARSET_WCHAR).c_str()) );
 
 			icalcomponent_add_property(lpicEvent, lpicProp);

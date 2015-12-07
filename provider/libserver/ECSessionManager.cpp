@@ -600,30 +600,26 @@ exit:
 
 ECRESULT ECSessionManager::CreateAuthSession(struct soap *soap, unsigned int ulCapabilities, ECSESSIONID *sessionID, ECAuthSession **lppAuthSession, bool bRegisterSession, bool bLockSession)
 {
-	ECRESULT er = erSuccess;
 	ECAuthSession *lpAuthSession = NULL;
 	ECSESSIONID newSessionID;
 
 	CreateSessionID(ulCapabilities, &newSessionID);
 
 	lpAuthSession = new(std::nothrow) ECAuthSession(GetSourceAddr(soap), newSessionID, m_lpDatabaseFactory, this, ulCapabilities);
-	if (lpAuthSession) {
-	    if (bLockSession) {
+	if (lpAuthSession == NULL)
+		return ZARAFA_E_NOT_ENOUGH_MEMORY;
+	if (bLockSession)
 	        lpAuthSession->Lock();
-	    }
-		if (bRegisterSession) {
-			pthread_rwlock_wrlock(&m_hCacheRWLock);
-			m_mapSessions.insert( SESSIONMAP::value_type(newSessionID, lpAuthSession) );
-			pthread_rwlock_unlock(&m_hCacheRWLock);
-			g_lpStatsCollector->Increment(SCN_SESSIONS_CREATED);
-		}
+	if (bRegisterSession) {
+		pthread_rwlock_wrlock(&m_hCacheRWLock);
+		m_mapSessions.insert( SESSIONMAP::value_type(newSessionID, lpAuthSession) );
+		pthread_rwlock_unlock(&m_hCacheRWLock);
+		g_lpStatsCollector->Increment(SCN_SESSIONS_CREATED);
+	}
 
-		*sessionID = newSessionID;
-		*lppAuthSession = lpAuthSession;
-	} else
-		er = ZARAFA_E_NOT_ENOUGH_MEMORY;
-
-	return er;
+	*sessionID = newSessionID;
+	*lppAuthSession = lpAuthSession;
+	return erSuccess;
 }
 
 ECRESULT ECSessionManager::CreateSession(struct soap *soap, char *szName, char *szPassword, char *szImpersonateUser, char *szClientVersion, char *szClientApp, const char *szClientAppVersion, const char *szClientAppMisc, unsigned int ulCapabilities, ECSESSIONGROUPID sessionGroupID, ECSESSIONID *lpSessionID, ECSession **lppSession, bool fLockSession, bool fAllowUidAuth)

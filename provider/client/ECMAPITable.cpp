@@ -125,9 +125,9 @@ exit:
 
 BOOL ECMAPITable::IsDeferred()
 {
-    if(m_lpSetColumns == NULL && m_lpRestrict == NULL && m_lpSortTable == NULL && m_ulRowCount == 0 && m_ulFlags == 0 && m_ulDeferredFlags == 0)
-        return false;
-    return true;
+	return m_lpSetColumns != NULL || m_lpRestrict != NULL ||
+	       m_lpSortTable != NULL || m_ulRowCount != 0 ||
+	       m_ulFlags != 0 || m_ulDeferredFlags != 0;
 }
 
 ECMAPITable::~ECMAPITable()

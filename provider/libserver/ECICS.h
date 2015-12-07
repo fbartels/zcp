@@ -53,7 +53,7 @@
 
 class SOURCEKEY {
 public:
-    SOURCEKEY() { lpData = NULL; ulSize = 0; };
+    SOURCEKEY(void) : lpData(NULL), ulSize(0) {}
     SOURCEKEY(const SOURCEKEY &s) { 
         if(&s == this) return; 
         if(s.ulSize == 0) { 

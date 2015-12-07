@@ -82,16 +82,14 @@
 
 static bool rand_init_done = false;
 
-bool operator!=(GUID a, GUID b) {
-	if (memcmp(&a, &b, sizeof(GUID)) == 0)
-		return false;
-	return true;
+bool operator!=(GUID a, GUID b)
+{
+	return memcmp(&a, &b, sizeof(GUID)) != 0;
 }
 
-bool operator==(REFIID a, GUID b) {
-	if (memcmp(&a, &b, sizeof(GUID)) == 0)
-		return true;
-	return false;
+bool operator==(REFIID a, GUID b)
+{
+	return memcmp(&a, &b, sizeof(GUID)) == 0;
 }
 
 HRESULT CoCreateGuid(LPGUID pNewGUID) {
@@ -258,7 +256,7 @@ time_t GetProcessTime()
 
 class Lock _zcp_final {
 public:
-       Lock() { locks = 0; busy = 0; dblTime = 0; };
+	Lock() : locks(0), busy(0), dblTime(0) {}
        ~Lock() {};
 
        std::string strLocation;

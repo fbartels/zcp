@@ -49,7 +49,7 @@
 class UTF8Iterator;
 class UTF32Iterator;
 
-#if (U_ICU_VERSION_MAJOR_NUM < 4) || ((U_ICU_VERSION_MAJOR_NUM == 4) && (U_ICU_VERSION_MINOR_NUM < 2))
+#if U_ICU_VERSION_MAJOR_NUM < 4 || (U_ICU_VERSION_MAJOR_NUM == 4 && U_ICU_VERSION_MINOR_NUM < 2)
 
 UnicodeString UTF8ToUnicode(const char *utf8);
 UnicodeString UTF32ToUnicode(const UChar32 *utf32);

@@ -1800,17 +1800,15 @@ HRESULT MAPIToVMIME::handleExtraHeaders(IMessage *lpMessage, vmime::ref<vmime::h
 	}
 
 	// only for message-in-message items, add Message-ID header from MAPI
-	if (sopt.msg_in_msg && HrGetOneProp(lpMessage, PR_INTERNET_MESSAGE_ID_A, &ptrMessageId) == hrSuccess && strlen(ptrMessageId->Value.lpszA) > 0) {
+	if (sopt.msg_in_msg && HrGetOneProp(lpMessage, PR_INTERNET_MESSAGE_ID_A, &ptrMessageId) == hrSuccess && strlen(ptrMessageId->Value.lpszA) > 0)
 		vmHeader->MessageId()->setValue(ptrMessageId->Value.lpszA);
-	}
 
 	// priority settings
 	static const char *const priomap[3] = { "5 (Lowest)", "3 (Normal)", "1 (Highest)" }; // 2 and 4 cannot be set from outlook
-	if (HrGetOneProp(lpMessage, PR_IMPORTANCE, &lpImportance) == hrSuccess) {
+	if (HrGetOneProp(lpMessage, PR_IMPORTANCE, &lpImportance) == hrSuccess)
 		vmHeader->appendField(hff->create("X-Priority", priomap[min(2, (int)(lpImportance->Value.ul)&3)])); // IMPORTANCE_* = 0..2
-	} else if (HrGetOneProp(lpMessage, PR_PRIORITY, &lpPriority) == hrSuccess) {
+	else if (HrGetOneProp(lpMessage, PR_PRIORITY, &lpPriority) == hrSuccess)
 		vmHeader->appendField(hff->create("X-Priority", priomap[min(2, (int)(lpPriority->Value.ul+1)&3)])); // PRIO_* = -1..1
-	}
 
 	// When adding a X-Priority, spamassassin may add a severe punishment because no User-Agent header
 	// or X-Mailer header is present. So we set the X-Mailer header :)
@@ -1862,9 +1860,8 @@ HRESULT MAPIToVMIME::handleExtraHeaders(IMessage *lpMessage, vmime::ref<vmime::h
 			vmHeader->appendField(hff->create("Sensitivity", strSens));
 	}
 
-	if (HrGetOneProp(lpMessage, PR_EXPIRY_TIME, &lpExpiryTime) == hrSuccess) {
+	if (HrGetOneProp(lpMessage, PR_EXPIRY_TIME, &lpExpiryTime) == hrSuccess)
 		vmHeader->appendField(hff->create("Expiry-Time", FiletimeTovmimeDatetime(lpExpiryTime->Value.ft).generate()));
-	}
 
 //exit:
 	MAPIFreeBuffer(lpExpiryTime);
@@ -2070,7 +2067,7 @@ HRESULT MAPIToVMIME::handleSenderInfo(IMessage *lpMessage, vmime::ref<vmime::hea
 	}
 
 	// read receipt request
-	if ((HrGetOneProp(lpMessage, PR_READ_RECEIPT_REQUESTED, &lpReadReceipt) == hrSuccess) && (lpReadReceipt->Value.b == TRUE)) {
+	if (HrGetOneProp(lpMessage, PR_READ_RECEIPT_REQUESTED, &lpReadReceipt) == hrSuccess && lpReadReceipt->Value.b == TRUE) {
 		vmime::mailboxList mbl;
 		if (!strResEmail.empty() && strResEmail != strEmail) {
 			// use user added from address

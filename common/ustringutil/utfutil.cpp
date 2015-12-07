@@ -47,8 +47,8 @@
 #include <unicode/ustring.h>
 #include <zarafa/charset/convert.h>
 
-#if (U_ICU_VERSION_MAJOR_NUM < 4) || ((U_ICU_VERSION_MAJOR_NUM == 4) && (U_ICU_VERSION_MINOR_NUM < 2))
-#if (U_ICU_VERSION_MAJOR_NUM > 3) || ((U_ICU_VERSION_MAJOR_NUM == 3) && (U_ICU_VERSION_MINOR_NUM >= 6))
+#if U_ICU_VERSION_MAJOR_NUM < 4 || (U_ICU_VERSION_MAJOR_NUM == 4 && U_ICU_VERSION_MINOR_NUM < 2)
+#if U_ICU_VERSION_MAJOR_NUM > 3 || (U_ICU_VERSION_MAJOR_NUM == 3 && U_ICU_VERSION_MINOR_NUM >= 6)
 
 UnicodeString UTF8ToUnicode(const char *utf8)
 {

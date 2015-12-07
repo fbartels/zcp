@@ -172,11 +172,10 @@
 				// Get permissions of all delegates.
 				if(isset($this->messageProps[PR_SCHDINFO_DELEGATE_ENTRYIDS])) {
 					for($i = 0; $i < count($this->messageProps[PR_SCHDINFO_DELEGATE_ENTRYIDS]); $i++){
-						if(is_array($delegateMeetingRule) && count($delegateMeetingRule) > 0) {
+						if (is_array($delegateMeetingRule) && count($delegateMeetingRule) > 0)
 							array_push($data["delegate"], $this->getDelegatePermissions($store, $this->messageProps[PR_SCHDINFO_DELEGATE_ENTRYIDS][$i], $delegateMeetingRule));
-						} else {
+						else
 							array_push($data["delegate"], $this->getDelegatePermissions($store, $this->messageProps[PR_SCHDINFO_DELEGATE_ENTRYIDS][$i]));
-						}
 					}
 				}
 

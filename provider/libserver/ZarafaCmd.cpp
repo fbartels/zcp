@@ -7830,8 +7830,8 @@ SOAP_ENTRY_START(resolveUserStore, lpsResponse->er, char *szUserName, unsigned i
 		goto exit;
 
 	/* Only users and companies have a store */
-	if (((OBJECTCLASS_TYPE(sUserDetails.GetClass()) == OBJECTTYPE_MAILUSER) && (sUserDetails.GetClass() == NONACTIVE_CONTACT)) ||
-		((OBJECTCLASS_TYPE(sUserDetails.GetClass()) != OBJECTTYPE_MAILUSER) && (sUserDetails.GetClass() != CONTAINER_COMPANY)))
+	if ((OBJECTCLASS_TYPE(sUserDetails.GetClass()) == OBJECTTYPE_MAILUSER && sUserDetails.GetClass() == NONACTIVE_CONTACT) ||
+		(OBJECTCLASS_TYPE(sUserDetails.GetClass()) != OBJECTTYPE_MAILUSER && sUserDetails.GetClass() != CONTAINER_COMPANY))
 	{
 		er = ZARAFA_E_NOT_FOUND;
 		goto exit;
@@ -9066,7 +9066,7 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 	}
 
 	// Check folder and dest folder are the same
-	if(!(ulObjFlags & MSGFLAG_DELETED) && (ulFlags & FOLDER_MOVE) && (ulDestFolderId == ulOldParent))
+	if(!(ulObjFlags & MSGFLAG_DELETED) && (ulFlags & FOLDER_MOVE) && ulDestFolderId == ulOldParent)
 		goto exit; // Do nothing... folder already on the right place
 
 	ulParentCycle = ulDestFolderId;

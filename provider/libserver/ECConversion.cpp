@@ -238,7 +238,7 @@ SOAP_FMAC3 struct searchCriteria52X * SOAP_FMAC4 soap_in_searchCriteria52X(struc
 			if (soap->error)
 				return NULL;
 		}
-		if ((soap->mode & SOAP_XML_STRICT) && (soap_flag_ulFlags > 0))
+		if ((soap->mode & SOAP_XML_STRICT) && soap_flag_ulFlags > 0)
 		{	soap->error = SOAP_OCCURS;
 			return NULL;
 		}

@@ -389,13 +389,11 @@ static char *get_password(void)
  * @note Does not accept uppercase 'yes'
  *
  * @param[in]	char*	String containing a boolean
- * @return		int		1 for true (yes) or 0 for false (no).
+ * @return	int	1 for true (yes) or 0 for false (no).
  */
 static int parse_yesno(const char *opt)
 {
-	if (opt[0] == 'y' || opt[0] == '1')
-		return 1;
-	return 0;
+	return opt[0] == 'y' || opt[0] == '1';
 }
 
 /**
@@ -736,9 +734,9 @@ static void print_company_settings(const ECCOMPANY *lpECCompany,
 {
 	cout << "Companyname:\t\t" << (LPSTR)lpECCompany->lpszCompanyname << endl;
 	cout << "Sysadmin:\t\t" << (LPSTR)lpECAdministrator->lpszUsername << endl;
-	if (lpECCompany->lpszServername != NULL && strlen((LPSTR)lpECCompany->lpszServername) > 0) {
+	if (lpECCompany->lpszServername != NULL && strlen((LPSTR)lpECCompany->lpszServername) > 0)
 		cout << "Home server:\t\t" << (LPSTR)lpECCompany->lpszServername << endl;
-	}
+
 	cout << "Address book:\t\t" << (lpECCompany->ulIsABHidden ? "Hidden" : "Visible") << endl;
 
 	print_extra_settings(&lpECCompany->sPropmap, &lpECCompany->sMVPropmap);
@@ -828,9 +826,9 @@ static void print_user_settings(IMsgStore *lpStore, const ECUSER *lpECUser,
 		cout << "Decline dbl meetingreq:\t" << (bDeclineConflict ? "yes" : "no") << endl;
 		cout << "Decline recur meet.req:\t" << (bDeclineRecur ? "yes" : "no") << endl;
 	}
-	if (lpECUser->lpszServername != NULL && strlen((LPSTR)lpECUser->lpszServername) > 0) {
+	if (lpECUser->lpszServername != NULL && strlen((LPSTR)lpECUser->lpszServername) > 0)
 		cout << "Home server:\t\t" << (LPSTR)lpECUser->lpszServername << endl;
-	}
+
 	if (lpProps) {
 		time_t logon = 0, logoff = 0;
 		char d[64];
@@ -879,10 +877,14 @@ static void print_user_settings(IMsgStore *lpStore, const ECUSER *lpECUser,
 		cout << " To version:\t\t" << ( (lpECUCUS->lpszLatestversion) ? (LPSTR)lpECUCUS->lpszLatestversion : "-" ) << endl;
 		cout << " Computername:\t\t" << ( (lpECUCUS->lpszComputername) ? (LPSTR)lpECUCUS->lpszComputername : "-" ) << endl;
 
-		if (lpECUCUS->ulStatus == UPDATE_STATUS_SUCCESS) cout << " Update:\t\tSuccess" << endl;
-		else if (lpECUCUS->ulStatus == UPDATE_STATUS_PENDING) cout << " Update:\t\tPending" << endl;
-		else if (lpECUCUS->ulStatus == UPDATE_STATUS_UNKNOWN) cout << " Update: \t\tUnknown" << endl;
-		else cout << " Update:\t\tFailed" << endl;
+		if (lpECUCUS->ulStatus == UPDATE_STATUS_SUCCESS)
+			cout << " Update:\t\tSuccess" << endl;
+		else if (lpECUCUS->ulStatus == UPDATE_STATUS_PENDING)
+			cout << " Update:\t\tPending" << endl;
+		else if (lpECUCUS->ulStatus == UPDATE_STATUS_UNKNOWN)
+			cout << " Update: \t\tUnknown" << endl;
+		else
+			cout << " Update:\t\tFailed" << endl;
 	}
 	MAPIFreeBuffer(lpProps);
 }

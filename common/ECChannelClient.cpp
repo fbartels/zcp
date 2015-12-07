@@ -69,7 +69,7 @@ ECChannelClient::ECChannelClient(const char *szPath, const char *szTokenizer)
 
 	m_strPath = GetServerNameFromPath(szPath);
 
-	if ((strncmp(szPath, "file", 4) == 0) || (szPath[0] == PATH_SEPARATOR)) {
+	if (strncmp(szPath, "file", 4) == 0 || szPath[0] == PATH_SEPARATOR) {
 		m_bSocket = true;
 		m_ulPort = 0;
 	} else {

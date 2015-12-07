@@ -836,7 +836,7 @@ ECRESULT ECAttachmentStorage::DeleteAttachment(ULONG ulObjId, ULONG ulPropId, bo
 	/*
 	 * Check if the attachment can be permanently deleted.
 	 */
-	if ((IsOrphanedSingleInstance(ulInstanceId, &bOrphan) == erSuccess) && (bOrphan == true)) {
+	if (IsOrphanedSingleInstance(ulInstanceId, &bOrphan) == erSuccess && bOrphan) {
 		er = DeleteAttachmentInstance(ulInstanceId, bReplace);
 		if (er != erSuccess)
 			goto exit;

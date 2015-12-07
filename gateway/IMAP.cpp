@@ -822,9 +822,7 @@ HRESULT IMAP::HrCmdNoop(const string &strTag) {
 		goto exit;
 
 exit:
-	if (hr2 != hrSuccess)
-		return hr2;
-	return hr;
+	return (hr2 != hrSuccess) ? hr2 : hr;
 }
 
 /** 

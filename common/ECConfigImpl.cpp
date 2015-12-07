@@ -108,9 +108,7 @@ bool ECConfigImpl::LoadSettings(const char *szFilename)
 
 static int tounderscore(int c)
 {
-	if(c == '-')
-		return '_';
-	return c;
+	return c == '-' ? '_' : c;
 }
 
 /**
@@ -329,7 +327,7 @@ const char *ECConfigImpl::GetSetting(const char *szName, const char *equal,
     const char *other)
 {
 	const char *value = this->GetSetting(szName);
-	if ((value == equal) || (value && equal && !strcmp(value, equal)))
+	if (value == equal || (value && equal && !strcmp(value, equal)))
 		return other;
 	else
 		return value;
@@ -351,7 +349,7 @@ const wchar_t *ECConfigImpl::GetSettingW(const char *szName,
     const wchar_t *equal, const wchar_t *other)
 {
 	const wchar_t *value = this->GetSettingW(szName);
-	if ((value == equal) || (value && equal && !wcscmp(value, equal)))
+	if (value == equal || (value && equal && !wcscmp(value, equal)))
 		return other;
 	else
 		return value;

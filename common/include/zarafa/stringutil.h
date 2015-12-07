@@ -56,14 +56,14 @@
 struct stricmp_comparison {
 	bool operator()(const std::string &left, const std::string &right) const
 	{
-		return ((left.size() < right.size()) || ((left.size() == right.size()) && (stricmp(left.c_str(), right.c_str()) < 0)));
+		return left.size() < right.size() || (left.size() == right.size() && stricmp(left.c_str(), right.c_str()) < 0);
 	}
 };
 
 struct wcscasecmp_comparison {
 	bool operator()(const std::wstring &left, const std::wstring &right) const
 	{
-		return ((left.size() < right.size()) || ((left.size() == right.size()) && (wcscasecmp(left.c_str(), right.c_str()) < 0)));
+		return left.size() < right.size() || (left.size() == right.size() && wcscasecmp(left.c_str(), right.c_str()) < 0);
 	}
 };
 

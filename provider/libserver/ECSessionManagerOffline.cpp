@@ -63,27 +63,23 @@ ECSessionManagerOffline::~ECSessionManagerOffline(void)
 
 ECRESULT ECSessionManagerOffline::CreateAuthSession(struct soap *soap, unsigned int ulCapabilities, ECSESSIONID *sessionID, ECAuthSession **lppAuthSession, bool bRegisterSession, bool bLockSession)
 {
-	ECRESULT er = erSuccess;
 	ECAuthSession *lpAuthSession = NULL;
 	ECSESSIONID newSessionID;
 
 	newSessionID = rand_mt();
 
 	lpAuthSession = new(std::nothrow) ECAuthSessionOffline(GetSourceAddr(soap), newSessionID, m_lpDatabaseFactory, this, ulCapabilities);
-	if (lpAuthSession) {
-	    if (bLockSession) {
+	if (lpAuthSession == NULL)
+		return ZARAFA_E_NOT_ENOUGH_MEMORY;
+	if (bLockSession)
 	        lpAuthSession->Lock();
-	    }
-		if (bRegisterSession) {
-			pthread_rwlock_wrlock(&m_hCacheRWLock);
-			m_mapSessions.insert( SESSIONMAP::value_type(newSessionID, lpAuthSession) );
-			pthread_rwlock_unlock(&m_hCacheRWLock);
-		}
+	if (bRegisterSession) {
+		pthread_rwlock_wrlock(&m_hCacheRWLock);
+		m_mapSessions.insert( SESSIONMAP::value_type(newSessionID, lpAuthSession) );
+		pthread_rwlock_unlock(&m_hCacheRWLock);
+	}
 
-		*sessionID = newSessionID;
-		*lppAuthSession = lpAuthSession;
-	} else
-		er = ZARAFA_E_NOT_ENOUGH_MEMORY;
-
-	return er;
+	*sessionID = newSessionID;
+	*lppAuthSession = lpAuthSession;
+	return erSuccess;
 }

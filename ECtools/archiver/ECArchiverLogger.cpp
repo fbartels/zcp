@@ -84,21 +84,21 @@ void ECArchiverLogger::Log(unsigned int loglevel, const std::string &message)
 
 void ECArchiverLogger::Log(unsigned int loglevel, const char *format, ...)
 {
-	if (m_lpLogger && m_lpLogger->Log(loglevel)) {
-		std::string strFormat = CreateFormat(format);
-		va_list va;
-		va_start(va, format);
-		m_lpLogger->LogVA(loglevel, strFormat.c_str(), va);
-		va_end(va);
-	}
+	if (m_lpLogger == NULL || !m_lpLogger->Log(loglevel))
+		return;
+	std::string strFormat = CreateFormat(format);
+	va_list va;
+	va_start(va, format);
+	m_lpLogger->LogVA(loglevel, strFormat.c_str(), va);
+	va_end(va);
 }
 
 void ECArchiverLogger::LogVA(unsigned int loglevel, const char *format, va_list& va)
 {
-	if (m_lpLogger && m_lpLogger->Log(loglevel)) {
-		std::string strFormat = CreateFormat(format);
-		m_lpLogger->LogVA(loglevel, strFormat.c_str(), va);
-	}
+	if (m_lpLogger == NULL || !m_lpLogger->Log(loglevel))
+		return;
+	std::string strFormat = CreateFormat(format);
+	m_lpLogger->LogVA(loglevel, strFormat.c_str(), va);
 }
 
 std::string ECArchiverLogger::CreateFormat(const char *format)
@@ -107,14 +107,15 @@ std::string ECArchiverLogger::CreateFormat(const char *format)
 	int len;
 	std::string strPrefix;
 
-	if (!m_strUser.empty()) {
-		if (m_strFolder.empty()) {
-			len = m_lpLogger->snprintf(buffer, sizeof(buffer), "For '" TSTRING_PRINTF "': ", m_strUser.c_str());
-			strPrefix = EscapeFormatString(std::string(buffer, len));
-		} else {
-			len = m_lpLogger->snprintf(buffer, sizeof(buffer), "For '" TSTRING_PRINTF "' in folder '" TSTRING_PRINTF "': ", m_strUser.c_str(), m_strFolder.c_str());
-			strPrefix = EscapeFormatString(std::string(buffer, len));
-		}
+	if (m_strUser.empty())
+		return strPrefix + format;
+
+	if (m_strFolder.empty()) {
+		len = m_lpLogger->snprintf(buffer, sizeof(buffer), "For '" TSTRING_PRINTF "': ", m_strUser.c_str());
+		strPrefix = EscapeFormatString(std::string(buffer, len));
+	} else {
+		len = m_lpLogger->snprintf(buffer, sizeof(buffer), "For '" TSTRING_PRINTF "' in folder '" TSTRING_PRINTF "': ", m_strUser.c_str(), m_strFolder.c_str());
+		strPrefix = EscapeFormatString(std::string(buffer, len));
 	}
 
 	return strPrefix + format;

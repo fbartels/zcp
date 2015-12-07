@@ -237,7 +237,7 @@ static HRESULT MungeForwardBody(LPMESSAGE lpMessage, LPMESSAGE lpOrigMessage)
 		pos = str_ifind(strHTML.c_str(), strFind.c_str());
 		pos = pos ? pos + strFind.length() : strHTML.c_str();
 		// if body tag was not found, this will make it be placed after the first tag, probably <html>
-		if ((pos == strHTML.c_str() && *pos == '<') || (pos != strHTML.c_str())) {
+		if ((pos == strHTML.c_str() && *pos == '<') || pos != strHTML.c_str()) {
 			// not all html bodies start actually using tags, so only seek if we find a <, or if we found a body tag starting point.
 			while (*pos && *pos != '>') pos++;
 			if (*pos == '>') pos++;

@@ -407,7 +407,7 @@ HRESULT WSTransport::HrLogon(const sGlobalProfileProps &sProfileProps)
 
 #ifdef WIN32
 	// For BES, we only support it if we have ZARAFA_SERVICE_BES. The only way to detect that we're Bes is by checking the calling program, BlackBerryAgent.exe
-	if((stricmp(GetAppName().c_str(), "BlackBerryAgent.exe") == 0) && (m_llFlags & (1 << ZARAFA_SERVICE_BES)) == 0) {
+	if (stricmp(GetAppName().c_str(), "BlackBerryAgent.exe") == 0 && (m_llFlags & (1 << ZARAFA_SERVICE_BES)) == 0) {
 		TRACE_RELEASE("You do not have the correct license to use BlackBerry Enterprise Server with Zarafa");
 		hr = MAPI_E_NO_SUPPORT;
 		goto exit;

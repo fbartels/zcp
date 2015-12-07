@@ -94,7 +94,7 @@
 #define OBJECTCLASS_TYPE(__class) \
 	( (objecttype_t)(((__class) >> 16) & 0xffff) )
 #define OBJECTCLASS_ISTYPE(__class) \
-	( (((__class) & 0xffff) == 0) && (((__class) >> 16) != 0) )
+	( ((__class) & 0xffff) == 0 && ((__class) >> 16) != 0)
 #define OBJECTCLASS_FIELD_COMPARE(__left, __right) \
 	( !(__left) || !(__right) || (__left) == (__right) )
 #define OBJECTCLASS_COMPARE(__left, __right) \

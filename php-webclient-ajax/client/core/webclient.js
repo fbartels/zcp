@@ -215,10 +215,9 @@ WebClient.prototype.startClient = function()
 	var urlIsDoubleEncoded = actionUrl.search(/\&url\=/i) != -1 ? true : false;
 
 	if(actionUrl.length > 0) {
-		if(urlIsDoubleEncoded) {
+		if (urlIsDoubleEncoded)
 			// decode URI before using it
 			actionUrl = decodeURIComponent(actionUrl);
-		}
 
 		// remove first '?' from the URL
 		actionUrl = actionUrl.replace("?", "");
@@ -236,9 +235,8 @@ WebClient.prototype.startClient = function()
 	 */
 	var outOfOfficeChangeId = webclient.settings.get("outofoffice_change_id", "false");
 	if(webclient.settings.get("outofoffice/set","false") == "true" && outOfOfficeChangeId != "false" && outOfOfficeChangeId != webclient.sessionid){
-		if(confirm(_("Out of Office currently on. Would you like to turn it off?"))){
+		if (confirm(_("Out of Office currently on. Would you like to turn it off?")))
 			webclient.settings.set("outofoffice/set","false");
-		}
 		webclient.settings.set("outofoffice_change_id", webclient.sessionid);
 	}
 }
