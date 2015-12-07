@@ -195,14 +195,29 @@ AC_ARG_WITH(searchscripts-prefix,
   [SEARCHSCRIPTSDIR=${withval}],[SEARCHSCRIPTSDIR=/etc/zarafa/searchscripts])
 AC_SUBST(SEARCHSCRIPTSDIR)
 
-systemunitdir=$("$PKG_CONFIG" systemd --variable systemdsystemunitdir 2>/dev/null)
-sysusersdir=$("$PKG_CONFIG" systemd --variable sysusersdir 2>/dev/null)
-tmpfilesdir=$("$PKG_CONFIG" systemd --variable tmpfilesdir 2>/dev/null)
-AS_IF([test -z "$systemunitdir"], [systemunitdir='${prefix}/lib/systemd/system'])
-AS_IF([test -z "$sysusersdir"], [sysusersdir='${prefix}/lib/sysusers.d'])
-AS_IF([test -z "$tmpfilesdir"], [tmpfilesdir='${prefix}/lib/tmpfiles.d'])
+AC_ARG_WITH([systemunitdir],
+	[AS_HELP_STRING([--with-systemunitdir=PATH], [Path to systemd service unit directory])],
+	[systemunitdir="$withval"],
+	[
+		systemunitdir=$("$PKG_CONFIG" systemd --variable systemdsystemunitdir 2>/dev/null)
+		AS_IF([test -z "$systemunitdir"], [systemunitdir='${prefix}/lib/systemd/system'])
+	])
 AC_SUBST([systemunitdir])
+AC_ARG_WITH([sysusersdir],
+	[AS_HELP_STRING([--with-sysusersdir=PATH], [Path to sysusers config directory])],
+	[sysusersdir="$withval"],
+	[
+		sysusersdir=$("$PKG_CONFIG" systemd --variable sysusersdir 2>/dev/null)
+		AS_IF([test -z "$sysusersdir"], [sysusersdir='${prefix}/lib/sysusers.d'])
+	])
 AC_SUBST([sysusersdir])
+AC_ARG_WITH([tmpfilesdir],
+	[AS_HELP_STRING([--with-tmpfilesdir=PATH], [Path to tmpfiles config directory])],
+	[tmpfilesdir="$withval"],
+	[
+		tmpfilesdir=$("$PKG_CONFIG" systemd --variable tmpfilesdir 2>/dev/null)
+		AS_IF([test -z "$tmpfilesdir"], [tmpfilesdir='${prefix}/lib/tmpfiles.d'])
+	])
 AC_SUBST([tmpfilesdir])
 
 # zarafa-stats requires ncurses(w) for --top
