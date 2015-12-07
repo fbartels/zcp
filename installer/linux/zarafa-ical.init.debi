@@ -18,7 +18,7 @@ ICAL=/usr/sbin/zarafa-ical
 DESC="Zarafa ical gateway"
 NAME=`basename $ICAL`
 #QUIETDAEMON=--quiet
-PIDFILE=/var/run/zarafa-ical.pid
+PIDFILE=/var/run/zarafad/ical.pid
 
 test -x $ICAL || exit 0
 
@@ -45,6 +45,7 @@ case "$1" in
 		exit 0
 	fi
 	log_begin_msg "Starting $DESC: $NAME"
+	install -dm0775 -o zarafa -g zarafa /var/run/zarafad
 	export LC_ALL=$ZARAFA_LOCALE
 	export LANG=$ZARAFA_LOCALE
 	start-stop-daemon --start $QUIETDAEMON --pidfile $PIDFILE --exec $ICAL -- $ICAL_OPTS

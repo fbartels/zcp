@@ -21,7 +21,7 @@ SERVER=/usr/sbin/zarafa-server
 DESC="Zarafa server"
 NAME=`basename $SERVER`
 #QUIETDAEMON=--quiet
-PIDFILE=/var/run/$NAME.pid
+PIDFILE=/var/run/zarafad/server.pid
 
 test -x $SERVER || exit 0
 
@@ -49,6 +49,7 @@ case "$1" in
 		exit 0
 	fi
 	log_begin_msg "Starting $DESC: $NAME"
+	install -dm0775 -o zarafa -g zarafa /var/run/zarafad
 	export LC_ALL=$ZARAFA_LOCALE
 	export LANG=$ZARAFA_LOCALE
 	start-stop-daemon --start $QUIETDAEMON --pidfile $PIDFILE --exec $SERVER -- $SERVER_OPTS

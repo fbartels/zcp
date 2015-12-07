@@ -18,7 +18,7 @@ MONITOR=/usr/sbin/zarafa-monitor
 DESC="Zarafa monitor"
 NAME=`basename $MONITOR`
 #QUIETDAEMON=--quiet
-PIDFILE=/var/run/zarafa-monitor.pid
+PIDFILE=/var/run/zarafad/monitor.pid
 
 test -x $MONITOR || exit 0
 
@@ -45,6 +45,7 @@ case "$1" in
 		exit 0
 	fi
 	log_begin_msg "Starting $DESC: $NAME"
+	install -dm0775 -o zarafa -g zarafa /var/run/zarafad
 	export LC_ALL=$ZARAFA_LOCALE
 	export LANG=$ZARAFA_LOCALE
 	start-stop-daemon --start $QUIETDAEMON --pidfile $PIDFILE --exec $MONITOR -- $MONITOR_OPTS

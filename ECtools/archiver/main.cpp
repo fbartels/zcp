@@ -272,7 +272,7 @@ int main(int argc, char *argv[])
 
     static const configsetting_t lpDefaults[] = {
 #ifdef LINUX
-        { "pid_file", "/var/run/zarafa-archiver.pid" },
+        { "pid_file", "/var/run/zarafad/archiver.pid" },
 #endif
         { NULL, NULL }
     };

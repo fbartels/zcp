@@ -994,9 +994,9 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 		{ "thread_stacksize",			"512" },
 		{ "allow_local_users",			"yes", CONFIGSETTING_RELOADABLE },			// allow any user connect through the unix socket
 		{ "local_admin_users",			"root", CONFIGSETTING_RELOADABLE },			// this local user is admin
-		{ "run_as_user",				"" },				// drop root privileges, and run as this user/group
-		{ "run_as_group",				"" },
-		{ "pid_file",					"/var/run/zarafa-server.pid" },
+		{ "run_as_user",			"zarafa" }, // drop root privileges, and run as this user/group
+		{ "run_as_group",			"zarafa" },
+		{ "pid_file",					"/var/run/zarafad/server.pid" },
 		{ "running_path",				"/" },
 		{ "coredump_enabled",			"yes" },
 

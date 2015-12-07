@@ -19,7 +19,7 @@ SPOOLER=/usr/sbin/zarafa-spooler
 DESC="Zarafa spooler"
 NAME=`basename $SPOOLER`
 #QUIETDAEMONDAEMON=--quiet
-PIDFILE=/var/run/zarafa-spooler.pid
+PIDFILE=/var/run/zarafad/spooler.pid
 
 test -x $SPOOLER || exit 0
 
@@ -46,6 +46,7 @@ case "$1" in
 		exit 0
 	fi
 	log_begin_msg "Starting $DESC: $NAME"
+	install -dm0775 -o zarafa -g zarafa /var/run/zarafad
 	export LC_ALL=$ZARAFA_LOCALE
 	export LANG=$ZARAFA_LOCALE
 	start-stop-daemon --start $QUIETDAEMON --pidfile $PIDFILE --exec $SPOOLER -- $SPOOLER_OPTS

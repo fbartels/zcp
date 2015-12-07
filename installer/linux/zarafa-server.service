@@ -1,7 +1,6 @@
 [Unit]
 Description=Zarafa Collaboration Platform Storage Server
 Documentation=man:zarafa-server(8) man:zarafa-server.cfg(5) man:zarafa-admin(8)
-Wants=mysqld.service
 After=network.target mysqld.service
 
 [Service]

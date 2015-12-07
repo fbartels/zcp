@@ -176,8 +176,9 @@ check-syntax:
 		-fsyntax-only -fmessage-length=0 ${CHK_SOURCES} -Wall -Wformat=2
 
 install-exec-local:
-	test -n "$(DESTDIR)" && pyroot="--root=$(DESTDIR)"; \
 	test "$(DISTRO)" = "suse" -o "$(DISTRO)" = "sles" && pyrpm="--record-rpm=INSTALLED_FILES"; \
-	cd ${top_srcdir}/swig/python/ && ${PYTHON} setup.py install $${pyroot} --prefix="${prefix}" --install-purelib ${pythondir} $${pyrpm}
+	cd ${srcdir} && ${PYTHON} setup.py install -f \
+		$${DESTDIR+--root=${DESTDIR}} \
+		--prefix="${prefix}" --install-purelib ${pythondir} $${pyrpm}
 
 include ../../global.am

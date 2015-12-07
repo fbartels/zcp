@@ -1165,9 +1165,9 @@ int main(int argc, char *argv[]) {
 		{ "smtp_port","25", CONFIGSETTING_RELOADABLE },
 		{ "server_socket", CLIENT_ADMIN_SOCKET },
 #ifdef LINUX
-		{ "run_as_user", "" },
-		{ "run_as_group", "" },
-		{ "pid_file", "/var/run/zarafa-spooler.pid" },
+		{ "run_as_user", "zarafa" },
+		{ "run_as_group", "zarafa" },
+		{ "pid_file", "/var/run/zarafad/spooler.pid" },
 		{ "running_path", "/" },
 		{ "coredump_enabled", "no" },
 #endif

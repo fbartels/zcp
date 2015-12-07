@@ -128,7 +128,7 @@ void unix_coredump_enable(ECLogger *logger)
 int unix_create_pidfile(const char *argv0, ECConfig *lpConfig,
     ECLogger *lpLogger, bool bForce)
 {
-	string pidfilename = string("/var/run/")+string(argv0)+string(".pid");
+	string pidfilename = "/var/run/zarafad/" + string(argv0) + ".pid";
 	FILE *pidfile;
 	int oldpid;
 	char tmp[255];

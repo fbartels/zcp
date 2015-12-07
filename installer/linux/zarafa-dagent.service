@@ -1,8 +1,6 @@
 [Unit]
 Description=Zarafa Collaboration Platform Delivery Agent
 Documentation=man:zarafa-dagent(8) man:zarafa-dagent.cfg(5)
-Wants=zarafa-server.service
-After=zarafa-server.service
 
 [Service]
 Type=simple

@@ -323,9 +323,9 @@ int main(int argc, char *argv[]) {
 	static const configsetting_t lpDefaults[] = {
 		{ "server_bind", "" },
 #ifdef LINUX
-		{ "run_as_user", "" },
-		{ "run_as_group", "" },
-		{ "pid_file", "/var/run/zarafa-gateway.pid" },
+		{ "run_as_user", "zarafa" },
+		{ "run_as_group", "zarafa" },
+		{ "pid_file", "/var/run/zarafad/gateway.pid" },
 		{ "running_path", "/" },
 		{ "process_model", "fork" },
 		{ "coredump_enabled", "no" },
