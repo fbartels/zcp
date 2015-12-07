@@ -195,6 +195,16 @@ AC_ARG_WITH(searchscripts-prefix,
   [SEARCHSCRIPTSDIR=${withval}],[SEARCHSCRIPTSDIR=/etc/zarafa/searchscripts])
 AC_SUBST(SEARCHSCRIPTSDIR)
 
+systemunitdir=$("$PKG_CONFIG" systemd --variable systemdsystemunitdir 2>/dev/null)
+sysusersdir=$("$PKG_CONFIG" systemd --variable sysusersdir 2>/dev/null)
+tmpfilesdir=$("$PKG_CONFIG" systemd --variable tmpfilesdir 2>/dev/null)
+AS_IF([test -z "$systemunitdir"], [systemunitdir='${prefix}/lib/systemd/system'])
+AS_IF([test -z "$sysusersdir"], [sysusersdir='${prefix}/lib/sysusers.d'])
+AS_IF([test -z "$tmpfilesdir"], [tmpfilesdir='${prefix}/lib/tmpfiles.d'])
+AC_SUBST([systemunitdir])
+AC_SUBST([sysusersdir])
+AC_SUBST([tmpfilesdir])
+
 # zarafa-stats requires ncurses(w) for --top
 # check wide version before non-wide version
 AC_DEFUN([LIBNCURSES_WITH_CONFIG],[

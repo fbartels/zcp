@@ -1,3 +1,8 @@
+# -*- Makefile -*-
+
+systemunit_DATA = zarafa-dagent.service zarafa-gateway.service zarafa-ical.service zarafa-monitor.service zarafa-search.service zarafa-server.service zarafa-spooler.service
+sysusers_DATA = zarafa-sysusers.conf
+tmpfiles_DATA = zarafa-tmpfiles.conf
 
 config_files = \
 	server.cfg unix.cfg ldap.propmap.cfg \
