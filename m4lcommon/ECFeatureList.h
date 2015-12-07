@@ -50,7 +50,7 @@
 
 ///< all zarafa features that are checked for access before allowing it
 static const char *const zarafa_features[] = {
-	"imap", "pop3"
+	"imap", "pop3", "mobile"
 };
 
 /** 
