@@ -1440,6 +1440,9 @@ class Store(object):
         else:
             return (self.user.store is None or self.user.store.guid != self.guid)
 
+    def create_prop(self, proptag, value, proptype=None):
+        return _create_prop(self, self.mapiobj, proptag, value, proptype)
+
     def prop(self, proptag):
         return _prop(self, self.mapiobj, proptag)
 
@@ -1803,6 +1806,9 @@ class Folder(object):
 
     def prop(self, proptag):
         return _prop(self, self.mapiobj, proptag)
+
+    def create_prop(self, proptag, value, proptype=None):
+        return _create_prop(self, self.mapiobj, proptag, value, proptype)
 
     def props(self):
         return _props(self.mapiobj)
@@ -2381,18 +2387,18 @@ class Item(object):
         # attachments
         atts = []
         # XXX optimize by looking at PR_MESSAGE_FLAGS?
-        if attachments:
-            for row in self.table(PR_MESSAGE_ATTACHMENTS).dict_rows(): # XXX should we use GetAttachmentTable?
-                num = row[PR_ATTACH_NUM]
-                method = row[PR_ATTACH_METHOD] # XXX default
-                att = self.mapiobj.OpenAttach(num, IID_IAttachment, 0)
-                if method == ATTACH_EMBEDDED_MSG:
-                    msg = att.OpenProperty(PR_ATTACH_DATA_OBJ, IID_IMessage, 0, MAPI_MODIFY | MAPI_DEFERRED_ERRORS)
-                    item = Item(mapiobj=msg)
-                    item.server = self.server # XXX
-                    data = item._dump() # recursion
-                else:
-                    data = _stream(att, PR_ATTACH_DATA_BIN)
+        for row in self.table(PR_MESSAGE_ATTACHMENTS).dict_rows(): # XXX should we use GetAttachmentTable?
+            num = row[PR_ATTACH_NUM]
+            method = row[PR_ATTACH_METHOD] # XXX default
+            att = self.mapiobj.OpenAttach(num, IID_IAttachment, 0)
+            if method == ATTACH_EMBEDDED_MSG:
+                msg = att.OpenProperty(PR_ATTACH_DATA_OBJ, IID_IMessage, 0, MAPI_MODIFY | MAPI_DEFERRED_ERRORS)
+                item = Item(mapiobj=msg)
+                item.server = self.server # XXX
+                data = item._dump() # recursion
+                atts.append(([[a, b, None] for a, b in row.items()], data))
+            elif attachments:
+                data = _stream(att, PR_ATTACH_DATA_BIN)
                 atts.append(([[a, b, None] for a, b in row.items()], data))
 
         return {
@@ -2421,20 +2427,19 @@ class Item(object):
         self.mapiobj.ModifyRecipients(0, recipients)
 
         # attachments
-        if attachments: # XXX breaks embedded msg
-            for props, data in d['attachments']:
-                props = [SPropValue(proptag, value) for (proptag, value, nameid) in props]
-                (id_, attach) = self.mapiobj.CreateAttach(None, 0)
-                attach.SetProps(props)
-                if isinstance(data, dict):
-                    msg = attach.OpenProperty(PR_ATTACH_DATA_OBJ, IID_IMessage, 0, MAPI_CREATE | MAPI_MODIFY)
-                    item = Item(mapiobj=msg)
-                    item._load(data, attachments) # recursion
-                else:
-                    stream = attach.OpenProperty(PR_ATTACH_DATA_BIN, IID_IStream, STGM_WRITE|STGM_TRANSACTED, MAPI_MODIFY | MAPI_CREATE)
-                    stream.Write(data)
-                    stream.Commit(0)
-                attach.SaveChanges(KEEP_OPEN_READWRITE)
+        for props, data in d['attachments']:
+            props = [SPropValue(proptag, value) for (proptag, value, nameid) in props]
+            (id_, attach) = self.mapiobj.CreateAttach(None, 0)
+            attach.SetProps(props)
+            if isinstance(data, dict): # embedded message
+                msg = attach.OpenProperty(PR_ATTACH_DATA_OBJ, IID_IMessage, 0, MAPI_CREATE | MAPI_MODIFY)
+                item = Item(mapiobj=msg)
+                item._load(data, attachments) # recursion
+            elif attachments:
+                stream = attach.OpenProperty(PR_ATTACH_DATA_BIN, IID_IStream, STGM_WRITE|STGM_TRANSACTED, MAPI_MODIFY | MAPI_CREATE)
+                stream.Write(data)
+                stream.Commit(0)
+            attach.SaveChanges(KEEP_OPEN_READWRITE)
         self.mapiobj.SaveChanges(KEEP_OPEN_READWRITE) # XXX needed?
 
     def load(self, f, attachments=True):
