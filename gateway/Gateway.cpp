@@ -159,7 +159,7 @@ static void print_help(const char *name)
 	cout << "Usage:\n" << endl;
 	cout << name << " [-F] [-h|--host <serverpath>] [-c|--config <configfile>]" << endl;
 	cout << "  -F\t\tDo not run in the background" << endl;
-	cout << "  -h path\tUse alternate connect path (e.g. file:///var/run/socket).\n\t\tDefault: file:///var/run/zarafa" << endl;
+	cout << "  -h path\tUse alternate connect path (e.g. file:///var/run/socket).\n\t\tDefault: file:///var/run/zarafad/server.sock" << endl;
 	cout << "  -V Print version info." << endl;
 	cout << "  -c filename\tUse alternate config file (e.g. /etc/zarafa-gateway.cfg)\n\t\tDefault: /etc/zarafa/gateway.cfg" << endl;
 #if defined(WIN32)

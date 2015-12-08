@@ -90,7 +90,7 @@ bool operator ==(SBinary a, SBinary b);
 bool operator <(SBinary a, SBinary b);
 
 #ifdef LINUX
-#define CLIENT_ADMIN_SOCKET "file:///var/run/zarafa"
+#define CLIENT_ADMIN_SOCKET "file:///var/run/zarafad/server.sock"
 #else
 /* win32 */
 #define CLIENT_ADMIN_SOCKET "file://\\\\.\\pipe\\zarafa"

@@ -93,7 +93,7 @@ if (DEBUG_SHOW_SERVER){
 			if ($matches[1][0]!="localhost"){ // other than localhost
 				define("DEBUG_SERVER_ADDRESS", $matches[1][0]);
 			}
-		}else if (DEFAULT_SERVER!="file://\\\\.\\pipe\\zarafa" && DEFAULT_SERVER!="file:///var/run/zarafa"){  
+		} else if (DEFAULT_SERVER != "file://\\\\.\\pipe\\zarafa" && DEFAULT_SERVER != "file:///var/run/zarafad/server.sock") {
 			// other non http server locations except the default values
 			define("DEBUG_SERVER_ADDRESS", str_replace("file://","",DEFAULT_SERVER)); // show location
 		}

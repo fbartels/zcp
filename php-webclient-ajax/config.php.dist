@@ -17,7 +17,7 @@
 	define("CONFIG_CHECK_COOKIES_SSL", FALSE);
 
 	// Default Zarafa server to connect to.
-	define("DEFAULT_SERVER","file:///var/run/zarafa");
+	define("DEFAULT_SERVER","file:///var/run/zarafad/server.sock");
 	#define("DEFAULT_SERVER","file://\\\\.\\pipe\\zarafa");
 	#define("DEFAULT_SERVER","http://localhost:236/zarafa");
 

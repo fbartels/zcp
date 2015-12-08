@@ -4,7 +4,7 @@
 _zarafa__hosts()
 {
 	local host_completes
-	host_completes='file:///var/run/zarafa http://localhost:236/zarafa https://localhost:237/zarafa'
+	host_completes='file:///var/run/zarafad/server.sock http://localhost:236/zarafa https://localhost:237/zarafa'
 	COMPREPLY=( $( compgen -W "$host_completes" -- ${COMP_WORDS[COMP_CWORD]} ) )
 	return 0
 }

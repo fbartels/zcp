@@ -867,8 +867,8 @@ int main(int argc, char* argv[])
 #define ZARAFA_SERVER_PRIO "\\\\.\\pipe\\zarafa-prio"
 inline int getuid() { return 0; }
 #else
-#define ZARAFA_SERVER_PIPE "/var/run/zarafa"
-#define ZARAFA_SERVER_PRIO "/var/run/zarafa-prio"
+#define ZARAFA_SERVER_PIPE "/var/run/zarafad/server.sock"
+#define ZARAFA_SERVER_PRIO "/var/run/zarafad/prio.sock"
 #endif
 
 #ifdef WIN32
@@ -1001,7 +1001,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 		{ "coredump_enabled",			"yes" },
 
 		{ "license_path",			"/etc/zarafa/license", CONFIGSETTING_UNUSED },
-		{ "license_socket",			"/var/run/zarafa-licensed" },
+		{ "license_socket",			"/var/run/zarafad/licensed.sock" },
 		{ "license_timeout", 		"10", CONFIGSETTING_RELOADABLE},
 #else
 		{ "local_admin_users",		"SYSTEM" },			// this local user is admin
@@ -1147,7 +1147,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 #else
 		{ "search_enabled",			"yes", CONFIGSETTING_RELOADABLE }, 
 #endif
-		{ "search_socket",			"file:///var/run/zarafa-search", CONFIGSETTING_RELOADABLE },        
+		{ "search_socket",			"file:///var/run/zarafad/search.sock", CONFIGSETTING_RELOADABLE },
 		{ "search_timeout",			"10", CONFIGSETTING_RELOADABLE },
 
 		{ "threads",				"8", CONFIGSETTING_RELOADABLE },

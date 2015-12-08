@@ -43,7 +43,7 @@ def print_help():
     print "   --until             specify the date/time when oof should become inactive again"
     print "   -t, --subject       specify the subject to be set in oof message"
     print "   -n, --message       text file containing body of out of office message"
-    print "   -h, --host          Host to connect with. Default: file:///var/run/zarafa"
+    print "   -h, --host          Host to connect with. Default: file:///var/run/zarafad/server.sock"
     print "   -s, --sslkey-file   SSL key file to authenticate as admin."
     print "   -p, --sslkey-pass   Password for the SSL key file."
     print "   --help              Show this help message and exit."
@@ -79,7 +79,7 @@ def main(argv = None):
         return 1
 
     # defaults
-    host = os.getenv('ZARAFA_SOCKET','file:///var/run/zarafa')
+    host = os.getenv('ZARAFA_SOCKET','file:///var/run/zarafad/server.sock')
     sslkey_file = None
     sslkey_pass = None
     mode = MODE_UPDATE_ONLY

@@ -62,7 +62,7 @@ CONFIG = {
     'run_as_user': Config.string(default="zarafa"),
     'run_as_group': Config.string(default="zarafa"),
     'search_engine': Config.string(default='xapian'),
-    'server_bind_name': Config.string(default='file:///var/run/zarafa-search'),
+    'server_bind_name': Config.string(default='file:///var/run/zarafad/search.sock'),
     'ssl_private_key_file': Config.path(default=None, check=False), # XXX don't check when default=None?
     'ssl_certificate_file': Config.path(default=None, check=False),
     'term_cache_size': Config.size(default=64000000),

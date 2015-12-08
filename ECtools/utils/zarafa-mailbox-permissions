@@ -844,7 +844,7 @@ def print_help():
     print ""
     print "optional arguments:"
     print " -a, --all           All mailboxes"
-    print " -h, --host          Host to connect with. Default: file:///var/run/zarafa"
+    print " -h, --host          Host to connect with. Default: file:///var/run/zarafad/server.sock"
     print " -s, --sslkey-file   SSL key file to authenticate as admin."
     print " -p, --sslkey-pass   Password for the SSL key file."
 #    print " -v, --verbose       Print more information."
@@ -884,7 +884,7 @@ def main(argv = None):
 
     global verbose
     # defaults
-    host = os.getenv('ZARAFA_SOCKET','file:///var/run/zarafa')
+    host = os.getenv('ZARAFA_SOCKET','file:///var/run/zarafad/server.sock')
     sslkey_file = None
     sslkey_pass = None
     users = [] 

@@ -4014,7 +4014,7 @@ int main(int argc, char *argv[]) {
 		{ "default_charset", "iso-8859-15" },
 		{ "set_rule_headers", "yes", CONFIGSETTING_RELOADABLE },
 		{ "no_double_forward", "no", CONFIGSETTING_RELOADABLE },
-		{ "z_statsd_stats", "/var/run/zarafa-zstatsd" },
+		{ "z_statsd_stats", "/var/run/zarafad/statsd.sock" },
 		{ "tmp_path", "/tmp" },
 		{ NULL, NULL },
 	};
@@ -4067,7 +4067,7 @@ int main(int argc, char *argv[]) {
 			break;
 		
 		case OPT_HOST:
-		case 'h':				// 'host' (file:///var/run/zarafa)
+		case 'h':				// 'host' (file:///var/run/zarafad/server.sock)
 			sDeliveryArgs.strPath = my_optarg;
 			break;
 		case 'a':				// external autoresponder program

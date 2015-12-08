@@ -176,7 +176,7 @@ exit:
  *
  * @param[in]	username	Username to logon to Zarafa
  * @param[in]	password	Password of the username
- * @param[in]	path		In URI form. Eg. file:///var/run/zarafa
+ * @param[in]	path		In URI form. Eg. file:///var/run/zarafad/server.sock
  * @param[in]	szProfName	Name of the profile to create
  * @param[in]	ulProfileFlags See EC_PROFILE_FLAGS_* in common/ECTags.h
  * @param[in]	sslkey_file	May be NULL. Logon with this sslkey instead of password.

@@ -198,7 +198,7 @@ static void print_help(const char *name)
 	cout << "Usage:\n" << endl;
 	cout << name << " [-F] [-h|--host <serverpath>] [-c|--config <configfile>] [smtp server]" << endl;
 	cout << "  -F\t\tDo not run in the background" << endl;
-	cout << "  -h path\tUse alternate connect path (e.g. file:///var/run/socket).\n\t\tDefault: file:///var/run/zarafa" << endl;
+	cout << "  -h path\tUse alternate connect path (e.g. file:///var/run/socket).\n\t\tDefault: file:///var/run/zarafad/server.sock" << endl;
 	cout << "  -V Print version info." << endl;
 	cout << "  -c filename\tUse alternate config file (e.g. /etc/zarafa-spooler.cfg)\n\t\tDefault: /etc/zarafa/spooler.cfg" << endl;
 	cout << "  smtp server: The name or IP-address of the SMTP server, overriding the configuration" << endl;
@@ -1195,7 +1195,7 @@ int main(int argc, char *argv[]) {
         { "plugin_enabled", "yes" },
         { "plugin_path", "/var/lib/zarafa/spooler/plugins" },
         { "plugin_manager_path", "/usr/share/zarafa-spooler/python" },
-		{ "z_statsd_stats", "/var/run/zarafa-zstatsd" },
+		{ "z_statsd_stats", "/var/run/zarafad/statsd.sock" },
 		{ "tmp_path", "/tmp" },
 		{ "tmp_path", "/tmp" },
 		{ "tmp_path", "/tmp" },

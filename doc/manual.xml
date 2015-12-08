@@ -390,7 +390,7 @@
 			  <para>Connect to the Zarafa server through
 			  <replaceable>path</replaceable>, e.g.
 			  <filename>file:///path/to/socket</filename>. Default:
-			  <filename>file:///var/run/zarafa</filename>.</para>
+			  <filename>file:///var/run/zarafad/server.sock</filename>.</para>
 			</listitem>
 		  </varlistentry>
 
@@ -665,7 +665,7 @@
 			  <para>Unix socket to find the connection to the Zarafa
 			  server.</para>
 			  <para>Default:
-			  <parameter>file:///var/run/zarafa</parameter></para>
+			  <parameter>file:///var/run/zarafad/server.sock</parameter></para>
 			</listitem>
 		  </varlistentry>
 
@@ -841,7 +841,7 @@
 			  <para>Unix socket to find the connection to the Zarafa
 			  server.</para>
 			  <para>Default:
-			  <parameter>file:///var/run/zarafa</parameter></para>
+			  <parameter>file:///var/run/zarafad/server.sock</parameter></para>
 			</listitem>
 		  </varlistentry>
 
@@ -2801,7 +2801,8 @@
 			  <para>Connect to the Zarafa server through
 			  <replaceable>path</replaceable>, e.g.
 			  <filename>file:///path/to/socket</filename>. Default:
-			  <filename>file:///var/run/zarafa</filename>. This option
+			  <filename>file:///var/run/zarafad/server.sock</filename>.
+			  This option
 			  can always be specified.</para>
 			</listitem>
 		  </varlistentry>
@@ -2851,7 +2852,7 @@
 			  <para>Unix socket to find the connection to the Zarafa
 			  server.</para>
 			  <para>Default:
-			  <parameter>file:///var/run/zarafa</parameter></para>
+			  <parameter>file:///var/run/zarafad/server.sock</parameter></para>
 			</listitem>
 		  </varlistentry>
 
@@ -3120,7 +3121,8 @@
 			  <para>Connect to the Zarafa server through
 			  <replaceable>path</replaceable>, e.g.
 			  <filename>file:///path/to/socket</filename>. Default:
-			  <filename>file:///var/run/zarafa</filename>. This option
+			  <filename>file:///var/run/zarafad/server.sock</filename>.
+			  This option
 			  can always be specified.</para>
 			</listitem>
 		  </varlistentry>
@@ -3194,7 +3196,7 @@
 		    <term><option>-h</option> <replaceable>hostname</replaceable></term>
 		    <listitem>
 		    <para>Connect to the given Zarafa server. This defaults to
-		    file:///var/run/zarafa.</para>
+		    file:///var/run/zarafad/server.sock.</para>
 		    </listitem>
 		  </varlistentry>
 		</variablelist>
@@ -3411,7 +3413,7 @@
 			<listitem>
 			  <para>Use URL to connect to the zarafa-server. Default
 			  is
-			  <replaceable>file:///var/run/zarafa</replaceable>.</para>
+			  <replaceable>file:///var/run/zarafad/server.sock</replaceable>.</para>
 			</listitem>
 		  </varlistentry>
 
@@ -3745,7 +3747,7 @@
 			<listitem>
 			  <para>Unix socket to listen on.</para>
 			  <para>Default:
-			  <replaceable>/var/run/zarafa</replaceable></para>
+			  <replaceable>/var/run/zarafad/server.sock</replaceable></para>
 			</listitem>
 		  </varlistentry>
 
@@ -3754,7 +3756,7 @@
 			<listitem>
 			  <para>Priority unix socket to listen on. This socket is only used by the zarafa-licensed daemon.</para>
 			  <para>Default:
-			  <replaceable>/var/run/zarafa-prio</replaceable></para>
+			  <replaceable>/var/run/zarafad/prio.sock</replaceable></para>
 			</listitem>
 		  </varlistentry>
 
@@ -3986,7 +3988,7 @@
 				  <manvolnum>8</manvolnum>
 				</citerefentry>
 				service.</para>
-			  <para>Default: <replaceable>/var/run/zarafa-licensed</replaceable></para>
+			  <para>Default: <replaceable>/var/run/zarafad/licensed.sock</replaceable></para>
 			</listitem>
 		  </varlistentry>
 
@@ -5169,7 +5171,7 @@
 				</citerefentry>
 				service, this option is only required if the server is going
 				to make use of the indexing service.</para>
-			  <para>Default: <replaceable>file:///var/run/zarafa-search</replaceable></para>
+			  <para>Default: <replaceable>file:///var/run/zarafad/search.sock</replaceable></para>
 			</listitem>
 		  </varlistentry>
 
@@ -6848,7 +6850,8 @@
 			  <para>Connect to the Zarafa server through
 			  <replaceable>path</replaceable>, e.g.
 			  <filename>file:///path/to/socket</filename>. Default:
-			  <filename>file:///var/run/zarafa</filename>. Overrides the config file setting.</para>
+			  <filename>file:///var/run/zarafad/server.sock</filename>.
+			  Overrides the config file setting.</para>
 			</listitem>
 		  </varlistentry>
 
@@ -7035,7 +7038,7 @@
 			  <para>Unix socket to find the connection to the Zarafa
 			  server.</para>
 			  <para>Default:
-			  <parameter>file:///var/run/zarafa</parameter></para>
+			  <parameter>file:///var/run/zarafad/server.sock</parameter></para>
 			</listitem>
 		  </varlistentry>
 
@@ -7526,7 +7529,8 @@
 				<para>Connect to the Zarafa server through
 				<replaceable>path</replaceable>, e.g.
 				<filename>file:///path/to/socket</filename>. Default:
-				<filename>file:///var/run/zarafa</filename>. Overrides the config file setting.</para>
+				<filename>file:///var/run/zarafad/server.sock</filename>.
+				Overrides the config file setting.</para>
 			  </listitem>
 			</varlistentry>
 
@@ -8268,7 +8272,7 @@
 			  <para>Connect to the Zarafa server through
 			  <replaceable>path</replaceable>, e.g.
 			  <filename>file:///path/to/socket</filename>. Default:
-			  <filename>file:///var/run/zarafa</filename>.</para>
+			  <filename>file:///var/run/zarafad/server.sock</filename>.</para>
 			</listitem>
 		  </varlistentry>
 
@@ -8443,7 +8447,7 @@
 			  <para>Connection URL to find the connection to the Zarafa
 			  server.</para>
 			  <para>Default:
-			  <parameter>file:///var/run/zarafa</parameter></para>
+			  <parameter>file:///var/run/zarafad/server.sock</parameter></para>
 			</listitem>
 		  </varlistentry>
 
@@ -8820,7 +8824,7 @@
 			  <para>Connect to the Zarafa server through
 			  <replaceable>path</replaceable>, e.g.
 			  <filename>file:///path/to/socket</filename>. Default:
-			  <filename>file:///var/run/zarafa</filename>.</para>
+			  <filename>file:///var/run/zarafad/server.sock</filename>.</para>
 			</listitem>
 		  </varlistentry>
 
@@ -9618,7 +9622,7 @@
 			  <para>Connect to the Zarafa server through
 			  <replaceable>path</replaceable>, e.g.
 			  <filename>file:///path/to/socket</filename>. Default:
-			  <filename>file:///var/run/zarafa</filename>.</para>
+			  <filename>file:///var/run/zarafad/server.sock</filename>.</para>
 			</listitem>
 		  </varlistentry>
 		</variablelist>
@@ -9897,7 +9901,7 @@
 			  <para>Connect to the Zarafa server through
 			  <replaceable>path</replaceable>, e.g.
 			  <filename>file:///path/to/socket</filename>. Default:
-			  <filename>file:///var/run/zarafa</filename>.</para>
+			  <filename>file:///var/run/zarafad/server.sock</filename>.</para>
 			</listitem>
 		  </varlistentry>
 
@@ -10119,7 +10123,7 @@
 			  <para>Socket to find the connection to the Zarafa
 			  server.</para>
 			  <para>Default:
-			  <parameter>file:///var/run/zarafa</parameter></para>
+			  <parameter>file:///var/run/zarafad/server.sock</parameter></para>
 			</listitem>
 		  </varlistentry>
 
@@ -10193,7 +10197,7 @@
 			  <replaceable>http://0.0.0.0:port</replaceable> to listen
 			  as an HTTP service on all IPv4 interfaces on the
 			  given <replaceable>port</replaceable> number.</para>
-			  <para>Default: <replaceable>file:///var/run/zarafa-search</replaceable></para>
+			  <para>Default: <replaceable>file:///var/run/zarafad/search.sock</replaceable></para>
 			</listitem>
 		  </varlistentry>
 
@@ -10838,7 +10842,7 @@
 			  <para>Unix socket to find the connection to the Zarafa
 			  server.</para>
 			  <para>Default:
-			  <parameter>file:///var/run/zarafa</parameter></para>
+			  <parameter>file:///var/run/zarafad/server.sock</parameter></para>
 			</listitem>
 		  </varlistentry>
 

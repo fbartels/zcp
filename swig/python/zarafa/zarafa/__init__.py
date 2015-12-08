@@ -612,7 +612,7 @@ class Server(object):
     """ 
 Server class 
 
-By default, tries to connect to a Zarafa server as configured in ``/etc/zarafa/admin.cfg`` or at UNIX socket ``/var/run/zarafa``
+By default, tries to connect to a Zarafa server as configured in ``/etc/zarafa/admin.cfg`` or at UNIX socket ``/var/run/zarafad/server.sock``
 
 Looks at command-line to see if another server address or other related options were given (such as -c, -s, -k, -p)
 
@@ -665,7 +665,7 @@ Looks at command-line to see if another server address or other related options 
                     self.server_socket = config.get('server_socket')
                     self.sslkey_file = config.get('sslkey_file')
                     self.sslkey_pass = config.get('sslkey_pass')
-            self.server_socket = self.server_socket or 'file:///var/run/zarafa'
+            self.server_socket = self.server_socket or 'file:///var/run/zarafad/server.sock'
 
             # override with explicit or command-line args
             self.server_socket = server_socket or getattr(self.options, 'server_socket', None) or self.server_socket
