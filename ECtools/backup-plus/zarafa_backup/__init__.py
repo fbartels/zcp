@@ -51,8 +51,8 @@ class BackupWorker(zarafa.Worker):
     def main(self):
         config, server, options = self.service.config, self.service.server, self.service.options
         while True:
-            changes = 0
-            with log_exc(self.log):
+            stats = {'changes': 0, 'deletes': 0, 'errors': 0}
+            with log_exc(self.log, stats):
                 # get store from input queue
                 (storeguid, username, path) = self.iqueue.get()
                 store = server.store(storeguid)
@@ -71,7 +71,6 @@ class BackupWorker(zarafa.Worker):
                 # check command-line options and backup folders
                 t0 = time.time()
                 self.log.info('backing up: %s' % path)
-                stats = {'changes': 0, 'deletes': 0, 'errors': 0}
                 paths = set()
                 folders = list(store.folders())
                 if options.recursive:
@@ -499,8 +498,8 @@ def main():
     parser.add_option('-A', '--skip-attachments', dest='skip_attachments', action='store_true', help='skip attachments')
     parser.add_option('', '--restore', dest='restore', action='store_true', help='restore from backup')
     parser.add_option('', '--restore-root', dest='restore_root', help='restore under specific folder', metavar='PATH')
-    parser.add_option('', '--stats', dest='stats', action='store_true', help='show statistics for backup (PATH)')
-    parser.add_option('', '--index', dest='index', action='store_true', help='show index for backup (PATH)')
+    parser.add_option('', '--stats', dest='stats', action='store_true', help='show statistics for backup PATH')
+    parser.add_option('', '--index', dest='index', action='store_true', help='show index for backup PATH')
     parser.add_option('', '--sourcekey', dest='sourcekeys', action='append', help='restore specific sourcekey', metavar='SOURCEKEY')
     parser.add_option('', '--recursive', dest='recursive', action='store_true', help='backup/restore folders recursively')
 
