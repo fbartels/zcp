@@ -1012,7 +1012,7 @@
 			<listitem>
 			  <para>Buffer logging in what sized blocks.
                               Bigger buffers is better for the performance but it gives lag
-                              when running e.g. multitail or 'tail -f' on the log-file. If
+                              when running e.g. 'tail -f' on the log-file. If
                               you want to directly see what is happing, set this to e.g. 1.
                               So when debugging: make it a small value, else set it to
                               4096 or more.</para>
@@ -4075,7 +4075,7 @@
 			<listitem>
 			  <para>Buffer logging in what sized blocks.
                               Bigger buffers is better for the performance but it gives lag
-                              when running e.g. multitail or 'tail -f' on the log-file. If
+                              when running e.g. 'tail -f' on the log-file. If
                               you want to directly see what is happing, set this to e.g. 1.
                               So when debugging: make it a small value, else set it to
                               4096 or more.</para>
@@ -7177,7 +7177,7 @@
 			<listitem>
 			  <para>Buffer logging in what sized blocks.
                               Bigger buffers is better for the performance but it gives lag
-                              when running e.g. multitail or 'tail -f' on the log-file. If
+                              when running e.g. 'tail -f' on the log-file. If
                               you want to directly see what is happing, set this to e.g. 1.
                               So when debugging: make it a small value, else set it to
                               4096 or more.</para>
@@ -8141,7 +8141,7 @@
 			<listitem>
 			  <para>Buffer logging in what sized blocks.
                               Bigger buffers is better for the performance but it gives lag
-                              when running e.g. multitail or 'tail -f' on the log-file. If
+                              when running e.g. 'tail -f' on the log-file. If
                               you want to directly see what is happing, set this to e.g. 1.
                               So when debugging: make it a small value, else set it to
                               4096 or more.</para>
@@ -8585,7 +8585,7 @@
 			<listitem>
 			  <para>Buffer logging in what sized blocks.
                               Bigger buffers is better for the performance but it gives lag
-                              when running e.g. multitail or 'tail -f' on the log-file. If
+                              when running e.g. 'tail -f' on the log-file. If
                               you want to directly see what is happing, set this to e.g. 1.
                               So when debugging: make it a small value, else set it to
                               4096 or more.</para>
@@ -9422,7 +9422,7 @@
 			<listitem>
 			  <para>Buffer logging in what sized blocks.
                               Bigger buffers is better for the performance but it gives lag
-                              when running e.g. multitail or 'tail -f' on the log-file. If
+                              when running e.g. 'tail -f' on the log-file. If
                               you want to directly see what is happing, set this to e.g. 1.
                               So when debugging: make it a small value, else set it to
                               4096 or more.</para>
@@ -10295,7 +10295,7 @@
 			<listitem>
 			  <para>Buffer logging in what sized blocks.
                               Bigger buffers is better for the performance but it gives lag
-                              when running e.g. multitail or 'tail -f' on the log-file. If
+                              when running e.g. 'tail -f' on the log-file. If
                               you want to directly see what is happing, set this to e.g. 1.
                               So when debugging: make it a small value, else set it to
                               4096 or more.</para>
@@ -11100,7 +11100,7 @@
 			<listitem>
 			  <para>Buffer logging in what sized blocks.
                               Bigger buffers is better for the performance but it gives lag
-                              when running e.g. multitail or 'tail -f' on the log-file. If
+                              when running e.g. 'tail -f' on the log-file. If
                               you want to directly see what is happing, set this to e.g. 1.
                               So when debugging: make it a small value, else set it to
                               4096 or more.</para>
