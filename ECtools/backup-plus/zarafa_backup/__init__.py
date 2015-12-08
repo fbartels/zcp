@@ -338,6 +338,7 @@ class Service(zarafa.Service):
 
 def folder_struct(data_path, options, mapper=None):
     """ determine all folders in backup directory """
+
     if mapper is None:
         mapper = {}
     if os.path.exists(data_path+'/path'):
@@ -371,6 +372,8 @@ def show_contents(data_path, options):
         if path not in path_folder:
             print 'no such folder:', path
             sys.exit(-1)
+    if options.recursive:
+        paths = [p for p in path_folder if [f for f in paths if p.startswith(f)]]
 
     # loop over folders
     for path in paths:
