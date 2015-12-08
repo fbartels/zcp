@@ -493,14 +493,14 @@ def main():
     parser = zarafa.parser('ckpsufwUPCSlObe', usage='zarafa-backup [PATH] [options]')
 
     # add custom options
-    parser.add_option('-J', '--skip-junk', dest='skip_junk', action='store_true', help='do not backup junk mail')
-    parser.add_option('-D', '--skip-deleted', dest='skip_deleted', action='store_true', help='do not backup deleted mail')
-    parser.add_option('-N', '--skip-public', dest='skip_public', action='store_true', help='do not backup public store')
-    parser.add_option('-A', '--skip-attachments', dest='skip_attachments', action='store_true', help='do not backup attachments')
+    parser.add_option('-J', '--skip-junk', dest='skip_junk', action='store_true', help='skip junk mail')
+    parser.add_option('-D', '--skip-deleted', dest='skip_deleted', action='store_true', help='skip deleted mail')
+    parser.add_option('-N', '--skip-public', dest='skip_public', action='store_true', help='skip public store')
+    parser.add_option('-A', '--skip-attachments', dest='skip_attachments', action='store_true', help='skip attachments')
     parser.add_option('', '--restore', dest='restore', action='store_true', help='restore from backup')
     parser.add_option('', '--restore-root', dest='restore_root', help='restore under specific folder', metavar='PATH')
-    parser.add_option('', '--stats', dest='stats', action='store_true', help='show statistics for backup')
-    parser.add_option('', '--index', dest='index', action='store_true', help='show index for backup')
+    parser.add_option('', '--stats', dest='stats', action='store_true', help='show statistics for backup (PATH)')
+    parser.add_option('', '--index', dest='index', action='store_true', help='show index for backup (PATH)')
     parser.add_option('', '--sourcekey', dest='sourcekeys', action='append', help='restore specific sourcekey', metavar='SOURCEKEY')
     parser.add_option('', '--recursive', dest='recursive', action='store_true', help='backup/restore folders recursively')
 
