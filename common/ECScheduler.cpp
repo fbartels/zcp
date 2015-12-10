@@ -89,7 +89,6 @@ ECScheduler::ECScheduler(ECLogger *lpLogger)
 
 ECScheduler::~ECScheduler(void)
 {
-	m_lpLogger->Release();
 	pthread_mutex_lock( &m_hExitMutex);
 	m_bExit = TRUE;
 	pthread_cond_signal(&m_hExitSignal);
