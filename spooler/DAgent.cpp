@@ -3983,7 +3983,7 @@ int main(int argc, char *argv[]) {
 	// Default settings
 	static const configsetting_t lpDefaults[] = {
 		{ "server_bind", "" },
-		{ "server_bind_intf", "lo" },
+		{ "server_bind_intf", "" },
 #ifdef LINUX
 		{ "run_as_user", "zarafa" },
 		{ "run_as_group", "zarafa" },
