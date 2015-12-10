@@ -1352,12 +1352,11 @@ class Store(object):
         except ZarafaException:
             pass
 
-    def folders(self, recurse=True, mail=False, parse=True): # XXX mail flag semantic difference?
+    def folders(self, recurse=True, parse=True):
         """ Return all :class:`folders <Folder>` in store
 
         :param recurse: include all sub-folders
         :param system: include system folders
-        :param mail: only include mail folders
 
         """
 
@@ -1369,8 +1368,7 @@ class Store(object):
             return
 
         for folder in self.subtree.folders(recurse=recurse):
-            if not mail or folder.prop(PR_CONTAINER_CLASS) == 'IPF.Note':
-                yield folder
+            yield folder
 
     def item(self, entryid):
         """ Return :class:`Item` with given entryid; raise exception of not found """ # XXX better exception?
@@ -1557,7 +1555,10 @@ class Folder(object):
         https://msdn.microsoft.com/en-us/library/aa125193(v=exchg.65).aspx
         '''
 
-        return self.prop(PR_CONTAINER_CLASS).value
+        try:
+            return self.prop(PR_CONTAINER_CLASS).value
+        except MAPIErrorNotFound:
+            pass
 
     @container_class.setter
     def container_class(self, value):
