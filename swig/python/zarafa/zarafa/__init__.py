@@ -3801,7 +3801,7 @@ class QueueListener(object):
                 self.handle(record)
                 if has_task_done:
                     q.task_done()
-            except Empty:
+            except (Empty, EOFError):
                 pass
         # There might still be records in the queue.
         while True:
@@ -3812,7 +3812,7 @@ class QueueListener(object):
                 self.handle(record)
                 if has_task_done:
                     q.task_done()
-            except Empty:
+            except (Empty, EOFError):
                 break
 
     def stop(self):
