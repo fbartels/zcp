@@ -475,6 +475,9 @@ int main(int argc, char *argv[]) {
 	hr = running_service(szPath, argv[0]);
 
 exit:
+	if (hr != hrSuccess)
+		fprintf(stderr, "%s: Startup failed: %s (%x). Please check the logfile (%s) for details.\n",
+			argv[0], GetMAPIErrorMessage(hr), hr, g_lpConfig->GetSetting("log_file"));
 	ssl_threading_cleanup();
 	delete g_lpConfig;
 	DeleteLogger(g_lpLogger);
