@@ -448,13 +448,14 @@ def dump_meta(folder, user, server, log):
         data['acl'].append(row)
 
     # delegates (delegate permissions are just acls, stored above)
-    fbeid = user.root.prop(PR_FREEBUSY_ENTRYIDS).value[1] # XXX store globally; all freebusy stuff?
-    fbf = user.store.mapiobj.OpenEntry(fbeid, None, 0)
-    try:
-        delegate_uids = HrGetOneProp(fbf, PR_SCHDINFO_DELEGATE_ENTRYIDS).Value
-    except MAPIErrorNotFound:
-        delegate_uids = []
-    data['delegate_users'] = [server.sa.GetUser(uid, MAPI_UNICODE).Username for uid in delegate_uids]
+    if user:
+        fbeid = user.root.prop(PR_FREEBUSY_ENTRYIDS).value[1] # XXX store globally; all freebusy stuff?
+        fbf = user.store.mapiobj.OpenEntry(fbeid, None, 0)
+        try:
+            delegate_uids = HrGetOneProp(fbf, PR_SCHDINFO_DELEGATE_ENTRYIDS).Value
+        except MAPIErrorNotFound:
+            delegate_uids = []
+        data['delegate_users'] = [server.sa.GetUser(uid, MAPI_UNICODE).Username for uid in delegate_uids]
 
     return pickle.dumps(data)
 
@@ -491,13 +492,14 @@ def load_meta(folder, user, server, data, log):
     acltab.ModifyTable(0, [ROWENTRY(ROW_ADD, row) for row in rows])
 
     # delegates
-    fbeid = user.root.prop(PR_FREEBUSY_ENTRYIDS).value[1]
-    fbf = user.store.mapiobj.OpenEntry(fbeid, None, MAPI_MODIFY)
-    try:
-        fbf.SetProps([SPropValue(PR_SCHDINFO_DELEGATE_ENTRYIDS, [server.user(name).userid.decode('hex') for name in data['delegate_users']])])
-        fbf.SaveChanges(0)
-    except zarafa.ZarafaNotFoundException:
-        log.warning("skipping delegation for unknown user '%s'" % name)
+    if user:
+        fbeid = user.root.prop(PR_FREEBUSY_ENTRYIDS).value[1]
+        fbf = user.store.mapiobj.OpenEntry(fbeid, None, MAPI_MODIFY)
+        try:
+            fbf.SetProps([SPropValue(PR_SCHDINFO_DELEGATE_ENTRYIDS, [server.user(name).userid.decode('hex') for name in data['delegate_users']])])
+            fbf.SaveChanges(0)
+        except zarafa.ZarafaNotFoundException:
+            log.warning("skipping delegation for unknown user '%s'" % name)
 
 def main():
     # select common options
@@ -512,8 +514,8 @@ def main():
     parser.add_option('', '--only-meta', dest='only_meta', action='store_true', help='only backup/restore metadata')
     parser.add_option('', '--restore', dest='restore', action='store_true', help='restore from backup')
     parser.add_option('', '--restore-root', dest='restore_root', help='restore under specific folder', metavar='PATH')
-    parser.add_option('', '--stats', dest='stats', action='store_true', help='show statistics for backup PATH')
-    parser.add_option('', '--index', dest='index', action='store_true', help='show index for backup PATH')
+    parser.add_option('', '--stats', dest='stats', action='store_true', help='list folders for PATH')
+    parser.add_option('', '--index', dest='index', action='store_true', help='list items for PATH')
     parser.add_option('', '--sourcekey', dest='sourcekeys', action='append', help='restore specific sourcekey', metavar='SOURCEKEY')
     parser.add_option('', '--recursive', dest='recursive', action='store_true', help='backup/restore folders recursively')
 
