@@ -440,26 +440,19 @@ def dump_meta(folder, user, server):
         row[1].Value = server.sa.GetUser(row[1].Value, MAPI_UNICODE).Username
         data['acl'].append(row)
 
-    # delegates
-    fbeid = user.root.prop(PR_FREEBUSY_ENTRYIDS).value[1] # XXX only store globally; backup more props
+    # delegates (delegate permissions are just acls, stored above)
+    fbeid = user.root.prop(PR_FREEBUSY_ENTRYIDS).value[1] # XXX store globally; all freebusy stuff?
     fbf = user.store.mapiobj.OpenEntry(fbeid, None, 0)
     try:
         delegate_uids = HrGetOneProp(fbf, PR_SCHDINFO_DELEGATE_ENTRYIDS).Value
     except MAPIErrorNotFound:
         delegate_uids = []
     data['delegate_users'] = [server.sa.GetUser(uid, MAPI_UNICODE).Username for uid in delegate_uids]
-    sec = folder.mapiobj.QueryInterface(IID_IECSecurity)
-    ecperms = sec.GetPermissionRules(ACCESS_TYPE_GRANT)
-    for p in ecperms:
-        p.UserID = server.sa.GetUser(p.UserID, MAPI_UNICODE).Username
-    data['delegate_perms'] = ecperms
 
     return pickle.dumps(data)
 
 def load_meta(folder, user, server, data):
     """ restore rules, acls and delegates, resolving portable user/store/folder ids """
-
-    # XXX move serialization code to python-zarafa once stabilized
 
     data = pickle.loads(data)
 
@@ -483,13 +476,7 @@ def load_meta(folder, user, server, data):
     acltab.ModifyTable(0, [ROWENTRY(ROW_ADD, row) for row in data['acl']])
 
     # delegates
-    for p in data['delegate_perms']:
-        p.UserID = server.user(p.UserID).userid.decode('hex')
-        p.ulState = 1 # RIGHT_NEW
-    sec = folder.mapiobj.QueryInterface(IID_IECSecurity)
-    if data['delegate_perms']: # XXX why needed?
-        sec.SetPermissionRules(data['delegate_perms'])
-    fbeid = user.root.prop(PR_FREEBUSY_ENTRYIDS).value[1] # XXX backup everything here?
+    fbeid = user.root.prop(PR_FREEBUSY_ENTRYIDS).value[1]
     fbf = user.store.mapiobj.OpenEntry(fbeid, None, MAPI_MODIFY)
     fbf.SetProps([SPropValue(PR_SCHDINFO_DELEGATE_ENTRYIDS, [server.user(name).userid.decode('hex') for name in data['delegate_users']])])
     fbf.SaveChanges(0)
