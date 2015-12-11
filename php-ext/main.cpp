@@ -4019,6 +4019,7 @@ ZEND_FUNCTION(mapi_decompressrtf)
 	// amount of text we've read in so far. If our buffer wasn't big enough,
 	// we enlarge it and continue. We have to do this, instead of allocating
 	// it up front, because Stream::Stat() doesn't work for the unc.stream
+	bufsize = max(rtfBufferLen * 2, bufsize);
 	htmlbuf = new char[bufsize];
 
 	while(1) {
