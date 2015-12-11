@@ -2128,9 +2128,14 @@ class Item(object):
     def create_prop(self, proptag, value, proptype=None):
         return _create_prop(self, self.mapiobj, proptag, value, proptype)
 
-
     def prop(self, proptag):
         return _prop(self, self.mapiobj, proptag)
+
+    def get_prop(self, proptag):
+        try:
+            return self.prop(proptag)
+        except MAPIErrorNotFound:
+            pass
 
     def props(self, namespace=None):
         return _props(self.mapiobj, namespace)
