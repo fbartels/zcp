@@ -110,7 +110,7 @@ class BackupWorker(zarafa.Worker):
         # backup folder properties, path, metadata
         file(data_path+'/path', 'w').write(folder.path.encode('utf8'))
         file(data_path+'/folder', 'w').write(dump_props(folder.props()))
-        file(data_path+'/meta', 'w').write(dump_meta(folder, user, server))
+        file(data_path+'/meta', 'w').write(dump_meta(folder, user, server, self.log))
 
         # sync over ICS, using stored 'state'
         importer = FolderImporter(folder, data_path, config, options, self.log, stats)
@@ -281,7 +281,7 @@ class Service(zarafa.Service):
             self.log.info('restoring folder %s' % path)
 
             # restore metadata
-            load_meta(folder, user, server, file(data_path+'/meta').read())
+            load_meta(folder, user, server, file(data_path+'/meta').read(), self.log)
 
         # load existing sourcekeys in folder, to check for duplicates
         existing = set()
@@ -410,7 +410,7 @@ def dump_props(props):
     return pickle.dumps(dict((prop.proptag, prop.mapiobj.Value) for prop in props))
 
 
-def dump_meta(folder, user, server):
+def dump_meta(folder, user, server, log):
     """ collect rules, acl, delegates for given folder, and make user/store/folder ids portable """
 
     # XXX no user, only store..? (public)
@@ -451,7 +451,7 @@ def dump_meta(folder, user, server):
 
     return pickle.dumps(data)
 
-def load_meta(folder, user, server, data):
+def load_meta(folder, user, server, data, log):
     """ restore rules, acls and delegates, resolving portable user/store/folder ids """
 
     data = pickle.loads(data)
@@ -470,16 +470,26 @@ def load_meta(folder, user, server, data):
         folder.create_prop(PR_RULES_DATA, ruledata)
 
     # acl
+    rows = []
     for row in data['acl']:
-        row[1].Value = server.user(row[1].Value).userid.decode('hex')
+        try:
+            u = server.user(row[1].Value)
+        except zarafa.ZarafaNotFoundException:
+            log.warning("skipping ACE for unknown user '%s'" % row[1].Value)
+            continue
+        row[1].Value = u.userid.decode('hex')
+        rows.append(row)
     acltab = folder.mapiobj.OpenProperty(PR_ACL_TABLE, IID_IExchangeModifyTable, 0, MAPI_MODIFY)
-    acltab.ModifyTable(0, [ROWENTRY(ROW_ADD, row) for row in data['acl']])
+    acltab.ModifyTable(0, [ROWENTRY(ROW_ADD, row) for row in rows])
 
     # delegates
     fbeid = user.root.prop(PR_FREEBUSY_ENTRYIDS).value[1]
     fbf = user.store.mapiobj.OpenEntry(fbeid, None, MAPI_MODIFY)
-    fbf.SetProps([SPropValue(PR_SCHDINFO_DELEGATE_ENTRYIDS, [server.user(name).userid.decode('hex') for name in data['delegate_users']])])
-    fbf.SaveChanges(0)
+    try:
+        fbf.SetProps([SPropValue(PR_SCHDINFO_DELEGATE_ENTRYIDS, [server.user(name).userid.decode('hex') for name in data['delegate_users']])])
+        fbf.SaveChanges(0)
+    except zarafa.ZarafaNotFoundException:
+        log.warning("skipping delegation for unknown user '%s'" % name)
 
 def main():
     # select common options
