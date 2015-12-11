@@ -110,7 +110,10 @@ class BackupWorker(zarafa.Worker):
         # backup folder properties, path, metadata
         file(data_path+'/path', 'w').write(folder.path.encode('utf8'))
         file(data_path+'/folder', 'w').write(dump_props(folder.props()))
-        file(data_path+'/meta', 'w').write(dump_meta(folder, user, server, self.log))
+        if not options.skip_meta:
+            file(data_path+'/meta', 'w').write(dump_meta(folder, user, server, self.log))
+        if options.only_meta:
+            return
 
         # sync over ICS, using stored 'state'
         importer = FolderImporter(folder, data_path, config, options, self.log, stats)
@@ -144,7 +147,7 @@ class FolderImporter:
                 db[item.sourcekey] = pickle.dumps({
                     'subject': item.subject,
                     'orig_sourcekey': orig_prop,
-                    'last_modified': item.last_modified, # XXX
+                    'last_modified': item.last_modified,
                 })
             self.stats['changes'] += 1
 
@@ -281,7 +284,10 @@ class Service(zarafa.Service):
             self.log.info('restoring folder %s' % path)
 
             # restore metadata
-            load_meta(folder, user, server, file(data_path+'/meta').read(), self.log)
+            if not self.options.skip_meta:
+                load_meta(folder, user, server, file(data_path+'/meta').read(), self.log)
+            if self.options.only_meta:
+                return
 
         # load existing sourcekeys in folder, to check for duplicates
         existing = set()
@@ -415,6 +421,7 @@ def dump_meta(folder, user, server, log):
 
     # XXX no user, only store..? (public)
     # XXX move serialization code to python-zarafa once stabilized
+    log.debug('backing up metadata')
     data = {}
 
     # rules
@@ -454,6 +461,7 @@ def dump_meta(folder, user, server, log):
 def load_meta(folder, user, server, data, log):
     """ restore rules, acls and delegates, resolving portable user/store/folder ids """
 
+    log.debug('restoring metadata')
     data = pickle.loads(data)
 
     # rules
@@ -496,10 +504,12 @@ def main():
     parser = zarafa.parser('ckpsufwUPCSlObe', usage='zarafa-backup [PATH] [options]')
 
     # add custom options
-    parser.add_option('-J', '--skip-junk', dest='skip_junk', action='store_true', help='skip junk mail')
-    parser.add_option('-D', '--skip-deleted', dest='skip_deleted', action='store_true', help='skip deleted mail')
-    parser.add_option('-N', '--skip-public', dest='skip_public', action='store_true', help='skip public store')
-    parser.add_option('-A', '--skip-attachments', dest='skip_attachments', action='store_true', help='skip attachments')
+    parser.add_option('', '--skip-junk', dest='skip_junk', action='store_true', help='skip junk mail')
+    parser.add_option('', '--skip-deleted', dest='skip_deleted', action='store_true', help='skip deleted mail')
+    parser.add_option('', '--skip-public', dest='skip_public', action='store_true', help='skip public store')
+    parser.add_option('', '--skip-attachments', dest='skip_attachments', action='store_true', help='skip attachments')
+    parser.add_option('', '--skip-meta', dest='skip_meta', action='store_true', help='skip metadata')
+    parser.add_option('', '--only-meta', dest='only_meta', action='store_true', help='only backup/restore metadata')
     parser.add_option('', '--restore', dest='restore', action='store_true', help='restore from backup')
     parser.add_option('', '--restore-root', dest='restore_root', help='restore under specific folder', metavar='PATH')
     parser.add_option('', '--stats', dest='stats', action='store_true', help='show statistics for backup PATH')
