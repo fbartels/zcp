@@ -138,9 +138,13 @@ class FolderImporter:
             with closing(dbhash.open(self.folder_path+'/items', 'c')) as db:
                 db[item.sourcekey] = zlib.compress(item.dumps(attachments=not self.options.skip_attachments, archiver=False))
             with closing(dbhash.open(self.folder_path+'/index', 'c')) as db:
+                orig_prop = item.get_prop(PR_EC_BACKUP_SOURCE_KEY)
+                if orig_prop:
+                    orig_prop = orig_prop.value.encode('hex').upper()
                 db[item.sourcekey] = pickle.dumps({
                     'subject': item.subject,
-                    'last_modified': item.last_modified,
+                    'orig_sourcekey': orig_prop,
+                    'last_modified': item.last_modified, # XXX
                 })
             self.stats['changes'] += 1
 
@@ -285,9 +289,9 @@ class Service(zarafa.Service):
         table.SetColumns([PR_SOURCE_KEY, PR_EC_BACKUP_SOURCE_KEY], 0)
         for row in table.QueryRows(-1, 0):
             if PROP_TYPE(row[1].ulPropTag) != PT_ERROR:
-                existing.add(row[1].Value)
+                existing.add(row[1].Value.encode('hex').upper())
             else:
-                existing.add(row[0].Value)
+                existing.add(row[0].Value.encode('hex').upper())
 
         # load entry from 'index', so we don't have to unpickle everything
         with closing(dbhash.open(data_path+'/index', 'c')) as db:
@@ -308,8 +312,8 @@ class Service(zarafa.Service):
                         (self.options.period_end and last_modified >= self.options.period_end)):
                         continue
 
-                    # check for duplicate
-                    if sourcekey2.decode('hex') in existing:
+                    # check for duplicates
+                    if sourcekey2 in existing or index[sourcekey2]['orig_sourcekey'] in existing:
                         self.log.warning('skipping duplicate item with sourcekey %s' % sourcekey2)
                     else:
                         # actually restore item
