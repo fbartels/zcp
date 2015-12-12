@@ -1,5 +1,10 @@
+#!/bin/bash
 # -*- Mode: sh -*-
 # bash completion for Zarafa admin command
+
+shopt -q extglob
+_zarafa_old_extglob=$?
+shopt -s extglob
 
 _zarafa__hosts()
 {
@@ -385,3 +390,7 @@ _zarafa_archiver_options()
 	return 0
 }
 complete -F _zarafa_archiver_options zarafa-archiver
+
+if test "$_zarafa_old_extglob" != 0; then
+	shopt -u extglob
+fi
