@@ -222,7 +222,7 @@ typedef struct {
  * Mode 2 = Plaintext only
  */
  
-const char *szGetProps =
+static const char szGetProps[] =
 "CREATE PROCEDURE GetProps(IN hid integer, IN mode integer)\n"
 "BEGIN\n"
 "  DECLARE bestbody INT;\n"
@@ -246,7 +246,7 @@ const char *szGetProps =
 "    FROM mvproperties LEFT JOIN names ON (mvproperties.tag-0x8501)=names.id WHERE hierarchyid=hid AND (tag <= 0x8500 OR names.id IS NOT NULL) GROUP BY tag, mvproperties.type; \n"
 "END;\n";
 
-const char *szPrepareGetProps =
+static const char szPrepareGetProps[] =
 "CREATE PROCEDURE PrepareGetProps(IN hid integer)\n"
 "BEGIN\n"
 "  SELECT 0, tag, properties.type, val_ulong, val_string, val_binary, val_double, val_longint, val_hi, val_lo, hierarchy.id, names.nameid, names.namestring, names.guid\n"
@@ -264,7 +264,7 @@ const char *szPrepareGetProps =
 "END;\n";
 
 
-const char *szGetBestBody = 
+static const char szGetBestBody[] =
 "CREATE PROCEDURE GetBestBody(hid integer, OUT bestbody integer)\n"
 "DETERMINISTIC\n"
 "BEGIN\n"
@@ -276,7 +276,7 @@ const char *szGetBestBody =
 "  SELECT tag INTO bestbody FROM properties WHERE hierarchyid=hid AND tag IN (0x1009, 0x1013) ORDER BY tag LIMIT 1;\n"
 "END;\n";
 
-const char *szStreamObj = 
+static const char szStreamObj[] =
 "# Read a type-5 (Message) item from the database, output properties and subobjects\n"
 "CREATE PROCEDURE StreamObj(IN rootid integer, IN maxdepth integer, IN mode integer)\n"
 "BEGIN\n"
