@@ -748,6 +748,7 @@ AC_CONFIG_FILES([Makefile
 		common/include/zarafa/Makefile
 		ECtools/Makefile
 		ECtools/archiver/include/zarafa/Makefile
+		ECtools/backup-plus/Makefile
 		ECtools/search/Makefile
 		installer/Makefile
 		installer/linux/Makefile
