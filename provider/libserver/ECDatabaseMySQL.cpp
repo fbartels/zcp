@@ -109,14 +109,15 @@ typedef struct _sNewDatabase {
 class zcp_versiontuple _zcp_final {
 	public:
 	zcp_versiontuple(unsigned int maj = 0, unsigned int min = 0,
-	    unsigned int rev = 0, unsigned int dbs = 0) :
-		v_major(maj), v_minor(min), v_rev(rev), v_schema(dbs)
+	    unsigned int mic = 0, unsigned int rev = 0, unsigned int dbs = 0) :
+		v_major(maj), v_minor(min), v_micro(mic),
+		v_rev(rev), v_schema(dbs)
 	{
 	}
 	std::string stringify(char sep = '.') const;
 	int compare(const zcp_versiontuple &) const;
 	/* stupid major(3) function uses a #define in glibc */
-	unsigned int v_major, v_minor, v_rev, v_schema;
+	unsigned int v_major, v_minor, v_micro, v_rev, v_schema;
 };
 
 static const sUpdateList_t sUpdateList[] = {
@@ -357,7 +358,8 @@ std::string	ECDatabaseMySQL::m_strDatabaseDir;
 std::string zcp_versiontuple::stringify(char sep) const
 {
 	return ::stringify(v_major) + sep + ::stringify(v_minor) + sep +
-	       ::stringify(v_rev) + sep + ::stringify(v_schema);
+	       ::stringify(v_micro) + sep + ::stringify(v_rev) + sep +
+	       ::stringify(v_schema);
 }
 
 int zcp_versiontuple::compare(const zcp_versiontuple &rhs) const
@@ -369,6 +371,10 @@ int zcp_versiontuple::compare(const zcp_versiontuple &rhs) const
 	if (v_minor < rhs.v_minor)
 		return -1;
 	if (v_minor > rhs.v_minor)
+		return 1;
+	if (v_micro < rhs.v_micro)
+		return -1;
+	if (v_micro > rhs.v_micro)
 		return 1;
 	if (v_rev < rhs.v_rev)
 		return -1;
@@ -1687,14 +1693,36 @@ exit:
 	return er;
 }
 
+static inline bool row_has_null(DB_ROW row, size_t z)
+{
+	if (row == NULL)
+		return true;
+	while (z-- > 0)
+		if (row[z] == NULL)
+			return true;
+	return false;
+}
+
 ECRESULT ECDatabaseMySQL::GetDatabaseVersion(zcp_versiontuple *dbv)
 {
 	ECRESULT		er = erSuccess;
 	string			strQuery;
 	DB_RESULT		lpResult = NULL;
 	DB_ROW			lpDBRow = NULL;
+	size_t rows;
 
-	strQuery = "SELECT major,minor,revision,databaserevision FROM versions ORDER BY major DESC, minor DESC, revision DESC, databaserevision DESC LIMIT 1";
+	er = DoSelect("SELECT databaserevision FROM versions WHERE databaserevision>=64 LIMIT 1", &lpResult);
+	if (er != erSuccess)
+		goto exit;
+	rows = GetNumRows(lpResult);
+	strQuery = "SELECT major, minor";
+	strQuery += rows == 0 ? ", 0" : ", micro";
+	strQuery += ", revision, databaserevision FROM versions ORDER BY major DESC, minor DESC";
+	if (rows > 0)
+		strQuery += ", micro DESC";
+	strQuery += ", revision DESC, databaserevision DESC LIMIT 1";
+	FreeResult(lpResult);
+
 	er = DoSelect(strQuery, &lpResult);
 	if(er != erSuccess && mysql_errno(&m_lpMySQL) != ER_NO_SUCH_TABLE)
 		goto exit;
@@ -1729,7 +1757,7 @@ ECRESULT ECDatabaseMySQL::GetDatabaseVersion(zcp_versiontuple *dbv)
 	}
 
 	lpDBRow = FetchRow(lpResult);
-	if( lpDBRow == NULL || lpDBRow[0] == NULL || lpDBRow[1] == NULL || lpDBRow[2] == NULL || lpDBRow[3] == NULL) {
+	if (row_has_null(lpDBRow, 5)) {
 		er = ZARAFA_E_DATABASE_ERROR;
 		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "ECDatabaseMySQL::GetDatabaseVersion(): NULL row or columns");
 		goto exit;
@@ -1737,8 +1765,9 @@ ECRESULT ECDatabaseMySQL::GetDatabaseVersion(zcp_versiontuple *dbv)
 
 	dbv->v_major  = strtoul(lpDBRow[0], NULL, 0);
 	dbv->v_minor  = strtoul(lpDBRow[1], NULL, 0);
-	dbv->v_rev    = strtoul(lpDBRow[2], NULL, 0);
-	dbv->v_schema = strtoul(lpDBRow[3], NULL, 0);
+	dbv->v_micro  = strtoul(lpDBRow[2], NULL, 0);
+	dbv->v_rev    = strtoul(lpDBRow[3], NULL, 0);
+	dbv->v_schema = strtoul(lpDBRow[4], NULL, 0);
 
 exit:
 	if(lpResult)
@@ -1815,7 +1844,7 @@ ECRESULT ECDatabaseMySQL::UpdateDatabase(bool bForceUpdate, std::string &strRepo
 	bool			bSkipped = false;
 	unsigned int	ulDatabaseRevisionMin = 0;
 	zcp_versiontuple stored_ver;
-	zcp_versiontuple program_ver(PROJECT_VERSION_MAJOR, PROJECT_VERSION_MINOR, PROJECT_VERSION_REVISION, Z_UPDATE_LAST);
+	zcp_versiontuple program_ver(PROJECT_VERSION_MAJOR, PROJECT_VERSION_MINOR, PROJECT_VERSION_MICRO, PROJECT_VERSION_REVISION, Z_UPDATE_LAST);
 	int cmp;
 
 	er = GetDatabaseVersion(&stored_ver);
