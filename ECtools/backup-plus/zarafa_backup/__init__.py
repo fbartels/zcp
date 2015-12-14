@@ -423,7 +423,6 @@ def dump_props(props):
 
     return pickle.dumps(dict((prop.proptag, prop.mapiobj.Value) for prop in props))
 
-
 def dump_acl(folder, user, server, log):
     """ dump acl for given folder """
 
@@ -464,8 +463,13 @@ def dump_rules(folder, user, server, log):
         etxml = ElementTree.fromstring(ruledata)
         for actions in etxml.findall('./item/item/actions'):
             for movecopy in actions.findall('.//moveCopy'):
+                s = movecopy.findall('store')[0]
+                store = server.mapisession.OpenMsgStore(0, s.text.decode('base64'), None, 0) # XXX server.store(entryid=..)
+                guid = HrGetOneProp(store, PR_STORE_RECORD_KEY).Value.encode('hex')
+                store = server.store(guid)
+                s.text = store.user.name if store != user.store else ''
                 f = movecopy.findall('folder')[0]
-                path = user.folder(f.text.decode('base64').encode('hex')).path
+                path = store.folder(f.text.decode('base64').encode('hex')).path # XXX store.folder(entryid=..)
                 f.text = path
         ruledata = ElementTree.tostring(etxml)
     return pickle.dumps(ruledata)
@@ -473,16 +477,16 @@ def dump_rules(folder, user, server, log):
 def load_rules(folder, user, server, data, log):
     """ load rules for given folder """
 
-    # XXX resolve other users/stores
     data = pickle.loads(data)
     if data:
         etxml = ElementTree.fromstring(data)
         for actions in etxml.findall('./item/item/actions'):
             for movecopy in actions.findall('.//moveCopy'):
-                store = movecopy.findall('store')[0]
-                store.text = user.store.entryid.decode('hex').encode('base64').strip()
+                s = movecopy.findall('store')[0]
+                store = server.user(s.text).store if s.text else user.store
+                s.text = store.entryid.decode('hex').encode('base64').strip()
                 f = movecopy.findall('folder')[0]
-                f.text = user.folder(f.text).entryid.decode('hex').encode('base64').strip()
+                f.text = store.folder(f.text).entryid.decode('hex').encode('base64').strip()
         etxml = ElementTree.tostring(etxml)
         folder.create_prop(PR_RULES_DATA, etxml)
 
