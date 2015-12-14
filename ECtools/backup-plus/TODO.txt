@@ -1,0 +1,11 @@
+
+# XXX archiver interaction
+# XXX restore container_class
+# XXX unittests
+# XXX packaging
+# XXX backup_servers
+# XXX shell breakouts
+# XXX error handling (cmd-line, ..)
+
+# XXX PR_IPM*
+# XXX restore: skip items with sourcekey match?

@@ -1,6 +1,6 @@
 # -*- Makefile -*-
 
-SUBDIRS = . archiver/include/zarafa presence search
+SUBDIRS = . archiver/include/zarafa backup-plus presence search
 
 AM_CPPFLAGS = ${ZCPPFLAGS} ${DEBUGFLAGS} ${BOOST_CPPFLAGS} ${SSL_CFLAGS} \
 	-I${top_srcdir}/mapi4linux/include \
