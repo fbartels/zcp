@@ -204,6 +204,9 @@ static const sUpdateList_t sUpdateList[] = {
 	
 	// Update from 7.0 to 7.1
 	{ Z_UPDATE_UPDATE_WLINK_RECKEY, 0, "Updating wunderbar record keys", UpdateWLinkRecordKeys },
+
+	// New in 7.2.2
+	{ Z_UPDATE_VERSIONTBL_MICRO, 0, "Add \"micro\" column to \"versions\" table", UpdateVersionsTbl },
 };
 
 static const char *const server_groups[] = {

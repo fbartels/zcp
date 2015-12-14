@@ -262,10 +262,11 @@
 #define Z_TABLEDEF_VERSIONS			"CREATE TABLE versions ( \
 										`major` int(11) unsigned NOT NULL default '0', \
 										`minor` int(11) unsigned NOT NULL default '0', \
+										`micro` int(11) unsigned not null default 0, \
 										`revision` int(11) unsigned NOT NULL default '0', \
 										`databaserevision` int(11) unsigned NOT NULL default '0', \
 										`updatetime` datetime NOT NULL, \
-										PRIMARY KEY  (`major`, `minor`, `revision`, `databaserevision`) \
+										PRIMARY KEY  (`major`, `minor`, `micro`, `revision`, `databaserevision`) \
 									) ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;"
 
 #define Z_TABLEDEF_SEARCHRESULTS	"CREATE TABLE searchresults ( \
@@ -436,12 +437,17 @@
 #define Z_UPDATE_CONVERT_STORES					61
 #define Z_UPDATE_UPDATE_STORES					62
 #define Z_UPDATE_UPDATE_WLINK_RECKEY			63
+#define Z_UPDATE_VERSIONTBL_MICRO 64
 
-// This is the update ID of a release so never change 
-// this in a release version
-#define Z_UPDATE_RELEASE_ID						63
+/*
+ * The first population of the SQL tables can use both create-type and
+ * update-type operations; %Z_UPDATE_RELEASE_ID specifies the schema
+ * version that can be reached with creates only.
+ * (This is never less than %Z_UPDATE_LAST.)
+ */
+#define Z_UPDATE_RELEASE_ID 64
 
 // This is the last update ID always update this to the last ID
-#define Z_UPDATE_LAST							63
+#define Z_UPDATE_LAST 64
 
 #endif
