@@ -533,7 +533,10 @@ def main():
     options, args = parser.parse_args()
     options.foreground = True
     if options.restore or options.stats or options.index:
-        assert (len(args) == 1 and os.path.isdir(args[0])), 'please specify path to backup data'
+        assert len(args) == 1 and os.path.isdir(args[0]), 'please specify path to backup data'
+    else:
+        assert len(args) == 0, 'too many arguments'
+
     if options.stats or options.index:
         # handle --stats/--index
         show_contents(args[0], options)
