@@ -467,7 +467,10 @@ def dump_rules(folder, user, server, log):
                 store = server.mapisession.OpenMsgStore(0, s.text.decode('base64'), None, 0) # XXX server.store(entryid=..)
                 guid = HrGetOneProp(store, PR_STORE_RECORD_KEY).Value.encode('hex')
                 store = server.store(guid)
-                s.text = store.user.name if store != user.store else ''
+                if store.public:
+                    s.text = 'public'
+                else:
+                    s.text = store.user.name if store != user.store else ''
                 f = movecopy.findall('folder')[0]
                 path = store.folder(f.text.decode('base64').encode('hex')).path # XXX store.folder(entryid=..)
                 f.text = path
@@ -483,7 +486,10 @@ def load_rules(folder, user, server, data, log):
         for actions in etxml.findall('./item/item/actions'):
             for movecopy in actions.findall('.//moveCopy'):
                 s = movecopy.findall('store')[0]
-                store = server.user(s.text).store if s.text else user.store
+                if s.text == 'public':
+                    store = server.public_store
+                else:
+                    store = server.user(s.text).store if s.text else user.store
                 s.text = store.entryid.decode('hex').encode('base64').strip()
                 f = movecopy.findall('folder')[0]
                 f.text = store.folder(f.text).entryid.decode('hex').encode('base64').strip()
