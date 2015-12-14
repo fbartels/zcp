@@ -73,6 +73,7 @@ static PyObject *PyTypeNEWMAIL_NOTIFICATION;
 static PyObject *PyTypeOBJECT_NOTIFICATION;
 static PyObject *PyTypeTABLE_NOTIFICATION;
 
+static PyObject *PyTypeMVPROPMAP;
 static PyObject *PyTypeECUser;
 static PyObject *PyTypeECGroup;
 static PyObject *PyTypeECCompany;
@@ -160,6 +161,7 @@ void Init()
 	PyTypeSTATSTG = PyObject_GetAttrString(lpMAPIStruct, "STATSTG");
 	PyTypeSYSTEMTIME = PyObject_GetAttrString(lpMAPIStruct, "SYSTEMTIME");
 
+        PyTypeMVPROPMAP = PyObject_GetAttrString(lpMAPIStruct, "MVPROPMAP");
 	PyTypeECUser = PyObject_GetAttrString(lpMAPIStruct, "ECUSER");
 	PyTypeECGroup = PyObject_GetAttrString(lpMAPIStruct, "ECGROUP");
 	PyTypeECCompany = PyObject_GetAttrString(lpMAPIStruct, "ECCOMPANY");
@@ -2740,6 +2742,140 @@ exit:
 	return list;
 }
 
+void Object_to_MVPROPMAP(PyObject *elem, ECUSER *&lpUser, ULONG ulFlags)
+{
+	HRESULT hr = hrSuccess;
+	PyObject *MVPropMaps, *Item, *PropID, *ListItem, *Values;
+	int ValuesLength, MVPropMapsSize = 0;
+
+	/* Multi-Value PropMap support. */
+	MVPropMaps = PyObject_GetAttrString(elem, "MVPropMap");
+
+	if (MVPropMaps != NULL && MVPropMaps != Py_None && PyList_Check(MVPropMaps)) {
+		MVPropMapsSize = PyList_Size(MVPropMaps);
+		/* No PropMaps - bail out */
+		if (MVPropMapsSize != 2) {
+			PyErr_SetString(PyExc_TypeError, "MVPropMap should contain two entries");
+			if (MVPropMaps != NULL)
+				Py_DECREF(MVPropMaps);
+			return;
+		}
+
+		/* If we have more mv props than the feature lists, adjust this value! */
+		lpUser->sMVPropmap.cEntries = 2;
+		hr = MAPIAllocateMore(sizeof(MVPROPMAPENTRY) * lpUser->sMVPropmap.cEntries, lpUser, reinterpret_cast<void **>(&lpUser->sMVPropmap.lpEntries));
+
+		for (int i = 0; i < MVPropMapsSize; ++i) {
+			Item = PyList_GetItem(MVPropMaps, i);
+			PropID = PyObject_GetAttrString(Item, "ulPropId");
+			Values = PyObject_GetAttrString(Item, "Values");
+
+			if (PropID == NULL || Values == NULL || PropID == Py_None || !PyList_Check(Values)) {
+				PyErr_SetString(PyExc_TypeError, "ulPropId or Values is empty or values is not a list");
+
+				if (PropID != NULL)
+					Py_DECREF(PropID);
+				if (Values != NULL)
+					Py_DECREF(Values);
+				if (MVPropMaps != NULL)
+					Py_DECREF(MVPropMaps);
+				return;
+			}
+
+			/* Set default struct entry to empty stub values */
+			lpUser->sMVPropmap.lpEntries[i].ulPropId = PyLong_AsUnsignedLong(PropID);
+			lpUser->sMVPropmap.lpEntries[i].cValues = 0;
+			lpUser->sMVPropmap.lpEntries[i].lpszValues = NULL;
+
+			//if ((PropID != NULL && PropID != Py_None) && (Values != NULL && Values != Py_None && PyList_Check(Values)))
+			ValuesLength = PyList_Size(Values);
+			lpUser->sMVPropmap.lpEntries[i].cValues = ValuesLength;
+
+			if (ValuesLength > 0) {
+				hr = MAPIAllocateMore(sizeof(LPTSTR) * lpUser->sMVPropmap.lpEntries[i].cValues, lpUser, reinterpret_cast<void **>(&lpUser->sMVPropmap.lpEntries[i].lpszValues));
+				if (hr != hrSuccess) {
+					PyErr_SetString(PyExc_RuntimeError, "Out of memory");
+					if (PropID != NULL)
+						Py_DECREF(PropID);
+					if (Values != NULL)
+						Py_DECREF(Values);
+					if (MVPropMaps != NULL)
+						Py_DECREF(MVPropMaps);
+					return;
+				}
+			}
+
+			for (int j = 0; j < ValuesLength; ++j) {
+				ListItem = PyList_GetItem(Values, j);
+
+				if (ListItem != Py_None) {
+					if ((ulFlags & MAPI_UNICODE) == 0)
+						// XXX: meh, not sure what todo here. Maybe use process_conv_out??
+						lpUser->sMVPropmap.lpEntries[i].lpszValues[j] = reinterpret_cast<TCHAR *>(PyString_AsString(ListItem));
+					else
+						CopyPyUnicode(&lpUser->sMVPropmap.lpEntries[i].lpszValues[j], ListItem, lpUser);
+				}
+				Py_DECREF(ListItem);
+			}
+
+			Py_DECREF(PropID);
+			Py_DECREF(Values);
+		}
+	}
+
+	if (MVPropMaps != NULL)
+		Py_DECREF(MVPropMaps);
+}
+
+PyObject *Object_from_MVPROPMAP(MVPROPMAP propmap, ULONG ulFlags)
+{
+	/*
+	 * Multi-Value PropMap support.
+	 *
+	 * This holds the enabled/disabled features of a user. It is
+	 * represented as a list of PropMaps which contains multiple values. A
+	 * Normal Propmap only contains one value, so we use a list to display
+	 * these values.
+	 *
+	 * Note that the enabled/disabled MVPropMap is special since, for
+	 * example, setting both PR_EC_ENABLED_FEATUES and
+	 * PR_EC_DISALBED_FEATURES to an empty list will still set the features
+	 * to either disabled or enabled according to the default set in the
+	 * server configuration.
+	 */
+	PyObject *MVProps = PyList_New(0);
+	PyObject *MVPropValues, *MVPropMap, *MVPropValue = NULL;
+
+	MVPROPMAP *lpMVPropmap = &propmap;
+	for (unsigned int i = 0; i < lpMVPropmap->cEntries; ++i) {
+		PyObject *MVPropValues = PyList_New(0);
+
+		for (unsigned int j = 0; j < lpMVPropmap->lpEntries[i].cValues; ++j) {
+			LPTSTR strval = lpMVPropmap->lpEntries[i].lpszValues[j];
+			std::string str = reinterpret_cast<LPSTR>(strval);
+
+			if (!str.empty()) {
+				if (ulFlags & MAPI_UNICODE)
+					MVPropValue = PyUnicode_FromWideChar(strval, wcslen(strval));
+				else
+					MVPropValue = PyString_FromStringAndSize(str.c_str(), str.length());
+
+				PyList_Append(MVPropValues, MVPropValue);
+				Py_DECREF(MVPropValue);
+				MVPropValue = NULL;
+			}
+		}
+
+		MVPropMap = PyObject_CallFunction(PyTypeMVPROPMAP, "(lO)", lpMVPropmap->lpEntries[i].ulPropId, MVPropValues);
+		PyList_Append(MVProps, MVPropMap);
+		Py_DECREF(MVPropMap);
+		MVPropMap = NULL;
+		MVPropValues = NULL;
+	}
+
+	return MVProps;
+}
+
 ECUSER *Object_to_LPECUSER(PyObject *elem, ULONG ulFlags)
 {
 	static conv_out_info<ECUSER> conv_info[] = {
@@ -2767,9 +2903,8 @@ ECUSER *Object_to_LPECUSER(PyObject *elem, ULONG ulFlags)
 		goto exit;
 	}
 	memset(lpUser, 0, sizeof *lpUser);
-
 	process_conv_out_array(lpUser, elem, conv_info, lpUser, ulFlags);
-
+	Object_to_MVPROPMAP(elem, lpUser, ulFlags);
 exit:
 	if (PyErr_Occurred()) {
 		MAPIFreeBuffer(lpUser);
@@ -2781,11 +2916,13 @@ exit:
 
 PyObject *Object_from_LPECUSER(ECUSER *lpUser, ULONG ulFlags)
 {
-    if(ulFlags & MAPI_UNICODE)
-        return PyObject_CallFunction(PyTypeECUser, "(uuuuulllls#)", lpUser->lpszUsername, lpUser->lpszPassword, lpUser->lpszMailAddress, lpUser->lpszFullName, lpUser->lpszServername, lpUser->ulObjClass, lpUser->ulIsAdmin, lpUser->ulIsABHidden, lpUser->ulCapacity, lpUser->sUserId.lpb, lpUser->sUserId.cb);
-    else
-        return PyObject_CallFunction(PyTypeECUser, "(ssssslllls#)", lpUser->lpszUsername, lpUser->lpszPassword, lpUser->lpszMailAddress, lpUser->lpszFullName, lpUser->lpszServername, lpUser->ulObjClass, lpUser->ulIsAdmin, lpUser->ulIsABHidden, lpUser->ulCapacity, lpUser->sUserId.lpb, lpUser->sUserId.cb);
+	PyObject *MVProps = Object_from_MVPROPMAP(lpUser->sMVPropmap, ulFlags);
 
+	// XXX: Caller should DECREF List?
+	if (ulFlags & MAPI_UNICODE)
+		return PyObject_CallFunction(PyTypeECUser, "(uuuuulllls#O)", lpUser->lpszUsername, lpUser->lpszPassword, lpUser->lpszMailAddress, lpUser->lpszFullName, lpUser->lpszServername, lpUser->ulObjClass, lpUser->ulIsAdmin, lpUser->ulIsABHidden, lpUser->ulCapacity, lpUser->sUserId.lpb, lpUser->sUserId.cb, MVProps);
+	else
+		return PyObject_CallFunction(PyTypeECUser, "(ssssslllls#O)", lpUser->lpszUsername, lpUser->lpszPassword, lpUser->lpszMailAddress, lpUser->lpszFullName, lpUser->lpszServername, lpUser->ulObjClass, lpUser->ulIsAdmin, lpUser->ulIsABHidden, lpUser->ulCapacity, lpUser->sUserId.lpb, lpUser->sUserId.cb, MVProps);
 }
 
 

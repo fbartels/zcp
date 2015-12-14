@@ -445,6 +445,9 @@ class ZarafaNotFoundException(ZarafaException):
 class ZarafaLogonException(ZarafaException):
     pass
 
+class ZarafaNotSupported(ZarafaException):
+    pass
+
 
 class SPropDelayedValue(SPropValue):
     def __init__(self, mapiobj, proptag):
@@ -1239,6 +1242,7 @@ class Store(object):
             mapiobj = server._store(guid)
         self.server = server
         self.mapiobj = mapiobj
+        # XXX: fails if store is orphaned and guid is given..
         self._root = self.mapiobj.OpenEntry(None, None, 0)
 
     @property
@@ -3036,6 +3040,57 @@ class User(object):
         self._update(email=unicode(value))
 
     @property
+    def features(self):
+        """ Enabled features (pop3/imap/mobile) """
+
+        if not hasattr(self._ecuser, 'MVPropMap'):
+            raise ZarafaNotSupported('Python-Mapi does not support MVPropMap')
+
+        for entry in self._ecuser.MVPropMap:
+            if entry.ulPropId == PR_EC_ENABLED_FEATURES_W:
+                return entry.Values
+
+    @features.setter
+    def features(self, value):
+
+        if not hasattr(self._ecuser, 'MVPropMap'):
+            raise ZarafaNotSupported('Python-Mapi does not support MVPropMap')
+
+        # Enabled + Disabled defines all features.
+        features = set([e for entry in self._ecuser.MVPropMap for e in entry.Values])
+        disabled = list(features - set(value))
+
+        # XXX: performance
+        for entry in self._ecuser.MVPropMap:
+            if entry.ulPropId == PR_EC_ENABLED_FEATURES_W:
+                entry.Values = value
+            if entry.ulPropId == PR_EC_DISABLED_FEATURES_W:
+                entry.Values = disabled
+
+        self._update()
+
+    def add_feature(self, feature):
+        ''' Add a feature for a user
+
+        :param feature: the new feature
+        '''
+
+        self.features = self.features + [unicode(feature)]
+
+    def remove_feature(self, feature):
+        ''' Remove a feature for a user
+
+        :param feature: the to be removed feature
+        '''
+
+        # Copy features otherwise we will miss an disabled feature.
+        # XXX: improvement?
+        features = self.features[:]
+        features.remove(unicode(feature))
+        self.features = features
+        self._update()
+
+    @property
     def userid(self):
         """ Userid """
 
@@ -3162,11 +3217,24 @@ class User(object):
         user_class = kwargs.get('user_class', self._ecuser.Class)
         admin = kwargs.get('admin', self._ecuser.IsAdmin)
 
+        # XXX: required to hook/unhook store??
         if self.active:
             store = self.store
             self.unhook()
-        usereid = self.server.sa.SetUser(ECUSER(Username=username, Password=password, Email=email, FullName=fullname,
-                                         Class=user_class, UserID=self._ecuser.UserID, IsAdmin=admin), MAPI_UNICODE)
+
+        # Thrown when a user tries to set his own features, handle gracefully otherwise you'll end up without a store
+        try:
+            # Pass the MVPropMAP otherwise the set values are reset
+            if hasattr(self._ecuser, 'MVPropMap'):
+                usereid = self.server.sa.SetUser(ECUSER(Username=username, Password=password, Email=email, FullName=fullname,
+                                             Class=user_class, UserID=self._ecuser.UserID, IsAdmin=admin, MVPropMap = self._ecuser.MVPropMap), MAPI_UNICODE)
+
+            else:
+                usereid = self.server.sa.SetUser(ECUSER(Username=username, Password=password, Email=email, FullName=fullname,
+                                             Class=user_class, UserID=self._ecuser.UserID, IsAdmin=admin), MAPI_UNICODE)
+        except MAPIErrorNoSupport:
+            pass
+
         if self.active:
             storeguid = self.hook(store=store)
         self._ecuser = self.server.sa.GetUser(self.server.sa.ResolveUserName(username, MAPI_UNICODE), MAPI_UNICODE)
