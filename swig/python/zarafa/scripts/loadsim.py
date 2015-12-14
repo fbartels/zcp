@@ -1,8 +1,7 @@
-#!/usr/bin/env python
+#! /usr/bin/python
 
-# basic loadsim framework
+# very simple load simulator
 
-import getopt
 import os
 import random
 import sys
@@ -15,41 +14,20 @@ n_read_processes = 1
 reconnect = False
 eml_file = None
 
-opts, args = getopt.getopt(sys.argv[1:], "u:N:n:re:h", ["user=", "n-write-processes", "n-read-processes=", "reconnect", "eml-file", "help"])
+parser = zarafa.parser('skpc', usage='loadsim [options]')
+parser.add_option('-u', '--user', dest='user', action='store', help='user to send mails to')
+parser.add_option('-N', '--n-write-workers', dest='n_write_workers', action='store', help='number of write workers to start')
+parser.add_option('-n', '--n-read-workers', dest='n_read_workers', action='store', help='number of read workers to start')
+parser.add_option('-r', '--new-session', dest='restart_session', action='store_false', help='start a new session for each iteration')
+parser.add_option('-e', '--eml', dest='eml', action='store', help='eml-file to use')
 
-def help():
-	print '-u user   user to send mails to'
-	print '-N #      number of write workers to start'
-	print '-n #      number of read workers to start'
-	print '-r        start a new session for each iteration'
-	print '-e file   eml-file to use'
-	print '-h        this help'
+o, a = parser.parse_args()
 
-for o, a in opts:
-	if o in ('-u', '--user'):
-		user = a
-
-	elif o in ('-N', '--n-write-processes'):
-		n_write_processes = int(a)
-
-	elif o in ('-n', '--n-read-processes'):
-		n_read_processes = int(a)
-
-	elif o in ('-r', '--reconnect'):
-		reconnect = True
-
-	elif o in ('-e', '--eml-file'):
-		eml_file = a
-
-	elif o in ('-h', '--help'):
-		help()
-		sys.exit(0)
-
-	else:
-		print '%s is not understood' % o
-		print
-		help()
-		sys.exit(1)
+user = o.user
+n_write_processes = int(o.n_write_workers)
+n_read_processes = int(o.n_read_workers)
+reconnect = o.restart_session
+eml_file = o.eml
 
 if eml_file == None:
 	print 'EML file missing'
@@ -57,15 +35,14 @@ if eml_file == None:
 
 eml_file_data = file(eml_file).read()
 
+abort = False
+
 def read_worker():
 	server = None
 
-	if reconnect == False:
-		server = zarafa.Server(o)
-
 	while True:
 		try:
-			if reconnect == True:
+			if reconnect == True or server == None:
 				server = zarafa.Server(o)
 
 			u = server.user(user)
@@ -83,12 +60,9 @@ def read_worker():
 def write_worker():
 	server = None
 
-	if reconnect == False:
-		server = zarafa.Server(o)
-
 	while True:
 		try:
-			if reconnect == True:
+			if reconnect == True or server == None:
 				server = zarafa.Server(o)
 
 			item = server.user(user).store.inbox.create_item(eml = eml_file_data)
@@ -99,17 +73,52 @@ def write_worker():
 		except Exception, e:
 			print e
 
+pids = []
+
 print 'Starting %d writers' % n_write_processes
 for i in range(n_write_processes):
-	if os.fork() == 0:
+	pid = os.fork()
+
+	if pid == 0:
 		write_worker()
 		sys.exit(0)
 
+	elif pid == -1:
+		print 'fork failed'
+		break;
+
+	pids.append(pid)
+
 print 'Starting %d readers' % n_read_processes
 for i in range(n_read_processes):
-	if os.fork() == 0:
+	pid = os.fork()
+
+	if pid == 0:
 		read_worker()
 		sys.exit(0)
 
-while True:
-	time.sleep(86400)
+	elif pid == -1:
+		print 'fork failed'
+		break;
+
+	pids.append(pid)
+
+print 'Child processes started'
+
+try:
+	while True:
+		time.sleep(86400)
+
+except:
+	pass
+
+print 'Terminating...'
+
+for pid in pids:
+	try:
+		os.kill(pid, -9)
+
+	except:
+		pass
+
+print 'Finished.'
