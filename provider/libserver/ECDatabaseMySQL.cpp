@@ -1739,10 +1739,8 @@ ECRESULT ECDatabaseMySQL::GetDatabaseVersion(zcp_versiontuple *dbv)
 		lpDBRow = FetchRow(lpResult);
 		er = ZARAFA_E_UNKNOWN_DATABASE;
 
-		while(lpResult)
-		{
-			if(lpDBRow != NULL && lpDBRow[0] != NULL && stricmp(lpDBRow[0], "storeid") == 0)
-			{
+		while (lpDBRow != NULL) {
+			if (lpDBRow[0] != NULL && stricmp(lpDBRow[0], "storeid") == 0) {
 				dbv->v_major  = 5;
 				dbv->v_minor  = 0;
 				dbv->v_rev    = 0;
