@@ -64,9 +64,11 @@ class BackupWorker(zarafa.Worker):
 
                 # backup user and store properties
                 if not options.folders:
+                    file(path+'/store', 'w').write(dump_props(store.props()))
                     if user:
                         file(path+'/user', 'w').write(dump_props(user.props()))
-                    file(path+'/store', 'w').write(dump_props(store.props()))
+                        if not options.skip_meta:
+                            file(path+'/delegates', 'w').write(dump_delegates(user, server, self.log))
 
                 # check command-line options and backup folders
                 t0 = time.time()
@@ -211,12 +213,15 @@ class Service(zarafa.Service):
         t0 = time.time()
         stats = {'changes': 0, 'errors': 0}
 
-        # if not at the folder-level, restore webapp settings from store props
-        if not self.options.folders and os.path.exists('%s/store' % self.data_path):
-            # XXX the change of prop type should not be necessary
-            settings = pickle.loads(file('%s/store' % self.data_path).read()).get(CHANGE_PROP_TYPE(PR_EC_WEBACCESS_SETTINGS_JSON, PT_UNICODE))
-            if settings:
-                store.create_prop(PR_EC_WEBACCESS_SETTINGS_JSON, settings)
+        # restore metadata (webapp settings, delegate users)
+        if user and not self.options.folders and not self.options.skip_meta:
+            if os.path.exists('%s/store' % self.data_path):
+                # XXX the change of prop type should not be necessary
+                settings = pickle.loads(file('%s/store' % self.data_path).read()).get(CHANGE_PROP_TYPE(PR_EC_WEBACCESS_SETTINGS_JSON, PT_UNICODE))
+                if settings:
+                    store.create_prop(PR_EC_WEBACCESS_SETTINGS_JSON, settings)
+            if os.path.exists('%s/delegates' % self.data_path):
+                load_delegates(user, self.server, file('%s/delegates' % self.data_path).read(), self.log)
 
         # determine stored and specified folders
         path_folder = folder_struct(self.data_path, self.options)
@@ -435,8 +440,9 @@ def load_acl(folder, user, server, data, log):
     """ load acl for given folder """
 
     # XXX groups/distlists
+    data = pickle.loads(data)
     rows = []
-    for row in pickle.loads(data):
+    for row in data:
         try:
             u = server.user(row[1].Value)
         except zarafa.ZarafaNotFoundException:
@@ -462,48 +468,48 @@ def dump_rules(folder, user, server, log):
                 path = user.folder(f.text.decode('base64').encode('hex')).path
                 f.text = path
         ruledata = ElementTree.tostring(etxml)
-
     return pickle.dumps(ruledata)
 
 def load_rules(folder, user, server, data, log):
     """ load rules for given folder """
 
+    # XXX resolve other users/stores
     data = pickle.loads(data)
     if data:
         etxml = ElementTree.fromstring(data)
         for actions in etxml.findall('./item/item/actions'):
             for movecopy in actions.findall('.//moveCopy'):
                 store = movecopy.findall('store')[0]
-                store.text = user.store.entryid.decode('hex').encode('base64').strip() # XXX resolve other users
+                store.text = user.store.entryid.decode('hex').encode('base64').strip()
                 f = movecopy.findall('folder')[0]
                 f.text = user.folder(f.text).entryid.decode('hex').encode('base64').strip()
         etxml = ElementTree.tostring(etxml)
         folder.create_prop(PR_RULES_DATA, etxml)
 
-'''
-def dump_delegates(user, log):
+def dump_delegates(user, server, log):
     """ dump delegate users for given user """
 
-    fbeid = user.root.prop(PR_FREEBUSY_ENTRYIDS).value[1] # XXX store globally; all freebusy stuff?
+    # XXX more freebusy stuff?
+    fbeid = user.root.prop(PR_FREEBUSY_ENTRYIDS).value[1]
     fbf = user.store.mapiobj.OpenEntry(fbeid, None, 0)
     try:
         delegate_uids = HrGetOneProp(fbf, PR_SCHDINFO_DELEGATE_ENTRYIDS).Value
     except MAPIErrorNotFound:
         delegate_uids = []
     usernames = [server.sa.GetUser(uid, MAPI_UNICODE).Username for uid in delegate_uids]
-
     return pickle.dumps(usernames)
 
-    # delegates
-    if user:
-        fbeid = user.root.prop(PR_FREEBUSY_ENTRYIDS).value[1]
-        fbf = user.store.mapiobj.OpenEntry(fbeid, None, MAPI_MODIFY)
-        try:
-            fbf.SetProps([SPropValue(PR_SCHDINFO_DELEGATE_ENTRYIDS, [server.user(name).userid.decode('hex') for name in data['delegate_users']])])
-            fbf.SaveChanges(0)
-        except zarafa.ZarafaNotFoundException:
-            log.warning("skipping delegation for unknown user '%s'" % name)
-'''
+def load_delegates(user, server, data, log):
+    """ load delegate users for given user """
+
+    data = pickle.loads(data)
+    fbeid = user.root.prop(PR_FREEBUSY_ENTRYIDS).value[1]
+    fbf = user.store.mapiobj.OpenEntry(fbeid, None, MAPI_MODIFY)
+    try:
+        fbf.SetProps([SPropValue(PR_SCHDINFO_DELEGATE_ENTRYIDS, [server.user(name).userid.decode('hex') for name in data])])
+        fbf.SaveChanges(0)
+    except zarafa.ZarafaNotFoundException:
+        log.warning("skipping delegation for unknown user '%s'" % name)
 
 def main():
     # select common options
