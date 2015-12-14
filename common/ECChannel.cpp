@@ -212,10 +212,10 @@ HRESULT ECChannel::HrSetCtx(ECConfig *lpConfig, ECLogger *lpLogger) {
 		SSL_CTX_set_verify(lpCTX, SSL_VERIFY_NONE, 0);
 	}
 
-	if (strlen(lpConfig->GetSetting("ssl_verify_file")) > 0)
+	if (lpConfig->GetSetting("ssl_verify_file")[0])
 		szFile = lpConfig->GetSetting("ssl_verify_file");
 
-	if (strlen(lpConfig->GetSetting("ssl_verify_path")) > 0)
+	if (lpConfig->GetSetting("ssl_verify_path")[0])
 		szPath = lpConfig->GetSetting("ssl_verify_path");
 
 	if (szFile || szPath) {

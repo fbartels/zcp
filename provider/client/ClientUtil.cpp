@@ -967,7 +967,7 @@ HRESULT ClientUtil::ConvertMSEMSProps(ULONG cValues, LPSPropValue pValues, ULONG
 	if (hr != hrSuccess)
 		goto exit;
 
-	if (strlen(lpConfig->GetSetting("server_address")) > 0) {
+	if (lpConfig->GetSetting("server_address")[0]) {
 		strServerPath = (std::string)"https://" + lpConfig->GetSetting("server_address") + ":" + lpConfig->GetSetting("ssl_port") + "/zarafa";
 	} else {
 		if(!lpServer) {
