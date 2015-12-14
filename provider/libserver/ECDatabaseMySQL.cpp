@@ -106,6 +106,19 @@ typedef struct _sNewDatabase {
 	const char *lpSQL;
 } sSQLDatabase_t;
 
+class zcp_versiontuple _zcp_final {
+	public:
+	zcp_versiontuple(unsigned int maj = 0, unsigned int min = 0,
+	    unsigned int rev = 0, unsigned int dbs = 0) :
+		v_major(maj), v_minor(min), v_rev(rev), v_schema(dbs)
+	{
+	}
+	std::string stringify(char sep = '.') const;
+	int compare(const zcp_versiontuple &) const;
+	/* stupid major(3) function uses a #define in glibc */
+	unsigned int v_major, v_minor, v_rev, v_schema;
+};
+
 static const sUpdateList_t sUpdateList[] = {
 	// Updates from version 5.02 to 5.10
 	{ Z_UPDATE_CREATE_VERSIONS_TABLE, 0, "Create table: versions", UpdateDatabaseCreateVersionsTable },
@@ -340,6 +353,29 @@ static const STOREDPROCS stored_procedures[] = {
 };
 
 std::string	ECDatabaseMySQL::m_strDatabaseDir;
+
+std::string zcp_versiontuple::stringify(char sep) const
+{
+	return ::stringify(v_major) + sep + ::stringify(v_minor) + sep +
+	       ::stringify(v_rev) + sep + ::stringify(v_schema);
+}
+
+int zcp_versiontuple::compare(const zcp_versiontuple &rhs) const
+{
+	if (v_major < rhs.v_major)
+		return -1;
+	if (v_major > rhs.v_major)
+		return 1;
+	if (v_minor < rhs.v_minor)
+		return -1;
+	if (v_minor > rhs.v_minor)
+		return 1;
+	if (v_rev < rhs.v_rev)
+		return -1;
+	if (v_rev > rhs.v_rev)
+		return 1;
+	return 0;
+}
 
 ECDatabaseMySQL::ECDatabaseMySQL(ECLogger *lpLogger, ECConfig *lpConfig)
 {
@@ -1651,7 +1687,7 @@ exit:
 	return er;
 }
 
-ECRESULT ECDatabaseMySQL::GetDatabaseVersion(unsigned int *lpulMajor, unsigned int *lpulMinor, unsigned int *lpulRevision, unsigned int *lpulDatabaseRevision)
+ECRESULT ECDatabaseMySQL::GetDatabaseVersion(zcp_versiontuple *dbv)
 {
 	ECRESULT		er = erSuccess;
 	string			strQuery;
@@ -1679,10 +1715,10 @@ ECRESULT ECDatabaseMySQL::GetDatabaseVersion(unsigned int *lpulMajor, unsigned i
 		{
 			if(lpDBRow != NULL && lpDBRow[0] != NULL && stricmp(lpDBRow[0], "storeid") == 0)
 			{
-				*lpulMajor = 5;
-				*lpulMinor = 0;
-				*lpulRevision = 0;
-				*lpulDatabaseRevision = 0;
+				dbv->v_major  = 5;
+				dbv->v_minor  = 0;
+				dbv->v_rev    = 0;
+				dbv->v_schema = 0;
 				er = erSuccess;
 				break;
 			}
@@ -1699,10 +1735,10 @@ ECRESULT ECDatabaseMySQL::GetDatabaseVersion(unsigned int *lpulMajor, unsigned i
 		goto exit;
 	}
 
-	*lpulMajor = atoui(lpDBRow[0]);
-	*lpulMinor = atoui(lpDBRow[1]);
-	*lpulRevision = atoui(lpDBRow[2]);
-	*lpulDatabaseRevision = atoui(lpDBRow[3]);
+	dbv->v_major  = strtoul(lpDBRow[0], NULL, 0);
+	dbv->v_minor  = strtoul(lpDBRow[1], NULL, 0);
+	dbv->v_rev    = strtoul(lpDBRow[2], NULL, 0);
+	dbv->v_schema = strtoul(lpDBRow[3], NULL, 0);
 
 exit:
 	if(lpResult)
@@ -1775,15 +1811,14 @@ exit:
 ECRESULT ECDatabaseMySQL::UpdateDatabase(bool bForceUpdate, std::string &strReport)
 {
 	ECRESULT		er = erSuccess;
-	unsigned int	ulMajor = 0;
-	unsigned int	ulMinor = 0;
-	unsigned int	ulRevision = 0;
-	unsigned int	ulDatabaseRevision = 0;
 	bool			bUpdated = false;
 	bool			bSkipped = false;
 	unsigned int	ulDatabaseRevisionMin = 0;
+	zcp_versiontuple stored_ver;
+	zcp_versiontuple program_ver(PROJECT_VERSION_MAJOR, PROJECT_VERSION_MINOR, PROJECT_VERSION_REVISION, Z_UPDATE_LAST);
+	int cmp;
 
-	er = GetDatabaseVersion(&ulMajor, &ulMinor, &ulRevision, &ulDatabaseRevision);
+	er = GetDatabaseVersion(&stored_ver);
 	if(er != erSuccess)
 		goto exit;
 
@@ -1793,21 +1828,18 @@ ECRESULT ECDatabaseMySQL::UpdateDatabase(bool bForceUpdate, std::string &strRepo
 		goto exit;
 
 	//default error
-	strReport = "Unable to upgrade zarafa from version ";
-	strReport+= stringify(ulMajor) + std::string(".") + stringify(ulMinor) + std::string(".")+stringify(ulRevision);
-	strReport+= std::string(" to ");
-	strReport+= std::string(PROJECT_VERSION_DOT_STR) + std::string(".")+std::string(PROJECT_SVN_REV_STR);
+	strReport = "Unable to upgrade zarafa from version " +
+	            stored_ver.stringify() + " to " + program_ver.stringify();
 
 	// Check version
-	if(ulMajor == PROJECT_VERSION_MAJOR && ulMinor == PROJECT_VERSION_MINOR && ulRevision == PROJECT_VERSION_REVISION && ulDatabaseRevision == Z_UPDATE_LAST) {
+	cmp = stored_ver.compare(program_ver);
+	if (cmp == 0 && stored_ver.v_schema == Z_UPDATE_LAST) {
 		// up to date
 		goto exit;
-	}else if((ulMajor == PROJECT_VERSION_MAJOR && ulMinor == PROJECT_VERSION_MINOR && ulRevision > PROJECT_VERSION_REVISION) ||
-			 (ulMajor == PROJECT_VERSION_MAJOR && ulMinor > PROJECT_VERSION_MINOR) || 
-			 (ulMajor > PROJECT_VERSION_MAJOR)) {
+	} else if (cmp > 0) {
 		// Start a old server with a new database
-		strReport = "Database version (" +stringify(ulRevision)+","+stringify(ulDatabaseRevision) +
-			") is newer than the server version (" + stringify(PROJECT_VERSION_REVISION)+","+stringify(Z_UPDATE_LAST) + ")";
+		strReport = "Database version (" + stored_ver.stringify(',') +
+		            ") is newer than the server version (" + program_ver.stringify(',') + ")";
 		er = ZARAFA_E_INVALID_VERSION;
 		goto exit;
 	}
@@ -1822,8 +1854,8 @@ ECRESULT ECDatabaseMySQL::UpdateDatabase(bool bForceUpdate, std::string &strRepo
 	     i < ARRAY_SIZE(sUpdateList); ++i)
 	{
 		if ( (ulDatabaseRevisionMin > 0 && IsUpdateDone(sUpdateList[i].ulVersion) == hrSuccess) ||
-			(sUpdateList[i].ulVersionMin != 0 && ulDatabaseRevision >= sUpdateList[i].ulVersion && 
-			ulDatabaseRevision >= sUpdateList[i].ulVersionMin) ||
+			(sUpdateList[i].ulVersionMin != 0 && stored_ver.v_schema >= sUpdateList[i].ulVersion &&
+			stored_ver.v_schema >= sUpdateList[i].ulVersionMin) ||
 			(sUpdateList[i].ulVersionMin != 0 && IsUpdateDone(sUpdateList[i].ulVersionMin, PROJECT_VERSION_REVISION) == hrSuccess))
 		{
 			// Update already done, next
