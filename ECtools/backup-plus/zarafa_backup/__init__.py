@@ -212,7 +212,8 @@ class Service(zarafa.Service):
 
         # if not at the folder-level, restore webapp settings from store props
         if not self.options.folders and os.path.exists('%s/store' % self.data_path):
-            settings = pickle.loads(file('%s/store' % self.data_path).read()).get(0x6772001f) # XXX PR_EC_WEBACCESS_SETTINGS_JSON
+            # XXX the change of prop type should not be necessary
+            settings = pickle.loads(file('%s/store' % self.data_path).read()).get(CHANGE_PROP_TYPE(PR_EC_WEBACCESS_SETTINGS_JSON, PT_UNICODE))
             if settings:
                 store.create_prop(PR_EC_WEBACCESS_SETTINGS_JSON, settings)
 
@@ -339,7 +340,7 @@ class Service(zarafa.Service):
     def _store(self, username):
         """ lookup store for username """
 
-        if '@' in username: # XXX
+        if '@' in username:
             u, c = username.split('@')
             if u == c: return self.server.company(c).public_store
             else: return self.server.user(username).store
@@ -419,8 +420,6 @@ def dump_props(props):
 def dump_meta(folder, user, server, log):
     """ collect rules, acl, delegates for given folder, and make user/store/folder ids portable """
 
-    # XXX no user, only store..? (public)
-    # XXX move serialization code to python-zarafa once stabilized
     log.debug('backing up metadata')
     data = {}
 
