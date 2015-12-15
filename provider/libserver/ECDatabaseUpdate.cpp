@@ -2720,3 +2720,13 @@ ECRESULT UpdateWLinkRecordKeys(ECDatabase *lpDatabase)
 
 	return er;
 }
+
+/* Edit no. 64 */
+ECRESULT UpdateVersionsTbl(ECDatabase *db)
+{
+	return db->DoUpdate(
+		"alter table `versions` "
+		"add column `micro` int(11) unsigned not null default 0 after `minor`, "
+		"drop primary key, "
+		"add primary key (`major`, `minor`, `micro`, `revision`, `databaserevision`)");
+}

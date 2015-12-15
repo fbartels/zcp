@@ -56,6 +56,7 @@
 #include "ECDatabase.h"
 
 class ECConfig;
+class zcp_versiontuple;
 
 class ECDatabaseMySQL _zcp_final : public ECDatabase
 {
@@ -145,7 +146,7 @@ private:
 
 
 // Database maintenance
-	ECRESULT GetDatabaseVersion(unsigned int *lpulMajor, unsigned int *lpulMinor, unsigned int *lpulRevision, unsigned int *lpulDatabaseRevision);
+	ECRESULT GetDatabaseVersion(zcp_versiontuple *);
 
 	// Add a new database version record
 	ECRESULT UpdateDatabaseVersion(unsigned int ulDatabaseRevision);
