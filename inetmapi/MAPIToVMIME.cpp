@@ -64,7 +64,7 @@
 #include <edkmdb.h>
 #include <zarafa/mapiguidext.h>
 #include <zarafa/mapi_ptr.h>
-
+#include <boost/algorithm/string.hpp>
 #include "tnef.h"
 
 // inetmapi
@@ -1795,8 +1795,15 @@ HRESULT MAPIToVMIME::handleExtraHeaders(IMessage *lpMessage, vmime::ref<vmime::h
 
 	// Outlook never adds this property
 	if (HrGetOneProp(lpMessage, PR_INTERNET_REFERENCES_A, &ptrMessageId) == hrSuccess && ptrMessageId->Value.lpszA[0]) {
-		vmime::ref<vmime::messageId> mid = vmime::create<vmime::messageId>(ptrMessageId->Value.lpszA);
-		vmHeader->References()->getValue().dynamicCast<vmime::messageIdSequence>()->appendMessageId(mid);
+		std::vector<std::string> ids;
+		boost::split(ids, ptrMessageId->Value.lpszA, boost::is_any_of(" "));
+
+		const size_t n = ids.size();
+		for (size_t i = 0; i < n; ++i) {
+			vmime::ref<vmime::messageId> mid = vmime::create<vmime::messageId>(ids.at(i));
+
+			vmHeader->References()->getValue().dynamicCast<vmime::messageIdSequence>()->appendMessageId(mid);
+		}
 	}
 
 	// only for message-in-message items, add Message-ID header from MAPI
