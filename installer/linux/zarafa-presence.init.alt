@@ -48,6 +48,7 @@ start() {
 }
 
 stop() {
+	stop_daemon --pidfile "/var/run/$presence.pid" --lockfile "$LOCKFILE" $presence
 	stop_daemon --pidfile "$PIDFILE" --lockfile "$LOCKFILE" $presence
 	RETVAL=$?
 

@@ -54,6 +54,7 @@ case "$1" in
 	;;
   stop)
 	log_begin_msg "Stopping $DESC: $NAME"
+	start-stop-daemon --stop $QUIETDAEMON --pidfile /var/run/zarafa-gateway.pid --retry TERM/15/KILL --exec $GATEWAY
 	start-stop-daemon --stop $QUIETDAEMON --pidfile $PIDFILE --retry TERM/15/KILL --exec $GATEWAY
 	RETVAL=$?
 	rm -f $PIDFILE

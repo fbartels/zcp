@@ -55,6 +55,8 @@ case "$1" in
 	;;
   stop)
 	log_begin_msg "Stopping $DESC: $NAME"
+	# try old pid location too
+	start-stop-daemon --stop $QUIETDAEMON --pidfile /var/run/$NAME.pid --retry TERM/15/KILL --exec $DAGENT
 	start-stop-daemon --stop $QUIETDAEMON --pidfile $PIDFILE --retry TERM/15/KILL --exec $DAGENT
 	RETVAL=$?
 	rm -f $PIDFILE
