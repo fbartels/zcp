@@ -50,6 +50,7 @@ start() {
 }
 
 stop() {
+	stop_daemon --pidfile "/var/run/$gateway.pid" --lockfile "$LOCKFILE" $gateway
 	stop_daemon --pidfile "$PIDFILE" --lockfile "$LOCKFILE" $gateway
 	RETVAL=$?
 

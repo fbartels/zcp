@@ -50,6 +50,7 @@ start() {
 }
 
 stop() {
+	stop_daemon --pidfile "/var/run/$search.pid" --lockfile "$LOCKFILE" $search
 	stop_daemon --pidfile "$PIDFILE" --lockfile "$LOCKFILE" $search
 	RETVAL=$?
 

@@ -66,6 +66,7 @@ case "$1" in
 	fi
 	# the server may take up to 60 seconds to exit, so we wait a bit longer than that
 	log_begin_msg "Stopping $DESC: $NAME"
+	start-stop-daemon --stop $QUIETDAEMON --pidfile /var/run/$NAME.pid --retry TERM/65 --exec $SERVER
 	start-stop-daemon --stop $QUIETDAEMON --pidfile $PIDFILE --retry TERM/65 --exec $SERVER
 	RETVAL=$?
 	rm -f $PIDFILE

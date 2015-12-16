@@ -50,6 +50,7 @@ start() {
 }
 
 stop() {
+	stop_daemon --pidfile "/var/run/$monitor.pid" --lockfile "$LOCKFILE" $monitor
 	stop_daemon --pidfile "$PIDFILE" --lockfile "$LOCKFILE" $monitor
 	RETVAL=$?
 
