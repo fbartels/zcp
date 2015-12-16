@@ -389,9 +389,7 @@ ECRESULT GetIndexerResults(ECDatabase *lpDatabase, ECConfig *lpConfig, ECLogger 
 	
 	lstMatches.clear();
 
-	if(parseBool(lpConfig->GetSetting("search_enabled")) == true &&
-		strlen(szSocket) > 0)
-	{
+	if (parseBool(lpConfig->GetSetting("search_enabled")) == true && szSocket[0]) {
 		lpSearchClient = new(std::nothrow) ECSearchClient(szSocket, atoui(lpConfig->GetSetting("search_timeout")) );
 		if (!lpSearchClient) {
 			er = ZARAFA_E_NOT_ENOUGH_MEMORY;

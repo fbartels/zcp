@@ -104,7 +104,7 @@ static HRESULT CheckEntryId(unsigned int cbEntryId, const ENTRYID *lpEntryId,
 	else if (lpEid->ulType != ulType)
 		bResult = false;
 
-	else if (lpEid->ulVersion == 1 && strlen(lpEid->szExId) > 0)
+	else if (lpEid->ulVersion == 1 && lpEid->szExId[0])
 		bResult = false;
 
 	*lpbResult = bResult;
@@ -192,7 +192,7 @@ HRESULT GeneralizeEntryIdInPlace(unsigned int cbEntryId,
 		// server will understand the entry id, regardless of the version number. We will
 		// downgrade anyway be as compatible as possible in that case.
 		case 1:
-			if (strlen(lpAbeid->szExId) > 0)	// remove the 'legacy ulId field'	
+			if (lpAbeid->szExId[0])	// remove the 'legacy ulId field'
 				lpAbeid->ulId = 0;			
 			else {								// downgrade to version 0
 				ASSERT(cbEntryId == sizeof(ABEID));

@@ -664,7 +664,7 @@ static void print_users(unsigned int cUsers, const ECUSER *lpECUsers,
 		ct.SetColumn(i, 0, (LPSTR)lpECUsers[i].lpszUsername);
 		ct.SetColumn(i, 1, (LPSTR)lpECUsers[i].lpszFullName);
 		if (bShowHomeServer) {
-			if (lpECUsers[i].lpszServername != NULL && strlen((LPSTR)lpECUsers[i].lpszServername) > 0)
+			if (lpECUsers[i].lpszServername != NULL && lpECUsers[i].lpszServername[0])
 				ct.SetColumn(i, 2, (LPSTR)lpECUsers[i].lpszServername);
 			else
 				// make sure we fill-in all table parts. not using "<unknown>" tag,
@@ -734,7 +734,7 @@ static void print_company_settings(const ECCOMPANY *lpECCompany,
 {
 	cout << "Companyname:\t\t" << (LPSTR)lpECCompany->lpszCompanyname << endl;
 	cout << "Sysadmin:\t\t" << (LPSTR)lpECAdministrator->lpszUsername << endl;
-	if (lpECCompany->lpszServername != NULL && strlen((LPSTR)lpECCompany->lpszServername) > 0)
+	if (lpECCompany->lpszServername != NULL && lpECCompany->lpszServername[0])
 		cout << "Home server:\t\t" << (LPSTR)lpECCompany->lpszServername << endl;
 
 	cout << "Address book:\t\t" << (lpECCompany->ulIsABHidden ? "Hidden" : "Visible") << endl;
@@ -826,7 +826,7 @@ static void print_user_settings(IMsgStore *lpStore, const ECUSER *lpECUser,
 		cout << "Decline dbl meetingreq:\t" << (bDeclineConflict ? "yes" : "no") << endl;
 		cout << "Decline recur meet.req:\t" << (bDeclineRecur ? "yes" : "no") << endl;
 	}
-	if (lpECUser->lpszServername != NULL && strlen((LPSTR)lpECUser->lpszServername) > 0)
+	if (lpECUser->lpszServername != NULL && lpECUser->lpszServername[0])
 		cout << "Home server:\t\t" << (LPSTR)lpECUser->lpszServername << endl;
 
 	if (lpProps) {
@@ -3409,7 +3409,7 @@ int main(int argc, char* argv[])
 					}
 
 					// homeserver on single server installations is empty
-					if (lpECUser->lpszServername != NULL && strlen((LPSTR)lpECUser->lpszServername) > 0) {
+					if (lpECUser->lpszServername != NULL && lpECUser->lpszServername[0]) {
 						// note, this has to be mapi allocated because GetServerDetails does a More allocation on this base pointer
 						if (MAPIAllocateBuffer(sizeof(ECSVRNAMELIST), (void**)&lpsServer) != hrSuccess ||
 								MAPIAllocateMore(sizeof(LPTSTR), lpsServer, (void**)&lpsServer->lpszaServer) != hrSuccess) {

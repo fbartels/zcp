@@ -6547,7 +6547,7 @@ HRESULT IMAP::HrSearch(vector<string> &lstSearchCriteria, ULONG &ulStartCriteria
 			lpExtraRestriction[0].res.resExist.ulPropTag = PR_SUBJECT;
 			lpExtraRestriction[1].rt = RES_CONTENT;
 
-            lpExtraRestriction[1].res.resContent.ulFuzzyLevel = strlen(szSearch) > 0 ? (FL_SUBSTRING | FL_IGNORECASE) : FL_FULLSTRING;
+            lpExtraRestriction[1].res.resContent.ulFuzzyLevel = szSearch[0] ? (FL_SUBSTRING | FL_IGNORECASE) : FL_FULLSTRING;
 			lpExtraRestriction[1].res.resContent.ulPropTag = PR_SUBJECT;
 
 			hr = MAPIAllocateMore(sizeof(SPropValue), lpRootRestrict, (LPVOID *) &lpPropVal);
@@ -7802,10 +7802,7 @@ bool IMAP::IsMailFolder(IMAPIFolder *lpFolder)
         goto exit;
 	}
         
-    if(strlen(lpProp->Value.lpszA) > 0 && stricmp(lpProp->Value.lpszA, "IPM") != 0 && stricmp(lpProp->Value.lpszA, "IPF.NOTE") != 0) 
-        result = false;
-    else
-        result = true;
+	result = stricmp(lpProp->Value.lpszA, "IPM") == 0 || stricmp(lpProp->Value.lpszA, "IPF.NOTE") == 0;
     
 exit:
 	MAPIFreeBuffer(lpProp);

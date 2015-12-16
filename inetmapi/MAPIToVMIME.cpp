@@ -1788,19 +1788,19 @@ HRESULT MAPIToVMIME::handleExtraHeaders(IMessage *lpMessage, vmime::ref<vmime::h
 	LPSPropValue lpExpiryTime = NULL;
 
 	// Conversation headers. New Message-Id header is set just before sending.
-	if (HrGetOneProp(lpMessage, PR_IN_REPLY_TO_ID_A, &ptrMessageId) == hrSuccess && strlen(ptrMessageId->Value.lpszA) > 0) {
+	if (HrGetOneProp(lpMessage, PR_IN_REPLY_TO_ID_A, &ptrMessageId) == hrSuccess && ptrMessageId->Value.lpszA[0]) {
 		vmime::ref<vmime::messageId> mid = vmime::create<vmime::messageId>(ptrMessageId->Value.lpszA);
 		vmHeader->InReplyTo()->getValue().dynamicCast<vmime::messageIdSequence>()->appendMessageId(mid);
 	}
 
 	// Outlook never adds this property
-	if (HrGetOneProp(lpMessage, PR_INTERNET_REFERENCES_A, &ptrMessageId) == hrSuccess && strlen(ptrMessageId->Value.lpszA) > 0) {
+	if (HrGetOneProp(lpMessage, PR_INTERNET_REFERENCES_A, &ptrMessageId) == hrSuccess && ptrMessageId->Value.lpszA[0]) {
 		vmime::ref<vmime::messageId> mid = vmime::create<vmime::messageId>(ptrMessageId->Value.lpszA);
 		vmHeader->References()->getValue().dynamicCast<vmime::messageIdSequence>()->appendMessageId(mid);
 	}
 
 	// only for message-in-message items, add Message-ID header from MAPI
-	if (sopt.msg_in_msg && HrGetOneProp(lpMessage, PR_INTERNET_MESSAGE_ID_A, &ptrMessageId) == hrSuccess && strlen(ptrMessageId->Value.lpszA) > 0)
+	if (sopt.msg_in_msg && HrGetOneProp(lpMessage, PR_INTERNET_MESSAGE_ID_A, &ptrMessageId) == hrSuccess && ptrMessageId->Value.lpszA[0])
 		vmHeader->MessageId()->setValue(ptrMessageId->Value.lpszA);
 
 	// priority settings

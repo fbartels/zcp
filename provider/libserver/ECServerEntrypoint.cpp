@@ -284,7 +284,7 @@ void zarafa_new_soap_connection(CONNECTION_TYPE ulType, struct soap *soap)
 	lpInfo->bProxy = false;
 	soap->user = (void *)lpInfo;
 	
-	if(strlen(szProxy) > 0) {
+	if (szProxy[0]) {
 		if(strcmp(szProxy, "*") == 0) {
 			// Assume everything is proxied
 			lpInfo->bProxy = true; 

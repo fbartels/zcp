@@ -1161,7 +1161,7 @@ HRESULT GetConnectionProperties(LPSPropValue lpServer, LPSPropValue lpUsername, 
 	if (hr != hrSuccess)
 		goto exit;
 
-	if (strlen(m4l_lpConfig->GetSetting("server_address")) > 0)
+	if (m4l_lpConfig->GetSetting("server_address")[0])
 		strServerPath = (std::string)"https://" + m4l_lpConfig->GetSetting("server_address") + ":" + m4l_lpConfig->GetSetting("ssl_port") + "/zarafa";
 	else
 		strServerPath = (std::string)"https://" + lpServer->Value.lpszA + ":" + m4l_lpConfig->GetSetting("ssl_port") + "/zarafa";

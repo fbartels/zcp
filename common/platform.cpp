@@ -430,12 +430,12 @@ int CreatePath(const char *createpath)
 	char *path = strdup(createpath);
 
 	// Remove trailing slashes
-	while (strlen(path) > 0 && (path[strlen(path)-1] == '/' || path[strlen(path)-1] == '\\')) {
-		path[strlen(path)-1] = 0;
-	}
+	size_t len = strlen(path);
+	while (len > 0 && (path[len-1] == '/' || path[len-1] == '\\'))
+		path[--len] = 0;
 
 #ifdef WIN32
-	if (path[strlen(path)-1] == ':') {
+	if (path[len-1] == ':') {
 		// do not try to create driverletters
 		free(path);
 		return 0;
