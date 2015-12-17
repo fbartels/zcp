@@ -1011,12 +1011,8 @@
 			<term><option>log_buffer_size</option></term>
 			<listitem>
 			  <para>Buffer logging in what sized blocks.
-                              Bigger buffers is better for the performance but it gives lag
-                              when running e.g. 'tail -f' on the log-file. If
-                              you want to directly see what is happing, set this to e.g. 1.
-                              So when debugging: make it a small value, else set it to
-                              4096 or more.</para>
-			  <para>Default: <replaceable>4096</replaceable></para>
+                              The special value 0 selects line buffering.</para>
+			  <para>Default: <replaceable>0</replaceable></para>
 			</listitem>
 		  </varlistentry>
 
@@ -4074,12 +4070,8 @@
 			<term><option>log_buffer_size</option></term>
 			<listitem>
 			  <para>Buffer logging in what sized blocks.
-                              Bigger buffers is better for the performance but it gives lag
-                              when running e.g. 'tail -f' on the log-file. If
-                              you want to directly see what is happing, set this to e.g. 1.
-                              So when debugging: make it a small value, else set it to
-                              4096 or more.</para>
-			  <para>Default: <replaceable>4096</replaceable></para>
+                              The special value 0 selects line buffering.</para>
+			  <para>Default: <replaceable>0</replaceable></para>
 			</listitem>
 		  </varlistentry>
 
@@ -7176,12 +7168,8 @@
 			<term><option>log_buffer_size</option></term>
 			<listitem>
 			  <para>Buffer logging in what sized blocks.
-                              Bigger buffers is better for the performance but it gives lag
-                              when running e.g. 'tail -f' on the log-file. If
-                              you want to directly see what is happing, set this to e.g. 1.
-                              So when debugging: make it a small value, else set it to
-                              4096 or more.</para>
-			  <para>Default: <replaceable>4096</replaceable></para>
+                              The special value 0 selects line buffering.</para>
+			  <para>Default: <replaceable>0</replaceable></para>
 			</listitem>
 		  </varlistentry>
 
@@ -8140,12 +8128,8 @@
 			<term><option>log_buffer_size</option></term>
 			<listitem>
 			  <para>Buffer logging in what sized blocks.
-                              Bigger buffers is better for the performance but it gives lag
-                              when running e.g. 'tail -f' on the log-file. If
-                              you want to directly see what is happing, set this to e.g. 1.
-                              So when debugging: make it a small value, else set it to
-                              4096 or more.</para>
-			  <para>Default: <replaceable>4096</replaceable></para>
+                              The special value 0 selects line buffering.</para>
+			  <para>Default: <replaceable>0</replaceable></para>
 			</listitem>
 		  </varlistentry>
 
@@ -8584,12 +8568,8 @@
 			<term><option>log_buffer_size</option></term>
 			<listitem>
 			  <para>Buffer logging in what sized blocks.
-                              Bigger buffers is better for the performance but it gives lag
-                              when running e.g. 'tail -f' on the log-file. If
-                              you want to directly see what is happing, set this to e.g. 1.
-                              So when debugging: make it a small value, else set it to
-                              4096 or more.</para>
-			  <para>Default: <replaceable>4096</replaceable></para>
+                              The special value 0 selects line buffering.</para>
+			  <para>Default: <replaceable>0</replaceable></para>
 			</listitem>
 		  </varlistentry>
 
@@ -9421,12 +9401,8 @@
 			<term><option>log_buffer_size</option></term>
 			<listitem>
 			  <para>Buffer logging in what sized blocks.
-                              Bigger buffers is better for the performance but it gives lag
-                              when running e.g. 'tail -f' on the log-file. If
-                              you want to directly see what is happing, set this to e.g. 1.
-                              So when debugging: make it a small value, else set it to
-                              4096 or more.</para>
-			  <para>Default: <replaceable>4096</replaceable></para>
+                              The special value 0 selects line buffering.</para>
+			  <para>Default: <replaceable>0</replaceable></para>
 			</listitem>
 		  </varlistentry>
 
@@ -10294,12 +10270,8 @@
 			<term><option>log_buffer_size</option></term>
 			<listitem>
 			  <para>Buffer logging in what sized blocks.
-                              Bigger buffers is better for the performance but it gives lag
-                              when running e.g. 'tail -f' on the log-file. If
-                              you want to directly see what is happing, set this to e.g. 1.
-                              So when debugging: make it a small value, else set it to
-                              4096 or more.</para>
-			  <para>Default: <replaceable>4096</replaceable></para>
+                              The special value 0 selects line buffering.</para>
+			  <para>Default: <replaceable>0</replaceable></para>
 			</listitem>
 		  </varlistentry>
 
@@ -11099,12 +11071,8 @@
 			<term><option>log_buffer_size</option></term>
 			<listitem>
 			  <para>Buffer logging in what sized blocks.
-                              Bigger buffers is better for the performance but it gives lag
-                              when running e.g. 'tail -f' on the log-file. If
-                              you want to directly see what is happing, set this to e.g. 1.
-                              So when debugging: make it a small value, else set it to
-                              4096 or more.</para>
-			  <para>Default: <replaceable>4096</replaceable></para>
+                              The special value 0 selects line buffering.</para>
+			  <para>Default: <replaceable>0</replaceable></para>
 			</listitem>
 		  </varlistentry>
 

@@ -1175,7 +1175,7 @@ int main(int argc, char *argv[]) {
 		{ "log_file","-" },
 		{ "log_level","2", CONFIGSETTING_RELOADABLE },
 		{ "log_timestamp","1" },
-		{ "log_buffer_size",	"4096" },
+		{ "log_buffer_size", "0" },
 		{ "sslkey_file", "" },
 		{ "sslkey_pass", "", CONFIGSETTING_EXACT },
 		{ "max_threads", "5", CONFIGSETTING_RELOADABLE },
@@ -1278,7 +1278,7 @@ int main(int argc, char *argv[]) {
 #ifdef WIN32
 			g_lpLogger = new ECLogger_Eventlog(EC_LOGLEVEL_INFO, "ZarafaSpooler");
 #else
-			g_lpLogger = new ECLogger_File(EC_LOGLEVEL_INFO, 0, "-", false, 0); // create info logger without a timestamp to stderr
+			g_lpLogger = new ECLogger_File(EC_LOGLEVEL_INFO, 0, "-", false); // create info logger without a timestamp to stderr
 #endif
 			LogConfigErrors(g_lpConfig, g_lpLogger);
 			hr = E_FAIL;

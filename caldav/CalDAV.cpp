@@ -213,7 +213,7 @@ int main(int argc, char **argv) {
 #endif
 		{ "log_level", "3", CONFIGSETTING_RELOADABLE },
 		{ "log_timestamp", "1" },
-		{ "log_buffer_size", "4096" },
+		{ "log_buffer_size", "0" },
 #ifdef LINUX
         { "ssl_private_key_file", "/etc/zarafa/ical/privkey.pem" },
         { "ssl_certificate_file", "/etc/zarafa/ical/cert.pem" },
@@ -279,7 +279,7 @@ int main(int argc, char **argv) {
 #ifdef WIN32
 		g_lpLogger = new ECLogger_Eventlog(1, "ZarafaICal");
 #else
-		g_lpLogger = new ECLogger_File(1, 0, "-", false, 0);
+		g_lpLogger = new ECLogger_File(1, 0, "-", false);
 #endif
 		LogConfigErrors(g_lpConfig, g_lpLogger);
 		goto exit;

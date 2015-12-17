@@ -89,10 +89,10 @@ HRESULT ECSyncLog::GetLogger(ECLogger **lppLogger)
 				strPath += stringify(now);
 				strPath += ".txt.gz";
 
-				s_lpLogger = new ECLogger_File(lpSettings->SyncLogLevel(), 1, (char*)strPath.c_str(), true, 4096);
+				s_lpLogger = new ECLogger_File(lpSettings->SyncLogLevel(), 1, strPath.c_str(), true);
 			} else {
 				strPath += "synclog.txt";
-				s_lpLogger = new ECLogger_File(lpSettings->SyncLogLevel(), 1, (char*)strPath.c_str(), false, 4096);
+				s_lpLogger = new ECLogger_File(lpSettings->SyncLogLevel(), 1, strPath.c_str(), false);
 			}
 
 			s_lpLogger->Log(EC_LOGLEVEL_FATAL, "********************");

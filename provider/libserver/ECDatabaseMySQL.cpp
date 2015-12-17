@@ -1940,8 +1940,9 @@ ECRESULT ECDatabaseMySQL::UpdateDatabaseVersion(unsigned int ulDatabaseRevision)
 	string		strQuery;
 
 	// Insert version number
-	strQuery = "INSERT INTO versions (major, minor, revision, databaserevision, updatetime) VALUES(";
+	strQuery = "INSERT INTO versions (major, minor, micro, revision, databaserevision, updatetime) VALUES(";
 	strQuery += stringify(PROJECT_VERSION_MAJOR) + std::string(", ") + stringify(PROJECT_VERSION_MINOR) + std::string(", ");
+	strQuery += stringify(PROJECT_VERSION_MICRO) + std::string(", ");
 	strQuery += std::string("'") + std::string(PROJECT_SVN_REV_STR) +  std::string("', ") + stringify(ulDatabaseRevision) + ", FROM_UNIXTIME("+stringify(time(NULL))+") )";
 
 	er = DoInsert(strQuery);
