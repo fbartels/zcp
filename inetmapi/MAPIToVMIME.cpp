@@ -26,6 +26,7 @@
 #include <vmime/platforms/posix/posixHandler.hpp>
 #include <vmime/contentTypeField.hpp>
 #include <vmime/parsedMessageAttachment.hpp>
+#include <vmime/emptyContentHandler.hpp>
 
 // mapi
 #include <mapi.h>
@@ -451,7 +452,8 @@ HRESULT MAPIToVMIME::handleSingleAttachment(IMessage* lpMessage, LPSRow lpRow, v
         }
         	
 		try {
-			inputDataStream = vmime::create<inputStreamMAPIAdapter>(lpStream);	// add ref to lpStream
+			if (inputDataStream != NULL)
+				inputDataStream = vmime::create<inputStreamMAPIAdapter>(lpStream); // add ref to lpStream
 
 			// Set filename
 			szFilename = L"data.bin";
@@ -479,8 +481,11 @@ HRESULT MAPIToVMIME::handleSingleAttachment(IMessage* lpMessage, LPSRow lpRow, v
 				vmime::mapiTextPart& textPart = dynamic_cast<vmime::mapiTextPart&>(*lpVMMessageBuilder->getTextPart());
 				// had szFilename .. but how, on inline?
 				// @todo find out how Content-Disposition receives highchar filename... always utf-8?
-				textPart.addObject(vmime::create<vmime::streamContentHandler>(inputDataStream, 0), vmime::encoding("base64"), vmMIMEType, strContentId, string(), strContentLocation);
-			} else {
+				if (inputDataStream != NULL)
+					textPart.addObject(vmime::create<vmime::streamContentHandler>(inputDataStream, 0), vmime::encoding("base64"), vmMIMEType, strContentId, string(), strContentLocation);
+				else
+					textPart.addObject(vmime::create<vmime::emptyContentHandler>(), vmime::encoding("base64"), vmMIMEType, strContentId, std::string(), strContentLocation);
+			} else if (inputDataStream != NULL) {
 				vmMapiAttach = vmime::create<mapiAttachment>(vmime::create<vmime::streamContentHandler>(inputDataStream, 0),
 															 bSendBinary ? vmime::encoding("base64") : vmime::encoding("quoted-printable"),
 															 vmMIMEType, strContentId,
@@ -488,6 +493,12 @@ HRESULT MAPIToVMIME::handleSingleAttachment(IMessage* lpMessage, LPSRow lpRow, v
 
 				// add to message (copies pointer, not data)
 				lpVMMessageBuilder->appendAttachment(vmMapiAttach); 
+			} else {
+				vmMapiAttach = vmime::create<mapiAttachment>(vmime::create<vmime::emptyContentHandler>(),
+				               bSendBinary ? vmime::encoding("base64") : vmime::encoding("quoted-printable"),
+				               vmMIMEType, strContentId,
+				               vmime::word(m_converter.convert_to<std::string>(m_strCharset.c_str(), szFilename, rawsize(szFilename), CHARSET_WCHAR), m_vmCharset));
+				lpVMMessageBuilder->appendAttachment(vmMapiAttach);
 			}
 		}
 		catch (vmime::exception& e) {
