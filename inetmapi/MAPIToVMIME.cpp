@@ -452,7 +452,7 @@ HRESULT MAPIToVMIME::handleSingleAttachment(IMessage* lpMessage, LPSRow lpRow, v
         }
         	
 		try {
-			if (inputDataStream != NULL)
+			if (lpStream != NULL)
 				inputDataStream = vmime::create<inputStreamMAPIAdapter>(lpStream); // add ref to lpStream
 
 			// Set filename
