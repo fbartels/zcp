@@ -3404,6 +3404,7 @@ def daemonize(func, options=None, foreground=False, args=[], log=None, config=No
                 os.chown(h.baseFilename, uid, gid)
     if options and options.foreground:
         foreground = options.foreground
+        working_directory = os.getcwd()
     with daemon.DaemonContext(
             pidfile=pidfile,
             uid=uid,
