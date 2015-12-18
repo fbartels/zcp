@@ -217,8 +217,6 @@ class ECRecipient {
 public:
 	ECRecipient(std::wstring wstrName)
 	{
-		bResolved = false;
-
 		/* strRCPT much match recipient string from LMTP caller */
 		wstrRCPT = wstrName;
 		vwstrRecipients.push_back(wstrName);
@@ -252,7 +250,7 @@ public:
 			return this->bHasIMAP && !r.bHasIMAP;
 	}
 
-	BOOL bResolved;
+	ULONG ulResolveFlags;
 
 	/* Information from LMTP caller */
 	std::wstring wstrRCPT;
@@ -820,6 +818,8 @@ static HRESULT ResolveUsers(const DeliveryArgs *lpArgs,
 		goto exit;
 
 	for (iter = lRCPT->begin(), ulRCPT = 0; iter != lRCPT->end(); iter++, ulRCPT++) {
+		(*iter)->ulResolveFlags = lpFlagList->ulFlag[ulRCPT];
+
 		if (lpFlagList->ulFlag[ulRCPT] != MAPI_RESOLVED) {
 			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Failed to resolve recipient %ls", (*iter)->wstrRCPT.c_str());
 			continue;
@@ -902,8 +902,6 @@ static HRESULT ResolveUsers(const DeliveryArgs *lpArgs,
 
 		lpFeatureList = PpropFindProp(lpAdrList->aEntries[ulRCPT].rgPropVals, lpAdrList->aEntries[ulRCPT].cValues, PR_EC_ENABLED_FEATURES_W);
 		(*iter)->bHasIMAP = lpFeatureList && hasFeature(L"imap", lpFeatureList) == hrSuccess;
-
-		(*iter)->bResolved = true;
 	}
 
 exit:
@@ -931,15 +929,11 @@ static HRESULT ResolveUser(DeliveryArgs *lpArgs, IABContainer *lpAddrFolder,
 	/* Simple wrapper around ResolveUsers */
 	list.insert(lpRecip);
 	hr = ResolveUsers(lpArgs, lpAddrFolder, &list);
-	if (hr != hrSuccess) {
+	if (hr != hrSuccess)
 		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "ResolveUser(): ResolveUsers failed %x", hr);
-		goto exit;
-	}
-
-	if (!lpRecip->bResolved)
+	else if (lpRecip->ulResolveFlags != MAPI_RESOLVED)
 		hr = MAPI_E_NOT_FOUND;
 
-exit:
 	return hr;
 }
 
@@ -3356,8 +3350,13 @@ static void *HandlerLMTP(void *lpArg)
 					}
 				} else {
 					if (hr == MAPI_E_NOT_FOUND) {
-						g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Requested e-mail address '%s' does not resolve to a user.", strMailAddress.c_str());
-						lmtp.HrResponse("503 5.1.1 User does not exist");
+						if (lpRecipient->ulResolveFlags == MAPI_AMBIGUOUS) {
+							g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Requested e-mail address '%s' resolves to multiple users.", strMailAddress.c_str());
+							lmtp.HrResponse("503 5.1.4 Destination mailbox address ambiguous");
+						} else {
+							g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Requested e-mail address '%s' does not resolve to a user.", strMailAddress.c_str());
+							lmtp.HrResponse("503 5.1.1 User does not exist");
+						}
 					} else {
 						g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Failed to lookup email address, error: 0x%08X", hr);
 						lmtp.HrResponse("503 5.1.1 Connection error: "+stringify(hr,1));
