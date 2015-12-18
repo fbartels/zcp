@@ -3412,6 +3412,8 @@ def daemonize(func, options=None, foreground=False, args=[], log=None, config=No
             files_preserve=[h.stream for h in log.handlers if isinstance(h, logging.handlers.WatchedFileHandler)] if log else None,
             prevent_core=False,
             detach_process=not foreground,
+            stdout=sys.stdout,
+            stderr=sys.stderr,
         ):
         daemon_helper(func, service, log)
 
