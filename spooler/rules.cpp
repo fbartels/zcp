@@ -182,6 +182,8 @@ static HRESULT MungeForwardBody(LPMESSAGE lpMessage, LPMESSAGE lpOrigMessage)
 		strForwardText = L"From: ";
 		if (PROP_TYPE(ptrInfo[0].ulPropTag) != PT_ERROR)
 			strForwardText += ptrInfo[0].Value.lpszW;
+		else if (PROP_TYPE(ptrInfo[1].ulPropTag) != PT_ERROR)
+			strForwardText += ptrInfo[1].Value.lpszW;
 		
 		if (PROP_TYPE(ptrInfo[1].ulPropTag) != PT_ERROR) {
 			strForwardText += L" <";
@@ -251,6 +253,14 @@ static HRESULT MungeForwardBody(LPMESSAGE lpMessage, LPMESSAGE lpOrigMessage)
 				Util::HrTextToHtml(ptrInfo[0].Value.lpszW, strHTMLForwardText, ulCharset);
 			else if (PROP_TYPE(ptrInfo[1].ulPropTag) != PT_ERROR)
 				Util::HrTextToHtml(ptrInfo[1].Value.lpszW, strHTMLForwardText, ulCharset);
+
+			if (PROP_TYPE(ptrInfo[1].ulPropTag) != PT_ERROR) {
+				strHTMLForwardText += " &lt;<a href=\"mailto:";
+				Util::HrTextToHtml(ptrInfo[1].Value.lpszW, strHTMLForwardText, ulCharset);
+				strHTMLForwardText += "\">";
+				Util::HrTextToHtml(ptrInfo[1].Value.lpszW, strHTMLForwardText, ulCharset);
+				strHTMLForwardText += "</a>&gt;";
+			}
 
 			strHTMLForwardText += "<br><b>Sent:</b> ";
 			if (PROP_TYPE(ptrInfo[2].ulPropTag) != PT_ERROR) {
