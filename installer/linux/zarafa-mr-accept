@@ -467,6 +467,7 @@ function autoRespond($session, $store, $entryid, $capacity, $policy)
 
 forceUTF8(LC_CTYPE);
 forceUTF8(LC_MESSAGES);
+forceUTF8(LC_TIME);
 textdomain("zarafa");
 
 if(count($argv) != 3 && count($argv) != 4) {
