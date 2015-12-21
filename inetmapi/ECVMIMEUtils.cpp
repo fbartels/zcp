@@ -471,7 +471,7 @@ HRESULT ECVMIMESender::sendMail(LPADRBOOK lpAdrBook, LPMESSAGE lpMessage, vmime:
 		catch (vmime::exception & e) {
 			size_t permanentFails = 0;
 
-			// multiple invalid recipients (outlook doing, again, the wrong thing) can cause the opponent mail server to disconnect (eg postfix)
+			// multiple invalid recipients can cause the opponent mail server to disconnect (eg postfix)
 			// in that case; fail those recipients
 
 			std::vector<sFailedRecip> fails = mapiTransport->getRecipientErrorList();
