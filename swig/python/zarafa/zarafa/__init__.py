@@ -1656,8 +1656,8 @@ class Folder(object):
                 for occurrence in item.occurrences(start, end):
                     yield occurrence
 
-    def create_item(self, eml=None, ics=None, vcf=None, load=None, loads=None, **kwargs): # XXX associated
-        item = Item(self, eml=eml, ics=ics, vcf=vcf, load=load, loads=loads, create=True)
+    def create_item(self, eml=None, ics=None, vcf=None, load=None, loads=None, attachments=True, **kwargs): # XXX associated
+        item = Item(self, eml=eml, ics=ics, vcf=vcf, load=load, loads=loads, attachments=attachments, create=True)
         item.server = self.server
         for key, val in kwargs.items():
             setattr(item, key, val)
@@ -1906,7 +1906,7 @@ class Folder(object):
 class Item(object):
     """ Item """
 
-    def __init__(self, parent=None, eml=None, ics=None, vcf=None, load=None, loads=None, create=False, mapiobj=None):
+    def __init__(self, parent=None, eml=None, ics=None, vcf=None, load=None, loads=None, attachments=True, create=False, mapiobj=None):
         # TODO: self.folder fix this!
         self.emlfile = eml
         self._folder = None
@@ -1955,9 +1955,9 @@ class Item(object):
                 ])
 
             elif load is not None:
-                self.load(load)
+                self.load(load, attachments=attachments)
             elif loads is not None:
-                self.loads(loads)
+                self.loads(loads, attachments=attachments)
 
             else:
                 try:

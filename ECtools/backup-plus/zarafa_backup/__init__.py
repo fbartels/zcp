@@ -337,8 +337,7 @@ class Service(zarafa.Service):
                     else:
                         # actually restore item
                         self.log.debug('restoring item with sourcekey %s' % sourcekey2)
-                        item = folder.create_item()
-                        item.loads(zlib.decompress(db[sourcekey2]), attachments=not self.options.skip_attachments)
+                        item = folder.create_item(loads=zlib.decompress(db[sourcekey2]), attachments=not self.options.skip_attachments)
 
                         # store original sourcekey or it is lost
                         try:
