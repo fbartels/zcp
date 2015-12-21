@@ -381,8 +381,7 @@ HRESULT ECVMIMESender::sendMail(LPADRBOOK lpAdrBook, LPMESSAGE lpMessage, vmime:
 
 		// get expeditor for 'mail from:' smtp command
 		try {
-			const vmime::mailbox& mbox = *vmMessage->getHeader()->findField(vmime::fields::FROM)->
-				getValue().dynamicCast <const vmime::mailbox>();
+			const vmime::mailbox& mbox = *vmMessage->getHeader()->findField(vmime::fields::FROM)-> getValue().dynamicCast <const vmime::mailbox>();
 
 			expeditor = mbox;
 		}
@@ -469,10 +468,40 @@ HRESULT ECVMIMESender::sendMail(LPADRBOOK lpAdrBook, LPMESSAGE lpMessage, vmime:
 			hr = MAPI_W_CANCEL_MESSAGE;
 			goto exit;
 		} 
-		catch (vmime::exception &e) {
-			// special error, smtp server not respoding, so try later again
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "SMTP: %s. E-Mail will be tried again later.", e.what());
-			hr = MAPI_W_NO_SERVICE;
+		catch (vmime::exception & e) {
+			size_t permanentFails = 0;
+
+			// multiple invalid recipients (outlook doing, again, the wrong thing) can cause the opponent mail server to disconnect (eg postfix)
+			// in that case; fail those recipients
+
+			std::vector<sFailedRecip> fails = mapiTransport->getRecipientErrorList();
+
+			for(size_t i=0; i<fails.size(); i++) {
+				if (fails[i].ulSMTPcode == 513 || fails[i].strSMTPResponse == "5.1.3") { // address typ is incorrect, ZCP-13606
+					lstFailedRecipients.push_back(fails[i]);
+					permanentFails++;
+				}
+			}
+
+			if (permanentFails > 0) {
+				if (permanentFails == fails.size()) {
+					hr = MAPI_W_CANCEL_MESSAGE;
+
+					lpLogger->Log(EC_LOGLEVEL_ERROR, "SMTP: %s. E-Mail will be not be tried again: all recipients failed.", e.what());
+				}
+				else {
+					hr = MAPI_W_PARTIAL_COMPLETION;
+
+					lpLogger->Log(EC_LOGLEVEL_ERROR, "SMTP: %s. E-Mail will be tried again: some recipients failed.", e.what());
+				}
+			}
+			else {
+				// special error, smtp server not respoding, so try later again
+				hr = MAPI_W_NO_SERVICE;
+
+				lpLogger->Log(EC_LOGLEVEL_ERROR, "SMTP: %s. E-Mail will be tried again.", e.what());
+			}
+
 			goto exit;
 		}
 
