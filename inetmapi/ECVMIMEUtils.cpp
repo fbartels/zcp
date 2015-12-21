@@ -469,8 +469,8 @@ HRESULT ECVMIMESender::sendMail(LPADRBOOK lpAdrBook, LPMESSAGE lpMessage, vmime:
 			hr = MAPI_W_CANCEL_MESSAGE;
 			goto exit;
 		} 
-		catch (vmime::exception &e) {
-			// special error, smtp server not respoding, so try later again
+		catch (vmime::exception & e) {
+			// Special error: SMTP server not respoding, so try again later.
 			lpLogger->Log(EC_LOGLEVEL_ERROR, "SMTP: %s. E-Mail will be tried again later.", e.what());
 			hr = MAPI_W_NO_SERVICE;
 			goto exit;
