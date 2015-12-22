@@ -3,8 +3,8 @@ AM_CPPFLAGS = ${ZCPPFLAGS} $(DEBUGFLAGS) $(BOOST_CPPFLAGS) \
 	-I${top_srcdir}/provider/libserver \
 	-I${top_srcdir}/provider/common	-I${top_srcdir}/mapi4linux/include
 
-COMMON_PLUGIN_FILES = plugin.h ..//common/ZarafaUser.h
-COMMON_DBPLUGIN_FILES = DBBase.h DBBase.cpp ../libserver/ECDatabase.h 
+COMMON_PLUGIN_FILES = plugin.h
+COMMON_DBPLUGIN_FILES = DBBase.h DBBase.cpp
 
 
 pkglib_LTLIBRARIES = 
