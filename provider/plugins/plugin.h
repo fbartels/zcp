@@ -49,7 +49,7 @@
 //#define EXCEPTION_DEBUG
 
 #include <zarafa/ECDefs.h>
-#include "ZarafaUser.h"
+#include <zarafa/ZarafaUser.h>
 
 #include <list>
 #include <map>

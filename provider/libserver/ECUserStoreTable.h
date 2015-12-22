@@ -46,7 +46,7 @@
 
 /* #include "ECStoreObjectTable.h" */
 #include "ECGenericObjectTable.h"
-#include "ZarafaUser.h"
+#include <zarafa/ZarafaUser.h>
 #include <map>
 
 class ECSession;

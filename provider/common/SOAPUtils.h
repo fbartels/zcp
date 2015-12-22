@@ -47,7 +47,7 @@
 #include "soapH.h"
 #include "SOAPAlloc.h"
 #include <zarafa/ZarafaCode.h>
-#include "ZarafaUser.h"
+#include <zarafa/ZarafaUser.h>
 #include <zarafa/ustringutil.h>
 
 #include <list>
