@@ -945,6 +945,8 @@ Looks at command-line to see if another server address or other related options 
         """ Return :class:`store <Store>` with given GUID; raise exception if not found """
 
         if guid == 'public':
+            if not self.public_store:
+                raise ZarafaNotFoundException("no public store")
             return self.public_store
         else:
             return Store(self, self._store(guid))
@@ -968,6 +970,8 @@ Looks at command-line to see if another server address or other related options 
         if parse and getattr(self.options, 'stores', None):
             for guid in self.options.stores:
                 if guid == 'public': # XXX check self.options.companies?
+                    if not self.public_store:
+                        raise ZarafaNotFoundException("no public store")
                     yield self.public_store
                 else:
                     yield Store(self, self._store(guid))
@@ -1120,6 +1124,8 @@ class Company(object):
 
     def store(self, guid):
         if guid == 'public':
+            if not self.public_store:
+                raise ZarafaNotFoundException("no public store for company '%s'" % self.name)
             return self.public_store
         else:
             return self.server.store(guid)
