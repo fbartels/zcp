@@ -50,7 +50,7 @@
 #include <zarafa/stringutil.h>
 #include <zarafa/CommonUtil.h>
 #include <zarafa/ECChannel.h>
-#include "ECIConv.h"
+#include <zarafa/ECIConv.h>
 #include <cstdio>
 #include <cstdarg>
 #include <cctype>

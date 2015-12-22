@@ -56,7 +56,7 @@
 #include "ECSessionManager.h"
 #include "ECPluginFactory.h"
 #include "ECSecurity.h"
-#include "ECIConv.h"
+#include <zarafa/ECIConv.h>
 #include "SymmetricCrypt.h"
 #include "ECPamAuth.h"
 #include "ECKrbAuth.h"

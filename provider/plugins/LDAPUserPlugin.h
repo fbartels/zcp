@@ -47,7 +47,7 @@
 
 #include <stdexcept>
 #include <string>
-#include <ECIConv.h>
+#include <zarafa/ECIConv.h>
 
 #include <set>
 
