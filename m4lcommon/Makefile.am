@@ -30,7 +30,6 @@ noinst_HEADERS = \
 	IECImportHierarchyChanges.h \
 	IECMultiStoreTable.h \
 	IECSpooler.h \
-	IECStatsCollector.h \
 	IECTestProtocol.h \
 	IMAPIOffline.h \
 	MAPIConsoleTable.h \

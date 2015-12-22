@@ -49,7 +49,7 @@
 #include <map>
 #include <pthread.h>
 
-#include "IECStatsCollector.h"
+#include <zarafa/IECStatsCollector.h>
 
 typedef union _statdata {
 	float f;

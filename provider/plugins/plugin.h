@@ -60,7 +60,7 @@
 #include <memory>
 #include <pthread.h>
 #include <zarafa/ECPluginSharedData.h>
-#include "IECStatsCollector.h"
+#include <zarafa/IECStatsCollector.h>
 
 /**
  * @defgroup userplugin Server user plugin
