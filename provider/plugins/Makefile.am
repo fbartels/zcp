@@ -30,6 +30,7 @@ ldapplugin_la_LDFLAGS = ${AM_LDFLAGS} -module -avoid-version
 ldapplugin_la_LIBADD = \
 	${top_builddir}/common/libzcp_common_util.la \
 	../libserver/libzarafa_server.la ${CRYPTO_LIBS} ${LDAP_LIBS}
+dist_pkgdata_DATA = ${ldapplugin_la_SOURCES}
 
 
 endif
