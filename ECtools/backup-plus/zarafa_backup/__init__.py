@@ -264,7 +264,7 @@ class Service(zarafa.Service):
                 companyname = company.name if company.name != 'Default' else ''
                 for user in company.users():
                     jobs.append((user.store, user.name, os.path.join(output_dir, companyname, user.name)))
-                if not self.options.skip_public:
+                if company.public_store and not self.options.skip_public:
                     target = 'public@'+companyname if companyname else 'public'
                     jobs.append((company.public_store, None, os.path.join(output_dir, companyname, target)))
 
