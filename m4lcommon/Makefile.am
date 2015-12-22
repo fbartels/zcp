@@ -34,7 +34,6 @@ noinst_HEADERS = \
 	IMAPIOffline.h \
 	MAPIConsoleTable.h \
 	MAPINotifSink.h \
-	auto_free.h \
 	favoritesutil.h \
 	mapicontact.h
 # These were split off libcommon_mapi

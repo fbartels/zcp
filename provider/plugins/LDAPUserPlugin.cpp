@@ -64,7 +64,7 @@
 #include <zarafa/ECPluginSharedData.h>
 #include <zarafa/stringutil.h>
 
-#include <auto_free.h>
+#include <zarafa/auto_free.h>
 
 using namespace std;
 
