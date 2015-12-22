@@ -59,7 +59,7 @@
 #include <sstream>
 #include <memory>
 #include <pthread.h>
-#include "ECPluginSharedData.h"
+#include <zarafa/ECPluginSharedData.h>
 #include "IECStatsCollector.h"
 
 /**

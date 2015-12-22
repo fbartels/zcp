@@ -68,7 +68,7 @@
 #include <zarafa/ECConfig.h>
 #include <zarafa/ECDefs.h>
 #include <zarafa/ECLogger.h>
-#include "ECPluginSharedData.h"
+#include <zarafa/ECPluginSharedData.h>
 #include <zarafa/stringutil.h>
 
 using namespace std;

@@ -16,6 +16,8 @@ AM_CPPFLAGS = ${ZCPPFLAGS} ${DEBUGFLAGS} ${BOOST_CPPFLAGS} \
 # provider/zarafa/Makefile.am. Probably such that other components including
 # libzarafa_server.la (provider/plugins/) _don't_ get tcmalloc.
 
+pkginclude_HEADERS = include/zarafa/ECPluginSharedData.h
+
 lib_LTLIBRARIES = libzarafa_server.la
 #noinst_DATA = libserver.ldd
 
