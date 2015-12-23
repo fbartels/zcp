@@ -42,7 +42,7 @@
  */
 
 #include <zarafa/platform.h>
-#include "ECPluginSharedData.h"
+#include <zarafa/ECPluginSharedData.h>
 
 ECPluginSharedData *ECPluginSharedData::m_lpSingleton = NULL;
 pthread_mutex_t ECPluginSharedData::m_SingletonLock = PTHREAD_MUTEX_INITIALIZER;

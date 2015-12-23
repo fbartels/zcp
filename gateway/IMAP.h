@@ -51,7 +51,7 @@
 #include <list>
 #include <set>
 
-#include <ECIConv.h>
+#include <zarafa/ECIConv.h>
 #include <zarafa/ECChannel.h>
 
 using namespace std;

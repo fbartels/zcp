@@ -48,7 +48,7 @@
 
 #include <zarafa/ECConfig.h>
 #include <zarafa/ECLogger.h>
-#include <IECStatsCollector.h>
+#include <zarafa/IECStatsCollector.h>
 
 /**
  * Shared plugin data

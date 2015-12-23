@@ -49,7 +49,7 @@
 #include <pthread.h>
 
 #include <zarafa/ZarafaCode.h>
-#include "ZarafaUser.h"
+#include <zarafa/ZarafaUser.h>
 #include <zarafa/ECConfig.h>
 #include "ECSession.h"
 #include <zarafa/ECLogger.h>

@@ -44,7 +44,7 @@
 #include <zarafa/platform.h>
 
 #include <zarafa/stringutil.h>
-#include "ZarafaUser.h"
+#include <zarafa/ZarafaUser.h>
 
 #include <sstream>
 

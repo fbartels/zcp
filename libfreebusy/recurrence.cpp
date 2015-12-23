@@ -47,7 +47,7 @@
 #include <cmath>
 #include <mapicode.h>
 #include <zarafa/stringutil.h>
-#include "ECIConv.h"
+#include <zarafa/ECIConv.h>
 #include <ctime>
 #include <zarafa/CommonUtil.h>
 #include <mapiutil.h>

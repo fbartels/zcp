@@ -48,7 +48,7 @@
 #include <zarafa/ZarafaCode.h>
 #include <zarafa/ECConfig.h>
 #include <zarafa/ECLogger.h>
-#include "ECPluginSharedData.h"
+#include <zarafa/ECPluginSharedData.h>
 #include "plugin.h"
 #include <pthread.h>
 

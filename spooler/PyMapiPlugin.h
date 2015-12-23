@@ -50,7 +50,7 @@
 #include "PythonSWIGRuntime.h"
 #include <edkmdb.h>
 
-#include <auto_free.h>
+#include <zarafa/auto_free.h>
 
 inline void my_DECREF(PyObject *obj) {
 	Py_DECREF(obj);

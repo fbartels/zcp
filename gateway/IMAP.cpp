@@ -59,7 +59,7 @@
 #include <zarafa/ECDefs.h>
 #include <zarafa/CommonUtil.h>
 #include <zarafa/ECTags.h>
-#include <ECIConv.h>
+#include <zarafa/ECIConv.h>
 #include <inetmapi/inetmapi.h>
 #include <zarafa/mapiext.h>
 #include <vector>

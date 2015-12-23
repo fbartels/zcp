@@ -2,7 +2,7 @@
 
 nobase_pkginclude_HEADERS = \
 	ECABEntryID.h ECChannel.h ECConfig.h ECDebug.h ECDebugPrint.h \
-	ECGetText.h ECGuid.h ECKeyTable.h ECLogger.h ECScheduler.h \
+	ECGetText.h ECGuid.h ECIConv.h ECKeyTable.h ECLogger.h ECScheduler.h \
 	ECThreadPool.h ECUnknown.h MAPIErrors.h \
 	Trace.h UnixUtil.h ZarafaCode.h \
 	base64.h codepage.h ecversion.h md5.h \

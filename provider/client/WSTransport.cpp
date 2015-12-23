@@ -57,7 +57,7 @@
 
 #include <fstream>
 
-#include "ECIConv.h"
+#include <zarafa/ECIConv.h>
 #include "WSTransport.h"
 #include "ProviderUtil.h"
 #include "SymmetricCrypt.h"

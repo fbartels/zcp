@@ -79,7 +79,7 @@
 #include "SOAPUtils.h"
 #include "ZarafaICS.h"
 #include "ECICS.h"
-#include "ECIConv.h"
+#include <zarafa/ECIConv.h>
 #include "ZarafaVersions.h"
 
 #include "pthreadutil.h"

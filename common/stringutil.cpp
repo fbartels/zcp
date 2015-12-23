@@ -46,7 +46,7 @@
 #include <zarafa/charset/convert.h>
 #include <sstream>
 
-#include "ECIConv.h"
+#include <zarafa/ECIConv.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
