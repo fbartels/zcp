@@ -93,8 +93,9 @@ static HRESULT GetPluginObject(ECLogger *lpLogger,
         goto exit;
     }
 
-	if (lpPyMapiPluginFactory->CreatePlugin("SpoolerPluginManager", &lpPyMapiPlugin) != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to initialize plugin system, please check your configuration.");
+	hr = lpPyMapiPluginFactory->CreatePlugin("SpoolerPluginManager", &lpPyMapiPlugin);
+	if (hr != hrSuccess) {
+		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to initialize plugin system, please check your configuration (%x).", hr);
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
@@ -236,7 +237,7 @@ static HRESULT ExpandRecipientsRecursive(LPADRBOOK lpAddrBook,
 
 			hr = lpMessage->ModifyRecipients(MODRECIP_ADD, (LPADRLIST)&sRowSMTProwSet);
 			if (hr != hrSuccess) {
-				g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to add e-mail address of %ls from group", lpEmailAddress->Value.lpszW);
+				g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to add e-mail address of %ls from group (%x)", lpEmailAddress->Value.lpszW, hr);
 				continue;
 			}
 		} else {
@@ -295,7 +296,7 @@ remove_group:
 
 			hr = lpMessage->ModifyRecipients(MODRECIP_REMOVE, (LPADRLIST)lpsRowSet);
 			if (hr != hrSuccess) {
-				g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to remove group %ls from recipient list.", lpDisplayName->Value.lpszW);
+				g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to remove group %ls from recipient list (%x).", lpDisplayName->Value.lpszW, hr);
 				continue;
 			}
 		}
@@ -546,13 +547,13 @@ static HRESULT RewriteRecipients(LPMAPISESSION lpMAPISession,
 
 				hr = lpMAPISession->OpenEntry(lpContabEntryID->cbeid, (LPENTRYID)lpContabEntryID->abeid, NULL, 0, &ulObjType, (LPUNKNOWN*)&lpFaxMailuser);
 				if (hr != hrSuccess) {
-					g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to convert FAX recipient, using %ls", lpEmailAddress->Value.lpszW);
+					g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to convert FAX recipient, using %ls (%x)", lpEmailAddress->Value.lpszW, hr);
 					goto nextfax;
 				}
 
 				hr = lpFaxMailuser->GetProps((LPSPropTagArray)&sptaFaxNumbers, 0, &cValues, &lpFaxNumbers);
 				if (FAILED(hr)) {
-					g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to convert FAX recipient, using %ls", lpEmailAddress->Value.lpszW);
+					g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to convert FAX recipient, using %ls (%x)", lpEmailAddress->Value.lpszW, hr);
 					goto nextfax;
 				}
 
@@ -581,7 +582,7 @@ static HRESULT RewriteRecipients(LPMAPISESSION lpMAPISession,
 
 			hr = lpMessage->ModifyRecipients(MODRECIP_MODIFY, (LPADRLIST)lpRowSet);
 			if (hr != hrSuccess) {
-				g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to set new FAX mail address for '%ls' to '%s'", wstrOldFaxMail.c_str(), strFaxMail.c_str());
+				g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to set new FAX mail address for '%ls' to '%s' (%x)", wstrOldFaxMail.c_str(), strFaxMail.c_str(), hr);
 				goto nextfax;
 			}
 
@@ -681,7 +682,7 @@ static HRESULT UniqueRecipients(IMessage *lpMessage)
 		if (strEmail == lpEmailAddress->Value.lpszA && ulRecipType == lpRecipType->Value.ul) {
 			hr = lpMessage->ModifyRecipients(MODRECIP_REMOVE, (LPADRLIST)lpRowSet);
 			if (hr != hrSuccess)
-				g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Failed to remove duplicate entry");
+				g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Failed to remove duplicate entry (%x)", hr);
 		} else {
 			strEmail = string(lpEmailAddress->Value.lpszA);
 			ulRecipType = lpRecipType->Value.ul;
@@ -759,7 +760,7 @@ static HRESULT RewriteQuotedRecipients(IMessage *lpMessage)
             hr = lpMessage->ModifyRecipients(MODRECIP_MODIFY, (LPADRLIST)lpRowSet);
 
 			if (hr != hrSuccess) {
-				g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Failed to rewrite quoted recipient");
+				g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Failed to rewrite quoted recipient (%x)", hr);
                 goto exit;
             }
         }
@@ -1432,13 +1433,13 @@ static HRESULT ContactToZarafa(IMsgStore *lpUserStore, LPADRBOOK lpAddrBook,
 
 	hr = MAPIAllocateBuffer(sizeof(MAPINAMEID) * 3, (void**)&lpNames);
 	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "No memory for named ids from contact");
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "No memory for named ids from contact (%x)", hr);
 		goto exit;
 	}
 
 	hr = MAPIAllocateBuffer(sizeof(LPMAPINAMEID) * 3, (void**)&lppNames);
 	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "No memory for named ids from contact");
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "No memory for named ids from contact (%x)", hr);
 		goto exit;
 	}
 
@@ -1480,7 +1481,7 @@ static HRESULT ContactToZarafa(IMsgStore *lpUserStore, LPADRBOOK lpAddrBook,
 
 	hr = MAPIAllocateBuffer(lpEntryIds[lpContabEntryID->email_offset].Value.bin.cb, (void**)lppZarafaEID);
 	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "No memory for contact eid");
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "No memory for contact eid (%x)", hr);
 		goto exit;
 	}
 
@@ -1597,7 +1598,7 @@ static HRESULT HrFindUserInGroup(LPADRBOOK lpAdrBook, ULONG ulOwnerCB,
 
 	if (level > 10) {
 		hr = MAPI_E_TOO_COMPLEX;
-		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "HrFindUserInGroup(): level too big %d %x", level, hr);
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "HrFindUserInGroup(): level too big %d (%x)", level, hr);
 		goto exit;
 	}
 
@@ -1694,21 +1695,23 @@ static HRESULT HrOpenRepresentStore(IAddrBook *lpAddrBook,
 	LPENTRYID lpRepStoreEID = NULL;
 	LPMDB lpRepStore = NULL;
 
-	if (lpAddrBook->OpenEntry(ulRepresentCB, lpRepresentEID, NULL, 0, &ulObjType, (LPUNKNOWN*)&lpRepresenting) != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_INFO, "Unable to open representing user in addressbook");
+	hr = lpAddrBook->OpenEntry(ulRepresentCB, lpRepresentEID, NULL, 0, &ulObjType, (LPUNKNOWN *)&lpRepresenting);
+	if (hr != hrSuccess) {
+		g_lpLogger->Log(EC_LOGLEVEL_INFO, "Unable to open representing user in addressbook (%x)", hr);
 		hr = MAPI_E_NOT_FOUND;
 		goto exit;
 	}
 
-	if (HrGetOneProp(lpRepresenting, PR_ACCOUNT, &lpRepAccount) != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_INFO, "Unable to find account name for representing user");
+	hr = HrGetOneProp(lpRepresenting, PR_ACCOUNT, &lpRepAccount);
+	if (hr != hrSuccess) {
+		g_lpLogger->Log(EC_LOGLEVEL_INFO, "Unable to find account name for representing user (%x)", hr);
 		hr = MAPI_E_NOT_FOUND;
 		goto exit;
 	}
 
 	hr = lpUserStore->QueryInterface(IID_IExchangeManageStore, (void **)&lpExchangeManageStore);
 	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_INFO, "IExchangeManageStore interface not found");
+		g_lpLogger->Log(EC_LOGLEVEL_INFO, "IExchangeManageStore interface not found (%x)", hr);
 		goto exit;
 	}
 
@@ -1776,7 +1779,7 @@ static HRESULT HrCheckAllowedEntryIDArray(const char *szFunc,
 		} else if (ulObjType == MAPI_MAILUSER) {
 			hr = lpAddrBook->CompareEntryIDs(ulOwnerCB, lpOwnerEID, lpEntryIDs[i].cb, (LPENTRYID)lpEntryIDs[i].lpb, 0, &ulCmpRes);
 		} else {
-			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Invalid object %d in %s list of user '%ls'", ulObjType, szFunc, lpszMailer);
+			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Invalid object %d in %s list of user '%ls' (%x)", ulObjType, szFunc, lpszMailer, hr);
 			continue;
 		}
 
@@ -2279,7 +2282,7 @@ static HRESULT ProcessMessage(IMAPISession *lpAdminSession,
 	// open the message we need to send
 	hr = lpUserStore->OpenEntry(cbMsgEntryId, (LPENTRYID)lpMsgEntryId, &IID_IMessage, MAPI_BEST_ACCESS, &ulObjType, (LPUNKNOWN*)&lpMessage);
 	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Could not open message in store from user %ls", lpUser->lpszUsername);
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Could not open message in store from user %ls (%x)", lpUser->lpszUsername, hr);
 		goto exit;
 	}
 
@@ -2348,8 +2351,9 @@ static HRESULT ProcessMessage(IMAPISession *lpAdminSession,
 		sPropSender[3].Value.bin.cb = lpUser->sUserId.cb;
 		sPropSender[3].Value.bin.lpb = lpUser->sUserId.lpb;
 
-		if (lpMessage->SetProps(4, sPropSender, NULL) != hrSuccess) {
-			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to set sender id for message");
+		HRESULT hr2 = lpMessage->SetProps(4, sPropSender, NULL);
+		if (hr2 != hrSuccess) {
+			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to set sender id for message (%x)", hr2);
 			goto exit;
 		}
 	} else {
@@ -2405,12 +2409,12 @@ static HRESULT ProcessMessage(IMAPISession *lpAdminSession,
 						goto exit;
 
 					if (!bAllowSendAs) {
-
 						g_lpLogger->Log(EC_LOGLEVEL_WARNING, "E-mail for user %ls may not be sent, notifying user", lpUser->lpszUsername);
 
-						if (SendUndeliverable(lpAddrBook, lpMailer, lpUserStore, lpUserAdmin, lpMessage) != hrSuccess) {
-							g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create undeliverable message for user %ls", lpUser->lpszUsername);
-						}
+						HRESULT hr2 = SendUndeliverable(lpAddrBook, lpMailer, lpUserStore, lpUserAdmin, lpMessage);
+						if (hr2 != hrSuccess)
+							g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create undeliverable message for user %ls (%x)", lpUser->lpszUsername, hr2);
+
 						// note: hr == hrSuccess, parent process will not send the undeliverable too
 						goto exit;
 					}
@@ -2437,13 +2441,13 @@ static HRESULT ProcessMessage(IMAPISession *lpAdminSession,
 
 	hr = lpMessage->SetProps(4, sPropSender, NULL);
 	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to update message with sender");
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to update message with sender (%x)", hr);
 		goto exit;
 	}
 
 	hr = lpMessage->SaveChanges(KEEP_OPEN_READWRITE);
 	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to save message before sending");
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to save message before sending (%x)", hr);
 		goto exit;
 	}
 
@@ -2458,13 +2462,13 @@ static HRESULT ProcessMessage(IMAPISession *lpAdminSession,
 		// move PR_REPRESENTING to PR_SENDER_NAME
 		hr = lpMessage->GetProps((LPSPropTagArray)&sptaMoveReprProps, 0, &cValuesMoveProps, &lpMoveReprProps);
 		if (FAILED(hr)) {
-			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to find sender information");
+			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to find sender information (%x)", hr);
 			goto exit;
 		}
 
 		hr = lpMessage->DeleteProps((LPSPropTagArray)&sptaMoveReprProps, NULL);
 		if (FAILED(hr)) {
-			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to remove sender information");
+			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to remove sender information (%x)", hr);
 			goto exit;
 		}
 
@@ -2476,7 +2480,7 @@ static HRESULT ProcessMessage(IMAPISession *lpAdminSession,
 
 		hr = lpMessage->SetProps(5, lpMoveReprProps, NULL);
 		if (FAILED(hr)) {
-			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to update sender information");
+			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to update sender information (%x)", hr);
 			goto exit;
 		}
 
@@ -2501,12 +2505,12 @@ static HRESULT ProcessMessage(IMAPISession *lpAdminSession,
 		// Expand recipients with ADDRTYPE=ZARAFA to multiple ADDRTYPE=SMTP recipients
 		hr = ExpandRecipients(lpAddrBook, lpMessage);
 		if(hr != hrSuccess)
-			g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to expand message recipient groups");
+			g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to expand message recipient groups (%x)", hr);
 	}
 
 	hr = RewriteRecipients(lpUserSession, lpMessage);
 	if (hr != hrSuccess)
-		g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to rewrite recipients");
+		g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to rewrite recipients (%x)", hr);
 
 	if (sopt.always_expand_distr_list) {
 		// Only touch recips if we're expanding groups; the rationale is here that the user
@@ -2515,7 +2519,7 @@ static HRESULT ProcessMessage(IMAPISession *lpAdminSession,
 		// later.
 		hr = UniqueRecipients(lpMessage);
 		if (hr != hrSuccess)
-			g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to remove duplicate recipients");
+			g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to remove duplicate recipients (%x)", hr);
 	}
 
 	RewriteQuotedRecipients(lpMessage);
@@ -2528,7 +2532,7 @@ static HRESULT ProcessMessage(IMAPISession *lpAdminSession,
 		hr = MAPI_E_WAIT;
 		goto exit;
 	} else if (ulResult == MP_FAILED) {
-		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Plugin error, hook gives a failed error.");
+		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Plugin error, hook gives a failed error (%x).", ulResult);
 		hr = MAPI_E_CANCEL;
 		goto exit;
 	}
@@ -2560,10 +2564,12 @@ static HRESULT ProcessMessage(IMAPISession *lpAdminSession,
 		g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to connect to SMTP server, retrying mail for user %ls later", lpUser->lpszUsername);
 		goto exit;
 	} else if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_WARNING, "E-mail for user %ls could not be sent, notifying user", lpUser->lpszUsername);
-		if (SendUndeliverable(lpAddrBook, lpMailer, lpUserStore, lpUserAdmin, lpMessage) != hrSuccess) {
-			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create undeliverable message for user %ls", lpUser->lpszUsername);
-		}
+		g_lpLogger->Log(EC_LOGLEVEL_WARNING, "E-mail for user %ls could not be sent, notifying user (%x)", lpUser->lpszUsername, hr);
+
+		hr = SendUndeliverable(lpAddrBook, lpMailer, lpUserStore, lpUserAdmin, lpMessage);
+		if (hr != hrSuccess)
+			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create undeliverable message for user %ls (%x)", lpUser->lpszUsername, hr);
+
 		// we set hr to success, so the parent process does not create the undeliverable thing again
 		hr = hrSuccess;
 		goto exit;
@@ -2573,8 +2579,10 @@ static HRESULT ProcessMessage(IMAPISession *lpAdminSession,
 
 	// If we have a repsenting message, save that now in the sent-items of that user
 	if (lpRepMessage) {
-		if (lpRepMessage->SaveChanges(0) != hrSuccess)
-			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Representee's mail copy could not be saved: error 0x%08X", hr);
+		HRESULT hr2 = lpRepMessage->SaveChanges(0);
+
+		if (hr2 != hrSuccess)
+			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Representee's mail copy could not be saved: error 0x%08X", hr2);
 	}
 
 exit:
@@ -2690,14 +2698,14 @@ HRESULT ProcessMessageForked(const wchar_t *szUsername, const char *szSMTP,
 
 	hr = HrGetOneProp(lpUserStore, PR_EC_OBJECT, &lpsProp);
 	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to get Zarafa internal object");
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to get Zarafa internal object (%x)", hr);
 		goto exit;
 	}
 
 	// NOTE: object is placed in Value.lpszA, not Value.x
 	hr = ((IECUnknown*)lpsProp->Value.lpszA)->QueryInterface(IID_IECServiceAdmin, (void **)&lpServiceAdmin);
 	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "ServiceAdmin interface not supported");
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "ServiceAdmin interface not supported (%x)", hr);
 		goto exit;
 	}
 

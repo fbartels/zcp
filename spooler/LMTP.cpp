@@ -135,7 +135,7 @@ HRESULT LMTP::HrResponse(const string &strResponse)
 
 	hr = m_lpChannel->HrWriteLine(strResponse);
 	if (hr != hrSuccess)
-		m_lpLogger->Log(EC_LOGLEVEL_ERROR, "LMTP write error");
+		m_lpLogger->Log(EC_LOGLEVEL_ERROR, "LMTP write error (%x)", hr);
 
 	return hr;
 }
@@ -192,16 +192,14 @@ HRESULT LMTP::HrCommandMAILFROM(const string &strFrom, std::string *const strAdd
  */
 HRESULT LMTP::HrCommandRCPTTO(const string &strTo, string *strUnresolved)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = HrParseAddress(strTo, strUnresolved);
+	HRESULT hr = HrParseAddress(strTo, strUnresolved);
 	
 	if (hr == hrSuccess) {
-		if(m_lpLogger->Log(EC_LOGLEVEL_DEBUG))
-		    m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "Resolved command '%s' to recipient address '%s'", strTo.c_str(), strUnresolved->c_str());
-    } else {
-	    m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Invalid recipient address in command '%s'", strTo.c_str());
-    }
+		if (m_lpLogger->Log(EC_LOGLEVEL_DEBUG))
+			m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "Resolved command '%s' to recipient address '%s'", strTo.c_str(), strUnresolved->c_str());
+	} else {
+		m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Invalid recipient address in command '%s' (%x)", strTo.c_str(), hr);
+	}
 	
 	return hr;
 }
@@ -224,7 +222,7 @@ HRESULT LMTP::HrCommandDATA(FILE *tmp)
 
 	hr = HrResponse("354 2.1.5 Start mail input; end with <CRLF>.<CRLF>");
 	if (hr != hrSuccess) {
-		m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Error during DATA communication with client.");
+		m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Error during DATA communication with client (%x).", hr);
 		goto exit;
 	}
 
@@ -232,7 +230,7 @@ HRESULT LMTP::HrCommandDATA(FILE *tmp)
 	while (1) {
 		hr = m_lpChannel->HrReadLine(&inBuffer);
 		if (hr != hrSuccess) {
-			m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Error during DATA communication with client.");
+			m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Error during DATA communication with client (%x).", hr);
 			goto exit;
 		}
 

@@ -436,7 +436,7 @@ static HRESULT GetErrorObjects(const SendData &sSendData,
 
 		hr = ((IECUnknown*)lpsProp->Value.lpszA)->QueryInterface(IID_IECServiceAdmin, (void **)&lpServiceAdmin);
 		if (hr != hrSuccess) {
-			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "ServiceAdmin interface not supported");
+			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "ServiceAdmin interface not supported (%x)", hr);
 			goto exit;
 		}
 
@@ -561,7 +561,7 @@ static HRESULT CleanFinishedMessages(IMAPISession *lpAdminSession,
 				// TODO: if failed, and we have the lpUserStore, create message?
 			}
 			if (hr != hrSuccess)
-				g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Failed to create error message for user %ls", sSendData.strUsername.c_str());
+				g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Failed to create error message for user %ls (%x)", sSendData.strUsername.c_str(), hr);
 
 			// remove mail from queue
 			hr = lpSpooler->DeleteFromMasterOutgoingTable(sSendData.cbMessageEntryId, (LPENTRYID)sSendData.lpMessageEntryId, sSendData.ulFlags);
@@ -573,7 +573,7 @@ static HRESULT CleanFinishedMessages(IMAPISession *lpAdminSession,
 				hr = DoSentMail(lpAdminSession, lpUserStore, 0, lpMessage);
 				lpMessage = NULL;
 				if (hr != hrSuccess)
-					g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to move sent mail to sent-items folder");
+					g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to move sent mail to sent-items folder (%x)", hr);
 			}
 
 			if (lpUserStore) {
@@ -636,7 +636,7 @@ static HRESULT ProcessAllEntries(IMAPISession *lpAdminSession,
 
 	hr = lpTable->GetRowCount(0, &ulRowCount);
 	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to get outgoing queue count");
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to get outgoing queue count (%x)", hr);
 		goto exit;
 	}
 
@@ -773,13 +773,13 @@ static HRESULT GetAdminSpooler(IMAPISession *lpAdminSession,
 
 	hr = HrGetOneProp(lpMDB, PR_EC_OBJECT, &lpsProp);
 	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to get Zarafa internal object");
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to get Zarafa internal object (%x)", hr);
 		goto exit;
 	}
 
 	hr = ((IECUnknown *)lpsProp->Value.lpszA)->QueryInterface(IID_IECSpooler, (void **)&lpSpooler);
 	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Spooler interface not supported");
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Spooler interface not supported (%x)", hr);
 		goto exit;
 	}
 
@@ -851,26 +851,26 @@ static HRESULT ProcessQueue(const char *szSMTP, int ulPort, const char *szPath)
 	// Request the master outgoing table
 	hr = lpSpooler->GetMasterOutgoingTable(0, &lpTable);
 	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Master outgoing queue not available");
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Master outgoing queue not available (%x)", hr);
 		goto exit;
 	}
 
 	hr = lpTable->SetColumns((LPSPropTagArray)&sOutgoingCols, 0);
 	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to setColumns() on OutgoingQueue");
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to setColumns() on OutgoingQueue (%x)", hr);
 		goto exit;
 	}
 	
 	// Sort by ascending hierarchyid: first in, first out queue
 	hr = lpTable->SortTable(&sSort, 0);
 	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to SortTable() on OutgoingQueue");
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to SortTable() on OutgoingQueue (%x)", hr);
 		goto exit;
 	}
 
 	hr = HrAllocAdviseSink(AdviseCallback, NULL, &lpAdviseSink);	
 	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to allocate memory for advise sink");
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to allocate memory for advise sink (%x)", hr);
 		goto exit;
 	}
 

@@ -981,12 +981,14 @@ HRESULT HrProcessRules(const std::string &recip, PyMapiPlugin *pyMapiPlugin,
 										  lpActions->lpAction[n].actMoveCopy.lpFldEntryId, &IID_IMAPIFolder, MAPI_MODIFY, &ulObjType,
 										  (IUnknown**)&lpDestFolder);
 				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_INFO, (std::string)"Rule "+strRule+": Unable to open folder through session, trying through store");
+					std::string msg = std::string("Rule ") + strRule + ": Unable to open folder through session, trying through store (%x)";
+					lpLogger->Log(EC_LOGLEVEL_INFO, msg.c_str(), hr);
 
 					hr = lpSession->OpenMsgStore(0, lpActions->lpAction[n].actMoveCopy.cbStoreEntryId,
 													lpActions->lpAction[n].actMoveCopy.lpStoreEntryId, NULL, MAPI_BEST_ACCESS, &lpDestStore);
 					if (hr != hrSuccess) {
-						lpLogger->Log(EC_LOGLEVEL_ERROR, (std::string)"Rule "+strRule+": Unable to open destination store");
+						std::string msg = std::string("Rule ") + strRule + ": Unable to open destination store (%x)";
+						lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), hr);
 						goto nextact;
 					}
 
@@ -994,35 +996,40 @@ HRESULT HrProcessRules(const std::string &recip, PyMapiPlugin *pyMapiPlugin,
 												lpActions->lpAction[n].actMoveCopy.lpFldEntryId, &IID_IMAPIFolder, MAPI_MODIFY, &ulObjType,
 												(IUnknown**)&lpDestFolder);
 					if (hr != hrSuccess || ulObjType != MAPI_FOLDER) {
-						lpLogger->Log(EC_LOGLEVEL_ERROR, (std::string)"Rule "+strRule+": Unable to open destination folder");
+						std::string msg = std::string("Rule ") + strRule + ": Unable to open destination folder (%x)";
+						lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), hr);
 						goto nextact;
 					}
 				}
 
 				hr = lpDestFolder->CreateMessage(NULL, 0, &lpNewMessage);
 				if(hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create e-mail for rule " + strRule);
+					std::string msg = "Unable to create e-mail for rule (%x)" + strRule;
+					lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), hr);
 					goto exit;
 				}
 					
 				hr = (*lppMessage)->CopyTo(0, NULL, NULL, 0, NULL, &IID_IMessage, lpNewMessage, 0, NULL);
 				if(hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to copy e-mail for rule " + strRule);
+					std::string msg = "Unable to copy e-mail for rule (%x)" + strRule;
+					lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), hr);
 					goto exit;
 				}
 
 				hr = Util::HrCopyIMAPData((*lppMessage), lpNewMessage);
 				// the function only returns errors on get/setprops, not when the data is just missing
 				if (hr != hrSuccess) {
+					std::string msg = "Unable to copy IMAP data e-mail for rule " + strRule + ", continuing (%x)";
+					lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), hr);
 					hr = hrSuccess;
-					lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to copy IMAP data e-mail for rule " + strRule + ", continuing");
 					goto exit;
 				}
 
 				// Save the copy in its new location
 				hr = lpNewMessage->SaveChanges(0);
 				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, (std::string)"Rule "+strRule+": Unable to copy/move message");
+					std::string msg = std::string("Rule ") + strRule + ": Unable to copy/move message (%x)";
+					lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), hr);
 					goto nextact;
 				}
 				if (lpActions->lpAction[n].acttype == OP_MOVE)
@@ -1043,19 +1050,22 @@ HRESULT HrProcessRules(const std::string &recip, PyMapiPlugin *pyMapiPlugin,
 											lpActions->lpAction[n].actReply.lpEntryId, &IID_IMessage, 0, &ulObjType,
 											(IUnknown**)&lpTemplate);
 				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, (std::string)"Rule "+strRule+": Unable to open reply message");
+					std::string msg = std::string("Rule ") + strRule + ": Unable to open reply message (%x)";
+					lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), hr);
 					goto nextact;
 				}
 
 				hr = CreateReplyCopy(lpSession, lpOrigStore, *lppMessage, lpTemplate, &lpReplyMsg);
 				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, (std::string)"Rule "+strRule+": Unable to create reply message");
+					std::string msg = std::string("Rule ") + strRule + ": Unable to create reply message (%x)";
+					lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), hr);
 					goto nextact;
 				}
 
 				hr = lpReplyMsg->SubmitMessage(0);
 				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, (std::string)"Rule "+strRule+": Unable to send reply message");
+					std::string msg = std::string("Rule ") + strRule + ": Unable to send reply message (%x)";
+					lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), hr);
 					goto nextact;
 				}
 				break;
@@ -1096,13 +1106,15 @@ HRESULT HrProcessRules(const std::string &recip, PyMapiPlugin *pyMapiPlugin,
 									   lpActions->lpAction[n].ulActionFlavor & FWD_AS_ATTACHMENT,
 									   &lpFwdMsg);
 				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, (std::string)"Rule "+strRule+": FORWARD Unable to create forward message");
+					std::string msg = std::string("Rule ") + strRule + ": FORWARD Unable to create forward message (%x)";
+					lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), hr);
 					goto nextact;
 				}
 
 				hr = lpFwdMsg->SubmitMessage(0);
 				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, (std::string)"Rule "+strRule+": FORWARD Unable to send forward message");
+					std::string msg = std::string("Rule ") + strRule + ": FORWARD Unable to send forward message (%x)";
+					lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), hr);
 					goto nextact;
 				}
 
@@ -1131,20 +1143,23 @@ HRESULT HrProcessRules(const std::string &recip, PyMapiPlugin *pyMapiPlugin,
 
 				hr = CreateForwardCopy(lpLogger, lpAdrBook, lpOrigStore, *lppMessage, lpActions->lpAction[n].lpadrlist, true, true, true, false, &lpFwdMsg);
 				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, (std::string)"Rule "+strRule+": DELEGATE Unable to create delegate message");
+					std::string msg = std::string("Rule ") + strRule + ": DELEGATE Unable to create delegate message (%x)";
+					lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), hr);
 					goto nextact;
 				}
 
 				// set delegate properties
 				hr = HrDelegateMessage(lpFwdMsg);
 				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, (std::string)"Rule "+strRule+": DELEGATE Unable to modify delegate message");
+					std::string msg = std::string("Rule ") + strRule + ": DELEGATE Unable to modify delegate message (%x)";
+					lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), hr);
 					goto nextact;
 				}
 
 				hr = lpFwdMsg->SubmitMessage(0);
 				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, (std::string)"Rule "+strRule+": DELEGATE Unable to send delegate message");
+					std::string msg = std::string("Rule ") + strRule + ": DELEGATE Unable to send delegate message (%x)";
+					lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), hr);
 					goto nextact;
 				}
 

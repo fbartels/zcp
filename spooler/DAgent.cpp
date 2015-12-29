@@ -284,8 +284,9 @@ static HRESULT GetPluginObject(ECLogger *lpLogger,
 		goto exit;
 	}
 
-	if (lpPyMapiPluginFactory->CreatePlugin("DAgentPluginManager", &lpPyMapiPlugin) != hrSuccess) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to initialize the dagent plugin manager, please check your configuration.");
+	hr = lpPyMapiPluginFactory->CreatePlugin("DAgentPluginManager", &lpPyMapiPlugin);
+	if (hr != hrSuccess) {
+		lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to initialize the dagent plugin manager, please check your configuration (%x).", hr);
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
@@ -689,13 +690,13 @@ static HRESULT OpenResolveAddrFolder(LPADRBOOK lpAdrBook,
 
 	hr = lpAdrBook->GetDefaultDir(&cbEntryId, &lpEntryId);
 	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to find default resolve directory");
+		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to find default resolve directory (%x)", hr);
 		goto exit;
 	}
 
 	hr = lpAdrBook->OpenEntry(cbEntryId, lpEntryId, NULL, 0, &ulObj, (LPUNKNOWN*)lppAddrDir);
 	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to open default resolve directory");
+		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to open default resolve directory (%x)", hr);
 		goto exit;
 	}
 
@@ -725,7 +726,7 @@ static HRESULT OpenResolveAddrFolder(IMAPISession *lpSession,
 
 	hr = lpSession->OpenAddressBook(0, NULL, 0, lppAdrBook);
 	if(hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to open addressbook");
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to open addressbook (%x)", hr);
 		goto exit;
 	}
 
@@ -820,8 +821,9 @@ static HRESULT ResolveUsers(const DeliveryArgs *lpArgs,
 	for (iter = lRCPT->begin(), ulRCPT = 0; iter != lRCPT->end(); iter++, ulRCPT++) {
 		(*iter)->ulResolveFlags = lpFlagList->ulFlag[ulRCPT];
 
-		if (lpFlagList->ulFlag[ulRCPT] != MAPI_RESOLVED) {
-			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Failed to resolve recipient %ls", (*iter)->wstrRCPT.c_str());
+		ULONG temp = lpFlagList->ulFlag[ulRCPT];
+		if (temp != MAPI_RESOLVED) {
+			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Failed to resolve recipient %ls (%x)", (*iter)->wstrRCPT.c_str(), temp);
 			continue;
 		}
 
@@ -1211,7 +1213,7 @@ static HRESULT HrGetDeliveryStoreAndFolder(IMAPISession *lpSession,
 			sc -> countInc("DAgent", "deliver_junk");
 		hr = HrGetOneProp(lpInbox, PR_ADDITIONAL_REN_ENTRYIDS, &lpJunkProp);
 		if (hr != hrSuccess || lpJunkProp->Value.MVbin.lpbin[4].cb == 0) {
-			g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to resolve junk folder, using normal Inbox");
+			g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to resolve junk folder, using normal Inbox (%x)", hr);
 			break;
 		}
 
@@ -1221,7 +1223,7 @@ static HRESULT HrGetDeliveryStoreAndFolder(IMAPISession *lpSession,
 		hr = lpUserStore->OpenEntry(lpJunkProp->Value.MVbin.lpbin[4].cb, (LPENTRYID)lpJunkProp->Value.MVbin.lpbin[4].lpb,
 									&IID_IMAPIFolder, MAPI_MODIFY, &ulObjType, (LPUNKNOWN *)&lpJunkFolder);
 		if (hr != hrSuccess || ulObjType != MAPI_FOLDER) {
-			g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to open junkmail folder, using normal Inbox");
+			g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to open junkmail folder, using normal Inbox (%x)", hr);
 			break;
 		}
 
@@ -1573,11 +1575,12 @@ static HRESULT SendOutOfOffice(LPADRBOOK lpAdrBook, LPMDB lpMDB,
 	// Check for presence of PR_EC_OUTOFOFFICE_MSG_W
 	if (lpStoreProps[1].ulPropTag != PR_EC_OUTOFOFFICE_MSG_W) {
 		StreamPtr ptrStream;
-		if (lpMDB->OpenProperty(PR_EC_OUTOFOFFICE_MSG_W, &IID_IStream, 0, 0, &ptrStream) != hrSuccess ||
-			Util::HrStreamToString(ptrStream, strBody) != hrSuccess)
+
+		HRESULT hr1 = hrSuccess, hr2 = hrSuccess;
+		if ((hr1 = lpMDB->OpenProperty(PR_EC_OUTOFOFFICE_MSG_W, &IID_IStream, 0, 0, &ptrStream)) != hrSuccess || (hr2 = Util::HrStreamToString(ptrStream, strBody)) != hrSuccess)
 		{
-			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to download out of office message.");
-            hr = MAPI_E_FAILURE;
+			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to download out of office message (%x %x).", hr1, hr2);
+			hr = MAPI_E_FAILURE;
 			goto exit;
 		}
 	} else {
@@ -2404,7 +2407,7 @@ static HRESULT HrPostDeliveryProcessing(PyMapiPlugin *lppyMapiPlugin,
 		if (hr == hrSuccess)
 			g_lpLogger->Log(EC_LOGLEVEL_INFO, "Automatic MR processing successful.");
 		else
-			g_lpLogger->Log(EC_LOGLEVEL_INFO, "Automatic MR processing failed.");
+			g_lpLogger->Log(EC_LOGLEVEL_INFO, "Automatic MR processing failed (%x).", hr);
 	}
 
 	if(FNeedsAutoAccept(lpStore, *lppMessage)) {
@@ -2419,7 +2422,7 @@ static HRESULT HrPostDeliveryProcessing(PyMapiPlugin *lppyMapiPlugin,
 			hr = MAPI_E_CANCEL;
 			goto exit;
 		} else {
-			g_lpLogger->Log(EC_LOGLEVEL_INFO, "Autoaccept processing failed, proceeding with rules processing.");
+			g_lpLogger->Log(EC_LOGLEVEL_INFO, "Autoaccept processing failed, proceeding with rules processing (%x).", hr);
 			// The MR autoaccepter did not run properly. This could be correct behaviour; for example the
 			// autoaccepter may want to defer accepting to a human controller. This means we have to continue
 			// processing as if the autoaccepter was not used
@@ -2949,7 +2952,7 @@ static HRESULT ProcessDeliveryToSingleRecipient(PyMapiPlugin *lppyMapiPlugin,
 	/* Read file into string */
 	hr = HrMapFileToString(fp, &strMail);
 	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to map input to memory");
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to map input to memory (%x)", hr);
 		goto exit;
 	}
 
@@ -3001,7 +3004,7 @@ static HRESULT ProcessDeliveryToCompany(PyMapiPlugin *lppyMapiPlugin,
 	/* Read file into string */
 	hr = HrMapFileToString(fp, &strMail);
 	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to map input to memory");
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to map input to memory (%x)", hr);
 		goto exit;
 	}
 
@@ -3383,7 +3386,7 @@ static void *HandlerLMTP(void *lpArg)
 				FILE *tmp = tmpfile();
 				if (!tmp) {
 					lmtp.HrResponse("503 5.1.1 Internal error during delivery");
-					g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create temp file for email delivery. Please check write-access in /tmp directory.");
+					g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create temp file for email delivery. Please check write-access in /tmp directory. Error: %s", strerror(errno));
 					sc -> countInc("DAgent::LMTP", "tmp_file_fail");
 					break;
 				}
@@ -3560,7 +3563,7 @@ static HRESULT running_service(const char *servicename, bool bDaemonize,
 	int iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
 
 	if (iResult != NO_ERROR) {
-		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Could not initialize Winsock");
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Could not initialize Winsock (%d)", iResult);
 		hr = E_FAIL;
 		goto exit;
 	}
@@ -3612,7 +3615,7 @@ static HRESULT running_service(const char *servicename, bool bDaemonize,
 	file_limit.rlim_max = FD_SETSIZE;
 
 	if(setrlimit(RLIMIT_NOFILE, &file_limit) < 0) {
-		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "WARNING: setrlimit(RLIMIT_NOFILE, %d) failed, you will only be able to connect up to %d sockets. Either start the process as root, or increase user limits for open file descriptors", FD_SETSIZE, getdtablesize());
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "WARNING: setrlimit(RLIMIT_NOFILE, %d) failed, you will only be able to connect up to %d sockets. Either start the process as root, or increase user limits for open file descriptors (%s)", FD_SETSIZE, getdtablesize(), strerror(errno));
 	}
 
 	if (parseBool(g_lpConfig->GetSetting("coredump_enabled")))
@@ -3764,8 +3767,9 @@ static HRESULT deliver_recipient(PyMapiPlugin *lppyMapiPlugin,
 	sc -> countInc("DAgent::STDIN", "received");
 
 	/* Make sure file uses CRLF */
-	if(HrFileLFtoCRLF(file, &fpMail) != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to convert input to CRLF format");
+	HRESULT hr2 = HrFileLFtoCRLF(file, &fpMail);
+	if (hr2 != hrSuccess) {
+		g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to convert input to CRLF format (%x)", hr2);
 		fpMail = file;
 	}
 
@@ -4207,7 +4211,7 @@ int main(int argc, char *argv[]) {
 
 	hr = MAPIInitialize(NULL);
 	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to initialize MAPI");
+		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to initialize MAPI (%x)", hr);
 		goto exit;
 	}
 
