@@ -57,6 +57,7 @@
 #include <zarafa/mapiext.h>
 
 #include <zarafa/CommonUtil.h>
+#include <zarafa/MAPIErrors.h>
 #include <fileutil.h>
 #include <zarafa/ECTags.h>
 #include <zarafa/ECChannel.h>
@@ -135,7 +136,8 @@ HRESULT LMTP::HrResponse(const string &strResponse)
 
 	hr = m_lpChannel->HrWriteLine(strResponse);
 	if (hr != hrSuccess)
-		m_lpLogger->Log(EC_LOGLEVEL_ERROR, "LMTP write error (%x)", hr);
+		m_lpLogger->Log(EC_LOGLEVEL_ERROR, "LMTP write error: %s (%x)",
+			GetMAPIErrorMessage(hr), hr);
 
 	return hr;
 }
@@ -198,7 +200,8 @@ HRESULT LMTP::HrCommandRCPTTO(const string &strTo, string *strUnresolved)
 		if (m_lpLogger->Log(EC_LOGLEVEL_DEBUG))
 			m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "Resolved command '%s' to recipient address '%s'", strTo.c_str(), strUnresolved->c_str());
 	} else {
-		m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Invalid recipient address in command '%s' (%x)", strTo.c_str(), hr);
+		m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Invalid recipient address in command '%s': %s (%x)",
+			strTo.c_str(), GetMAPIErrorMessage(hr), hr);
 	}
 	
 	return hr;
@@ -222,7 +225,8 @@ HRESULT LMTP::HrCommandDATA(FILE *tmp)
 
 	hr = HrResponse("354 2.1.5 Start mail input; end with <CRLF>.<CRLF>");
 	if (hr != hrSuccess) {
-		m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Error during DATA communication with client (%x).", hr);
+		m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Error during DATA communication with client: %s (%x).",
+			GetMAPIErrorMessage(hr), hr);
 		goto exit;
 	}
 
@@ -230,7 +234,8 @@ HRESULT LMTP::HrCommandDATA(FILE *tmp)
 	while (1) {
 		hr = m_lpChannel->HrReadLine(&inBuffer);
 		if (hr != hrSuccess) {
-			m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Error during DATA communication with client (%x).", hr);
+			m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Error during DATA communication with client: %s (%x).",
+				GetMAPIErrorMessage(hr), hr);
 			goto exit;
 		}
 

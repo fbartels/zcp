@@ -80,6 +80,7 @@
 #include <algorithm>
 #include <map>
 
+#include <zarafa/MAPIErrors.h>
 #include <zarafa/mapi_ptr.h>
 #include "fileutil.h"
 #include "PyMapiPlugin.h"
@@ -286,7 +287,8 @@ static HRESULT GetPluginObject(ECLogger *lpLogger,
 
 	hr = lpPyMapiPluginFactory->CreatePlugin("DAgentPluginManager", &lpPyMapiPlugin);
 	if (hr != hrSuccess) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to initialize the dagent plugin manager, please check your configuration (%x).", hr);
+		lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to initialize the dagent plugin manager, please check your configuration: %s (%x).",
+			GetMAPIErrorMessage(hr), hr);
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
@@ -690,13 +692,15 @@ static HRESULT OpenResolveAddrFolder(LPADRBOOK lpAdrBook,
 
 	hr = lpAdrBook->GetDefaultDir(&cbEntryId, &lpEntryId);
 	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to find default resolve directory (%x)", hr);
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to find default resolve directory: %s (%x)",
+			GetMAPIErrorMessage(hr), hr);
 		goto exit;
 	}
 
 	hr = lpAdrBook->OpenEntry(cbEntryId, lpEntryId, NULL, 0, &ulObj, (LPUNKNOWN*)lppAddrDir);
 	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to open default resolve directory (%x)", hr);
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to open default resolve directory: %s (%x)",
+			GetMAPIErrorMessage(hr), hr);
 		goto exit;
 	}
 
@@ -726,7 +730,8 @@ static HRESULT OpenResolveAddrFolder(IMAPISession *lpSession,
 
 	hr = lpSession->OpenAddressBook(0, NULL, 0, lppAdrBook);
 	if(hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to open addressbook (%x)", hr);
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to open addressbook: %s (%x)",
+			GetMAPIErrorMessage(hr), hr);
 		goto exit;
 	}
 
@@ -1213,7 +1218,8 @@ static HRESULT HrGetDeliveryStoreAndFolder(IMAPISession *lpSession,
 			sc -> countInc("DAgent", "deliver_junk");
 		hr = HrGetOneProp(lpInbox, PR_ADDITIONAL_REN_ENTRYIDS, &lpJunkProp);
 		if (hr != hrSuccess || lpJunkProp->Value.MVbin.lpbin[4].cb == 0) {
-			g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to resolve junk folder, using normal Inbox (%x)", hr);
+			g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to resolve junk folder, using normal Inbox: %s (%x)",
+				GetMAPIErrorMessage(hr), hr);
 			break;
 		}
 
@@ -1223,7 +1229,8 @@ static HRESULT HrGetDeliveryStoreAndFolder(IMAPISession *lpSession,
 		hr = lpUserStore->OpenEntry(lpJunkProp->Value.MVbin.lpbin[4].cb, (LPENTRYID)lpJunkProp->Value.MVbin.lpbin[4].lpb,
 									&IID_IMAPIFolder, MAPI_MODIFY, &ulObjType, (LPUNKNOWN *)&lpJunkFolder);
 		if (hr != hrSuccess || ulObjType != MAPI_FOLDER) {
-			g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to open junkmail folder, using normal Inbox (%x)", hr);
+			g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to open junkmail folder, using normal Inbox: %s (%x)",
+				GetMAPIErrorMessage(hr), hr);
 			break;
 		}
 
@@ -1579,7 +1586,9 @@ static HRESULT SendOutOfOffice(LPADRBOOK lpAdrBook, LPMDB lpMDB,
 		HRESULT hr1 = hrSuccess, hr2 = hrSuccess;
 		if ((hr1 = lpMDB->OpenProperty(PR_EC_OUTOFOFFICE_MSG_W, &IID_IStream, 0, 0, &ptrStream)) != hrSuccess || (hr2 = Util::HrStreamToString(ptrStream, strBody)) != hrSuccess)
 		{
-			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to download out of office message (%x %x).", hr1, hr2);
+			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to download out of office message: %s (%x); %s (%x).",
+				GetMAPIErrorMessage(hr1), hr1,
+				GetMAPIErrorMessage(hr2), hr2);
 			hr = MAPI_E_FAILURE;
 			goto exit;
 		}
@@ -2407,7 +2416,8 @@ static HRESULT HrPostDeliveryProcessing(PyMapiPlugin *lppyMapiPlugin,
 		if (hr == hrSuccess)
 			g_lpLogger->Log(EC_LOGLEVEL_INFO, "Automatic MR processing successful.");
 		else
-			g_lpLogger->Log(EC_LOGLEVEL_INFO, "Automatic MR processing failed (%x).", hr);
+			g_lpLogger->Log(EC_LOGLEVEL_INFO, "Automatic MR processing failed: %s (%x).",
+				GetMAPIErrorMessage(hr), hr);
 	}
 
 	if(FNeedsAutoAccept(lpStore, *lppMessage)) {
@@ -2422,7 +2432,8 @@ static HRESULT HrPostDeliveryProcessing(PyMapiPlugin *lppyMapiPlugin,
 			hr = MAPI_E_CANCEL;
 			goto exit;
 		} else {
-			g_lpLogger->Log(EC_LOGLEVEL_INFO, "Autoaccept processing failed, proceeding with rules processing (%x).", hr);
+			g_lpLogger->Log(EC_LOGLEVEL_INFO, "Autoaccept processing failed, proceeding with rules processing: %s (%x).",
+				GetMAPIErrorMessage(hr), hr);
 			// The MR autoaccepter did not run properly. This could be correct behaviour; for example the
 			// autoaccepter may want to defer accepting to a human controller. This means we have to continue
 			// processing as if the autoaccepter was not used
@@ -2952,7 +2963,8 @@ static HRESULT ProcessDeliveryToSingleRecipient(PyMapiPlugin *lppyMapiPlugin,
 	/* Read file into string */
 	hr = HrMapFileToString(fp, &strMail);
 	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to map input to memory (%x)", hr);
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to map input to memory: %s (%x)",
+			GetMAPIErrorMessage(hr), hr);
 		goto exit;
 	}
 
@@ -3004,7 +3016,8 @@ static HRESULT ProcessDeliveryToCompany(PyMapiPlugin *lppyMapiPlugin,
 	/* Read file into string */
 	hr = HrMapFileToString(fp, &strMail);
 	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to map input to memory (%x)", hr);
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to map input to memory: %s (%x)",
+			GetMAPIErrorMessage(hr), hr);
 		goto exit;
 	}
 
@@ -3769,7 +3782,8 @@ static HRESULT deliver_recipient(PyMapiPlugin *lppyMapiPlugin,
 	/* Make sure file uses CRLF */
 	HRESULT hr2 = HrFileLFtoCRLF(file, &fpMail);
 	if (hr2 != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to convert input to CRLF format (%x)", hr2);
+		g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to convert input to CRLF format: %s (%x)",
+			GetMAPIErrorMessage(hr2), hr2);
 		fpMail = file;
 	}
 
@@ -4211,7 +4225,8 @@ int main(int argc, char *argv[]) {
 
 	hr = MAPIInitialize(NULL);
 	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to initialize MAPI (%x)", hr);
+		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to initialize MAPI: %s (%x)",
+			GetMAPIErrorMessage(hr), hr);
 		goto exit;
 	}
 
