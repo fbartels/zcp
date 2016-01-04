@@ -51,10 +51,12 @@ start() {
 
 stop() {
 	stop_daemon --pidfile "/var/run/$search.pid" --lockfile "$LOCKFILE" $search
+	RETVAL2="$?"
 	stop_daemon --pidfile "$PIDFILE" --lockfile "$LOCKFILE" $search
 	RETVAL=$?
 
-	return $RETVAL
+	test "$RETVAL2" -eq 0 || "$RETVAL" -eq 0
+	return $?
 }
 
 restart() {
