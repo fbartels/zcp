@@ -2147,103 +2147,107 @@ HRESULT VMIMEToMAPI::handleTextpart(vmime::ref<vmime::header> vmHeader, vmime::r
 	HRESULT hr = S_OK;
 	IStream *lpStream = NULL;
 
-	if (m_mailState.bodyLevel < BODY_PLAIN || (m_mailState.bodyLevel == BODY_PLAIN && bAppendBody)) {
-		// we have no body, or need to append more plain text body parts
-		try {
-			SPropValue sCodepage;
+	bool append = m_mailState.bodyLevel < BODY_PLAIN ||
+	              (m_mailState.bodyLevel == BODY_PLAIN && bAppendBody);
 
-			/* process Content-Transfer-Encoding */
-			std::string strBuffOut = content_transfer_decode(vmBody);
-
-			/* repair unrecognized Content-Types */
-			vmime::charset mime_charset =
-				get_mime_encoding(vmHeader, vmBody);
-			if (mime_charset == im_charset_unspec) {
-				lpLogger->Log(EC_LOGLEVEL_DEBUG, "No charset specified in text/plain MIME part header, defaulting to ASCII.");
-				mime_charset = vmime::charsets::US_ASCII;
-			}
-
-			/*
-			 * We write to PR_BODY_W, so we need the text in a
-			 * std::wstring.
-			 */
-			std::wstring strUnicodeText;
-
-			/* Try candidates in order of preference */
-			std::vector<std::string> cs_cand;
-			cs_cand.push_back(mime_charset.getName());
-			cs_cand.push_back(m_dopt.default_charset);
-			cs_cand.push_back(vmime::charsets::US_ASCII);
-
-			int cs_best = renovate_encoding(strUnicodeText,
-			              strBuffOut, cs_cand);
-			if (cs_best < 0)
-				lpLogger->Log(EC_LOGLEVEL_ERROR, "Text part did not validate in any character set.");
-			/*
-			 * PR_BODY_W cannot deal with U+0000 characters
-			 * (even though the underlying wchar_t encoding may
-			 * successfully involve 0x00 bytes).
-			 */
-			strUnicodeText.erase(std::remove(strUnicodeText.begin(), strUnicodeText.end(), L'\0'), strUnicodeText.end());
-
-			if (HrGetCPByCharset(cs_cand[cs_best].c_str(), &sCodepage.Value.ul) != hrSuccess) {
-				// we have no matching win32 codepage, so convert the HTML from plaintext in utf-8 for compatibility.
-				sCodepage.Value.ul = 65001;
-				strBuffOut = m_converter.convert_to<std::string>("UTF-8", strBuffOut, rawsize(strBuffOut), cs_cand[cs_best].c_str());
-				lpLogger->Log(EC_LOGLEVEL_INFO, "Upgrading text/plain MIME body to UTF-8 for compatibility");
-			}
-			sCodepage.ulPropTag = PR_INTERNET_CPID;
-			HrSetOneProp(lpMessage, &sCodepage);
-
-			// create new or reset body
-			ULONG ulFlags = MAPI_MODIFY;
-			if (m_mailState.bodyLevel < BODY_PLAIN || !bAppendBody)
-				ulFlags |= MAPI_CREATE;
-
-			hr = lpMessage->OpenProperty(PR_BODY_W, &IID_IStream, STGM_TRANSACTED, ulFlags, (LPUNKNOWN*)&lpStream);
-			if (hr != hrSuccess)
-				goto exit;
-
-			if (bAppendBody) {
-				static const LARGE_INTEGER liZero = {{0, 0}};
-				hr = lpStream->Seek(liZero, SEEK_END, NULL);
-				if (hr != hrSuccess)
-					goto exit;
-			}
-
-			hr = lpStream->Write(strUnicodeText.c_str(), (strUnicodeText.length()+1) * sizeof(wstring::value_type), NULL);
-			if (hr != hrSuccess)
-				goto exit;			
-
-			// commit triggers plain -> html/rtf conversion, PR_INTERNET_CPID must be set.
-			hr = lpStream->Commit(0);
-			if (hr != hrSuccess)
-				goto exit;			
-		}
-		catch (vmime::exception& e) {
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "VMIME exception on text body: %s", e.what());
-			hr = MAPI_E_CALL_FAILED;
-			goto exit;
-		}
-		catch (std::exception& e) {
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "STD exception on text body: %s", e.what());
-			hr = MAPI_E_CALL_FAILED;
-			goto exit;
-		}
-		catch (...) {
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unknown generic exception occurred on text body");
-			hr = MAPI_E_CALL_FAILED;
-			goto exit;
-		}
-		m_mailState.bodyLevel = BODY_PLAIN;
-	} else {
+	if (!append) {
 		// we already had a plaintext or html body, so attach this text part
 		hr = handleAttachment(vmHeader, vmBody, lpMessage);
 		if (hr != hrSuccess) {
 			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse attached text mail");
-			goto exit;
+			return hr;
 		}
+		return hrSuccess;
 	}
+
+	// we have no body, or need to append more plain text body parts
+	try {
+		SPropValue sCodepage;
+
+		/* process Content-Transfer-Encoding */
+		std::string strBuffOut = content_transfer_decode(vmBody);
+
+		/* repair unrecognized Content-Types */
+		vmime::charset mime_charset =
+			get_mime_encoding(vmHeader, vmBody);
+		if (mime_charset == im_charset_unspec) {
+			lpLogger->Log(EC_LOGLEVEL_DEBUG, "No charset specified in text/plain MIME part header, defaulting to ASCII.");
+			mime_charset = vmime::charsets::US_ASCII;
+		}
+
+		/*
+		 * We write to PR_BODY_W, so we need the text in a
+		 * std::wstring.
+		 */
+		std::wstring strUnicodeText;
+
+		/* Try candidates in order of preference */
+		std::vector<std::string> cs_cand;
+		cs_cand.push_back(mime_charset.getName());
+		cs_cand.push_back(m_dopt.default_charset);
+		cs_cand.push_back(vmime::charsets::US_ASCII);
+
+		int cs_best = renovate_encoding(strUnicodeText,
+		              strBuffOut, cs_cand);
+		if (cs_best < 0)
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "Text part did not validate in any character set.");
+		/*
+		 * PR_BODY_W cannot deal with U+0000 characters
+		 * (even though the underlying wchar_t encoding may
+		 * successfully involve 0x00 bytes).
+		 */
+		strUnicodeText.erase(std::remove(strUnicodeText.begin(), strUnicodeText.end(), L'\0'), strUnicodeText.end());
+
+		if (HrGetCPByCharset(cs_cand[cs_best].c_str(), &sCodepage.Value.ul) != hrSuccess) {
+			// we have no matching win32 codepage, so convert the HTML from plaintext in utf-8 for compatibility.
+			sCodepage.Value.ul = 65001;
+			strBuffOut = m_converter.convert_to<std::string>("UTF-8", strBuffOut, rawsize(strBuffOut), cs_cand[cs_best].c_str());
+			lpLogger->Log(EC_LOGLEVEL_INFO, "Upgrading text/plain MIME body to UTF-8 for compatibility");
+		}
+		sCodepage.ulPropTag = PR_INTERNET_CPID;
+		HrSetOneProp(lpMessage, &sCodepage);
+
+		// create new or reset body
+		ULONG ulFlags = MAPI_MODIFY;
+		if (m_mailState.bodyLevel < BODY_PLAIN || !bAppendBody)
+			ulFlags |= MAPI_CREATE;
+
+		hr = lpMessage->OpenProperty(PR_BODY_W, &IID_IStream, STGM_TRANSACTED, ulFlags, (LPUNKNOWN *)&lpStream);
+		if (hr != hrSuccess)
+			goto exit;
+
+		if (bAppendBody) {
+			static const LARGE_INTEGER liZero = {{0, 0}};
+			hr = lpStream->Seek(liZero, SEEK_END, NULL);
+			if (hr != hrSuccess)
+				goto exit;
+		}
+
+		hr = lpStream->Write(strUnicodeText.c_str(), (strUnicodeText.length() + 1) * sizeof(wstring::value_type), NULL);
+		if (hr != hrSuccess)
+			goto exit;
+
+		// commit triggers plain -> html/rtf conversion, PR_INTERNET_CPID must be set.
+		hr = lpStream->Commit(0);
+		if (hr != hrSuccess)
+			goto exit;
+	}
+	catch (vmime::exception &e) {
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "VMIME exception on text body: %s", e.what());
+		hr = MAPI_E_CALL_FAILED;
+		goto exit;
+	}
+	catch (std::exception &e) {
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "STD exception on text body: %s", e.what());
+		hr = MAPI_E_CALL_FAILED;
+		goto exit;
+	}
+	catch (...) {
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unknown generic exception occurred on text body");
+		hr = MAPI_E_CALL_FAILED;
+		goto exit;
+	}
+	m_mailState.bodyLevel = BODY_PLAIN;
 
 exit:
 	if (lpStream)
@@ -2313,171 +2317,176 @@ HRESULT VMIMEToMAPI::handleHTMLTextpart(vmime::ref<vmime::header> vmHeader, vmim
 	std::string strHTML;
 	const char *lpszCharset = NULL;
 	SPropValue sCodepage;
+	LONG ulFlags;
 
-	if (m_mailState.bodyLevel < BODY_HTML || (m_mailState.bodyLevel == BODY_HTML && bAppendBody)) {
-		// we're overriding a plain text body, setting a new HTML body or appending HTML data
-		try {
-			/* process Content-Transfer-Encoding */
-			strHTML = content_transfer_decode(vmBody);
+	bool new_text = m_mailState.bodyLevel < BODY_HTML ||
+                        (m_mailState.bodyLevel == BODY_HTML && bAppendBody);
 
-			/* repair unrecognized Content-Types */
-			vmime::charset mime_charset =
-				get_mime_encoding(vmHeader, vmBody);
-			if (mime_charset == im_charset_unspec)
-				lpLogger->Log(EC_LOGLEVEL_DEBUG, "No charset specified in text/html MIME part header");
-
-			/* Look for fallback in HTML */
-			vmime::charset html_charset(im_charset_unspec);
-			if (getCharsetFromHTML(strHTML, &html_charset) == hrSuccess &&
-			    html_charset != mime_charset &&
-			    mime_charset != im_charset_unspec)
-				/*
-				 * This is not actually a problem, it can
-				 * happen when an MTA transcodes it.
-				 */
-				lpLogger->Log(EC_LOGLEVEL_DEBUG, "MIME headers declare charset \"%s\", while HTML meta tag declares \"%s\".",
-					mime_charset.getName().c_str(),
-					html_charset.getName().c_str());
-
-			if (mime_charset == im_charset_unspec &&
-			    html_charset == im_charset_unspec) {
-				lpLogger->Log(EC_LOGLEVEL_DEBUG, "No MIME charset and no HTML charset, defaulting to US-ASCII");
-				mime_charset = html_charset = vmime::charsets::US_ASCII;
-			} else if (mime_charset == im_charset_unspec) {
-				/* only place to name cset is <meta> */
-				mime_charset = html_charset;
-			} else if (html_charset == im_charset_unspec) {
-				/* only place to name cset is MIME header */
-				html_charset = mime_charset;
-			}
-
-			/* Try candidates in order of preference */
-			std::vector<std::string> cs_cand;
-			cs_cand.push_back(mime_charset.getName());
-			if (mime_charset != html_charset)
-				cs_cand.push_back(html_charset.getName());
-			cs_cand.push_back(m_dopt.default_charset);
-			cs_cand.push_back(vmime::charsets::US_ASCII);
-			int cs_best = renovate_encoding(strHTML, cs_cand);
-			if (cs_best < 0)
-				lpLogger->Log(EC_LOGLEVEL_ERROR, "HTML part did not validate in any character set.");
-			/*
-			 * PR_HTML is a PT_BINARY, and can handle 0x00 bytes
-			 * (e.g. in case of UTF-16 encoding).
-			 */
-
-			// write codepage for PR_HTML property
-			if (HrGetCPByCharset(cs_cand[cs_best].c_str(), &sCodepage.Value.ul) != hrSuccess) {
-				// we have no matching win32 codepage, so choose utf-8 and convert body using iconv, (note: HTML is already "charset-sanitized", should not throw error here)
-				sCodepage.Value.ul = 65001;
-				strHTML = m_converter.convert_to<std::string>("UTF-8", strHTML, rawsize(strHTML), cs_cand[cs_best].c_str());
-				lpLogger->Log(EC_LOGLEVEL_INFO, "Upgrading text/html MIME body to UTF-8 for compatibility");
-			}
-			
-			if (bAppendBody && m_mailState.bodyLevel == BODY_HTML && m_mailState.ulLastCP && sCodepage.Value.ul != m_mailState.ulLastCP) {
-				// we're appending but the new body part has a different codepage than the previous one. To support this
-				// we have to upgrade the old data to utf-8, convert the new data to utf-8 and append that.
-				
-				if(m_mailState.ulLastCP != 65001) {
-					hr = HrGetCharsetByCP(m_mailState.ulLastCP, &lpszCharset);
-					if (hr != hrSuccess) {
-						ASSERT(false); // Should not happen since ulLastCP was generated by HrGetCPByCharset()
-						goto exit;
-					}
-						
-					// Convert previous body part to utf-8
-					std::string strCurrentHTML;
-					
-					hr = Util::ReadProperty(lpMessage, PR_HTML, strCurrentHTML);
-					if (hr != hrSuccess)
-						goto exit;
-						
-					strCurrentHTML = m_converter.convert_to<std::string>("UTF-8", strCurrentHTML, rawsize(strCurrentHTML), lpszCharset);
-					
-					hr = Util::WriteProperty(lpMessage, PR_HTML, strCurrentHTML);
-					if (hr != hrSuccess)
-						goto exit;
-				}
-				
-				if(sCodepage.Value.ul != 65001) {
-					// Convert new body part to utf-8
-					strHTML = m_converter.convert_to<std::string>("UTF-8", strHTML, rawsize(strHTML), mime_charset.getName().c_str());
-				}
-				
-				// Everything is utf-8 now
-				sCodepage.Value.ul = 65001;
-				mime_charset = "utf-8";
-			}
-			
-			m_mailState.ulLastCP = sCodepage.Value.ul;
-			
-			sCodepage.ulPropTag = PR_INTERNET_CPID;
-			HrSetOneProp(lpMessage, &sCodepage);
-
-			// we may have received a text part to append to the HTML body
-			if (vmHeader->ContentType()->getValue().dynamicCast<vmime::mediaType>()->getSubType() == vmime::mediaTypes::TEXT_PLAIN) {
-				// escape and wrap with <pre> tags
-				std::wstring strwBody = m_converter.convert_to<std::wstring>(CHARSET_WCHAR "//IGNORE", strHTML, rawsize(strHTML), mime_charset.getName().c_str());
-				strHTML = "<pre>";
-				hr = Util::HrTextToHtml(strwBody.c_str(), strHTML, sCodepage.Value.ul);
-				if (hr != hrSuccess)
-					goto exit;
-				strHTML += "</pre>";
-			}
-		}
-		catch (vmime::exception& e) {
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "VMIME exception on html body: %s", e.what());
-			hr = MAPI_E_CALL_FAILED;
-			goto exit;
-		}
-		catch (std::exception& e) {
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "STD exception on html body: %s", e.what());
-			hr = MAPI_E_CALL_FAILED;
-			goto exit;
-		}
-		catch (...) {
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unknown generic exception occurred on html body");
-			hr = MAPI_E_CALL_FAILED;
-			goto exit;
-		}
-
-		// create new or reset body
-		ULONG ulFlags = MAPI_MODIFY;
-		if (m_mailState.bodyLevel == BODY_NONE || (m_mailState.bodyLevel < BODY_HTML && !bAppendBody))
-			ulFlags |= MAPI_CREATE;
-
-		hr = lpMessage->OpenProperty(PR_HTML, &IID_IStream, STGM_TRANSACTED, ulFlags, (LPUNKNOWN *)&lpHTMLStream);
-		if (hr != hrSuccess)
-			goto exit;
-
-		if (bAppendBody) {
-			static const LARGE_INTEGER liZero = {{0, 0}};
-			hr = lpHTMLStream->Seek(liZero, SEEK_END, NULL);
-			if (hr != hrSuccess)
-				goto exit;
-		}
-
-		hr = lpHTMLStream->Write(strHTML.c_str(), strHTML.length(), &cbWritten);
-		if (hr != hrSuccess)		// check cbWritten too?
-			goto exit;
-
-		hr = lpHTMLStream->Commit(0);
-		if (hr != hrSuccess)
-			goto exit;
-
-		m_mailState.bodyLevel = BODY_HTML;
-		if (bAppendBody)
-			m_mailState.strHTMLBody.append(strHTML);
-		else
-			swap(strHTML, m_mailState.strHTMLBody);
-	} else {
+	if (!new_text) {
 		// already found html as body, so this is an attachment
 		hr = handleAttachment(vmHeader, vmBody, lpMessage);
 		if (hr != hrSuccess) {
 			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse attached text mail");
-			goto exit;
+			return hr;
+		}
+		return hrSuccess;
+	}
+
+	// we're overriding a plain text body, setting a new HTML body or appending HTML data
+	try {
+		/* process Content-Transfer-Encoding */
+		strHTML = content_transfer_decode(vmBody);
+
+		/* repair unrecognized Content-Types */
+		vmime::charset mime_charset =
+			get_mime_encoding(vmHeader, vmBody);
+		if (mime_charset == im_charset_unspec)
+			lpLogger->Log(EC_LOGLEVEL_DEBUG, "No charset specified in text/html MIME part header");
+
+		/* Look for fallback in HTML */
+		vmime::charset html_charset(im_charset_unspec);
+		if (getCharsetFromHTML(strHTML, &html_charset) == hrSuccess &&
+		    html_charset != mime_charset &&
+		    mime_charset != im_charset_unspec)
+			/*
+			 * This is not actually a problem, it can
+			 * happen when an MTA transcodes it.
+			 */
+			lpLogger->Log(EC_LOGLEVEL_DEBUG, "MIME headers declare charset \"%s\", while HTML meta tag declares \"%s\".",
+				mime_charset.getName().c_str(),
+				html_charset.getName().c_str());
+
+		if (mime_charset == im_charset_unspec &&
+		    html_charset == im_charset_unspec) {
+			lpLogger->Log(EC_LOGLEVEL_DEBUG, "No MIME charset and no HTML charset, defaulting to US-ASCII");
+			mime_charset = html_charset = vmime::charsets::US_ASCII;
+		} else if (mime_charset == im_charset_unspec) {
+			/* only place to name cset is <meta> */
+			mime_charset = html_charset;
+		} else if (html_charset == im_charset_unspec) {
+			/* only place to name cset is MIME header */
+			html_charset = mime_charset;
+		}
+
+		/* Try candidates in order of preference */
+		std::vector<std::string> cs_cand;
+		cs_cand.push_back(mime_charset.getName());
+		if (mime_charset != html_charset)
+			cs_cand.push_back(html_charset.getName());
+		cs_cand.push_back(m_dopt.default_charset);
+		cs_cand.push_back(vmime::charsets::US_ASCII);
+		int cs_best = renovate_encoding(strHTML, cs_cand);
+		if (cs_best < 0)
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "HTML part did not validate in any character set.");
+		/*
+		 * PR_HTML is a PT_BINARY, and can handle 0x00 bytes
+		 * (e.g. in case of UTF-16 encoding).
+		 */
+
+		// write codepage for PR_HTML property
+		if (HrGetCPByCharset(cs_cand[cs_best].c_str(), &sCodepage.Value.ul) != hrSuccess) {
+			// we have no matching win32 codepage, so choose utf-8 and convert body using iconv, (note: HTML is already "charset-sanitized", should not throw error here)
+			sCodepage.Value.ul = 65001;
+			strHTML = m_converter.convert_to<std::string>("UTF-8", strHTML, rawsize(strHTML), cs_cand[cs_best].c_str());
+			lpLogger->Log(EC_LOGLEVEL_INFO, "Upgrading text/html MIME body to UTF-8 for compatibility");
+		}
+
+		if (bAppendBody && m_mailState.bodyLevel == BODY_HTML && m_mailState.ulLastCP && sCodepage.Value.ul != m_mailState.ulLastCP) {
+			// we're appending but the new body part has a different codepage than the previous one. To support this
+			// we have to upgrade the old data to utf-8, convert the new data to utf-8 and append that.
+
+			if(m_mailState.ulLastCP != 65001) {
+				hr = HrGetCharsetByCP(m_mailState.ulLastCP, &lpszCharset);
+				if (hr != hrSuccess) {
+					ASSERT(false); // Should not happen since ulLastCP was generated by HrGetCPByCharset()
+					goto exit;
+				}
+
+				// Convert previous body part to utf-8
+				std::string strCurrentHTML;
+
+				hr = Util::ReadProperty(lpMessage, PR_HTML, strCurrentHTML);
+				if (hr != hrSuccess)
+					goto exit;
+
+				strCurrentHTML = m_converter.convert_to<std::string>("UTF-8", strCurrentHTML, rawsize(strCurrentHTML), lpszCharset);
+
+				hr = Util::WriteProperty(lpMessage, PR_HTML, strCurrentHTML);
+				if (hr != hrSuccess)
+					goto exit;
+			}
+
+			if(sCodepage.Value.ul != 65001) {
+				// Convert new body part to utf-8
+				strHTML = m_converter.convert_to<std::string>("UTF-8", strHTML, rawsize(strHTML), mime_charset.getName().c_str());
+			}
+
+			// Everything is utf-8 now
+			sCodepage.Value.ul = 65001;
+			mime_charset = "utf-8";
+		}
+
+		m_mailState.ulLastCP = sCodepage.Value.ul;
+
+		sCodepage.ulPropTag = PR_INTERNET_CPID;
+		HrSetOneProp(lpMessage, &sCodepage);
+
+		// we may have received a text part to append to the HTML body
+		if (vmHeader->ContentType()->getValue().dynamicCast<vmime::mediaType>()->getSubType() == vmime::mediaTypes::TEXT_PLAIN) {
+			// escape and wrap with <pre> tags
+			std::wstring strwBody = m_converter.convert_to<std::wstring>(CHARSET_WCHAR "//IGNORE", strHTML, rawsize(strHTML), mime_charset.getName().c_str());
+			strHTML = "<pre>";
+			hr = Util::HrTextToHtml(strwBody.c_str(), strHTML, sCodepage.Value.ul);
+			if (hr != hrSuccess)
+				goto exit;
+			strHTML += "</pre>";
 		}
 	}
+	catch (vmime::exception &e) {
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "VMIME exception on html body: %s", e.what());
+		hr = MAPI_E_CALL_FAILED;
+		goto exit;
+	}
+	catch (std::exception &e) {
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "STD exception on html body: %s", e.what());
+		hr = MAPI_E_CALL_FAILED;
+		goto exit;
+	}
+	catch (...) {
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unknown generic exception occurred on html body");
+		hr = MAPI_E_CALL_FAILED;
+		goto exit;
+	}
+
+	// create new or reset body
+	ulFlags = MAPI_MODIFY;
+	if (m_mailState.bodyLevel == BODY_NONE || (m_mailState.bodyLevel < BODY_HTML && !bAppendBody))
+		ulFlags |= MAPI_CREATE;
+
+	hr = lpMessage->OpenProperty(PR_HTML, &IID_IStream, STGM_TRANSACTED, ulFlags, (LPUNKNOWN *)&lpHTMLStream);
+	if (hr != hrSuccess)
+		goto exit;
+
+	if (bAppendBody) {
+		static const LARGE_INTEGER liZero = {{0, 0}};
+		hr = lpHTMLStream->Seek(liZero, SEEK_END, NULL);
+		if (hr != hrSuccess)
+			goto exit;
+	}
+
+	hr = lpHTMLStream->Write(strHTML.c_str(), strHTML.length(), &cbWritten);
+	if (hr != hrSuccess)		// check cbWritten too?
+		goto exit;
+
+	hr = lpHTMLStream->Commit(0);
+	if (hr != hrSuccess)
+		goto exit;
+
+	m_mailState.bodyLevel = BODY_HTML;
+	if (bAppendBody)
+		m_mailState.strHTMLBody.append(strHTML);
+	else
+		swap(strHTML, m_mailState.strHTMLBody);
 
 exit:
 	if (lpHTMLStream)
