@@ -626,8 +626,7 @@ ECRESULT ECDatabaseMySQL::CheckExistColumn(const std::string &strTable, const st
 	*lpbExist = (FetchRow(lpDBResult) != NULL);
 	
 exit:
-	if (lpDBResult)
-		FreeResult(lpDBResult);
+	FreeResult(lpDBResult);
 	
 	return er;
 }
