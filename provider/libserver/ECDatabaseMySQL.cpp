@@ -655,8 +655,7 @@ ECRESULT ECDatabaseMySQL::CheckExistIndex(const std::string strTable, const std:
 	}
 
 exit:
-	if (lpDBResult)
-		FreeResult(lpDBResult);
+	FreeResult(lpDBResult);
 	
 	return er;
 }
