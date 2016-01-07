@@ -314,7 +314,7 @@ HRESULT VMIMEToMAPI::convertVMIMEToMAPI(const string &input, IMessage *lpMessage
 
 			hr = lpMessage->SetProps(1, &sPropSMIMEClass, NULL);
 			if (hr != hrSuccess) {
-				lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to set message class");
+				lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to set message class");
 				goto exit;
 			}
 		}
@@ -351,17 +351,17 @@ HRESULT VMIMEToMAPI::convertVMIMEToMAPI(const string &input, IMessage *lpMessage
 		}
 	}
 	catch (vmime::exception& e) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "VMIME exception: %s", e.what());
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "VMIME exception: %s", e.what());
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
 	catch (std::exception& e) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "STD exception: %s", e.what());
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "STD exception: %s", e.what());
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
 	catch (...) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "Unknown generic exception occurred");
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unknown generic exception occurred");
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
@@ -417,7 +417,7 @@ HRESULT VMIMEToMAPI::fillMAPIMail(vmime::ref<vmime::message> vmMessage, IMessage
 
 	hr = lpMessage->SetProps(3, sPropDefaults, NULL);
 	if (hr != hrSuccess) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to set default mail properties");
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to set default mail properties");
 		goto exit;
 	}
 
@@ -432,14 +432,14 @@ HRESULT VMIMEToMAPI::fillMAPIMail(vmime::ref<vmime::message> vmMessage, IMessage
 		// pass recipients somewhere else 
 		hr = handleRecipients(vmHeader, lpMessage);
 		if (hr != hrSuccess) {
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to parse mail recipients");
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse mail recipients");
 			goto exit;
 		}
 
 		// Headers
 		hr = handleHeaders(vmHeader, lpMessage);
 		if (hr != hrSuccess) {
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to parse mail headers");
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse mail headers");
 			goto exit;
 		}
 
@@ -464,7 +464,7 @@ HRESULT VMIMEToMAPI::fillMAPIMail(vmime::ref<vmime::message> vmMessage, IMessage
 				{
 					hr = disectBody(bPart->getHeader(), bPart->getBody(), lpMessage, true);
 					if (hr != hrSuccess) {
-						lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to parse MDN mail body");
+						lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse MDN mail body");
 						goto exit;
 					}
 					// we have a body, lets skip the other parts
@@ -487,30 +487,30 @@ HRESULT VMIMEToMAPI::fillMAPIMail(vmime::ref<vmime::message> vmMessage, IMessage
 
 			hr = lpMessage->SetProps(2, sPropDefaults, NULL);
 			if (hr != hrSuccess) {
-				lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to set MDN mail properties");
+				lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to set MDN mail properties");
 				goto exit;
 			}
 		} else {
 			// multiparts are handled in disectBody, if any
 			hr = disectBody(vmHeader, vmBody, lpMessage, mt->getType().compare("multipart") != 0);
 			if (hr != hrSuccess) {
-				lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to parse mail body");
+				lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse mail body");
 				goto exit;
 			}
 		}
 	}
 	catch (vmime::exception& e) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "VMIME exception on create message: %s", e.what());
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "VMIME exception on create message: %s", e.what());
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
 	catch (std::exception& e) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "STD exception on create message: %s", e.what());
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "STD exception on create message: %s", e.what());
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
 	catch (...) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "Unknown generic exception occurred on create message");
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unknown generic exception occurred on create message");
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
@@ -1037,17 +1037,17 @@ next:
 		}
 	}
 	catch (vmime::exception& e) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "VMIME exception on parsing headers: %s", e.what());
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "VMIME exception on parsing headers: %s", e.what());
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
 	catch (std::exception& e) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "STD exception on parsing headers: %s", e.what());
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "STD exception on parsing headers: %s", e.what());
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
 	catch (...) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "Unknown generic exception occurred on parsing headers");
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unknown generic exception occurred on parsing headers");
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
@@ -1188,17 +1188,17 @@ HRESULT VMIMEToMAPI::handleRecipients(vmime::ref<vmime::header> vmHeader, IMessa
 
 	}
 	catch (vmime::exception& e) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "VMIME exception on recipients: %s", e.what());
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "VMIME exception on recipients: %s", e.what());
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
 	catch (std::exception& e) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "STD exception on recipients: %s", e.what());
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "STD exception on recipients: %s", e.what());
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
 	catch (...) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "Unknown generic exception occurred on recipients");
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unknown generic exception occurred on recipients");
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
@@ -1277,17 +1277,17 @@ HRESULT VMIMEToMAPI::modifyRecipientList(LPADRLIST lpRecipients, vmime::ref<vmim
 			}
 		}
 		catch (vmime::exception& e) {
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "VMIME exception on modify recipient: %s", e.what());
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "VMIME exception on modify recipient: %s", e.what());
 			hr = MAPI_E_CALL_FAILED;
 			goto exit;
 		}
 		catch (std::exception& e) {
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "STD exception on modify recipient: %s", e.what());
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "STD exception on modify recipient: %s", e.what());
 			hr = MAPI_E_CALL_FAILED;
 			goto exit;
 		}
 		catch (...) {
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "Unknown generic exception occurred on modify recipient");
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unknown generic exception occurred on modify recipient");
 			hr = MAPI_E_CALL_FAILED;
 			goto exit;
 		}
@@ -1699,12 +1699,12 @@ HRESULT VMIMEToMAPI::disectBody(vmime::ref<vmime::header> vmHeader, vmime::ref<v
 
 						hr = disectBody(vmBodyPart->getHeader(), vmBodyPart->getBody(), lpMessage, onlyBody, bFilterDouble, bAppendBody);
 						if (hr != hrSuccess)
-							lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to parse alternative multipart %d of mail body, trying other alternatives", *i);
+							lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse alternative multipart %d of mail body, trying other alternatives", *i);
 						else
 							break;
 					}
 					if (hr != hrSuccess) {
-						lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to parse all alternative multiparts of mail body");
+						lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse all alternative multiparts of mail body");
 						goto exit;
 					}
 				} else {
@@ -1714,7 +1714,7 @@ HRESULT VMIMEToMAPI::disectBody(vmime::ref<vmime::header> vmHeader, vmime::ref<v
 
 						hr = disectBody(vmBodyPart->getHeader(), vmBodyPart->getBody(), lpMessage, onlyBody, bFilterDouble, bAppendBody);
 						if (hr != hrSuccess) {
-							lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to parse sub multipart %d of mail body", i);
+							lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse sub multipart %d of mail body", i);
 							goto exit;
 						}
 					}
@@ -1724,7 +1724,7 @@ HRESULT VMIMEToMAPI::disectBody(vmime::ref<vmime::header> vmHeader, vmime::ref<v
 				// a lonely attachment in a multipart, may not be empty when it's a signed part.
 				hr = handleAttachment(vmHeader, vmBody, lpMessage);
 				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to save attachment");
+					lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to save attachment");
 					goto exit;
 				}
 			}
@@ -1739,7 +1739,7 @@ HRESULT VMIMEToMAPI::disectBody(vmime::ref<vmime::header> vmHeader, vmime::ref<v
 				// subtype guaranteed html or plain.
 				hr = handleHTMLTextpart(vmHeader, vmBody, lpMessage, bAppendBody);
 				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to parse mail HTML text");
+					lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse mail HTML text");
 					goto exit;
 				}
 			} else {
@@ -1873,13 +1873,13 @@ next:
 
 				hr = lpMessage->CreateAttach(NULL, 0, &ulAttNr, &ptrAttach);
 				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to create attachment for ical data: 0x%08X", hr);
+					lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create attachment for ical data: 0x%08X", hr);
 					goto exit;
 				}
 
 				hr = ptrAttach->OpenProperty(PR_ATTACH_DATA_OBJ, &IID_IMessage, 0, MAPI_CREATE | MAPI_MODIFY, &ptrNewMessage);
 				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to create message attachment for ical data: 0x%08X", hr);
+					lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create message attachment for ical data: 0x%08X", hr);
 					goto exit;
 				}
 
@@ -1894,7 +1894,7 @@ next:
 
 				hr = ptrAttach->SetProps(3, (LPSPropValue)sAttProps, NULL);
 				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to create message attachment for ical data: 0x%08X", hr);
+					lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create message attachment for ical data: 0x%08X", hr);
 					goto exit;
 				}
 
@@ -1903,20 +1903,20 @@ next:
 
 			hr = CreateICalToMapi(lpMessage, m_lpAdrBook, true, &lpIcalMapi);
 			if (hr != hrSuccess) {
-				lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to create ical converter: 0x%08X", hr);
+				lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create ical converter: 0x%08X", hr);
 				goto exit;
 			}
 
 			hr = lpIcalMapi->ParseICal(icaldata, strCharset, "UTC" , NULL, 0);
 			if (hr != hrSuccess || lpIcalMapi->GetItemCount() != 1) {
-				lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to parse ical information: 0x%08X, items: %d, adding as normal attachment", hr, lpIcalMapi->GetItemCount());
+				lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse ical information: 0x%08X, items: %d, adding as normal attachment", hr, lpIcalMapi->GetItemCount());
 				hr = handleAttachment(vmHeader, vmBody, lpMessage);
 				if (hr != hrSuccess)
 					goto exit;
 			} else {
 				hr = lpIcalMapi->GetItem(0, IC2M_NO_RECIPIENTS | IC2M_APPEND_ONLY, lpIcalMessage);
 				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_FATAL, "Error while converting ical to mapi: 0x%08X", hr);
+					lpLogger->Log(EC_LOGLEVEL_ERROR, "Error while converting ical to mapi: 0x%08X", hr);
 					goto exit;
 				}
 				if (bIsAttachment) {
@@ -1933,12 +1933,12 @@ next:
 
 					hr = ptrNewMessage->SaveChanges(0);
 					if (hr != hrSuccess) {
-						lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to save ical message: 0x%08X", hr);
+						lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to save ical message: 0x%08X", hr);
 						goto exit;
 					}
 					hr = ptrAttach->SaveChanges(0);
 					if (hr != hrSuccess) {
-						lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to save ical message attachment: 0x%08X", hr);
+						lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to save ical message attachment: 0x%08X", hr);
 						goto exit;
 					}
 
@@ -1972,7 +1972,7 @@ next:
 
 			hr = lpMessage->SetProps(1, &sPropSMIMEClass, NULL);
 			if (hr != hrSuccess) {
-				lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to set message class");
+				lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to set message class");
 				goto exit;
 			}
 		} else if (mt->getType() == vmime::mediaTypes::APPLICATION && mt->getSubType() == vmime::mediaTypes::APPLICATION_OCTET_STREAM) {
@@ -1995,17 +1995,17 @@ next:
 		}
 	}
 	catch (vmime::exception& e) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "VMIME exception on parsing body: %s", e.what());
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "VMIME exception on parsing body: %s", e.what());
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
 	catch (std::exception& e) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "STD exception on parsing body: %s", e.what());
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "STD exception on parsing body: %s", e.what());
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
 	catch (...) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "Unknown generic exception occurred on parsing body");
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unknown generic exception occurred on parsing body");
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
@@ -2221,17 +2221,17 @@ HRESULT VMIMEToMAPI::handleTextpart(vmime::ref<vmime::header> vmHeader, vmime::r
 				goto exit;			
 		}
 		catch (vmime::exception& e) {
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "VMIME exception on text body: %s", e.what());
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "VMIME exception on text body: %s", e.what());
 			hr = MAPI_E_CALL_FAILED;
 			goto exit;
 		}
 		catch (std::exception& e) {
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "STD exception on text body: %s", e.what());
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "STD exception on text body: %s", e.what());
 			hr = MAPI_E_CALL_FAILED;
 			goto exit;
 		}
 		catch (...) {
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "Unknown generic exception occurred on text body");
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unknown generic exception occurred on text body");
 			hr = MAPI_E_CALL_FAILED;
 			goto exit;
 		}
@@ -2240,7 +2240,7 @@ HRESULT VMIMEToMAPI::handleTextpart(vmime::ref<vmime::header> vmHeader, vmime::r
 		// we already had a plaintext or html body, so attach this text part
 		hr = handleAttachment(vmHeader, vmBody, lpMessage);
 		if (hr != hrSuccess) {
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to parse attached text mail");
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse attached text mail");
 			goto exit;
 		}
 	}
@@ -2426,17 +2426,17 @@ HRESULT VMIMEToMAPI::handleHTMLTextpart(vmime::ref<vmime::header> vmHeader, vmim
 			}
 		}
 		catch (vmime::exception& e) {
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "VMIME exception on html body: %s", e.what());
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "VMIME exception on html body: %s", e.what());
 			hr = MAPI_E_CALL_FAILED;
 			goto exit;
 		}
 		catch (std::exception& e) {
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "STD exception on html body: %s", e.what());
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "STD exception on html body: %s", e.what());
 			hr = MAPI_E_CALL_FAILED;
 			goto exit;
 		}
 		catch (...) {
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "Unknown generic exception occurred on html body");
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unknown generic exception occurred on html body");
 			hr = MAPI_E_CALL_FAILED;
 			goto exit;
 		}
@@ -2474,7 +2474,7 @@ HRESULT VMIMEToMAPI::handleHTMLTextpart(vmime::ref<vmime::header> vmHeader, vmim
 		// already found html as body, so this is an attachment
 		hr = handleAttachment(vmHeader, vmBody, lpMessage);
 		if (hr != hrSuccess) {
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to parse attached text mail");
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse attached text mail");
 			goto exit;
 		}
 	}
@@ -2536,7 +2536,7 @@ HRESULT VMIMEToMAPI::handleAttachment(vmime::ref<vmime::header> vmHeader, vmime:
 				goto exit;
 
 			if (stat.cbSize.QuadPart == 0) {
-				lpLogger->Log(EC_LOGLEVEL_FATAL, "Empty attachment found when not allowed, dropping empty attachment.");
+				lpLogger->Log(EC_LOGLEVEL_ERROR, "Empty attachment found when not allowed, dropping empty attachment.");
 				hr = MAPI_E_NOT_FOUND;
 				goto exit;
 			}
@@ -2650,17 +2650,17 @@ HRESULT VMIMEToMAPI::handleAttachment(vmime::ref<vmime::header> vmHeader, vmime:
 			goto exit;
 	}
 	catch (vmime::exception& e) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "VMIME exception on attachment: %s", e.what());
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "VMIME exception on attachment: %s", e.what());
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
 	catch (std::exception& e) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "STD exception on attachment: %s", e.what());
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "STD exception on attachment: %s", e.what());
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
 	catch (...) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "Unknown generic exception occurred on attachment");
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unknown generic exception occurred on attachment");
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
@@ -2671,7 +2671,7 @@ HRESULT VMIMEToMAPI::handleAttachment(vmime::ref<vmime::header> vmHeader, vmime:
 
 exit:
 	if (hr != hrSuccess)
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to create attachment");
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create attachment");
 
 	if (lpAtt)
 		lpAtt->Release();
