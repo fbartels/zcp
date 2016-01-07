@@ -2211,6 +2211,11 @@ HRESULT VMIMEToMAPI::handleTextpart(vmime::ref<vmime::header> vmHeader, vmime::r
 				mime_charset = vmime::charsets::US_ASCII;
 			}
 		}
+		if (!ValidateCharset(mime_charset.getName().c_str())) {
+			/* RFC 2049 §2 item 6 subitem 5 */
+			lpLogger->Log(EC_LOGLEVEL_DEBUG, "Unknown Content-Type charset \"%s\". Storing as attachment instead.", mime_charset.getName().c_str());
+			return handleAttachment(vmHeader, vmBody, lpMessage, true);
+		}
 
 		/*
 		 * We write to PR_BODY_W, so we need the text in a
