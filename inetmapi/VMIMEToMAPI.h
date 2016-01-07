@@ -102,6 +102,7 @@ private:
 	HRESULT fillMAPIMail(vmime::ref<vmime::message> vmMessage, IMessage *lpMessage);
 	HRESULT disectBody(vmime::ref<vmime::header> vmHeader, vmime::ref<vmime::body> vmBody, IMessage* lpMessage, bool onlyBody = false, bool filterDouble = false, bool appendBody = false);
 	HRESULT dissect_multipart(vmime::ref<vmime::header>, vmime::ref<vmime::body>, IMessage *, bool onlyBody = false, bool filterDouble = false, bool appendBody = false);
+	HRESULT dissect_ical(vmime::ref<vmime::header>, vmime::ref<vmime::body>, IMessage *, bool bIsAttachment);
 
 	HRESULT handleHeaders(vmime::ref<vmime::header> vmHeader, IMessage* lpMessage);
 	HRESULT handleRecipients(vmime::ref<vmime::header> vmHeader, IMessage* lpMessage);

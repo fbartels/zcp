@@ -1681,6 +1681,112 @@ HRESULT VMIMEToMAPI::dissect_multipart(vmime::ref<vmime::header> vmHeader,
 	return hr;
 }
 
+HRESULT VMIMEToMAPI::dissect_ical(vmime::ref<vmime::header> vmHeader,
+    vmime::ref<vmime::body> vmBody, IMessage *lpMessage, bool bIsAttachment)
+{
+	HRESULT hr;
+	// ical file
+	string icaldata;
+	vmime::utility::outputStreamStringAdapter os(icaldata);
+	std::string strCharset;
+	MessagePtr ptrNewMessage;
+	LPMESSAGE lpIcalMessage = lpMessage;
+	AttachPtr ptrAttach;
+	ULONG ulAttNr = 0;
+	ICalToMapi *lpIcalMapi = NULL;
+	SPropValuePtr ptrSubject;
+
+	// Some senders send utf-8 iCalendar information without a charset (Exchange does this). Default
+	// to utf-8 if no charset was specified
+	strCharset = vmBody->getCharset().getName();
+	if (strCharset == "us-ascii")
+		// We can safely upgrade from us-ascii to utf-8 since it is compatible
+		strCharset = "utf-8";
+
+	vmBody->getContents()->extract(os);
+
+	if (bIsAttachment) {
+		// create message in message to create calendar message
+		SPropValue sAttProps[3];
+
+		hr = lpMessage->CreateAttach(NULL, 0, &ulAttNr, &ptrAttach);
+		if (hr != hrSuccess) {
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create attachment for ical data: 0x%08X", hr);
+			goto exit;
+		}
+
+		hr = ptrAttach->OpenProperty(PR_ATTACH_DATA_OBJ, &IID_IMessage, 0, MAPI_CREATE | MAPI_MODIFY, &ptrNewMessage);
+		if (hr != hrSuccess) {
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create message attachment for ical data: 0x%08X", hr);
+			goto exit;
+		}
+
+		sAttProps[0].ulPropTag = PR_ATTACH_METHOD;
+		sAttProps[0].Value.ul = ATTACH_EMBEDDED_MSG;
+
+		sAttProps[1].ulPropTag = PR_ATTACHMENT_HIDDEN;
+		sAttProps[1].Value.b = FALSE;
+
+		sAttProps[2].ulPropTag = PR_ATTACH_FLAGS;
+		sAttProps[2].Value.ul = 0;
+
+		hr = ptrAttach->SetProps(3, (LPSPropValue)sAttProps, NULL);
+		if (hr != hrSuccess) {
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create message attachment for ical data: 0x%08X", hr);
+			goto exit;
+		}
+
+		lpIcalMessage = ptrNewMessage.get();
+	}
+
+	hr = CreateICalToMapi(lpMessage, m_lpAdrBook, true, &lpIcalMapi);
+	if (hr != hrSuccess) {
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create ical converter: 0x%08X", hr);
+		goto exit;
+	}
+
+	hr = lpIcalMapi->ParseICal(icaldata, strCharset, "UTC" , NULL, 0);
+	if (hr != hrSuccess || lpIcalMapi->GetItemCount() != 1) {
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse ical information: 0x%08X, items: %d, adding as normal attachment", hr, lpIcalMapi->GetItemCount());
+		hr = handleAttachment(vmHeader, vmBody, lpMessage);
+		goto exit;
+	}
+
+	hr = lpIcalMapi->GetItem(0, IC2M_NO_RECIPIENTS | IC2M_APPEND_ONLY, lpIcalMessage);
+	if (hr != hrSuccess) {
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "Error while converting ical to mapi: 0x%08X", hr);
+		goto exit;
+	}
+	if (!bIsAttachment)
+		goto exit;
+
+	// give attachment name of calendar item
+	if (HrGetOneProp(ptrNewMessage, PR_SUBJECT_W, &ptrSubject) == hrSuccess) {
+		ptrSubject->ulPropTag = PR_DISPLAY_NAME_W;
+
+		hr = ptrAttach->SetProps(1, ptrSubject, NULL);
+		if (hr != hrSuccess)
+			goto exit;
+	}
+
+	hr = ptrNewMessage->SaveChanges(0);
+	if (hr != hrSuccess) {
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to save ical message: 0x%08X", hr);
+		goto exit;
+	}
+	hr = ptrAttach->SaveChanges(0);
+	if (hr != hrSuccess) {
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to save ical message attachment: 0x%08X", hr);
+		goto exit;
+	}
+
+	// make sure we show the attachment icon
+	m_mailState.attachLevel = ATTACH_NORMAL;
+ exit:
+	delete lpIcalMapi;
+	return hr;
+}
+
 /**
  * Disect Body
  *
@@ -1718,7 +1824,6 @@ HRESULT VMIMEToMAPI::disectBody(vmime::ref<vmime::header> vmHeader, vmime::ref<v
 	SPropValue sPropSMIMEClass;
 	bool bFilterDouble = filterDouble;
 	bool bAppendBody = appendBody;
-	ICalToMapi *lpIcalMapi = NULL;
 	bool bIsAttachment = false;
 
 	try {
@@ -1857,102 +1962,9 @@ next:
 			}
 			hr = hrSuccess;
 		} else if (mt->getType() == vmime::mediaTypes::TEXT && mt->getSubType() == "calendar") {
-			// ical file
-			string icaldata;
-			vmime::utility::outputStreamStringAdapter os(icaldata);
-			std::string strCharset;
-			MessagePtr ptrNewMessage;
-			LPMESSAGE lpIcalMessage = lpMessage;
-			AttachPtr ptrAttach;
-			ULONG ulAttNr = 0;
-
-			// Some senders send utf-8 iCalendar information without a charset (Exchange does this). Default
-			// to utf-8 if no charset was specified
-			strCharset = vmBody->getCharset().getName();
-			if(strCharset == "us-ascii") // We can safely upgrade from us-ascii to utf-8 since it is compatible
-				strCharset = "utf-8";
-
-			vmBody->getContents()->extract(os);
-
-			if (bIsAttachment) {
-				// create message in message to create calendar message
-				SPropValue sAttProps[3];
-
-				hr = lpMessage->CreateAttach(NULL, 0, &ulAttNr, &ptrAttach);
-				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create attachment for ical data: 0x%08X", hr);
-					goto exit;
-				}
-
-				hr = ptrAttach->OpenProperty(PR_ATTACH_DATA_OBJ, &IID_IMessage, 0, MAPI_CREATE | MAPI_MODIFY, &ptrNewMessage);
-				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create message attachment for ical data: 0x%08X", hr);
-					goto exit;
-				}
-
-				sAttProps[0].ulPropTag = PR_ATTACH_METHOD;
-				sAttProps[0].Value.ul = ATTACH_EMBEDDED_MSG;
-
-				sAttProps[1].ulPropTag = PR_ATTACHMENT_HIDDEN;
-				sAttProps[1].Value.b = FALSE;
-
-				sAttProps[2].ulPropTag = PR_ATTACH_FLAGS;
-				sAttProps[2].Value.ul = 0;
-
-				hr = ptrAttach->SetProps(3, (LPSPropValue)sAttProps, NULL);
-				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create message attachment for ical data: 0x%08X", hr);
-					goto exit;
-				}
-
-				lpIcalMessage = ptrNewMessage.get();
-			}
-
-			hr = CreateICalToMapi(lpMessage, m_lpAdrBook, true, &lpIcalMapi);
-			if (hr != hrSuccess) {
-				lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create ical converter: 0x%08X", hr);
+			hr = dissect_ical(vmHeader, vmBody, lpMessage, bIsAttachment);
+			if (hr != hrSuccess)
 				goto exit;
-			}
-
-			hr = lpIcalMapi->ParseICal(icaldata, strCharset, "UTC" , NULL, 0);
-			if (hr != hrSuccess || lpIcalMapi->GetItemCount() != 1) {
-				lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse ical information: 0x%08X, items: %d, adding as normal attachment", hr, lpIcalMapi->GetItemCount());
-				hr = handleAttachment(vmHeader, vmBody, lpMessage);
-				if (hr != hrSuccess)
-					goto exit;
-			} else {
-				hr = lpIcalMapi->GetItem(0, IC2M_NO_RECIPIENTS | IC2M_APPEND_ONLY, lpIcalMessage);
-				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, "Error while converting ical to mapi: 0x%08X", hr);
-					goto exit;
-				}
-				if (bIsAttachment) {
-					SPropValuePtr ptrSubject;
-
-					// give attachment name of calendar item
-					if (HrGetOneProp(ptrNewMessage, PR_SUBJECT_W, &ptrSubject) == hrSuccess) {
-						ptrSubject->ulPropTag = PR_DISPLAY_NAME_W;
-
-						hr = ptrAttach->SetProps(1, ptrSubject, NULL);
-						if (hr != hrSuccess)
-							goto exit;
-					}
-
-					hr = ptrNewMessage->SaveChanges(0);
-					if (hr != hrSuccess) {
-						lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to save ical message: 0x%08X", hr);
-						goto exit;
-					}
-					hr = ptrAttach->SaveChanges(0);
-					if (hr != hrSuccess) {
-						lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to save ical message attachment: 0x%08X", hr);
-						goto exit;
-					}
-
-					// make sure we show the attachment icon
-					m_mailState.attachLevel = ATTACH_NORMAL;
-				}
-			}
 		} else if (filterDouble && mt->getType() == vmime::mediaTypes::APPLICATION && mt->getSubType() == "applefile") {
 		} else if (filterDouble && mt->getType() == vmime::mediaTypes::APPLICATION && mt->getSubType() == "mac-binhex40") {
 				// ignore appledouble parts
@@ -2020,7 +2032,6 @@ next:
 exit:
 	if(lpStream)
 		lpStream->Release();
-	delete lpIcalMapi;
 	return hr;
 }
 
