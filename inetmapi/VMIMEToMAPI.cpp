@@ -1624,6 +1624,63 @@ list<int> VMIMEToMAPI::findBestAlternative(vmime::ref<vmime::body> vmBody) {
 	return lBodies;
 }
 
+HRESULT VMIMEToMAPI::dissect_multipart(vmime::ref<vmime::header> vmHeader,
+    vmime::ref<vmime::body> vmBody, IMessage *lpMessage, bool onlyBody,
+    bool bFilterDouble, bool bAppendBody)
+{
+	bool bAlternative = false;
+	HRESULT hr = hrSuccess;
+
+	if (vmBody->getPartCount() <= 0) {
+		// a lonely attachment in a multipart, may not be empty when it's a signed part.
+		hr = handleAttachment(vmHeader, vmBody, lpMessage);
+		if (hr != hrSuccess)
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to save attachment");
+		return hr;
+	}
+
+	// check new multipart type
+	vmime::ref<vmime::mediaType> mt = vmHeader->ContentType()->getValue().dynamicCast<vmime::mediaType>();
+	if (mt->getSubType() == "appledouble")
+		bFilterDouble = true;
+	else if (mt->getSubType() == "mixed")
+		bAppendBody = true;
+	else if (mt->getSubType() == "alternative")
+		bAlternative = true;
+
+	if (!bAlternative) {
+		// recursively process multipart message
+		for (int i = 0; i < vmBody->getPartCount(); ++i) {
+			vmime::ref<vmime::bodyPart> vmBodyPart = vmBody->getPartAt(i);
+
+			hr = disectBody(vmBodyPart->getHeader(), vmBodyPart->getBody(), lpMessage, onlyBody, bFilterDouble, bAppendBody);
+			if (hr != hrSuccess) {
+				lpLogger->Log(EC_LOGLEVEL_ERROR, "dissect_multipart: Unable to parse sub multipart %d of mail body", i);
+				return hr;
+			}
+		}
+		return hrSuccess;
+	}
+
+	list<int> lBodies = findBestAlternative(vmBody);
+
+	// recursively process multipart alternatives in reverse to select best body first
+	for (list<int>::const_iterator i = lBodies.begin(); i != lBodies.end(); ++i) {
+		vmime::ref<vmime::bodyPart> vmBodyPart = vmBody->getPartAt(*i);
+
+		lpLogger->Log(EC_LOGLEVEL_DEBUG, "Trying to parse alternative multipart %d of mail body", *i);
+
+		hr = disectBody(vmBodyPart->getHeader(), vmBodyPart->getBody(), lpMessage, onlyBody, bFilterDouble, bAppendBody);
+		if (hr == hrSuccess)
+			return hrSuccess;
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse alternative multipart %d of mail body, trying other alternatives", *i);
+	}
+	/* If lBodies was empty, we could get here, with hr being hrSuccess. */
+	if (hr != hrSuccess)
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse all alternative multiparts of mail body");
+	return hr;
+}
+
 /**
  * Disect Body
  *
@@ -1661,7 +1718,6 @@ HRESULT VMIMEToMAPI::disectBody(vmime::ref<vmime::header> vmHeader, vmime::ref<v
 	SPropValue sPropSMIMEClass;
 	bool bFilterDouble = filterDouble;
 	bool bAppendBody = appendBody;
-	bool bAlternative = false;
 	ICalToMapi *lpIcalMapi = NULL;
 	bool bIsAttachment = false;
 
@@ -1677,58 +1733,9 @@ HRESULT VMIMEToMAPI::disectBody(vmime::ref<vmime::header> vmHeader, vmime::ref<v
 
 		// find body type
 		if (mt->getType() == "multipart") {
-			if (vmBody->getPartCount() > 0) {
-				vmime::ref<vmime::bodyPart> vmBodyPart;
-
-				// check new multipart type
-				if (mt->getSubType() == "appledouble")
-					bFilterDouble = true;
-				else if (mt->getSubType() == "mixed")
-					bAppendBody = true;
-				else if (mt->getSubType() == "alternative")
-					bAlternative = true;
-
-				if (bAlternative) {
-					list<int> lBodies = findBestAlternative(vmBody);
-
-					// recursively process multipart alternatives in reverse to select best body first
-					for (list<int>::iterator i = lBodies.begin(); i != lBodies.end(); i++) {
-						vmBodyPart = vmBody->getPartAt(*i);
-
-						lpLogger->Log(EC_LOGLEVEL_DEBUG, "Trying to parse alternative multipart %d of mail body", *i);
-
-						hr = disectBody(vmBodyPart->getHeader(), vmBodyPart->getBody(), lpMessage, onlyBody, bFilterDouble, bAppendBody);
-						if (hr != hrSuccess)
-							lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse alternative multipart %d of mail body, trying other alternatives", *i);
-						else
-							break;
-					}
-					if (hr != hrSuccess) {
-						lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse all alternative multiparts of mail body");
-						goto exit;
-					}
-				} else {
-					// recursively process multipart message
-					for (int i=0; i < vmBody->getPartCount(); i++) {
-						vmBodyPart = vmBody->getPartAt(i);
-
-						hr = disectBody(vmBodyPart->getHeader(), vmBodyPart->getBody(), lpMessage, onlyBody, bFilterDouble, bAppendBody);
-						if (hr != hrSuccess) {
-							lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse sub multipart %d of mail body", i);
-							goto exit;
-						}
-					}
-				}
-
-			} else {
-				// a lonely attachment in a multipart, may not be empty when it's a signed part.
-				hr = handleAttachment(vmHeader, vmBody, lpMessage);
-				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to save attachment");
-					goto exit;
-				}
-			}
-
+			hr = dissect_multipart(vmHeader, vmBody, lpMessage, onlyBody, bFilterDouble, bAppendBody);
+			if (hr != hrSuccess)
+				goto exit;
 		// Only handle as inline text if no filename is specified and not specified as 'attachment'
 		// or if the text part is the only body part in the mail
 		} else if (	mt->getType() == vmime::mediaTypes::TEXT &&
