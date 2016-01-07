@@ -1896,6 +1896,7 @@ HRESULT VMIMEToMAPI::disectBody(vmime::ref<vmime::header> vmHeader, vmime::ref<v
 
 	try {
 		vmime::ref<vmime::mediaType> mt = vmHeader->ContentType()->getValue().dynamicCast<vmime::mediaType>();
+		bool force_raw = false;
 
 		try {
 			bIsAttachment = vmHeader->ContentDisposition()->getValue().dynamicCast<vmime::contentDisposition>()->getName() == vmime::contentDispositionTypes::ATTACHMENT;
@@ -1904,8 +1905,21 @@ HRESULT VMIMEToMAPI::disectBody(vmime::ref<vmime::header> vmHeader, vmime::ref<v
 			// probably can not happen, but better safe than sorry.
 		}
 
+		try {
+			vmBody->getContents()->getEncoding().getEncoder();
+		} catch (vmime::exceptions::no_encoder_available &) {
+			/* RFC 2045 §6.4 page 17 */
+			lpLogger->Log(EC_LOGLEVEL_DEBUG, "Encountered unknown Content-Transfer-Encoding \"%s\".",
+				vmBody->getContents()->getEncoding().getName().c_str());
+			force_raw = true;
+		}
+
 		// find body type
-		if (mt->getType() == "multipart") {
+		if (force_raw) {
+			hr = handleAttachment(vmHeader, vmBody, lpMessage, true);
+			if (hr != hrSuccess)
+				goto exit;
+		} else if (mt->getType() == "multipart") {
 			hr = dissect_multipart(vmHeader, vmBody, lpMessage, onlyBody, bFilterDouble, bAppendBody);
 			if (hr != hrSuccess)
 				goto exit;
@@ -2546,7 +2560,19 @@ HRESULT VMIMEToMAPI::handleAttachment(vmime::ref<vmime::header> vmHeader, vmime:
 	try {
 		// attach adapter, generate in right encoding
 		outputStreamMAPIAdapter osMAPI(lpStream);
-		vmBody->getContents()->generate(osMAPI, vmime::encoding(vmime::encodingTypes::BINARY));
+		cdf = vmHeader->ContentDisposition().dynamicCast<vmime::contentDispositionField>();
+		cdv = cdf->getValue().dynamicCast<vmime::contentDisposition>();
+		ctf = vmHeader->ContentType().dynamicCast<vmime::contentTypeField>();
+		mt = ctf->getValue().dynamicCast<vmime::mediaType>();
+
+		try {
+			vmBody->getContents()->generate(osMAPI, vmime::encoding(vmime::encodingTypes::BINARY));
+		} catch (vmime::exceptions::no_encoder_available &) {
+			/* RFC 2045 §6.4 page 17 */
+			vmBody->getContents()->extractRaw(osMAPI);
+			mt->setType(vmime::mediaTypes::APPLICATION);
+			mt->setSubType(vmime::mediaTypes::APPLICATION_OCTET_STREAM);
+		}
 
 		if (!bAllowEmpty) {
 			STATSTG stat;
@@ -2591,11 +2617,6 @@ HRESULT VMIMEToMAPI::handleAttachment(vmime::ref<vmime::header> vmHeader, vmime:
 			attProps[nProps].ulPropTag = PR_ATTACH_CONTENT_LOCATION_A;
 			attProps[nProps++].Value.lpszA = (char*)strLocation.c_str();
 		}
-
-		cdf = vmHeader->ContentDisposition().dynamicCast <vmime::contentDispositionField>();
-		cdv = vmHeader->ContentDisposition()->getValue().dynamicCast<vmime::contentDisposition>();
-		ctf = vmHeader->ContentType().dynamicCast<vmime::contentTypeField>();
-		mt = vmHeader->ContentType()->getValue().dynamicCast<vmime::mediaType>();
 
 		// make hidden when inline, is an image or text, has an content id or location, is an HTML mail,
 		// has a CID reference in the HTML or has a location reference in the HTML.
@@ -2651,7 +2672,6 @@ HRESULT VMIMEToMAPI::handleAttachment(vmime::ref<vmime::header> vmHeader, vmime:
 		attProps[nProps++].Value.ul = 0;
 
 		try {
-			vmime::ref<vmime::mediaType> mt = ctf->getValue().dynamicCast<vmime::mediaType>();
 			if (!mt->getType().empty() &&
 				!mt->getSubType().empty()) {
 				strMimeType = mt->getType() + "/" + mt->getSubType();
