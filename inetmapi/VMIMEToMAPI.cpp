@@ -1894,6 +1894,9 @@ HRESULT VMIMEToMAPI::disectBody(vmime::ref<vmime::header> vmHeader, vmime::ref<v
 	bool bAppendBody = appendBody;
 	bool bIsAttachment = false;
 
+	if (vmHeader->hasField(vmime::fields::MIME_VERSION))
+		++m_mailState.mime_vtag_nest;
+
 	try {
 		vmime::ref<vmime::mediaType> mt = vmHeader->ContentType()->getValue().dynamicCast<vmime::mediaType>();
 		bool force_raw = false;
@@ -2037,6 +2040,8 @@ HRESULT VMIMEToMAPI::disectBody(vmime::ref<vmime::header> vmHeader, vmime::ref<v
 	}
 
 exit:
+	if (vmHeader->hasField(vmime::fields::MIME_VERSION))
+		--m_mailState.mime_vtag_nest;
 	if(lpStream)
 		lpStream->Release();
 	return hr;
@@ -2192,12 +2197,19 @@ HRESULT VMIMEToMAPI::handleTextpart(vmime::ref<vmime::header> vmHeader, vmime::r
 		/* process Content-Transfer-Encoding */
 		std::string strBuffOut = content_transfer_decode(vmBody);
 
-		/* repair unrecognized Content-Types */
+		/* determine first choice character set */
 		vmime::charset mime_charset =
 			get_mime_encoding(vmHeader, vmBody);
 		if (mime_charset == im_charset_unspec) {
-			lpLogger->Log(EC_LOGLEVEL_DEBUG, "No charset specified in text/plain MIME part header, defaulting to ASCII.");
-			mime_charset = vmime::charsets::US_ASCII;
+			if (m_mailState.mime_vtag_nest == 0) {
+				/* RFC 2045 §4 page 9 */
+				lpLogger->Log(EC_LOGLEVEL_DEBUG, "No charset (case #1). Defaulting to \"%s\".", m_dopt.default_charset);
+				mime_charset = m_dopt.default_charset;
+			} else {
+				/* RFC 2045 §5.2 */
+				lpLogger->Log(EC_LOGLEVEL_DEBUG, "No charset (case #2). Defaulting to \"us-ascii\".");
+				mime_charset = vmime::charsets::US_ASCII;
+			}
 		}
 
 		/*
@@ -2206,7 +2218,7 @@ HRESULT VMIMEToMAPI::handleTextpart(vmime::ref<vmime::header> vmHeader, vmime::r
 		 */
 		std::wstring strUnicodeText;
 
-		/* Try candidates in order of preference */
+		/* Add secondary candidates and try all in order */
 		std::vector<std::string> cs_cand;
 		cs_cand.push_back(mime_charset.getName());
 		cs_cand.push_back(m_dopt.default_charset);
@@ -2279,6 +2291,28 @@ exit:
 		lpStream->Release();
 
 	return hr;
+}
+
+static bool vtm_ascii_compatible(const char *s)
+{
+	static const char in[] = {
+		0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,
+		24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,
+		45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,
+		66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,
+		87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,
+		106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,
+		121,122,123,124,125,126,127,
+	};
+	char out[sizeof(in)];
+	iconv_t cd = iconv_open(s, "us-ascii");
+	if (cd == reinterpret_cast<iconv_t>(-1))
+		return false;
+	char *inbuf = const_cast<char *>(in), *outbuf = out;
+	size_t insize = sizeof(in), outsize = sizeof(out);
+	bool mappable = iconv(cd, &inbuf, &insize, &outbuf, &outsize) >= 0;
+	iconv_close(cd);
+	return mappable && memcmp(in, out, sizeof(in)) == 0;
 }
 
 /**
@@ -2361,17 +2395,13 @@ HRESULT VMIMEToMAPI::handleHTMLTextpart(vmime::ref<vmime::header> vmHeader, vmim
 	try {
 		/* process Content-Transfer-Encoding */
 		strHTML = content_transfer_decode(vmBody);
-
-		/* repair unrecognized Content-Types */
 		vmime::charset mime_charset =
 			get_mime_encoding(vmHeader, vmBody);
-		if (mime_charset == im_charset_unspec)
-			lpLogger->Log(EC_LOGLEVEL_DEBUG, "No charset specified in text/html MIME part header");
 
-		/* Look for fallback in HTML */
+		/* Look for alternative in HTML */
 		vmime::charset html_charset(im_charset_unspec);
-		if (getCharsetFromHTML(strHTML, &html_charset) == hrSuccess &&
-		    html_charset != mime_charset &&
+		int html_analyze = getCharsetFromHTML(strHTML, &html_charset);
+		if (html_analyze > 0 && html_charset != mime_charset &&
 		    mime_charset != im_charset_unspec)
 			/*
 			 * This is not actually a problem, it can
@@ -2383,17 +2413,43 @@ HRESULT VMIMEToMAPI::handleHTMLTextpart(vmime::ref<vmime::header> vmHeader, vmim
 
 		if (mime_charset == im_charset_unspec &&
 		    html_charset == im_charset_unspec) {
-			lpLogger->Log(EC_LOGLEVEL_DEBUG, "No MIME charset and no HTML charset, defaulting to US-ASCII");
-			mime_charset = html_charset = vmime::charsets::US_ASCII;
+			if (m_mailState.mime_vtag_nest > 0) {
+				lpLogger->Log(EC_LOGLEVEL_DEBUG, "No charset (case #3), defaulting to \"us-ascii\".");
+				mime_charset = html_charset = vmime::charsets::US_ASCII;
+			} else if (html_analyze < 0) {
+				/*
+				 * No HTML structure found when assuming ASCII,
+				 * so we can just directly fallback to default_charset.
+				 */
+				lpLogger->Log(EC_LOGLEVEL_DEBUG, "No charset (case #4), defaulting to \"%s\".", m_dopt.default_charset);
+				mime_charset = html_charset = m_dopt.default_charset;
+			} else if (vtm_ascii_compatible(m_dopt.default_charset)) {
+				/*
+				 * HTML structure recognized when interpreting as ASCII.
+				 * If default_charset is compatible, that is our pick.
+				 */
+				lpLogger->Log(EC_LOGLEVEL_DEBUG, "No charset (case #5), defaulting to \"%s\".", m_dopt.default_charset);
+				mime_charset = html_charset = m_dopt.default_charset;
+			} else {
+				/*
+				 * HTML structure recognized when interpreting as ASCII.
+				 * default_charset is not compatible, so cannot be
+				 * the actual encoding.
+				 */
+				lpLogger->Log(EC_LOGLEVEL_DEBUG, "No charset (case #6), defaulting to \"us-ascii\".");
+				mime_charset = html_charset = vmime::charsets::US_ASCII;
+			}
 		} else if (mime_charset == im_charset_unspec) {
 			/* only place to name cset is <meta> */
+			lpLogger->Log(EC_LOGLEVEL_DEBUG, "Charset is \"%s\" (case #7).", html_charset.getName().c_str());
 			mime_charset = html_charset;
 		} else if (html_charset == im_charset_unspec) {
 			/* only place to name cset is MIME header */
+			lpLogger->Log(EC_LOGLEVEL_DEBUG, "Charset is \"%s\" (case #8).", mime_charset.getName().c_str());
 			html_charset = mime_charset;
 		}
 
-		/* Try candidates in order of preference */
+		/* Add secondary candidates and try all in order */
 		std::vector<std::string> cs_cand;
 		cs_cand.push_back(mime_charset.getName());
 		if (mime_charset != html_charset)
@@ -2838,27 +2894,44 @@ static std::string fix_content_type_charset(const char *in)
  * correct, because if the MIME body is encoded in UTF-16, whatever else there
  * is in <meta> is, if it is not UTF-16, is likely wrong to begin with.
  *
- * Returns a MAPI error code.
+ * Returns -1 if it does not appear to be HTML at all,
+ * returns 0 if it looked like HTML/XML, but no character set was specified,
+ * and returns 1 if a character set was declared.
  */
-HRESULT VMIMEToMAPI::getCharsetFromHTML(const string &strHTML, vmime::charset *htmlCharset)
+int VMIMEToMAPI::getCharsetFromHTML(const string &strHTML, vmime::charset *htmlCharset)
 {
-	HRESULT hr = MAPI_E_NOT_FOUND;
+	int ret = 0;
 	htmlDocPtr lpDoc = NULL;
-	htmlNodePtr lpNode = NULL;
+	htmlNodePtr root = NULL, lpNode = NULL;
 	xmlChar *lpValue = NULL;
 	std::string charset;
 
 	// really lazy html parsing and disable all error reporting
         xmlSetGenericErrorFunc(NULL, ignoreError); // disable stderr output (ZCP-13337)
 
-        /* Parser will automatically lower-case element and attribute names */
+	/*
+	 * Parser will automatically lower-case element and attribute names.
+	 * It appears to try decoding as UTF-16 as well.
+	 */
 	lpDoc = htmlReadMemory(strHTML.c_str(), strHTML.length(), "", NULL, HTML_PARSE_RECOVER | HTML_PARSE_NOWARNING | HTML_PARSE_NOERROR);
 	if (!lpDoc) {
 		lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to parse HTML document");
+		ret = -1;
 		goto exit;
 	}
 
-	lpNode = find_node(xmlDocGetRootElement(lpDoc), "head");
+	/*
+	 * The HTML parser is very forgiving, so lpDoc is almost never %NULL
+	 * (only if input buffer is size 0 apparently). But, if we have data
+	 * in, for example, UTF-32 encoding, then @root will be NULL.
+	 */
+	root = xmlDocGetRootElement(lpDoc);
+	if (root == NULL) {
+		lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to parse HTML document");
+		ret = -1;
+		goto exit;
+	}
+	lpNode = find_node(root, "head");
 	if (!lpNode) {
 		lpLogger->Log(EC_LOGLEVEL_DEBUG, "HTML document contains no HEAD tag");
 		goto exit;
@@ -2911,14 +2984,14 @@ HRESULT VMIMEToMAPI::getCharsetFromHTML(const string &strHTML, vmime::charset *h
 	}
 
 	lpLogger->Log(EC_LOGLEVEL_DEBUG, "HTML charset adjusted to \"%s\"", htmlCharset->getName().c_str());
-	hr = hrSuccess;
+	ret = 1;
 
 exit:
 	if (lpValue)
 		xmlFree(lpValue);
 	if (lpDoc)
 		xmlFreeDoc(lpDoc);
-	return hr;
+	return ret;
 }
 
 /** 
