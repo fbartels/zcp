@@ -1681,6 +1681,74 @@ HRESULT VMIMEToMAPI::dissect_multipart(vmime::ref<vmime::header> vmHeader,
 	return hr;
 }
 
+void VMIMEToMAPI::dissect_message(vmime::ref<vmime::body> vmBody, IMessage *lpMessage)
+{
+	// Create Attach
+	ULONG ulAttNr = 0;
+	LPATTACH pAtt = NULL;
+	IMessage *lpNewMessage = NULL;
+	LPSPropValue lpSubject = NULL;
+	SPropValue sAttachMethod;
+	char *lpszBody = NULL, *lpszBodyOrig = NULL;
+	sMailState savedState;
+
+	std::string newMessage;
+	vmime::utility::outputStreamStringAdapter os(newMessage);
+	vmBody->generate(os);
+
+	lpszBodyOrig = lpszBody = (char *)newMessage.c_str();
+
+	// Skip any leading newlines from the e-mail (attached messaged produced by Microsoft MimeOLE seem to do this)
+	while (*lpszBody != '\0' && (*lpszBody == '\r' || *lpszBody == '\n'))
+		lpszBody++;
+
+	// and remove from string
+	newMessage.erase(0, lpszBody - lpszBodyOrig);
+
+	HRESULT hr = lpMessage->CreateAttach(NULL, 0, &ulAttNr, &pAtt);
+	if (hr != hrSuccess)
+		goto next;
+
+	hr = pAtt->OpenProperty(PR_ATTACH_DATA_OBJ, &IID_IMessage, 0, MAPI_CREATE | MAPI_MODIFY, (LPUNKNOWN *)&lpNewMessage);
+	if (hr != hrSuccess)
+		goto next;
+
+	// handle message-in-message, save current state variables
+	savedState = m_mailState;
+	m_mailState.reset();
+	m_mailState.ulMsgInMsg++;
+
+	hr = convertVMIMEToMAPI(newMessage, lpNewMessage);
+
+	// return to previous state
+	m_mailState = savedState;
+
+	if (hr != hrSuccess)
+		goto next;
+
+	if (HrGetOneProp(lpNewMessage, PR_SUBJECT_W, &lpSubject) == hrSuccess) {
+		// Set PR_ATTACH_FILENAME of attachment to message subject, (WARNING: abuse of lpSubject variable)
+		lpSubject->ulPropTag = PR_DISPLAY_NAME_W;
+		pAtt->SetProps(1, lpSubject, NULL);
+	}
+
+	sAttachMethod.ulPropTag = PR_ATTACH_METHOD;
+	sAttachMethod.Value.ul = ATTACH_EMBEDDED_MSG;
+	pAtt->SetProps(1, &sAttachMethod, NULL);
+
+	lpNewMessage->SaveChanges(0);
+	pAtt->SaveChanges(0);
+
+ next:
+	MAPIFreeBuffer(lpSubject);
+	lpSubject = NULL;
+
+	if (lpNewMessage != NULL)
+		lpNewMessage->Release();
+	if (pAtt != NULL)
+		pAtt->Release();
+}
+
 HRESULT VMIMEToMAPI::dissect_ical(vmime::ref<vmime::header> vmHeader,
     vmime::ref<vmime::body> vmBody, IMessage *lpMessage, bool bIsAttachment)
 {
@@ -1861,82 +1929,11 @@ HRESULT VMIMEToMAPI::disectBody(vmime::ref<vmime::header> vmHeader, vmime::ref<v
 			}
 		
 		} else if (mt->getType() == vmime::mediaTypes::MESSAGE) {
-			// Create Attach			
-			ULONG		ulAttNr			= 0;
-			LPATTACH	pAtt			= NULL;
-			IMessage*	lpNewMessage	= NULL;
-			LPSPropValue	lpSubject	= NULL;
-			SPropValue	sAttachMethod;
-			char *		lpszBody	= NULL;
-			char *		lpszBodyOrig	= NULL;
-			sMailState savedState;
-
-			std::string newMessage;
-			vmime::utility::outputStreamStringAdapter os(newMessage);
-			vmBody->generate(os);
-					
-			lpszBodyOrig = lpszBody = (char *)newMessage.c_str();
-
-			// Skip any leading newlines from the e-mail (attached messaged produced by Microsoft MimeOLE seem to do this)
-			while (*lpszBody != '\0' && (*lpszBody == '\r' || *lpszBody == '\n'))
-				lpszBody++;
-
-			// and remove from string
-			newMessage.erase(0, lpszBody - lpszBodyOrig);
-
-			hr = lpMessage->CreateAttach(NULL, 0, &ulAttNr, &pAtt);
-			if (hr != hrSuccess)
-				goto next;
-
-			hr = pAtt->OpenProperty(PR_ATTACH_DATA_OBJ, &IID_IMessage, 0, MAPI_CREATE | MAPI_MODIFY, (LPUNKNOWN *)&lpNewMessage);
-			if (hr != hrSuccess)
-				goto next;
-
-			// handle message-in-message, save current state variables
-			savedState = m_mailState;
-			m_mailState.reset();
-			m_mailState.ulMsgInMsg++;
-
-			hr = convertVMIMEToMAPI(newMessage, lpNewMessage);
-
-			// return to previous state
-			m_mailState = savedState;
-
-			if (hr != hrSuccess)
-				goto next;
-
-			if(HrGetOneProp(lpNewMessage, PR_SUBJECT_W, &lpSubject) == hrSuccess) {
-				// Set PR_ATTACH_FILENAME of attachment to message subject, (WARNING: abuse of lpSubject variable)
-				lpSubject->ulPropTag = PR_DISPLAY_NAME_W;
-				pAtt->SetProps(1, lpSubject, NULL);
-			}
-			
-			sAttachMethod.ulPropTag = PR_ATTACH_METHOD;
-			sAttachMethod.Value.ul = ATTACH_EMBEDDED_MSG;
-			pAtt->SetProps(1, &sAttachMethod, NULL);
-
-			lpNewMessage->SaveChanges(0);
-			pAtt->SaveChanges(0);
-
-next:
-			MAPIFreeBuffer(lpSubject);
-			lpSubject = NULL;
-
-			if (lpNewMessage) {
-				lpNewMessage->Release();
-				lpNewMessage = NULL;
-			}
-
-			if (pAtt) {
-				pAtt->Release();
-				pAtt = NULL;
-			}
-			
+			dissect_message(vmBody, lpMessage);
 			if (lpStream) {
 				lpStream->Release();
 				lpStream = NULL;
 			}
-
 		} else if(mt->getType() == vmime::mediaTypes::APPLICATION && mt->getSubType() == "ms-tnef") {
 			LARGE_INTEGER zero = {{0,0}};
 			
