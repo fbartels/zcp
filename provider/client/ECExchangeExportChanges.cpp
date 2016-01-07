@@ -1294,7 +1294,8 @@ HRESULT ECExchangeExportChanges::ExportMessageChangesFast()
 	LPSPropTagArray lpImportProps = m_sourcekey.empty() ? (LPSPropTagArray)&sptImportPropsServerWide : (LPSPropTagArray)&sptImportProps;
 
 	// No more changes (add/modify).
-	ZLOG_DEBUG(m_lpLogger, "ExportFast: At step %u, changeset contains %u items)", m_ulStep, m_lstChange.size());
+	ZLOG_DEBUG(m_lpLogger, "ExportFast: At step %u, changeset contains %lu items)",
+		m_ulStep, static_cast<unsigned long>(m_lstChange.size()));
 	if (m_ulStep >= m_lstChange.size())
 		goto exit;
 

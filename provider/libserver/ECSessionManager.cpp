@@ -168,7 +168,8 @@ ECSessionManager::~ECSessionManager()
 		iSessionNext = iSession;
 		iSessionNext++;
 
-		m_lpLogger->Log(EC_LOGLEVEL_INFO, "End of session (shutdown) %llu", iSession->first);
+		m_lpLogger->Log(EC_LOGLEVEL_INFO, "End of session (shutdown) %llu",
+			static_cast<unsigned long long>(iSession->first));
 
 		m_mapSessions.erase(iSession);
 
@@ -698,9 +699,12 @@ authenticated:
 		goto exit;
 	}
 	if (!szImpersonateUser || *szImpersonateUser == '\0')
-		m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "User %s receives session %llu", szName, *lpSessionID);
+		m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "User %s receives session %llu",
+			szName, static_cast<unsigned long long>(*lpSessionID));
 	else {
-		m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "User %s impersonated by %s receives session %llu", szImpersonateUser, szName, *lpSessionID);
+		m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "User %s impersonated by %s receives session %llu",
+			szImpersonateUser, szName,
+			static_cast<unsigned long long>(*lpSessionID));
 		ZLOG_AUDIT(m_lpAudit, "impersonate ok user='%s', from='%s' program='%s' impersonator='%s'",
 				  szImpersonateUser, from.c_str(), szClientApp ? szClientApp : "<unknown>", szName);
 	}
@@ -763,7 +767,8 @@ ECRESULT ECSessionManager::CreateSessionInternal(ECSession **lppSession, unsigne
 		goto exit;
 	}
 
-	m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "New internal session (%llu)", newSID);
+	m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "New internal session (%llu)",
+		static_cast<unsigned long long>(newSID));
 
 	g_lpStatsCollector->Increment(SCN_SESSIONS_INTERNAL_CREATED);
 
@@ -786,7 +791,8 @@ ECRESULT ECSessionManager::RemoveSession(ECSESSIONID sessionID){
 	ECRESULT	hr			= erSuccess;
 	BTSession	*lpSession	= NULL;
 	
-	m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "End of session (logoff) %llu", sessionID);
+	m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "End of session (logoff) %llu",
+		static_cast<unsigned long long>(sessionID));
 	g_lpStatsCollector->Increment(SCN_SESSIONS_DELETED);
 
 	// Make sure no other thread can read or write the sessions list
@@ -935,7 +941,8 @@ void* ECSessionManager::SessionCleaner(void *lpTmpSessionManager)
 				iRemove = iIterator++;
 				// Remove the session from the list, no new threads can start on this session after this point.
 				g_lpStatsCollector->Increment(SCN_SESSIONS_TIMEOUT);
-				lpSessionManager->m_lpLogger->Log(EC_LOGLEVEL_INFO, "End of session (timeout) %llu", iRemove->first);
+				lpSessionManager->m_lpLogger->Log(EC_LOGLEVEL_INFO, "End of session (timeout) %llu",
+					static_cast<unsigned long long>(iRemove->first));
 				lpSessionManager->m_mapSessions.erase(iRemove);
 			} else {
 				iIterator++;
@@ -1439,9 +1446,9 @@ ECRESULT ECSessionManager::DumpStats()
 	GetStats(sSessionStats);
 
 	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Session stats:");
-	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  Sessions : %u (%llu bytes)", sSessionStats.session.ulItems, sSessionStats.session.ullSize);
+	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  Sessions : %u (%llu bytes)", sSessionStats.session.ulItems, static_cast<unsigned long long>(sSessionStats.session.ullSize));
 	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  Locked   : %d", sSessionStats.session.ulLocked);
-	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  Groups   : %u (%llu bytes)" ,sSessionStats.group.ulItems, sSessionStats.group.ullSize);
+	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  Groups   : %u (%llu bytes)" ,sSessionStats.group.ulItems, static_cast<unsigned long long>(sSessionStats.group.ullSize));
 	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  PersistentByConnection : %u (%u bytes)" ,sSessionStats.ulPersistentByConnection, sSessionStats.ulPersistentByConnectionSize);
 	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  PersistentBySession    : %u (%u bytes)" , sSessionStats.ulPersistentBySession, sSessionStats.ulPersistentBySessionSize);
 	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Subscription stats:");
@@ -1449,7 +1456,7 @@ ECRESULT ECSessionManager::DumpStats()
 	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  Object: %u (%u bytes)", sSessionStats.ulObjectSubscriptions, sSessionStats.ulObjectSubscriptionSize);
 
 	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Table stats:");
-	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  Open tables: %u (%llu bytes)", sSessionStats.session.ulOpenTables, sSessionStats.session.ulTableSize);
+	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  Open tables: %u (%llu bytes)", sSessionStats.session.ulOpenTables, static_cast<unsigned long long>(sSessionStats.session.ulTableSize));
 
 	m_lpSearchFolders->GetStats(sSearchStats);
 
@@ -1457,7 +1464,7 @@ ECRESULT ECSessionManager::DumpStats()
 	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  Stores    : %u", sSearchStats.ulStores);
 	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  Folders   : %u", sSearchStats.ulFolders);
 	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  Queue     : %u", sSearchStats.ulEvents);
-	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  Mem usage : %llu Bytes", sSearchStats.ullSize);
+	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  Mem usage : %llu Bytes", static_cast<unsigned long long>(sSearchStats.ullSize));
 
 	return this->m_lpECCacheManager->DumpStats();
 }
