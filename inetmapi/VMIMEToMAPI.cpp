@@ -1930,10 +1930,6 @@ HRESULT VMIMEToMAPI::disectBody(vmime::ref<vmime::header> vmHeader, vmime::ref<v
 		
 		} else if (mt->getType() == vmime::mediaTypes::MESSAGE) {
 			dissect_message(vmBody, lpMessage);
-			if (lpStream) {
-				lpStream->Release();
-				lpStream = NULL;
-			}
 		} else if(mt->getType() == vmime::mediaTypes::APPLICATION && mt->getSubType() == "ms-tnef") {
 			LARGE_INTEGER zero = {{0,0}};
 			
