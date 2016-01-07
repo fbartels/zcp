@@ -117,7 +117,6 @@ HRESULT ProtocolBase::HrInitializeClass()
 	LPSPropValue lpFldProp = NULL;
 	SPropValuePtr lpEntryID;
 	ULONG ulRes = 0;
-	bool blCreateIFNf = false;
 	bool bIsPublic = false;
 	ULONG ulType = 0;
 	MAPIFolderPtr lpRoot;
@@ -147,8 +146,8 @@ HRESULT ProtocolBase::HrInitializeClass()
 		m_wstrFldOwner = m_wstrUser;
 
 	// we may (try to) create the folder on new ical data writes
-	if (!strMethod.compare("PUT") && (m_ulUrlFlag & SERVICE_ICAL))
-		blCreateIFNf = true;
+	//if (!strMethod.compare("PUT") && (m_ulUrlFlag & SERVICE_ICAL))
+	//	blCreateIFNf = true;
 
 	hr = m_lpSession->OpenAddressBook(0, NULL, 0, &m_lpAddrBook);
 	if(hr != hrSuccess)

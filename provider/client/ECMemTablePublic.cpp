@@ -254,7 +254,6 @@ static LONG __stdcall AdviseFolderCallback(void *lpContext, ULONG cNotif,
 HRESULT ECMemTablePublic::Init(ULONG ulFlags)
 {
 	HRESULT hr = hrSuccess;
-	ULONG ulRowId = 0;
 	IMAPIFolder *lpShortcutFolder = NULL;
 	LPMAPITABLE lpShortcutTable = NULL;
 	LPSRestriction lpRestriction = NULL;
@@ -308,8 +307,6 @@ HRESULT ECMemTablePublic::Init(ULONG ulFlags)
 			if (hr != hrSuccess)
 				goto exit;
 		}
-
-		ulRowId = 1;
 
 		while(true)
 		{

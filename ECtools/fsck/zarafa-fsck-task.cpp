@@ -186,7 +186,6 @@ HRESULT ZarafaFsckTask::ValidateCompletion(LPMESSAGE lpMessage)
 	LPSPropValue lpPropertyArray = NULL;
 	LPSPropTagArray lpPropertyTagArray = NULL;
 	bool bCompleted;
-	double dblCompleted;
 
 	enum {
 		E_COMPLETE,
@@ -256,10 +255,7 @@ HRESULT ZarafaFsckTask::ValidateCompletion(LPMESSAGE lpMessage)
 					 Value);
 		if (hr != hrSuccess)
 			goto exit;
-
-		dblCompleted = Value.dbl;
 	}
-		dblCompleted = lpPropertyArray[E_PERCENT_COMPLETE].Value.dbl;
 
 	if (PROP_TYPE(lpPropertyArray[E_COMPLETION_DATE].ulPropTag) == PT_ERROR && bCompleted) {
 		__UPV Value;
