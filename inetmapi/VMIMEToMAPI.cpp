@@ -2239,7 +2239,7 @@ HRESULT VMIMEToMAPI::handleTextpart(vmime::ref<vmime::header> vmHeader, vmime::r
 			// we have no matching win32 codepage, so convert the HTML from plaintext in utf-8 for compatibility.
 			sCodepage.Value.ul = 65001;
 			strBuffOut = m_converter.convert_to<std::string>("UTF-8", strBuffOut, rawsize(strBuffOut), cs_cand[cs_best].c_str());
-			lpLogger->Log(EC_LOGLEVEL_INFO, "Upgrading text/plain MIME body to UTF-8 for compatibility");
+			lpLogger->Log(EC_LOGLEVEL_INFO, "No Win32 CP ID for \"%s\" - upgrading text/plain MIME body to UTF-8 for compatibility", cs_cand[cs_best].c_str());
 		}
 		sCodepage.ulPropTag = PR_INTERNET_CPID;
 		HrSetOneProp(lpMessage, &sCodepage);
@@ -2469,7 +2469,7 @@ HRESULT VMIMEToMAPI::handleHTMLTextpart(vmime::ref<vmime::header> vmHeader, vmim
 			// we have no matching win32 codepage, so choose utf-8 and convert body using iconv, (note: HTML is already "charset-sanitized", should not throw error here)
 			sCodepage.Value.ul = 65001;
 			strHTML = m_converter.convert_to<std::string>("UTF-8", strHTML, rawsize(strHTML), cs_cand[cs_best].c_str());
-			lpLogger->Log(EC_LOGLEVEL_INFO, "Upgrading text/html MIME body to UTF-8 for compatibility");
+			lpLogger->Log(EC_LOGLEVEL_INFO, "No Win32 CPID for \"%s\" - upgrading text/html MIME body to UTF-8 for compatibility", cs_cand[cs_best].c_str());
 		}
 
 		if (bAppendBody && m_mailState.bodyLevel == BODY_HTML && m_mailState.ulLastCP && sCodepage.Value.ul != m_mailState.ulLastCP) {
