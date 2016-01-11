@@ -2134,7 +2134,7 @@ int VMIMEToMAPI::renovate_encoding(std::string &data,
 			if (i == 0)
 				lvl = EC_LOGLEVEL_WARNING;
 			lpLogger->Log(lvl,
-				"renovate_encoding: reading data using charset \"%s\" did not succeed: %s",
+				"renovate_encoding: reading data using charset \"%s\" produced partial results: %s",
 				name, ce.what());
 		}
 	}
@@ -2226,8 +2226,10 @@ HRESULT VMIMEToMAPI::handleTextpart(vmime::ref<vmime::header> vmHeader, vmime::r
 		/* Add secondary candidates and try all in order */
 		std::vector<std::string> cs_cand;
 		cs_cand.push_back(mime_charset.getName());
-		cs_cand.push_back(m_dopt.default_charset);
-		cs_cand.push_back(vmime::charsets::US_ASCII);
+		if (!m_dopt.charset_strict_rfc) {
+			cs_cand.push_back(m_dopt.default_charset);
+			cs_cand.push_back(vmime::charsets::US_ASCII);
+		}
 
 		int cs_best = renovate_encoding(strUnicodeText,
 		              strBuffOut, cs_cand);
@@ -2457,10 +2459,12 @@ HRESULT VMIMEToMAPI::handleHTMLTextpart(vmime::ref<vmime::header> vmHeader, vmim
 		/* Add secondary candidates and try all in order */
 		std::vector<std::string> cs_cand;
 		cs_cand.push_back(mime_charset.getName());
-		if (mime_charset != html_charset)
-			cs_cand.push_back(html_charset.getName());
-		cs_cand.push_back(m_dopt.default_charset);
-		cs_cand.push_back(vmime::charsets::US_ASCII);
+		if (!m_dopt.charset_strict_rfc) {
+			if (mime_charset != html_charset)
+				cs_cand.push_back(html_charset.getName());
+			cs_cand.push_back(m_dopt.default_charset);
+			cs_cand.push_back(vmime::charsets::US_ASCII);
+		}
 		int cs_best = renovate_encoding(strHTML, cs_cand);
 		if (cs_best < 0)
 			lpLogger->Log(EC_LOGLEVEL_ERROR, "HTML part did not validate in any character set.");
@@ -3874,6 +3878,7 @@ void imopt_default_delivery_options(delivery_options *dopt) {
 	dopt->use_received_date = true;
 	dopt->mark_as_read = false;
 	dopt->add_imap_data = false;
+	dopt->charset_strict_rfc = true;
 	dopt->user_entryid = NULL;
 	dopt->parse_smime_signed = false;
 	dopt->default_charset = "iso-8859-15";
