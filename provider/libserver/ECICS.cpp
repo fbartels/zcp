@@ -1038,7 +1038,7 @@ nextFolder:
 
 				if (lpDBLen[1] < CbNewABEID("")) {
                     er = ZARAFA_E_DATABASE_ERROR; // this should never happen
-					lpSession->GetSessionManager()->GetLogger()->Log(EC_LOGLEVEL_FATAL, "%s:%d invalid size for ab entryid: %u", __FUNCTION__, __LINE__, lpDBLen[1]);
+					lpSession->GetSessionManager()->GetLogger()->Log(EC_LOGLEVEL_FATAL, "%s:%d invalid size for ab entryid: %lu", __FUNCTION__, __LINE__, static_cast<unsigned long>(lpDBLen[1]));
                     goto exit;
 				}
 

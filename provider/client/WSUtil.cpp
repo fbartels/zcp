@@ -1167,8 +1167,6 @@ HRESULT CopySOAPRowSetToMAPIRowSet(void *lpProvider,
 	}
 
 	*lppRowSetDst = lpRowSet;
-
-exit:
 	return hr;
 }
 

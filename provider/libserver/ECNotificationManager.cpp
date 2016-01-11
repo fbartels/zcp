@@ -143,7 +143,8 @@ HRESULT ECNotificationManager::AddRequest(ECSESSIONID ecSessionId, struct soap *
         // requested notifications. Since this should only happen if the client thinks it has lost its connection and has
         // restarted the request, we will replace the existing request with this one.
 
-		m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Replacing notification request for ID: %llu", ecSessionId);
+		m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Replacing notification request for ID: %llu",
+			static_cast<unsigned long long>(ecSessionId));
         
         // Return the previous request as an error
         struct notifyResponse notifications;

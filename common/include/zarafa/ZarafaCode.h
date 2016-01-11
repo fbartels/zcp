@@ -113,8 +113,8 @@ typedef unsigned int ECRESULT;
 #define ZARAFA_OBJTYPE_MESSAGE			5
 
 // Sessions
-#define ECSESSIONID	uint64_t
-#define ECSESSIONGROUPID uint64_t
+typedef uint64_t ECSESSIONID;
+typedef uint64_t ECSESSIONGROUPID;
 
 #define EC_NOTIFICATION_CHECK_FREQUENTY		(1000*2)
 #define EC_NOTIFICATION_CLOSE_TIMEOUT		(1000)

@@ -1008,7 +1008,6 @@ HRESULT WebDav::HrWriteSResponse(xmlTextWriter *xmlWriter,
 	std::string strNsPrefix;
 	std::list<WEBDAVPROPSTAT>::iterator iterPropStat;
 	std::list<WEBDAVPROPERTY>::iterator iterProperty;
-	int ulRet = 0;
 
 	sWebResp = sResponse;
 	// <response>
@@ -1038,8 +1037,7 @@ HRESULT WebDav::HrWriteSResponse(xmlTextWriter *xmlWriter,
 	}
 
 	//</response>
-	ulRet = xmlTextWriterEndElement(xmlWriter);
-
+	xmlTextWriterEndElement(xmlWriter);
 	return hr;
 }
 
@@ -1056,7 +1054,6 @@ HRESULT WebDav::HrWriteResponseProps(xmlTextWriter *xmlWriter,
 {
 	HRESULT hr = hrSuccess;
 	std::list<WEBDAVPROPERTY>::iterator iterProp;
-	ULONG ulRet = 0;
 
 	iterProp = lplstProps->begin();
 	while (lplstProps->end() != iterProp)
@@ -1088,12 +1085,12 @@ HRESULT WebDav::HrWriteResponseProps(xmlTextWriter *xmlWriter,
 			else
 			{
 				WriteNode(xmlWriter, sWebVal.sPropName, lpstrNsPrefix);
-				ulRet = xmlTextWriterEndElement(xmlWriter);
+				xmlTextWriterEndElement(xmlWriter);
 			}
 			sWebProperty.lstValues.pop_front();
 		}
 		if (sWebProperty.strValue.empty())
-			ulRet = xmlTextWriterEndElement(xmlWriter);
+			xmlTextWriterEndElement(xmlWriter);
 		iterProp++;
 	}
 
@@ -1114,7 +1111,6 @@ HRESULT WebDav::HrWriteSPropStat(xmlTextWriter *xmlWriter,
 	HRESULT hr = hrSuccess;
 	WEBDAVPROPSTAT sWebPropStat;
 	WEBDAVPROP sWebProp;
-	int ulRet = 0;
 	std::list<WEBDAVPROPERTY>::iterator iterProp;
 	
 	sWebPropStat = lpsPropStat;
@@ -1160,26 +1156,25 @@ HRESULT WebDav::HrWriteSPropStat(xmlTextWriter *xmlWriter,
 			else
 			{
 				WriteNode(xmlWriter, sWebVal.sPropName, lpstrNsPrefix);
-				ulRet = xmlTextWriterEndElement(xmlWriter);
+				xmlTextWriterEndElement(xmlWriter);
 			}
 			sWebProperty.lstValues.pop_front();
 		}
 		//end tag if started
 		//</resourcetype>
 		if (sWebProperty.strValue.empty())
-			ulRet = xmlTextWriterEndElement(xmlWriter);
+			xmlTextWriterEndElement(xmlWriter);
 
 		iterProp++;
 	}
 	//</prop>
-	ulRet = xmlTextWriterEndElement(xmlWriter);
+	xmlTextWriterEndElement(xmlWriter);
 	
 	//<status xmlns="xxxxxxx">HTTP/1.1 200 OK</status>
 	hr = WriteData(xmlWriter,sWebPropStat.sStatus,lpstrNsPrefix);
 
 	//</propstat>
-	ulRet = xmlTextWriterEndElement(xmlWriter);
-
+	xmlTextWriterEndElement(xmlWriter);
 	return hr;
 }
 

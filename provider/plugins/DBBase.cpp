@@ -1010,7 +1010,6 @@ void DBPlugin::CreateObjectWithExternId(const objectid_t &objectid, const object
 	ECRESULT er;
 	string strQuery;
 	DB_RESULT_AUTOFREE lpResult(m_lpDatabase);
-	DB_ROW lpDBRow = NULL;
 
 	// check if object already exists
 	strQuery = 

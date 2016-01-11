@@ -813,11 +813,8 @@ HRESULT ECSyncContext::HrGetSyncStatusStream(SBinary *lpsSourceKey, LPSTREAM *lp
 	LPSTREAM lpStream = NULL;
 	std::string strSourceKey;
 	StatusStreamMap::iterator iStatusStream;
-	ULONG ulSize;
 
 	strSourceKey.assign((char*)lpsSourceKey->lpb, lpsSourceKey->cb);
-
-	ulSize = m_mapSyncStatus.size();
 	iStatusStream = m_mapSyncStatus.find(strSourceKey);
 
 	if (iStatusStream != m_mapSyncStatus.end()) {
