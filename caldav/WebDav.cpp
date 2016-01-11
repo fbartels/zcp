@@ -319,53 +319,38 @@ exit:
  */
 HRESULT WebDav::HrReport()
 {
-	HRESULT hr = hrSuccess;
-	xmlNode * lpXmlNode = NULL;
+	HRESULT hr;
+	xmlNode *lpXmlNode;
 	
 	hr = HrParseXml();
 	if (hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	lpXmlNode = xmlDocGetRootElement(m_lpXmlDoc);
 	if (!lpXmlNode)
-	{
-		hr = MAPI_E_CORRUPT_DATA;
-		goto exit;
-	}
+		return MAPI_E_CORRUPT_DATA;
 
 	if (lpXmlNode->name && !xmlStrcmp(lpXmlNode->name, (const xmlChar *)"calendar-query") )
-	{
 		//CALENDAR-QUERY
 		//Retrieves the list of GUIDs
-		hr = HrHandleRptCalQry();
-
-	}
+		return HrHandleRptCalQry();
 	else if (lpXmlNode->name && !xmlStrcmp(lpXmlNode->name, (const xmlChar *)"calendar-multiget") )
-	{
 		//MULTIGET
 		//Retrieves Ical data for each GUID that client requests
-		hr = HrHandleRptMulGet();
-	}
+		return HrHandleRptMulGet();
 	else if (lpXmlNode->name && !xmlStrcmp(lpXmlNode->name, (const xmlChar *)"principal-property-search"))
-	{
 		// suggestion list while adding attendees on mac iCal.
-		hr = HrPropertySearch();
-	}
+		return HrPropertySearch();
 	else if (lpXmlNode->name && !xmlStrcmp(lpXmlNode->name, (const xmlChar *)"principal-search-property-set"))
-	{
 		// which all properties to be searched while searching for attendees.
-		hr = HrPropertySearchSet();
-	}
+		return HrPropertySearchSet();
 	else if (lpXmlNode->name && !xmlStrcmp(lpXmlNode->name, (const xmlChar *)"expand-property"))
-	{
 		// ignore expand-property
 		m_lpRequest->HrResponseHeader(200, "OK");
-	}
 	else
 		m_lpRequest->HrResponseHeader(500, "Internal Server Error");
 
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 /**
@@ -775,23 +760,22 @@ exit:
  */
 HRESULT WebDav::HrPropertySearchSet()
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	WEBDAVMULTISTATUS sDavMStatus;
 	std::string strXml;
 
 	hr = HrHandlePropertySearchSet(&sDavMStatus);
 	if (hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	hr = RespStructToXml(&sDavMStatus, &strXml);
 	if (hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	m_lpRequest->HrResponseHeader(200, "OK");
 	m_lpRequest->HrResponseHeader("Content-Type", "application/xml; charset=\"utf-8\"");
 	m_lpRequest->HrResponseBody(strXml);
-exit:
-	return hr;
+	return hrSuccess;
 }
 /**
  * Generates xml response for POST request to view freebusy information
@@ -869,7 +853,7 @@ HRESULT WebDav::WriteData(xmlTextWriter *xmlWriter, const WEBDAVVALUE &sWebVal,
 	std::string strNs;
 	int ulRet = 0;
 	convert_context converter;
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 
 	strNs = sWebVal.sPropName.strNS;
 
@@ -878,7 +862,7 @@ HRESULT WebDav::WriteData(xmlTextWriter *xmlWriter, const WEBDAVVALUE &sWebVal,
 		ulRet = xmlTextWriterWriteElement(xmlWriter,
 										  (const xmlChar *)sWebVal.sPropName.strPropname.c_str(),
 										  (const xmlChar *)sWebVal.strValue.c_str());
-		goto exit;
+		return hrSuccess;
 	}
 
 	// Retrieve the namespace prefix if present in map.
@@ -888,7 +872,7 @@ HRESULT WebDav::WriteData(xmlTextWriter *xmlWriter, const WEBDAVVALUE &sWebVal,
 		hr = RegisterNs(strNs, szNsPrefix);	
 
 	if (hr != hrSuccess)
-		goto exit;
+		return hr;
 	
 	/*Write xml none of the form
 	 *	<D:href>/caldav/user/calendar/entryGUID.ics</D:href>
@@ -898,14 +882,9 @@ HRESULT WebDav::WriteData(xmlTextWriter *xmlWriter, const WEBDAVVALUE &sWebVal,
 										(const xmlChar *)sWebVal.sPropName.strPropname.c_str(),
 										(const xmlChar *)(strNs.empty() ? NULL : strNs.c_str()),
 										(const xmlChar *)sWebVal.strValue.c_str());
-	if (ulRet == -1) {
-		hr = MAPI_E_CALL_FAILED;
-		goto exit;
-	}
-	
-exit:
-	
-	return hr;
+	if (ulRet < 0)
+		return MAPI_E_CALL_FAILED;
+	return hrSuccess;
 }
 /**
  * Converts WEBDAVPROPNAME	to xml data
@@ -919,7 +898,7 @@ HRESULT WebDav::WriteNode(xmlTextWriter *xmlWriter,
 {
 	std::string strNs;
 	int ulRet = 0;
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 
 	strNs = sWebPropName.strNS;
 	
@@ -927,7 +906,7 @@ HRESULT WebDav::WriteNode(xmlTextWriter *xmlWriter,
 	{
 		ulRet = xmlTextWriterStartElement	(xmlWriter,
 											(const xmlChar *)sWebPropName.strPropname.c_str());
-		goto exit;
+		return hrSuccess;
 	}
 
 	hr = GetNs(lpstrNsPrefix, &strNs);
@@ -935,7 +914,7 @@ HRESULT WebDav::WriteNode(xmlTextWriter *xmlWriter,
 	   hr =	RegisterNs(strNs, lpstrNsPrefix);
 
 	if (hr != hrSuccess)
-		goto exit;
+		return hr;
 	/*Write Xml data of the form
 	 * <D:propstat>
 	 * the end tag </D:propstat> is written by "xmlTextWriterEndElement(xmlWriter)"
@@ -945,16 +924,13 @@ HRESULT WebDav::WriteNode(xmlTextWriter *xmlWriter,
 										(const xmlChar *)sWebPropName.strPropname.c_str(),
 										(const xmlChar *)(strNs.empty() ? NULL : strNs.c_str()));
 
-	if (ulRet == -1) {
-		hr = MAPI_E_CALL_FAILED;
-		goto exit;
-	}
+	if (ulRet < 0)
+		return MAPI_E_CALL_FAILED;
 	
 	if (!sWebPropName.strPropAttribName.empty())
 		ulRet = xmlTextWriterWriteAttribute(xmlWriter, (const xmlChar *)sWebPropName.strPropAttribName.c_str(), (const xmlChar *) sWebPropName.strPropAttribValue.c_str());
-	
-exit:
-	return hr;
+
+	return hrSuccess;
 }
 /**
  * Adds namespace prefix into map of namespaces
