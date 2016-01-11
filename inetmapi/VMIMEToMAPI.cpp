@@ -88,6 +88,7 @@
 #include <zarafa/codepage.h>
 #include <zarafa/Util.h>
 #include <zarafa/CommonUtil.h>
+#include <zarafa/MAPIErrors.h>
 #include <zarafa/namedprops.h>
 #include <zarafa/charset/convert.h>
 #include <zarafa/stringutil.h>
@@ -1639,7 +1640,7 @@ HRESULT VMIMEToMAPI::dissect_multipart(vmime::ref<vmime::header> vmHeader,
 		// a lonely attachment in a multipart, may not be empty when it's a signed part.
 		hr = handleAttachment(vmHeader, vmBody, lpMessage);
 		if (hr != hrSuccess)
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to save attachment");
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "dissect_multipart: Unable to save attachment");
 		return hr;
 	}
 
@@ -1787,13 +1788,13 @@ HRESULT VMIMEToMAPI::dissect_ical(vmime::ref<vmime::header> vmHeader,
 
 		hr = lpMessage->CreateAttach(NULL, 0, &ulAttNr, &ptrAttach);
 		if (hr != hrSuccess) {
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create attachment for ical data: 0x%08X", hr);
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "dissect_ical-1790: Unable to create attachment for ical data: %s (%x)", GetMAPIErrorMessage(hr), hr);
 			goto exit;
 		}
 
 		hr = ptrAttach->OpenProperty(PR_ATTACH_DATA_OBJ, &IID_IMessage, 0, MAPI_CREATE | MAPI_MODIFY, &ptrNewMessage);
 		if (hr != hrSuccess) {
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create message attachment for ical data: 0x%08X", hr);
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "dissect_ical-1796: Unable to create message attachment for ical data: %s (%x)", GetMAPIErrorMessage(hr), hr);
 			goto exit;
 		}
 
@@ -1808,7 +1809,7 @@ HRESULT VMIMEToMAPI::dissect_ical(vmime::ref<vmime::header> vmHeader,
 
 		hr = ptrAttach->SetProps(3, (LPSPropValue)sAttProps, NULL);
 		if (hr != hrSuccess) {
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create message attachment for ical data: 0x%08X", hr);
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "dissect_ical-1811: Unable to create message attachment for ical data: %s (%x)", GetMAPIErrorMessage(hr), hr);
 			goto exit;
 		}
 
@@ -1817,20 +1818,21 @@ HRESULT VMIMEToMAPI::dissect_ical(vmime::ref<vmime::header> vmHeader,
 
 	hr = CreateICalToMapi(lpMessage, m_lpAdrBook, true, &lpIcalMapi);
 	if (hr != hrSuccess) {
-		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create ical converter: 0x%08X", hr);
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "dissect_ical-1820: Unable to create ical converter: %s (%x)", GetMAPIErrorMessage(hr), hr);
 		goto exit;
 	}
 
 	hr = lpIcalMapi->ParseICal(icaldata, strCharset, "UTC" , NULL, 0);
 	if (hr != hrSuccess || lpIcalMapi->GetItemCount() != 1) {
-		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse ical information: 0x%08X, items: %d, adding as normal attachment", hr, lpIcalMapi->GetItemCount());
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "dissect_ical-1826: Unable to parse ical information: %s (%x), items: %d, adding as normal attachment",
+			GetMAPIErrorMessage(hr), hr, lpIcalMapi->GetItemCount());
 		hr = handleAttachment(vmHeader, vmBody, lpMessage);
 		goto exit;
 	}
 
 	hr = lpIcalMapi->GetItem(0, IC2M_NO_RECIPIENTS | IC2M_APPEND_ONLY, lpIcalMessage);
 	if (hr != hrSuccess) {
-		lpLogger->Log(EC_LOGLEVEL_ERROR, "Error while converting ical to mapi: 0x%08X", hr);
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "dissect_ical-1834: Error while converting ical to mapi: %s (%x)", GetMAPIErrorMessage(hr), hr);
 		goto exit;
 	}
 	if (!bIsAttachment)
@@ -1847,12 +1849,12 @@ HRESULT VMIMEToMAPI::dissect_ical(vmime::ref<vmime::header> vmHeader,
 
 	hr = ptrNewMessage->SaveChanges(0);
 	if (hr != hrSuccess) {
-		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to save ical message: 0x%08X", hr);
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "dissect_ical-1851: Unable to save ical message: %s (%x)", GetMAPIErrorMessage(hr), hr);
 		goto exit;
 	}
 	hr = ptrAttach->SaveChanges(0);
 	if (hr != hrSuccess) {
-		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to save ical message attachment: 0x%08X", hr);
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "dissect_ical-1856: Unable to save ical message attachment: %s (%x)", GetMAPIErrorMessage(hr), hr);
 		goto exit;
 	}
 
@@ -1925,7 +1927,6 @@ HRESULT VMIMEToMAPI::disectBody(vmime::ref<vmime::header> vmHeader, vmime::ref<v
 			force_raw = true;
 		}
 
-		// find body type
 		if (force_raw) {
 			hr = handleAttachment(vmHeader, vmBody, lpMessage, true);
 			if (hr != hrSuccess)
@@ -2020,12 +2021,22 @@ HRESULT VMIMEToMAPI::disectBody(vmime::ref<vmime::header> vmHeader, vmime::ref<v
 				if (hr != hrSuccess)
 					goto exit;
 			} else {
-				// possibly text?
+				/*
+				 * Possibly text?
+				 * Unknown character set for text/* causes it
+				 * the part to get interpreted as
+				 * application/octet-stream (RFC 2049 §2
+				 * item 6), and vmime presents it to us as
+				 * such, making it impossible to know
+				 * whether it was originally text/* or
+				 * application/*.
+				 */
 				hr = handleTextpart(vmHeader, vmBody, lpMessage, false);
 				if (hr != hrSuccess)
 					goto exit;
 			}
 		} else {
+			/* RFC 2049 §2 item 7 */
 			hr = handleAttachment(vmHeader, vmBody, lpMessage);
 			if (hr != hrSuccess)
 				goto exit;
@@ -2247,6 +2258,7 @@ HRESULT VMIMEToMAPI::handleTextpart(vmime::ref<vmime::header> vmHeader, vmime::r
 		 * Because PR_BODY_W is not of type PT_BINARY, the length is
 		 * determined by wcslen and not a dedicated length field. This
 		 * means U+0000 characters cannot be represented. Strip them.
+		 * (See also RFC 2049 §3 item 3.)
 		 */
 		strUnicodeText.erase(std::remove(strUnicodeText.begin(), strUnicodeText.end(), L'\0'), strUnicodeText.end());
 
@@ -2562,8 +2574,10 @@ HRESULT VMIMEToMAPI::handleHTMLTextpart(vmime::ref<vmime::header> vmHeader, vmim
 		ulFlags |= MAPI_CREATE;
 
 	hr = lpMessage->OpenProperty(PR_HTML, &IID_IStream, STGM_TRANSACTED, ulFlags, (LPUNKNOWN *)&lpHTMLStream);
-	if (hr != hrSuccess)
+	if (hr != hrSuccess) {
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "OpenProperty PR_HTML failed: %s", GetMAPIErrorMessage(hr));
 		goto exit;
+	}
 
 	if (bAppendBody) {
 		static const LARGE_INTEGER liZero = {{0, 0}};
@@ -3031,7 +3045,15 @@ std::wstring VMIMEToMAPI::getWideFromVmimeText(const vmime::text &vmText)
 		vmime::charset wordCharset = (*i)->getCharset();
 		vmime::charset vmForcedCharset(getCompatibleCharset(wordCharset));
 
-		// concat words with same charset, as they may not be safely split up (should be fixed in later version of VMIME!)
+		/*
+		 * Concatenate words having the same charset, as the original
+		 * input bytes may not have been safely split up. I cannot make
+		 * out whether RFC 2047 §6.2 ¶6 actually discourages this
+		 * concatenation, but permitting it gives the most pleasing
+		 * result without violently disagreeing with the RFC. Hence,
+		 * we also will not be adding if (m_dopt.charset_strict_rfc)
+		 * here anytime soon.
+		 */
 		myword = (*i)->getBuffer();
 		for(j=i+1; j != words.end() && (*j)->getCharset() == wordCharset; j++) {
 			myword += (*j)->getBuffer();
