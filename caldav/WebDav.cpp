@@ -273,7 +273,7 @@ HRESULT WebDav::RespStructToXml(WEBDAVMULTISTATUS *sDavMStatus, std::string *str
 		strNs = iterMapNS->first;
 		if(sDavMStatus->sPropName.strNS == strNs || strNs.empty())
 			continue;
-		hr = RegisterNs(strNs, &strNsPrefix);
+		RegisterNs(strNs, &strNsPrefix);
 		strprefix = "xmlns:" + strNsPrefix;
 		
 		xmlTextWriterWriteAttribute	(xmlWriter,
@@ -869,10 +869,7 @@ HRESULT WebDav::WriteData(xmlTextWriter *xmlWriter, const WEBDAVVALUE &sWebVal,
 	hr = GetNs(szNsPrefix, &strNs);
 	// if namespace is not present in the map then insert it into map.
 	if (hr != hrSuccess)
-		hr = RegisterNs(strNs, szNsPrefix);	
-
-	if (hr != hrSuccess)
-		return hr;
+		RegisterNs(strNs, szNsPrefix);	
 	
 	/*Write xml none of the form
 	 *	<D:href>/caldav/user/calendar/entryGUID.ics</D:href>
@@ -911,10 +908,8 @@ HRESULT WebDav::WriteNode(xmlTextWriter *xmlWriter,
 
 	hr = GetNs(lpstrNsPrefix, &strNs);
 	if (hr != hrSuccess)
-	   hr =	RegisterNs(strNs, lpstrNsPrefix);
+		RegisterNs(strNs, lpstrNsPrefix);
 
-	if (hr != hrSuccess)
-		return hr;
 	/*Write Xml data of the form
 	 * <D:propstat>
 	 * the end tag </D:propstat> is written by "xmlTextWriterEndElement(xmlWriter)"
@@ -938,13 +933,12 @@ HRESULT WebDav::WriteNode(xmlTextWriter *xmlWriter,
  * @param[in]	lpstrNsPrefix	Namespace prefix
  * @return		HRESULT			Always returns hrSuccess 
  */
-HRESULT WebDav::RegisterNs(std::string strNs, std::string *lpstrNsPrefix)
+void WebDav::RegisterNs(std::string strNs, std::string *lpstrNsPrefix)
 {
 	(*lpstrNsPrefix)[0]++;
 	m_mapNs[strNs] = *lpstrNsPrefix;
-
-	return hrSuccess;
 }
+
 /**
  * Returns the namespace prefix for the corresponding namespace name
  * @param[in,out]	lpstrPrefx	Return string for namespace prefix
@@ -1241,7 +1235,7 @@ HRESULT WebDav::HrWriteItems(xmlTextWriter *xmlWriter,
  *
  * @return		HRESULT		Always returns hrsuccess
  */
-HRESULT WebDav::HrSetDavPropName(WEBDAVPROPNAME *lpsDavPropName, xmlNode *lpXmlNode)
+void WebDav::HrSetDavPropName(WEBDAVPROPNAME *lpsDavPropName, xmlNode *lpXmlNode)
 {
 	lpsDavPropName->strPropname.assign((const char*)lpXmlNode->name);
 	lpsDavPropName->strNS.assign((const char*)lpXmlNode->ns->href);
@@ -1250,7 +1244,6 @@ HRESULT WebDav::HrSetDavPropName(WEBDAVPROPNAME *lpsDavPropName, xmlNode *lpXmlN
 
 	lpsDavPropName->strPropAttribName = "";
 	lpsDavPropName->strPropAttribValue = "";
-	return hrSuccess;
 }
 
 /**
@@ -1264,7 +1257,7 @@ HRESULT WebDav::HrSetDavPropName(WEBDAVPROPNAME *lpsDavPropName, xmlNode *lpXmlN
  *
  * @return		HRESULT		Always returns hrsuccess
  */
-HRESULT WebDav::HrSetDavPropName(WEBDAVPROPNAME *lpsDavPropName,
+void WebDav::HrSetDavPropName(WEBDAVPROPNAME *lpsDavPropName,
     const std::string &strPropName, const std::string &strNs)
 {
 	lpsDavPropName->strPropname.assign(strPropName);
@@ -1273,8 +1266,6 @@ HRESULT WebDav::HrSetDavPropName(WEBDAVPROPNAME *lpsDavPropName,
 		m_mapNs[lpsDavPropName->strNS].clear();
 	lpsDavPropName->strPropAttribName.clear();
 	lpsDavPropName->strPropAttribValue.clear();
-
-	return hrSuccess;
 }
 
 /**
@@ -1290,7 +1281,7 @@ HRESULT WebDav::HrSetDavPropName(WEBDAVPROPNAME *lpsDavPropName,
  *
  * @return		HRESULT		Always returns hrsuccess
  */
-HRESULT WebDav::HrSetDavPropName(WEBDAVPROPNAME *lpsDavPropName,
+void WebDav::HrSetDavPropName(WEBDAVPROPNAME *lpsDavPropName,
     const std::string &strPropName, const std::string &strPropAttribName,
     const std::string &strPropAttribValue, const std::string &strNs)
 {
@@ -1300,7 +1291,6 @@ HRESULT WebDav::HrSetDavPropName(WEBDAVPROPNAME *lpsDavPropName,
 	lpsDavPropName->strPropAttribValue = strPropAttribValue;
 	if (!lpsDavPropName->strNS.empty())
 		m_mapNs[lpsDavPropName->strNS] = "";
-	return hrSuccess;
 }
 
 /**
