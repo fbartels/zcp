@@ -1594,29 +1594,33 @@ exit:
 }
 
 /** 
- * Find the best alternatives in a body. Returns a list sorted on best alternative.
+ * Order alternatives in a body according to local preference.
  *
- * Currently places text/plain alternatives as last, anything else at the front,
- * returning the later bodies (considered best by rfc-1521) as better.
- * 
- * @param[in] vmBody Alternative body container
- * 
- * @return sorted list of body alternatives
+ * This function (currently) only deprioritizes text/plain parts, and leaves
+ * the priority of everything else as-is.
+ *
+ * This function also reverses the list. Whereas MIME parts in @vmBody are
+ * ordered from boring-to-interesting, the list returned by this function is
+ * interesting-to-boring.
  */
-list<int> VMIMEToMAPI::findBestAlternative(vmime::ref<vmime::body> vmBody) {
+static std::list<unsigned int> vtm_order_alternatives(vmime::ref<vmime::body> vmBody)
+{
 	vmime::ref<vmime::header> vmHeader;
 	vmime::ref<vmime::bodyPart> vmBodyPart;
 	vmime::ref<vmime::mediaType> mt;
-	list<int> lBodies;
+	std::list<unsigned int> lBodies, pgtext;
 
 	for (int i = 0; i < vmBody->getPartCount(); i++) {
 		vmBodyPart = vmBody->getPartAt(i);
 		vmHeader = vmBodyPart->getHeader();
-		if (!vmHeader->hasField(vmime::fields::CONTENT_TYPE))
+		if (!vmHeader->hasField(vmime::fields::CONTENT_TYPE)) {
+			/* RFC 2046 §5.1 ¶2 says treat it as text/plain */
+			lBodies.push_front(i);
 			continue;
+		}
 		mt = vmHeader->ContentType()->getValue().dynamicCast<vmime::mediaType>();
 		// mostly better alternatives for text/plain, so try that last
-		if (mt->getType() == "text" && mt->getSubType() == "plain")
+		if (mt->getType() == vmime::mediaTypes::TEXT && mt->getSubType() == vmime::mediaTypes::TEXT_PLAIN)
 			lBodies.push_back(i);
 		else
 			lBodies.push_front(i);
@@ -1666,10 +1670,10 @@ HRESULT VMIMEToMAPI::dissect_multipart(vmime::ref<vmime::header> vmHeader,
 		return hrSuccess;
 	}
 
-	list<int> lBodies = findBestAlternative(vmBody);
+	list<unsigned int> lBodies = vtm_order_alternatives(vmBody);
 
 	// recursively process multipart alternatives in reverse to select best body first
-	for (list<int>::const_iterator i = lBodies.begin(); i != lBodies.end(); ++i) {
+	for (list<unsigned int>::const_iterator i = lBodies.begin(); i != lBodies.end(); ++i) {
 		vmime::ref<vmime::bodyPart> vmBodyPart = vmBody->getPartAt(*i);
 
 		lpLogger->Log(EC_LOGLEVEL_DEBUG, "Trying to parse alternative multipart %d of mail body", *i);

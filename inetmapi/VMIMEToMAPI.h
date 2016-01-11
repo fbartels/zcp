@@ -122,7 +122,6 @@ private:
 	HRESULT handleAttachment(vmime::ref<vmime::header> vmHeader, vmime::ref<vmime::body> vmBody, IMessage* lpMessage, bool bAllowEmpty = true);
 	HRESULT handleMessageToMeProps(IMessage *lpMessage, LPADRLIST lpRecipients);
 
-	std::list<int> findBestAlternative(vmime::ref<vmime::body> vmBody);
 	int getCharsetFromHTML(const std::string &strHTML, vmime::charset *htmlCharset);
 	vmime::charset getCompatibleCharset(const vmime::charset &vmCharset);
 	std::wstring getWideFromVmimeText(const vmime::text &vmText);
