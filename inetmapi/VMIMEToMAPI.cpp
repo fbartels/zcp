@@ -2229,9 +2229,9 @@ HRESULT VMIMEToMAPI::handleTextpart(vmime::ref<vmime::header> vmHeader, vmime::r
 		if (cs_best < 0)
 			lpLogger->Log(EC_LOGLEVEL_ERROR, "Text part did not validate in any character set.");
 		/*
-		 * PR_BODY_W cannot deal with U+0000 characters
-		 * (even though the underlying wchar_t encoding may
-		 * successfully involve 0x00 bytes).
+		 * Because PR_BODY_W is not of type PT_BINARY, the length is
+		 * determined by wcslen and not a dedicated length field. This
+		 * means U+0000 characters cannot be represented. Strip them.
 		 */
 		strUnicodeText.erase(std::remove(strUnicodeText.begin(), strUnicodeText.end(), L'\0'), strUnicodeText.end());
 
