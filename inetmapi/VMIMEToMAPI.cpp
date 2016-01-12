@@ -1643,10 +1643,14 @@ HRESULT VMIMEToMAPI::dissect_multipart(vmime::ref<vmime::header> vmHeader,
 	vmime::ref<vmime::mediaType> mt = vmHeader->ContentType()->getValue().dynamicCast<vmime::mediaType>();
 	if (mt->getSubType() == "appledouble")
 		bFilterDouble = true;
-	else if (mt->getSubType() == "mixed")
-		bAppendBody = true;
 	else if (mt->getSubType() == "alternative")
 		bAlternative = true;
+	else
+		/*
+		 * RFC 2046 §5.1.7: all unrecognized subtypes are to be
+		 * treated like multipart/mixed.
+		 */
+		bAppendBody = true;
 
 	if (!bAlternative) {
 		// recursively process multipart message
