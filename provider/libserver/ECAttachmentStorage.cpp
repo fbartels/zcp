@@ -916,10 +916,8 @@ bool ECDatabaseAttachment::ExistAttachmentInstance(ULONG ulInstanceId)
 
 	lpDBRow = m_lpDatabase->FetchRow(lpDBResult);
 
-	if (!lpDBRow || !lpDBRow[0]) {
+	if (!lpDBRow || !lpDBRow[0])
 		er = ZARAFA_E_NOT_FOUND;
-		m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECAttachmentStorage::ExistAttachmentInstance(): FetchRow failed %x", er);
-	}
 
 exit:
 	if (lpDBResult)
