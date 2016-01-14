@@ -2809,8 +2809,9 @@ exit:
 	return hr;
 }
 
-/** 
- * Return a compatible charset for a possible invalid charset.
+/**
+ * Change a character set name which is unknown to iconv to one that it knows
+ * and which is 100% compatible.
  * 
  * @param[in] vmCharset original charset
  * 
@@ -2825,8 +2826,24 @@ namespace charsetHelper {
 		{"x-gbk", "gb18030"},			// gb18030 > gbk > gb2312. x-gbk is an alias of gbk, which is not listed in iconv.
 		{"ks_c_5601-1987", "cp949"},	// cp949 is euc-kr with UHC extensions
 		{"iso-8859-8-i", "iso-8859-8"},	// logical vs visual order, does not matter. http://mirror.hamakor.org.il/archives/linux-il/08-2004/11445.html
+
+		/*
+		 * This particular "unicode" is different from iconv's
+		 * "unicode" character set. It is UTF-8 content with a UTF-16
+		 * BOM (which we can just drop because it carries no
+		 * relevant information).
+		 */
 		{"unicode", "utf-8"}, /* UTF-16 BOM + UTF-8 content */
 	};
+}
+
+static vmime::charset vtm_upgrade_charset(const vmime::charset &cset)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(charsetHelper::fixes); ++i)
+		if (stricmp(charsetHelper::fixes[i].original, cset.getName().c_str()) == 0)
+			return charsetHelper::fixes[i].update;
+
+	return cset;
 }
 
 vmime::charset VMIMEToMAPI::getCompatibleCharset(const vmime::charset &vmCharset)
@@ -3001,7 +3018,7 @@ int VMIMEToMAPI::getCharsetFromHTML(const string &strHTML, vmime::charset *htmlC
 		lpLogger->Log(EC_LOGLEVEL_DEBUG, "HTML body does not contain meta charset information");
 		goto exit;
 	}
-	*htmlCharset = charset.size() != 0 ? getCompatibleCharset(charset) :
+	*htmlCharset = charset.size() != 0 ? vtm_upgrade_charset(charset) :
 	               vmime::charsets::US_ASCII;
 	lpLogger->Log(EC_LOGLEVEL_DEBUG, "HTML charset adjusted to \"%s\"", htmlCharset->getName().c_str());
 	ret = 1;
