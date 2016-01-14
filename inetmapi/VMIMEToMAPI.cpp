@@ -3001,19 +3001,8 @@ int VMIMEToMAPI::getCharsetFromHTML(const string &strHTML, vmime::charset *htmlC
 		lpLogger->Log(EC_LOGLEVEL_DEBUG, "HTML body does not contain meta charset information");
 		goto exit;
 	}
-
-	try {
-		vmime::ref<vmime::headerField> ctf =
-			vmime::headerFieldFactory::getInstance()->
-			create("Content-Type", "text/html; charset=" + charset);
-		*htmlCharset = getCompatibleCharset(ctf.dynamicCast<vmime::contentTypeField>()->getCharset());
-	}
-	catch(vmime::exceptions::no_such_parameter & e) {
-		lpLogger->Log(EC_LOGLEVEL_WARNING, "VMIMEToMAPI::getCharsetFromHTML() getCharset() failed: %s", e.what());
-
-		*htmlCharset = getCompatibleCharset(vmime::charset(m_dopt.default_charset));
-	}
-
+	*htmlCharset = charset.size() != 0 ? getCompatibleCharset(charset) :
+	               vmime::charsets::US_ASCII;
 	lpLogger->Log(EC_LOGLEVEL_DEBUG, "HTML charset adjusted to \"%s\"", htmlCharset->getName().c_str());
 	ret = 1;
 
