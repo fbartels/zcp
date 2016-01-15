@@ -45,8 +45,12 @@
 
 #include <iostream>
 #include <zarafa/my_getopt.h>
+#include <cerrno>
 #include <climits>
 #include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <ctime>
 #include <mapidefs.h>
 #include <mapispi.h>
 #include <mapix.h>
@@ -664,7 +668,7 @@ static void print_users(unsigned int cUsers, const ECUSER *lpECUsers,
 		ct.SetColumn(i, 0, (LPSTR)lpECUsers[i].lpszUsername);
 		ct.SetColumn(i, 1, (LPSTR)lpECUsers[i].lpszFullName);
 		if (bShowHomeServer) {
-			if (lpECUsers[i].lpszServername != NULL && lpECUsers[i].lpszServername[0])
+			if (lpECUsers[i].lpszServername != NULL && *reinterpret_cast<LPSTR>(lpECUsers[i].lpszServername) != '\0')
 				ct.SetColumn(i, 2, (LPSTR)lpECUsers[i].lpszServername);
 			else
 				// make sure we fill-in all table parts. not using "<unknown>" tag,
@@ -734,7 +738,7 @@ static void print_company_settings(const ECCOMPANY *lpECCompany,
 {
 	cout << "Companyname:\t\t" << (LPSTR)lpECCompany->lpszCompanyname << endl;
 	cout << "Sysadmin:\t\t" << (LPSTR)lpECAdministrator->lpszUsername << endl;
-	if (lpECCompany->lpszServername != NULL && lpECCompany->lpszServername[0])
+	if (lpECCompany->lpszServername != NULL && *reinterpret_cast<LPSTR>(lpECCompany->lpszServername) != '\0')
 		cout << "Home server:\t\t" << (LPSTR)lpECCompany->lpszServername << endl;
 
 	cout << "Address book:\t\t" << (lpECCompany->ulIsABHidden ? "Hidden" : "Visible") << endl;
@@ -791,6 +795,39 @@ static string ClassToString(objectclass_t eClass)
 	};
 }
 
+static void adm_oof_status(const SPropValue *const prop)
+{
+	if (prop[2].ulPropTag != PR_EC_OUTOFOFFICE || !prop[2].Value.b) {
+		printf("Out Of Office:          disabled\n");
+		return;
+	}
+
+	if (prop[3].ulPropTag != PR_EC_OUTOFOFFICE_FROM || prop[4].ulPropTag != PR_EC_OUTOFOFFICE_UNTIL) {
+		printf("Out Of Office:          enabled\n");
+		return;
+	}
+
+	time_t start, end, now = time(NULL);
+	char start_buf[64], end_buf[64];
+	struct tm *tm;
+
+	FileTimeToUnixTime(prop[3].Value.ft, &start);
+	FileTimeToUnixTime(prop[4].Value.ft, &end);
+	if ((tm = localtime(&start)) == NULL) {
+		perror("localtime");
+		return;
+	}
+	strftime(start_buf, sizeof(start_buf), "%F %T", tm);
+	if ((tm = localtime(&end)) == NULL) {
+		perror("localtime");
+		return;
+	}
+	strftime(end_buf, sizeof(end_buf), "%F %T", tm);
+	printf("Out Of Office:          from %s until %s (currently %s)\n",
+	       start_buf, end_buf,
+	       start <= now && now <= end ? "active" : "inactive");
+}
+
 /**
  * Print user details
  *
@@ -806,7 +843,7 @@ static void print_user_settings(IMsgStore *lpStore, const ECUSER *lpECUser,
     const ArchiveList &lstArchives, const ECUSERCLIENTUPDATESTATUS *lpECUCUS)
 {
 	LPSPropValue lpProps = NULL;
-	SizedSPropTagArray(2, sptaProps) = {2, { PR_LAST_LOGON_TIME, PR_LAST_LOGOFF_TIME } };
+	SizedSPropTagArray(5, sptaProps) = {5, { PR_LAST_LOGON_TIME, PR_LAST_LOGOFF_TIME, PR_EC_OUTOFOFFICE, PR_EC_OUTOFOFFICE_FROM, PR_EC_OUTOFOFFICE_UNTIL } };
 	ULONG cValues = 0;
 
 	lpStore->GetProps((LPSPropTagArray)&sptaProps, 0, &cValues, &lpProps);
@@ -826,8 +863,10 @@ static void print_user_settings(IMsgStore *lpStore, const ECUSER *lpECUser,
 		cout << "Decline dbl meetingreq:\t" << (bDeclineConflict ? "yes" : "no") << endl;
 		cout << "Decline recur meet.req:\t" << (bDeclineRecur ? "yes" : "no") << endl;
 	}
-	if (lpECUser->lpszServername != NULL && lpECUser->lpszServername[0])
+	if (lpECUser->lpszServername != NULL && *reinterpret_cast<LPSTR>(lpECUser->lpszServername) != '\0')
 		cout << "Home server:\t\t" << (LPSTR)lpECUser->lpszServername << endl;
+
+	adm_oof_status(lpProps);
 
 	if (lpProps) {
 		time_t logon = 0, logoff = 0;
@@ -2754,7 +2793,7 @@ int main(int argc, char* argv[])
 			case 'V':
 				       cout << "Product version:\t" << PROJECT_VERSION_PROFADMIN_STR << endl
 					       << "File version:\t\t" << PROJECT_SVN_REV_STR << endl;
-				       return 1;
+				       return EXIT_SUCCESS;
 			case OPT_SELECT_NODE:
 				       node = validateInput(my_optarg);
 				       break;
@@ -3409,7 +3448,7 @@ int main(int argc, char* argv[])
 					}
 
 					// homeserver on single server installations is empty
-					if (lpECUser->lpszServername != NULL && lpECUser->lpszServername[0]) {
+					if (lpECUser->lpszServername != NULL && *reinterpret_cast<LPSTR>(lpECUser->lpszServername) != '\0') {
 						// note, this has to be mapi allocated because GetServerDetails does a More allocation on this base pointer
 						if (MAPIAllocateBuffer(sizeof(ECSVRNAMELIST), (void**)&lpsServer) != hrSuccess ||
 								MAPIAllocateMore(sizeof(LPTSTR), lpsServer, (void**)&lpsServer->lpszaServer) != hrSuccess) {
