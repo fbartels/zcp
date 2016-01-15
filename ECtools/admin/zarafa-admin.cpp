@@ -791,6 +791,28 @@ static string ClassToString(objectclass_t eClass)
 	};
 }
 
+static bool dagent_oof_enabled(const SPropValue *const prop)
+{
+	if (prop[2].ulPropTag != PR_EC_OUTOFOFFICE || !prop[2].Value.b)
+		/* Not enabled _at all_. */
+		return false;
+
+	if (prop[3].ulPropTag != PR_EC_OUTOFOFFICE_FROM || prop[4].ulPropTag != PR_EC_OUTOFOFFICE_UNTIL)
+		/*
+		 * FROM/UNTIL fields are not present at all -
+		 * just ENABLED counts, and it is on.
+		 */
+		return true;
+
+	/* FROM/UNTIL is present - evaluate it. */
+	time_t start, end;
+	FileTimeToUnixTime(prop[3].Value.ft, &start);
+	FileTimeToUnixTime(prop[4].Value.ft, &end);
+
+	time_t now = time(NULL);
+	return start <= now && now <= end;
+}
+
 /**
  * Print user details
  *
@@ -806,7 +828,7 @@ static void print_user_settings(IMsgStore *lpStore, const ECUSER *lpECUser,
     const ArchiveList &lstArchives, const ECUSERCLIENTUPDATESTATUS *lpECUCUS)
 {
 	LPSPropValue lpProps = NULL;
-	SizedSPropTagArray(2, sptaProps) = {2, { PR_LAST_LOGON_TIME, PR_LAST_LOGOFF_TIME } };
+	SizedSPropTagArray(5, sptaProps) = {5, { PR_LAST_LOGON_TIME, PR_LAST_LOGOFF_TIME, PR_EC_OUTOFOFFICE, PR_EC_OUTOFOFFICE_FROM, PR_EC_OUTOFOFFICE_UNTIL } };
 	ULONG cValues = 0;
 
 	lpStore->GetProps((LPSPropTagArray)&sptaProps, 0, &cValues, &lpProps);
@@ -828,6 +850,11 @@ static void print_user_settings(IMsgStore *lpStore, const ECUSER *lpECUser,
 	}
 	if (lpECUser->lpszServername != NULL && *reinterpret_cast<LPSTR>(lpECUser->lpszServername) != '\0')
 		cout << "Home server:\t\t" << (LPSTR)lpECUser->lpszServername << endl;
+
+	if (dagent_oof_enabled(lpProps))
+		cout << "User has out-of-office ENABLED" << endl;
+	else
+		cout << "User has out-of-office disabled" << endl;
 
 	if (lpProps) {
 		time_t logon = 0, logoff = 0;
