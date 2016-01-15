@@ -2846,29 +2846,6 @@ static vmime::charset vtm_upgrade_charset(const vmime::charset &cset)
 	return cset;
 }
 
-vmime::charset VMIMEToMAPI::getCompatibleCharset(const vmime::charset &vmCharset)
-{
-	vmime::charset vmComp(vmCharset);
-	size_t i;
-
-	// If we are handling us-ascii, use default_charset instead
-	if(stricmp(vmCharset.getName().c_str(), "us-ascii") == 0)
-		return m_dopt.default_charset;
-
-	// First try to lookup the charset in our list of replacement charsets
-	for (i = 0; i < arraySize(charsetHelper::fixes); i++) {
-		if (stricmp(charsetHelper::fixes[i].original, vmCharset.getName().c_str()) == 0) {
-			return charsetHelper::fixes[i].update;
-		}
-	}
-
-	// If that doesn't work, check that the charset even exists. If it doesn't, fallback to default charset
-	if(!ValidateCharset(vmComp.getName().c_str()))
-		return m_dopt.default_charset;
-
-	return vmComp;
-}
-
 static htmlNodePtr find_node(htmlNodePtr lpNode, const char *name)
 {
 	htmlNodePtr node = NULL;
@@ -3042,14 +3019,33 @@ exit:
  */
 std::wstring VMIMEToMAPI::getWideFromVmimeText(const vmime::text &vmText)
 {
-	std::string strInter;
 	std::string myword;
+	std::wstring ret;
 
 	const std::vector<vmime::ref<const vmime::word> >& words = vmText.getWordList();
 	std::vector<vmime::ref<const vmime::word> >::const_iterator i, j;
 	for (i = words.begin(); i != words.end(); i++) {
-		vmime::charset wordCharset = (*i)->getCharset();
-		vmime::charset vmForcedCharset(getCompatibleCharset(wordCharset));
+		vmime::charset wordCharset = vtm_upgrade_charset((*i)->getCharset());
+		/*
+		 * In case of unknown character sets, RFC 2047 §6.2 ¶5
+		 * gives the following options:
+		 *
+		 * (a) display input as-is:
+		 *     if (!ValidateCharset(..))
+		 *         ret += m_converter.convert_to<std::wstring>((*i)->generate());
+		 * (b) best effort conversion (which we pick) or
+		 * (c) substitute by a message that decoding failed.
+		 *
+		 * We pick (b). However, reinterpreting the input as
+		 * m_dopt.default_charset produces the _worst_ possible result,
+		 * since codepoints get transcoded into different dingbats.
+		 * With ASCII as the forced charset, the user at least gets
+		 * consistent placeholders. These placeholders may be the empty
+		 * string. (a) is also a good choice, but the "placeholders"
+		 * may be longer for not much benefit to the human reader.
+		 */
+		if (!ValidateCharset(wordCharset.getName().c_str()))
+			wordCharset = vmime::charsets::US_ASCII;
 
 		/*
 		 * Concatenate words having the same charset, as the original
@@ -3066,10 +3062,11 @@ std::wstring VMIMEToMAPI::getWideFromVmimeText(const vmime::text &vmText)
 			i++;
                 }
 
-		strInter += vmime::word(myword, vmForcedCharset).getConvertedText(CHARSET_WCHAR);
+		std::string tmp = vmime::word(myword, wordCharset).getConvertedText(CHARSET_WCHAR);
+		ret.append(reinterpret_cast<const wchar_t *>(tmp.c_str()), tmp.size() / sizeof(wchar_t));
 	}
 
-	return std::wstring((WCHAR*)strInter.c_str(), strInter.size() / sizeof(WCHAR));
+	return ret;
 }
 
 /**
