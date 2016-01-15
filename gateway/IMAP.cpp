@@ -1031,7 +1031,10 @@ HRESULT IMAP::HrCmdLogin(const string &strTag, const string &strUser, const stri
 	if (hr != hrSuccess) {
 		lpLogger->Log(EC_LOGLEVEL_WARNING, "Failed to login from %s with invalid username \"%s\" or wrong password. Error: 0x%08X",
 					  lpChannel->peer_addr(), strUsername.c_str(), hr);
-		hr2 = HrResponse(RESP_TAGGED_NO, strTag, "LOGIN wrong username or password");
+		if (hr == MAPI_E_LOGON_FAILED)
+			hr2 = HrResponse(RESP_TAGGED_NO, strTag, "LOGIN wrong username or password");
+		else
+			hr2 = HrResponse(RESP_TAGGED_BAD, strTag, "Internal error: OpenECSession failed");
 		if (hr2 != hrSuccess)
 			goto exit;
 		m_ulFailedLogins++;

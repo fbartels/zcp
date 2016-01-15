@@ -3243,18 +3243,21 @@ static void *HandlerLMTP(void *lpArg)
 	hr = pyMapiPluginFactory.Init(g_lpConfig, g_lpLogger);
 	if (hr != hrSuccess) {
 		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to instantiate plugin factory, hr=0x%08x", hr);
+		lmtp.HrResponse("421 internal error: pyMapiPluginFactory failed");
 		goto exit;
 	}
 
 	hr = HrGetSession(lpArgs, ZARAFA_SYSTEM_USER_W, &lpSession);
 	if (hr != hrSuccess) {
 		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "HandlerLMTP(): HrGetSession failed %x", hr);
+		lmtp.HrResponse("421 internal error: GetSession failed");
 		goto exit;
 	}
 
 	hr = OpenResolveAddrFolder(lpSession, &lpAdrBook, &lpAddrDir);
 	if (hr != hrSuccess) {
 		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "HandlerLMTP(): OpenResolveAddrFolder failed %x", hr);
+		lmtp.HrResponse("421 internal error: OpenResolveAddrFolder failed");
 		goto exit;
 	}
 

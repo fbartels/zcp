@@ -443,7 +443,10 @@ HRESULT POP3::HrCmdPass(const string &strPass) {
 	} else {
 		hr = this->HrLogin(szUser, strPass);
 		if (hr != hrSuccess) {
-			HrResponse(POP3_RESP_AUTH_ERROR, "Wrong username or password");
+			if (hr == MAPI_E_LOGON_FAILED)
+				HrResponse(POP3_RESP_AUTH_ERROR, "Wrong username or password");
+			else
+				HrResponse(POP3_RESP_TEMPFAIL, "Internal error: HrLogin failed");
 			goto exit;
 		}
 
