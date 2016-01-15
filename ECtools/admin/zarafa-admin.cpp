@@ -49,6 +49,7 @@
 #include <climits>
 #include <cmath>
 #include <cstdio>
+#include <cstdlib>
 #include <ctime>
 #include <mapidefs.h>
 #include <mapispi.h>
@@ -2792,7 +2793,7 @@ int main(int argc, char* argv[])
 			case 'V':
 				       cout << "Product version:\t" << PROJECT_VERSION_PROFADMIN_STR << endl
 					       << "File version:\t\t" << PROJECT_SVN_REV_STR << endl;
-				       return 1;
+				       return EXIT_SUCCESS;
 			case OPT_SELECT_NODE:
 				       node = validateInput(my_optarg);
 				       break;
