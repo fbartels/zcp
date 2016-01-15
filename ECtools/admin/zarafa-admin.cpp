@@ -45,8 +45,11 @@
 
 #include <iostream>
 #include <zarafa/my_getopt.h>
+#include <cerrno>
 #include <climits>
 #include <cmath>
+#include <cstdio>
+#include <ctime>
 #include <mapidefs.h>
 #include <mapispi.h>
 #include <mapix.h>
@@ -791,26 +794,37 @@ static string ClassToString(objectclass_t eClass)
 	};
 }
 
-static bool dagent_oof_enabled(const SPropValue *const prop)
+static void adm_oof_status(const SPropValue *const prop)
 {
-	if (prop[2].ulPropTag != PR_EC_OUTOFOFFICE || !prop[2].Value.b)
-		/* Not enabled _at all_. */
-		return false;
+	if (prop[2].ulPropTag != PR_EC_OUTOFOFFICE || !prop[2].Value.b) {
+		printf("Out Of Office:          disabled\n");
+		return;
+	}
 
-	if (prop[3].ulPropTag != PR_EC_OUTOFOFFICE_FROM || prop[4].ulPropTag != PR_EC_OUTOFOFFICE_UNTIL)
-		/*
-		 * FROM/UNTIL fields are not present at all -
-		 * just ENABLED counts, and it is on.
-		 */
-		return true;
+	if (prop[3].ulPropTag != PR_EC_OUTOFOFFICE_FROM || prop[4].ulPropTag != PR_EC_OUTOFOFFICE_UNTIL) {
+		printf("Out Of Office:          enabled\n");
+		return;
+	}
 
-	/* FROM/UNTIL is present - evaluate it. */
-	time_t start, end;
+	time_t start, end, now = time(NULL);
+	char start_buf[64], end_buf[64];
+	struct tm *tm;
+
 	FileTimeToUnixTime(prop[3].Value.ft, &start);
 	FileTimeToUnixTime(prop[4].Value.ft, &end);
-
-	time_t now = time(NULL);
-	return start <= now && now <= end;
+	if ((tm = localtime(&start)) == NULL) {
+		perror("localtime");
+		return;
+	}
+	strftime(start_buf, sizeof(start_buf), "%F %T", tm);
+	if ((tm = localtime(&end)) == NULL) {
+		perror("localtime");
+		return;
+	}
+	strftime(end_buf, sizeof(end_buf), "%F %T", tm);
+	printf("Out Of Office:          from %s until %s (currently %s)\n",
+	       start_buf, end_buf,
+	       start <= now && now <= end ? "active" : "inactive");
 }
 
 /**
@@ -851,10 +865,7 @@ static void print_user_settings(IMsgStore *lpStore, const ECUSER *lpECUser,
 	if (lpECUser->lpszServername != NULL && *reinterpret_cast<LPSTR>(lpECUser->lpszServername) != '\0')
 		cout << "Home server:\t\t" << (LPSTR)lpECUser->lpszServername << endl;
 
-	if (dagent_oof_enabled(lpProps))
-		cout << "User has out-of-office ENABLED" << endl;
-	else
-		cout << "User has out-of-office disabled" << endl;
+	adm_oof_status(lpProps);
 
 	if (lpProps) {
 		time_t logon = 0, logoff = 0;
