@@ -2493,7 +2493,7 @@ static HRESULT ProcessMessage(IMAPISession *lpAdminSession,
 		// move PR_REPRESENTING to PR_SENDER_NAME
 		hr = lpMessage->GetProps((LPSPropTagArray)&sptaMoveReprProps, 0, &cValuesMoveProps, &lpMoveReprProps);
 		if (FAILED(hr)) {
-			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to find sender information (%x)",
+			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to find sender information: %s (%x)",
 				GetMAPIErrorMessage(hr), hr);
 			goto exit;
 		}
