@@ -2872,10 +2872,10 @@ static HRESULT ProcessDeliveryToServer(PyMapiPlugin *lppyMapiPlugin,
 				}
 				HrGetOneProp(lpMessageTmp, PR_SUBJECT_W, &lpSubject);
 				g_lpLogger->Log(EC_LOGLEVEL_INFO,
-					"Delivered message to '%ls', Subject: \"%ls\", Message-Id: %ls",
+					"Delivered message to '%ls', Subject: \"%ls\", Message-Id: %ls, size %lu",
 					(*iter)->wstrUsername.c_str(),
 					(lpSubject != NULL) ? lpSubject->Value.lpszW : L"<none>",
-					wMessageId.c_str());
+					wMessageId.c_str(), static_cast<unsigned long>(strMail.size()));
 				MAPIFreeBuffer(lpSubject);
 			}
 			// cancel already logged.
