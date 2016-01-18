@@ -9011,6 +9011,7 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 	ECLogger *const logger = lpecSession->GetSessionManager()->GetLogger();
 	const EntryId srcEntryId(&sEntryId);
 	const EntryId dstEntryId(&sDestFolderId);
+	std::string name;
 
 	// NOTE: lpszNewFolderName can be NULL
 	if (lpszNewFolderName)
@@ -9045,7 +9046,7 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 	}
 
 	if(ulDestStoreId != ulSourceStoreId) {
-		logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder copy from/to different stores is not supported");
+		logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder copy from/to different stores (from %u to %u) is not supported", ulSourceStoreId, ulDestStoreId);
 		ASSERT(FALSE);
 		er = ZARAFA_E_NO_SUPPORT;
 		goto exit;
@@ -9054,7 +9055,7 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 	// Check permission
 	er = lpecSession->GetSecurity()->CheckPermission(ulDestFolderId, ecSecurityCreateFolder);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_DEBUG, "SOAP::copyFolder copy folder is not allowed: %x", er);
+		logger->Log(EC_LOGLEVEL_DEBUG, "SOAP::copyFolder copy folder (to %u) is not allowed: %x", ulDestFolderId, er);
 		goto exit;
 	}
 
@@ -9064,13 +9065,13 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 		er = lpecSession->GetSecurity()->CheckPermission(ulFolderId, ecSecurityRead);
 
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_DEBUG, "SOAP::copyFolder folder is not editable %x", er);
+		logger->Log(EC_LOGLEVEL_DEBUG, "SOAP::copyFolder folder (%u) is not editable %x", ulFolderId, er);
 		goto exit;
 	}
 
 	// Check MAPI_E_FOLDER_CYCLE
 	if(ulFolderId == ulDestFolderId) {
-		logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder target-folder cannot be the same as source folder");
+		logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder target-folder (%u) cannot be the same as source folder", ulDestFolderId);
 		er = ZARAFA_E_FOLDER_CYCLE;
 		goto exit;
 	}
@@ -9078,20 +9079,20 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 	// Get the parent id, for notification and copy
 	er = g_lpSessionManager->GetCacheManager()->GetObject(ulFolderId, &ulOldParent, NULL, &ulObjFlags, &ulSourceType);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder cannot get parent-folder id: %x", er);
+		logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder cannot get parent-folder id for %u: %x", ulFolderId, er);
 		goto exit;
 	}
 
 	er = g_lpSessionManager->GetCacheManager()->GetObject(ulDestFolderId, NULL, NULL, NULL, &ulDestType);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder cannot get type of destination: %x", er);
+		logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder cannot get type of destination-folder (%u): %x", ulDestFolderId, er);
 		goto exit;
 	}
 
 	if (ulSourceType != MAPI_FOLDER || ulDestType != MAPI_FOLDER) {
 		const std::string srcEntryIdStr = srcEntryId;
 		const std::string dstEntryIdStr = dstEntryId;
-		logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder source or destination is not a folder, invalid entry id (%s / %s)", srcEntryIdStr.c_str(), dstEntryIdStr.c_str());
+		logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder source (%u) or destination (%u) is not a folder, invalid entry id (%s / %s)", ulSourceType, ulDestType, srcEntryIdStr.c_str(), dstEntryIdStr.c_str());
 		er = ZARAFA_E_INVALID_ENTRYID;
 		goto exit;
 	}
@@ -9099,7 +9100,7 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 	// Check folder and dest folder are the same
 	if (!(ulObjFlags & MSGFLAG_DELETED) && (ulFlags & FOLDER_MOVE) &&
 	    ulDestFolderId == ulOldParent) {
-		logger->Log(EC_LOGLEVEL_DEBUG, "SOAP::copyFolder destination == source");
+		logger->Log(EC_LOGLEVEL_DEBUG, "SOAP::copyFolder destination (%u) == source", ulDestFolderId);
 		goto exit; // Do nothing... folder already on the right place
 	}
 
@@ -9107,7 +9108,7 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 	while (g_lpSessionManager->GetCacheManager()->GetParent(ulParentCycle, &ulParentCycle) == erSuccess) {
 		if(ulFolderId == ulParentCycle)
 		{
-			logger->Log(EC_LOGLEVEL_DEBUG, "SOAP::copyFolder infinite loop detected");
+			logger->Log(EC_LOGLEVEL_DEBUG, "SOAP::copyFolder infinite loop detected for %u", ulDestFolderId);
 			er = ZARAFA_E_FOLDER_CYCLE;
 			goto exit;
 		}
@@ -9116,21 +9117,23 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 	// Check whether the requested name already exists
 	strQuery = "SELECT hierarchy.id FROM hierarchy JOIN properties ON hierarchy.id = properties.hierarchyid WHERE parent=" + stringify(ulDestFolderId) + " AND (hierarchy.flags & " + stringify(MSGFLAG_DELETED) + ") = 0 AND hierarchy.type="+stringify(MAPI_FOLDER)+" AND properties.tag=" + stringify(ZARAFA_TAG_DISPLAY_NAME) + " AND properties.type="+stringify(PT_STRING8);
 	if(lpszNewFolderName) {
+		name = lpszNewFolderName;
 		strQuery+= " AND properties.val_string = '" + lpDatabase->Escape(lpszNewFolderName) + "'";
 	} else {
+		name = format("%u", ulFolderId);
 		strSubQuery = "SELECT properties.val_string FROM hierarchy JOIN properties ON hierarchy.id = properties.hierarchyid WHERE hierarchy.id=" + stringify(ulFolderId) + " AND properties.tag=" + stringify(ZARAFA_TAG_DISPLAY_NAME) + " AND properties.type=" + stringify(PT_STRING8);
 		strQuery+= " AND properties.val_string = ("+strSubQuery+")";
 	}
 
 	er = lpDatabase->DoSelect(strQuery, &lpDBResult);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_DEBUG, "SOAP::copyFolder check for existing name failed: %x", er);
+		logger->Log(EC_LOGLEVEL_DEBUG, "SOAP::copyFolder check for existing name (%s) failed: %x", name.c_str(), er);
 		goto exit;
 	}
 
 	if(lpDatabase->GetNumRows(lpDBResult) > 0 && !ulSyncId) {
 		er = ZARAFA_E_COLLISION;
-		logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): target name already exists");
+		logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): target name (%s) already exists", name.c_str());
 		goto exit;
 	}
 
@@ -9141,13 +9144,13 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 		strQuery = "SELECT properties.val_string FROM hierarchy JOIN properties ON hierarchy.id = properties.hierarchyid WHERE hierarchy.id=" + stringify(ulFolderId) + " AND properties.tag=" + stringify(ZARAFA_TAG_DISPLAY_NAME) + " AND properties.type=" + stringify(PT_STRING8);
 		er = lpDatabase->DoSelect(strQuery, &lpDBResult);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): problem retrieving source name");
+			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): problem retrieving source name for %u: %x", ulFolderId, er);
 			goto exit;
 		}
 
 		lpDBRow = lpDatabase->FetchRow(lpDBResult);
 		if( lpDBRow == NULL || lpDBRow[0] == NULL) {
-			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): source name not known");
+			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): source name (%s) not known", name.c_str());
 			er = ZARAFA_E_NOT_FOUND;
 			goto exit;
 		}
@@ -9187,15 +9190,15 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 		// FIXME update modtime
 		strQuery = "UPDATE hierarchy SET parent="+stringify(ulDestFolderId)+", flags=flags&"+stringify(~MSGFLAG_DELETED)+" WHERE id="+stringify(ulFolderId);
 		if ((er = lpDatabase->DoUpdate(strQuery, &ulAffRows)) != erSuccess) {
-		    lpDatabase->Rollback();
-			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): update of modification time failed: %x", er);
+			lpDatabase->Rollback();
+			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): update of modification-time failed: %x", er);
 			er = ZARAFA_E_DATABASE_ERROR;
 			goto exit;
 		}
 
 		if(ulAffRows != 1) {
 		    lpDatabase->Rollback();
-			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): unexpected number of affected rows: %u", ulAffRows);
+			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): unexpected number of affected rows (expected: 1, got: %u)", ulAffRows);
 			er = ZARAFA_E_DATABASE_ERROR;
 			goto exit;
 		}
@@ -9204,7 +9207,7 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 		//Info: Always an update, It's not faster first check and than update/or not
 		strQuery = "UPDATE properties SET val_string = '" + lpDatabase->Escape(lpszNewFolderName) + "' WHERE tag=" + stringify(ZARAFA_TAG_DISPLAY_NAME) + " AND hierarchyid="+stringify(ulFolderId) + " AND type=" + stringify(PT_STRING8);
 		if ((er = lpDatabase->DoUpdate(strQuery, &ulAffRows)) != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): actual move of folder (db query) failed: %x", er);
+			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): actual move of folder %s failed: %x", lpszNewFolderName, er);
 			er = ZARAFA_E_DATABASE_ERROR;
 		    lpDatabase->Rollback();
 			goto exit;
@@ -9214,8 +9217,8 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 		strQuery = "DELETE FROM properties WHERE hierarchyid="+stringify(ulFolderId)+" AND tag="+stringify(PROP_ID(PR_DELETED_ON))+" AND type="+stringify(PROP_TYPE(PR_DELETED_ON));
 		er = lpDatabase->DoDelete(strQuery);
 		if(er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): cannot remove PR_DELETED_ON property: %x", er);
-		    lpDatabase->Rollback();
+			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): cannot remove PR_DELETED_ON property for %u: %x", ulFolderId, er);
+			lpDatabase->Rollback();
 			er = ZARAFA_E_DATABASE_ERROR;
 			goto exit;
 		}
@@ -9224,7 +9227,7 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 		if (llFolderSize > 0) {
 			er = UpdateObjectSize(lpDatabase, ulSourceStoreId, MAPI_STORE, UPDATE_ADD, llFolderSize);
 			if (er != erSuccess) {
-				logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): problem updating store size: %x", er);
+				logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): problem updating store (%u) size: %x", ulSourceStoreId, er);
 				goto exit;
 			}
 		}
@@ -9257,7 +9260,7 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 		}
 
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): updating folder counts: %x", er);
+			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): updating folder counts failed: %x", er);
 			goto exit;
 		}
 
@@ -9298,7 +9301,7 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 	}else {// a copy
 		er = CopyFolderObjects(soap, lpecSession, ulFolderId, ulDestFolderId, lpszNewFolderName, !!(ulFlags&COPY_SUBFOLDERS), ulSyncId);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): CopyFolderObjects failed: %x", er);
+			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): CopyFolderObjects (src folder: %u, dest folder: %u, new name: %s) failed: %x", ulFolderId, ulDestFolderId, lpszNewFolderName, er);
 			goto exit;
 		}
 	}
