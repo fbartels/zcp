@@ -8067,7 +8067,8 @@ static ECRESULT MoveObjects(ECSession *lpSession, ECDatabase *lpDatabase,
 	}
 	
 	// Free database results
-	if(lpDBResult) { lpDatabase->FreeResult(lpDBResult); lpDBResult = NULL;}
+	lpDatabase->FreeResult(lpDBResult);
+	lpDBResult = NULL;
 
 	// Check the quota size when the item is a softdelete item
 	if(bUpdateDeletedSize == true)
@@ -8318,10 +8319,7 @@ exit:
 
 	if(lpDatabase && er != erSuccess && er != ZARAFA_W_PARTIAL_COMPLETION)
 		lpDatabase->Rollback();
-
-	if(lpDBResult)
-		lpDatabase->FreeResult(lpDBResult);
-
+	lpDatabase->FreeResult(lpDBResult);
 	if(lpsNewEntryId)
 		FreeEntryId(lpsNewEntryId, true);
 
@@ -8508,8 +8506,12 @@ static ECRESULT CopyObject(ECSession *lpecSession,
 	}
 
 	//Free Results
-	if(lpDBResult) { lpDatabase->FreeResult(lpDBResult); lpDBResult = NULL; }
-	if(lpsNewEntryId) { FreeEntryId(lpsNewEntryId, true); lpsNewEntryId = NULL; }
+	lpDatabase->FreeResult(lpDBResult);
+	lpDBResult = NULL;
+	if (lpsNewEntryId != NULL) {
+		FreeEntryId(lpsNewEntryId, true);
+		lpsNewEntryId = NULL;
+	}
 
 
 	// Get child items of the message like , attachment, recipient...
@@ -8636,7 +8638,7 @@ static ECRESULT CopyObject(ECSession *lpecSession,
 	g_lpSessionManager->GetCacheManager()->Update(fnevObjectModified, ulDestFolderId);
 
 	if(bDoNotification){
-		// Update destenation folder
+		// Update destination folder
 		if (bDoTableNotification)
 			g_lpSessionManager->UpdateTables(ECKeyTable::TABLE_ROW_ADD, 0, ulDestFolderId, ulNewObjectId, MAPI_MESSAGE);
 
@@ -8657,8 +8659,7 @@ exit:
 		lpInternalAttachmentStorage->Release();
 
 	//Free Results
-	if(lpDBResult)
-		lpDatabase->FreeResult(lpDBResult);
+	lpDatabase->FreeResult(lpDBResult);
 
 	if(lpsNewEntryId)
 		FreeEntryId(lpsNewEntryId, true);
@@ -8812,10 +8813,8 @@ static ECRESULT CopyFolderObjects(struct soap *soap, ECSession *lpecSession,
 			goto exit;
 	}
 
-	if(lpDBResult) {
-		lpDatabase->FreeResult(lpDBResult);
-		lpDBResult = NULL;
-	}
+	lpDatabase->FreeResult(lpDBResult);
+	lpDBResult = NULL;
 
 	// update the destination folder for disconnected clients
 	er = WriteLocalCommitTimeMax(NULL, lpDatabase, ulNewDestFolderId, NULL);
@@ -8890,10 +8889,7 @@ exit:
 
 	if (lpAttachmentStorage)
 		lpAttachmentStorage->Release();
-
-	if(lpDBResult)
-		lpDatabase->FreeResult(lpDBResult);
-
+	lpDatabase->FreeResult(lpDBResult);
 	return er;
 
 }
