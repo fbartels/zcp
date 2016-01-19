@@ -130,7 +130,7 @@ static void sighup(int sig)
 	if (g_lpLogger) {
 		if (g_lpConfig) {
 			const char *ll = g_lpConfig->GetSetting("log_level");
-			int new_ll = ll ? atoi(ll) : 2;
+			int new_ll = ll ? atoi(ll) : EC_LOGLEVEL_WARNING;
 			g_lpLogger->SetLoglevel(new_ll);
 		}
 
@@ -361,7 +361,7 @@ int main(int argc, char *argv[]) {
 		{ "ssl_prefer_server_ciphers", "no" },
 		{ "log_method", "file" },
 		{ "log_file", "-" },
-		{ "log_level", "2", CONFIGSETTING_RELOADABLE },
+		{ "log_level", "3", CONFIGSETTING_RELOADABLE },
 		{ "log_timestamp", "1" },
 		{ "log_buffer_size", "0" },
 		{ "tmp_path", "/tmp" },

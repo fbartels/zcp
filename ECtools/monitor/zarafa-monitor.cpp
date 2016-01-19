@@ -130,7 +130,7 @@ static void sighup(int signr)
 		if (m_lpThreadMonitor->lpLogger) {
 			if (m_lpThreadMonitor->lpConfig) {
 				const char *ll = m_lpThreadMonitor->lpConfig->GetSetting("log_level");
-				int new_ll = ll ? atoi(ll) : 2;
+				int new_ll = ll ? atoi(ll) : EC_LOGLEVEL_WARNING;
 				m_lpThreadMonitor->lpLogger->SetLoglevel(new_ll);
 			}
 
@@ -197,7 +197,7 @@ int main(int argc, char *argv[]) {
 #else
 		{ "log_file","-" },
 #endif
-		{ "log_level","2", CONFIGSETTING_RELOADABLE },
+		{ "log_level", "3", CONFIGSETTING_RELOADABLE },
 		{ "log_timestamp","1" },
 		{ "log_buffer_size", "0" },
 		{ "sslkey_file", "" },

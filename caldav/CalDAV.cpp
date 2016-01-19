@@ -130,7 +130,7 @@ static void sighup(int)
 	if (g_lpLogger) {
 		if (g_lpConfig) {
 			const char *ll = g_lpConfig->GetSetting("log_level");
-			int new_ll = ll ? atoi(ll) : 2;
+			int new_ll = ll ? atoi(ll) : EC_LOGLEVEL_WARNING;
 			g_lpLogger->SetLoglevel(new_ll);
 		}
 
