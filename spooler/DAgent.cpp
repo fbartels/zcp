@@ -665,7 +665,7 @@ static void SaveRawMessage(FILE *fp, const char *lpRecipient)
 		sprintf(szBuff, "_%04d%02d%02d%02d%02d%02d_%08x.eml", tmResult.tm_year+1900, tmResult.tm_mon+1, tmResult.tm_mday, tmResult.tm_hour, tmResult.tm_min, tmResult.tm_sec, rand_mt());
 		strFileName += szBuff;
 
-		if(DuplicateFile(g_lpLogger, fp, strFileName))
+		if (DuplicateFile(fp, strFileName))
 			g_lpLogger->Log(EC_LOGLEVEL_NOTICE, "Raw message saved to '%s'", strFileName.c_str());
 	}
 }

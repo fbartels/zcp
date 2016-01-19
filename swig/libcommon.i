@@ -89,13 +89,6 @@ public:
        }
 };
 
-// functions from common/fileutil.h
-%inline %{
-    bool ConvertFileFromUCS2ToUTF8(std::string strSrcFileName, std::string strDstFileName) {
-        return ConvertFileFromUCS2ToUTF8(NULL, strSrcFileName, strDstFileName);
-    }
-%}
-
 %feature("notabstract") IStreamAdapter;
 
 // this is a way to make std::string objects that you can pass to the IStreamAdapter
