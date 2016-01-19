@@ -60,6 +60,15 @@ typedef struct _do {
 	bool mark_as_read;				// Deliver the message 'read' instead of unread
 	bool add_imap_data;				// Save IMAP optimizations to the server
 	bool parse_smime_signed;		// Parse actual S/MIME content instead of just writing out the S/MIME data to a single attachment
+
+	/*
+	 * If @charset_strict_rfc is false, VMIMEToMAPI will try to
+	 * re-interpret {messages with unexpected characters} in character
+	 * sets other than the one specified in the mail header, which may
+	 * worsen the result.
+	 */
+	bool charset_strict_rfc;
+
 	LPSBinary user_entryid;			// If not NULL, specifies the entryid of the user for whom we are delivering. If set, allows generating PR_MESSAGE_*_ME properties.
 	const char *default_charset;		// Specifies the default charset to use when none is found in the source message, or when us-ascii is used in the source message. Note that this charset *must* be a superset of us-ascii
 } delivery_options;

@@ -205,7 +205,7 @@ INETMAPI_API HRESULT IMToMAPI(IMAPISession *lpSession, IMsgStore *lpMsgStore, IA
 	if(!ValidateCharset(dopt.default_charset)) {
 		const char *charset = "iso-8859-15";
 		if(lpLogger)
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "Configured default_charset '%s' is invalid. Reverting to '%s'", dopt.default_charset, charset);
+			lpLogger->Log(EC_LOGLEVEL_WARNING, "Configured default_charset '%s' is invalid. Reverting to '%s'", dopt.default_charset, charset);
 		dopt.default_charset = charset;
 	}
 
