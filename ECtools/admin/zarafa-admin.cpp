@@ -3089,7 +3089,7 @@ int main(int argc, char* argv[])
 	else
 		lpLogger = new ECLogger_Null();
 
-	HrSetLogger(lpLogger);
+	ec_log_set(lpLogger);
 
 	//Init mapi
 	hr = MAPIInitialize(NULL);

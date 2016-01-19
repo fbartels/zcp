@@ -81,15 +81,6 @@ ECConfig *m4l_lpConfig = NULL;
 ECLogger *m4l_lpLogger = NULL;
 MAPISVC *m4l_lpMAPISVC = NULL;
 
-void HrSetLogger(void *const pl) {
-	if (pl == NULL) {
-		m4l_lpLogger = new ECLogger_Null();
-	} else {
-		m4l_lpLogger = (ECLogger *)pl;
-		m4l_lpLogger->AddRef();
-}
-}
-
 /**
  * Internal MAPI4Linux function to create m4l internal ECConfig and ECLogger objects
  */
@@ -145,12 +136,20 @@ static HRESULT HrCreateM4LServices(void)
 		m4l_lpConfig->LoadSettings(configfile.c_str());
 	}
 
-	if (!m4l_lpLogger) {
+	if (!ec_log_has_target()) {
 		m4l_lpLogger = CreateLogger(m4l_lpConfig, "exchange-redirector", "ExchangeRedirector");
 		if (!m4l_lpLogger) {
 			hr = MAPI_E_NOT_ENOUGH_MEMORY;
 			goto exit;
 		}
+		/*
+		 * You already knew that MAPIInitialize() could only be called
+		 * from single-threaded context.
+		 */
+		ec_log_set(m4l_lpLogger);
+	} else {
+		m4l_lpLogger = ec_log_get();
+		m4l_lpLogger->AddRef();
 	}
 
 exit:

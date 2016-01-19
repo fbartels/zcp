@@ -385,6 +385,20 @@ class ECLogger_Tee _zcp_final : public ECLogger {
 		void AddLogger(ECLogger *lpLogger);
 };
 
+extern bool ec_log_has_target(void);
+extern ECLogger *ec_log_get(void);
+extern void ec_log_set(ECLogger *);
+extern void ec_log(unsigned int, const char *, ...);
+extern void ec_log(unsigned int, const std::string &);
+
+#define ec_log_always(...)  ec_log(EC_LOGLEVEL_ALWAYS, ## __VA_ARGS__)
+#define ec_log_fatal(...)   ec_log(EC_LOGLEVEL_FATAL, ## __VA_ARGS__)
+#define ec_log_err(...)     ec_log(EC_LOGLEVEL_ERROR, ## __VA_ARGS__)
+#define ec_log_warn(...)    ec_log(EC_LOGLEVEL_WARNING, ## __VA_ARGS__)
+#define ec_log_notice(...)  ec_log(EC_LOGLEVEL_NOTICE, ## __VA_ARGS__)
+#define ec_log_info(...)    ec_log(EC_LOGLEVEL_INFO, ## __VA_ARGS__)
+#define ec_log_debug(...)   ec_log(EC_LOGLEVEL_DEBUG, ## __VA_ARGS__)
+
 ECLogger* CreateLogger(ECConfig *config, const char *argv0, const char *lpszServiceName, bool bAudit = false);
 int DeleteLogger(ECLogger *lpLogger);
 void LogConfigErrors(ECConfig *lpConfig, ECLogger *lpLogger);

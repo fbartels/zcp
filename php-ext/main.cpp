@@ -598,7 +598,7 @@ static int LoadSettingsFile(void)
 
 	lpLogger->Log(EC_LOGLEVEL_INFO, "PHP-Mapi instantiated " PROJECT_VERSION_EXT_STR);
 
-	HrSetLogger(lpLogger);
+	ec_log_set(lpLogger);
 	if (mapi_debug)
 		lpLogger->Log(EC_LOGLEVEL_INFO, "PHP-MAPI trace level set to %d", mapi_debug);
 	return SUCCESS;
