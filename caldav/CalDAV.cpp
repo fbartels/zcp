@@ -418,11 +418,11 @@ exit:
 
 static HRESULT HrSetupListeners(int *lpulNormal, int *lpulSecure)
 {
-	HRESULT hr = hrSuccess;
-	bool bListen = false;
-	bool bListenSecure = false;
-	int ulPortICal = 0;
-	int ulPortICalS = 0;
+	HRESULT hr;
+	bool bListen;
+	bool bListenSecure;
+	int ulPortICal;
+	int ulPortICalS;
 	int ulNormalSocket = 0;
 	int ulSecureSocket = 0;
 
@@ -432,8 +432,7 @@ static HRESULT HrSetupListeners(int *lpulNormal, int *lpulSecure)
 
 	if (!bListen && !bListenSecure) {
 		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "No ports to open for listening.");
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
+		return MAPI_E_INVALID_PARAMETER;
 	}
 
 	ulPortICal = atoi(g_lpConfig->GetSetting("ical_port"));
@@ -468,16 +467,12 @@ static HRESULT HrSetupListeners(int *lpulNormal, int *lpulSecure)
 
 	if (!bListen && !bListenSecure) {
 		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "No ports have been opened for listening, exiting.");
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
+		return MAPI_E_INVALID_PARAMETER;
 	}
 
-	hr = hrSuccess;
 	*lpulNormal = ulNormalSocket;
 	*lpulSecure = ulSecureSocket;
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 /**

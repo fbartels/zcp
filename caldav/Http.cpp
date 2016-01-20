@@ -178,7 +178,7 @@ Http::~Http()
  */
 HRESULT Http::HrReadHeaders()
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	std::string strBuffer;
 	ULONG n = 0;
 	std::map<std::string, std::string>::iterator iHeader = mapHeaders.end();
@@ -188,7 +188,7 @@ HRESULT Http::HrReadHeaders()
 	{
 		hr = m_lpChannel->HrReadLine(&strBuffer);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		if (strBuffer.empty())
 			break;
@@ -226,8 +226,6 @@ HRESULT Http::HrReadHeaders()
 	hr = HrParseHeaders();
 	if (hr != hrSuccess)
 		m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "parsing headers failed: 0x%08X", hr);
-
-exit:
 	return hr;
 }
 
@@ -239,7 +237,7 @@ exit:
 // @todo this does way too much.
 HRESULT Http::HrParseHeaders()
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	std::string strAuthdata;
 	std::string strLength;
 	std::string strUserAgent;
@@ -253,8 +251,7 @@ HRESULT Http::HrParseHeaders()
 	items = tokenize(m_strAction, ' ', true);
 	if (items.size() != 3) {
 		m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "HrParseHeaders invalid != 3 tokens");
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
+		return MAPI_E_INVALID_PARAMETER;
 	}
 	m_strMethod = items[0];
 	m_strURL = items[1];
@@ -288,31 +285,26 @@ HRESULT Http::HrParseHeaders()
 	hr = HrGetHeaderValue("Authorization", &strAuthdata);
 	if (hr != hrSuccess) {
 		hr = HrGetHeaderValue("WWW-Authenticate", &strAuthdata);
-		if (hr != hrSuccess) {
-			hr = S_OK;	// ignore empty Authorization
-			goto exit;
-		}
+		if (hr != hrSuccess)
+			return S_OK; /* ignore empty Authorization */
 	}
 
 	items = tokenize(strAuthdata, ' ', true);
 	// we only support basic authentication
 	if (items.size() != 2 || items[0].compare("Basic") != 0) {
 		m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "HrParseHeaders login failed");
-		hr = MAPI_E_LOGON_FAILED;
-		goto exit;
+		return MAPI_E_LOGON_FAILED;
 	}
 
 	user_pass = base64_decode(items[1]);
 	if((colon_pos = user_pass.find(":")) == std::string::npos) {
-		hr = MAPI_E_LOGON_FAILED;
 		m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "HrParseHeaders password missing");
-		goto exit;
+		return MAPI_E_LOGON_FAILED;
 	}
 
 	m_strUser = user_pass.substr(0, colon_pos);
 	m_strPass = user_pass.substr(colon_pos+1, std::string::npos);
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 /**
@@ -538,7 +530,7 @@ HRESULT Http::HrGetCharSet(std::string *strCharset)
  */
 HRESULT Http::HrGetDestination(std::string *strDestination)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	std::string strHost;
 	std::string strDest;
 	string::size_type pos;
@@ -547,29 +539,24 @@ HRESULT Http::HrGetDestination(std::string *strDestination)
 	hr = HrGetHeaderValue("Host", &strHost);
 	if(hr != hrSuccess) {
 		m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "Http::HrGetDestination host header missing");
-		goto exit;
+		return hr;
 	}
 
 	// example:  Destination: http://server:port/caldav/username/folderid/entry.ics
 	hr = HrGetHeaderValue("Destination", &strDest);
 	if (hr != hrSuccess) {
 		m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "Http::HrGetDestination destination header missing");
-		goto exit;
+		return hr;
 	}
 
 	pos = strDest.find(strHost);
 	if (pos == string::npos) {
 		m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Refusing to move calendar item from %s to different host on url %s", strHost.c_str(), strDest.c_str());
-		hr = MAPI_E_CALL_FAILED;
-		goto exit;
-	} else {
-		strDest.erase(0, pos + strHost.length());
+		return MAPI_E_CALL_FAILED;
 	}
-
+	strDest.erase(0, pos + strHost.length());
 	*strDestination = strDest;
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 /**
@@ -609,24 +596,22 @@ HRESULT Http::HrReadBody()
  */
 HRESULT Http::HrValidateReq()
 {
-	HRESULT hr = hrSuccess;
 	static const char *const lpszMethods[] = {
 		"ACL", "GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS",
 		"PROPFIND", "REPORT", "MKCALENDAR", "PROPPATCH", "MOVE", NULL,
 	};
 	bool bFound = false;
-	int i = 0;
+	int i;
 
 	if (m_strMethod.empty()) {
-		hr = MAPI_E_INVALID_PARAMETER;
+		static const HRESULT hr = MAPI_E_INVALID_PARAMETER;
 		m_lpLogger->Log(EC_LOGLEVEL_ERROR, "HTTP request method is empty: %08X", hr);
-		goto exit;
+		return hr;
 	}
 
 	if (!parseBool(m_lpConfig->GetSetting("enable_ical_get")) && m_strMethod == "GET") {
-		hr = MAPI_E_NO_ACCESS;
 		m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Denying iCalendar GET since it is disabled");
-		goto exit;
+		return MAPI_E_NO_ACCESS;
 	}
 
 	for (i = 0; lpszMethods[i] != NULL; i++) {
@@ -637,20 +622,17 @@ HRESULT Http::HrValidateReq()
 	}
 
 	if (bFound == false) {
-		hr = MAPI_E_INVALID_PARAMETER;
+		static const HRESULT hr = MAPI_E_INVALID_PARAMETER;
 		m_lpLogger->Log(EC_LOGLEVEL_ERROR, "HTTP request '%s' not implemented: %08X", m_strMethod.c_str(), hr);
-		goto exit;
+		return hr;
 	}
 
 	// validate authentication data
 	if (m_strUser.empty() || m_strPass.empty())
-	{
 		// hr still success, since http request is valid
 		m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "Request missing authorization data");
-	}
 
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 /**
@@ -839,19 +821,16 @@ HRESULT Http::HrResponseBody(std::string strResponse)
  */
 HRESULT Http::HrRequestAuth(std::string strMsg)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = HrResponseHeader(401, "Unauthorized");
+	HRESULT hr = HrResponseHeader(401, "Unauthorized");
 	if (hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	strMsg = "Basic realm=\"" + strMsg + "\"";
 	hr = HrResponseHeader("WWW-Authenticate", strMsg);
 	if (hr != hrSuccess)
-		goto exit;
+		return hr;
 
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 /**

@@ -200,7 +200,7 @@ HRESULT CalDAV::HrHandleCommand(const std::string &strMethod)
  */
 HRESULT CalDAV::HrHandlePropfind(WEBDAVREQSTPROPS *lpsDavProp, WEBDAVMULTISTATUS *lpsDavMulStatus)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	ULONG ulDepth = 0;
 
 	/* default depths:
@@ -213,22 +213,17 @@ HRESULT CalDAV::HrHandlePropfind(WEBDAVREQSTPROPS *lpsDavProp, WEBDAVMULTISTATUS
 	// always load top level container properties
 	hr = HrHandlePropfindRoot(lpsDavProp, lpsDavMulStatus);
 	if (hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	// m_wstrFldName not set means url is: /caldav/user/ so list calendars
 	if (ulDepth == 1 && m_wstrFldName.empty())
-	{	
 		// Retrieve list of calendars
-		hr = HrListCalendar(lpsDavProp, lpsDavMulStatus);
-	}
+		return HrListCalendar(lpsDavProp, lpsDavMulStatus);
 	else if (ulDepth >= 1)
-	{
 		// Retrieve the Calendar entries list
-		hr = HrListCalEntries(lpsDavProp, lpsDavMulStatus);
-	}
+		return HrListCalEntries(lpsDavProp, lpsDavMulStatus);
 
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 /**
@@ -1756,7 +1751,7 @@ exit:
  */
 HRESULT CalDAV::HrHandlePropPatch(WEBDAVPROP *lpsDavProp, WEBDAVMULTISTATUS *lpsMultiStatus)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	std::list<WEBDAVPROPERTY>::iterator iter;
 	std::wstring wstrConvProp;
 	SPropValue sProp;
@@ -1831,7 +1826,7 @@ HRESULT CalDAV::HrHandlePropPatch(WEBDAVPROP *lpsDavProp, WEBDAVMULTISTATUS *lps
 				// set error 409 collision
 				sPropStatusCollision.sProp.lstProps.push_back(sDavProp);
 				// returned on folder rename, directly return an error and skip all other properties, see note above
-				goto exit;
+				return hr;
 			} else {
 				// set error 403 forbidden
 				sPropStatusForbidden.sProp.lstProps.push_back(sDavProp);
@@ -1842,13 +1837,10 @@ HRESULT CalDAV::HrHandlePropPatch(WEBDAVPROP *lpsDavProp, WEBDAVMULTISTATUS *lps
 	}
 
 	// @todo, maybe only do this for certain Mac iCal app versions?
-	if (!sPropStatusForbidden.sProp.lstProps.empty()) {
-		hr = MAPI_E_CALL_FAILED;
-		goto exit;
-	} else if (!sPropStatusCollision.sProp.lstProps.empty()) {
-		hr = MAPI_E_COLLISION;
-		goto exit;
-	}
+	if (!sPropStatusForbidden.sProp.lstProps.empty())
+		return MAPI_E_CALL_FAILED;
+	else if (!sPropStatusCollision.sProp.lstProps.empty())
+		return MAPI_E_COLLISION;
 
 	// this is the normal code path to return the correct 207 Multistatus
 
@@ -1862,9 +1854,7 @@ HRESULT CalDAV::HrHandlePropPatch(WEBDAVPROP *lpsDavProp, WEBDAVMULTISTATUS *lps
 		sDavResponse.lstsPropStat.push_back(sPropStatusCollision);
 
 	lpsMultiStatus->lstResp.push_back(sDavResponse);
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 /**
@@ -2156,7 +2146,7 @@ exit:
 // @todo cleanup this code, and fix url values
 HRESULT CalDAV::HrMapValtoStruct(LPMAPIPROP lpObj, LPSPropValue lpProps, ULONG ulPropCount, MapiToICal *lpMtIcal, ULONG ulFlags, bool bPropsFirst, std::list<WEBDAVPROPERTY> *lstDavProps, WEBDAVRESPONSE *lpsResponse)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	std::list<WEBDAVPROPERTY>::iterator iterProperty;
 	WEBDAVPROPERTY sWebProperty;
 	std::string strProperty;
@@ -2165,11 +2155,11 @@ HRESULT CalDAV::HrMapValtoStruct(LPMAPIPROP lpObj, LPSPropValue lpProps, ULONG u
 	std::string strCurrentUserURL;
 	std::string strPrincipalURL;
 	std::string strCalHome;
-	LPSPropValue lpFoundProp = NULL;
+	LPSPropValue lpFoundProp;
 	WEBDAVPROP sWebProp;
 	WEBDAVPROP sWebPropNotFound;
 	WEBDAVPROPSTAT sPropStat;
-	ULONG ulFolderType = 0;
+	ULONG ulFolderType;
 	SPropValuePtr ptrEmail;
 	SPropValuePtr ptrFullname;
 
@@ -2318,7 +2308,7 @@ HRESULT CalDAV::HrMapValtoStruct(LPMAPIPROP lpObj, LPSPropValue lpProps, ULONG u
 				// ical data is empty so discard this calendar entry
 				HrSetDavPropName(&(lpsResponse->sStatus.sPropName), "status", WEBDAVNS);
 				lpsResponse->sStatus.strValue = "HTTP/1.1 404 Not Found";
-				goto exit;
+				return hr;
 			}
 
 			strIcal.clear();
@@ -2422,8 +2412,7 @@ HRESULT CalDAV::HrMapValtoStruct(LPMAPIPROP lpObj, LPSPropValue lpProps, ULONG u
 		lpsResponse->lstsPropStat.push_back (sPropStat);
 	}
 
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 /**
