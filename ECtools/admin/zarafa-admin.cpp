@@ -3068,6 +3068,7 @@ int main(int argc, char* argv[])
 			cerr << "Error while reading configuration file " << szConfig << endl;
 			// create fatal logger without a timestamp to stderr
 			lpLogger = new ECLogger_File(EC_LOGLEVEL_FATAL, 0, "-", false);
+			ec_log_set(lpLogger);
 			LogConfigErrors(lpsConfig, lpLogger);
 			lpLogger->Release();
 			return 1;

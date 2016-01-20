@@ -1197,6 +1197,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 #else
 		g_lpLogger = new ECLogger_File(EC_LOGLEVEL_INFO, 0, "-", false); // create info logger without a timestamp to stderr
 #endif
+		ec_log_set(g_lpLogger);
 		LogConfigErrors(g_lpConfig, g_lpLogger);
 		er = MAPI_E_UNCONFIGURED;
 		goto exit;
@@ -1210,7 +1211,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 		er = MAPI_E_UNCONFIGURED;
 		goto exit;
 	}
-
+	ec_log_set(g_lpLogger);
 	if (m_bIgnoreUnknownConfigOptions && g_lpConfig->HasErrors())
 		LogConfigErrors(g_lpConfig, g_lpLogger);
 
