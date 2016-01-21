@@ -152,8 +152,8 @@ HRESULT ZarafaFsckTask::ValidateTimestamps(LPMESSAGE lpMessage)
 	 */
 	if (PROP_TYPE(lpPropertyArray[E_START_DATE].ulPropTag) != PT_ERROR &&
 	    PROP_TYPE(lpPropertyArray[E_DUE_DATE].ulPropTag) != PT_ERROR) {
-		LPFILETIME lpStart = &lpPropertyArray[E_START_DATE].Value.ft;
-		LPFILETIME lpDue = &lpPropertyArray[E_DUE_DATE].Value.ft;
+		const FILETIME *lpStart = &lpPropertyArray[E_START_DATE].Value.ft;
+		const FILETIME *lpDue = &lpPropertyArray[E_DUE_DATE].Value.ft;
 
 		/*
 		 * We cannot start a task _after_ it is due.
