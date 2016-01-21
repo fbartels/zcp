@@ -108,15 +108,14 @@ namespace details {
 	 * which are the source and destination charsets, respectively. The 'tocode' may take
 	 * some extra options, separated with '//' from the charset, and then separated by commas
 	 *
-	 * This function accepts values accepted by GNU iconv, plus it also accepts the FORCE
-	 * modifier, eg.:
+	 * This function accepts values accepted by GNU iconv:
 	 *
-	 * iso-8859-1//TRANSLIT,FORCE
+	 * iso-8859-1//TRANSLIT,IGNORE
 	 * windows-1252//TRANSLIT
 	 *
 	 * The 'fromcode' can also take modifiers but they are ignored by iconv.
 	 *
-	 * Also, instead of FORCE, the HTMLENTITY modifier can be used, eg:
+	 * Also, instead of IGNORE, the HTMLENTITY modifier can be used, eg:
 	 *
 	 * iso-8859-1//HTMLENTITY
 	 *
@@ -126,9 +125,9 @@ namespace details {
 	 * other characters are represented by an HTML entity. Note: the HTMLENTITY modifier may only
 	 * be applied when the fromcode is CHARSET_WCHAR (this is purely an implementation limitation)
 	 *
-     * Note that in release builds, the FORCE flag is implicit. This means that a conversion error
-     * is never generated. If you require an error on conversion problems, you must pass the NOFORCE
-     * modifier. This has no effect in debug builds.
+	 * Release builds default to //IGNORE (due to -DFORCE_CHARSET_CONVERSION
+	 * added by ./configure --enable-release), while debug builds default
+	 * to //NOIGNORE.
 	 *
 	 * @param tocode Destination charset
 	 * @param fromcode Source charset
@@ -136,8 +135,8 @@ namespace details {
 	iconv_context_base::iconv_context_base(const char* tocode, const char* fromcode)
 	{
 #ifdef FORCE_CHARSET_CONVERSION		
-		// We now default to forcing conversion; this makes sure that we don't SIGABORT
-		// when some bad input from a user fails to convert. This means that the 'FORCE'
+		// We now default to ignoring illegal sequences during conversion; this makes sure that we don't SIGABORT
+		// when some bad input from a user fails to convert. This means that the 'IGNORE'
 		// flag is on by default; specifying it is not useful.
 		m_bForce = true;
 #else
@@ -159,9 +158,9 @@ namespace details {
 
             i = vOptions.begin();
             while(i != vOptions.end()) {
-                if(*i == "FORCE") {
+                if (*i == "IGNORE" || *i == "FORCE") {
                     m_bForce = true;
-                } else if(*i == "NOFORCE") {
+                } else if (*i == "NOIGNORE" || *i == "NOFORCE") {
                     m_bForce = false;
                 } else if(*i == "HTMLENTITIES" && stricmp(fromcode, CHARSET_WCHAR) == 0) {
                 	m_bHTML = true;
@@ -207,7 +206,7 @@ namespace details {
 			if (err == (size_t)(-1) && cbDst == sizeof(buf)) {
 				if(m_bHTML) {
 					if(cbSrc < sizeof(wchar_t)) {
-						// Do what //FORCE would have done
+						// Do what //IGNORE would have done
 						lpSrc++;
 						cbSrc--;
 					} else {

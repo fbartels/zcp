@@ -2135,7 +2135,7 @@ int VMIMEToMAPI::renovate_encoding(std::string &data,
 		const char *name = cs[i].c_str();
 		try {
 			data = m_converter.convert_to<std::string>(
-			       (cs[i] + "//NOFORCE").c_str(),
+			       (cs[i] + "//NOIGNORE").c_str(),
 			       data, rawsize(data), name);
 			lpLogger->Log(EC_LOGLEVEL_DEBUG,
 				"renovate_encoding: reading data using charset \"%s\" succeeded.",
@@ -2164,7 +2164,7 @@ int VMIMEToMAPI::renovate_encoding(std::string &data,
 	 */
 	const char *name = cs[0].c_str();
 	data = m_converter.convert_to<std::string>(
-	       (cs[0] + "//FORCE").c_str(), data, rawsize(data), name);
+	       (cs[0] + "//IGNORE").c_str(), data, rawsize(data), name);
 	lpLogger->Log(EC_LOGLEVEL_DEBUG,
 		"renovate_encoding: forced interpretation as charset \"%s\".", name);
 	return 0;
