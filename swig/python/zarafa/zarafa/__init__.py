@@ -2265,7 +2265,24 @@ class Item(object):
     def sender(self):
         """ Sender :class:`Address` """
 
+        return Address(self.server, *(self.prop(p).value for p in (PR_SENDER_ADDRTYPE_W, PR_SENDER_NAME_W, PR_SENDER_EMAIL_ADDRESS_W, PR_SENDER_ENTRYID)))
+
+    @property
+    def from_(self):
+        """ From :class:`Address` """
+
         return Address(self.server, *(self.prop(p).value for p in (PR_SENT_REPRESENTING_ADDRTYPE_W, PR_SENT_REPRESENTING_NAME_W, PR_SENT_REPRESENTING_EMAIL_ADDRESS_W, PR_SENT_REPRESENTING_ENTRYID)))
+
+    @from_.setter
+    def from_(self, addr):
+        pr_addrtype, pr_dispname, pr_email, pr_entryid = self._addr_props(addr)
+        self.mapiobj.SetProps([
+            SPropValue(PR_SENT_REPRESENTING_ADDRTYPE_W, unicode(pr_addrtype)), # XXX pr_addrtype should be unicode already
+            SPropValue(PR_SENT_REPRESENTING_NAME_W, pr_dispname),
+            SPropValue(PR_SENT_REPRESENTING_EMAIL_ADDRESS_W, pr_email),
+            SPropValue(PR_SENT_REPRESENTING_ENTRYID, pr_entryid),
+        ])
+        self.mapiobj.SaveChanges(KEEP_OPEN_READWRITE)
 
     def table(self, name, restriction=None, order=None, columns=None):
         return Table(self.server, self.mapiobj.OpenProperty(name, IID_IMAPITable, MAPI_UNICODE, 0), name, restriction=restriction, order=order, columns=columns)
@@ -2318,6 +2335,24 @@ class Item(object):
         except MAPIErrorNotFound: # XXX shouldn't happen
             pass
 
+    def _addr_props(self, addr):
+        if isinstance(addr, User):
+            pr_addrtype = 'ZARAFA'
+            pr_dispname = addr.name
+            pr_email = addr.email
+            pr_entryid = addr.userid.decode('hex')
+        else:
+            addr = unicode(addr)
+            pr_addrtype = 'SMTP'
+            if '<' in addr: # XXX standard email lib?
+                pr_dispname = addr[:addr.find('<')].strip()
+                pr_email = addr[addr.find('<')+1:addr.find('>')].strip()
+            else:
+                pr_dispname = u'nobody' # XXX
+                pr_email  = addr.strip()
+            pr_entryid = self.server.ab.CreateOneOff(pr_dispname, u'SMTP', unicode(pr_email), MAPI_UNICODE)
+        return pr_addrtype, pr_dispname, pr_email, pr_entryid
+
     @to.setter
     def to(self, addrs):
         if isinstance(addrs, (str, unicode)):
@@ -2326,21 +2361,7 @@ class Item(object):
             adders = [addrs]
         names = []
         for addr in addrs:
-            if isinstance(addr, User):
-                pr_addrtype = 'ZARAFA'
-                pr_dispname = addr.name
-                pr_email = addr.email
-                pr_entryid = addr.userid.decode('hex')
-            else:
-                addr = unicode(addr)
-                pr_addrtype = 'SMTP'
-                if '<' in addr: # XXX standard email lib?
-                    pr_dispname = addr[:addr.find('<')].strip()
-                    pr_email = addr[addr.find('<')+1:addr.find('>')].strip()
-                else:
-                    pr_dispname = u'nobody' # XXX
-                    pr_email  = addr.strip()
-                pr_entryid = self.server.ab.CreateOneOff(pr_dispname, u'SMTP', unicode(pr_email), MAPI_UNICODE)
+            pr_addrtype, pr_dispname, pr_email, pr_entryid = self._addr_props(addr)
             names.append([
                 SPropValue(PR_RECIPIENT_TYPE, MAPI_TO), 
                 SPropValue(PR_DISPLAY_NAME_W, pr_dispname),
