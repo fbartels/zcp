@@ -2023,13 +2023,13 @@ HRESULT VMIMEToMAPI::disectBody(vmime::ref<vmime::header> vmHeader, vmime::ref<v
 			} else {
 				/*
 				 * Possibly text?
-				 * Unknown character set for text/* causes it
+				 * Unknown character set for text-* causes it
 				 * the part to get interpreted as
-				 * application/octet-stream (RFC 2049 §2
+				 * application-octet-stream (RFC 2049 §2
 				 * item 6), and vmime presents it to us as
 				 * such, making it impossible to know
-				 * whether it was originally text/* or
-				 * application/*.
+				 * whether it was originally text-* or
+				 * application-*.
 				 */
 				hr = handleTextpart(vmHeader, vmBody, lpMessage, false);
 				if (hr != hrSuccess)

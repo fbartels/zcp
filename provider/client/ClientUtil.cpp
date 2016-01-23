@@ -917,7 +917,7 @@ HRESULT ClientUtil::ConvertMSEMSProps(ULONG cValues, LPSPropValue pValues, ULONG
 		{ "server_address", "" },
 		{ "log_method","file" },
 		{ "log_file","-" },
-		{ "log_level","2", CONFIGSETTING_RELOADABLE },
+		{ "log_level", "3", CONFIGSETTING_RELOADABLE },
 		{ "log_timestamp","1" },
 		{ "log_buffer_size", "0" },
 		{ NULL, NULL },

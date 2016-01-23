@@ -94,7 +94,7 @@ const configsetting_t* Archiver::GetConfigDefaults()
 		// Log options
 		{ "log_method",		"file" },
 		{ "log_file",		"-" },
-		{ "log_level",		"2", CONFIGSETTING_RELOADABLE },
+		{ "log_level",		"3", CONFIGSETTING_RELOADABLE },
 		{ "log_timestamp",	"yes" },
 		{ "log_buffer_size",    "0" },
 

@@ -561,7 +561,7 @@ static int LoadSettingsFile(void)
 		static const configsetting_t settings[] = {
 			{ "log_method", "syslog" },
 			{ "log_file", LOGFILE_PATH "/php-mapi.log" },
-			{ "log_level", "2", CONFIGSETTING_RELOADABLE },
+			{ "log_level", "3", CONFIGSETTING_RELOADABLE },
 			{ "log_timestamp", "0" },
 			{ "log_buffer_size", "0" },
 			{ "log_buffer_size", "0" },
