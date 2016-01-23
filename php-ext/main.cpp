@@ -54,6 +54,7 @@
 #include <zarafa/ECConfig.h>
 #include <zarafa/ECLogger.h>
 #include <zarafa/mapi_ptr.h>
+#include <zarafa/MAPIErrors.h>
 #include "ECRulesTableProxy.h"
 
 #define LOGFILE_PATH "/var/log/zarafa"
@@ -655,7 +656,7 @@ PHP_MINIT_FUNCTION(mapi) {
 #define THROW_ON_ERROR() \
 	if (FAILED(MAPI_G(hr))) { \
 		if (lpLogger) \
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "MAPI error: %x (method: %s, line: %d)", MAPI_G(hr), __FUNCTION__, __LINE__); \
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "MAPI error: %s (%x) (method: %s, line: %d)", GetMAPIErrorMessage(MAPI_G(hr)), MAPI_G(hr), __FUNCTION__, __LINE__); \
 			\
 		if (MAPI_G(exceptions_enabled)) \
 			zend_throw_exception(MAPI_G(exception_ce), "MAPI error ", MAPI_G(hr)  TSRMLS_CC); \
@@ -663,7 +664,7 @@ PHP_MINIT_FUNCTION(mapi) {
 #else
 #define THROW_ON_ERROR() \
 	if (FAILED(MAPI_G(hr)) && lpLogger) \
-		lpLogger->Log(EC_LOGLEVEL_ERROR, "MAPI error: %x (method: %s, line: %d)", MAPI_G(hr), __FUNCTION__, __LINE__);
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "MAPI error: %s (%x) (method: %s, line: %d)", GetMAPIErrorMessage(MAPI_G(hr)), MAPI_G(hr), __FUNCTION__, __LINE__);
 #endif
 
 /**
