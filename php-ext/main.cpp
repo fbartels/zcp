@@ -274,7 +274,7 @@ static char *perf_measure_file;
 
 pmeasure::pmeasure(const std::string &whatIn)
 {
-	if (perf_measure_file == NULL)
+	if (perf_measure_file == NULL || *perf_measure_file == '\0')
 		return;
 	what = whatIn;
 	struct timespec ts;
@@ -284,7 +284,7 @@ pmeasure::pmeasure(const std::string &whatIn)
 
 pmeasure::~pmeasure(void)
 {
-	if (perf_measure_file == NULL)
+	if (perf_measure_file == NULL || *perf_measure_file == '\0')
 		return;
 	struct timespec ts;
 	clock_gettime(CLOCK_MONOTONIC, &ts);
@@ -292,7 +292,7 @@ pmeasure::~pmeasure(void)
 	FILE *fh = fopen(perf_measure_file, "a+");
 	if (fh == NULL) {
 		if (lpLogger != NULL)
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "Cannot open %s: %s", perf_measure_file, strerror(errno));
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "~pmeasure: cannot open \"%s\": %s", perf_measure_file, strerror(errno));
 		return;
 	}
 
