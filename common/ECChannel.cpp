@@ -665,9 +665,13 @@ char * ECChannel::SSL_gets(char *buf, int *lpulLen) {
 	return buf;
 }
 
-void ECChannel::SetIPAddress(char *szIPAddress)
+void ECChannel::SetIPAddress(const struct sockaddr *sa, size_t slen)
 {
-	strIP = szIPAddress;
+	char buf[128];
+	if (getnameinfo(sa, slen, buf, sizeof(buf), NULL, 0,
+	    NI_NUMERICHOST | NI_NUMERICSERV) != 0)
+		snprintf(buf, sizeof(buf), "<socket type %d>", sa->sa_family);
+	strIP = buf;
 }
 
 const std::string& ECChannel::GetIPAddress() const
@@ -912,7 +916,7 @@ HRESULT HrAccept(ECLogger *lpLogger, int ulListenFD, ECChannel **lppChannel)
 {
 	HRESULT hr = hrSuccess;
 	int socket = 0;
-	struct sockaddr_in client;
+	struct sockaddr_storage client;
 	ECChannel *lpChannel = NULL;
 	socklen_t len = sizeof(client);
 
@@ -938,11 +942,10 @@ HRESULT HrAccept(ECLogger *lpLogger, int ulListenFD, ECChannel **lppChannel)
 		hr = MAPI_E_NETWORK_ERROR;
 		goto exit;
 	}
-	if (lpLogger)
-		lpLogger->Log(EC_LOGLEVEL_INFO, "Accepted connection from %s", inet_ntoa(client.sin_addr));
-
 	lpChannel = new ECChannel(socket);
-	lpChannel->SetIPAddress(inet_ntoa(client.sin_addr));
+	lpChannel->SetIPAddress(reinterpret_cast<const struct sockaddr *>(&client), len);
+	if (lpLogger)
+		lpLogger->Log(EC_LOGLEVEL_INFO, "Accepted connection from %s", lpChannel->GetIPAddress().c_str());
 
 	*lppChannel = lpChannel;
 

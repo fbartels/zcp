@@ -55,6 +55,8 @@
 #include <zarafa/ECConfig.h>
 #include <zarafa/ECLogger.h>
 
+struct sockaddr;
+
 // ECChannel is the communication channel with the other side. Initially, it is
 // a simple way to read/write full lines of data. The reason why we specify
 // a special 'HrWriteLine' instead of 'HrWrite' is that SSL encryption prefers
@@ -81,7 +83,7 @@ public:
 
 	HRESULT HrSelect(int seconds);
 
-	void SetIPAddress(char *szIPAddress);
+	void SetIPAddress(const struct sockaddr *, size_t);
 	const std::string& GetIPAddress() const;
 		
 	bool UsingSsl();
