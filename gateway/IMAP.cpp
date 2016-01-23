@@ -81,6 +81,7 @@
 #include "ECFeatures.h"
 
 #include <boost/algorithm/string/join.hpp>
+#include <boost/unordered_set.hpp>
 #include <zarafa/mapi_ptr.h>
 
 #include "IMAP.h"
@@ -5177,23 +5178,15 @@ HRESULT IMAP::HrGetMessagePart(string &strMessagePart, string &strMessage, strin
         } else {
             vector<string> lstReqFields;
             vector<string>::iterator iterReqField;
-            vector<string>::iterator r, w;
-            set<string> tmpset;
+            boost::unordered_set<std::string> seen;
 
             // Get fields as vector
 			lstReqFields = tokenize(strFields, " ");
             
-            // Make elements of vector unique  
-            for(r = lstReqFields.begin(), w = lstReqFields.begin(); r != lstReqFields.end(); ++r) {
-                if(tmpset.insert(*r).second) {
-                    *w++ = *r;
-                }
-            }
-
-            lstReqFields.erase(w, lstReqFields.end());
-
             // Output headers specified, in order of field set
             for(iterReqField = lstReqFields.begin(); iterReqField != lstReqFields.end(); iterReqField++) {
+                if (!seen.insert(*iterReqField).second)
+                    continue;
                 for(iterField = lstFields.begin(); iterField != lstFields.end(); iterField++) {
                     if(CaseCompare(*iterReqField, iterField->first)) {
                         strMessagePart += iterField->first;
