@@ -1512,6 +1512,52 @@ static bool dagent_oof_enabled(const SPropValue *prop)
 	return start <= now && now <= end;
 }
 
+/**
+ * Determines whether @s is a header that inhibits autoreplies.
+ */
+static bool dagent_stop_autoreply_hdr(const char *s)
+{
+#define S(x) do { if (strcasecmp(s, (x)) == 0) return true; } while (false)
+	/* Zarafa - Vacation header already present, do not send vacation reply. */
+	S("X-Zarafa-Vacation");
+	/* RFC 3834 - Precedence: list/bulk/junk, do not reply to these mails. */
+	S("Auto-Submitted");
+	S("Precedence");
+	/* RFC 2919 */
+	S("List-Id");
+	/* RFC 2369 */
+	S("List-Help");
+	S("List-Subscribe");
+	S("List-Unsubscribe");
+	S("List-Post");
+	S("List-Owner");
+	S("List-Archive");
+	return false;
+#undef S
+}
+
+/**
+ * Determines from a set of lines from internet headers (can be wrapped or
+ * not) whether to inhibit autoreplies.
+ */
+static bool dagent_avoid_autoreply(const std::vector<std::string> &hl)
+{
+	for (std::vector<std::string>::const_iterator sline = hl.begin();
+	     sline != hl.end(); ++sline)
+	{
+		const std::string &line = *sline;
+		/* no-throw guarantee because const string & */
+		if (isspace(line[0]))
+			continue;
+		size_t pos = line.find_first_of(':');
+		if (pos == std::string::npos || pos == 0)
+			continue;
+		if (dagent_stop_autoreply_hdr(line.substr(0, pos).c_str()))
+			return true;
+	}
+	return false;
+}
+
 /** 
  * Create an out-of-office mail, and start the script to trigger its
  * optional sending.
@@ -1610,19 +1656,7 @@ static HRESULT SendOutOfOffice(LPADRBOOK lpAdrBook, LPMDB lpMDB,
 
 	// See if we're looping
 	if (lpMessageProps[0].ulPropTag == PR_TRANSPORT_MESSAGE_HEADERS_A) {
-		if ( (strstr(lpMessageProps[0].Value.lpszA, "X-Zarafa-Vacation:") != NULL) ||		// Zarafa
-			 (strstr(lpMessageProps[0].Value.lpszA, "Auto-Submitted:") != NULL) ||		// RFC 3834
-			 (strstr(lpMessageProps[0].Value.lpszA, "List-Id:") != NULL) ||			// RFC 2919
-			 (strstr(lpMessageProps[0].Value.lpszA, "List-Help:") != NULL) ||		// RFC 2369
-			 (strstr(lpMessageProps[0].Value.lpszA, "List-Subscribe:") != NULL) ||		// RFC 2369
-			 (strstr(lpMessageProps[0].Value.lpszA, "List-Unsubscribe:") != NULL) ||	// RFC 2369
-			 (strstr(lpMessageProps[0].Value.lpszA, "List-Post:") != NULL) ||		// RFC 2369
-			 (strstr(lpMessageProps[0].Value.lpszA, "List-Owner:") != NULL) ||		// RFC 2369
-			 (strstr(lpMessageProps[0].Value.lpszA, "List-Archive:") != NULL) ||		// RFC 2369
-			 (strstr(lpMessageProps[0].Value.lpszA, "Precedence:") != NULL) )		// RFC 3834
-			// Vacation header already present, do not send vacation reply
-			// Precedence: list/bulk/junk, do not reply to these mails
-			// See also RFC 5230 §4.6 for details
+		if (dagent_avoid_autoreply(tokenize(lpMessageProps[0].Value.lpszA, "\n")))
 			goto exit;
 		// save headers to a file so they can also be tested from the script we're runing
 		snprintf(szTemp, PATH_MAX, "%s/autorespond-headers.XXXXXX", TmpPath::getInstance() -> getTempPath().c_str());
