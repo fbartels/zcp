@@ -2118,9 +2118,7 @@ VMIMEToMAPI::get_mime_encoding(vmime::ref<vmime::header> im_header,
 
 /**
  * Try decoding the MIME body with a bunch of character sets
- * @out:	transformed string is put here
- * 		(is permitted to be the same variable as @in)
- * @in:		any body text
+ * @data:	input body text, modified in-place if transformation successful
  * @cs:		list of character sets to try, ordered by descending preference
  *
  * Interpret the body text in various character sets and see in which one
@@ -2132,7 +2130,10 @@ VMIMEToMAPI::get_mime_encoding(vmime::ref<vmime::header> im_header,
 int VMIMEToMAPI::renovate_encoding(std::string &data,
     const std::vector<std::string> &cs)
 {
-	assert(cs.size() > 0);
+	/*
+	 * First check if any charset converts without raising
+	 * illegal_sequence_exceptions.
+	 */
 	for (size_t i = 0; i < cs.size(); ++i) {
 		const char *name = cs[i].c_str();
 		try {
@@ -2143,7 +2144,7 @@ int VMIMEToMAPI::renovate_encoding(std::string &data,
 				"renovate_encoding: reading data using charset \"%s\" succeeded.",
 				name);
 			return i;
-		} catch (convert_exception &ce) {
+		} catch (illegal_sequence_exception &ce) {
 			/*
 			 * Basically, choices other than the first are subpar
 			 * and may not yield an RFC-compliant result (but
@@ -2157,31 +2158,27 @@ int VMIMEToMAPI::renovate_encoding(std::string &data,
 			lpLogger->Log(lvl,
 				"renovate_encoding: reading data using charset \"%s\" produced partial results: %s",
 				name, ce.what());
+		} catch (unknown_charset_exception &) {
+			lpLogger->Log(EC_LOGLEVEL_WARNING, "renovate_encoding: unknown charset \"%s\", skipping", name);
 		}
 	}
 	/*
-	 * We have no more alternatives, so pick most preferential one and
-	 * do it with FORCE. If it now throws an exception, there is nothing
-	 * we can do for now.
+	 * Take the hit, convert with the next best thing and
+	 * drop illegal sequences.
 	 */
-	const char *name = cs[0].c_str();
-	data = m_converter.convert_to<std::string>(
-	       (cs[0] + "//IGNORE").c_str(), data, rawsize(data), name);
-	lpLogger->Log(EC_LOGLEVEL_DEBUG,
-		"renovate_encoding: forced interpretation as charset \"%s\".", name);
-	return 0;
-}
-
-int VMIMEToMAPI::renovate_encoding(std::wstring &out, std::string &in,
-    const std::vector<std::string> &cs)
-{
-	int pick = renovate_encoding(in, cs);
-	if (pick < 0)
-		return pick;
-	const char *name = cs[pick].c_str();
-	out = m_converter.convert_to<std::wstring>(in.c_str(),
-	      rawsize(in), name);
-	return pick;
+	for (size_t i = 0; i < cs.size(); ++i) {
+		const char *name = cs[i].c_str();
+		try {
+			data = m_converter.convert_to<std::string>(
+			       (cs[i] + "//IGNORE").c_str(), data, rawsize(data), name);
+		} catch (unknown_charset_exception &) {
+			continue;
+		}
+		lpLogger->Log(EC_LOGLEVEL_DEBUG,
+			"renovate_encoding: forced interpretation as charset \"%s\".", name);
+		return i;
+	}
+	return -1;
 }
 
 /**
@@ -2379,11 +2376,11 @@ static bool vtm_ascii_compatible(const char *s)
  * unspec     unspec     us-ascii   us-ascii   us-ascii
  * unspec     present    unspec     us-ascii   meta
  * present    unspec     mime       mime       mime
- * present    present    mime       mime       try mime, then meta
+ * present    present    mime       mime       mime
  *
  * Ideally, the message should be stored raw, and the mail body never be
  * changed unless it is 100% certain that the transformation is unambiguously
- * reversible. Like, how RFC5322 systems actually do it.
+ * reversible. Like, how mbox systems actually do it.
  * But with conversion to MAPI, we have this seemingly lossy conversion
  * stage. :-(
  */
@@ -2477,8 +2474,10 @@ HRESULT VMIMEToMAPI::handleHTMLTextpart(vmime::ref<vmime::header> vmHeader, vmim
 			cs_cand.push_back(vmime::charsets::US_ASCII);
 		}
 		int cs_best = renovate_encoding(strHTML, cs_cand);
-		if (cs_best < 0)
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "HTML part did not validate in any character set.");
+		if (cs_best < 0) {
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "HTML part not readable in any charset. Storing as attachment instead.");
+			return handleAttachment(vmHeader, vmBody, lpMessage, true);
+		}
 		/*
 		 * PR_HTML is a PT_BINARY, and can handle 0x00 bytes
 		 * (e.g. in case of UTF-16 encoding).
@@ -2486,10 +2485,10 @@ HRESULT VMIMEToMAPI::handleHTMLTextpart(vmime::ref<vmime::header> vmHeader, vmim
 
 		// write codepage for PR_HTML property
 		if (HrGetCPByCharset(cs_cand[cs_best].c_str(), &sCodepage.Value.ul) != hrSuccess) {
-			// we have no matching win32 codepage, so choose utf-8 and convert body using iconv, (note: HTML is already "charset-sanitized", should not throw error here)
+			/* Win32 does not know the charset — change encoding to something it knows. */
 			sCodepage.Value.ul = 65001;
 			strHTML = m_converter.convert_to<std::string>("UTF-8", strHTML, rawsize(strHTML), cs_cand[cs_best].c_str());
-			lpLogger->Log(EC_LOGLEVEL_INFO, "No Win32 CPID for \"%s\" - upgrading text/html MIME body to UTF-8 for compatibility", cs_cand[cs_best].c_str());
+			lpLogger->Log(EC_LOGLEVEL_INFO, "No Win32 CPID for \"%s\" - upgrading text/html MIME body to UTF-8", cs_cand[cs_best].c_str());
 		}
 
 		if (bAppendBody && m_mailState.bodyLevel == BODY_HTML && m_mailState.ulLastCP && sCodepage.Value.ul != m_mailState.ulLastCP) {
