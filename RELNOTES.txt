@@ -1,0 +1,67 @@
+Release notes for 7.2.2
+=======================
+
+Enhancements:
+
+* Within systemd environments, if you want to make (best) use of
+  journald, "log_file" should be set to "syslog" rather than "-"
+  (stderr).
+
+* IPv6 support in zarafa-server and zarafa-ws.
+  To enable, the "server_bind" parameter in the respective
+  configuration file needs to be set to an IPv6 address. Use of the
+  so-called IPv6 Unspecified Address, ::, makes the service reachable
+  on both IPv6 and IPv4 on all addresses.
+
+* IPv6 support in all other daemons.
+  To enable, the "server_bind" parameter in the respective
+  configuration file must be empty, or be commented out, or (if only
+  IPv6 service is desired) be assigned an IPv6 address.
+
+* IPv6 support in connecting clients
+* dagent: new "mr_autoprocess" parameter available for dagent.cfg
+* python: support UTF-8 in .vcf files
+
+Fixes:
+
+* inetmapi: The MAPI to Internet Email translator avoids emitting
+  mails for invalid addresses (e.g. no '@' in it). This way, spooler
+  won't spam the SMTP server with unhandlable mails.
+
+Changes:
+
+* Most daemons are now started using an unprivileged user. Be sure that
+  "run_as_user" and "run_as_group" are commented out to use the default,
+  "zarafa". If using our prebuilt DEB/RPM packages, this user and group
+  will be created on installation (if not already present).
+
+* Permissions on directories may need to be adjusted. If using our
+  prebuild DEB/RPM packages, the owner of /var/lib/zarafa and
+  /var/log/zarafa will be changed on package installation. Any custom
+  locations in use need to be manually adjusted.
+
+* To facilitate use of IPv6 on a single socket, zarafa-dagent no longer
+  binds to the IPv4-only 127.0.0.1 by default. It is advised to review
+  your firewall settings and perhaps block port 2003 if applicable.
+
+* Default AF_LOCAL socket locations have changed to /var/run/zarafad.
+  Review your /etc/zarafa/*.cfg for the value after installation that
+  they are consistent. _Also_ check the LDAP tree (if applicable) for
+  the zarafaFilePath attribute of objects which may also carry the
+  socket location.
+
+* Default PID file locations have changed to /var/run/zarafad.
+  Check for duplicate programs running on non-systemd services.
+
+* calendar: disregard timezones for all-day events so that they
+  always start and end at 00:00.
+* server: improved reporting in case all file descriptors are used up
+* Corrected improper "fatal" severity level for some more messages
+
+Notes:
+
+* Files in /var/run/zarafad may still be owned by root - this is normal.
+
+* The "server_bind" parameter was previously, and continues to be, documented
+  to require an address, not a hostname. This is now enforced with new use of
+  getaddrinfo(3).

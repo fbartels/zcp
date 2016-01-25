@@ -48,7 +48,11 @@ case "$1" in
 
     stop)
 		echo -n "Stopping Zarafa search "
+		killproc -t15 -p "/var/run/$search.pid" python
+		RETVAL2="$?"
 		killproc -t15 -p $PIDFILE python
+		RETVAL="$?"
+		test "$RETVAL2" -eq 0 || "$RETVAL" -eq 0
 		rc_status -v
 		;;
 

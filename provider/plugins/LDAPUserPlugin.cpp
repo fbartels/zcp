@@ -61,10 +61,10 @@
 #include <zarafa/EMSAbTag.h>
 #include <zarafa/ECConfig.h>
 #include <zarafa/ECLogger.h>
-#include "ECPluginSharedData.h"
+#include <zarafa/ECPluginSharedData.h>
 #include <zarafa/stringutil.h>
 
-#include <auto_free.h>
+#include <zarafa/auto_free.h>
 
 using namespace std;
 
@@ -184,7 +184,7 @@ typedef auto_free<struct berval*, auto_free_dealloc<struct berval**, void, ldap_
 				throw ldap_error(string("ldap_parse_pageresponse_control: ") + ldap_err2string(rc), rc); \
 			}																\
 			/* you can't check on cookie->bv_len. and yes this is the stop value. */ \
-			morePages = sCookie.bv_val && strlen(sCookie.bv_val) > 0; \
+			morePages = sCookie.bv_val && sCookie.bv_val[0]; \
 		} else { \
 			morePages = false; \
 		}

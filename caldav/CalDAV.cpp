@@ -130,7 +130,7 @@ static void sighup(int)
 	if (g_lpLogger) {
 		if (g_lpConfig) {
 			const char *ll = g_lpConfig->GetSetting("log_level");
-			int new_ll = ll ? atoi(ll) : 2;
+			int new_ll = ll ? atoi(ll) : EC_LOGLEVEL_WARNING;
 			g_lpLogger->SetLoglevel(new_ll);
 		}
 
@@ -213,7 +213,7 @@ int main(int argc, char **argv) {
 #endif
 		{ "log_level", "3", CONFIGSETTING_RELOADABLE },
 		{ "log_timestamp", "1" },
-		{ "log_buffer_size", "4096" },
+		{ "log_buffer_size", "0" },
 #ifdef LINUX
         { "ssl_private_key_file", "/etc/zarafa/ical/privkey.pem" },
         { "ssl_certificate_file", "/etc/zarafa/ical/cert.pem" },
@@ -279,7 +279,7 @@ int main(int argc, char **argv) {
 #ifdef WIN32
 		g_lpLogger = new ECLogger_Eventlog(1, "ZarafaICal");
 #else
-		g_lpLogger = new ECLogger_File(1, 0, "-", false, 0);
+		g_lpLogger = new ECLogger_File(1, 0, "-", false);
 #endif
 		LogConfigErrors(g_lpConfig, g_lpLogger);
 		goto exit;
@@ -418,11 +418,11 @@ exit:
 
 static HRESULT HrSetupListeners(int *lpulNormal, int *lpulSecure)
 {
-	HRESULT hr = hrSuccess;
-	bool bListen = false;
-	bool bListenSecure = false;
-	int ulPortICal = 0;
-	int ulPortICalS = 0;
+	HRESULT hr;
+	bool bListen;
+	bool bListenSecure;
+	int ulPortICal;
+	int ulPortICalS;
 	int ulNormalSocket = 0;
 	int ulSecureSocket = 0;
 
@@ -432,8 +432,7 @@ static HRESULT HrSetupListeners(int *lpulNormal, int *lpulSecure)
 
 	if (!bListen && !bListenSecure) {
 		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "No ports to open for listening.");
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
+		return MAPI_E_INVALID_PARAMETER;
 	}
 
 	ulPortICal = atoi(g_lpConfig->GetSetting("ical_port"));
@@ -468,16 +467,12 @@ static HRESULT HrSetupListeners(int *lpulNormal, int *lpulSecure)
 
 	if (!bListen && !bListenSecure) {
 		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "No ports have been opened for listening, exiting.");
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
+		return MAPI_E_INVALID_PARAMETER;
 	}
 
-	hr = hrSuccess;
 	*lpulNormal = ulNormalSocket;
 	*lpulSecure = ulSecureSocket;
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 /**

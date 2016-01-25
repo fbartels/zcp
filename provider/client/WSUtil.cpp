@@ -59,7 +59,7 @@
 #include <sys/un.h>
 #endif
 #include "WSUtil.h"
-#include "ECIConv.h"
+#include <zarafa/ECIConv.h>
 #include <zarafa/ECGuid.h>
 #include <zarafa/Trace.h>
 
@@ -1167,8 +1167,6 @@ HRESULT CopySOAPRowSetToMAPIRowSet(void *lpProvider,
 	}
 
 	*lppRowSetDst = lpRowSet;
-
-exit:
 	return hr;
 }
 

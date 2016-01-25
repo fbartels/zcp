@@ -130,7 +130,7 @@ static void sighup(int sig)
 	if (g_lpLogger) {
 		if (g_lpConfig) {
 			const char *ll = g_lpConfig->GetSetting("log_level");
-			int new_ll = ll ? atoi(ll) : 2;
+			int new_ll = ll ? atoi(ll) : EC_LOGLEVEL_WARNING;
 			g_lpLogger->SetLoglevel(new_ll);
 		}
 
@@ -361,9 +361,9 @@ int main(int argc, char *argv[]) {
 		{ "ssl_prefer_server_ciphers", "no" },
 		{ "log_method", "file" },
 		{ "log_file", "-" },
-		{ "log_level", "2", CONFIGSETTING_RELOADABLE },
+		{ "log_level", "3", CONFIGSETTING_RELOADABLE },
 		{ "log_timestamp", "1" },
-		{ "log_buffer_size",	"4096" },
+		{ "log_buffer_size", "0" },
 		{ "tmp_path", "/tmp" },
 		{ NULL, NULL },
 	};
@@ -426,7 +426,7 @@ int main(int argc, char *argv[]) {
 #ifdef WIN32
 		g_lpLogger = new ECLogger_Eventlog(EC_LOGLEVEL_INFO, "ZarafaGateway");
 #else
-		g_lpLogger = new ECLogger_File(EC_LOGLEVEL_INFO, 0, "-", false, 0);	// create logger without a timestamp to stderr
+		g_lpLogger = new ECLogger_File(EC_LOGLEVEL_INFO, 0, "-", false);	// create logger without a timestamp to stderr
 #endif
 		LogConfigErrors(g_lpConfig, g_lpLogger);
 		hr = E_FAIL;

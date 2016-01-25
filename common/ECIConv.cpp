@@ -42,7 +42,7 @@
  */
 
 #include <zarafa/platform.h>
-#include "ECIConv.h"
+#include <zarafa/ECIConv.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

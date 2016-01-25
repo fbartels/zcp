@@ -98,7 +98,7 @@ eResult ArchiverImpl::Init(const char *lpszAppName, const char *lpszConfig, cons
 		}
 	} else if (m_lpsConfig->HasErrors()) {
 		if (!(ulFlags & InhibitErrorLogging)) {
-			ECLogger *lpLogger = new ECLogger_File(EC_LOGLEVEL_FATAL, 0, "-", false, 0);
+			ECLogger *lpLogger = new ECLogger_File(EC_LOGLEVEL_FATAL, 0, "-", false);
 			LogConfigErrors(m_lpsConfig, lpLogger);
 			lpLogger->Release();
 		}
@@ -128,7 +128,7 @@ eResult ArchiverImpl::Init(const char *lpszAppName, const char *lpszConfig, cons
 			ECLogger_Tee *lpTeeLogger = new ECLogger_Tee();
 			lpTeeLogger->AddLogger(m_lpLogLogger);
 
-			ECLogger_File *lpConsoleLogger = new ECLogger_File(EC_LOGLEVEL_ERROR, 0, "-", false, 0);
+			ECLogger_File *lpConsoleLogger = new ECLogger_File(EC_LOGLEVEL_ERROR, 0, "-", false);
 			lpTeeLogger->AddLogger(lpConsoleLogger);
 			lpConsoleLogger->Release();
 

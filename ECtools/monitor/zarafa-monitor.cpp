@@ -130,7 +130,7 @@ static void sighup(int signr)
 		if (m_lpThreadMonitor->lpLogger) {
 			if (m_lpThreadMonitor->lpConfig) {
 				const char *ll = m_lpThreadMonitor->lpConfig->GetSetting("log_level");
-				int new_ll = ll ? atoi(ll) : 2;
+				int new_ll = ll ? atoi(ll) : EC_LOGLEVEL_WARNING;
 				m_lpThreadMonitor->lpLogger->SetLoglevel(new_ll);
 			}
 
@@ -197,9 +197,9 @@ int main(int argc, char *argv[]) {
 #else
 		{ "log_file","-" },
 #endif
-		{ "log_level","2", CONFIGSETTING_RELOADABLE },
+		{ "log_level", "3", CONFIGSETTING_RELOADABLE },
 		{ "log_timestamp","1" },
-		{ "log_buffer_size",	"4096" },
+		{ "log_buffer_size", "0" },
 		{ "sslkey_file", "" },
 		{ "sslkey_pass", "", CONFIGSETTING_EXACT },
 		{ "quota_check_interval", "15" },
@@ -276,7 +276,7 @@ int main(int argc, char *argv[]) {
 #ifdef WIN32
 		m_lpThreadMonitor->lpLogger = new ECLogger_Eventlog(EC_LOGLEVEL_INFO, "ZarafaMonitor");
 #else
-		m_lpThreadMonitor->lpLogger = new ECLogger_File(EC_LOGLEVEL_INFO, 0, "-", false, 0); // create fatal logger without a timestamp to stderr
+		m_lpThreadMonitor->lpLogger = new ECLogger_File(EC_LOGLEVEL_INFO, 0, "-", false); // create fatal logger without a timestamp to stderr
 #endif
 		LogConfigErrors(m_lpThreadMonitor->lpConfig, m_lpThreadMonitor->lpLogger);
 		hr = E_FAIL;

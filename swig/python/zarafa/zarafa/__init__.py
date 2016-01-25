@@ -945,6 +945,8 @@ Looks at command-line to see if another server address or other related options 
         """ Return :class:`store <Store>` with given GUID; raise exception if not found """
 
         if guid == 'public':
+            if not self.public_store:
+                raise ZarafaNotFoundException("no public store")
             return self.public_store
         else:
             return Store(self, self._store(guid))
@@ -968,6 +970,8 @@ Looks at command-line to see if another server address or other related options 
         if parse and getattr(self.options, 'stores', None):
             for guid in self.options.stores:
                 if guid == 'public': # XXX check self.options.companies?
+                    if not self.public_store:
+                        raise ZarafaNotFoundException("no public store")
                     yield self.public_store
                 else:
                     yield Store(self, self._store(guid))
@@ -1120,6 +1124,8 @@ class Company(object):
 
     def store(self, guid):
         if guid == 'public':
+            if not self.public_store:
+                raise ZarafaNotFoundException("no public store for company '%s'" % self.name)
             return self.public_store
         else:
             return self.server.store(guid)
@@ -1656,8 +1662,8 @@ class Folder(object):
                 for occurrence in item.occurrences(start, end):
                     yield occurrence
 
-    def create_item(self, eml=None, ics=None, vcf=None, load=None, loads=None, **kwargs): # XXX associated
-        item = Item(self, eml=eml, ics=ics, vcf=vcf, load=load, loads=loads, create=True)
+    def create_item(self, eml=None, ics=None, vcf=None, load=None, loads=None, attachments=True, **kwargs): # XXX associated
+        item = Item(self, eml=eml, ics=ics, vcf=vcf, load=load, loads=loads, attachments=attachments, create=True)
         item.server = self.server
         for key, val in kwargs.items():
             setattr(item, key, val)
@@ -1906,7 +1912,7 @@ class Folder(object):
 class Item(object):
     """ Item """
 
-    def __init__(self, parent=None, eml=None, ics=None, vcf=None, load=None, loads=None, create=False, mapiobj=None):
+    def __init__(self, parent=None, eml=None, ics=None, vcf=None, load=None, loads=None, attachments=True, create=False, mapiobj=None):
         # TODO: self.folder fix this!
         self.emlfile = eml
         self._folder = None
@@ -1955,9 +1961,9 @@ class Item(object):
                 ])
 
             elif load is not None:
-                self.load(load)
+                self.load(load, attachments=attachments)
             elif loads is not None:
-                self.loads(loads)
+                self.loads(loads, attachments=attachments)
 
             else:
                 try:
@@ -3404,6 +3410,7 @@ def daemonize(func, options=None, foreground=False, args=[], log=None, config=No
                 os.chown(h.baseFilename, uid, gid)
     if options and options.foreground:
         foreground = options.foreground
+        working_directory = os.getcwd()
     with daemon.DaemonContext(
             pidfile=pidfile,
             uid=uid,
@@ -3412,6 +3419,8 @@ def daemonize(func, options=None, foreground=False, args=[], log=None, config=No
             files_preserve=[h.stream for h in log.handlers if isinstance(h, logging.handlers.WatchedFileHandler)] if log else None,
             prevent_core=False,
             detach_process=not foreground,
+            stdout=sys.stdout,
+            stderr=sys.stderr,
         ):
         daemon_helper(func, service, log)
 

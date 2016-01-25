@@ -205,12 +205,9 @@ void ECLogger_Null::LogVA(unsigned int loglevel, const char *format, va_list& va
  * @param[in]	add_timestamp	true if a timestamp before the logmessage is wanted
  * @param[in]	filename		filename of log in current locale
  */
-ECLogger_File::ECLogger_File(const unsigned int max_ll, const bool add_timestamp, const char *const filename, const bool compress, const size_t bs) : ECLogger(max_ll) {
+ECLogger_File::ECLogger_File(const unsigned int max_ll, const bool add_timestamp, const char *const filename, const bool compress) : ECLogger(max_ll) {
 	logname = strdup(filename);
 	timestamp = add_timestamp;
-
-	buffer = new char[bs];
-	buffer_size = bs;
 
 	if (strcmp(logname, "-") == 0) {
 		log = stderr;
@@ -237,9 +234,7 @@ ECLogger_File::ECLogger_File(const unsigned int max_ll, const bool add_timestamp
 		}
 
 		log = fnOpen(logname, szMode);
-#ifndef WIN32
-		setbuffer((FILE *)log, buffer, buffer_size);
-#endif
+		reinit_buffer(0);
 	}
 
 	// read/write is for the handle, not the f*-calls
@@ -271,8 +266,16 @@ ECLogger_File::~ECLogger_File() {
 	free(logname);
 
 	pthread_rwlock_destroy(&dupfilter_lock);
+}
 
-	delete [] buffer;
+void ECLogger_File::reinit_buffer(size_t size)
+{
+	if (size == 0)
+		setvbuf(static_cast<FILE *>(log), NULL, _IOLBF, size);
+	else
+		setvbuf(static_cast<FILE *>(log), NULL, _IOFBF, size);
+	/* Store value for Reset() to re-invoke this function after reload */
+	buffer_size = size;
 }
 
 void ECLogger_File::Reset() {
@@ -283,9 +286,7 @@ void ECLogger_File::Reset() {
 			fnClose(log);
 
 		log = fnOpen(logname, szMode);
-#ifndef WIN32
-		setbuffer((FILE *)log, buffer, buffer_size);
-#endif
+		reinit_buffer(buffer_size);
 	}
 
 	pthread_rwlock_unlock(&handle_lock);
@@ -1082,15 +1083,13 @@ ECLogger* CreateLogger(ECConfig *lpConfig, const char *argv0,
 		if (ret == 0) {
 			bool logtimestamp = parseBool(lpConfig->GetSetting((prepend + "log_timestamp").c_str()));
 
-			int log_buffer_size = 4096;
+			size_t log_buffer_size = 0;
 			const char *log_buffer_size_str = lpConfig->GetSetting("log_buffer_size");
 			if (log_buffer_size_str)
-				log_buffer_size = atoi(log_buffer_size_str);
-
-			if (log_buffer_size < 1)
-				log_buffer_size = 1;
-
-			lpLogger = new ECLogger_File(loglevel, logtimestamp, lpConfig->GetSetting((prepend+"log_file").c_str()), false, log_buffer_size);
+				log_buffer_size = strtoul(log_buffer_size_str, NULL, 0);
+			ECLogger_File *log = new ECLogger_File(loglevel, logtimestamp, lpConfig->GetSetting((prepend + "log_file").c_str()), false);
+			log->reinit_buffer(log_buffer_size);
+			lpLogger = log;
 #ifdef LINUX
 			// chown file
 			if (pw || gr) {
@@ -1106,14 +1105,14 @@ ECLogger* CreateLogger(ECConfig *lpConfig, const char *argv0,
 		} else {
 			fprintf(stderr, "Not enough permissions to append logfile '%s'. Reverting to stderr.\n", lpConfig->GetSetting((prepend+"log_file").c_str()));
 			bool logtimestamp = parseBool(lpConfig->GetSetting((prepend + "log_timestamp").c_str()));
-			lpLogger = new ECLogger_File(loglevel, logtimestamp, "-", false, 0);
+			lpLogger = new ECLogger_File(loglevel, logtimestamp, "-", false);
 		}
 	}
 
 	if (!lpLogger) {
 		fprintf(stderr, "Incorrect logging method selected. Reverting to stderr.\n");
 		bool logtimestamp = parseBool(lpConfig->GetSetting((prepend + "log_timestamp").c_str()));
-		lpLogger = new ECLogger_File(loglevel, logtimestamp, "-", false, 0);
+		lpLogger = new ECLogger_File(loglevel, logtimestamp, "-", false);
 	}
 
 	return lpLogger;

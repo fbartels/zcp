@@ -62,6 +62,7 @@ typedef struct sMailState {
 	BODYLEVEL bodyLevel;		//!< the current body state. plain upgrades none, html upgrades plain and none.
 	ULONG ulLastCP;
 	ATTACHLEVEL attachLevel;	//!< the current attachment state
+	unsigned int mime_vtag_nest;	//!< number of nested MIME-Version tags seen
 	bool bAttachSignature;		//!< add a signed signature at the end
 	ULONG ulMsgInMsg;			//!< counter for msg-in-msg level
 	std::string strHTMLBody;	//!< cache for the current complete untouched HTML body, used for finding CIDs or locations (inline images)
@@ -74,6 +75,7 @@ typedef struct sMailState {
 		bodyLevel = BODY_NONE;
 		ulLastCP = 0;
 		attachLevel = ATTACH_NONE;
+		mime_vtag_nest = 0;
 		bAttachSignature = false;
 		strHTMLBody.clear();
 	};
@@ -101,6 +103,9 @@ private:
 
 	HRESULT fillMAPIMail(vmime::ref<vmime::message> vmMessage, IMessage *lpMessage);
 	HRESULT disectBody(vmime::ref<vmime::header> vmHeader, vmime::ref<vmime::body> vmBody, IMessage* lpMessage, bool onlyBody = false, bool filterDouble = false, bool appendBody = false);
+	void dissect_message(vmime::ref<vmime::body>, IMessage *);
+	HRESULT dissect_multipart(vmime::ref<vmime::header>, vmime::ref<vmime::body>, IMessage *, bool onlyBody = false, bool filterDouble = false, bool appendBody = false);
+	HRESULT dissect_ical(vmime::ref<vmime::header>, vmime::ref<vmime::body>, IMessage *, bool bIsAttachment);
 
 	HRESULT handleHeaders(vmime::ref<vmime::header> vmHeader, IMessage* lpMessage);
 	HRESULT handleRecipients(vmime::ref<vmime::header> vmHeader, IMessage* lpMessage);
@@ -117,8 +122,7 @@ private:
 	HRESULT handleAttachment(vmime::ref<vmime::header> vmHeader, vmime::ref<vmime::body> vmBody, IMessage* lpMessage, bool bAllowEmpty = true);
 	HRESULT handleMessageToMeProps(IMessage *lpMessage, LPADRLIST lpRecipients);
 
-	std::list<int> findBestAlternative(vmime::ref<vmime::body> vmBody);
-	HRESULT getCharsetFromHTML(const std::string &strHTML, vmime::charset *htmlCharset);
+	int getCharsetFromHTML(const std::string &strHTML, vmime::charset *htmlCharset);
 	vmime::charset getCompatibleCharset(const vmime::charset &vmCharset);
 	std::wstring getWideFromVmimeText(const vmime::text &vmText);
 	

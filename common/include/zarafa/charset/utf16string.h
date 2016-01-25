@@ -51,8 +51,7 @@
 #include <zarafa/charset/traits.h>
 
 #ifdef LINUX
-#define UTF16_CHAR unsigned short
-
+typedef unsigned short UTF16_CHAR;
 typedef std::basic_string<unsigned short> utf16string;
 
 namespace std {
@@ -179,7 +178,7 @@ public:
 };
 
 #else
-#define UTF16_CHAR wchar_t
+typedef wchar_t UTF16_CHAR;
 
 // The utf16string type
 typedef std::wstring utf16string;

@@ -276,7 +276,7 @@ HRESULT MAPIToVMIME::processRecipients(IMessage *lpMessage, vmime::messageBuilde
 				pPropDispl = PpropFindProp(pRows->aRow[i].lpProps, pRows->aRow[i].cValues, PR_DISPLAY_NAME_W);
 				pPropAType = PpropFindProp(pRows->aRow[i].lpProps, pRows->aRow[i].cValues, PR_ADDRTYPE_W);
 				pPropEAddr = PpropFindProp(pRows->aRow[i].lpProps, pRows->aRow[i].cValues, PR_EMAIL_ADDRESS_W);
-				lpLogger->Log(EC_LOGLEVEL_FATAL, "No recipient type set for recipient. DisplayName: %ls, AddrType: %ls, Email: %ls",
+				lpLogger->Log(EC_LOGLEVEL_ERROR, "No recipient type set for recipient. DisplayName: %ls, AddrType: %ls, Email: %ls",
 							  pPropDispl?pPropDispl->Value.lpszW:L"(none)",
 							  pPropAType?pPropAType->Value.lpszW:L"(none)",
 							  pPropEAddr?pPropEAddr->Value.lpszW:L"(none)");
@@ -309,7 +309,7 @@ HRESULT MAPIToVMIME::processRecipients(IMessage *lpMessage, vmime::messageBuilde
 		if (!fToFound) {
 			if (!hasRecips && sopt.no_recipients_workaround == false) {
 				// spooler will exit here, gateway will continue with the workaround
-				lpLogger->Log(EC_LOGLEVEL_FATAL, "No valid recipients found.");
+				lpLogger->Log(EC_LOGLEVEL_ERROR, "No valid recipients found.");
 				hr = MAPI_E_NOT_FOUND;
 				goto exit;
 			}
@@ -321,17 +321,17 @@ HRESULT MAPIToVMIME::processRecipients(IMessage *lpMessage, vmime::messageBuilde
 			
 	}
 	catch (vmime::exception& e) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "VMIME exception: %s", e.what());
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "VMIME exception: %s", e.what());
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
 	catch (std::exception& e) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "STD exception on recipients: %s", e.what());
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "STD exception on recipients: %s", e.what());
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
 	catch (...) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "Unknown generic exception occurred on recipients");
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unknown generic exception occurred on recipients");
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
@@ -525,17 +525,17 @@ HRESULT MAPIToVMIME::handleSingleAttachment(IMessage* lpMessage, LPSRow lpRow, v
 			}
 		}
 		catch (vmime::exception& e) {
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "VMIME exception: %s", e.what());
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "VMIME exception: %s", e.what());
 			hr = MAPI_E_CALL_FAILED;
 			goto exit;
 		}
 		catch (std::exception& e) {
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "STD exception on attachment: %s", e.what());
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "STD exception on attachment: %s", e.what());
 			hr = MAPI_E_CALL_FAILED;
 			goto exit;
 		}
 		catch (...) {
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "Unknown generic exception occurred on attachment");
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unknown generic exception occurred on attachment");
 			hr = MAPI_E_CALL_FAILED;
 			goto exit;
 		}
@@ -896,17 +896,17 @@ HRESULT MAPIToVMIME::BuildNoteMessage(IMessage *lpMessage, bool bSkipContent, vm
 		handleXHeaders(lpMessage, vmHeader);
 	}
 	catch (vmime::exception& e) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "VMIME exception: %s", e.what());
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "VMIME exception: %s", e.what());
 		hr = MAPI_E_CALL_FAILED; // set real error
 		goto exit;
 	}
 	catch (std::exception& e) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "STD exception on note message: %s", e.what());
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "STD exception on note message: %s", e.what());
 		hr = MAPI_E_CALL_FAILED; // set real error
 		goto exit;
 	}
 	catch (...) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "Unknown generic exception on note message");
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unknown generic exception on note message");
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
@@ -985,7 +985,7 @@ HRESULT MAPIToVMIME::BuildMDNMessage(IMessage *lpMessage, vmime::ref<vmime::mess
 
 		if (pRows->cRows == 0) {
 			if (sopt.no_recipients_workaround == false) {
-				lpLogger->Log(EC_LOGLEVEL_FATAL, "No MDN recipient found");
+				lpLogger->Log(EC_LOGLEVEL_ERROR, "No MDN recipient found");
 				hr = MAPI_E_NOT_FOUND;
 				goto exit;
 			} else {
@@ -1001,7 +1001,7 @@ HRESULT MAPIToVMIME::BuildMDNMessage(IMessage *lpMessage, vmime::ref<vmime::mess
 		// if vmRecipientbox is a vmime::mailboxGroup the dynamicCast to vmime::mailbox failed,
 		// so never send a MDN to a group.
 		if (vmRecipientbox->isGroup()) {
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "Not possible to send a MDN to a group");
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "Not possible to send a MDN to a group");
 			hr = MAPI_E_CORRUPT_DATA;
 			goto exit;
 		}
@@ -1020,7 +1020,7 @@ HRESULT MAPIToVMIME::BuildMDNMessage(IMessage *lpMessage, vmime::ref<vmime::mess
 		dispo.setSendingMode(vmime::dispositionSendingModes::SENT_MANUALLY);
 
 		if (HrGetOneProp(lpMessage, PR_MESSAGE_CLASS_A, &lpMsgClass) != hrSuccess) {
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "MDN message has no class.");
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "MDN message has no class.");
 			hr = MAPI_E_CORRUPT_DATA;
 			goto exit;
 		}
@@ -1037,7 +1037,7 @@ HRESULT MAPIToVMIME::BuildMDNMessage(IMessage *lpMessage, vmime::ref<vmime::mess
 			std::wstring strBuffer;
 			hr = Util::HrStreamToString(lpBodyStream, strBuffer);
 			if (hr != hrSuccess) {
-				lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to read MDN message body.");
+				lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to read MDN message body.");
 				goto exit;
 			}
 			strMDNText = m_converter.convert_to<string>(m_strCharset.c_str(), strBuffer, rawsize(strBuffer), CHARSET_WCHAR);
@@ -1082,17 +1082,17 @@ HRESULT MAPIToVMIME::BuildMDNMessage(IMessage *lpMessage, vmime::ref<vmime::mess
 
 	}
 	catch (vmime::exception& e) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "VMIME exception: %s", e.what());
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "VMIME exception: %s", e.what());
 		hr = MAPI_E_CALL_FAILED; // set real error
 		goto exit;
 	}
 	catch (std::exception& e) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "STD exception on MDN message: %s", e.what());
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "STD exception on MDN message: %s", e.what());
 		hr = MAPI_E_CALL_FAILED; // set real error
 		goto exit;
 	}
 	catch (...) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "Unknown generic exception on MDN message");
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unknown generic exception on MDN message");
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
@@ -1418,17 +1418,17 @@ HRESULT MAPIToVMIME::fillVMIMEMail(IMessage *lpMessage, bool bSkipContent, vmime
 		// sender and reply-to is set elsewhere because it can only be done on a message object...
 	}
 	catch (vmime::exception& e) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "VMIME exception: %s", e.what());
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "VMIME exception: %s", e.what());
 		hr = MAPI_E_CALL_FAILED; // set real error
 		goto exit;
 	}
 	catch (std::exception& e) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "STD exception on fill message: %s", e.what());
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "STD exception on fill message: %s", e.what());
 		hr = MAPI_E_CALL_FAILED; // set real error
 		goto exit;
 	}
 	catch (...) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "Unknown generic exception  on fill message");
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unknown generic exception  on fill message");
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
@@ -1542,7 +1542,7 @@ HRESULT MAPIToVMIME::handleTextparts(IMessage* lpMessage, vmime::messageBuilder 
 
 		hr = Util::HrStreamToString(lpUncompressedRTFStream, strRtf);
 		if (hr != hrSuccess) {
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to read RTF-text stream. Error: 0x%08X", hr);
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to read RTF-text stream. Error: 0x%08X", hr);
 			goto exit;
 		}
 
@@ -1628,17 +1628,17 @@ HRESULT MAPIToVMIME::handleTextparts(IMessage* lpMessage, vmime::messageBuilder 
 		}
 	}
 	catch (vmime::exception& e) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "VMIME exception: %s", e.what());
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "VMIME exception: %s", e.what());
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
 	catch (std::exception& e) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "STD exception on text part: %s", e.what());
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "STD exception on text part: %s", e.what());
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
 	catch (...) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "Unknown generic exception on text part");
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unknown generic exception on text part");
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}
@@ -1788,19 +1788,19 @@ HRESULT MAPIToVMIME::handleExtraHeaders(IMessage *lpMessage, vmime::ref<vmime::h
 	LPSPropValue lpExpiryTime = NULL;
 
 	// Conversation headers. New Message-Id header is set just before sending.
-	if (HrGetOneProp(lpMessage, PR_IN_REPLY_TO_ID_A, &ptrMessageId) == hrSuccess && strlen(ptrMessageId->Value.lpszA) > 0) {
+	if (HrGetOneProp(lpMessage, PR_IN_REPLY_TO_ID_A, &ptrMessageId) == hrSuccess && ptrMessageId->Value.lpszA[0]) {
 		vmime::ref<vmime::messageId> mid = vmime::create<vmime::messageId>(ptrMessageId->Value.lpszA);
 		vmHeader->InReplyTo()->getValue().dynamicCast<vmime::messageIdSequence>()->appendMessageId(mid);
 	}
 
 	// Outlook never adds this property
-	if (HrGetOneProp(lpMessage, PR_INTERNET_REFERENCES_A, &ptrMessageId) == hrSuccess && strlen(ptrMessageId->Value.lpszA) > 0) {
+	if (HrGetOneProp(lpMessage, PR_INTERNET_REFERENCES_A, &ptrMessageId) == hrSuccess && ptrMessageId->Value.lpszA[0]) {
 		vmime::ref<vmime::messageId> mid = vmime::create<vmime::messageId>(ptrMessageId->Value.lpszA);
 		vmHeader->References()->getValue().dynamicCast<vmime::messageIdSequence>()->appendMessageId(mid);
 	}
 
 	// only for message-in-message items, add Message-ID header from MAPI
-	if (sopt.msg_in_msg && HrGetOneProp(lpMessage, PR_INTERNET_MESSAGE_ID_A, &ptrMessageId) == hrSuccess && strlen(ptrMessageId->Value.lpszA) > 0)
+	if (sopt.msg_in_msg && HrGetOneProp(lpMessage, PR_INTERNET_MESSAGE_ID_A, &ptrMessageId) == hrSuccess && ptrMessageId->Value.lpszA[0])
 		vmHeader->MessageId()->setValue(ptrMessageId->Value.lpszA);
 
 	// priority settings
@@ -2036,7 +2036,7 @@ HRESULT MAPIToVMIME::handleSenderInfo(IMessage *lpMessage, vmime::ref<vmime::hea
 		}
 		if (sopt.no_recipients_workaround == false && strResEmail.empty() && PROP_TYPE(lpProps[0].ulPropTag) != PT_ERROR) {
 			m_strError = L"Representing email address is empty";
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "%ls", m_strError.c_str());
+			lpLogger->Log(EC_LOGLEVEL_ERROR, "%ls", m_strError.c_str());
 			hr = MAPI_E_NOT_FOUND;
 			goto exit;
 		}
@@ -2438,17 +2438,17 @@ tnef_anyway:
 		}
 	}
 	catch (vmime::exception& e) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "VMIME exception: %s", e.what());
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "VMIME exception: %s", e.what());
 	    hr = MAPI_E_CALL_FAILED; // set real error
 	    goto exit;
 	}
 	catch (std::exception& e) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "STD exception on fill message: %s", e.what());
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "STD exception on fill message: %s", e.what());
 	    hr = MAPI_E_CALL_FAILED; // set real error
 	    goto exit;
 	}
 	catch (...) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "Unknown generic exception on fill message");
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unknown generic exception on fill message");
 		hr = MAPI_E_CALL_FAILED;
 		goto exit;
 	}

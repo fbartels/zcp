@@ -56,10 +56,13 @@ start() {
 }
 
 stop() {
+	stop_daemon --pidfile "/var/run/$dagent.pid" --lockfile "$LOCKFILE" $dagent
+	RETVAL2="$?"
 	stop_daemon --pidfile "$PIDFILE" --lockfile "$LOCKFILE" $dagent
 	RETVAL=$?
 	
-	return $RETVAL
+	test "$RETVAL2" -eq 0 || test "$RETVAL" -eq 0
+	return $?
 }
 
 restart() {

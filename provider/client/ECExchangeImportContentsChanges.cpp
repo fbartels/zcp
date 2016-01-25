@@ -334,7 +334,6 @@ HRESULT ECExchangeImportContentsChanges::ImportMessageChange(ULONG cValue, LPSPr
 	LPSPropValue lpRemoteCK = PpropFindProp(lpPropArray, cValue, PR_CHANGE_KEY);
 
 	ULONG ulObjType = 0;
-	ULONG ulCount = 0;
 	bool bAssociatedMessage = false;
 	IMessage *lpMessage = NULL;
 	ECMessage *lpECMessage = NULL;

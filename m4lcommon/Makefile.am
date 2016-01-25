@@ -30,12 +30,10 @@ noinst_HEADERS = \
 	IECImportHierarchyChanges.h \
 	IECMultiStoreTable.h \
 	IECSpooler.h \
-	IECStatsCollector.h \
 	IECTestProtocol.h \
 	IMAPIOffline.h \
 	MAPIConsoleTable.h \
 	MAPINotifSink.h \
-	auto_free.h \
 	favoritesutil.h \
 	mapicontact.h
 # These were split off libcommon_mapi

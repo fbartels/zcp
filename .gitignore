@@ -30,6 +30,7 @@ stamp-h2
 
 /default.sym
 
+/ECtools/presence/build/
 /ECtools/zarafa-admin
 /ECtools/zarafa-archiver
 /ECtools/zarafa-cfgchecker

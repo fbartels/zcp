@@ -125,7 +125,7 @@ static HRESULT UpdatePassword(const char *lpPath, const char *lpUsername,
 
 	ECLogger *lpLogger = NULL;
 	if (verbose)
-		lpLogger = new ECLogger_File(EC_LOGLEVEL_FATAL, 0, "-", false, 0);
+		lpLogger = new ECLogger_File(EC_LOGLEVEL_FATAL, 0, "-", false);
 	else
 		lpLogger = new ECLogger_Null();
 	hr = HrOpenECSession(lpLogger, &lpSession, "zarafa-passwd", PROJECT_SVN_REV_STR, strwUsername.c_str(), strwPassword.c_str(), lpPath, EC_PROFILE_FLAGS_NO_NOTIFICATIONS | EC_PROFILE_FLAGS_NO_PUBLIC_STORE, NULL, NULL);

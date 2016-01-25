@@ -71,6 +71,8 @@ AC_SUBST([ZPHPCXXFLAGS])
 # disable write-strings: too much complains about "" being 'cast' to char* (since const char* is not in the declarations) on g++-4.2 and higher
 ZCPPFLAGS="$BUILDOS -DHAVE_CONFIG_H -I\${top_srcdir}/common/include \
 	-I\${top_srcdir}/m4lcommon/include \
+	-I\${top_srcdir}/provider/common/include \
+	-I\${top_srcdir}/provider/libserver/include \
 	-I\${top_srcdir}/ECtools/archiver/include \
 	-I\${top_srcdir}/inetmapi/include \
 	-I\${top_srcdir}/swig/include \
@@ -748,6 +750,8 @@ AC_CONFIG_FILES([Makefile
 		common/include/zarafa/Makefile
 		ECtools/Makefile
 		ECtools/archiver/include/zarafa/Makefile
+		ECtools/backup-plus/Makefile
+		ECtools/presence/Makefile
 		ECtools/search/Makefile
 		installer/Makefile
 		installer/linux/Makefile

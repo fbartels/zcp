@@ -50,7 +50,7 @@
 #include <string>
 
 #include <zarafa/ECDefs.h>
-#include "ZarafaUser.h"
+#include <zarafa/ZarafaUser.h>
 
 class LDAPUserPlugin;
 

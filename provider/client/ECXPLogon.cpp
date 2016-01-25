@@ -372,8 +372,6 @@ HRESULT ECXPLogon::SubmitMessage(ULONG ulFlags, LPMESSAGE lpMessage, ULONG * lpu
 	ENTRYLIST sDelete;
 	IMsgStore *lpMsgStore = NULL;
 	ULONG ulType = 0;
-
-	ULONG ulSize;
 	ULONG ulValue;
 	
 	struct timespec sTimeOut;
@@ -498,11 +496,11 @@ HRESULT ECXPLogon::SubmitMessage(ULONG ulFlags, LPMESSAGE lpMessage, ULONG * lpu
 	}
 
 	gettimeofday(&sNow,NULL);
-	ulSize = sizeof(ULONG);
 	ulValue = 300; // Default wait for max 5 min
 #ifdef WIN32
 	{
 		HKEY hKey;
+		ULONG ulSize = sizeof(ULONG);
 
 		if(RegOpenKeyExA(HKEY_CURRENT_USER, "Software\\Zarafa\\Client", 0, KEY_READ, &hKey) == ERROR_SUCCESS) {
 			RegQueryValueExA(hKey, "SubmitTimeOut", NULL, NULL, (BYTE*)&ulValue, &ulSize);

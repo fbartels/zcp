@@ -55,6 +55,7 @@
 #include <zarafa/Util.h>
 #include <zarafa/CommonUtil.h>
 #include <zarafa/ECLogger.h>
+#include <zarafa/MAPIErrors.h>
 #include <zarafa/mapi_ptr.h>
 #include <zarafa/mapiguidext.h>
 
@@ -181,6 +182,8 @@ static HRESULT MungeForwardBody(LPMESSAGE lpMessage, LPMESSAGE lpOrigMessage)
 		strForwardText = L"From: ";
 		if (PROP_TYPE(ptrInfo[0].ulPropTag) != PT_ERROR)
 			strForwardText += ptrInfo[0].Value.lpszW;
+		else if (PROP_TYPE(ptrInfo[1].ulPropTag) != PT_ERROR)
+			strForwardText += ptrInfo[1].Value.lpszW;
 		
 		if (PROP_TYPE(ptrInfo[1].ulPropTag) != PT_ERROR) {
 			strForwardText += L" <";
@@ -250,6 +253,14 @@ static HRESULT MungeForwardBody(LPMESSAGE lpMessage, LPMESSAGE lpOrigMessage)
 				Util::HrTextToHtml(ptrInfo[0].Value.lpszW, strHTMLForwardText, ulCharset);
 			else if (PROP_TYPE(ptrInfo[1].ulPropTag) != PT_ERROR)
 				Util::HrTextToHtml(ptrInfo[1].Value.lpszW, strHTMLForwardText, ulCharset);
+
+			if (PROP_TYPE(ptrInfo[1].ulPropTag) != PT_ERROR) {
+				strHTMLForwardText += " &lt;<a href=\"mailto:";
+				Util::HrTextToHtml(ptrInfo[1].Value.lpszW, strHTMLForwardText, ulCharset);
+				strHTMLForwardText += "\">";
+				Util::HrTextToHtml(ptrInfo[1].Value.lpszW, strHTMLForwardText, ulCharset);
+				strHTMLForwardText += "</a>&gt;";
+			}
 
 			strHTMLForwardText += "<br><b>Sent:</b> ";
 			if (PROP_TYPE(ptrInfo[2].ulPropTag) != PT_ERROR) {
@@ -822,7 +833,11 @@ exit:
 }
 
 // lpMessage: gets EntryID, maybe pass this and close message in DAgent.cpp
-HRESULT HrProcessRules(PyMapiPlugin *pyMapiPlugin, LPMAPISESSION lpSession, LPADRBOOK lpAdrBook, LPMDB lpOrigStore, LPMAPIFOLDER lpOrigInbox, IMessage **lppMessage, ECLogger *lpLogger, StatsClient *const sc) {
+HRESULT HrProcessRules(const std::string &recip, PyMapiPlugin *pyMapiPlugin,
+    LPMAPISESSION lpSession, LPADRBOOK lpAdrBook, LPMDB lpOrigStore,
+    LPMAPIFOLDER lpOrigInbox, IMessage **lppMessage, ECLogger *lpLogger,
+    StatsClient *const sc)
+{
 	HRESULT hr = hrSuccess;
     IExchangeModifyTable *lpTable = NULL;
     IMAPITable *lpView = NULL;
@@ -918,6 +933,7 @@ HRESULT HrProcessRules(PyMapiPlugin *pyMapiPlugin, LPMAPISESSION lpSession, LPAD
 		else
 			strRule = "(no name)";
 
+		lpLogger->Log(EC_LOGLEVEL_DEBUG, "Processing rule %s for %s", strRule.c_str(), recip.c_str());
 		lpRuleState = PpropFindProp(lpRowSet->aRow[0].lpProps, lpRowSet->aRow[0].cValues, PR_RULE_STATE);
 		if (lpRuleState) {
 			if (!(lpRuleState->Value.i & ST_ENABLED)) {
@@ -976,12 +992,14 @@ HRESULT HrProcessRules(PyMapiPlugin *pyMapiPlugin, LPMAPISESSION lpSession, LPAD
 										  lpActions->lpAction[n].actMoveCopy.lpFldEntryId, &IID_IMAPIFolder, MAPI_MODIFY, &ulObjType,
 										  (IUnknown**)&lpDestFolder);
 				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_INFO, (std::string)"Rule "+strRule+": Unable to open folder through session, trying through store");
+					std::string msg = std::string("Rule ") + strRule + ": Unable to open folder through session, trying through store: %s (%x)";
+					lpLogger->Log(EC_LOGLEVEL_INFO, msg.c_str(), GetMAPIErrorMessage(hr), hr);
 
 					hr = lpSession->OpenMsgStore(0, lpActions->lpAction[n].actMoveCopy.cbStoreEntryId,
 													lpActions->lpAction[n].actMoveCopy.lpStoreEntryId, NULL, MAPI_BEST_ACCESS, &lpDestStore);
 					if (hr != hrSuccess) {
-						lpLogger->Log(EC_LOGLEVEL_ERROR, (std::string)"Rule "+strRule+": Unable to open destination store");
+						std::string msg = std::string("Rule ") + strRule + ": Unable to open destination store: %s (%x)";
+						lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), GetMAPIErrorMessage(hr), hr);
 						goto nextact;
 					}
 
@@ -989,35 +1007,40 @@ HRESULT HrProcessRules(PyMapiPlugin *pyMapiPlugin, LPMAPISESSION lpSession, LPAD
 												lpActions->lpAction[n].actMoveCopy.lpFldEntryId, &IID_IMAPIFolder, MAPI_MODIFY, &ulObjType,
 												(IUnknown**)&lpDestFolder);
 					if (hr != hrSuccess || ulObjType != MAPI_FOLDER) {
-						lpLogger->Log(EC_LOGLEVEL_ERROR, (std::string)"Rule "+strRule+": Unable to open destination folder");
+						std::string msg = std::string("Rule ") + strRule + ": Unable to open destination folder: %s (%x)";
+						lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), GetMAPIErrorMessage(hr), hr);
 						goto nextact;
 					}
 				}
 
 				hr = lpDestFolder->CreateMessage(NULL, 0, &lpNewMessage);
 				if(hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create e-mail for rule " + strRule);
+					std::string msg = "Unable to create e-mail for rule: %s (%x)" + strRule;
+					lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), GetMAPIErrorMessage(hr), hr);
 					goto exit;
 				}
 					
 				hr = (*lppMessage)->CopyTo(0, NULL, NULL, 0, NULL, &IID_IMessage, lpNewMessage, 0, NULL);
 				if(hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to copy e-mail for rule " + strRule);
+					std::string msg = "Unable to copy e-mail for rule: %s (%x)" + strRule;
+					lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), GetMAPIErrorMessage(hr), hr);
 					goto exit;
 				}
 
 				hr = Util::HrCopyIMAPData((*lppMessage), lpNewMessage);
 				// the function only returns errors on get/setprops, not when the data is just missing
 				if (hr != hrSuccess) {
+					std::string msg = "Unable to copy IMAP data e-mail for rule " + strRule + ", continuing: %s (%x)";
+					lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), GetMAPIErrorMessage(hr), hr);
 					hr = hrSuccess;
-					lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to copy IMAP data e-mail for rule " + strRule + ", continuing");
 					goto exit;
 				}
 
 				// Save the copy in its new location
 				hr = lpNewMessage->SaveChanges(0);
 				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, (std::string)"Rule "+strRule+": Unable to copy/move message");
+					std::string msg = std::string("Rule ") + strRule + ": Unable to copy/move message: %s (%x)";
+					lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), GetMAPIErrorMessage(hr), hr);
 					goto nextact;
 				}
 				if (lpActions->lpAction[n].acttype == OP_MOVE)
@@ -1038,19 +1061,22 @@ HRESULT HrProcessRules(PyMapiPlugin *pyMapiPlugin, LPMAPISESSION lpSession, LPAD
 											lpActions->lpAction[n].actReply.lpEntryId, &IID_IMessage, 0, &ulObjType,
 											(IUnknown**)&lpTemplate);
 				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, (std::string)"Rule "+strRule+": Unable to open reply message");
+					std::string msg = std::string("Rule ") + strRule + ": Unable to open reply message: %s (%x)";
+					lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), GetMAPIErrorMessage(hr), hr);
 					goto nextact;
 				}
 
 				hr = CreateReplyCopy(lpSession, lpOrigStore, *lppMessage, lpTemplate, &lpReplyMsg);
 				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, (std::string)"Rule "+strRule+": Unable to create reply message");
+					std::string msg = std::string("Rule ") + strRule + ": Unable to create reply message: %s (%x)";
+					lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), GetMAPIErrorMessage(hr), hr);
 					goto nextact;
 				}
 
 				hr = lpReplyMsg->SubmitMessage(0);
 				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, (std::string)"Rule "+strRule+": Unable to send reply message");
+					std::string msg = std::string("Rule ") + strRule + ": Unable to send reply message: %s (%x)";
+					lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), GetMAPIErrorMessage(hr), hr);
 					goto nextact;
 				}
 				break;
@@ -1091,13 +1117,15 @@ HRESULT HrProcessRules(PyMapiPlugin *pyMapiPlugin, LPMAPISESSION lpSession, LPAD
 									   lpActions->lpAction[n].ulActionFlavor & FWD_AS_ATTACHMENT,
 									   &lpFwdMsg);
 				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, (std::string)"Rule "+strRule+": FORWARD Unable to create forward message");
+					std::string msg = std::string("Rule ") + strRule + ": FORWARD Unable to create forward message: %s (%x)";
+					lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), GetMAPIErrorMessage(hr), hr);
 					goto nextact;
 				}
 
 				hr = lpFwdMsg->SubmitMessage(0);
 				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, (std::string)"Rule "+strRule+": FORWARD Unable to send forward message");
+					std::string msg = std::string("Rule ") + strRule + ": FORWARD Unable to send forward message: %s (%x)";
+					lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), GetMAPIErrorMessage(hr), hr);
 					goto nextact;
 				}
 
@@ -1126,20 +1154,23 @@ HRESULT HrProcessRules(PyMapiPlugin *pyMapiPlugin, LPMAPISESSION lpSession, LPAD
 
 				hr = CreateForwardCopy(lpLogger, lpAdrBook, lpOrigStore, *lppMessage, lpActions->lpAction[n].lpadrlist, true, true, true, false, &lpFwdMsg);
 				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, (std::string)"Rule "+strRule+": DELEGATE Unable to create delegate message");
+					std::string msg = std::string("Rule ") + strRule + ": DELEGATE Unable to create delegate message: %s (%x)";
+					lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), GetMAPIErrorMessage(hr), hr);
 					goto nextact;
 				}
 
 				// set delegate properties
 				hr = HrDelegateMessage(lpFwdMsg);
 				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, (std::string)"Rule "+strRule+": DELEGATE Unable to modify delegate message");
+					std::string msg = std::string("Rule ") + strRule + ": DELEGATE Unable to modify delegate message: %s (%x)";
+					lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), GetMAPIErrorMessage(hr), hr);
 					goto nextact;
 				}
 
 				hr = lpFwdMsg->SubmitMessage(0);
 				if (hr != hrSuccess) {
-					lpLogger->Log(EC_LOGLEVEL_ERROR, (std::string)"Rule "+strRule+": DELEGATE Unable to send delegate message");
+					std::string msg = std::string("Rule ") + strRule + ": DELEGATE Unable to send delegate message: %s (%x)";
+					lpLogger->Log(EC_LOGLEVEL_ERROR, msg.c_str(), GetMAPIErrorMessage(hr), hr);
 					goto nextact;
 				}
 

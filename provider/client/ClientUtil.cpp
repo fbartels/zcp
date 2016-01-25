@@ -917,9 +917,9 @@ HRESULT ClientUtil::ConvertMSEMSProps(ULONG cValues, LPSPropValue pValues, ULONG
 		{ "server_address", "" },
 		{ "log_method","file" },
 		{ "log_file","-" },
-		{ "log_level","2", CONFIGSETTING_RELOADABLE },
+		{ "log_level", "3", CONFIGSETTING_RELOADABLE },
 		{ "log_timestamp","1" },
-		{ "log_buffer_size",	"4096" },
+		{ "log_buffer_size", "0" },
 		{ NULL, NULL },
 	};
 	ECConfig *lpConfig = ECConfig::Create(settings);
@@ -967,7 +967,7 @@ HRESULT ClientUtil::ConvertMSEMSProps(ULONG cValues, LPSPropValue pValues, ULONG
 	if (hr != hrSuccess)
 		goto exit;
 
-	if (strlen(lpConfig->GetSetting("server_address")) > 0) {
+	if (lpConfig->GetSetting("server_address")[0]) {
 		strServerPath = (std::string)"https://" + lpConfig->GetSetting("server_address") + ":" + lpConfig->GetSetting("ssl_port") + "/zarafa";
 	} else {
 		if(!lpServer) {

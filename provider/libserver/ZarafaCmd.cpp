@@ -639,7 +639,7 @@ int ns__logon(struct soap *soap, char *user, char *pass, char *impersonate, char
 
 	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &startTimes);
 
-    LOG_SOAP_DEBUG(g_lpSessionManager->GetLogger(), "%020llu: S logon", sessionID);
+	LOG_SOAP_DEBUG(g_lpSessionManager->GetLogger(), "%020llu: S logon", static_cast<unsigned long long>(sessionID));
 
     if ((clientCaps & ZARAFA_CAP_UNICODE) == 0) {
 		user = ECStringCompat::WTF1252_to_UTF8(soap, user);
@@ -745,7 +745,10 @@ exit:
 
 	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &endTimes);
 
-	LOG_SOAP_DEBUG(g_lpSessionManager->GetLogger(), "%020llu: E logon 0x%08x %f %f", sessionID, er, timespec2dbl(endTimes) - timespec2dbl(startTimes), GetTimeOfDay() - dblStart);
+	LOG_SOAP_DEBUG(g_lpSessionManager->GetLogger(), "%020llu: E logon 0x%08x %f %f",
+		static_cast<unsigned long long>(sessionID), er,
+		timespec2dbl(endTimes) - timespec2dbl(startTimes),
+		GetTimeOfDay() - dblStart);
 
 	return SOAP_OK;
 }

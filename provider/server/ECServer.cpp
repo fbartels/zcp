@@ -245,7 +245,7 @@ static void process_signal(int sig)
 			g_lpSessionManager->GetPluginFactory()->SignalPlugins(sig);
 
 			const char *ll = g_lpConfig->GetSetting("log_level");
-			int new_ll = ll ? strtol(ll, NULL, 0) : 2;
+			int new_ll = ll ? strtol(ll, NULL, 0) : EC_LOGLEVEL_WARNING;
 			g_lpLogger->SetLoglevel(new_ll);
 			g_lpLogger->Reset();
 			g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Log connection was reset");
@@ -1047,9 +1047,9 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 		// Log options
 		{ "log_method",					"file" },
 		{ "log_file",					"-" },
-		{ "log_level",					"2", CONFIGSETTING_RELOADABLE },
+		{ "log_level",					"3", CONFIGSETTING_RELOADABLE },
 		{ "log_timestamp",				"1" },
-		{ "log_buffer_size",	"4096" },
+		{ "log_buffer_size", "0" },
 		// security log options
 		{ "audit_log_enabled",			"no" },
 		{ "audit_log_method",			"syslog" },
@@ -1195,7 +1195,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 #ifdef WIN32
 		g_lpLogger = new ECLogger_Eventlog(EC_LOGLEVEL_INFO, "ZarafaServer");
 #else
-		g_lpLogger = new ECLogger_File(EC_LOGLEVEL_INFO, 0, "-", false, 0); // create info logger without a timestamp to stderr
+		g_lpLogger = new ECLogger_File(EC_LOGLEVEL_INFO, 0, "-", false); // create info logger without a timestamp to stderr
 #endif
 		LogConfigErrors(g_lpConfig, g_lpLogger);
 		er = MAPI_E_UNCONFIGURED;

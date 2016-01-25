@@ -1451,7 +1451,6 @@ HRESULT ECMessage::SubmitMessage(ULONG ulFlags)
 	SRowSet sRowSetRecip;
 	SPropValue sPropResponsibility;
 	FILETIME ft;
-	ULONG ulPreFlags = 0;
 
 	// Get message flag to check for resubmit. PR_MESSAGE_FLAGS
 	sPropTagArray.cValues = 1;
@@ -1464,6 +1463,8 @@ HRESULT ECMessage::SubmitMessage(ULONG ulFlags)
 #ifdef WIN32
 	if(cValue == 1 && lpsPropArray != NULL && PROP_TYPE(lpsPropArray->ulPropTag) != PT_ERROR && (lpsPropArray->Value.ul & MSGFLAG_RESEND))
 	{
+		ULONG ulPreFlags = 0;
+
 		hr = this->GetMsgStore()->lpSupport->SpoolerNotify(NOTIFY_READYTOSEND, NULL);
 		if(hr != hrSuccess)
 			goto exit;

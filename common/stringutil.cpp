@@ -46,7 +46,7 @@
 #include <zarafa/charset/convert.h>
 #include <sstream>
 
-#include "ECIConv.h"
+#include <zarafa/ECIConv.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -313,19 +313,19 @@ std::string GetServerPortFromPath(const char *szPath) {
 std::string ServerNamePortToURL(const char *lpszType, const char *lpszServerName, const char *lpszServerPort, const char *lpszExtra) {
 	std::string strURL;
 
-	if (lpszType && strlen(lpszType) > 0) {
+	if (lpszType && lpszType[0]) {
 		strURL.append(lpszType);
 		strURL.append("://");
 	}
 
 	strURL.append(lpszServerName);
 
-	if (lpszServerPort && strlen(lpszServerPort) > 0) {
+	if (lpszServerPort && lpszServerPort[0]) {
 		strURL.append(":");
 		strURL.append(lpszServerPort);
 	}
 
-	if (strnicmp(lpszType,"http", 4) == 0 && lpszExtra && strlen(lpszExtra) > 0) {
+	if (strnicmp(lpszType,"http", 4) == 0 && lpszExtra && lpszExtra[0]) {
 		strURL.append("/");
 		strURL.append(lpszExtra);
 	}

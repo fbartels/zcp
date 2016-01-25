@@ -49,7 +49,7 @@
 //#define EXCEPTION_DEBUG
 
 #include <zarafa/ECDefs.h>
-#include "ZarafaUser.h"
+#include <zarafa/ZarafaUser.h>
 
 #include <list>
 #include <map>
@@ -59,8 +59,8 @@
 #include <sstream>
 #include <memory>
 #include <pthread.h>
-#include "ECPluginSharedData.h"
-#include "IECStatsCollector.h"
+#include <zarafa/ECPluginSharedData.h>
+#include <zarafa/IECStatsCollector.h>
 
 /**
  * @defgroup userplugin Server user plugin

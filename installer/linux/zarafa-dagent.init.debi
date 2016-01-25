@@ -55,10 +55,15 @@ case "$1" in
 	;;
   stop)
 	log_begin_msg "Stopping $DESC: $NAME"
-	start-stop-daemon --stop $QUIETDAEMON --pidfile $PIDFILE --retry TERM/15/KILL --exec $DAGENT
+	# try old pid location too
+	start-stop-daemon --stop $QUIETDAEMON --pidfile /var/run/$NAME.pid --retry TERM/15/KILL --exec $DAGENT >/dev/null
+	RETVAL2="$?"
+	rm -f "/var/run/$NAME.pid"
+	start-stop-daemon --stop $QUIETDAEMON --pidfile $PIDFILE --retry TERM/15/KILL --exec $DAGENT >/dev/null
 	RETVAL=$?
 	rm -f $PIDFILE
-	log_end_msg $RETVAL
+	test "$RETVAL2" -eq 0 || test "$RETVAL" -eq 0
+	log_end_msg "$?"
 	;;
   restart)
 	$0 stop

@@ -105,7 +105,7 @@ bool TmpPath::OverridePath(ECConfig *const ec) {
 	bool rc = true;
 	const char *newPath = ec->GetSetting("tmp_path");
 
-	if (newPath && strlen(newPath) > 0) {
+	if (newPath && newPath[0]) {
 		path = newPath;
 
 		size_t s = path.size();

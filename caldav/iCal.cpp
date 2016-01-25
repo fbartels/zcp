@@ -190,7 +190,6 @@ HRESULT iCal::HrHandleIcalPost()
 	SBinary sbUid = {0,0};
 	ULONG ulItemCount = 0;
 	ULONG ulProptag = 0;
-	ULONG ulTagPrivate = 0;
 	ULONG cValues = 0;
 	ICalToMapi *lpICalToMapi = NULL;
 	time_t tLastMod = 0;
@@ -211,8 +210,6 @@ HRESULT iCal::HrHandleIcalPost()
 
 
 	ulProptag = CHANGE_PROP_TYPE(m_lpNamedProps->aulPropTag[PROP_GOID], PT_BINARY);
-	ulTagPrivate = CHANGE_PROP_TYPE(m_lpNamedProps->aulPropTag[PROP_PRIVATE], PT_BOOLEAN);
-
 	cValues = 3;
 	if ((hr = MAPIAllocateBuffer(CbNewSPropTagArray(cValues), (void **)&lpPropTagArr)) != hrSuccess)
 		goto exit;

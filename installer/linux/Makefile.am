@@ -1,35 +1,43 @@
 # -*- Makefile -*-
 
-systemunit_DATA = zarafa-dagent.service zarafa-gateway.service zarafa-ical.service zarafa-monitor.service zarafa-search.service zarafa-server.service zarafa-spooler.service
+systemunit_DATA = zarafa-dagent.service zarafa-gateway.service \
+                  zarafa-ical.service zarafa-monitor.service \
+                  zarafa-presence.service zarafa-search.service \
+                  zarafa-server.service zarafa-spooler.service
 sysusers_DATA = zarafa-sysusers.conf
 tmpfiles_DATA = zarafa-tmpfiles.conf
 
 config_files = \
-	server.cfg unix.cfg ldap.propmap.cfg \
+	server.cfg unix.cfg ldap.propmap.cfg presence.cfg \
 	spooler.cfg gateway.cfg monitor.cfg dagent.cfg ical.cfg search.cfg \
-	autorespond archiver.cfg
+	autorespond archiver.cfg backup.cfg
 
 rhel_initscript_files = \
 	zarafa-server.init.rhel zarafa-spooler.init.rhel \
 	zarafa-gateway.init.rhel zarafa-monitor.init.rhel \
-	zarafa-ical.init.rhel zarafa-dagent.init.rhel zarafa-search.init.rhel
+	zarafa-ical.init.rhel zarafa-dagent.init.rhel zarafa-search.init.rhel \
+	zarafa-presence.init.rhel
 suse_initscript_files = \
 	zarafa-server.init.suse zarafa-spooler.init.suse \
 	zarafa-gateway.init.suse zarafa-monitor.init.suse \
-	zarafa-ical.init.suse zarafa-dagent.init.suse zarafa-search.init.suse
+	zarafa-ical.init.suse zarafa-dagent.init.suse zarafa-search.init.suse \
+	zarafa-presence.init.suse
 sles_initscript_files = $(suse_initscript_files)
 cbs4_initscript_files = \
 	zarafa-server.init.cbs4 zarafa-spooler.init.cbs4 \
 	zarafa-gateway.init.cbs4 zarafa-monitor.init.cbs4 \
-	zarafa-ical.init.cbs4 zarafa-dagent.init.cbs4 zarafa-search.init.cbs4
+	zarafa-ical.init.cbs4 zarafa-dagent.init.cbs4 zarafa-search.init.cbs4 \
+	zarafa-presence.init.cbs4
 alt_initscript_files = \
 	zarafa-server.init.alt zarafa-spooler.init.alt \
 	zarafa-gateway.init.alt zarafa-monitor.init.alt \
-	zarafa-ical.init.alt zarafa-dagent.init.alt zarafa-search.init.alt
+	zarafa-ical.init.alt zarafa-dagent.init.alt zarafa-search.init.alt \
+	zarafa-presence.init.alt
 debian_initscript_files = \
 	zarafa-server.init.debi zarafa-spooler.init.debi \
 	zarafa-gateway.init.debi zarafa-monitor.init.debi \
-	zarafa-ical.init.debi zarafa-dagent.init.debi zarafa-search.init.debi
+	zarafa-ical.init.debi zarafa-dagent.init.debi zarafa-search.init.debi \
+	zarafa-presence.init.debi
 
 data_configdir = ${docdir}/example-config
 dist_data_config_DATA = ${config_files}

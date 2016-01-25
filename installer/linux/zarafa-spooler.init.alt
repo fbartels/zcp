@@ -52,10 +52,13 @@ start() {
 }
 
 stop() {
+	stop_daemon --pidfile "/var/run/$spooler.pid" --lockfile "$LOCKFILE" $spooler
+	RETVAL2="$?"
 	stop_daemon --pidfile "$PIDFILE" --lockfile "$LOCKFILE" $spooler
 	RETVAL=$?
 
-	return $RETVAL
+	test "$RETVAL2" -eq 0 || "$RETVAL" -eq 0
+	return $?
 }
 
 restart() {

@@ -606,7 +606,7 @@ int main(int argc, char *argv[])
 	wstring strwUsername;
 	wstring strwPassword;
 	bool humanreadable(true);
-	ECLogger *const lpLogger = new ECLogger_File(EC_LOGLEVEL_FATAL, 0, "-", false, 0);
+	ECLogger *const lpLogger = new ECLogger_File(EC_LOGLEVEL_FATAL, 0, "-", false);
 
 	setlocale(LC_MESSAGES, "");
 	setlocale(LC_CTYPE, "");

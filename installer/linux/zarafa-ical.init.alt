@@ -50,10 +50,13 @@ start() {
 }
 
 stop() {
+	stop_daemon --pidfile "/var/run/$ical.pid" --lockfile "$LOCKFILE" $ical
+	RETVAL2="$?"
 	stop_daemon --pidfile "$PIDFILE" --lockfile "$LOCKFILE" $ical
 	RETVAL=$?
 
-	return $RETVAL
+	test "$RETVAL2" -eq 0 || "$RETVAL" -eq 0
+	return $?
 }
 
 restart() {
