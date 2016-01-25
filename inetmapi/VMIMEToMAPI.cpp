@@ -2278,7 +2278,7 @@ HRESULT VMIMEToMAPI::handleTextpart(vmime::ref<vmime::header> vmHeader, vmime::r
 				goto exit;
 		}
 
-		hr = lpStream->Write(strUnicodeText.c_str(), (strUnicodeText.length() + 1) * sizeof(wstring::value_type), NULL);
+		hr = lpStream->Write(strUnicodeText.c_str(), strUnicodeText.length() * sizeof(wstring::value_type), NULL);
 		if (hr != hrSuccess)
 			goto exit;
 
