@@ -84,7 +84,7 @@ public:
 	HRESULT HrSelect(int seconds);
 
 	void SetIPAddress(const struct sockaddr *, size_t);
-	std::string GetIPAddress(void) const;
+	const char *peer_addr(void) const;
 		
 	bool UsingSsl();
 	bool sslctx();

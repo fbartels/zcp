@@ -286,7 +286,7 @@ static void *Handler(void *lpArg)
 	}
 
 exit:
-	lpLogger->Log(EC_LOGLEVEL_NOTICE, "Client %s thread exiting", lpChannel->GetIPAddress().c_str());
+	lpLogger->Log(EC_LOGLEVEL_NOTICE, "Client %s thread exiting", lpChannel->peer_addr());
 
 	client->HrDone(false);	// HrDone does not send an error string to the client
 	delete client;

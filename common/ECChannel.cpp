@@ -679,7 +679,7 @@ void ECChannel::SetIPAddress(const struct sockaddr *sa, size_t slen)
 		snprintf(peer_atxt, sizeof(peer_atxt), "%s:%s", host, serv);
 }
 
-std::string ECChannel::GetIPAddress(void) const
+const char *ECChannel::peer_addr(void) const
 {
 	return peer_atxt;
 }
@@ -950,7 +950,7 @@ HRESULT HrAccept(ECLogger *lpLogger, int ulListenFD, ECChannel **lppChannel)
 	lpChannel = new ECChannel(socket);
 	lpChannel->SetIPAddress(reinterpret_cast<const struct sockaddr *>(&client), len);
 	if (lpLogger)
-		lpLogger->Log(EC_LOGLEVEL_INFO, "Accepted connection from %s", lpChannel->GetIPAddress().c_str());
+		lpLogger->Log(EC_LOGLEVEL_INFO, "Accepted connection from %s", lpChannel->peer_addr());
 
 	*lppChannel = lpChannel;
 

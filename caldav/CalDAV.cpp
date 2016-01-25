@@ -602,7 +602,7 @@ static HRESULT HrStartHandlerClient(ECChannel *lpChannel, bool bUseSSL,
 			goto exit;
 		}
 
-		set_thread_name(pThread, "ZCalDAV" + lpChannel -> GetIPAddress());
+		set_thread_name(pThread, std::string("ZCalDAV") + lpChannel->peer_addr());
 	}
 	else {
 		if (unix_fork_function(HandlerClient, lpHandlerArgs, nCloseFDs, pCloseFDs) < 0) {

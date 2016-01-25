@@ -922,7 +922,7 @@ HRESULT IMAP::HrCmdAuthenticate(const string &strTag, string strAuthMethod, cons
 			goto exit;
 
 		lpLogger->Log(EC_LOGLEVEL_ERROR, "Aborted login from %s without username (tried to use disallowed plaintext auth)",
-					  lpChannel->GetIPAddress().c_str());
+					  lpChannel->peer_addr());
 		goto exit;
 	}
 
@@ -1004,7 +1004,7 @@ HRESULT IMAP::HrCmdLogin(const string &strTag, const string &strUser, const stri
 			goto exit;
 
 		lpLogger->Log(EC_LOGLEVEL_ERROR, "Aborted login from %s with username \"%s\" (tried to use disallowed plaintext auth)",
-					  lpChannel->GetIPAddress().c_str(), strUsername.c_str());
+					  lpChannel->peer_addr(), strUsername.c_str());
 		goto exit;
 	}
 
@@ -1030,7 +1030,7 @@ HRESULT IMAP::HrCmdLogin(const string &strTag, const string &strUser, const stri
 	hr = HrOpenECSession(lpLogger, &lpSession, "gateway/imap", PROJECT_SVN_REV_STR, strwUsername.c_str(), strwPassword.c_str(), m_strPath.c_str(), EC_PROFILE_FLAGS_NO_COMPRESSION, NULL, NULL);
 	if (hr != hrSuccess) {
 		lpLogger->Log(EC_LOGLEVEL_WARNING, "Failed to login from %s with invalid username \"%s\" or wrong password. Error: 0x%08X",
-					  lpChannel->GetIPAddress().c_str(), strUsername.c_str(), hr);
+					  lpChannel->peer_addr(), strUsername.c_str(), hr);
 		hr2 = HrResponse(RESP_TAGGED_NO, strTag, "LOGIN wrong username or password");
 		if (hr2 != hrSuccess)
 			goto exit;
@@ -1096,7 +1096,7 @@ HRESULT IMAP::HrCmdLogin(const string &strTag, const string &strUser, const stri
 		goto exit;
 	}
 
-	lpLogger->Log(EC_LOGLEVEL_NOTICE, "IMAP Login from %s for user %s", lpChannel->GetIPAddress().c_str(), strUsername.c_str());
+	lpLogger->Log(EC_LOGLEVEL_NOTICE, "IMAP Login from %s for user %s", lpChannel->peer_addr(), strUsername.c_str());
 	hr = HrResponse(RESP_TAGGED_OK, strTag, "[" + GetCapabilityString(false) + "] LOGIN completed");
 
 exit:
