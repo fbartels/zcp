@@ -3015,7 +3015,14 @@ std::wstring VMIMEToMAPI::getWideFromVmimeText(const vmime::text &vmText)
 	const std::vector<vmime::ref<const vmime::word> >& words = vmText.getWordList();
 	std::vector<vmime::ref<const vmime::word> >::const_iterator i, j;
 	for (i = words.begin(); i != words.end(); i++) {
+		/*
+		 * RFC 5322 §2.2 specifies header field bodies consist of
+		 * US-ASCII characters only, and the only way to get other
+		 * encodings is by RFC 2047. In other words, the use of
+		 * m_dopt.default_charset is disallowed.
+		 */
 		vmime::charset wordCharset = vtm_upgrade_charset((*i)->getCharset());
+
 		/*
 		 * In case of unknown character sets, RFC 2047 §6.2 ¶5
 		 * gives the following options:
