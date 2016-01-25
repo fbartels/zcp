@@ -47,6 +47,7 @@
 #include <zarafa/zcdefs.h>
 #include <cstdio>
 #include <iostream>
+#include <sys/socket.h>
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 
@@ -111,6 +112,7 @@ HRESULT HrAccept(ECLogger *lpLogger, int ulListenFD, ECChannel **lppChannel);
 extern "C" {
 
 extern int zcp_bindtodevice(ECLogger *log, int fd, const char *iface);
+extern int zcp_peerfd_is_local(int);
 
 }
 
