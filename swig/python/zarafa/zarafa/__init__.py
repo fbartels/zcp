@@ -3271,11 +3271,6 @@ class User(object):
         user_class = kwargs.get('user_class', self._ecuser.Class)
         admin = kwargs.get('admin', self._ecuser.IsAdmin)
 
-        # XXX: required to hook/unhook store??
-        if self.active:
-            store = self.store
-            self.unhook()
-
         # Thrown when a user tries to set his own features, handle gracefully otherwise you'll end up without a store
         try:
             # Pass the MVPropMAP otherwise the set values are reset
@@ -3289,8 +3284,6 @@ class User(object):
         except MAPIErrorNoSupport:
             pass
 
-        if self.active:
-            storeguid = self.hook(store=store)
         self._ecuser = self.server.sa.GetUser(self.server.sa.ResolveUserName(username, MAPI_UNICODE), MAPI_UNICODE)
         if self.name != username:
             self._name = username
