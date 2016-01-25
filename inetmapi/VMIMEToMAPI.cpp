@@ -104,6 +104,8 @@
 
 using namespace std;
 
+static vmime::charset vtm_upgrade_charset(const vmime::charset &);
+
 static const char im_charset_unspec[] = "unspecified";
 
 /**
@@ -2213,9 +2215,6 @@ HRESULT VMIMEToMAPI::handleTextpart(vmime::ref<vmime::header> vmHeader, vmime::r
 	try {
 		SPropValue sCodepage;
 
-		/* process Content-Transfer-Encoding */
-		std::string strBuffOut = content_transfer_decode(vmBody);
-
 		/* determine first choice character set */
 		vmime::charset mime_charset =
 			get_mime_encoding(vmHeader, vmBody);
@@ -2230,44 +2229,36 @@ HRESULT VMIMEToMAPI::handleTextpart(vmime::ref<vmime::header> vmHeader, vmime::r
 				mime_charset = vmime::charsets::US_ASCII;
 			}
 		}
+		mime_charset = vtm_upgrade_charset(mime_charset);
 		if (!ValidateCharset(mime_charset.getName().c_str())) {
 			/* RFC 2049 §2 item 6 subitem 5 */
 			lpLogger->Log(EC_LOGLEVEL_DEBUG, "Unknown Content-Type charset \"%s\". Storing as attachment instead.", mime_charset.getName().c_str());
 			return handleAttachment(vmHeader, vmBody, lpMessage, true);
 		}
-
 		/*
-		 * We write to PR_BODY_W, so we need the text in a
-		 * std::wstring.
+		 * Because PR_BODY is not of type PT_BINARY, the length is
+		 * determined by looking for the first \0 rather than a
+		 * dedicated length field. This interferes with multibyte
+		 * encodings which use 0x00 bytes in their sequences, such as
+		 * UTF-16. (For example '!' in UTF-16BE is 0x00 0x21.)
+		 *
+		 * To cure this, the input is converted to a wide string, so
+		 * that we work with codepoints instead of bytes. Then, we only
+		 * have to consider U+0000 codepoints, which we will just strip
+		 * as they are not very useful in text.
+		 *
+		 * The data will be stored in PR_BODY_W, and since the encoding
+		 * is prescribed for that, PR_INTERNET_CPID is not needed, but
+		 * we record it anyway… for the testsuite, and for its
+		 * unreviewed use in MAPIToVMIME.
 		 */
-		std::wstring strUnicodeText;
-
-		/* Add secondary candidates and try all in order */
-		std::vector<std::string> cs_cand;
-		cs_cand.push_back(mime_charset.getName());
-		if (!m_dopt.charset_strict_rfc) {
-			cs_cand.push_back(m_dopt.default_charset);
-			cs_cand.push_back(vmime::charsets::US_ASCII);
-		}
-
-		int cs_best = renovate_encoding(strUnicodeText,
-		              strBuffOut, cs_cand);
-		if (cs_best < 0)
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "Text part did not validate in any character set.");
-		/*
-		 * Because PR_BODY_W is not of type PT_BINARY, the length is
-		 * determined by wcslen and not a dedicated length field. This
-		 * means U+0000 characters cannot be represented. Strip them.
-		 * (See also RFC 2049 §3 item 3.)
-		 */
+		std::string strBuffOut = content_transfer_decode(vmBody);
+		std::wstring strUnicodeText = m_converter.convert_to<std::wstring>(CHARSET_WCHAR "//IGNORE", strBuffOut, rawsize(strBuffOut), mime_charset.getName().c_str());
 		strUnicodeText.erase(std::remove(strUnicodeText.begin(), strUnicodeText.end(), L'\0'), strUnicodeText.end());
 
-		if (HrGetCPByCharset(cs_cand[cs_best].c_str(), &sCodepage.Value.ul) != hrSuccess) {
-			// we have no matching win32 codepage, so convert the HTML from plaintext in utf-8 for compatibility.
+		if (HrGetCPByCharset(mime_charset.getName().c_str(), &sCodepage.Value.ul) != hrSuccess)
+			/* pretend original input was UTF-8 */
 			sCodepage.Value.ul = 65001;
-			strBuffOut = m_converter.convert_to<std::string>("UTF-8", strBuffOut, rawsize(strBuffOut), cs_cand[cs_best].c_str());
-			lpLogger->Log(EC_LOGLEVEL_INFO, "No Win32 CP ID for \"%s\" - upgrading text/plain MIME body to UTF-8 for compatibility", cs_cand[cs_best].c_str());
-		}
 		sCodepage.ulPropTag = PR_INTERNET_CPID;
 		HrSetOneProp(lpMessage, &sCodepage);
 
