@@ -3927,6 +3927,7 @@ class Worker(Process):
 
     def run(self):
         signal.signal(signal.SIGINT, signal.SIG_IGN)
+        signal.signal(signal.SIGTERM, lambda a,b: sys.exit(0))
         with log_exc(self.log):
             self.main()
 
