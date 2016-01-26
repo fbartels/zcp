@@ -79,6 +79,7 @@
 #include "vmime/utility/stringUtils.hpp"
 #include "vmime/net/defaultConnectionInfos.hpp"
 
+#include <zarafa/ECDebugPrint.h>
 #include <zarafa/ECLogger.h>
 #include <zarafa/charset/traits.h>
 
@@ -632,8 +633,8 @@ void MAPISMTPTransport::send(const mailbox& expeditor, const mailboxList& recipi
 
 	sendRequest(strSend);
 
-	if ((resp = readResponse())->getCode() != 250)
-	{
+	resp = readResponse();
+	if (resp->getCode() / 10 != 25) {
 		internalDisconnect();
 		throw exceptions::command_error("MAIL", resp->getText());
 	}
@@ -653,18 +654,38 @@ void MAPISMTPTransport::send(const mailbox& expeditor, const mailboxList& recipi
 		resp = readResponse();
 		code = resp->getCode();
 
-		if (code != 250)
-		{
-			sFailedRecip entry;
-			entry.strRecipName = (WCHAR*)mbox.getName().getConvertedText(charset(CHARSET_WCHAR)).c_str(); // does this work?, or convert to utf-8 then wstring?
-			entry.strRecipEmail = mbox.getEmail();
-			entry.ulSMTPcode = code;
-			entry.strSMTPResponse = resp->getText();
-			m_lstFailedRecipients.push_back(entry);
-                               
-			if (m_lpLogger)
-				m_lpLogger->Log(EC_LOGLEVEL_ERROR, "SMTP Error:" + resp->getText());
+		if (code / 10 == 25) {
+			continue;
+		} else if (code == 421) {
+			/* 421 4.7.0 localhorse.lh Error: too many errors */
+			ec_log_err("RCPT line gave SMTP error: %d %s. (and now?)",
+				resp->getCode(), resp->getText().c_str());
+			break;
+		} else if (code / 100 == 5) {
+			/*
+			 * Example Postfix codes:
+			 * 501 5.1.3 Bad recipient address syntax  (RCPT TO: <with spaces>)
+			 * 550 5.1.1 <fox>: Recipient address rejected: User unknown in virtual mailbox table
+			 * 550 5.7.1 REJECT action without code by means of e.g. /etc/postfix/header_checks
+			 */
+			ec_log_err("RCPT line gave SMTP error %d %s. (no retry)",
+				resp->getCode(), resp->getText().c_str());
+			continue;
+		} else if (code / 100 != 4) {
+			ec_log_err("RCPT line gave unexpected SMTP reply %d %s. (no retry)",
+				resp->getCode(), resp->getText().c_str());
+			continue;
 		}
+
+		/* Other 4xx codes (disk full, ... ?) */
+		sFailedRecip entry;
+		entry.strRecipName = (WCHAR*)mbox.getName().getConvertedText(charset(CHARSET_WCHAR)).c_str(); // does this work?, or convert to utf-8 then wstring?
+		entry.strRecipEmail = mbox.getEmail();
+		entry.ulSMTPcode = code;
+		entry.strSMTPResponse = resp->getText();
+		m_lstFailedRecipients.push_back(entry);
+		ec_log_err("RCPT line gave SMTP error: %d %s. (will be retried)",
+			resp->getCode(), resp->getText().c_str());
 	}
 
 	// Send the message data
@@ -674,7 +695,7 @@ void MAPISMTPTransport::send(const mailbox& expeditor, const mailboxList& recipi
 	if ((resp = readResponse())->getCode() != 354)
 	{
 		internalDisconnect();
-		throw exceptions::command_error("DATA", resp->getText());
+		throw exceptions::command_error("DATA", stringify(resp->getCode()) + " " + resp->getText());
 	}
 
 	// Stream copy with "\n." to "\n.." transformation
@@ -691,7 +712,7 @@ void MAPISMTPTransport::send(const mailbox& expeditor, const mailboxList& recipi
 	if ((resp = readResponse())->getCode() != 250)
 	{
 		internalDisconnect();
-		throw exceptions::command_error("DATA", resp->getText());
+		throw exceptions::command_error("DATA", stringify(resp->getCode()) + " " + resp->getText());
 	} else {
 		// postfix: 2.0.0 Ok: queued as B36E73608E
 		// qmail: ok 1295860788 qp 29154
