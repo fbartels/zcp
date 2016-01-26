@@ -2208,6 +2208,13 @@ class Item(object):
                     yield Attachment(att)
 
     def create_attachment(self, name, data):
+        '''Create a new attachment
+
+        :param name: the attachment name
+        :param data: string containing the attachment data
+        '''
+
+        # XXX: use file object instead of data?
         (id_, attach) = self.mapiobj.CreateAttach(None, 0)
         name = unicode(name)
         props = [SPropValue(PR_ATTACH_LONG_FILENAME_W, name), SPropValue(PR_ATTACH_METHOD, ATTACH_BY_VALUE)]
@@ -2383,14 +2390,26 @@ class Item(object):
         self.mapiobj.SaveChanges(KEEP_OPEN_READWRITE) # XXX needed?
 
     def delete(self, items):
-        # XXX attachments
-        if isinstance(items, Property):
-            proptags = [items.proptag]
+        '''Delete properties or attachments from an Item
+
+        :param items: The Attachments or Properties
+        '''
+
+        if isinstance(items, (Attachment, Property)):
+            items = [items]
         else:
-            proptags = [item.proptag for item in items]
+            items = list(items)
+
+        attach_ids = [item.number for item in items if isinstance(item, Attachment)]
+        proptags = [item.proptag for item in items if isinstance(item, Property)]
         if proptags:
             self.mapiobj.DeleteProps(proptags)
             self.mapiobj.SaveChanges(KEEP_OPEN_READWRITE)
+        for attach_id in attach_ids:
+            self._arch_item.DeleteAttach(attach_id, 0, None, 0)
+
+        # XXX: no attachments should remove PR_HASATTACH??
+        # XXX: renumber PR_ATTACH_NUM, when we remove 0, should 1 become 0, etc.
 
     def _convert_to_smtp(self, props, tag_data):
         if not hasattr(self.server, '_smtp_cache'): # XXX speed hack, discuss
