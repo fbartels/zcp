@@ -858,34 +858,37 @@ exit:
  */
 HRESULT SendUndeliverable(LPADRBOOK lpAddrBook, ECSender *lpMailer, LPMDB lpStore, LPECUSER lpUserAdmin, LPMESSAGE lpMessage)
 {
-	HRESULT			hr;
+	HRESULT		hr = hrSuccess;
 	LPMAPIFOLDER	lpInbox = NULL;
-	LPMESSAGE		lpErrorMsg = NULL;
-	LPENTRYID		lpEntryID = NULL;
-	ULONG			cbEntryID;
-	ULONG			ulObjType;
-	wstring			newbody;
+	LPMESSAGE	lpErrorMsg = NULL;
+	LPENTRYID	lpEntryID = NULL;
+	ULONG		cbEntryID;
+	ULONG		ulObjType;
+	wstring		newbody;
 	LPSPropValue	lpPropValue = NULL;
 	unsigned int	ulPropPos = 0;
-	FILETIME		ft;
-	LPENTRYID		lpEntryIdSender	= NULL;
-	ULONG			cbEntryIdSender;
-	LPATTACH		lpAttach = NULL;
-	LPMESSAGE		lpOriginalMessage = NULL;
-	ULONG			cValuesOriginal = 0;
+	FILETIME	ft;
+	LPENTRYID	lpEntryIdSender	= NULL;
+	ULONG		cbEntryIdSender;
+	LPATTACH	lpAttach = NULL;
+	LPMESSAGE	lpOriginalMessage = NULL;
+	ULONG		cValuesOriginal = 0;
 	LPSPropValue	lpPropArrayOriginal = NULL;
 	LPSPropValue	lpPropValueAttach = NULL;
 	unsigned int	ulPropModsPos;
-	LPADRLIST		lpMods = NULL;
-	IMAPITable*		lpTableMods = NULL;
-	LPSRowSet		lpRows = NULL;
-	ULONG			ulRows = 0;
-	ULONG			cEntries = 0;
-	string			strName, strType, strEmail;
+	LPADRLIST	lpMods = NULL;
+	IMAPITable	*lpTableMods = NULL;
+	LPSRowSet	lpRows = NULL;
+	ULONG		ulRows = 0;
+	ULONG		cEntries = 0;
+	string		strName, strType, strEmail;
 
 	// CopyTo() var's
 	unsigned int	ulPropAttachPos;
-	ULONG			ulAttachNum;
+	ULONG		ulAttachNum;
+
+	std::vector<sFailedRecip> temporaryFailedRecipients = lpMailer->getTemporaryFailedRecipients();
+	std::vector<sFailedRecip> permanentFailedRecipients = lpMailer->getPermanentFailedRecipients();
 
 	enum eORPos {
 		OR_DISPLAY_TO, OR_DISPLAY_CC, OR_DISPLAY_BCC, OR_SEARCH_KEY, OR_SENDER_ADDRTYPE,
@@ -1175,7 +1178,6 @@ HRESULT SendUndeliverable(LPADRBOOK lpAddrBook, ECSender *lpMailer, LPMDB lpStor
 		lpPropValue[ulPropPos++].Value.bin.lpb	= lpPropArrayOriginal[OR_SEARCH_KEY].Value.bin.lpb;
 	}
 
-
 	// Add the orinal message into the errorMessage
 	hr = lpErrorMsg->CreateAttach(NULL, 0, &ulAttachNum, &lpAttach);
 	if (hr != hrSuccess) {
@@ -1259,7 +1261,7 @@ HRESULT SendUndeliverable(LPADRBOOK lpAddrBook, ECSender *lpMailer, LPMDB lpStor
 		goto exit;
 	}
 
-	if (ulRows == 0 || lpMailer->getRecipientErrorCount() == 0) {
+	if (ulRows == 0 || (permanentFailedRecipients.empty() && temporaryFailedRecipients.empty())) {
 		// No specific failed recipients, so the entire message failed
 		
 		// If there's a pr_body, outlook will display that, and not the 'default' outlook error report
@@ -1284,23 +1286,64 @@ HRESULT SendUndeliverable(LPADRBOOK lpAddrBook, ECSender *lpMailer, LPMDB lpStor
 			if (hr != hrSuccess) {
 				g_lpLogger->Log(EC_LOGLEVEL_ERROR, "SendUndeliverable(): ModifyRecipients failed %x", hr);
 				goto exit;
+			}
 		}
 	}
-	}
-	else if (ulRows > 0)
-	{
+	else if (ulRows > 0) {
 		convert_context converter;
-		
+
+		newbody = L"Unfortunately, I was unable to deliver your mail to the/some of the recipient(s).\n";
+		newbody.append(L"You may need to contact your e-mail administrator to solve this problem.\n");
+
+		if (!temporaryFailedRecipients.empty()) {
+			newbody.append(L"\nRecipients that will be retried:\n");
+
+			for(size_t i=0; i<temporaryFailedRecipients.size(); i++) {
+				const sFailedRecip *const cur = &temporaryFailedRecipients.at(i);
+
+				newbody.append(L"\t");
+				newbody.append(cur -> strRecipName.c_str());
+				newbody.append(L" <");
+				newbody.append(converter.convert_to<WCHAR *>(cur -> strRecipEmail));
+				newbody.append(L">\n");
+			}
+		}
+
+		if (!permanentFailedRecipients.empty()) {
+			newbody.append(L"\nRecipients that failed permanently:\n");
+
+			for(size_t i=0; i<permanentFailedRecipients.size(); i++) {
+				const sFailedRecip *const cur = &permanentFailedRecipients.at(i);
+
+				newbody.append(L"\t");
+				newbody.append(cur -> strRecipName.c_str());
+				newbody.append(L" <");
+				newbody.append(converter.convert_to<WCHAR *>(cur -> strRecipEmail));
+				newbody.append(L">\n");
+			}
+		}
+
 		// Only some recipients failed, so add only failed recipients to the MDN message. This causes
 		// resends only to go to those recipients. This means we should add all error recipients to the
 		// recipient list of the MDN message. 
-		if ((hr = MAPIAllocateBuffer(CbNewADRLIST(lpMailer->getRecipientErrorCount()), (void**)&lpMods)) != hrSuccess)
+
+		std::vector<sFailedRecip> combined;
+		combined.insert(combined.begin(), temporaryFailedRecipients.begin(), temporaryFailedRecipients.end());
+		combined.insert(combined.begin(), permanentFailedRecipients.begin(), permanentFailedRecipients.end());
+
+		const size_t totalNFailedSomehow = combined.size();
+
+		if ((hr = MAPIAllocateBuffer(CbNewADRLIST(totalNFailedSomehow), (void**)&lpMods)) != hrSuccess)
 			goto exit;
+
+		lpPropValue[ulPropPos].ulPropTag = PR_BODY_W;
+		lpPropValue[ulPropPos++].Value.lpszW = (WCHAR*)newbody.c_str();
 
 		lpMods->cEntries = 0;
 
-		for (ULONG j = 0; j < lpMailer->getRecipientErrorCount(); j++)
-		{
+		for(size_t j = 0; j < totalNFailedSomehow; j++) {
+			const sFailedRecip *const cur = &combined.at(j);
+
 			if ((hr = MAPIAllocateBuffer(sizeof(SPropValue) * 10, (void**)&lpMods->aEntries[cEntries].rgPropVals)) != hrSuccess)
 				goto exit;
 
@@ -1311,29 +1354,29 @@ HRESULT SendUndeliverable(LPADRBOOK lpAddrBook, ECSender *lpMailer, LPMDB lpStor
 			lpMods->aEntries[cEntries].rgPropVals[ulPropModsPos++].Value.ul = MAPI_TO;
 
 			lpMods->aEntries[cEntries].rgPropVals[ulPropModsPos].ulPropTag = PR_EMAIL_ADDRESS_A;
-			lpMods->aEntries[cEntries].rgPropVals[ulPropModsPos++].Value.lpszA = (char*)lpMailer->getRecipientErrorEmailAddress(j).c_str();
+			lpMods->aEntries[cEntries].rgPropVals[ulPropModsPos++].Value.lpszA = (char *)cur -> strRecipEmail.c_str();
 
 			lpMods->aEntries[cEntries].rgPropVals[ulPropModsPos].ulPropTag = PR_ADDRTYPE_W;
 			lpMods->aEntries[cEntries].rgPropVals[ulPropModsPos++].Value.lpszW = const_cast<wchar_t *>(L"SMTP");
 
 			lpMods->aEntries[cEntries].rgPropVals[ulPropModsPos].ulPropTag = PR_DISPLAY_NAME_W;
-			if(!lpMailer->getRecipientErrorDisplayName(j).empty()) {
-				lpMods->aEntries[cEntries].rgPropVals[ulPropModsPos++].Value.lpszW = (WCHAR*)lpMailer->getRecipientErrorDisplayName(j).c_str();
-			} else {
-				lpMods->aEntries[cEntries].rgPropVals[ulPropModsPos++].Value.lpszW = converter.convert_to<WCHAR*>(lpMailer->getRecipientErrorEmailAddress(j));
-			}
+
+			if (!cur -> strRecipName.empty())
+				lpMods->aEntries[cEntries].rgPropVals[ulPropModsPos++].Value.lpszW = (WCHAR*)cur -> strRecipName.c_str();
+			else
+				lpMods->aEntries[cEntries].rgPropVals[ulPropModsPos++].Value.lpszW = converter.convert_to<WCHAR *>(cur -> strRecipEmail);
 
 			lpMods->aEntries[cEntries].rgPropVals[ulPropModsPos].ulPropTag = PR_REPORT_TEXT_A;
-			lpMods->aEntries[cEntries].rgPropVals[ulPropModsPos++].Value.lpszA = (char*)lpMailer->getRecipientErrorText(j).c_str();
+			lpMods->aEntries[cEntries].rgPropVals[ulPropModsPos++].Value.lpszA = (char *)cur -> strSMTPResponse.c_str();
 
 			lpMods->aEntries[cEntries].rgPropVals[ulPropModsPos].ulPropTag = PR_REPORT_TIME;
 			lpMods->aEntries[cEntries].rgPropVals[ulPropModsPos++].Value.ft = ft;
 
 			lpMods->aEntries[cEntries].rgPropVals[ulPropModsPos].ulPropTag = PR_TRANSMITABLE_DISPLAY_NAME_A;
-			lpMods->aEntries[cEntries].rgPropVals[ulPropModsPos++].Value.lpszA = (char*)lpMailer->getRecipientErrorEmailAddress(j).c_str();
+			lpMods->aEntries[cEntries].rgPropVals[ulPropModsPos++].Value.lpszA = (char *)cur -> strRecipEmail.c_str();
 
-			lpMods->aEntries[cEntries].rgPropVals[ulPropModsPos].ulPropTag = 0x0C200003;//PR_NDR_STATUS_CODE;
-			lpMods->aEntries[cEntries].rgPropVals[ulPropModsPos++].Value.ul = lpMailer->getRecipientErrorSMTPCode(j);
+			lpMods->aEntries[cEntries].rgPropVals[ulPropModsPos].ulPropTag = 0x0C200003; // PR_NDR_STATUS_CODE;
+			lpMods->aEntries[cEntries].rgPropVals[ulPropModsPos++].Value.ul = cur -> ulSMTPcode;
 
 			lpMods->aEntries[cEntries].rgPropVals[ulPropModsPos].ulPropTag = PR_NDR_DIAG_CODE;
 			lpMods->aEntries[cEntries].rgPropVals[ulPropModsPos++].Value.ul = MAPI_DIAG_MAIL_RECIPIENT_UNKNOWN;

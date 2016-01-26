@@ -435,8 +435,10 @@ HRESULT ECVMIMESender::sendMail(LPADRBOOK lpAdrBook, LPMESSAGE lpMessage, vmime:
 			mapiTransport->setLogger(lpLogger);
 
 		// send the email already!
+		bool ok = false;
 		try {
 			vmTransport->connect();
+
 		} catch (vmime::exception &e) {
 			// special error, smtp server not respoding, so try later again
 			lpLogger->Log(EC_LOGLEVEL_ERROR, "Connect to SMTP: %s. E-Mail will be tried again later.", e.what());
@@ -447,11 +449,16 @@ HRESULT ECVMIMESender::sendMail(LPADRBOOK lpAdrBook, LPMESSAGE lpMessage, vmime:
 		try {
 			vmTransport->send(expeditor, recipients, isAdapter, str.length(), NULL);
 			vmTransport->disconnect();
+			ok = true;
 		}
 		catch (vmime::exceptions::command_error& e) {
-			if (mapiTransport)
-				lstFailedRecipients = mapiTransport->getRecipientErrorList();
+			if (mapiTransport) {
+				mPermanentFailedRecipients = mapiTransport->getPermanentFailedRecipients();
+				mTemporaryFailedRecipients = mapiTransport->getTemporaryFailedRecipients();
+			}
+
 			lpLogger->Log(EC_LOGLEVEL_ERROR, "SMTP: %s Response: %s", e.what(), e.response().c_str());
+
 			smtpresult = atoi(e.response().substr(0, e.response().find_first_of(" ")).c_str());
 			error = convert_to<wstring>(e.response());
 			// message should be cancelled, unsendable, test by smtp result code.
@@ -459,8 +466,11 @@ HRESULT ECVMIMESender::sendMail(LPADRBOOK lpAdrBook, LPMESSAGE lpMessage, vmime:
 			goto exit;
 		} 
 		catch (vmime::exceptions::no_recipient& e) {
-			if (mapiTransport)
-				lstFailedRecipients = mapiTransport->getRecipientErrorList();
+			if (mapiTransport) {
+				mPermanentFailedRecipients = mapiTransport->getPermanentFailedRecipients();
+				mTemporaryFailedRecipients = mapiTransport->getTemporaryFailedRecipients();
+			}
+
 			lpLogger->Log(EC_LOGLEVEL_ERROR, "SMTP: %s Name: %s", e.what(), e.name());
 			//smtpresult = atoi(e.response().substr(0, e.response().find_first_of(" ")).c_str());
 			//error = convert_to<wstring>(e.response());
@@ -469,49 +479,35 @@ HRESULT ECVMIMESender::sendMail(LPADRBOOK lpAdrBook, LPMESSAGE lpMessage, vmime:
 			goto exit;
 		} 
 		catch (vmime::exception & e) {
-			size_t permanentFails = 0;
+		}
 
+		if (mapiTransport) {
 			// multiple invalid recipients can cause the opponent mail server to disconnect (eg postfix)
 			// in that case; fail those recipients
+			mPermanentFailedRecipients = mapiTransport->getPermanentFailedRecipients();
+			mTemporaryFailedRecipients = mapiTransport->getTemporaryFailedRecipients();
 
-			std::vector<sFailedRecip> fails = mapiTransport->getRecipientErrorList();
+			if (mPermanentFailedRecipients.size() == recipients.getMailboxCount()) {
+				hr = MAPI_W_CANCEL_MESSAGE;
 
-			for(size_t i=0; i<fails.size(); i++) {
-				if (fails[i].ulSMTPcode == 513 || fails[i].strSMTPResponse == "5.1.3") { // address typ is incorrect, ZCP-13606
-					lstFailedRecipients.push_back(fails[i]);
-					permanentFails++;
-				}
+				lpLogger->Log(EC_LOGLEVEL_ERROR, "SMTP: E-Mail will be not be tried again: all recipients failed.");
 			}
+			else if (!mTemporaryFailedRecipients.empty()) {
+				hr = MAPI_W_PARTIAL_COMPLETION;
 
-			if (permanentFails > 0) {
-				if (permanentFails == fails.size()) {
-					hr = MAPI_W_CANCEL_MESSAGE;
-
-					lpLogger->Log(EC_LOGLEVEL_ERROR, "SMTP: %s. E-Mail will be not be tried again: all recipients failed.", e.what());
-				}
-				else {
-					hr = MAPI_W_PARTIAL_COMPLETION;
-
-					lpLogger->Log(EC_LOGLEVEL_ERROR, "SMTP: %s. E-Mail will be tried again: some recipients failed.", e.what());
-				}
+				lpLogger->Log(EC_LOGLEVEL_ERROR, "SMTP: E-Mail will be tried again: some recipients failed.");
 			}
-			else {
+			else if (!mPermanentFailedRecipients.empty()) {
+				hr = MAPI_W_PARTIAL_COMPLETION;
+
+				lpLogger->Log(EC_LOGLEVEL_ERROR, "SMTP: Some recipients failed.");
+			}
+			else if (mTemporaryFailedRecipients.empty() && mPermanentFailedRecipients.empty() && !ok) {
 				// special error, smtp server not respoding, so try later again
 				hr = MAPI_W_NO_SERVICE;
 
-				lpLogger->Log(EC_LOGLEVEL_ERROR, "SMTP: %s. E-Mail will be tried again.", e.what());
+				lpLogger->Log(EC_LOGLEVEL_ERROR, "SMTP: E-Mail will be tried again.");
 			}
-
-			goto exit;
-		}
-
-		if (mapiTransport && mapiTransport->getRecipientErrorCount() > 0) {
-			// hr value returned to spooler
-			hr = MAPI_W_PARTIAL_COMPLETION;
-			lstFailedRecipients = mapiTransport->getRecipientErrorList();
-			error = L"Unable to reach all recipients";
-			smtpresult = 250;	// ok value
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "SMTP Error: Not all recipients could be reached. User will be notified.");
 		}
 	}
 	catch (vmime::exception& e) {

@@ -68,6 +68,7 @@
 //
 
 #include <zarafa/platform.h>
+#include <zarafa/stringutil.h>
 #include "MAPISMTPTransport.h"
 #include "vmime/net/smtp/SMTPResponse.hpp"
 
@@ -116,7 +117,6 @@ MAPISMTPTransport::MAPISMTPTransport(ref <session> sess, ref <security::authenti
 	  m_bDSNRequest(false)
 {
 }
-
 
 MAPISMTPTransport::~MAPISMTPTransport()
 {
@@ -637,8 +637,9 @@ void MAPISMTPTransport::send(const mailbox& expeditor, const mailboxList& recipi
 	}
 
 	// Emit a "RCPT TO" command for each recipient
-	m_lstFailedRecipients.clear();
-	int nValid = 0;
+        mTemporaryFailedRecipients.clear();
+        mPermanentFailedRecipients.clear();
+
 	for(int i = 0 ; i < recipients.getMailboxCount() ; ++i)
 	{
 		const mailbox& mbox = *recipients.getMailboxAt(i);
@@ -654,50 +655,50 @@ void MAPISMTPTransport::send(const mailbox& expeditor, const mailboxList& recipi
 		resp = readResponse();
 		code = resp->getCode();
 
+		sFailedRecip entry;
+		entry.strRecipName = (WCHAR*)mbox.getName().getConvertedText(charset(CHARSET_WCHAR)).c_str(); // does this work?, or convert to utf-8 then wstring?
+		entry.strRecipEmail = mbox.getEmail();
+		entry.ulSMTPcode = code;
+		entry.strSMTPResponse = resp->getText();
+
 		if (code / 10 == 25) {
 			continue;
 		} else if (code == 421) {
 			/* 421 4.7.0 localhorse.lh Error: too many errors */
-			m_lpLogger->Log(EC_LOGLEVEL_ERROR, "RCPT line gave SMTP error: %d %s. (and now??)",
-				resp->getCode(), resp->getText());
+			m_lpLogger->Log(EC_LOGLEVEL_ERROR, "RCPT line gave SMTP error: %d %s", resp->getCode(), resp->getText().c_str());
 			break;
 		} else if (code / 100 == 5) {
 			/*
 			 * 501 5.1.3 Bad recipient address syntax  (RCPT TO: <with spaces>)
 			 * 550 5.1.1 <fox>: Recipient address rejected: User unknown in virtual mailbox table
 			 */
+			mPermanentFailedRecipients.push_back(entry);
+
 			if (m_lpLogger != NULL)
-				m_lpLogger->Log(EC_LOGLEVEL_ERROR, "RCPT line gave SMTP error %d %s. (no retry)",
-					resp->getCode(), resp->getText());
+				m_lpLogger->Log(EC_LOGLEVEL_ERROR, "RCPT line gave SMTP error %d %s. (no retry)", resp->getCode(), resp->getText().c_str());
 			continue;
 		} else if (code / 100 != 4) {
+			mPermanentFailedRecipients.push_back(entry);
+
 			if (m_lpLogger != NULL)
-				m_lpLogger->Log(EC_LOGLEVEL_ERROR, "RCPT line gave unexpected SMTP reply %d %s. (no retry)",
-					resp->getCode(), resp->getText());
+				m_lpLogger->Log(EC_LOGLEVEL_ERROR, "RCPT line gave unexpected SMTP reply %d %s. (no retry)", resp->getCode(), resp->getText().c_str());
 			continue;
 		}
 
 		/* Other 4xx codes (disk full, ... ?) */
-		sFailedRecip entry;
-		entry.strRecipName = (WCHAR*)mbox.getName().getConvertedText(charset(CHARSET_WCHAR)).c_str(); // does this work?, or convert to utf-8 then wstring?
-		entry.strRecipEmail = mbox.getEmail();
-		entry.ulSMTPcode = code;
-		entry.strSMTPResponse = resp->getText();
-		m_lstFailedRecipients.push_back(entry);
+		mTemporaryFailedRecipients.push_back(entry);
                                
 		if (m_lpLogger)
-			m_lpLogger->Log(EC_LOGLEVEL_ERROR, "RCPT line gave SMTP error: %d %s. (will be retried)",
-				resp->getCode(), resp->getText());
+			m_lpLogger->Log(EC_LOGLEVEL_ERROR, "RCPT line gave SMTP error: %d %s. (will be retried)", resp->getCode(), resp->getText().c_str());
 	}
 
 	// Send the message data
 	sendRequest("DATA");
 
 	// we also stop here if all recipients failed before
-	if ((resp = readResponse())->getCode() != 354)
-	{
+	if ((resp = readResponse())->getCode() != 354) {
 		internalDisconnect();
-		throw exceptions::command_error("DATA", stringify(resp->getCode()) + " " + resp->getText());
+		throw exceptions::command_error("DATA", format("%d %s", resp->getCode(), resp->getText()));
 	}
 
 	// Stream copy with "\n." to "\n.." transformation
@@ -714,7 +715,7 @@ void MAPISMTPTransport::send(const mailbox& expeditor, const mailboxList& recipi
 	if ((resp = readResponse())->getCode() != 250)
 	{
 		internalDisconnect();
-		throw exceptions::command_error("DATA", stringify(resp->getCode()) + " " + resp->getText());
+		throw exceptions::command_error("DATA", format("%d %s", resp->getCode(), resp->getText()));
 	} else {
 		// postfix: 2.0.0 Ok: queued as B36E73608E
 		// qmail: ok 1295860788 qp 29154
@@ -724,17 +725,16 @@ void MAPISMTPTransport::send(const mailbox& expeditor, const mailboxList& recipi
 	}
 }
 
-// new functions               
-const int MAPISMTPTransport::getRecipientErrorCount() const
-{                              
-	return m_lstFailedRecipients.size();
-}                              
-                               
-const std::vector<sFailedRecip> MAPISMTPTransport::getRecipientErrorList() const
-{                              
-	return m_lstFailedRecipients;
-}                              
-                               
+const std::vector<sFailedRecip> & MAPISMTPTransport::getPermanentFailedRecipients() const
+{
+	return mPermanentFailedRecipients;
+}
+
+const std::vector<sFailedRecip> & MAPISMTPTransport::getTemporaryFailedRecipients() const
+{
+	return mTemporaryFailedRecipients;
+}
+
 void MAPISMTPTransport::setLogger(ECLogger *lpLogger)
 {                              
 	if (m_lpLogger != NULL)

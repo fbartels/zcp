@@ -127,37 +127,14 @@ bool ECSender::haveError() {
 	return ! error.empty();
 }
 
-const unsigned int ECSender::getRecipientErrorCount() const
+const std::vector<sFailedRecip> & ECSender::getPermanentFailedRecipients() const
 {
-	return lstFailedRecipients.size();
+	return mPermanentFailedRecipients;
 }
 
-const unsigned int ECSender::getRecipientErrorSMTPCode(unsigned int offset) const
+const std::vector<sFailedRecip> & ECSender::getTemporaryFailedRecipients() const
 {
-	if (offset >= lstFailedRecipients.size())
-		return 0;
-	return lstFailedRecipients[offset].ulSMTPcode;
-}
-
-const string ECSender::getRecipientErrorText(unsigned int offset) const
-{
-	if (offset >= lstFailedRecipients.size())
-		return string();
-	return lstFailedRecipients[offset].strSMTPResponse;
-}
-
-const wstring ECSender::getRecipientErrorDisplayName(unsigned int offset) const
-{
-	if (offset >= lstFailedRecipients.size())
-		return wstring();
-	return lstFailedRecipients[offset].strRecipName;
-}
-
-const string ECSender::getRecipientErrorEmailAddress(unsigned int offset) const
-{
-	if (offset >= lstFailedRecipients.size())
-		return string();
-	return lstFailedRecipients[offset].strRecipEmail;
+	return mTemporaryFailedRecipients;
 }
 
 pthread_mutex_t vmInitLock = PTHREAD_MUTEX_INITIALIZER;
