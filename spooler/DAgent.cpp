@@ -1041,7 +1041,7 @@ static HRESULT ResolveServerToPath(IMAPISession *lpSession,
 	IECServiceAdmin *lpServiceAdmin = NULL;
 	LPSPropValue	lpsObject = NULL;
 	ECSVRNAMELIST *lpSrvNameList = NULL;
-	LPECSERVERLIST	lpSrvList = NULL;
+	ECSERVERLIST *lpSrvList = NULL;
 	serverrecipients_t::iterator iter;
 
 	if (!lpServerNameRecips || !lpServerPathRecips) {

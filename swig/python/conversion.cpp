@@ -3220,7 +3220,7 @@ PyObject *Object_from_LPECSERVER(ECSERVER *lpServer)
 	return PyObject_CallFunction(PyTypeECServer, "(sssssl)", lpServer->lpszName, lpServer->lpszFilePath, lpServer->lpszHttpPath, lpServer->lpszSslPath, lpServer->lpszPreferedPath, lpServer->ulFlags);
 }
 
-PyObject *List_from_LPECSERVERLIST(LPECSERVERLIST lpServerList)
+PyObject *List_from_LPECSERVERLIST(ECSERVERLIST *lpServerList)
 {
 	PyObject *list = PyList_New(0);
 	PyObject *item = NULL;

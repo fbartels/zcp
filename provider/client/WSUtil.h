@@ -94,7 +94,7 @@ HRESULT SoapCompanyArrayToCompanyArray(const struct companyArray *lpCompanyArray
 HRESULT SoapCompanyToCompany(const struct company *lpCompany, ULONG ulFLags, LPECCOMPANY *lppsCompany);
 
 HRESULT SvrNameListToSoapMvString8(ECSVRNAMELIST *lpSvrNameList, ULONG ulFLags, struct mv_string8 **lppsSvrNameList);
-HRESULT SoapServerListToServerList(const struct serverList *lpsServerList, ULONG ulFLags, LPECSERVERLIST *lppServerList);
+HRESULT SoapServerListToServerList(const struct serverList *lpsServerList, ULONG ulFLags, ECSERVERLIST **lppServerList);
 
 #ifdef LINUX
 int gsoap_connect_unixsocket(struct soap *soap, const char *endpoint, const char *host, int port);

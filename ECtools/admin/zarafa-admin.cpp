@@ -2414,7 +2414,7 @@ int main(int argc, char* argv[])
 	LPECQUOTA lpsQuota = NULL;
 
 	ECSVRNAMELIST *lpsServer = NULL;
-	LPECSERVERLIST lpServerDetails = NULL;
+	ECSERVERLIST *lpServerDetails = NULL;
 
 	ULONG cSenders = 0;
 	LPECUSER lpSenders = NULL;

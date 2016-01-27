@@ -270,7 +270,7 @@ typedef struct _sECServer {
 typedef struct _sECServerList {
 	unsigned int	cServers;
 	ECSERVER *lpsaServer;
-}ECSERVERLIST, *LPECSERVERLIST;
+} ECSERVERLIST;
 
 // Flags for ns__submitMessage
 #define EC_SUBMIT_LOCAL			0x00000000

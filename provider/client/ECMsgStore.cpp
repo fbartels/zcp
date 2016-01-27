@@ -3395,7 +3395,7 @@ HRESULT ECMsgStore::PurgeDeferredUpdates(ULONG *lpulRemaining)
 }
 
 HRESULT ECMsgStore::GetServerDetails(ECSVRNAMELIST *lpServerNameList,
-    ULONG ulFlags, LPECSERVERLIST *lppsServerList)
+    ULONG ulFlags, ECSERVERLIST **lppsServerList)
 {
 	HRESULT hr = hrSuccess;
 	
@@ -4600,7 +4600,7 @@ HRESULT ECMsgStore::xECServiceAdmin::PurgeDeferredUpdates(ULONG *lpulRemaining)
 }
 
 HRESULT ECMsgStore::xECServiceAdmin::GetServerDetails(ECSVRNAMELIST *lpServerNameList,
-    ULONG ulFlags, LPECSERVERLIST *lppsServerList)
+    ULONG ulFlags, ECSERVERLIST **lppsServerList)
 {
 	TRACE_MAPI(TRACE_ENTRY, "IECServiceAdmin::GetServerDetails", "");
 	METHOD_PROLOGUE_(ECMsgStore, ECServiceAdmin);

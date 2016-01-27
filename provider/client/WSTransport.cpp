@@ -4394,7 +4394,7 @@ exit:
 }
 
 HRESULT WSTransport::HrGetServerDetails(ECSVRNAMELIST *lpServerNameList,
-    ULONG ulFlags, LPECSERVERLIST *lppsServerList)
+    ULONG ulFlags, ECSERVERLIST **lppsServerList)
 {
 	ECRESULT						er = erSuccess;
 	HRESULT							hr = hrSuccess;

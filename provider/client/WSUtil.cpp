@@ -2188,10 +2188,10 @@ exit:
 }
 
 HRESULT SoapServerListToServerList(const struct serverList *lpsServerList,
-    ULONG ulFLags, LPECSERVERLIST *lppServerList)
+    ULONG ulFLags, ECSERVERLIST **lppServerList)
 {
 	HRESULT			hr = hrSuccess;
-	LPECSERVERLIST	lpServerList = NULL;
+	ECSERVERLIST *lpServerList = NULL;
 	convert_context	converter;
 
 	if (lpsServerList == NULL || lppServerList == NULL) {
