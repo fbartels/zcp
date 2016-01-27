@@ -66,7 +66,7 @@ typedef struct tagSchedule
 	time_t			tLastRunTime;
 	void*			(*lpFunction)(void*);
 	void*			lpData;
-}ECSCHEDULE, *LPECSCHEDULE;
+} ECSCHEDULE;
 
 typedef std::list<ECSCHEDULE> ECScheduleList;
 
@@ -78,7 +78,7 @@ public:
 	HRESULT AddSchedule(eSchedulerType eType, unsigned int ulBeginCycle, void* (*lpFunction)(void*), void* lpData = NULL);
 
 private:
-	static bool hasExpired(time_t ttime, LPECSCHEDULE lpSchedule);
+	static bool hasExpired(time_t ttime, ECSCHEDULE *lpSchedule);
 	static void* ScheduleThread(void* lpTmpScheduler);
 
 private:
