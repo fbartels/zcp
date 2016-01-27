@@ -1325,25 +1325,19 @@ HRESULT SendUndeliverable(LPADRBOOK lpAddrBook, ECSender *lpMailer,
 			}
 		}
 
+		lpPropValue[ulPropPos].ulPropTag = PR_BODY_W;
+		lpPropValue[ulPropPos++].Value.lpszW = const_cast<wchar_t *>(newbody.c_str());
+
 		// Only some recipients failed, so add only failed recipients to the MDN message. This causes
 		// resends only to go to those recipients. This means we should add all error recipients to the
 		// recipient list of the MDN message. 
-
-		std::vector<sFailedRecip> combined;
-		combined.insert(combined.begin(), temporaryFailedRecipients.begin(), temporaryFailedRecipients.end());
-		combined.insert(combined.begin(), permanentFailedRecipients.begin(), permanentFailedRecipients.end());
-
-		const size_t totalNFailedSomehow = combined.size();
-		hr = MAPIAllocateBuffer(CbNewADRLIST(totalNFailedSomehow), reinterpret_cast<void **>(&lpMods));
+		hr = MAPIAllocateBuffer(CbNewADRLIST(temporaryFailedRecipients.size()), reinterpret_cast<void **>(&lpMods));
 		if (hr != hrSuccess)
 			goto exit;
 
-		lpPropValue[ulPropPos].ulPropTag = PR_BODY_W;
-		lpPropValue[ulPropPos++].Value.lpszW = (WCHAR*)newbody.c_str();
 		lpMods->cEntries = 0;
-
-		for (size_t j = 0; j < totalNFailedSomehow; ++j) {
-			const sFailedRecip &cur = combined.at(j);
+		for (size_t j = 0; j < temporaryFailedRecipients.size(); ++j) {
+			const sFailedRecip &cur = temporaryFailedRecipients.at(j);
 
 			if ((hr = MAPIAllocateBuffer(sizeof(SPropValue) * 10, (void**)&lpMods->aEntries[cEntries].rgPropVals)) != hrSuccess)
 				goto exit;
