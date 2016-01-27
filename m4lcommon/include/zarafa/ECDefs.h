@@ -265,11 +265,11 @@ typedef struct _sECServer {
 	LPTSTR	lpszSslPath;
 	LPTSTR	lpszPreferedPath;
 	ULONG	ulFlags;
-}ECSERVER, *LPECSERVER;
+} ECSERVER;
 
 typedef struct _sECServerList {
 	unsigned int	cServers;
-	LPECSERVER		lpsaServer;
+	ECSERVER *lpsaServer;
 }ECSERVERLIST, *LPECSERVERLIST;
 
 // Flags for ns__submitMessage

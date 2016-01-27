@@ -3168,10 +3168,10 @@ LPECSVRNAMELIST List_to_LPECSVRNAMELIST(PyObject *object)
 		goto exit;
 	}
 
-	if (MAPIAllocateBuffer(sizeof(ECSVRNAMELIST)+(sizeof(LPECSERVER) * len), (void**)&lpSvrNameList) != hrSuccess)
+	if (MAPIAllocateBuffer(sizeof(ECSVRNAMELIST) + (sizeof(ECSERVER *) * len), reinterpret_cast<void **>(&lpSvrNameList)) != hrSuccess)
 		goto exit;
 
-	memset(lpSvrNameList, 0, sizeof(ECSVRNAMELIST)+(sizeof(LPECSERVER) * len) );
+	memset(lpSvrNameList, 0, sizeof(ECSVRNAMELIST) + (sizeof(ECSERVER *) * len) );
 
 	iter = PyObject_GetIter(object);
 	if (iter == NULL)
@@ -3215,7 +3215,7 @@ exit:
 	return lpSvrNameList;
 }
 
-PyObject *Object_from_LPECSERVER(LPECSERVER lpServer)
+PyObject *Object_from_LPECSERVER(ECSERVER *lpServer)
 {
 	return PyObject_CallFunction(PyTypeECServer, "(sssssl)", lpServer->lpszName, lpServer->lpszFilePath, lpServer->lpszHttpPath, lpServer->lpszSslPath, lpServer->lpszPreferedPath, lpServer->ulFlags);
 }

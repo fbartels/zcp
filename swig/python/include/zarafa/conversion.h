@@ -140,7 +140,7 @@ LPROWLIST		List_to_LPROWLIST(PyObject *, ULONG ulFlags = CONV_COPY_SHALLOW);
 
 LPECSVRNAMELIST List_to_LPECSVRNAMELIST(PyObject *object);
 
-PyObject *		Object_from_LPECSERVER(LPECSERVER lpServer);
+PyObject *Object_from_LPECSERVER(ECSERVER *lpServer);
 PyObject *		List_from_LPECSERVERLIST(LPECSERVERLIST lpServerList);
 
 PyObject *		List_from_wchar_t(wchar_t **, ULONG cElements);
