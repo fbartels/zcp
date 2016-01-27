@@ -63,37 +63,33 @@ struct TemplateVariables {
 class ECQuotaMonitor
 {
 private:
-	ECQuotaMonitor(LPECTHREADMONITOR lpThreadMonitor, LPMAPISESSION lpMAPIAdminSession, LPMDB lpMDBAdmin);
+	ECQuotaMonitor(ECTHREADMONITOR *lpThreadMonitor, LPMAPISESSION lpMAPIAdminSession, LPMDB lpMDBAdmin);
 	virtual ~ECQuotaMonitor();
 
 public:
 	static void* Create(void* lpVoid);
 
 	HRESULT	CheckQuota();
-	HRESULT CheckCompanyQuota(LPECCOMPANY lpecCompany);
-	HRESULT CheckServerQuota(ULONG cUsers, LPECUSER lpsUserList, LPECCOMPANY lpecCompany, LPMDB lpAdminStore);
+	HRESULT CheckCompanyQuota(ECCOMPANY *lpecCompany);
+	HRESULT CheckServerQuota(ULONG cUsers, ECUSER *lpsUserList, ECCOMPANY *lpecCompany, LPMDB lpAdminStore);
 
 private:
 	HRESULT CreateMailFromTemplate(TemplateVariables *lpVars, std::string *lpstrSubject, std::string *lpstrBody);
-	HRESULT CreateMessageProperties(LPECUSER lpecToUser, LPECUSER lpecFromUser,
-									std::string strSubject, std::string strBody,
-									ULONG *lpcPropSize, LPSPropValue *lppPropArray);
-	HRESULT CreateRecipientList(ULONG cToUsers, LPECUSER lpToUsers, LPADRLIST *lppAddrList);
+	HRESULT CreateMessageProperties(ECUSER *lpecToUser, ECUSER *lpecFromUser, std::string strSubject, std::string strBody, ULONG *lpcPropSize, LPSPropValue *lppPropArray);
+	HRESULT CreateRecipientList(ULONG cToUsers, ECUSER *lpToUsers, LPADRLIST *lppAddrList);
 
 	HRESULT SendQuotaWarningMail(IMsgStore* lpMDB, ULONG cPropSize, LPSPropValue lpPropArray, LPADRLIST lpAddrList);
 
-	HRESULT CreateQuotaWarningMail(TemplateVariables *lpVars,
-								   IMsgStore* lpMDB, LPECUSER lpecToUser, LPECUSER lpecFromUser,
-								   LPADRLIST lpAddrList);
+	HRESULT CreateQuotaWarningMail(TemplateVariables *lpVars, IMsgStore* lpMDB, ECUSER *lpecToUser, ECUSER *lpecFromUser, LPADRLIST lpAddrList);
 
 	HRESULT OpenUserStore(LPTSTR szStoreName, objectclass_t objclass, LPMDB *lppStore);
 	HRESULT CheckQuotaInterval(LPMDB lpStore, LPMESSAGE *lppMessage, bool *lpbTimeout);
 	HRESULT UpdateQuotaTimestamp(LPMESSAGE lpMessage);
 
-	HRESULT Notify(LPECUSER lpecUser, LPECCOMPANY lpecCompany, LPECQUOTASTATUS lpecQuotaStatus, LPMDB lpStore);
+	HRESULT Notify(ECUSER *lpecUser, ECCOMPANY *lpecCompany, ECQUOTASTATUS *lpecQuotaStatus, LPMDB lpStore);
 
 private:
-	LPECTHREADMONITOR	m_lpThreadMonitor;
+	ECTHREADMONITOR *m_lpThreadMonitor;
 	LPMAPISESSION		m_lpMAPIAdminSession;
 	LPMDB				m_lpMDBAdmin;
 	ULONG				m_ulProcessed;

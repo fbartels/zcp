@@ -351,7 +351,7 @@ HRESULT GetMailboxData(ECLogger *lpLogger, IMAPISession *lpMapiSession, const ch
 	convert_context		converter;
 	
 	ECSVRNAMELIST	*lpSrvNameList = NULL;
-	LPECSERVERLIST	lpSrvList = NULL;
+	ECSERVERLIST *lpSrvList = NULL;
 
 	SizedSPropTagArray(1, sCols) = {1, { PR_ENTRYID } };
 

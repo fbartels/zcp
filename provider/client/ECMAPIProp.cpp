@@ -736,7 +736,7 @@ exit:
 	return hr;
 }
 
-HRESULT	ECMAPIProp::UpdateACLs(ULONG cNewPerms, LPECPERMISSION lpNewPerms)
+HRESULT	ECMAPIProp::UpdateACLs(ULONG cNewPerms, ECPERMISSION *lpNewPerms)
 {
 	HRESULT					hr = hrSuccess;
 	ECSecurityPtr			ptrSecurity;
@@ -744,7 +744,7 @@ HRESULT	ECMAPIProp::UpdateACLs(ULONG cNewPerms, LPECPERMISSION lpNewPerms)
 	ECPermissionArrayPtr	ptrPerms;
 	ULONG					cSparePerms = 0;
 	ECPermissionPtr			ptrTmpPerms;
-	LPECPERMISSION			lpPermissions = NULL;
+	ECPERMISSION *lpPermissions = NULL;
 
 	hr = QueryInterface(IID_IECSecurity, &ptrSecurity);
 	if (hr != hrSuccess)
@@ -759,7 +759,7 @@ HRESULT	ECMAPIProp::UpdateACLs(ULONG cNewPerms, LPECPERMISSION lpNewPerms)
 	// But there can also be overlap, where some items are left unchanged, and
 	// other modified.
 	for (ULONG i = 0; i < cPerms; ++i) {
-		LPECPERMISSION lpMatch = std::find_if(lpNewPerms, lpNewPerms + cNewPerms, FindUser(ptrPerms[i].sUserId));
+		ECPERMISSION *lpMatch = std::find_if(lpNewPerms, lpNewPerms + cNewPerms, FindUser(ptrPerms[i].sUserId));
 		if (lpMatch == lpNewPerms + cNewPerms) {
 			// Not in new set, so delete
 			ptrPerms[i].ulState = RIGHT_DELETED;
@@ -963,7 +963,9 @@ exit:
 ////////////////////////////////////////////////////////////////
 // Security fucntions
 //
-HRESULT ECMAPIProp::GetPermissionRules(int ulType, ULONG* lpcPermissions, LPECPERMISSION* lppECPermissions) {
+HRESULT ECMAPIProp::GetPermissionRules(int ulType, ULONG *lpcPermissions,
+    ECPERMISSION **lppECPermissions)
+{
 	HRESULT hr = hrSuccess;
 
 	if(m_lpEntryId == NULL) {
@@ -980,7 +982,9 @@ exit:
 	return hr;
 }
 
-HRESULT ECMAPIProp::SetPermissionRules(ULONG cPermissions, LPECPERMISSION lpECPermissions) {
+HRESULT ECMAPIProp::SetPermissionRules(ULONG cPermissions,
+    ECPERMISSION *lpECPermissions)
+{
 	HRESULT hr = hrSuccess;
 
 	if(m_lpEntryId == NULL) {
@@ -1017,7 +1021,8 @@ exit:
 	return hr;
 }
 
-HRESULT ECMAPIProp::GetUserList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcUsers, LPECUSER* lppsUsers)
+HRESULT ECMAPIProp::GetUserList(ULONG cbCompanyId, LPENTRYID lpCompanyId,
+    ULONG ulFlags, ULONG *lpcUsers, ECUSER **lppsUsers)
 {
 	HRESULT	hr = hrSuccess;
 	
@@ -1026,7 +1031,8 @@ HRESULT ECMAPIProp::GetUserList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG 
 	return hr;
 }
 
-HRESULT ECMAPIProp::GetGroupList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcGroups, LPECGROUP *lppsGroups)
+HRESULT ECMAPIProp::GetGroupList(ULONG cbCompanyId, LPENTRYID lpCompanyId,
+    ULONG ulFlags, ULONG *lpcGroups, ECGROUP **lppsGroups)
 {
 	HRESULT	hr = hrSuccess;
 	
@@ -1035,7 +1041,8 @@ HRESULT ECMAPIProp::GetGroupList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG
 	return hr;
 }
 
-HRESULT ECMAPIProp::GetCompanyList(ULONG ulFlags, ULONG *lpcCompanies, LPECCOMPANY *lppsCompanies)
+HRESULT ECMAPIProp::GetCompanyList(ULONG ulFlags, ULONG *lpcCompanies,
+    ECCOMPANY **lppsCompanies)
 {
 	HRESULT hr = hrSuccess;
 
@@ -1220,31 +1227,37 @@ HRESULT ECMAPIProp::xECSecurity::GetOwner(ULONG *lpcbOwner, LPENTRYID *lppOwner)
 	return pThis->GetOwner(lpcbOwner, lppOwner);
 }
 
-HRESULT ECMAPIProp::xECSecurity::GetUserList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcUsers, LPECUSER* lpsUsers)
+HRESULT ECMAPIProp::xECSecurity::GetUserList(ULONG cbCompanyId,
+    LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcUsers, ECUSER **lpsUsers)
 {
 	METHOD_PROLOGUE_(ECMAPIProp, ECSecurity);
 	return pThis->GetUserList(cbCompanyId, lpCompanyId, ulFlags, lpcUsers, lpsUsers);
 }
 
-HRESULT ECMAPIProp::xECSecurity::GetGroupList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcGroups, LPECGROUP *lppsGroups)
+HRESULT ECMAPIProp::xECSecurity::GetGroupList(ULONG cbCompanyId,
+    LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcGroups,
+    ECGROUP **lppsGroups)
 {
 	METHOD_PROLOGUE_(ECMAPIProp, ECSecurity);
 	return pThis->GetGroupList(cbCompanyId, lpCompanyId, ulFlags, lpcGroups, lppsGroups);
 }
 
-HRESULT ECMAPIProp::xECSecurity::GetCompanyList(ULONG ulFlags, ULONG *lpcCompanies, LPECCOMPANY *lppsCompanies)
+HRESULT ECMAPIProp::xECSecurity::GetCompanyList(ULONG ulFlags,
+    ULONG *lpcCompanies, ECCOMPANY **lppsCompanies)
 {
 	METHOD_PROLOGUE_(ECMAPIProp, ECSecurity);
 	return pThis->GetCompanyList(ulFlags, lpcCompanies, lppsCompanies);
 }
 
-HRESULT ECMAPIProp::xECSecurity::GetPermissionRules(int ulType, ULONG* lpcPermissions, LPECPERMISSION* lppECPermissions)
+HRESULT ECMAPIProp::xECSecurity::GetPermissionRules(int ulType,
+    ULONG *lpcPermissions, ECPERMISSION **lppECPermissions)
 {
 	METHOD_PROLOGUE_(ECMAPIProp, ECSecurity);
 	return pThis->GetPermissionRules(ulType, lpcPermissions, lppECPermissions);
 }
 
-HRESULT ECMAPIProp::xECSecurity::SetPermissionRules(ULONG cPermissions, LPECPERMISSION lpECPermissions)
+HRESULT ECMAPIProp::xECSecurity::SetPermissionRules(ULONG cPermissions,
+    ECPERMISSION *lpECPermissions)
 {
 	METHOD_PROLOGUE_(ECMAPIProp, ECSecurity);
 	TRACE_MAPI(TRACE_ENTRY, "IMAPIProp::IECSecurity::SetPermissionRules", "%s", PermissionRulesToString(cPermissions, lpECPermissions).c_str());

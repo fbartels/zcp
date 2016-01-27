@@ -124,10 +124,7 @@ HRESULT ZarafaFsckCalendar::ValidateTimestamps(LPMESSAGE lpMessage)
 	HRESULT hr = hrSuccess;
 	LPSPropValue lpPropertyArray = NULL;
 	LPSPropTagArray lpPropertyTagArray = NULL;
-	LPFILETIME lpStart;
-	LPFILETIME lpEnd;
-	LPFILETIME lpCommonStart;
-	LPFILETIME lpCommonEnd;
+	const FILETIME *lpStart, *lpEnd, *lpCommonStart, *lpCommonEnd;
 	LONG ulDuration;
 
 	enum {

@@ -101,17 +101,17 @@ protected:
 
 	HRESULT GetSerializedACLData(LPVOID lpBase, LPSPropValue lpsPropValue);
 	HRESULT SetSerializedACLData(LPSPropValue lpsPropValue);
-	HRESULT	UpdateACLs(ULONG cNewPerms, LPECPERMISSION lpNewPerms);
+	HRESULT	UpdateACLs(ULONG cNewPerms, ECPERMISSION *lpNewPerms);
 
 protected:
 	// IECServiceAdmin and IECSecurity
-	virtual HRESULT GetUserList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcUsers, LPECUSER* lppsUsers);
-	virtual HRESULT GetGroupList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcGroups, LPECGROUP *lppsGroups);
-	virtual HRESULT GetCompanyList(ULONG ulFlags, ULONG *lpcCompanies, LPECCOMPANY* lppsCompanies);
+	virtual HRESULT GetUserList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcUsers, ECUSER **lppsUsers);
+	virtual HRESULT GetGroupList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcGroups, ECGROUP **lppsGroups);
+	virtual HRESULT GetCompanyList(ULONG ulFlags, ULONG *lpcCompanies, ECCOMPANY **lppsCompanies);
 	// IECSecurity
 	virtual HRESULT GetOwner(ULONG *lpcbOwner, LPENTRYID *lppOwner);
-	virtual HRESULT GetPermissionRules(int ulType, ULONG* lpcPermissions, LPECPERMISSION* lppECPermissions);
-	virtual HRESULT SetPermissionRules(ULONG cPermissions, LPECPERMISSION lpECPermissions);
+	virtual HRESULT GetPermissionRules(int ulType, ULONG* lpcPermissions, ECPERMISSION **lppECPermissions);
+	virtual HRESULT SetPermissionRules(ULONG cPermissions, ECPERMISSION *lpECPermissions);
 
 public:
 	ECMsgStore*				GetMsgStore();
@@ -146,11 +146,11 @@ public:
 		virtual HRESULT QueryInterface(REFIID refiid, void **lppInterface) _zcp_override;
 		
 		virtual HRESULT GetOwner(ULONG *lpcbOwner, LPENTRYID *lppOwner) _zcp_override;
-		virtual HRESULT GetPermissionRules(int ulType, ULONG *lpcPermissions, LPECPERMISSION *lppECPermissions) _zcp_override;
-		virtual HRESULT SetPermissionRules(ULONG cPermissions, LPECPERMISSION lpECPermissions) _zcp_override;
-		virtual HRESULT GetUserList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcUsers, LPECUSER *lppsUsers) _zcp_override;
-		virtual HRESULT GetGroupList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcGroups, LPECGROUP *lppsGroups) _zcp_override;
-		virtual HRESULT GetCompanyList(ULONG ulFlags, ULONG *lpcCompanies, LPECCOMPANY *lppCompanies);
+		virtual HRESULT GetPermissionRules(int ulType, ULONG *lpcPermissions, ECPERMISSION **lppECPermissions) _zcp_override;
+		virtual HRESULT SetPermissionRules(ULONG cPermissions, ECPERMISSION *lpECPermissions) _zcp_override;
+		virtual HRESULT GetUserList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcUsers, ECUSER **lppsUsers) _zcp_override;
+		virtual HRESULT GetGroupList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcGroups, ECGROUP **lppsGroups) _zcp_override;
+		virtual HRESULT GetCompanyList(ULONG ulFlags, ULONG *lpcCompanies, ECCOMPANY **lppCompanies);
 	} m_xECSecurity;
 
 private:

@@ -191,7 +191,7 @@ private:
 	HRESULT HrSaveChangeNotificationStatusStream(ECSyncContext *lpContext, ULONG ulStatePropTag);
 	HRESULT HrCreateChangeNotificationStatusStreams(LPSTREAM *lppOnlineStream, LPSTREAM *lppOfflineStream);
 	HRESULT HrAddFolderSyncStateToEntryList(ECSyncContext *lpContext, SBinary *lpsEntryID, LPENTRYLIST lpEntryList);
-	static HRESULT HrEntryListToChangeNotificationStream(LPECCHANGEADVISOR lpChangeAdvisor, LPMDB lpStore, ULONG ulPropTag, LPENTRYLIST lpEntryList, LPSTREAM *lppStream);
+	static HRESULT HrEntryListToChangeNotificationStream(IECChangeAdvisor *lpChangeAdvisor, LPMDB lpStore, ULONG ulPropTag, LPENTRYLIST lpEntryList, LPSTREAM *lppStream);
 
 	// Check for cancel and exit sync
 	HRESULT CheckExit();

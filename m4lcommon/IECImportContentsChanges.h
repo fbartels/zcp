@@ -51,6 +51,4 @@ public:
 	virtual HRESULT __stdcall SetMessageInterface(REFIID refiid) = 0;
 };
 
-typedef IECImportContentsChanges* LPECIMPORTCONTENTSCHANGES;
-
 #endif

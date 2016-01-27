@@ -4563,7 +4563,7 @@ ZEND_FUNCTION(mapi_zarafa_getuserlist)
 
 	// local
 	ULONG		nUsers, i;
-	LPECUSER	lpUsers = NULL;
+	ECUSER *lpUsers = NULL;
 	IECUnknown	*lpUnknown = NULL;
 	IECSecurity 	*lpSecurity = NULL;
 
@@ -4635,7 +4635,7 @@ ZEND_FUNCTION(mapi_zarafa_getquota)
 	// local
 	IECUnknown      *lpUnknown = NULL;
 	IECServiceAdmin *lpServiceAdmin = NULL;
-	LPECQUOTA		lpQuota = NULL;
+	ECQUOTA *lpQuota = NULL;
 
 	RETVAL_FALSE;
 	MAPI_G(hr) = MAPI_E_INVALID_PARAMETER;
@@ -4696,7 +4696,7 @@ ZEND_FUNCTION(mapi_zarafa_setquota)
 	// local
 	IECUnknown      *lpUnknown = NULL;
 	IECServiceAdmin *lpServiceAdmin = NULL;
-	LPECQUOTA		lpQuota = NULL;
+	ECQUOTA *lpQuota = NULL;
 	HashTable		*data = NULL;
 	zval			**value = NULL;
 
@@ -4783,7 +4783,7 @@ ZEND_FUNCTION(mapi_zarafa_getuser_by_name)
 	// return value
 
 	// local
-	LPECUSER		lpUsers = NULL;
+	ECUSER *lpUsers = NULL;
 	IECUnknown		*lpUnknown = NULL;
 	IECServiceAdmin *lpServiceAdmin = NULL;
 	LPENTRYID		lpUserId = NULL;
@@ -4855,7 +4855,7 @@ ZEND_FUNCTION(mapi_zarafa_getuser_by_id)
 	// return value
 
 	// local
-	LPECUSER		lpUsers = NULL;
+	ECUSER *lpUsers = NULL;
 	IECUnknown		*lpUnknown = NULL;
 	IECServiceAdmin *lpServiceAdmin = NULL;
 
@@ -5167,7 +5167,7 @@ ZEND_FUNCTION(mapi_zarafa_getgroup_by_id)
 	// locals
 	IECUnknown		*lpUnknown = NULL;
 	IECServiceAdmin *lpServiceAdmin = NULL;
-	LPECGROUP		lpsGroup = NULL;
+	ECGROUP *lpsGroup = NULL;
 
 	RETVAL_FALSE;
 	MAPI_G(hr) = MAPI_E_INVALID_PARAMETER;
@@ -5218,7 +5218,7 @@ ZEND_FUNCTION(mapi_zarafa_getgroup_by_name)
 	// locals
 	IECUnknown		*lpUnknown = NULL;
 	IECServiceAdmin *lpServiceAdmin = NULL;
-	LPECGROUP		lpsGroup = NULL;
+	ECGROUP *lpsGroup = NULL;
 
 	RETVAL_FALSE;
 	MAPI_G(hr) = MAPI_E_INVALID_PARAMETER;
@@ -5277,7 +5277,7 @@ ZEND_FUNCTION(mapi_zarafa_getgrouplist)
 	IECUnknown		*lpUnknown = NULL;
 	IECServiceAdmin *lpServiceAdmin = NULL;
 	ULONG			ulGroups;
-	LPECGROUP		lpsGroups = NULL;
+	ECGROUP *lpsGroups = NULL;
 	unsigned int	i;
 
 	RETVAL_FALSE;
@@ -5338,7 +5338,7 @@ ZEND_FUNCTION(mapi_zarafa_getgrouplistofuser)
 	IECUnknown		*lpUnknown = NULL;
 	IECServiceAdmin *lpServiceAdmin = NULL;
 	ULONG			ulGroups;
-	LPECGROUP		lpsGroups = NULL;
+	ECGROUP *lpsGroups = NULL;
 	unsigned int	i;
 
 	RETVAL_FALSE;
@@ -5398,7 +5398,7 @@ ZEND_FUNCTION(mapi_zarafa_getuserlistofgroup)
 	IECUnknown		*lpUnknown = NULL;
 	IECServiceAdmin *lpServiceAdmin = NULL;
 	ULONG			ulUsers;
-	LPECUSER		lpsUsers;
+	ECUSER *lpsUsers;
 	unsigned int	i;
 
 	RETVAL_FALSE;
@@ -5568,7 +5568,7 @@ ZEND_FUNCTION(mapi_zarafa_getcompany_by_id)
 	// locals
 	IECUnknown *lpUnknown = NULL;
 	IECServiceAdmin *lpServiceAdmin = NULL;
-	LPECCOMPANY lpsCompany = NULL;
+	ECCOMPANY *lpsCompany = NULL;
 
 	RETVAL_FALSE;
 	MAPI_G(hr) = MAPI_E_INVALID_PARAMETER;
@@ -5620,7 +5620,7 @@ ZEND_FUNCTION(mapi_zarafa_getcompany_by_name)
 	// locals
 	IECUnknown *lpUnknown = NULL;
 	IECServiceAdmin *lpServiceAdmin = NULL;
-	LPECCOMPANY lpsCompany = NULL;
+	ECCOMPANY *lpsCompany = NULL;
 
 	RETVAL_FALSE;
 	MAPI_G(hr) = MAPI_E_INVALID_PARAMETER;
@@ -5676,7 +5676,7 @@ ZEND_FUNCTION(mapi_zarafa_getcompanylist)
 	// return value
 	// local
 	ULONG nCompanies, i;
-	LPECCOMPANY lpCompanies = NULL;
+	ECCOMPANY *lpCompanies = NULL;
 	IECUnknown *lpUnknown = NULL;;
 	IECSecurity *lpSecurity = NULL;
 
@@ -5828,7 +5828,7 @@ ZEND_FUNCTION(mapi_zarafa_get_remote_viewlist)
 	IECServiceAdmin	*lpServiceAdmin = NULL;
 	IMsgStore		*lpMsgStore = NULL;
 	ULONG			ulCompanies = 0;
-	LPECCOMPANY		lpsCompanies = NULL;
+	ECCOMPANY *lpsCompanies = NULL;
 
 	RETVAL_FALSE;
 	MAPI_G(hr) = MAPI_E_INVALID_PARAMETER;
@@ -5979,7 +5979,7 @@ ZEND_FUNCTION(mapi_zarafa_get_remote_adminlist)
 	IECServiceAdmin	*lpServiceAdmin = NULL;
 	IMsgStore		*lpMsgStore = NULL;
 	ULONG			ulUsers = 0;
-	LPECUSER		lpsUsers = NULL;
+	ECUSER *lpsUsers = NULL;
 
 	RETVAL_FALSE;
 	MAPI_G(hr) = MAPI_E_INVALID_PARAMETER;
@@ -6132,7 +6132,7 @@ ZEND_FUNCTION(mapi_zarafa_get_quota_recipientlist)
 	IECServiceAdmin	*lpServiceAdmin = NULL;
 	IMsgStore		*lpMsgStore = NULL;
 	ULONG			ulUsers = 0;
-	LPECUSER		lpsUsers = NULL;
+	ECUSER *lpsUsers = NULL;
 
 	RETVAL_FALSE;
 	MAPI_G(hr) = MAPI_E_INVALID_PARAMETER;
@@ -6281,7 +6281,7 @@ ZEND_FUNCTION(mapi_zarafa_getpermissionrules)
 	// return value
 	zval *zval_data_value = NULL;
 	ULONG cPerms = 0;
-	LPECPERMISSION lpECPerms = NULL;
+	ECPERMISSION *lpECPerms = NULL;
 
 	// local
 	int type = -1;
@@ -6362,7 +6362,7 @@ ZEND_FUNCTION(mapi_zarafa_setpermissionrules)
 	IECUnknown	*lpUnknown = NULL;
 	IECSecurity *lpSecurity = NULL;
 	ULONG cPerms = 0;
-	LPECPERMISSION lpECPerms = NULL;
+	ECPERMISSION *lpECPerms = NULL;
 	HashTable *target_hash = NULL;
 	ULONG i, j;
 	zval **entry = NULL, **value = NULL;

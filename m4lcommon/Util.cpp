@@ -4120,10 +4120,11 @@ HRESULT Util::HrDeleteIMAPData(LPMESSAGE lpMsg)
  * 
  * @return MAPI error code
  */
-HRESULT Util::HrGetQuotaStatus(IMsgStore *lpMsgStore, LPECQUOTA lpsQuota, LPECQUOTASTATUS *lppsQuotaStatus)
+HRESULT Util::HrGetQuotaStatus(IMsgStore *lpMsgStore, ECQUOTA *lpsQuota,
+    ECQUOTASTATUS **lppsQuotaStatus)
 {
 	HRESULT			hr = hrSuccess;
-	LPECQUOTASTATUS	lpsQuotaStatus = NULL;
+	ECQUOTASTATUS *lpsQuotaStatus = NULL;
 	LPSPropValue 	lpProps = NULL;
     SizedSPropTagArray(1, sptaProps) = {1, {PR_MESSAGE_SIZE_EXTENDED}};
     ULONG 			cValues = 0;

@@ -161,7 +161,7 @@ HRESULT ClientUtil::HrSetIdentity(WSTransport *lpTransport, LPMAPISUP lpMAPISup,
 	ULONG			cbEID = 0;
 	ULONG			cValues = 0;
 	ULONG			ulSize = 0;
-	LPECUSER		lpUser = NULL;
+	ECUSER *lpUser = NULL;
 	tstring			strProfileSenderSearchKey;
 	LPSPropValue	lpIdentityProps = NULL;
 

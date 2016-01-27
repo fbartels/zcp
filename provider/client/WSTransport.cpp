@@ -2108,7 +2108,8 @@ exit:
  * @param[out]	lppUserId	The entry id of the new user
  * @return		HRESULT		MAPI error code.
  */
-HRESULT WSTransport::HrCreateUser(LPECUSER lpECUser, ULONG ulFlags, ULONG *lpcbUserId, LPENTRYID *lppUserId)
+HRESULT WSTransport::HrCreateUser(ECUSER *lpECUser, ULONG ulFlags,
+    ULONG *lpcbUserId, LPENTRYID *lppUserId)
 {
 	HRESULT	hr = hrSuccess;
 	ECRESULT er = erSuccess;
@@ -2170,12 +2171,13 @@ exit:
  * @param[out]	lppECUser	Pointer to an ECUSER object that contains the user details
  * @return		HRESULT		MAPI error code.
  */
-HRESULT WSTransport::HrGetUser(ULONG cbUserID, LPENTRYID lpUserID, ULONG ulFlags, LPECUSER *lppECUser)
+HRESULT WSTransport::HrGetUser(ULONG cbUserID, LPENTRYID lpUserID,
+    ULONG ulFlags, ECUSER **lppECUser)
 {
 	HRESULT	hr = hrSuccess;
 	ECRESULT er = erSuccess;
 	struct getUserResponse	sResponse;
-	LPECUSER lpECUser = NULL;
+	ECUSER *lpECUser = NULL;
 	entryId	sUserId = {0};
 	ULONG ulUserId = 0;
 
@@ -2227,7 +2229,7 @@ exit:
  * @param[in]	ulFlags		MAPI_UNICODE, values in user struct will be PT_UNICODE, otherwise in PT_STRING8
  * @return		HRESULT		MAPI error code.
  */
-HRESULT WSTransport::HrSetUser(LPECUSER lpECUser, ULONG ulFlags)
+HRESULT WSTransport::HrSetUser(ECUSER *lpECUser, ULONG ulFlags)
 {
 	HRESULT	hr = hrSuccess;
 	ECRESULT er = erSuccess;
@@ -2477,7 +2479,8 @@ exit:
  * @param[out]	lppsUsers		Array of ECUSER objects.
  * @return		HRESULT			MAPI error code.
  */
-HRESULT WSTransport::HrGetUserList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcUsers, LPECUSER* lppsUsers)
+HRESULT WSTransport::HrGetUserList(ULONG cbCompanyId, LPENTRYID lpCompanyId,
+    ULONG ulFlags, ULONG *lpcUsers, ECUSER **lppsUsers)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;
@@ -2533,7 +2536,8 @@ exit:
  * @param[out]	lppUserId	The entry id of the new group
  * @return		HRESULT		MAPI error code.
  */
-HRESULT WSTransport::HrCreateGroup(LPECGROUP lpECGroup, ULONG ulFlags, ULONG *lpcbGroupId, LPENTRYID *lppGroupId)
+HRESULT WSTransport::HrCreateGroup(ECGROUP *lpECGroup, ULONG ulFlags,
+    ULONG *lpcbGroupId, LPENTRYID *lppGroupId)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;
@@ -2590,7 +2594,7 @@ exit:
  * @param[in]	ulFlags		MAPI_UNICODE, values in group struct will be PT_UNICODE, otherwise in PT_STRING8
  * @return		HRESULT		MAPI error code.
  */
-HRESULT WSTransport::HrSetGroup(LPECGROUP lpECGroup, ULONG ulFlags)
+HRESULT WSTransport::HrSetGroup(ECGROUP *lpECGroup, ULONG ulFlags)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;
@@ -2645,11 +2649,12 @@ exit:
  * @param[out]	lppECGroup	Pointer to an ECGROUP object that contains the group details
  * @return		HRESULT		MAPI error code.
  */
-HRESULT WSTransport::HrGetGroup(ULONG cbGroupID, LPENTRYID lpGroupID, ULONG ulFlags, LPECGROUP *lppECGroup)
+HRESULT WSTransport::HrGetGroup(ULONG cbGroupID, LPENTRYID lpGroupID,
+    ULONG ulFlags, ECGROUP **lppECGroup)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;
-	LPECGROUP lpGroup = NULL;
+	ECGROUP *lpGroup = NULL;
 	entryId sGroupId = {0};
 
 	struct getGroupResponse sResponse;
@@ -2727,7 +2732,8 @@ exit:
  * @param[out]	lppSenders	Array of ECUSER objects.
  * @return		HRESULT		MAPI error code.
  */
-HRESULT WSTransport::HrGetSendAsList(ULONG cbUserId, LPENTRYID lpUserId, ULONG ulFlags, ULONG *lpcSenders, LPECUSER *lppSenders)
+HRESULT WSTransport::HrGetSendAsList(ULONG cbUserId, LPENTRYID lpUserId,
+    ULONG ulFlags, ULONG *lpcSenders, ECUSER **lppSenders)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;
@@ -2837,7 +2843,8 @@ exit:
 	return hr;
 }
 
-HRESULT WSTransport::HrGetUserClientUpdateStatus(ULONG cbUserId, LPENTRYID lpUserId, ULONG ulFlags, LPECUSERCLIENTUPDATESTATUS *lppECUCUS)
+HRESULT WSTransport::HrGetUserClientUpdateStatus(ULONG cbUserId,
+    LPENTRYID lpUserId, ULONG ulFlags, ECUSERCLIENTUPDATESTATUS **lppECUCUS)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;
@@ -2996,7 +3003,8 @@ exit:
  * @param[out]	lppsGroups		Array of ECGROUP objects.
  * @return		HRESULT			MAPI error code.
  */
-HRESULT WSTransport::HrGetGroupList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcGroups, LPECGROUP *lppsGroups)
+HRESULT WSTransport::HrGetGroupList(ULONG cbCompanyId, LPENTRYID lpCompanyId,
+    ULONG ulFlags, ULONG *lpcGroups, ECGROUP **lppsGroups)
 {
 	ECRESULT	er = erSuccess;
 	HRESULT		hr = hrSuccess;
@@ -3119,7 +3127,8 @@ exit:
  * @param[out]	lppsUsers		Array of ECUSER objects.
  * @return		HRESULT			MAPI error code.
  */
-HRESULT WSTransport::HrGetUserListOfGroup(ULONG cbGroupId, LPENTRYID lpGroupId, ULONG ulFlags, ULONG *lpcUsers, LPECUSER *lppsUsers)
+HRESULT WSTransport::HrGetUserListOfGroup(ULONG cbGroupId, LPENTRYID lpGroupId,
+    ULONG ulFlags, ULONG *lpcUsers, ECUSER **lppsUsers)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;
@@ -3167,7 +3176,8 @@ exit:
  * @param[out]	lppsGroups		Array of ECGROUP objects.
  * @return		HRESULT			MAPI error code.
  */
-HRESULT WSTransport::HrGetGroupListOfUser(ULONG cbUserId, LPENTRYID lpUserId, ULONG ulFlags, ULONG *lpcGroup, LPECGROUP *lppsGroups)
+HRESULT WSTransport::HrGetGroupListOfUser(ULONG cbUserId, LPENTRYID lpUserId,
+    ULONG ulFlags, ULONG *lpcGroup, ECGROUP **lppsGroups)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;
@@ -3214,7 +3224,8 @@ exit:
  * @param[out]	lppCompanyId	The entry id of the new company
  * @return		HRESULT			MAPI error code.
  */
-HRESULT WSTransport::HrCreateCompany(LPECCOMPANY lpECCompany, ULONG ulFlags, ULONG *lpcbCompanyId, LPENTRYID *lppCompanyId)
+HRESULT WSTransport::HrCreateCompany(ECCOMPANY *lpECCompany, ULONG ulFlags,
+    ULONG *lpcbCompanyId, LPENTRYID *lppCompanyId)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;
@@ -3299,7 +3310,7 @@ exit:
  * @param[in]	ulFlags		MAPI_UNICODE, values in company struct will be PT_UNICODE, otherwise in PT_STRING8
  * @return		HRESULT		MAPI error code.
  */
-HRESULT WSTransport::HrSetCompany(LPECCOMPANY lpECCompany, ULONG ulFlags)
+HRESULT WSTransport::HrSetCompany(ECCOMPANY *lpECCompany, ULONG ulFlags)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;
@@ -3357,11 +3368,12 @@ exit:
  * @param[out]	lppECCompany	Pointer to an ECOMPANY object that contains the company details
  * @return		HRESULT			MAPI error code.
  */
-HRESULT WSTransport::HrGetCompany(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, LPECCOMPANY *lppECCompany)
+HRESULT WSTransport::HrGetCompany(ULONG cbCompanyId, LPENTRYID lpCompanyId,
+    ULONG ulFlags, ECCOMPANY **lppECCompany)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;
-	LPECCOMPANY lpCompany = NULL;
+	ECCOMPANY *lpCompany = NULL;
 	struct getCompanyResponse sResponse;
 	entryId sCompanyId = {0};
 
@@ -3447,7 +3459,8 @@ exit:
  * @param[out]	lppsCompanies	Pointer to an array of ECCOMPANY objects.
  * @return		HRESULT			MAPI error code.
  */
-HRESULT WSTransport::HrGetCompanyList(ULONG ulFlags, ULONG *lpcCompanies, LPECCOMPANY *lppsCompanies)
+HRESULT WSTransport::HrGetCompanyList(ULONG ulFlags, ULONG *lpcCompanies,
+    ECCOMPANY **lppsCompanies)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;
@@ -3565,7 +3578,9 @@ exit:
  * @param[out]	lppsCompanies	Array of ECCOMPANY objects.
  * @return		HRESULT			MAPI error code.
  */
-HRESULT WSTransport::HrGetRemoteViewList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags,  ULONG *lpcCompanies, LPECCOMPANY *lppsCompanies)
+HRESULT WSTransport::HrGetRemoteViewList(ULONG cbCompanyId,
+    LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcCompanies,
+    ECCOMPANY **lppsCompanies)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;
@@ -3686,7 +3701,8 @@ exit:
  * @param[out]	lppsUsers		Array of ECUSER objects.
  * @return		HRESULT			MAPI error code.
  */
-HRESULT WSTransport::HrGetRemoteAdminList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcUsers, LPECUSER *lppsUsers)
+HRESULT WSTransport::HrGetRemoteAdminList(ULONG cbCompanyId,
+    LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcUsers, ECUSER **lppsUsers)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;
@@ -3725,12 +3741,14 @@ exit:
 	return hr;
 }
 
-HRESULT WSTransport::HrGetPermissionRules(int ulType, ULONG cbEntryID, LPENTRYID lpEntryID, ULONG* lpcPermissions, LPECPERMISSION* lppECPermissions)
+HRESULT WSTransport::HrGetPermissionRules(int ulType, ULONG cbEntryID,
+    LPENTRYID lpEntryID, ULONG *lpcPermissions,
+    ECPERMISSION **lppECPermissions)
 {
 	ECRESULT		er = erSuccess;
 	HRESULT			hr = hrSuccess;
 	entryId			sEntryId = {0}; // Do not free
-	LPECPERMISSION	lpECPermissions = NULL;
+	ECPERMISSION *lpECPermissions = NULL;
 	
 	LPENTRYID		lpUnWrapStoreID = NULL;
 	ULONG			cbUnWrapStoreID = 0;
@@ -3790,7 +3808,8 @@ exit:
 	return hr;
 }
 
-HRESULT WSTransport::HrSetPermissionRules(ULONG cbEntryID, LPENTRYID lpEntryID, ULONG cPermissions, LPECPERMISSION lpECPermissions)
+HRESULT WSTransport::HrSetPermissionRules(ULONG cbEntryID, LPENTRYID lpEntryID,
+    ULONG cPermissions, ECPERMISSION *lpECPermissions)
 {
 	ECRESULT		er = erSuccess;
 	HRESULT			hr = hrSuccess;
@@ -4018,12 +4037,13 @@ exit:
 	return hr;
 }
 
-HRESULT WSTransport::GetQuota(ULONG cbUserId, LPENTRYID lpUserId, bool bGetUserDefault, LPECQUOTA* lppsQuota)
+HRESULT WSTransport::GetQuota(ULONG cbUserId, LPENTRYID lpUserId,
+    bool bGetUserDefault, ECQUOTA **lppsQuota)
 {
 	ECRESULT				er = erSuccess;
 	HRESULT					hr = hrSuccess;
 	struct quotaResponse	sResponse;
-	LPECQUOTA				lpsQuota =  NULL;
+	ECQUOTA *lpsQuota =  NULL;
 	entryId					sUserId = {0};
 	
 	LockSoap();
@@ -4062,7 +4082,8 @@ HRESULT WSTransport::GetQuota(ULONG cbUserId, LPENTRYID lpUserId, bool bGetUserD
 	return hr;
 }
 
-HRESULT WSTransport::SetQuota(ULONG cbUserId, LPENTRYID lpUserId, LPECQUOTA lpsQuota)
+HRESULT WSTransport::SetQuota(ULONG cbUserId, LPENTRYID lpUserId,
+    ECQUOTA *lpsQuota)
 {
 	ECRESULT				er = erSuccess;
 	HRESULT					hr = hrSuccess;
@@ -4173,7 +4194,8 @@ exit:
 	return hr;
 }
 
-HRESULT WSTransport::GetQuotaRecipients(ULONG cbUserId, LPENTRYID lpUserId, ULONG ulFlags, ULONG *lpcUsers, LPECUSER *lppsUsers)
+HRESULT WSTransport::GetQuotaRecipients(ULONG cbUserId, LPENTRYID lpUserId,
+    ULONG ulFlags, ULONG *lpcUsers, ECUSER **lppsUsers)
 {
 	ECRESULT	er = erSuccess;
 	HRESULT		hr = hrSuccess;
@@ -4212,12 +4234,13 @@ exit:
 	return hr;
 }
 
-HRESULT WSTransport::GetQuotaStatus(ULONG cbUserId, LPENTRYID lpUserId, LPECQUOTASTATUS* lppsQuotaStatus)
+HRESULT WSTransport::GetQuotaStatus(ULONG cbUserId, LPENTRYID lpUserId,
+    ECQUOTASTATUS **lppsQuotaStatus)
 {
 	ECRESULT				er = erSuccess;
 	HRESULT					hr = hrSuccess;
 	struct quotaStatus		sResponse;
-	LPECQUOTASTATUS			lpsQuotaStatus =  NULL;
+	ECQUOTASTATUS *lpsQuotaStatus =  NULL;
 	entryId					sUserId = {0};
 	
 	LockSoap();
@@ -4392,7 +4415,8 @@ exit:
 	return hr;
 }
 
-HRESULT WSTransport::HrGetServerDetails(LPECSVRNAMELIST lpServerNameList, ULONG ulFlags, LPECSERVERLIST* lppsServerList)
+HRESULT WSTransport::HrGetServerDetails(ECSVRNAMELIST *lpServerNameList,
+    ULONG ulFlags, ECSERVERLIST **lppsServerList)
 {
 	ECRESULT						er = erSuccess;
 	HRESULT							hr = hrSuccess;

@@ -49,6 +49,4 @@ public:
 	virtual ULONG __stdcall OnNotify(ULONG ulFLags, LPENTRYLIST lpEntryList) = 0;
 };
 
-typedef IECChangeAdviseSink* LPECCHANGEADVISESINK;
-
 #endif

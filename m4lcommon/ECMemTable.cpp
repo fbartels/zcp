@@ -649,7 +649,7 @@ HRESULT ECMemTableView::GetLastError(HRESULT hResult, ULONG ulFlags, LPMAPIERROR
 HRESULT ECMemTableView::Advise(ULONG ulEventMask, LPMAPIADVISESINK lpAdviseSink, ULONG * lpulConnection)
 {
 	HRESULT hr = hrSuccess;
-	LPECMEMADVISE	lpMemAdvise = NULL;
+	ECMEMADVISE *lpMemAdvise = NULL;
 	ULONG ulConnection = m_ulConnection++;
 
 	if(lpAdviseSink == NULL || lpulConnection == NULL) {

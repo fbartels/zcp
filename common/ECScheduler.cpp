@@ -139,7 +139,7 @@ exit:
 	return hr;
 }
 
-bool ECScheduler::hasExpired(time_t ttime, LPECSCHEDULE lpSchedule)
+bool ECScheduler::hasExpired(time_t ttime, ECSCHEDULE *lpSchedule)
 {
 	struct tm tmLastRunTime;
 	struct tm tmtime;

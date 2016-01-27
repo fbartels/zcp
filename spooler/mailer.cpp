@@ -856,7 +856,8 @@ exit:
  * @param lpUserAdmin User object which specifies the 'from' address of the MDN message to be created
  * @param lpMessage Failed message
  */
-HRESULT SendUndeliverable(LPADRBOOK lpAddrBook, ECSender *lpMailer, LPMDB lpStore, LPECUSER lpUserAdmin, LPMESSAGE lpMessage)
+HRESULT SendUndeliverable(LPADRBOOK lpAddrBook, ECSender *lpMailer,
+    LPMDB lpStore, ECUSER *lpUserAdmin, LPMESSAGE lpMessage)
 {
 	HRESULT			hr;
 	LPMAPIFOLDER	lpInbox = NULL;
@@ -2214,7 +2215,7 @@ static HRESULT ProcessMessage(IMAPISession *lpAdminSession,
     IMessage **lppMessage)
 {
 	HRESULT 		hr 				= hrSuccess;
-	LPECUSER		lpUserAdmin		= NULL;
+	ECUSER *lpUserAdmin = NULL;
 
 	LPMESSAGE		lpMessage		= NULL;
 	ULONG			ulObjType		= 0;
@@ -2691,7 +2692,7 @@ HRESULT ProcessMessageForked(const wchar_t *szUsername, const char *szSMTP,
 	IECSecurity		*lpSecurity = NULL;
 	SPropValue		*lpsProp = NULL;
 	IMessage		*lpMessage = NULL;
-	LPECUSER		lpUserAdmin = NULL;	// for error message
+	ECUSER *lpUserAdmin = NULL; // for error message
 	
 	lpMailer = CreateSender(g_lpLogger, szSMTP, ulPort);
 	if (!lpMailer) {

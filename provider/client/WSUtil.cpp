@@ -1787,7 +1787,7 @@ HRESULT FreeABProps(struct propmapPairArray *lpsoapPropmap, struct propmapMVPair
 	return hrSuccess;
 }
 
-static HRESULT SoapUserToUser(const struct user *lpUser, LPECUSER lpsUser,
+static HRESULT SoapUserToUser(const struct user *lpUser, ECUSER *lpsUser,
     ULONG ulFlags, void *lpBase, convert_context &converter)
 {
 	HRESULT 	hr		= hrSuccess;
@@ -1865,10 +1865,10 @@ exit:
 }
 
 HRESULT SoapUserArrayToUserArray(const struct userArray *lpUserArray,
-    ULONG ulFlags, ULONG *lpcUsers, LPECUSER *lppsUsers)
+    ULONG ulFlags, ULONG *lpcUsers, ECUSER **lppsUsers)
 {
 	HRESULT 		hr = hrSuccess;
-	LPECUSER 		lpECUsers = NULL;
+	ECUSER *lpECUsers = NULL;
 	unsigned 		int i = 0;
 	convert_context	converter;
 
@@ -1894,10 +1894,10 @@ exit:
 }
 
 HRESULT SoapUserToUser(const struct user *lpUser, ULONG ulFlags,
-    LPECUSER *lppsUser)
+    ECUSER **lppsUser)
 {
 	HRESULT			hr		= hrSuccess;
-	LPECUSER		lpsUser	= NULL;
+	ECUSER *lpsUser = NULL;
 	convert_context	converter;
 
 	if (lpUser == NULL || lppsUser == NULL)
@@ -1925,8 +1925,7 @@ exit:
 }
 
 static HRESULT SoapGroupToGroup(const struct group *lpGroup,
-    LPECGROUP lpsGroup, ULONG ulFlags, void *lpBase,
-    convert_context &converter)
+    ECGROUP *lpsGroup, ULONG ulFlags, void *lpBase, convert_context &converter)
 {
 	HRESULT 	hr = hrSuccess;
 
@@ -1975,11 +1974,11 @@ exit:
 }
 
 HRESULT SoapGroupArrayToGroupArray(const struct groupArray *lpGroupArray,
-    ULONG ulFlags, ULONG *lpcGroups, LPECGROUP *lppsGroups)
+    ULONG ulFlags, ULONG *lpcGroups, ECGROUP **lppsGroups)
 {
 	HRESULT			hr = hrSuccess;
 	unsigned int	i;
-	LPECGROUP		lpECGroups = NULL;
+	ECGROUP *lpECGroups = NULL;
 	convert_context	converter;
 
 	if(lpGroupArray == NULL || lpcGroups == NULL || lppsGroups == NULL) {
@@ -2008,10 +2007,10 @@ exit:
 }
 
 HRESULT SoapGroupToGroup(const struct group *lpGroup, ULONG ulFlags,
-    LPECGROUP *lppsGroup)
+    ECGROUP **lppsGroup)
 {
 	HRESULT			hr			= hrSuccess;
-	LPECGROUP		lpsGroup	= NULL;
+	ECGROUP *lpsGroup = NULL;
 	convert_context	converter;
 
 	if (lpGroup == NULL || lppsGroup == NULL)
@@ -2039,7 +2038,7 @@ exit:
 }
 
 static HRESULT SoapCompanyToCompany(const struct company *lpCompany,
-    LPECCOMPANY lpsCompany, ULONG ulFlags, void *lpBase,
+    ECCOMPANY *lpsCompany, ULONG ulFlags, void *lpBase,
     convert_context &converter)
 {
 	HRESULT 	hr		= hrSuccess;
@@ -2084,10 +2083,10 @@ exit:
 
 HRESULT SoapCompanyArrayToCompanyArray(
     const struct companyArray *lpCompanyArray, ULONG ulFlags,
-    ULONG *lpcCompanies, LPECCOMPANY *lppsCompanies)
+    ULONG *lpcCompanies, ECCOMPANY **lppsCompanies)
 {
 	HRESULT 		hr = hrSuccess;
-	LPECCOMPANY 	lpECCompanies = NULL;
+	ECCOMPANY *lpECCompanies = NULL;
 	convert_context	converter;
 
 	if (lpCompanyArray == NULL || lpcCompanies == NULL || lppsCompanies == NULL) {
@@ -2116,10 +2115,10 @@ exit:
 }
 
 HRESULT SoapCompanyToCompany(const struct company *lpCompany, ULONG ulFlags,
-    LPECCOMPANY *lppsCompany)
+    ECCOMPANY **lppsCompany)
 {
 	HRESULT			hr			= hrSuccess;
-	LPECCOMPANY		lpsCompany	= NULL;
+	ECCOMPANY *lpsCompany = NULL;
 	convert_context	converter;
 
 	if (lpCompany == NULL || lppsCompany == NULL)
@@ -2146,7 +2145,7 @@ exit:
 	return hr;
 }
 
-HRESULT SvrNameListToSoapMvString8(LPECSVRNAMELIST lpSvrNameList,
+HRESULT SvrNameListToSoapMvString8(ECSVRNAMELIST *lpSvrNameList,
     ULONG ulFlags, struct mv_string8 **lppsSvrNameList)
 {
 	HRESULT				hr = hrSuccess;
@@ -2188,10 +2187,10 @@ exit:
 }
 
 HRESULT SoapServerListToServerList(const struct serverList *lpsServerList,
-    ULONG ulFLags, LPECSERVERLIST *lppServerList)
+    ULONG ulFLags, ECSERVERLIST **lppServerList)
 {
 	HRESULT			hr = hrSuccess;
-	LPECSERVERLIST	lpServerList = NULL;
+	ECSERVERLIST *lpServerList = NULL;
 	convert_context	converter;
 
 	if (lpsServerList == NULL || lppServerList == NULL) {
@@ -2635,10 +2634,11 @@ exit:
 	return hr;
 }
 
-HRESULT CopyUserClientUpdateStatusFromSOAP(struct userClientUpdateStatusResponse &sUCUS, ULONG ulFlags, LPECUSERCLIENTUPDATESTATUS *lppECUCUS)
+HRESULT CopyUserClientUpdateStatusFromSOAP(struct userClientUpdateStatusResponse &sUCUS,
+    ULONG ulFlags, ECUSERCLIENTUPDATESTATUS **lppECUCUS)
 {
 	HRESULT hr = hrSuccess;
-	LPECUSERCLIENTUPDATESTATUS lpECUCUS = NULL;
+	ECUSERCLIENTUPDATESTATUS *lpECUCUS = NULL;
 	convert_context converter;
 
 	hr = MAPIAllocateBuffer(sizeof(ECUSERCLIENTUPDATESTATUS), (void**)&lpECUCUS);

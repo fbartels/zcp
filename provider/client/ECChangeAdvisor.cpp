@@ -194,7 +194,8 @@ HRESULT ECChangeAdvisor::GetLastError(HRESULT hResult, ULONG ulFlags, LPMAPIERRO
 	return MAPI_E_NO_SUPPORT;
 }
 
-HRESULT ECChangeAdvisor::Config(LPSTREAM lpStream, LPGUID /*lpGUID*/, LPECCHANGEADVISESINK lpAdviseSink, ULONG ulFlags)
+HRESULT ECChangeAdvisor::Config(LPSTREAM lpStream, LPGUID /*lpGUID*/,
+    IECChangeAdviseSink *lpAdviseSink, ULONG ulFlags)
 {
 	HRESULT					hr = hrSuccess;
 	ULONG					ulVal = 0;
@@ -583,7 +584,9 @@ HRESULT ECChangeAdvisor::xECChangeAdvisor::GetLastError(HRESULT hResult, ULONG u
 	return hr;
 }
 
-HRESULT ECChangeAdvisor::xECChangeAdvisor::Config(LPSTREAM lpStream, LPGUID lpGUID, LPECCHANGEADVISESINK lpAdviseSink, ULONG ulFlags) {
+HRESULT ECChangeAdvisor::xECChangeAdvisor::Config(LPSTREAM lpStream,
+    LPGUID lpGUID, IECChangeAdviseSink *lpAdviseSink, ULONG ulFlags)
+{
 	TRACE_MAPI(TRACE_ENTRY, "IECChangeAdvisor::Config", "%s, %x", lpGUID ? DBGGUIDToString(*lpGUID).c_str() : "NULL", ulFlags);
 	METHOD_PROLOGUE_(ECChangeAdvisor, ECChangeAdvisor);
 	HRESULT hr = pThis->Config(lpStream, lpGUID, lpAdviseSink, ulFlags);

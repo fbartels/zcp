@@ -159,13 +159,13 @@ typedef struct _sECEntryId
 {
 	unsigned int	cb;
 	unsigned char*	lpb;
-} ECENTRYID, *LPECENTRYID;
+} ECENTRYID;
 
 typedef struct _sECServerNameList
 {
 	unsigned int	cServers;
 	LPTSTR*			lpszaServer;
-} ECSVRNAMELIST, *LPECSVRNAMELIST;
+} ECSVRNAMELIST;
 
 typedef struct _sPropmapEntry {
 	unsigned int	ulPropId;
@@ -201,7 +201,7 @@ typedef struct _sECUser {
 	SPROPMAP		sPropmap;		// Extra anonymous properties for addressbook
 	MVPROPMAP		sMVPropmap;		// Extra anonymous MV properties for addressbook
 	ECENTRYID		sUserId;
-} ECUSER, *LPECUSER;
+} ECUSER;
 
 typedef struct _sECGroup {
 	LPTSTR			lpszGroupname; // groupname@companyname
@@ -211,7 +211,7 @@ typedef struct _sECGroup {
 	unsigned int	ulIsABHidden;	// Is group hidden from address book
 	SPROPMAP		sPropmap;		// Extra anonymous properties for addressbook
 	MVPROPMAP		sMVPropmap;		// Extra anonymous MV properties for addressbook
-}ECGROUP, *LPECGROUP;
+} ECGROUP;
 
 typedef struct _sECCompany {
 	ECENTRYID		sAdministrator; // userid of the administrator
@@ -221,7 +221,7 @@ typedef struct _sECCompany {
 	unsigned int	ulIsABHidden;	// Is company hidden from address book
 	SPROPMAP		sPropmap;		// Extra anonymous properties for addressbook
 	MVPROPMAP		sMVPropmap;		// Extra anonymous MV properties for addressbook
-} ECCOMPANY, *LPECCOMPANY;
+} ECCOMPANY;
 
 
 typedef struct _sUserClientUpdateStatus {
@@ -231,7 +231,7 @@ typedef struct _sUserClientUpdateStatus {
 	LPTSTR			lpszLatestversion;
 	LPTSTR			lpszComputername;
 	unsigned int 	ulStatus;
-}ECUSERCLIENTUPDATESTATUS, *LPECUSERCLIENTUPDATESTATUS;
+} ECUSERCLIENTUPDATESTATUS;
 
 #define UPDATE_STATUS_UNKNOWN	0
 #define UPDATE_STATUS_SUCCESS   1
@@ -243,7 +243,7 @@ typedef struct _sECPermission {
 	unsigned int	ulRights;
 	unsigned int	ulState;
 	ECENTRYID		sUserId;
-}ECPERMISSION, *LPECPERMISSION;
+} ECPERMISSION;
 
 typedef struct _sECQuota {
 	bool			bUseDefaultQuota;
@@ -251,12 +251,12 @@ typedef struct _sECQuota {
 	int64_t		llWarnSize;
 	int64_t		llSoftSize;
 	int64_t		llHardSize;
-}ECQUOTA, *LPECQUOTA;
+} ECQUOTA;
 
 typedef struct _sECQuotaStatus {
 	int64_t		llStoreSize;
 	eQuotaStatus	quotaStatus;
-}ECQUOTASTATUS, *LPECQUOTASTATUS;
+} ECQUOTASTATUS;
 
 typedef struct _sECServer {
 	LPTSTR	lpszName;
@@ -265,12 +265,12 @@ typedef struct _sECServer {
 	LPTSTR	lpszSslPath;
 	LPTSTR	lpszPreferedPath;
 	ULONG	ulFlags;
-}ECSERVER, *LPECSERVER;
+} ECSERVER;
 
 typedef struct _sECServerList {
 	unsigned int	cServers;
-	LPECSERVER		lpsaServer;
-}ECSERVERLIST, *LPECSERVERLIST;
+	ECSERVER *lpsaServer;
+} ECSERVERLIST;
 
 // Flags for ns__submitMessage
 #define EC_SUBMIT_LOCAL			0x00000000

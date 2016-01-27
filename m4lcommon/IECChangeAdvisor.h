@@ -69,7 +69,7 @@ public:
 	 *									on the server.
 	 * @return HRESULT
 	 */
-	virtual HRESULT __stdcall Config(LPSTREAM lpStream, LPGUID lpGUID, LPECCHANGEADVISESINK lpAdviseSink, ULONG ulFlags) = 0;
+	virtual HRESULT __stdcall Config(LPSTREAM lpStream, LPGUID lpGUID, IECChangeAdviseSink *lpAdviseSink, ULONG ulFlags) = 0;
 
 	/**
 	 * Store the current internal state in the stream pointed to by lpStream.
@@ -126,7 +126,5 @@ public:
 	 */
 	virtual HRESULT __stdcall UpdateSyncState(ULONG ulSyncId, ULONG ulChangeId) = 0;
 };
-
-typedef IECChangeAdvisor* LPECCHANGEADVISOR;
 
 #endif

@@ -45,7 +45,7 @@
 #define CONVERSION_H
 
 #include <edkmdb.h>		// LPREADSTATE
-#include <zarafa/ECDefs.h>		// LPECUSER
+#include <zarafa/ECDefs.h>	// ECUSER
 
 #define CONV_COPY_SHALLOW	0
 #define CONV_COPY_DEEP		1
@@ -117,31 +117,31 @@ PyObject *		List_from_LPREADSTATE(LPREADSTATE lpReadState, ULONG cElements);
 LPCIID 			List_to_LPCIID(PyObject *, ULONG *);
 PyObject *		List_from_LPCIID(LPCIID iids, ULONG cElements);
 
-LPECUSER		Object_to_LPECUSER(PyObject *, ULONG ulFlags);
-PyObject *		Object_from_LPECUSER(LPECUSER lpUser, ULONG ulFlags);
-PyObject *		List_from_LPECUSER(LPECUSER lpUser, ULONG cElements, ULONG ulFlags);
+ECUSER *Object_to_LPECUSER(PyObject *, ULONG ulFlags);
+PyObject *Object_from_LPECUSER(ECUSER *lpUser, ULONG ulFlags);
+PyObject *List_from_LPECUSER(ECUSER *lpUser, ULONG cElements, ULONG ulFlags);
 
-LPECGROUP		Object_to_LPECGROUP(PyObject *, ULONG ulFlags);
-PyObject *		Object_from_LPECGROUP(LPECGROUP lpGroup, ULONG ulFlags);
-PyObject *		List_from_LPECGROUP(LPECGROUP lpGroup, ULONG cElements, ULONG ulFlags);
+ECGROUP *Object_to_LPECGROUP(PyObject *, ULONG ulFlags);
+PyObject *Object_from_LPECGROUP(ECGROUP *lpGroup, ULONG ulFlags);
+PyObject *List_from_LPECGROUP(ECGROUP *lpGroup, ULONG cElements, ULONG ulFlags);
 
-LPECCOMPANY		Object_to_LPECCOMPANY(PyObject *, ULONG ulFlags);
-PyObject *		Object_from_LPECCOMPANY(LPECCOMPANY lpCompany, ULONG ulFlags);
-PyObject *		List_from_LPECCOMPANY(LPECCOMPANY lpCompany, ULONG cElements, ULONG ulFlags);
+ECCOMPANY *Object_to_LPECCOMPANY(PyObject *, ULONG ulFlags);
+PyObject *Object_from_LPECCOMPANY(ECCOMPANY *lpCompany, ULONG ulFlags);
+PyObject *List_from_LPECCOMPANY(ECCOMPANY *lpCompany, ULONG cElements, ULONG ulFlags);
 
-LPECQUOTA		Object_to_LPECQUOTA(PyObject *);
-PyObject *		Object_from_LPECQUOTA(LPECQUOTA lpQuota);
+ECQUOTA *Object_to_LPECQUOTA(PyObject *);
+PyObject *Object_from_LPECQUOTA(ECQUOTA *lpQuota);
 
-PyObject *		Object_from_LPECQUOTASTATUS(LPECQUOTASTATUS lpQuotaStatus);
+PyObject *Object_from_LPECQUOTASTATUS(ECQUOTASTATUS *lpQuotaStatus);
 
-PyObject *		Object_from_LPECUSERCLIENTUPDATESTATUS(LPECUSERCLIENTUPDATESTATUS lpECUCUS);
+PyObject *Object_from_LPECUSERCLIENTUPDATESTATUS(ECUSERCLIENTUPDATESTATUS *lpECUCUS);
 
 LPROWLIST		List_to_LPROWLIST(PyObject *, ULONG ulFlags = CONV_COPY_SHALLOW);
 
-LPECSVRNAMELIST List_to_LPECSVRNAMELIST(PyObject *object);
+ECSVRNAMELIST *List_to_LPECSVRNAMELIST(PyObject *object);
 
-PyObject *		Object_from_LPECSERVER(LPECSERVER lpServer);
-PyObject *		List_from_LPECSERVERLIST(LPECSERVERLIST lpServerList);
+PyObject *Object_from_LPECSERVER(ECSERVER *lpServer);
+PyObject *List_from_LPECSERVERLIST(ECSERVERLIST *lpServerList);
 
 PyObject *		List_from_wchar_t(wchar_t **, ULONG cElements);
 

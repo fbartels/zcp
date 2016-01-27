@@ -120,7 +120,7 @@ public:
 	 *					pointer to the change advisor upon successful completion.
 	 * @return MAPI_E_NO_SUPPORT if the change notification system is disabled.
 	 */
-	HRESULT HrGetChangeAdvisor(LPECCHANGEADVISOR *lppChangeAdvisor);
+	HRESULT HrGetChangeAdvisor(IECChangeAdvisor **lppChangeAdvisor);
 
 	/**
 	 * Replace the change advisor. This causes all the registered change advises
@@ -138,7 +138,7 @@ public:
 	 *					pointer to the change advise sink upon successful completion.
 	 * @return HRESULT.
 	 */
-	HRESULT HrGetChangeAdviseSink(LPECCHANGEADVISESINK *lppChangeAdviseSink);
+	HRESULT HrGetChangeAdviseSink(IECChangeAdviseSink **lppChangeAdviseSink);
 
 	/**
 	 * Get the full hierarchy for the store on which this sync context operates.
@@ -363,8 +363,8 @@ private:	// members
 	ECLogger				*m_lpLogger;
 	ECSyncSettings			*m_lpSettings;
 
-	LPECCHANGEADVISOR		m_lpChangeAdvisor;
-	LPECCHANGEADVISESINK	m_lpChangeAdviseSink;
+	IECChangeAdvisor *m_lpChangeAdvisor;
+	IECChangeAdviseSink *m_lpChangeAdviseSink;
 
 	StatusStreamMap			m_mapSyncStatus;
 	SyncStateMap			m_mapStates;

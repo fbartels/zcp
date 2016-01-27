@@ -68,9 +68,9 @@ typedef struct {
 	ULONG				ulEventMask;
 	LPMAPIADVISESINK	lpAdviseSink;
 	//ULONG				ulConnection;
-}ECMEMADVISE, *LPECMEMADVISE;
+} ECMEMADVISE;
 
-typedef std::map<int, LPECMEMADVISE> ECMapMemAdvise;
+typedef std::map<int, ECMEMADVISE *> ECMapMemAdvise;
 
 
 /* Status returned in HrGetAllWithStatus() */

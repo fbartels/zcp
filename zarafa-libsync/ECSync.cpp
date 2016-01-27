@@ -436,12 +436,12 @@ exit:
 HRESULT ECSync::HrSetupChangeAdvisors()
 {
 	HRESULT					hr = hrSuccess;
-	LPECCHANGEADVISOR		lpOnlineAdvisor = NULL;
-	LPECCHANGEADVISESINK	lpOnlineAdviseSink = NULL;
+	IECChangeAdvisor *lpOnlineAdvisor = NULL;
+	IECChangeAdviseSink *lpOnlineAdviseSink = NULL;
 	LPSTREAM				lpOnlineStream = NULL;
-	LPECCHANGEADVISOR		lpOfflineAdvisor = NULL;
+	IECChangeAdvisor *lpOfflineAdvisor = NULL;
 	LPSTREAM				lpOfflineStream = NULL;
-	LPECCHANGEADVISESINK	lpOfflineAdviseSink = NULL;
+	IECChangeAdviseSink *lpOfflineAdviseSink = NULL;
 
 
 	// Open the advisors so we know whether they are supported.
@@ -586,7 +586,7 @@ HRESULT ECSync::HrSaveChangeNotificationStatusStreams()
 HRESULT ECSync::HrSaveChangeNotificationStatusStream(ECSyncContext *lpContext, ULONG ulStatePropTag)
 {
 	HRESULT					hr = hrSuccess;
-	LPECCHANGEADVISOR	lpAdvisor = NULL;
+	IECChangeAdvisor *lpAdvisor = NULL;
 	LPMDB					lpStore = NULL;
 	LPSTREAM				lpStream = NULL;
 
@@ -656,7 +656,9 @@ exit:
 	return hr;
 }
 
-HRESULT ECSync::HrEntryListToChangeNotificationStream(LPECCHANGEADVISOR lpChangeAdvisor, LPMDB lpStore, ULONG ulPropTag, LPENTRYLIST lpEntryList, LPSTREAM *lppStream)
+HRESULT ECSync::HrEntryListToChangeNotificationStream(IECChangeAdvisor *lpChangeAdvisor,
+    LPMDB lpStore, ULONG ulPropTag, LPENTRYLIST lpEntryList,
+    LPSTREAM *lppStream)
 {
 	HRESULT		hr = hrSuccess;
 	LPSTREAM	lpStream = NULL;
@@ -696,8 +698,8 @@ exit:
 HRESULT ECSync::HrCreateChangeNotificationStatusStreams(LPSTREAM *lppOnlineStream, LPSTREAM *lppOfflineStream)
 {
 	HRESULT					hr = hrSuccess;
-	LPECCHANGEADVISOR	lpOnlineChangeAdvisor = NULL;
-	LPECCHANGEADVISOR	lpOfflineChangeAdvisor = NULL;
+	IECChangeAdvisor *lpOnlineChangeAdvisor = NULL;
+	IECChangeAdvisor *lpOfflineChangeAdvisor = NULL;
 	LPSRowSet				lpRows = NULL;
 	ENTRYLIST				sOnlineEntryList = {0};
 	ENTRYLIST				sOfflineEntryList = {0};

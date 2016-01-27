@@ -490,8 +490,8 @@ static HRESULT setQuota(IECServiceAdmin *lpServiceAdmin, ULONG cbEid,
     long long hard, bool print = false, bool company = false)
 {
 	HRESULT hr = hrSuccess;
-	LPECQUOTASTATUS lpsQuotaStatus = NULL;
-	LPECQUOTA lpsQuota = NULL;
+	ECQUOTASTATUS *lpsQuotaStatus = NULL;
+	ECQUOTA *lpsQuota = NULL;
 	ECQUOTA sQuota;
 
 	if (lpEid == NULL)
@@ -1403,7 +1403,7 @@ exit:
 	return hr;
 }
 
-static LPMVPROPMAPENTRY FindMVPropmapEntry(LPECUSER lpUser, ULONG ulPropTag)
+static LPMVPROPMAPENTRY FindMVPropmapEntry(ECUSER *lpUser, ULONG ulPropTag)
 {
 	for (unsigned i = 0; i < lpUser->sMVPropmap.cEntries; ++i) {
 		if (lpUser->sMVPropmap.lpEntries[i].ulPropId == ulPropTag) {
@@ -1430,15 +1430,15 @@ static HRESULT print_details(LPMAPISESSION lpSession, IECUnknown *lpECMsgStore,
     objectclass_t ulClass, const char *lpszName)
 {
 	HRESULT hr = hrSuccess;
-	LPECUSER lpECUser = NULL;
-	LPECGROUP lpECGroup = NULL;
-	LPECCOMPANY lpECCompany = NULL;
-	LPECQUOTASTATUS lpsQuotaStatus = NULL;
-	LPECQUOTA lpsQuota = NULL;
-	LPECGROUP lpECGroups = NULL;
-	LPECUSER lpECUsers = NULL;
-	LPECUSER lpECAdmins = NULL;
-	LPECCOMPANY lpECViews = NULL;
+	ECUSER *lpECUser = NULL;
+	ECGROUP *lpECGroup = NULL;
+	ECCOMPANY *lpECCompany = NULL;
+	ECQUOTASTATUS *lpsQuotaStatus = NULL;
+	ECQUOTA *lpsQuota = NULL;
+	ECGROUP *lpECGroups = NULL;
+	ECUSER *lpECUsers = NULL;
+	ECUSER *lpECAdmins = NULL;
+	ECCOMPANY *lpECViews = NULL;
 	ULONG cGroups = 0;
 	ULONG cUsers = 0;
 	ULONG cAdmins = 0;
@@ -1455,7 +1455,7 @@ static HRESULT print_details(LPMAPISESSION lpSession, IECUnknown *lpECMsgStore,
 	LPENTRYID lpObjectId = NULL;
 	ArchiveManagePtr ptrArchiveManage;
 	ArchiveList lstArchives;
-	LPECUSERCLIENTUPDATESTATUS lpECUCUS = NULL;
+	ECUSERCLIENTUPDATESTATUS *lpECUCUS = NULL;
 	convert_context converter;
 
 	hr = lpECMsgStore->QueryInterface(IID_IECServiceAdmin, (void **)&lpServiceAdmin);
@@ -1731,8 +1731,7 @@ exit:
  * @param[in]	lpCompany		The company to request users from. NULL EntryID in a non-hosted environment
  * @return		MAPI Error code
  */
-static HRESULT ListUsers(IECServiceAdmin *lpServiceAdmin,
-    LPECCOMPANY lpCompany)
+static HRESULT ListUsers(IECServiceAdmin *lpServiceAdmin, ECCOMPANY *lpCompany)
 {
 	HRESULT		hr = hrSuccess;
 	ECUSER*		lpECUsers = NULL;
@@ -1761,7 +1760,7 @@ exit:
  * @return		HRESULT			MAPI Error code
  */
 static HRESULT ListGroups(IECServiceAdmin *lpServiceAdmin,
-    LPECCOMPANY lpCompany)
+    ECCOMPANY *lpCompany)
 {
 	HRESULT		hr = hrSuccess;
 	ECGROUP*	lpECGroups = NULL;
@@ -1815,15 +1814,15 @@ exit:
  */
 static HRESULT ForEachCompany(IECServiceAdmin *lpServiceAdmin,
     const char *lpszCompanyName,
-    HRESULT (*lpWork)(IECServiceAdmin *, LPECCOMPANY))
+    HRESULT (*lpWork)(IECServiceAdmin *, ECCOMPANY *))
 {
 	HRESULT hr = hrSuccess;
 	ULONG cbCompanyId = 0;
 	LPENTRYID lpCompanyId = NULL;
 	ULONG cCompanies = 0;
 
-	LPECCOMPANY lpECCompanies = NULL;
-	LPECCOMPANY lpECCompaniesAlloc = NULL;
+	ECCOMPANY *lpECCompanies = NULL;
+	ECCOMPANY *lpECCompaniesAlloc = NULL;
 	ECCOMPANY sRootCompany = {{g_cbSystemEid, g_lpSystemEid}, (LPTSTR)"Default", NULL, {0, NULL}};
 
 	if (lpszCompanyName) {
@@ -2403,21 +2402,21 @@ int main(int argc, char* argv[])
 	LPENTRYID lpUnWrappedEntry = NULL;
 
 	ECGROUP		sECGroup;
-	LPECGROUP	lpECGroups = NULL;
+	ECGROUP *lpECGroups = NULL;
 	ULONG		cCompanies = 0;
 	ULONG		cUsers = 0;
 
 	ECCOMPANY sECCompany;
-	LPECCOMPANY lpECCompanies = NULL;
+	ECCOMPANY *lpECCompanies = NULL;
 
-	LPECQUOTASTATUS	lpsQuotaStatus = NULL;
-	LPECQUOTA lpsQuota = NULL;
+	ECQUOTASTATUS *lpsQuotaStatus = NULL;
+	ECQUOTA *lpsQuota = NULL;
 
-	LPECSVRNAMELIST lpsServer = NULL;
-	LPECSERVERLIST lpServerDetails = NULL;
+	ECSVRNAMELIST *lpsServer = NULL;
+	ECSERVERLIST *lpServerDetails = NULL;
 
 	ULONG cSenders = 0;
-	LPECUSER lpSenders = NULL;
+	ECUSER *lpSenders = NULL;
 
 	objectclass_t ulClass = OBJECTCLASS_UNKNOWN;
 	const char *detailstype = NULL;

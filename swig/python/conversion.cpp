@@ -2740,7 +2740,8 @@ exit:
 	return list;
 }
 
-LPECUSER Object_to_LPECUSER(PyObject *elem, ULONG ulFlags) {
+ECUSER *Object_to_LPECUSER(PyObject *elem, ULONG ulFlags)
+{
 	static conv_out_info<ECUSER> conv_info[] = {
 		{conv_out_default<ECUSER, LPTSTR, &ECUSER::lpszUsername>, "Username"},
 		{conv_out_default<ECUSER, LPTSTR, &ECUSER::lpszPassword>, "Password"},
@@ -2755,7 +2756,7 @@ LPECUSER Object_to_LPECUSER(PyObject *elem, ULONG ulFlags) {
 	};
 
 	HRESULT hr = hrSuccess;
-	LPECUSER lpUser = NULL;
+	ECUSER *lpUser = NULL;
 
 	if (elem == Py_None)
 		goto exit;
@@ -2778,7 +2779,7 @@ exit:
 	return lpUser;
 }
 
-PyObject * Object_from_LPECUSER(LPECUSER lpUser, ULONG ulFlags)
+PyObject *Object_from_LPECUSER(ECUSER *lpUser, ULONG ulFlags)
 {
     if(ulFlags & MAPI_UNICODE)
         return PyObject_CallFunction(PyTypeECUser, "(uuuuulllls#)", lpUser->lpszUsername, lpUser->lpszPassword, lpUser->lpszMailAddress, lpUser->lpszFullName, lpUser->lpszServername, lpUser->ulObjClass, lpUser->ulIsAdmin, lpUser->ulIsABHidden, lpUser->ulCapacity, lpUser->sUserId.lpb, lpUser->sUserId.cb);
@@ -2788,7 +2789,7 @@ PyObject * Object_from_LPECUSER(LPECUSER lpUser, ULONG ulFlags)
 }
 
 
-PyObject * List_from_LPECUSER(LPECUSER lpUser, ULONG cElements, ULONG ulFlags)
+PyObject *List_from_LPECUSER(ECUSER *lpUser, ULONG cElements, ULONG ulFlags)
 {
 	PyObject *list = PyList_New(0);
 	PyObject *item = NULL;
@@ -2819,7 +2820,7 @@ exit:
 	return list;
 }
 
-LPECGROUP Object_to_LPECGROUP(PyObject *elem, ULONG ulFlags)
+ECGROUP *Object_to_LPECGROUP(PyObject *elem, ULONG ulFlags)
 {
 	static conv_out_info<ECGROUP> conv_info[] = {
 		{conv_out_default<ECGROUP, LPTSTR, &ECGROUP::lpszGroupname>, "Groupname"},
@@ -2830,7 +2831,7 @@ LPECGROUP Object_to_LPECGROUP(PyObject *elem, ULONG ulFlags)
 	};
 
 	HRESULT hr = hrSuccess;
-	LPECGROUP lpGroup = NULL;
+	ECGROUP *lpGroup = NULL;
 
 	if (elem == Py_None)
 		goto exit;
@@ -2853,7 +2854,7 @@ exit:
 	return lpGroup;
 }
 
-PyObject * Object_from_LPECGROUP(LPECGROUP lpGroup, ULONG ulFlags)
+PyObject *Object_from_LPECGROUP(ECGROUP *lpGroup, ULONG ulFlags)
 {
 	if(ulFlags & MAPI_UNICODE)
 		return PyObject_CallFunction(PyTypeECGroup, "(uuuls#)", lpGroup->lpszGroupname, lpGroup->lpszFullname, lpGroup->lpszFullEmail, lpGroup->ulIsABHidden, lpGroup->sGroupId.lpb, lpGroup->sGroupId.cb);
@@ -2861,7 +2862,7 @@ PyObject * Object_from_LPECGROUP(LPECGROUP lpGroup, ULONG ulFlags)
 		return PyObject_CallFunction(PyTypeECGroup, "(sssls#)", lpGroup->lpszGroupname, lpGroup->lpszFullname, lpGroup->lpszFullEmail, lpGroup->ulIsABHidden, lpGroup->sGroupId.lpb, lpGroup->sGroupId.cb);
 }
 
-PyObject * List_from_LPECGROUP(LPECGROUP lpGroup, ULONG cElements, ULONG ulFlags)
+PyObject *List_from_LPECGROUP(ECGROUP *lpGroup, ULONG cElements, ULONG ulFlags)
 {
 	PyObject *list = PyList_New(0);
 	PyObject *item = NULL;
@@ -2892,7 +2893,7 @@ exit:
 	return list;
 }
 
-LPECCOMPANY Object_to_LPECCOMPANY(PyObject *elem, ULONG ulFlags)
+ECCOMPANY *Object_to_LPECCOMPANY(PyObject *elem, ULONG ulFlags)
 {
 	static conv_out_info<ECCOMPANY> conv_info[] = {
 		{conv_out_default<ECCOMPANY, LPTSTR, &ECCOMPANY::lpszCompanyname>, "Companyname"},
@@ -2902,7 +2903,7 @@ LPECCOMPANY Object_to_LPECCOMPANY(PyObject *elem, ULONG ulFlags)
 	};
 
 	HRESULT hr = hrSuccess;
-	LPECCOMPANY lpCompany = NULL;
+	ECCOMPANY *lpCompany = NULL;
 
 	if (elem == Py_None)
 		goto exit;
@@ -2925,7 +2926,7 @@ exit:
 	return lpCompany;
 }
 
-PyObject * Object_from_LPECCOMPANY(LPECCOMPANY lpCompany, ULONG ulFlags)
+PyObject *Object_from_LPECCOMPANY(ECCOMPANY *lpCompany, ULONG ulFlags)
 {
         if(ulFlags & MAPI_UNICODE)
 		return PyObject_CallFunction(PyTypeECCompany, "(uuls#)", lpCompany->lpszCompanyname, lpCompany->lpszServername, lpCompany->ulIsABHidden, lpCompany->sCompanyId.lpb, lpCompany->sCompanyId.cb);
@@ -2933,7 +2934,8 @@ PyObject * Object_from_LPECCOMPANY(LPECCOMPANY lpCompany, ULONG ulFlags)
 		return PyObject_CallFunction(PyTypeECCompany, "(ssls#)", lpCompany->lpszCompanyname, lpCompany->lpszServername, lpCompany->ulIsABHidden, lpCompany->sCompanyId.lpb, lpCompany->sCompanyId.cb);
 }
 
-PyObject * List_from_LPECCOMPANY(LPECCOMPANY lpCompany, ULONG cElements, ULONG ulFlags)
+PyObject *List_from_LPECCOMPANY(ECCOMPANY *lpCompany, ULONG cElements,
+    ULONG ulFlags)
 {
 	PyObject *list = PyList_New(0);
 	PyObject *item = NULL;
@@ -2964,7 +2966,7 @@ exit:
 	return list;
 }
 
-PyObject *Object_from_LPECUSERCLIENTUPDATESTATUS(LPECUSERCLIENTUPDATESTATUS lpECUCUS)
+PyObject *Object_from_LPECUSERCLIENTUPDATESTATUS(ECUSERCLIENTUPDATESTATUS *lpECUCUS)
 {
 	// @todo charset conversion ?
 	return PyObject_CallFunction(PyTypeECUserClientUpdateStatus, "(llsssl)", lpECUCUS->ulTrackId, lpECUCUS->tUpdatetime, lpECUCUS->lpszCurrentversion, lpECUCUS->lpszLatestversion, lpECUCUS->lpszComputername, lpECUCUS->ulStatus);
@@ -3107,7 +3109,7 @@ int GetExceptionError(PyObject *object, HRESULT *lphr)
 	return 1;
 }
 
-LPECQUOTA Object_to_LPECQUOTA(PyObject *elem)
+ECQUOTA *Object_to_LPECQUOTA(PyObject *elem)
 {
 	static conv_out_info<ECQUOTA> conv_info[] = {
 		{conv_out_default<ECQUOTA, bool, &ECQUOTA::bUseDefaultQuota>, "bUseDefaultQuota"},
@@ -3118,7 +3120,7 @@ LPECQUOTA Object_to_LPECQUOTA(PyObject *elem)
 	};
 
 	HRESULT hr = hrSuccess;
-	LPECQUOTA lpQuota = NULL;
+	ECQUOTA *lpQuota = NULL;
 
 	if (elem == Py_None)
 		goto exit;
@@ -3141,23 +3143,23 @@ exit:
 	return lpQuota;
 }
 
-PyObject *Object_from_LPECQUOTA(LPECQUOTA lpQuota)
+PyObject *Object_from_LPECQUOTA(ECQUOTA *lpQuota)
 {
 	return PyObject_CallFunction(PyTypeECQuota, "(llLLL)", lpQuota->bUseDefaultQuota, lpQuota->bIsUserDefaultQuota, lpQuota->llWarnSize, lpQuota->llSoftSize, lpQuota->llHardSize);
 }
 
-PyObject *Object_from_LPECQUOTASTATUS(LPECQUOTASTATUS lpQuotaStatus)
+PyObject *Object_from_LPECQUOTASTATUS(ECQUOTASTATUS *lpQuotaStatus)
 {
 	return PyObject_CallFunction(PyTypeECQuotaStatus, "Ll", lpQuotaStatus->llStoreSize, lpQuotaStatus->quotaStatus);
 }
 
-LPECSVRNAMELIST List_to_LPECSVRNAMELIST(PyObject *object)
+ECSVRNAMELIST *List_to_LPECSVRNAMELIST(PyObject *object)
 {
 	HRESULT hr = hrSuccess;
 	Py_ssize_t len = 0;
 	PyObject *iter = NULL;
 	PyObject *elem = NULL;
-	LPECSVRNAMELIST lpSvrNameList = NULL;
+	ECSVRNAMELIST *lpSvrNameList = NULL;
 
 	if (object == Py_None)
 		goto exit;
@@ -3168,10 +3170,10 @@ LPECSVRNAMELIST List_to_LPECSVRNAMELIST(PyObject *object)
 		goto exit;
 	}
 
-	if (MAPIAllocateBuffer(sizeof(ECSVRNAMELIST)+(sizeof(LPECSERVER) * len), (void**)&lpSvrNameList) != hrSuccess)
+	if (MAPIAllocateBuffer(sizeof(ECSVRNAMELIST) + (sizeof(ECSERVER *) * len), reinterpret_cast<void **>(&lpSvrNameList)) != hrSuccess)
 		goto exit;
 
-	memset(lpSvrNameList, 0, sizeof(ECSVRNAMELIST)+(sizeof(LPECSERVER) * len) );
+	memset(lpSvrNameList, 0, sizeof(ECSVRNAMELIST) + (sizeof(ECSERVER *) * len) );
 
 	iter = PyObject_GetIter(object);
 	if (iter == NULL)
@@ -3215,12 +3217,12 @@ exit:
 	return lpSvrNameList;
 }
 
-PyObject *Object_from_LPECSERVER(LPECSERVER lpServer)
+PyObject *Object_from_LPECSERVER(ECSERVER *lpServer)
 {
 	return PyObject_CallFunction(PyTypeECServer, "(sssssl)", lpServer->lpszName, lpServer->lpszFilePath, lpServer->lpszHttpPath, lpServer->lpszSslPath, lpServer->lpszPreferedPath, lpServer->ulFlags);
 }
 
-PyObject *List_from_LPECSERVERLIST(LPECSERVERLIST lpServerList)
+PyObject *List_from_LPECSERVERLIST(ECSERVERLIST *lpServerList)
 {
 	PyObject *list = PyList_New(0);
 	PyObject *item = NULL;
