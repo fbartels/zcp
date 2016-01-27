@@ -3219,7 +3219,8 @@ exit:
  * @param[out]	lppCompanyId	The entry id of the new company
  * @return		HRESULT			MAPI error code.
  */
-HRESULT WSTransport::HrCreateCompany(LPECCOMPANY lpECCompany, ULONG ulFlags, ULONG *lpcbCompanyId, LPENTRYID *lppCompanyId)
+HRESULT WSTransport::HrCreateCompany(ECCOMPANY *lpECCompany, ULONG ulFlags,
+    ULONG *lpcbCompanyId, LPENTRYID *lppCompanyId)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;
@@ -3304,7 +3305,7 @@ exit:
  * @param[in]	ulFlags		MAPI_UNICODE, values in company struct will be PT_UNICODE, otherwise in PT_STRING8
  * @return		HRESULT		MAPI error code.
  */
-HRESULT WSTransport::HrSetCompany(LPECCOMPANY lpECCompany, ULONG ulFlags)
+HRESULT WSTransport::HrSetCompany(ECCOMPANY *lpECCompany, ULONG ulFlags)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;
@@ -3362,11 +3363,12 @@ exit:
  * @param[out]	lppECCompany	Pointer to an ECOMPANY object that contains the company details
  * @return		HRESULT			MAPI error code.
  */
-HRESULT WSTransport::HrGetCompany(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, LPECCOMPANY *lppECCompany)
+HRESULT WSTransport::HrGetCompany(ULONG cbCompanyId, LPENTRYID lpCompanyId,
+    ULONG ulFlags, ECCOMPANY **lppECCompany)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;
-	LPECCOMPANY lpCompany = NULL;
+	ECCOMPANY *lpCompany = NULL;
 	struct getCompanyResponse sResponse;
 	entryId sCompanyId = {0};
 
@@ -3452,7 +3454,8 @@ exit:
  * @param[out]	lppsCompanies	Pointer to an array of ECCOMPANY objects.
  * @return		HRESULT			MAPI error code.
  */
-HRESULT WSTransport::HrGetCompanyList(ULONG ulFlags, ULONG *lpcCompanies, LPECCOMPANY *lppsCompanies)
+HRESULT WSTransport::HrGetCompanyList(ULONG ulFlags, ULONG *lpcCompanies,
+    ECCOMPANY **lppsCompanies)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;
@@ -3570,7 +3573,9 @@ exit:
  * @param[out]	lppsCompanies	Array of ECCOMPANY objects.
  * @return		HRESULT			MAPI error code.
  */
-HRESULT WSTransport::HrGetRemoteViewList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags,  ULONG *lpcCompanies, LPECCOMPANY *lppsCompanies)
+HRESULT WSTransport::HrGetRemoteViewList(ULONG cbCompanyId,
+    LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcCompanies,
+    ECCOMPANY **lppsCompanies)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;

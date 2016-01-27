@@ -197,8 +197,8 @@ HRESULT ECQuotaMonitor::CheckQuota()
 	IExchangeManageStore *lpIEMS = NULL;
 
 	/* Companylist */
-	LPECCOMPANY			lpsCompanyList = NULL;
-	LPECCOMPANY			lpsCompanyListAlloc = NULL;
+	ECCOMPANY *lpsCompanyList = NULL;
+	ECCOMPANY *lpsCompanyListAlloc = NULL;
 	ECCOMPANY			sRootCompany = {{g_cbSystemEid, g_lpSystemEid}, (LPTSTR)"Default", NULL, {0, NULL}};
     ULONG				cCompanies = 0;
 
@@ -309,7 +309,7 @@ exit:
  * @param[in] company lpecCompany ECCompany struct
  * @return hrSuccess or any MAPI error code.
  */
-HRESULT ECQuotaMonitor::CheckCompanyQuota(LPECCOMPANY lpecCompany)
+HRESULT ECQuotaMonitor::CheckCompanyQuota(ECCOMPANY *lpecCompany)
 {
 	HRESULT				hr = hrSuccess;
 	/* Service object */
@@ -451,7 +451,8 @@ exit:
  * @param[in]	lpAdminStore IMsgStore of SYSTEM user on a specific server instance.
  * @return hrSuccess or any MAPI error code.
  */
-HRESULT ECQuotaMonitor::CheckServerQuota(ULONG cUsers, LPECUSER lpsUserList, LPECCOMPANY lpecCompany, LPMDB lpAdminStore)
+HRESULT ECQuotaMonitor::CheckServerQuota(ULONG cUsers, LPECUSER lpsUserList,
+    ECCOMPANY *lpecCompany, LPMDB lpAdminStore)
 {
 	HRESULT hr = hrSuccess;
 	LPSRestriction lpsRestriction = NULL;
@@ -1313,7 +1314,7 @@ exit:
  * @param[in]	lpStore The store that is over quota
  * @return MAPI error code
  */
-HRESULT ECQuotaMonitor::Notify(LPECUSER lpecUser, LPECCOMPANY lpecCompany,
+HRESULT ECQuotaMonitor::Notify(LPECUSER lpecUser, ECCOMPANY *lpecCompany,
     ECQUOTASTATUS *lpecQuotaStatus, LPMDB lpStore)
 {
 	HRESULT hr = hrSuccess;

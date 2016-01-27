@@ -1040,7 +1040,8 @@ HRESULT ECMAPIProp::GetGroupList(ULONG cbCompanyId, LPENTRYID lpCompanyId,
 	return hr;
 }
 
-HRESULT ECMAPIProp::GetCompanyList(ULONG ulFlags, ULONG *lpcCompanies, LPECCOMPANY *lppsCompanies)
+HRESULT ECMAPIProp::GetCompanyList(ULONG ulFlags, ULONG *lpcCompanies,
+    ECCOMPANY **lppsCompanies)
 {
 	HRESULT hr = hrSuccess;
 
@@ -1239,7 +1240,8 @@ HRESULT ECMAPIProp::xECSecurity::GetGroupList(ULONG cbCompanyId,
 	return pThis->GetGroupList(cbCompanyId, lpCompanyId, ulFlags, lpcGroups, lppsGroups);
 }
 
-HRESULT ECMAPIProp::xECSecurity::GetCompanyList(ULONG ulFlags, ULONG *lpcCompanies, LPECCOMPANY *lppsCompanies)
+HRESULT ECMAPIProp::xECSecurity::GetCompanyList(ULONG ulFlags,
+    ULONG *lpcCompanies, ECCOMPANY **lppsCompanies)
 {
 	METHOD_PROLOGUE_(ECMAPIProp, ECSecurity);
 	return pThis->GetCompanyList(ulFlags, lpcCompanies, lppsCompanies);

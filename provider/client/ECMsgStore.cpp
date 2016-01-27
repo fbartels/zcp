@@ -2245,7 +2245,7 @@ HRESULT ECMsgStore::CreateStore(ULONG ulStoreType, ULONG cbUserId, LPENTRYID lpU
 	ECPERMISSION		sPermission;
 
 	LPECUSER			lpECUser = NULL;
-	LPECCOMPANY			lpECCompany = NULL;
+	ECCOMPANY *lpECCompany = NULL;
 	ECGROUP *lpECGroup = NULL;
 
 	std::string			strBuffer;
@@ -3199,7 +3199,8 @@ HRESULT ECMsgStore::GetGroupListOfUser(ULONG cbUserId, LPENTRYID lpUserId,
 	return hr;
 }
 
-HRESULT ECMsgStore::CreateCompany(LPECCOMPANY lpECCompany, ULONG ulFlags, ULONG *lpcbCompanyId, LPENTRYID *lppCompanyId)
+HRESULT ECMsgStore::CreateCompany(ECCOMPANY *lpECCompany, ULONG ulFlags,
+    ULONG *lpcbCompanyId, LPENTRYID *lppCompanyId)
 {
 	HRESULT hr = hrSuccess;
 
@@ -3217,7 +3218,7 @@ HRESULT ECMsgStore::DeleteCompany(ULONG cbCompanyId, LPENTRYID lpCompanyId)
 	return hr;
 }
 
-HRESULT ECMsgStore::SetCompany(LPECCOMPANY lpECCompany, ULONG ulFlags)
+HRESULT ECMsgStore::SetCompany(ECCOMPANY *lpECCompany, ULONG ulFlags)
 {
 	HRESULT hr = hrSuccess;
 
@@ -3226,7 +3227,8 @@ HRESULT ECMsgStore::SetCompany(LPECCOMPANY lpECCompany, ULONG ulFlags)
 	return hr;
 }
 
-HRESULT ECMsgStore::GetCompany(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, LPECCOMPANY *lppECCompany)
+HRESULT ECMsgStore::GetCompany(ULONG cbCompanyId, LPENTRYID lpCompanyId,
+    ULONG ulFlags, ECCOMPANY **lppECCompany)
 {
 	HRESULT hr = hrSuccess;
 
@@ -3244,7 +3246,8 @@ HRESULT ECMsgStore::ResolveCompanyName(LPCTSTR lpszCompanyName, ULONG ulFlags, U
 	return hr;
 }
 
-HRESULT ECMsgStore::GetCompanyList(ULONG ulFlags, ULONG *lpcCompanies, LPECCOMPANY *lppsCompanies)
+HRESULT ECMsgStore::GetCompanyList(ULONG ulFlags, ULONG *lpcCompanies,
+    ECCOMPANY **lppsCompanies)
 {
 	HRESULT hr = hrSuccess;
 
@@ -3271,7 +3274,8 @@ HRESULT ECMsgStore::DelCompanyFromRemoteViewList(ULONG cbSetCompanyId, LPENTRYID
 	return hr;
 }
 
-HRESULT ECMsgStore::GetRemoteViewList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcCompanies, LPECCOMPANY *lppsCompanies)
+HRESULT ECMsgStore::GetRemoteViewList(ULONG cbCompanyId, LPENTRYID lpCompanyId,
+    ULONG ulFlags, ULONG *lpcCompanies, ECCOMPANY **lppsCompanies)
 {
 	HRESULT hr = hrSuccess;
 
@@ -4427,7 +4431,8 @@ HRESULT ECMsgStore::xECServiceAdmin::GetGroupListOfUser(ULONG cbUserId,
 	return hr;
 }
 
-HRESULT ECMsgStore::xECServiceAdmin::CreateCompany(LPECCOMPANY lpECCompany, ULONG ulFlags, ULONG *lpcbCompanyId, LPENTRYID *lppCompanyId)
+HRESULT ECMsgStore::xECServiceAdmin::CreateCompany(ECCOMPANY *lpECCompany,
+    ULONG ulFlags, ULONG *lpcbCompanyId, LPENTRYID *lppCompanyId)
 {
 	TRACE_MAPI(TRACE_ENTRY, "IECServiceAdmin::CreateCompany", "");
 	METHOD_PROLOGUE_(ECMsgStore, ECServiceAdmin);
@@ -4445,7 +4450,8 @@ HRESULT ECMsgStore::xECServiceAdmin::DeleteCompany(ULONG cbCompanyId, LPENTRYID 
 	return hr; 
 }
 
-HRESULT ECMsgStore::xECServiceAdmin::SetCompany(LPECCOMPANY lpECCompany, ULONG ulFlags)
+HRESULT ECMsgStore::xECServiceAdmin::SetCompany(ECCOMPANY *lpECCompany,
+    ULONG ulFlags)
 {
 	TRACE_MAPI(TRACE_ENTRY, "IECServiceAdmin::SetCompany", "");
 	METHOD_PROLOGUE_(ECMsgStore, ECServiceAdmin);
@@ -4454,7 +4460,8 @@ HRESULT ECMsgStore::xECServiceAdmin::SetCompany(LPECCOMPANY lpECCompany, ULONG u
 	return hr;
 }
 
-HRESULT ECMsgStore::xECServiceAdmin::GetCompany(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, LPECCOMPANY *lppECCompany)
+HRESULT ECMsgStore::xECServiceAdmin::GetCompany(ULONG cbCompanyId,
+    LPENTRYID lpCompanyId, ULONG ulFlags, ECCOMPANY **lppECCompany)
 {
 	TRACE_MAPI(TRACE_ENTRY, "IECServiceAdmin::GetCompany", "");
 	METHOD_PROLOGUE_(ECMsgStore, ECServiceAdmin);
@@ -4472,7 +4479,8 @@ HRESULT ECMsgStore::xECServiceAdmin::ResolveCompanyName(LPCTSTR lpszCompanyName,
 	return hr;
 }
 
-HRESULT ECMsgStore::xECServiceAdmin::GetCompanyList(ULONG ulFlags, ULONG *lpcCompanies, LPECCOMPANY *lppsCompanies)
+HRESULT ECMsgStore::xECServiceAdmin::GetCompanyList(ULONG ulFlags,
+    ULONG *lpcCompanies, ECCOMPANY **lppsCompanies)
 {
 	TRACE_MAPI(TRACE_ENTRY, "IECServiceAdmin::GetCompanyList", "");
 	METHOD_PROLOGUE_(ECMsgStore, ECServiceAdmin);
@@ -4499,7 +4507,9 @@ HRESULT ECMsgStore::xECServiceAdmin::DelCompanyFromRemoteViewList(ULONG cbSetCom
 	return hr;
 }
 
-HRESULT ECMsgStore::xECServiceAdmin::GetRemoteViewList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcCompanies, LPECCOMPANY *lppsCompanies)
+HRESULT ECMsgStore::xECServiceAdmin::GetRemoteViewList(ULONG cbCompanyId,
+    LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcCompanies,
+    ECCOMPANY **lppsCompanies)
 {
 	TRACE_MAPI(TRACE_ENTRY, "IECServiceAdmin::GetRemoteViewList", "");
 	METHOD_PROLOGUE_(ECMsgStore, ECServiceAdmin);

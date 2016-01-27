@@ -2892,7 +2892,7 @@ exit:
 	return list;
 }
 
-LPECCOMPANY Object_to_LPECCOMPANY(PyObject *elem, ULONG ulFlags)
+ECCOMPANY *Object_to_LPECCOMPANY(PyObject *elem, ULONG ulFlags)
 {
 	static conv_out_info<ECCOMPANY> conv_info[] = {
 		{conv_out_default<ECCOMPANY, LPTSTR, &ECCOMPANY::lpszCompanyname>, "Companyname"},
@@ -2902,7 +2902,7 @@ LPECCOMPANY Object_to_LPECCOMPANY(PyObject *elem, ULONG ulFlags)
 	};
 
 	HRESULT hr = hrSuccess;
-	LPECCOMPANY lpCompany = NULL;
+	ECCOMPANY *lpCompany = NULL;
 
 	if (elem == Py_None)
 		goto exit;
@@ -2925,7 +2925,7 @@ exit:
 	return lpCompany;
 }
 
-PyObject * Object_from_LPECCOMPANY(LPECCOMPANY lpCompany, ULONG ulFlags)
+PyObject *Object_from_LPECCOMPANY(ECCOMPANY *lpCompany, ULONG ulFlags)
 {
         if(ulFlags & MAPI_UNICODE)
 		return PyObject_CallFunction(PyTypeECCompany, "(uuls#)", lpCompany->lpszCompanyname, lpCompany->lpszServername, lpCompany->ulIsABHidden, lpCompany->sCompanyId.lpb, lpCompany->sCompanyId.cb);
@@ -2933,7 +2933,8 @@ PyObject * Object_from_LPECCOMPANY(LPECCOMPANY lpCompany, ULONG ulFlags)
 		return PyObject_CallFunction(PyTypeECCompany, "(ssls#)", lpCompany->lpszCompanyname, lpCompany->lpszServername, lpCompany->ulIsABHidden, lpCompany->sCompanyId.lpb, lpCompany->sCompanyId.cb);
 }
 
-PyObject * List_from_LPECCOMPANY(LPECCOMPANY lpCompany, ULONG cElements, ULONG ulFlags)
+PyObject *List_from_LPECCOMPANY(ECCOMPANY *lpCompany, ULONG cElements,
+    ULONG ulFlags)
 {
 	PyObject *list = PyList_New(0);
 	PyObject *item = NULL;

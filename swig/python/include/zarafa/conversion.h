@@ -125,9 +125,9 @@ ECGROUP *Object_to_LPECGROUP(PyObject *, ULONG ulFlags);
 PyObject *Object_from_LPECGROUP(ECGROUP *lpGroup, ULONG ulFlags);
 PyObject *List_from_LPECGROUP(ECGROUP *lpGroup, ULONG cElements, ULONG ulFlags);
 
-LPECCOMPANY		Object_to_LPECCOMPANY(PyObject *, ULONG ulFlags);
-PyObject *		Object_from_LPECCOMPANY(LPECCOMPANY lpCompany, ULONG ulFlags);
-PyObject *		List_from_LPECCOMPANY(LPECCOMPANY lpCompany, ULONG cElements, ULONG ulFlags);
+ECCOMPANY *Object_to_LPECCOMPANY(PyObject *, ULONG ulFlags);
+PyObject *Object_from_LPECCOMPANY(ECCOMPANY *lpCompany, ULONG ulFlags);
+PyObject *List_from_LPECCOMPANY(ECCOMPANY *lpCompany, ULONG cElements, ULONG ulFlags);
 
 ECQUOTA *Object_to_LPECQUOTA(PyObject *);
 PyObject *Object_from_LPECQUOTA(ECQUOTA *lpQuota);

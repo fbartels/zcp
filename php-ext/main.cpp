@@ -5567,7 +5567,7 @@ ZEND_FUNCTION(mapi_zarafa_getcompany_by_id)
 	// locals
 	IECUnknown *lpUnknown = NULL;
 	IECServiceAdmin *lpServiceAdmin = NULL;
-	LPECCOMPANY lpsCompany = NULL;
+	ECCOMPANY *lpsCompany = NULL;
 
 	RETVAL_FALSE;
 	MAPI_G(hr) = MAPI_E_INVALID_PARAMETER;
@@ -5619,7 +5619,7 @@ ZEND_FUNCTION(mapi_zarafa_getcompany_by_name)
 	// locals
 	IECUnknown *lpUnknown = NULL;
 	IECServiceAdmin *lpServiceAdmin = NULL;
-	LPECCOMPANY lpsCompany = NULL;
+	ECCOMPANY *lpsCompany = NULL;
 
 	RETVAL_FALSE;
 	MAPI_G(hr) = MAPI_E_INVALID_PARAMETER;
@@ -5675,7 +5675,7 @@ ZEND_FUNCTION(mapi_zarafa_getcompanylist)
 	// return value
 	// local
 	ULONG nCompanies, i;
-	LPECCOMPANY lpCompanies = NULL;
+	ECCOMPANY *lpCompanies = NULL;
 	IECUnknown *lpUnknown = NULL;;
 	IECSecurity *lpSecurity = NULL;
 
@@ -5827,7 +5827,7 @@ ZEND_FUNCTION(mapi_zarafa_get_remote_viewlist)
 	IECServiceAdmin	*lpServiceAdmin = NULL;
 	IMsgStore		*lpMsgStore = NULL;
 	ULONG			ulCompanies = 0;
-	LPECCOMPANY		lpsCompanies = NULL;
+	ECCOMPANY *lpsCompanies = NULL;
 
 	RETVAL_FALSE;
 	MAPI_G(hr) = MAPI_E_INVALID_PARAMETER;

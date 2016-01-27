@@ -5,6 +5,7 @@ typedef ECSERVERLIST *LPECSERVERLIST;
 typedef ECQUOTASTATUS *LPECQUOTASTATUS;
 typedef ECQUOTA *LPECQUOTA;
 typedef ECGROUP *LPECGROUP;
+typedef ECCOMPANY *LPECCOMPANY;
 
 %apply (ULONG cbEntryID, LPENTRYID lpEntryID) {(ULONG cbUserId, LPENTRYID lpUserId), (ULONG cbStoreId, LPENTRYID lpStoreId), (ULONG cbRootId, LPENTRYID lpRootId), (ULONG cbCompanyId, LPENTRYID lpCompanyId), (ULONG cbGroupId, LPENTRYID lpGroupId), (ULONG cbSenderId, LPENTRYID lpSenderId), (ULONG cbRecipientId, LPENTRYID lpRecipientId), (ULONG cbSetCompanyId, LPENTRYID lpSetCompanyId)};
 
@@ -85,16 +86,16 @@ public:
 	virtual HRESULT GetGroupListOfUser(ULONG cbUserId, LPENTRYID lpUserId, ULONG ulFlags, ULONG *OUTPUT /*lpcGroups*/, ECGROUP **OUTPUT /*lppsGroups*/) = 0;
 
 	// Company functions
-	virtual HRESULT CreateCompany(LPECCOMPANY lpECCompany, ULONG ulFlags, ULONG *OUTPUT, LPENTRYID *OUTPUT) = 0;
+	virtual HRESULT CreateCompany(ECCOMPANY *lpECCompany, ULONG ulFlags, ULONG *OUTPUT, LPENTRYID *OUTPUT) = 0;
 	virtual HRESULT DeleteCompany(ULONG cbCompanyId, LPENTRYID lpCompanyId) = 0;
-	virtual HRESULT SetCompany(LPECCOMPANY lpECCompany, ULONG ulFlags) = 0;
-	virtual HRESULT GetCompany(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, LPECCOMPANY *OUTPUT/*lppECCompany*/) = 0;
+	virtual HRESULT SetCompany(ECCOMPANY *lpECCompany, ULONG ulFlags) = 0;
+	virtual HRESULT GetCompany(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ECCOMPANY **OUTPUT/*lppECCompany*/) = 0;
 	virtual HRESULT ResolveCompanyName(LPTSTR lpszCompanyName, ULONG ulFlags, ULONG *OUTPUT, LPENTRYID *OUTPUT) = 0;
-	virtual HRESULT GetCompanyList(ULONG ulFlags, ULONG *OUTPUT /*lpcCompanies*/, LPECCOMPANY *OUTPUT /*lppsCompanies*/) = 0;
+	virtual HRESULT GetCompanyList(ULONG ulFlags, ULONG *OUTPUT /*lpcCompanies*/, ECCOMPANY **OUTPUT /*lppsCompanies*/) = 0;
 
 	virtual HRESULT AddCompanyToRemoteViewList(ULONG cbSetCompanyId, LPENTRYID lpSetCompanyId, ULONG cbCompanyId, LPENTRYID lpCompanyId) = 0;
 	virtual HRESULT DelCompanyFromRemoteViewList(ULONG cbSetCompanyId, LPENTRYID lpSetCompanyId, ULONG cbCompanyId, LPENTRYID lpCompanyId) = 0;
-	virtual HRESULT GetRemoteViewList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *OUTPUT /*lpcCompanies*/, LPECCOMPANY *OUTPUT /*lppsCompanies*/) = 0;
+	virtual HRESULT GetRemoteViewList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *OUTPUT /*lpcCompanies*/, ECCOMPANY **OUTPUT /*lppsCompanies*/) = 0;
 	virtual HRESULT AddUserToRemoteAdminList(ULONG cbUserId, LPENTRYID lpUserId, ULONG cbCompanyId, LPENTRYID lpCompanyId) = 0;
 	virtual HRESULT DelUserFromRemoteAdminList(ULONG cbUserId, LPENTRYID lpUserId, ULONG cbCompanyId, LPENTRYID lpCompanyId) = 0;
 	virtual HRESULT GetRemoteAdminList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *OUTPUT /*lpcUsers*/, LPECUSER *OUTPUT /*lppsUsers*/) = 0;

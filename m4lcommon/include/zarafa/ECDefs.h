@@ -221,7 +221,7 @@ typedef struct _sECCompany {
 	unsigned int	ulIsABHidden;	// Is company hidden from address book
 	SPROPMAP		sPropmap;		// Extra anonymous properties for addressbook
 	MVPROPMAP		sMVPropmap;		// Extra anonymous MV properties for addressbook
-} ECCOMPANY, *LPECCOMPANY;
+} ECCOMPANY;
 
 
 typedef struct _sUserClientUpdateStatus {

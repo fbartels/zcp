@@ -90,8 +90,8 @@ HRESULT SoapUserToUser(const struct user *lpUser, ULONG ulFLags, LPECUSER *lppsU
 HRESULT SoapGroupArrayToGroupArray(const struct groupArray *lpGroupArray, ULONG ulFLags, ULONG *lpcGroups, ECGROUP **lppsGroups);
 HRESULT SoapGroupToGroup(const struct group *lpGroup, ULONG ulFLags, ECGROUP **lppsGroup);
 
-HRESULT SoapCompanyArrayToCompanyArray(const struct companyArray *lpCompanyArray, ULONG ulFLags, ULONG *lpcCompanies, LPECCOMPANY *lppsCompanies);
-HRESULT SoapCompanyToCompany(const struct company *lpCompany, ULONG ulFLags, LPECCOMPANY *lppsCompany);
+HRESULT SoapCompanyArrayToCompanyArray(const struct companyArray *lpCompanyArray, ULONG ulFLags, ULONG *lpcCompanies, ECCOMPANY **lppsCompanies);
+HRESULT SoapCompanyToCompany(const struct company *lpCompany, ULONG ulFLags, ECCOMPANY **lppsCompany);
 
 HRESULT SvrNameListToSoapMvString8(ECSVRNAMELIST *lpSvrNameList, ULONG ulFLags, struct mv_string8 **lppsSvrNameList);
 HRESULT SoapServerListToServerList(const struct serverList *lpsServerList, ULONG ulFLags, ECSERVERLIST **lppServerList);

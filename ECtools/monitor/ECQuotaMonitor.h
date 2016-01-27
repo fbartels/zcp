@@ -70,8 +70,8 @@ public:
 	static void* Create(void* lpVoid);
 
 	HRESULT	CheckQuota();
-	HRESULT CheckCompanyQuota(LPECCOMPANY lpecCompany);
-	HRESULT CheckServerQuota(ULONG cUsers, LPECUSER lpsUserList, LPECCOMPANY lpecCompany, LPMDB lpAdminStore);
+	HRESULT CheckCompanyQuota(ECCOMPANY *lpecCompany);
+	HRESULT CheckServerQuota(ULONG cUsers, LPECUSER lpsUserList, ECCOMPANY *lpecCompany, LPMDB lpAdminStore);
 
 private:
 	HRESULT CreateMailFromTemplate(TemplateVariables *lpVars, std::string *lpstrSubject, std::string *lpstrBody);
@@ -90,7 +90,7 @@ private:
 	HRESULT CheckQuotaInterval(LPMDB lpStore, LPMESSAGE *lppMessage, bool *lpbTimeout);
 	HRESULT UpdateQuotaTimestamp(LPMESSAGE lpMessage);
 
-	HRESULT Notify(LPECUSER lpecUser, LPECCOMPANY lpecCompany, ECQUOTASTATUS *lpecQuotaStatus, LPMDB lpStore);
+	HRESULT Notify(LPECUSER lpecUser, ECCOMPANY *lpecCompany, ECQUOTASTATUS *lpecQuotaStatus, LPMDB lpStore);
 
 private:
 	ECTHREADMONITOR *m_lpThreadMonitor;

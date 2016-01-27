@@ -2038,7 +2038,7 @@ exit:
 }
 
 static HRESULT SoapCompanyToCompany(const struct company *lpCompany,
-    LPECCOMPANY lpsCompany, ULONG ulFlags, void *lpBase,
+    ECCOMPANY *lpsCompany, ULONG ulFlags, void *lpBase,
     convert_context &converter)
 {
 	HRESULT 	hr		= hrSuccess;
@@ -2083,10 +2083,10 @@ exit:
 
 HRESULT SoapCompanyArrayToCompanyArray(
     const struct companyArray *lpCompanyArray, ULONG ulFlags,
-    ULONG *lpcCompanies, LPECCOMPANY *lppsCompanies)
+    ULONG *lpcCompanies, ECCOMPANY **lppsCompanies)
 {
 	HRESULT 		hr = hrSuccess;
-	LPECCOMPANY 	lpECCompanies = NULL;
+	ECCOMPANY *lpECCompanies = NULL;
 	convert_context	converter;
 
 	if (lpCompanyArray == NULL || lpcCompanies == NULL || lppsCompanies == NULL) {
@@ -2115,10 +2115,10 @@ exit:
 }
 
 HRESULT SoapCompanyToCompany(const struct company *lpCompany, ULONG ulFlags,
-    LPECCOMPANY *lppsCompany)
+    ECCOMPANY **lppsCompany)
 {
 	HRESULT			hr			= hrSuccess;
-	LPECCOMPANY		lpsCompany	= NULL;
+	ECCOMPANY *lpsCompany = NULL;
 	convert_context	converter;
 
 	if (lpCompany == NULL || lppsCompany == NULL)
