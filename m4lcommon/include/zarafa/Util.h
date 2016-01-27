@@ -145,7 +145,7 @@ class Util _zcp_final {
 	static HRESULT HrCopyIMAPData(LPMESSAGE lpSrcMsg, LPMESSAGE lpDstMsg);
 	static HRESULT HrDeleteIMAPData(LPMESSAGE lpMsg);
 
-	static HRESULT HrGetQuotaStatus(IMsgStore *lpMsgStore, LPECQUOTA lpsQuota, LPECQUOTASTATUS *lppsQuotaStatus);
+	static HRESULT HrGetQuotaStatus(IMsgStore *lpMsgStore, LPECQUOTA lpsQuota, ECQUOTASTATUS **lppsQuotaStatus);
 
 	static HRESULT HrDeleteResidualProps(LPMESSAGE lpDestMsg, LPMESSAGE lpSourceMsg, LPSPropTagArray lpsValidProps);
 	static HRESULT ValidMapiPropInterface(LPCIID lpInterface);

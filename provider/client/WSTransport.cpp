@@ -4213,12 +4213,13 @@ exit:
 	return hr;
 }
 
-HRESULT WSTransport::GetQuotaStatus(ULONG cbUserId, LPENTRYID lpUserId, LPECQUOTASTATUS* lppsQuotaStatus)
+HRESULT WSTransport::GetQuotaStatus(ULONG cbUserId, LPENTRYID lpUserId,
+    ECQUOTASTATUS **lppsQuotaStatus)
 {
 	ECRESULT				er = erSuccess;
 	HRESULT					hr = hrSuccess;
 	struct quotaStatus		sResponse;
-	LPECQUOTASTATUS			lpsQuotaStatus =  NULL;
+	ECQUOTASTATUS *lpsQuotaStatus =  NULL;
 	entryId					sUserId = {0};
 	
 	LockSoap();

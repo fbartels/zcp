@@ -2,6 +2,7 @@
 typedef ECUSERCLIENTUPDATESTATUS *LPECUSERCLIENTUPDATESTATUS;
 typedef ECSVRNAMELIST *LPECSVRNAMELIST;
 typedef ECSERVERLIST *LPECSERVERLIST;
+typedef ECQUOTASTATUS *LPECQUOTASTATUS;
 
 %apply (ULONG cbEntryID, LPENTRYID lpEntryID) {(ULONG cbUserId, LPENTRYID lpUserId), (ULONG cbStoreId, LPENTRYID lpStoreId), (ULONG cbRootId, LPENTRYID lpRootId), (ULONG cbCompanyId, LPENTRYID lpCompanyId), (ULONG cbGroupId, LPENTRYID lpGroupId), (ULONG cbSenderId, LPENTRYID lpSenderId), (ULONG cbRecipientId, LPENTRYID lpRecipientId), (ULONG cbSetCompanyId, LPENTRYID lpSetCompanyId)};
 
@@ -106,7 +107,7 @@ public:
 	virtual HRESULT DeleteQuotaRecipient(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG cbRecipientId, LPENTRYID lpRecipientId, ULONG ulType) = 0;
 	virtual HRESULT GetQuotaRecipients(ULONG cbUserId, LPENTRYID lpUserId, ULONG ulFlags, ULONG *OUTPUT /*lpcUsers*/, LPECUSER *OUTPUT /*lppsUsers*/) = 0;
 
-	virtual HRESULT GetQuotaStatus(ULONG cbUserId, LPENTRYID lpUserId, LPECQUOTASTATUS* OUTPUT/*lppsQuotaStatus*/) = 0;
+	virtual HRESULT GetQuotaStatus(ULONG cbUserId, LPENTRYID lpUserId, ECQUOTASTATUS **OUTPUT/*lppsQuotaStatus*/) = 0;
 	
 	virtual HRESULT PurgeSoftDelete(ULONG ulDays) = 0;
 	virtual HRESULT PurgeCache(ULONG ulFlags) = 0;

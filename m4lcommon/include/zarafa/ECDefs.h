@@ -256,7 +256,7 @@ typedef struct _sECQuota {
 typedef struct _sECQuotaStatus {
 	int64_t		llStoreSize;
 	eQuotaStatus	quotaStatus;
-}ECQUOTASTATUS, *LPECQUOTASTATUS;
+} ECQUOTASTATUS;
 
 typedef struct _sECServer {
 	LPTSTR	lpszName;

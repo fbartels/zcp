@@ -90,7 +90,7 @@ private:
 	HRESULT CheckQuotaInterval(LPMDB lpStore, LPMESSAGE *lppMessage, bool *lpbTimeout);
 	HRESULT UpdateQuotaTimestamp(LPMESSAGE lpMessage);
 
-	HRESULT Notify(LPECUSER lpecUser, LPECCOMPANY lpecCompany, LPECQUOTASTATUS lpecQuotaStatus, LPMDB lpStore);
+	HRESULT Notify(LPECUSER lpecUser, LPECCOMPANY lpecCompany, ECQUOTASTATUS *lpecQuotaStatus, LPMDB lpStore);
 
 private:
 	ECTHREADMONITOR *m_lpThreadMonitor;

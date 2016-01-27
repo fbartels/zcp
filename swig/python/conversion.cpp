@@ -3146,7 +3146,7 @@ PyObject *Object_from_LPECQUOTA(LPECQUOTA lpQuota)
 	return PyObject_CallFunction(PyTypeECQuota, "(llLLL)", lpQuota->bUseDefaultQuota, lpQuota->bIsUserDefaultQuota, lpQuota->llWarnSize, lpQuota->llSoftSize, lpQuota->llHardSize);
 }
 
-PyObject *Object_from_LPECQUOTASTATUS(LPECQUOTASTATUS lpQuotaStatus)
+PyObject *Object_from_LPECQUOTASTATUS(ECQUOTASTATUS *lpQuotaStatus)
 {
 	return PyObject_CallFunction(PyTypeECQuotaStatus, "Ll", lpQuotaStatus->llStoreSize, lpQuotaStatus->quotaStatus);
 }

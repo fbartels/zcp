@@ -3358,7 +3358,8 @@ HRESULT ECMsgStore::GetQuotaRecipients(ULONG cbUserId, LPENTRYID lpUserId, ULONG
 	return hr;
 }
 
-HRESULT ECMsgStore::GetQuotaStatus(ULONG cbUserId, LPENTRYID lpUserId, LPECQUOTASTATUS* lppsQuotaStatus)
+HRESULT ECMsgStore::GetQuotaStatus(ULONG cbUserId, LPENTRYID lpUserId,
+    ECQUOTASTATUS **lppsQuotaStatus)
 {
 	HRESULT	hr = hrSuccess;
 
@@ -4571,7 +4572,8 @@ HRESULT ECMsgStore::xECServiceAdmin::GetQuotaRecipients(ULONG cbUserId, LPENTRYI
 	return pThis->GetQuotaRecipients(cbUserId, lpUserId, ulFlags, lpcUsers, lppsUsers);
 }
 
-HRESULT ECMsgStore::xECServiceAdmin::GetQuotaStatus(ULONG cbUserId, LPENTRYID lpUserId, LPECQUOTASTATUS* lppsQuotaStatus)
+HRESULT ECMsgStore::xECServiceAdmin::GetQuotaStatus(ULONG cbUserId,
+    LPENTRYID lpUserId, ECQUOTASTATUS **lppsQuotaStatus)
 {
 	TRACE_MAPI(TRACE_ENTRY, "IECServiceAdmin::GetQuotaStatus", "");
 	METHOD_PROLOGUE_(ECMsgStore, ECServiceAdmin);

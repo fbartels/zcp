@@ -132,7 +132,7 @@ PyObject *		List_from_LPECCOMPANY(LPECCOMPANY lpCompany, ULONG cElements, ULONG 
 LPECQUOTA		Object_to_LPECQUOTA(PyObject *);
 PyObject *		Object_from_LPECQUOTA(LPECQUOTA lpQuota);
 
-PyObject *		Object_from_LPECQUOTASTATUS(LPECQUOTASTATUS lpQuotaStatus);
+PyObject *Object_from_LPECQUOTASTATUS(ECQUOTASTATUS *lpQuotaStatus);
 
 PyObject *Object_from_LPECUSERCLIENTUPDATESTATUS(ECUSERCLIENTUPDATESTATUS *lpECUCUS);
 

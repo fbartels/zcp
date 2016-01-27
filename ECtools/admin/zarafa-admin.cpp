@@ -490,7 +490,7 @@ static HRESULT setQuota(IECServiceAdmin *lpServiceAdmin, ULONG cbEid,
     long long hard, bool print = false, bool company = false)
 {
 	HRESULT hr = hrSuccess;
-	LPECQUOTASTATUS lpsQuotaStatus = NULL;
+	ECQUOTASTATUS *lpsQuotaStatus = NULL;
 	LPECQUOTA lpsQuota = NULL;
 	ECQUOTA sQuota;
 
@@ -1433,7 +1433,7 @@ static HRESULT print_details(LPMAPISESSION lpSession, IECUnknown *lpECMsgStore,
 	LPECUSER lpECUser = NULL;
 	LPECGROUP lpECGroup = NULL;
 	LPECCOMPANY lpECCompany = NULL;
-	LPECQUOTASTATUS lpsQuotaStatus = NULL;
+	ECQUOTASTATUS *lpsQuotaStatus = NULL;
 	LPECQUOTA lpsQuota = NULL;
 	LPECGROUP lpECGroups = NULL;
 	LPECUSER lpECUsers = NULL;
@@ -2410,7 +2410,7 @@ int main(int argc, char* argv[])
 	ECCOMPANY sECCompany;
 	LPECCOMPANY lpECCompanies = NULL;
 
-	LPECQUOTASTATUS	lpsQuotaStatus = NULL;
+	ECQUOTASTATUS *lpsQuotaStatus = NULL;
 	LPECQUOTA lpsQuota = NULL;
 
 	ECSVRNAMELIST *lpsServer = NULL;

@@ -207,7 +207,7 @@ HRESULT ECQuotaMonitor::CheckQuota()
 
 	/* Quota information */
 	LPECQUOTA			lpsQuota = NULL;
-	LPECQUOTASTATUS		lpsQuotaStatus = NULL;
+	ECQUOTASTATUS *lpsQuotaStatus = NULL;
 
 	/* Obtain Service object */
 	hr = HrGetOneProp(m_lpMDBAdmin, PR_EC_OBJECT, &lpsObject);
@@ -1313,7 +1313,8 @@ exit:
  * @param[in]	lpStore The store that is over quota
  * @return MAPI error code
  */
-HRESULT ECQuotaMonitor::Notify(LPECUSER lpecUser, LPECCOMPANY lpecCompany, LPECQUOTASTATUS lpecQuotaStatus, LPMDB lpStore)
+HRESULT ECQuotaMonitor::Notify(LPECUSER lpecUser, LPECCOMPANY lpecCompany,
+    ECQUOTASTATUS *lpecQuotaStatus, LPMDB lpStore)
 {
 	HRESULT hr = hrSuccess;
 	IECServiceAdmin *lpServiceAdmin = NULL;
