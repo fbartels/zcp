@@ -6280,7 +6280,7 @@ ZEND_FUNCTION(mapi_zarafa_getpermissionrules)
 	// return value
 	zval *zval_data_value = NULL;
 	ULONG cPerms = 0;
-	LPECPERMISSION lpECPerms = NULL;
+	ECPERMISSION *lpECPerms = NULL;
 
 	// local
 	int type = -1;
@@ -6361,7 +6361,7 @@ ZEND_FUNCTION(mapi_zarafa_setpermissionrules)
 	IECUnknown	*lpUnknown = NULL;
 	IECSecurity *lpSecurity = NULL;
 	ULONG cPerms = 0;
-	LPECPERMISSION lpECPerms = NULL;
+	ECPERMISSION *lpECPerms = NULL;
 	HashTable *target_hash = NULL;
 	ULONG i, j;
 	zval **entry = NULL, **value = NULL;

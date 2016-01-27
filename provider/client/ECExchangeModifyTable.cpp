@@ -370,7 +370,7 @@ HRESULT ECExchangeModifyTable::OpenACLS(ECMAPIProp *lpecMapiProp, ULONG ulFlags,
 	HRESULT hr = hrSuccess;
 	IECSecurity *lpSecurity = NULL;
 	ULONG cPerms = 0;
-	LPECPERMISSION lpECPerms = NULL;
+	ECPERMISSION *lpECPerms = NULL;
 	SPropValue	lpsPropMember[4];
 	LPECUSER lpECUser = NULL;
 	LPECGROUP lpECGroup = NULL;
@@ -462,7 +462,7 @@ HRESULT ECExchangeModifyTable::SaveACLS(ECMAPIProp *lpecMapiProp, ECMemTable *lp
 	LPSPropValue lpMemberRights = NULL; //do not free
 	LPSPropValue lpMemberID = NULL; //do not free
 	
-	LPECPERMISSION lpECPermissions = NULL;
+	ECPERMISSION *lpECPermissions = NULL;
 	ULONG			cECPerm = 0;
 
 	entryId sEntryId = {0};

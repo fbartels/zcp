@@ -3726,12 +3726,14 @@ exit:
 	return hr;
 }
 
-HRESULT WSTransport::HrGetPermissionRules(int ulType, ULONG cbEntryID, LPENTRYID lpEntryID, ULONG* lpcPermissions, LPECPERMISSION* lppECPermissions)
+HRESULT WSTransport::HrGetPermissionRules(int ulType, ULONG cbEntryID,
+    LPENTRYID lpEntryID, ULONG *lpcPermissions,
+    ECPERMISSION **lppECPermissions)
 {
 	ECRESULT		er = erSuccess;
 	HRESULT			hr = hrSuccess;
 	entryId			sEntryId = {0}; // Do not free
-	LPECPERMISSION	lpECPermissions = NULL;
+	ECPERMISSION *lpECPermissions = NULL;
 	
 	LPENTRYID		lpUnWrapStoreID = NULL;
 	ULONG			cbUnWrapStoreID = 0;
@@ -3791,7 +3793,8 @@ exit:
 	return hr;
 }
 
-HRESULT WSTransport::HrSetPermissionRules(ULONG cbEntryID, LPENTRYID lpEntryID, ULONG cPermissions, LPECPERMISSION lpECPermissions)
+HRESULT WSTransport::HrSetPermissionRules(ULONG cbEntryID, LPENTRYID lpEntryID,
+    ULONG cPermissions, ECPERMISSION *lpECPermissions)
 {
 	ECRESULT		er = erSuccess;
 	HRESULT			hr = hrSuccess;

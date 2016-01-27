@@ -56,8 +56,8 @@ public:
 	virtual HRESULT GetGroupList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcGroups, LPECGROUP *lppsGroups) = 0;
 	virtual HRESULT GetCompanyList(ULONG ulFlags, ULONG *lpcCompanies, LPECCOMPANY *lppsCompanies) = 0;
 
-	virtual HRESULT GetPermissionRules(int ulType, ULONG* lpcPermissions, LPECPERMISSION* lppECPermissions) = 0;
-	virtual HRESULT SetPermissionRules(ULONG cPermissions, LPECPERMISSION lpECPermissions) = 0;
+	virtual HRESULT GetPermissionRules(int ulType, ULONG* lpcPermissions, ECPERMISSION **lppECPermissions) = 0;
+	virtual HRESULT SetPermissionRules(ULONG cPermissions, ECPERMISSION *lpECPermissions) = 0;
 };
 
 #endif

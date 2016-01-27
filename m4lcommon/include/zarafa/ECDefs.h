@@ -243,7 +243,7 @@ typedef struct _sECPermission {
 	unsigned int	ulRights;
 	unsigned int	ulState;
 	ECENTRYID		sUserId;
-}ECPERMISSION, *LPECPERMISSION;
+} ECPERMISSION;
 
 typedef struct _sECQuota {
 	bool			bUseDefaultQuota;
