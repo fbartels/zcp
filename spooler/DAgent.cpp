@@ -3424,7 +3424,7 @@ static void *HandlerLMTP(void *lpArg)
 				strftime(timeStr, sizeof timeStr, "%a, %d %b %Y %T %z (%Z)", tm);
 
 				fprintf(tmp, "Received: from %s (%s)\r\n\tby %s (Zarafa-spooler) with LMTP\r\n\tfor <%s>; %s\r\n",
-					heloName.c_str(), lpArgs->lpChannel->GetIPAddress().c_str(),
+					heloName.c_str(), lpArgs->lpChannel->peer_addr(),
 					serverName.c_str(),
 					curFrom.c_str(),
 					timeStr);

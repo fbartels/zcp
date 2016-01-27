@@ -53,6 +53,11 @@ Changes:
 * Default PID file locations have changed to /var/run/zarafad.
   Check for duplicate programs running on non-systemd services.
 
+* Several fixes to character set recognition. The MIME RFCs are
+  pretty clear on where the declarations of charset can be found
+  (ZCP looked elsewhere), what characters are allowed where, and
+  how MIME parts are to be parsed.
+
 * calendar: disregard timezones for all-day events so that they
   always start and end at 00:00.
 * server: improved reporting in case all file descriptors are used up

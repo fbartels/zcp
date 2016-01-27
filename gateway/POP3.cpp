@@ -399,7 +399,7 @@ HRESULT POP3::HrCmdUser(const string &strUser) {
 	if (!lpChannel->UsingSsl() && lpChannel->sslctx() && plain && strcmp(plain, "yes") == 0) {
 		hr = HrResponse(POP3_RESP_AUTH_ERROR, "Plaintext authentication disallowed on non-secure (SSL/TLS) connections");
 		lpLogger->Log(EC_LOGLEVEL_ERROR, "Aborted login from %s with username \"%s\" (tried to use disallowed plaintext auth)",
-					  lpChannel->GetIPAddress().c_str(), strUser.c_str());
+					  lpChannel->peer_addr(), strUser.c_str());
 	} else if (lpStore != NULL) {
 		hr = HrResponse(POP3_RESP_AUTH_ERROR, "Can't login twice");
 	} else if (strUser.length() > POP3_MAX_RESPONSE_LENGTH) {
@@ -429,10 +429,10 @@ HRESULT POP3::HrCmdPass(const string &strPass) {
 		hr = HrResponse(POP3_RESP_AUTH_ERROR, "Plaintext authentication disallowed on non-secure (SSL/TLS) connections");
 		if(szUser.empty())
 			lpLogger->Log(EC_LOGLEVEL_ERROR, "Aborted login from %s without username (tried to use disallowed "
-							 "plaintext auth)", lpChannel->GetIPAddress().c_str());
+							 "plaintext auth)", lpChannel->peer_addr());
 		else
 			lpLogger->Log(EC_LOGLEVEL_ERROR, "Aborted login from %s with username \"%s\" (tried to use disallowed "
-							 "plaintext auth)", lpChannel->GetIPAddress().c_str(), szUser.c_str());
+							 "plaintext auth)", lpChannel->peer_addr(), szUser.c_str());
 	} else if (lpStore != NULL) {
 		hr = HrResponse(POP3_RESP_AUTH_ERROR, "Can't login twice");
 	} else if (strPass.length() > POP3_MAX_RESPONSE_LENGTH) {
@@ -869,7 +869,7 @@ HRESULT POP3::HrLogin(const std::string &strUsername, const std::string &strPass
 	hr = HrOpenECSession(lpLogger, &lpSession, "gateway/pop3", PROJECT_SVN_REV_STR, strwUsername.c_str(), strwPassword.c_str(), m_strPath.c_str(), EC_PROFILE_FLAGS_NO_NOTIFICATIONS, NULL, NULL);
 	if (hr != hrSuccess) {
 		lpLogger->Log(EC_LOGLEVEL_ERROR, "Failed to login from %s with invalid username \"%s\" or wrong password. Error: 0x%X",
-					  lpChannel->GetIPAddress().c_str(), strUsername.c_str(), hr);
+					  lpChannel->peer_addr(), strUsername.c_str(), hr);
 		m_ulFailedLogins++;
 		if (m_ulFailedLogins >= LOGIN_RETRIES)
 			// disconnect client
@@ -911,7 +911,7 @@ HRESULT POP3::HrLogin(const std::string &strUsername, const std::string &strPass
 		goto exit;
 	}
 
-	lpLogger->Log(EC_LOGLEVEL_ERROR, "POP3 Login from %s for user %s", lpChannel->GetIPAddress().c_str(), strUsername.c_str());
+	lpLogger->Log(EC_LOGLEVEL_ERROR, "POP3 Login from %s for user %s", lpChannel->peer_addr(), strUsername.c_str());
 
 exit:
 	MAPIFreeBuffer(lpEntryID);

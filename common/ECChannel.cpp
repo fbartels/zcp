@@ -667,16 +667,21 @@ char * ECChannel::SSL_gets(char *buf, int *lpulLen) {
 
 void ECChannel::SetIPAddress(const struct sockaddr *sa, size_t slen)
 {
-	char buf[128];
-	if (getnameinfo(sa, slen, buf, sizeof(buf), NULL, 0,
+	char host[256], serv[16];
+	if (getnameinfo(sa, slen, host, sizeof(host), serv, sizeof(serv),
 	    NI_NUMERICHOST | NI_NUMERICSERV) != 0)
-		snprintf(buf, sizeof(buf), "<socket type %d>", sa->sa_family);
-	strIP = buf;
+		snprintf(peer_atxt, sizeof(peer_atxt), "<indeterminate>");
+	else if (sa->sa_family == AF_INET6)
+		snprintf(peer_atxt, sizeof(peer_atxt), "[%s]:%s", host, serv);
+	else if (sa->sa_family == AF_UNIX)
+		snprintf(peer_atxt, sizeof(peer_atxt), "unix:%s:%s", host, serv);
+	else
+		snprintf(peer_atxt, sizeof(peer_atxt), "%s:%s", host, serv);
 }
 
-const std::string& ECChannel::GetIPAddress() const
+const char *ECChannel::peer_addr(void) const
 {
-	return strIP;
+	return peer_atxt;
 }
 
 /**
@@ -945,7 +950,7 @@ HRESULT HrAccept(ECLogger *lpLogger, int ulListenFD, ECChannel **lppChannel)
 	lpChannel = new ECChannel(socket);
 	lpChannel->SetIPAddress(reinterpret_cast<const struct sockaddr *>(&client), len);
 	if (lpLogger)
-		lpLogger->Log(EC_LOGLEVEL_INFO, "Accepted connection from %s", lpChannel->GetIPAddress().c_str());
+		lpLogger->Log(EC_LOGLEVEL_INFO, "Accepted connection from %s", lpChannel->peer_addr());
 
 	*lppChannel = lpChannel;
 
