@@ -159,7 +159,7 @@ typedef struct _sECEntryId
 {
 	unsigned int	cb;
 	unsigned char*	lpb;
-} ECENTRYID, *LPECENTRYID;
+} ECENTRYID;
 
 typedef struct _sECServerNameList
 {

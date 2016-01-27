@@ -63,7 +63,7 @@ typedef struct {
 	ULONG				ulConnection;
 	GUID				guid;
 	ULONG				ulSupportConnection;
-}ECADVISE, *LPECADVISE;
+} ECADVISE;
 
 typedef struct {
 	ULONG					ulSyncId;
@@ -72,7 +72,7 @@ typedef struct {
 	LPECCHANGEADVISESINK	lpAdviseSink;
 	ULONG					ulConnection;
 	GUID					guid;
-}ECCHANGEADVISE, *LPECCHANGEADVISE;
+} ECCHANGEADVISE;
 
 typedef std::map<int, ECADVISE*> ECMAPADVISE;
 typedef std::map<int, ECCHANGEADVISE*> ECMAPCHANGEADVISE;
