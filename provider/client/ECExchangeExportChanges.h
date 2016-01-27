@@ -129,7 +129,7 @@ private:
 	IID				m_iidMessage;
 
 	LPEXCHANGEIMPORTCONTENTSCHANGES		m_lpImportContents;
-	LPECIMPORTCONTENTSCHANGES			m_lpImportStreamedContents;
+	IECImportContentsChanges *m_lpImportStreamedContents;
 	LPEXCHANGEIMPORTHIERARCHYCHANGES	m_lpImportHierarchy;
 	
 	WSMessageStreamExporterPtr			m_ptrStreamExporter;
