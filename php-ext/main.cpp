@@ -4634,7 +4634,7 @@ ZEND_FUNCTION(mapi_zarafa_getquota)
 	// local
 	IECUnknown      *lpUnknown = NULL;
 	IECServiceAdmin *lpServiceAdmin = NULL;
-	LPECQUOTA		lpQuota = NULL;
+	ECQUOTA *lpQuota = NULL;
 
 	RETVAL_FALSE;
 	MAPI_G(hr) = MAPI_E_INVALID_PARAMETER;
@@ -4695,7 +4695,7 @@ ZEND_FUNCTION(mapi_zarafa_setquota)
 	// local
 	IECUnknown      *lpUnknown = NULL;
 	IECServiceAdmin *lpServiceAdmin = NULL;
-	LPECQUOTA		lpQuota = NULL;
+	ECQUOTA *lpQuota = NULL;
 	HashTable		*data = NULL;
 	zval			**value = NULL;
 

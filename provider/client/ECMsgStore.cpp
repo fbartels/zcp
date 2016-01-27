@@ -3313,7 +3313,8 @@ HRESULT ECMsgStore::SyncUsers(ULONG cbCompanyId, LPENTRYID lpCompanyId)
 	return hr;
 }
 
-HRESULT ECMsgStore::GetQuota(ULONG cbUserId, LPENTRYID lpUserId, bool bGetUserDefault, LPECQUOTA* lppsQuota)
+HRESULT ECMsgStore::GetQuota(ULONG cbUserId, LPENTRYID lpUserId,
+    bool bGetUserDefault, ECQUOTA **lppsQuota)
 {
 	HRESULT	hr = hrSuccess;
 
@@ -3322,7 +3323,8 @@ HRESULT ECMsgStore::GetQuota(ULONG cbUserId, LPENTRYID lpUserId, bool bGetUserDe
 	return hr;
 }
 
-HRESULT ECMsgStore::SetQuota(ULONG cbUserId, LPENTRYID lpUserId, LPECQUOTA lpsQuota)
+HRESULT ECMsgStore::SetQuota(ULONG cbUserId, LPENTRYID lpUserId,
+    ECQUOTA *lpsQuota)
 {
 	HRESULT	hr = hrSuccess;
 
@@ -4533,7 +4535,8 @@ HRESULT ECMsgStore::xECServiceAdmin::SyncUsers(ULONG cbCompanyId, LPENTRYID lpCo
 	return hr;
 }
 
-HRESULT ECMsgStore::xECServiceAdmin::GetQuota(ULONG cbUserId, LPENTRYID lpUserId, bool bGetUserDefault, LPECQUOTA* lppsQuota)
+HRESULT ECMsgStore::xECServiceAdmin::GetQuota(ULONG cbUserId,
+    LPENTRYID lpUserId, bool bGetUserDefault, ECQUOTA **lppsQuota)
 {
 	TRACE_MAPI(TRACE_ENTRY, "IECServiceAdmin::GetQuota", "");
 	METHOD_PROLOGUE_(ECMsgStore, ECServiceAdmin);
@@ -4542,7 +4545,8 @@ HRESULT ECMsgStore::xECServiceAdmin::GetQuota(ULONG cbUserId, LPENTRYID lpUserId
 	return hr;
 }
 
-HRESULT ECMsgStore::xECServiceAdmin::SetQuota(ULONG cbUserId, LPENTRYID lpUserId, LPECQUOTA lpsQuota)
+HRESULT ECMsgStore::xECServiceAdmin::SetQuota(ULONG cbUserId,
+    LPENTRYID lpUserId, ECQUOTA *lpsQuota)
 {
 	TRACE_MAPI(TRACE_ENTRY, "IECServiceAdmin::SetQuota", "");
 	METHOD_PROLOGUE_(ECMsgStore, ECServiceAdmin);

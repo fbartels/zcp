@@ -4022,12 +4022,13 @@ exit:
 	return hr;
 }
 
-HRESULT WSTransport::GetQuota(ULONG cbUserId, LPENTRYID lpUserId, bool bGetUserDefault, LPECQUOTA* lppsQuota)
+HRESULT WSTransport::GetQuota(ULONG cbUserId, LPENTRYID lpUserId,
+    bool bGetUserDefault, ECQUOTA **lppsQuota)
 {
 	ECRESULT				er = erSuccess;
 	HRESULT					hr = hrSuccess;
 	struct quotaResponse	sResponse;
-	LPECQUOTA				lpsQuota =  NULL;
+	ECQUOTA *lpsQuota =  NULL;
 	entryId					sUserId = {0};
 	
 	LockSoap();
@@ -4066,7 +4067,8 @@ HRESULT WSTransport::GetQuota(ULONG cbUserId, LPENTRYID lpUserId, bool bGetUserD
 	return hr;
 }
 
-HRESULT WSTransport::SetQuota(ULONG cbUserId, LPENTRYID lpUserId, LPECQUOTA lpsQuota)
+HRESULT WSTransport::SetQuota(ULONG cbUserId, LPENTRYID lpUserId,
+    ECQUOTA *lpsQuota)
 {
 	ECRESULT				er = erSuccess;
 	HRESULT					hr = hrSuccess;

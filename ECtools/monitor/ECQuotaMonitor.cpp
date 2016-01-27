@@ -206,7 +206,7 @@ HRESULT ECQuotaMonitor::CheckQuota()
 	LPMDB				lpMsgStore = NULL;
 
 	/* Quota information */
-	LPECQUOTA			lpsQuota = NULL;
+	ECQUOTA *lpsQuota = NULL;
 	ECQUOTASTATUS *lpsQuotaStatus = NULL;
 
 	/* Obtain Service object */
@@ -1327,7 +1327,7 @@ HRESULT ECQuotaMonitor::Notify(LPECUSER lpecUser, LPECCOMPANY lpecCompany,
 	LPECUSER lpecFromUser = NULL;
 	ULONG cToUsers = 0;
 	LPECUSER lpToUsers = NULL;
-	LPECQUOTA lpecQuota = NULL;
+	ECQUOTA *lpecQuota = NULL;
 	ULONG cbUserId = 0;
 	LPENTRYID lpUserId = NULL;
 	struct TemplateVariables sVars;

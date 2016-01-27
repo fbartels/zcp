@@ -129,8 +129,8 @@ LPECCOMPANY		Object_to_LPECCOMPANY(PyObject *, ULONG ulFlags);
 PyObject *		Object_from_LPECCOMPANY(LPECCOMPANY lpCompany, ULONG ulFlags);
 PyObject *		List_from_LPECCOMPANY(LPECCOMPANY lpCompany, ULONG cElements, ULONG ulFlags);
 
-LPECQUOTA		Object_to_LPECQUOTA(PyObject *);
-PyObject *		Object_from_LPECQUOTA(LPECQUOTA lpQuota);
+ECQUOTA *Object_to_LPECQUOTA(PyObject *);
+PyObject *Object_from_LPECQUOTA(ECQUOTA *lpQuota);
 
 PyObject *Object_from_LPECQUOTASTATUS(ECQUOTASTATUS *lpQuotaStatus);
 

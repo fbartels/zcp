@@ -3107,7 +3107,7 @@ int GetExceptionError(PyObject *object, HRESULT *lphr)
 	return 1;
 }
 
-LPECQUOTA Object_to_LPECQUOTA(PyObject *elem)
+ECQUOTA *Object_to_LPECQUOTA(PyObject *elem)
 {
 	static conv_out_info<ECQUOTA> conv_info[] = {
 		{conv_out_default<ECQUOTA, bool, &ECQUOTA::bUseDefaultQuota>, "bUseDefaultQuota"},
@@ -3118,7 +3118,7 @@ LPECQUOTA Object_to_LPECQUOTA(PyObject *elem)
 	};
 
 	HRESULT hr = hrSuccess;
-	LPECQUOTA lpQuota = NULL;
+	ECQUOTA *lpQuota = NULL;
 
 	if (elem == Py_None)
 		goto exit;
@@ -3141,7 +3141,7 @@ exit:
 	return lpQuota;
 }
 
-PyObject *Object_from_LPECQUOTA(LPECQUOTA lpQuota)
+PyObject *Object_from_LPECQUOTA(ECQUOTA *lpQuota)
 {
 	return PyObject_CallFunction(PyTypeECQuota, "(llLLL)", lpQuota->bUseDefaultQuota, lpQuota->bIsUserDefaultQuota, lpQuota->llWarnSize, lpQuota->llSoftSize, lpQuota->llHardSize);
 }

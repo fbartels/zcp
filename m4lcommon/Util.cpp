@@ -4120,7 +4120,7 @@ HRESULT Util::HrDeleteIMAPData(LPMESSAGE lpMsg)
  * 
  * @return MAPI error code
  */
-HRESULT Util::HrGetQuotaStatus(IMsgStore *lpMsgStore, LPECQUOTA lpsQuota,
+HRESULT Util::HrGetQuotaStatus(IMsgStore *lpMsgStore, ECQUOTA *lpsQuota,
     ECQUOTASTATUS **lppsQuotaStatus)
 {
 	HRESULT			hr = hrSuccess;

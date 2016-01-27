@@ -251,7 +251,7 @@ typedef struct _sECQuota {
 	int64_t		llWarnSize;
 	int64_t		llSoftSize;
 	int64_t		llHardSize;
-}ECQUOTA, *LPECQUOTA;
+} ECQUOTA;
 
 typedef struct _sECQuotaStatus {
 	int64_t		llStoreSize;
