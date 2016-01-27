@@ -231,7 +231,7 @@ typedef struct _sUserClientUpdateStatus {
 	LPTSTR			lpszLatestversion;
 	LPTSTR			lpszComputername;
 	unsigned int 	ulStatus;
-}ECUSERCLIENTUPDATESTATUS, *LPECUSERCLIENTUPDATESTATUS;
+} ECUSERCLIENTUPDATESTATUS;
 
 #define UPDATE_STATUS_UNKNOWN	0
 #define UPDATE_STATUS_SUCCESS   1

@@ -2837,7 +2837,8 @@ exit:
 	return hr;
 }
 
-HRESULT WSTransport::HrGetUserClientUpdateStatus(ULONG cbUserId, LPENTRYID lpUserId, ULONG ulFlags, LPECUSERCLIENTUPDATESTATUS *lppECUCUS)
+HRESULT WSTransport::HrGetUserClientUpdateStatus(ULONG cbUserId,
+    LPENTRYID lpUserId, ULONG ulFlags, ECUSERCLIENTUPDATESTATUS **lppECUCUS)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;

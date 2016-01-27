@@ -1455,7 +1455,7 @@ static HRESULT print_details(LPMAPISESSION lpSession, IECUnknown *lpECMsgStore,
 	LPENTRYID lpObjectId = NULL;
 	ArchiveManagePtr ptrArchiveManage;
 	ArchiveList lstArchives;
-	LPECUSERCLIENTUPDATESTATUS lpECUCUS = NULL;
+	ECUSERCLIENTUPDATESTATUS *lpECUCUS = NULL;
 	convert_context converter;
 
 	hr = lpECMsgStore->QueryInterface(IID_IECServiceAdmin, (void **)&lpServiceAdmin);

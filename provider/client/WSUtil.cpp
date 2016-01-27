@@ -2635,10 +2635,11 @@ exit:
 	return hr;
 }
 
-HRESULT CopyUserClientUpdateStatusFromSOAP(struct userClientUpdateStatusResponse &sUCUS, ULONG ulFlags, LPECUSERCLIENTUPDATESTATUS *lppECUCUS)
+HRESULT CopyUserClientUpdateStatusFromSOAP(struct userClientUpdateStatusResponse &sUCUS,
+    ULONG ulFlags, ECUSERCLIENTUPDATESTATUS **lppECUCUS)
 {
 	HRESULT hr = hrSuccess;
-	LPECUSERCLIENTUPDATESTATUS lpECUCUS = NULL;
+	ECUSERCLIENTUPDATESTATUS *lpECUCUS = NULL;
 	convert_context converter;
 
 	hr = MAPIAllocateBuffer(sizeof(ECUSERCLIENTUPDATESTATUS), (void**)&lpECUCUS);
