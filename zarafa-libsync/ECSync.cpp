@@ -437,11 +437,11 @@ HRESULT ECSync::HrSetupChangeAdvisors()
 {
 	HRESULT					hr = hrSuccess;
 	IECChangeAdvisor *lpOnlineAdvisor = NULL;
-	LPECCHANGEADVISESINK	lpOnlineAdviseSink = NULL;
+	IECChangeAdviseSink *lpOnlineAdviseSink = NULL;
 	LPSTREAM				lpOnlineStream = NULL;
 	IECChangeAdvisor *lpOfflineAdvisor = NULL;
 	LPSTREAM				lpOfflineStream = NULL;
-	LPECCHANGEADVISESINK	lpOfflineAdviseSink = NULL;
+	IECChangeAdviseSink *lpOfflineAdviseSink = NULL;
 
 
 	// Open the advisors so we know whether they are supported.

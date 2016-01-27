@@ -138,7 +138,7 @@ public:
 	 *					pointer to the change advise sink upon successful completion.
 	 * @return HRESULT.
 	 */
-	HRESULT HrGetChangeAdviseSink(LPECCHANGEADVISESINK *lppChangeAdviseSink);
+	HRESULT HrGetChangeAdviseSink(IECChangeAdviseSink **lppChangeAdviseSink);
 
 	/**
 	 * Get the full hierarchy for the store on which this sync context operates.
@@ -364,7 +364,7 @@ private:	// members
 	ECSyncSettings			*m_lpSettings;
 
 	IECChangeAdvisor *m_lpChangeAdvisor;
-	LPECCHANGEADVISESINK	m_lpChangeAdviseSink;
+	IECChangeAdviseSink *m_lpChangeAdviseSink;
 
 	StatusStreamMap			m_mapSyncStatus;
 	SyncStateMap			m_mapStates;

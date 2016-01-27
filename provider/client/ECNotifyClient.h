@@ -69,7 +69,7 @@ typedef struct {
 	ULONG					ulSyncId;
 	ULONG					ulChangeId;
 	ULONG					ulEventMask;
-	LPECCHANGEADVISESINK	lpAdviseSink;
+	IECChangeAdviseSink *lpAdviseSink;
 	ULONG					ulConnection;
 	GUID					guid;
 } ECCHANGEADVISE;
@@ -91,7 +91,7 @@ public:
 	virtual HRESULT QueryInterface(REFIID refiid, void **lppInterface);
 
 	virtual HRESULT Advise(ULONG cbKey, LPBYTE lpKey, ULONG ulEventMask, LPMAPIADVISESINK lpAdviseSink, ULONG *lpulConnection);
-	virtual HRESULT Advise(const ECLISTSYNCSTATE &lstSyncStates, LPECCHANGEADVISESINK lpChangeAdviseSink, ECLISTCONNECTION *lplstConnections);
+	virtual HRESULT Advise(const ECLISTSYNCSTATE &lstSyncStates, IECChangeAdviseSink *lpChangeAdviseSink, ECLISTCONNECTION *lplstConnections);
 	virtual HRESULT Unadvise(ULONG ulConnection);
 	virtual HRESULT Unadvise(const ECLISTCONNECTION &lstConnections);
 
@@ -106,7 +106,7 @@ public:
 
 	// Only register an advise client side
 	virtual HRESULT RegisterAdvise(ULONG cbKey, LPBYTE lpKey, ULONG ulEventMask, bool bSynchronous, LPMAPIADVISESINK lpAdviseSink, ULONG *lpulConnection);
-	virtual HRESULT RegisterChangeAdvise(ULONG ulSyncId, ULONG ulChangeId, LPECCHANGEADVISESINK lpChangeAdviseSink, ULONG *lpulConnection);
+	virtual HRESULT RegisterChangeAdvise(ULONG ulSyncId, ULONG ulChangeId, IECChangeAdviseSink *lpChangeAdviseSink, ULONG *lpulConnection);
 	virtual HRESULT UnRegisterAdvise(ULONG ulConnection);
 
 	virtual HRESULT UpdateSyncStates(const ECLISTSYNCID &lstSyncID, ECLISTSYNCSTATE *lplstSyncState);

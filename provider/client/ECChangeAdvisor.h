@@ -109,7 +109,7 @@ public:
 
 	// IECChangeAdvisor
 	virtual HRESULT GetLastError(HRESULT hResult, ULONG ulFlags, LPMAPIERROR *lppMAPIError);
-	virtual HRESULT Config(LPSTREAM lpStream, LPGUID lpGUID, LPECCHANGEADVISESINK lpAdviseSink, ULONG ulFlags);
+	virtual HRESULT Config(LPSTREAM lpStream, LPGUID lpGUID, IECChangeAdviseSink *lpAdviseSink, ULONG ulFlags);
 	virtual HRESULT UpdateState(LPSTREAM lpStream);
 	virtual HRESULT AddKeys(LPENTRYLIST lpEntryList);
 	virtual HRESULT RemoveKeys(LPENTRYLIST lpEntryList);
@@ -177,7 +177,7 @@ private:
 
 		// IECChangeAdvisor
 		virtual HRESULT __stdcall GetLastError(HRESULT hResult, ULONG ulFlags, LPMAPIERROR *lppMAPIError) _zcp_override;
-		virtual HRESULT __stdcall Config(LPSTREAM lpStream, LPGUID lpGUID, LPECCHANGEADVISESINK lpAdviseSink, ULONG ulFlags) _zcp_override;
+		virtual HRESULT __stdcall Config(LPSTREAM lpStream, LPGUID lpGUID, IECChangeAdviseSink *lpAdviseSink, ULONG ulFlags) _zcp_override;
 		virtual HRESULT __stdcall UpdateState(LPSTREAM lpStream) _zcp_override;
 		virtual HRESULT __stdcall AddKeys(LPENTRYLIST lpEntryList) _zcp_override;
 		virtual HRESULT __stdcall RemoveKeys(LPENTRYLIST lpEntryList) _zcp_override;
@@ -187,7 +187,7 @@ private:
 
 
 	ECMsgStore				*m_lpMsgStore;
-	LPECCHANGEADVISESINK	m_lpChangeAdviseSink;
+	IECChangeAdviseSink *m_lpChangeAdviseSink;
 	ULONG					m_ulFlags;
 	pthread_mutex_t			m_hConnectionLock;
 	ConnectionMap			m_mapConnections;

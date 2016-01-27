@@ -150,7 +150,7 @@ private:
 
 static HRESULT HrCreateECChangeAdviseSink(ECSyncContext *lpsSyncContext,
     ECChangeAdviseSink::NOTIFYCALLBACK fnCallback,
-    LPECCHANGEADVISESINK *lppAdviseSink)
+    IECChangeAdviseSink **lppAdviseSink)
 {
 	HRESULT				hr = hrSuccess;
 	ECChangeAdviseSink	*lpAdviseSink = NULL;
@@ -336,7 +336,7 @@ exit:
 }
 
 
-HRESULT ECSyncContext::HrGetChangeAdviseSink(LPECCHANGEADVISESINK *lppChangeAdviseSink)
+HRESULT ECSyncContext::HrGetChangeAdviseSink(IECChangeAdviseSink **lppChangeAdviseSink)
 {
 	ASSERT(m_lpChangeAdviseSink != NULL);
 	return m_lpChangeAdviseSink->QueryInterface(IID_IECChangeAdviseSink, (void**)lppChangeAdviseSink);

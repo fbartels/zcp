@@ -293,7 +293,8 @@ exit:
 	return hr;
 }
 
-HRESULT ECNotifyClient::RegisterChangeAdvise(ULONG ulSyncId, ULONG ulChangeId, LPECCHANGEADVISESINK lpChangeAdviseSink, ULONG *lpulConnection)
+HRESULT ECNotifyClient::RegisterChangeAdvise(ULONG ulSyncId, ULONG ulChangeId,
+    IECChangeAdviseSink *lpChangeAdviseSink, ULONG *lpulConnection)
 {
 	HRESULT			hr = MAPI_E_NO_SUPPORT;
 	ECCHANGEADVISE*	pEcAdvise = NULL;
@@ -425,7 +426,8 @@ exit:
 	return hr;
 }
 
-HRESULT ECNotifyClient::Advise(const ECLISTSYNCSTATE &lstSyncStates, LPECCHANGEADVISESINK lpChangeAdviseSink, ECLISTCONNECTION *lplstConnections)
+HRESULT ECNotifyClient::Advise(const ECLISTSYNCSTATE &lstSyncStates,
+    IECChangeAdviseSink *lpChangeAdviseSink, ECLISTCONNECTION *lplstConnections)
 {
 	TRACE_NOTIFY(TRACE_ENTRY, "ECNotifyClient::AdviseICS", "");
 
