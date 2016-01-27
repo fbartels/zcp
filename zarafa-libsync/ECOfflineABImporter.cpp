@@ -117,9 +117,9 @@ HRESULT OfflineABImporter::ImportABChange(ULONG ulObjType, ULONG cbObjId, LPENTR
 	ULONG cSrcUsers = 0;
 	LPECUSER lpSrcUsers = NULL;
 	ULONG cDstGroups = 0;		
-	LPECGROUP lpDstGroups = NULL;
+	ECGROUP *lpDstGroups = NULL;
 	ULONG cSrcGroups = 0;		
-	LPECGROUP lpSrcGroups = NULL;
+	ECGROUP *lpSrcGroups = NULL;
 	ULONG ulMemberObjType = 0;
 
 	if(ulObjType == MAPI_MAILUSER) {

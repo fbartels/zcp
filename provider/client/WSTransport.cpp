@@ -2533,7 +2533,8 @@ exit:
  * @param[out]	lppUserId	The entry id of the new group
  * @return		HRESULT		MAPI error code.
  */
-HRESULT WSTransport::HrCreateGroup(LPECGROUP lpECGroup, ULONG ulFlags, ULONG *lpcbGroupId, LPENTRYID *lppGroupId)
+HRESULT WSTransport::HrCreateGroup(ECGROUP *lpECGroup, ULONG ulFlags,
+    ULONG *lpcbGroupId, LPENTRYID *lppGroupId)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;
@@ -2590,7 +2591,7 @@ exit:
  * @param[in]	ulFlags		MAPI_UNICODE, values in group struct will be PT_UNICODE, otherwise in PT_STRING8
  * @return		HRESULT		MAPI error code.
  */
-HRESULT WSTransport::HrSetGroup(LPECGROUP lpECGroup, ULONG ulFlags)
+HRESULT WSTransport::HrSetGroup(ECGROUP *lpECGroup, ULONG ulFlags)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;
@@ -2645,11 +2646,12 @@ exit:
  * @param[out]	lppECGroup	Pointer to an ECGROUP object that contains the group details
  * @return		HRESULT		MAPI error code.
  */
-HRESULT WSTransport::HrGetGroup(ULONG cbGroupID, LPENTRYID lpGroupID, ULONG ulFlags, LPECGROUP *lppECGroup)
+HRESULT WSTransport::HrGetGroup(ULONG cbGroupID, LPENTRYID lpGroupID,
+    ULONG ulFlags, ECGROUP **lppECGroup)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;
-	LPECGROUP lpGroup = NULL;
+	ECGROUP *lpGroup = NULL;
 	entryId sGroupId = {0};
 
 	struct getGroupResponse sResponse;
@@ -2997,7 +2999,8 @@ exit:
  * @param[out]	lppsGroups		Array of ECGROUP objects.
  * @return		HRESULT			MAPI error code.
  */
-HRESULT WSTransport::HrGetGroupList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcGroups, LPECGROUP *lppsGroups)
+HRESULT WSTransport::HrGetGroupList(ULONG cbCompanyId, LPENTRYID lpCompanyId,
+    ULONG ulFlags, ULONG *lpcGroups, ECGROUP **lppsGroups)
 {
 	ECRESULT	er = erSuccess;
 	HRESULT		hr = hrSuccess;
@@ -3168,7 +3171,8 @@ exit:
  * @param[out]	lppsGroups		Array of ECGROUP objects.
  * @return		HRESULT			MAPI error code.
  */
-HRESULT WSTransport::HrGetGroupListOfUser(ULONG cbUserId, LPENTRYID lpUserId, ULONG ulFlags, ULONG *lpcGroup, LPECGROUP *lppsGroups)
+HRESULT WSTransport::HrGetGroupListOfUser(ULONG cbUserId, LPENTRYID lpUserId,
+    ULONG ulFlags, ULONG *lpcGroup, ECGROUP **lppsGroups)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;

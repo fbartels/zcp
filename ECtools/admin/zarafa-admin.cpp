@@ -1431,11 +1431,11 @@ static HRESULT print_details(LPMAPISESSION lpSession, IECUnknown *lpECMsgStore,
 {
 	HRESULT hr = hrSuccess;
 	LPECUSER lpECUser = NULL;
-	LPECGROUP lpECGroup = NULL;
+	ECGROUP *lpECGroup = NULL;
 	LPECCOMPANY lpECCompany = NULL;
 	ECQUOTASTATUS *lpsQuotaStatus = NULL;
 	ECQUOTA *lpsQuota = NULL;
-	LPECGROUP lpECGroups = NULL;
+	ECGROUP *lpECGroups = NULL;
 	LPECUSER lpECUsers = NULL;
 	LPECUSER lpECAdmins = NULL;
 	LPECCOMPANY lpECViews = NULL;
@@ -2403,7 +2403,7 @@ int main(int argc, char* argv[])
 	LPENTRYID lpUnWrappedEntry = NULL;
 
 	ECGROUP		sECGroup;
-	LPECGROUP	lpECGroups = NULL;
+	ECGROUP *lpECGroups = NULL;
 	ULONG		cCompanies = 0;
 	ULONG		cUsers = 0;
 

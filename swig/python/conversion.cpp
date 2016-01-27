@@ -2819,7 +2819,7 @@ exit:
 	return list;
 }
 
-LPECGROUP Object_to_LPECGROUP(PyObject *elem, ULONG ulFlags)
+ECGROUP *Object_to_LPECGROUP(PyObject *elem, ULONG ulFlags)
 {
 	static conv_out_info<ECGROUP> conv_info[] = {
 		{conv_out_default<ECGROUP, LPTSTR, &ECGROUP::lpszGroupname>, "Groupname"},
@@ -2830,7 +2830,7 @@ LPECGROUP Object_to_LPECGROUP(PyObject *elem, ULONG ulFlags)
 	};
 
 	HRESULT hr = hrSuccess;
-	LPECGROUP lpGroup = NULL;
+	ECGROUP *lpGroup = NULL;
 
 	if (elem == Py_None)
 		goto exit;
@@ -2853,7 +2853,7 @@ exit:
 	return lpGroup;
 }
 
-PyObject * Object_from_LPECGROUP(LPECGROUP lpGroup, ULONG ulFlags)
+PyObject *Object_from_LPECGROUP(ECGROUP *lpGroup, ULONG ulFlags)
 {
 	if(ulFlags & MAPI_UNICODE)
 		return PyObject_CallFunction(PyTypeECGroup, "(uuuls#)", lpGroup->lpszGroupname, lpGroup->lpszFullname, lpGroup->lpszFullEmail, lpGroup->ulIsABHidden, lpGroup->sGroupId.lpb, lpGroup->sGroupId.cb);
@@ -2861,7 +2861,7 @@ PyObject * Object_from_LPECGROUP(LPECGROUP lpGroup, ULONG ulFlags)
 		return PyObject_CallFunction(PyTypeECGroup, "(sssls#)", lpGroup->lpszGroupname, lpGroup->lpszFullname, lpGroup->lpszFullEmail, lpGroup->ulIsABHidden, lpGroup->sGroupId.lpb, lpGroup->sGroupId.cb);
 }
 
-PyObject * List_from_LPECGROUP(LPECGROUP lpGroup, ULONG cElements, ULONG ulFlags)
+PyObject *List_from_LPECGROUP(ECGROUP *lpGroup, ULONG cElements, ULONG ulFlags)
 {
 	PyObject *list = PyList_New(0);
 	PyObject *item = NULL;

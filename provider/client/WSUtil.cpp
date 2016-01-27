@@ -1925,8 +1925,7 @@ exit:
 }
 
 static HRESULT SoapGroupToGroup(const struct group *lpGroup,
-    LPECGROUP lpsGroup, ULONG ulFlags, void *lpBase,
-    convert_context &converter)
+    ECGROUP *lpsGroup, ULONG ulFlags, void *lpBase, convert_context &converter)
 {
 	HRESULT 	hr = hrSuccess;
 
@@ -1975,11 +1974,11 @@ exit:
 }
 
 HRESULT SoapGroupArrayToGroupArray(const struct groupArray *lpGroupArray,
-    ULONG ulFlags, ULONG *lpcGroups, LPECGROUP *lppsGroups)
+    ULONG ulFlags, ULONG *lpcGroups, ECGROUP **lppsGroups)
 {
 	HRESULT			hr = hrSuccess;
 	unsigned int	i;
-	LPECGROUP		lpECGroups = NULL;
+	ECGROUP *lpECGroups = NULL;
 	convert_context	converter;
 
 	if(lpGroupArray == NULL || lpcGroups == NULL || lppsGroups == NULL) {
@@ -2008,10 +2007,10 @@ exit:
 }
 
 HRESULT SoapGroupToGroup(const struct group *lpGroup, ULONG ulFlags,
-    LPECGROUP *lppsGroup)
+    ECGROUP **lppsGroup)
 {
 	HRESULT			hr			= hrSuccess;
-	LPECGROUP		lpsGroup	= NULL;
+	ECGROUP *lpsGroup = NULL;
 	convert_context	converter;
 
 	if (lpGroup == NULL || lppsGroup == NULL)

@@ -121,9 +121,9 @@ LPECUSER		Object_to_LPECUSER(PyObject *, ULONG ulFlags);
 PyObject *		Object_from_LPECUSER(LPECUSER lpUser, ULONG ulFlags);
 PyObject *		List_from_LPECUSER(LPECUSER lpUser, ULONG cElements, ULONG ulFlags);
 
-LPECGROUP		Object_to_LPECGROUP(PyObject *, ULONG ulFlags);
-PyObject *		Object_from_LPECGROUP(LPECGROUP lpGroup, ULONG ulFlags);
-PyObject *		List_from_LPECGROUP(LPECGROUP lpGroup, ULONG cElements, ULONG ulFlags);
+ECGROUP *Object_to_LPECGROUP(PyObject *, ULONG ulFlags);
+PyObject *Object_from_LPECGROUP(ECGROUP *lpGroup, ULONG ulFlags);
+PyObject *List_from_LPECGROUP(ECGROUP *lpGroup, ULONG cElements, ULONG ulFlags);
 
 LPECCOMPANY		Object_to_LPECCOMPANY(PyObject *, ULONG ulFlags);
 PyObject *		Object_from_LPECCOMPANY(LPECCOMPANY lpCompany, ULONG ulFlags);

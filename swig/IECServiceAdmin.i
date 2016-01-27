@@ -4,6 +4,7 @@ typedef ECSVRNAMELIST *LPECSVRNAMELIST;
 typedef ECSERVERLIST *LPECSERVERLIST;
 typedef ECQUOTASTATUS *LPECQUOTASTATUS;
 typedef ECQUOTA *LPECQUOTA;
+typedef ECGROUP *LPECGROUP;
 
 %apply (ULONG cbEntryID, LPENTRYID lpEntryID) {(ULONG cbUserId, LPENTRYID lpUserId), (ULONG cbStoreId, LPENTRYID lpStoreId), (ULONG cbRootId, LPENTRYID lpRootId), (ULONG cbCompanyId, LPENTRYID lpCompanyId), (ULONG cbGroupId, LPENTRYID lpGroupId), (ULONG cbSenderId, LPENTRYID lpSenderId), (ULONG cbRecipientId, LPENTRYID lpRecipientId), (ULONG cbSetCompanyId, LPENTRYID lpSetCompanyId)};
 
@@ -71,17 +72,17 @@ public:
     virtual HRESULT RemoveAllObjects(ULONG cbUserId, LPENTRYID lpUserId) = 0;
 
 	// Group functions
-	virtual HRESULT CreateGroup(LPECGROUP lpECGroup, ULONG ulFlags, ULONG *OUTPUT, LPENTRYID *OUTPUT) = 0;
+	virtual HRESULT CreateGroup(ECGROUP *lpECGroup, ULONG ulFlags, ULONG *OUTPUT, LPENTRYID *OUTPUT) = 0;
 	virtual HRESULT DeleteGroup(ULONG cbGroupId, LPENTRYID lpGroupId) = 0;
-	virtual HRESULT SetGroup(LPECGROUP lpECGroup, ULONG ulFlags) = 0;
-	virtual HRESULT GetGroup(ULONG cbGroupId, LPENTRYID lpGroupId, ULONG ulFlags, LPECGROUP *OUTPUT/*lppECGroup*/) = 0;
+	virtual HRESULT SetGroup(ECGROUP *lpECGroup, ULONG ulFlags) = 0;
+	virtual HRESULT GetGroup(ULONG cbGroupId, LPENTRYID lpGroupId, ULONG ulFlags, ECGROUP **OUTPUT/*lppECGroup*/) = 0;
 	virtual HRESULT ResolveGroupName(LPTSTR lpszGroupName, ULONG ulFlags, ULONG *OUTPUT, LPENTRYID *OUTPUT) = 0;
-	virtual HRESULT GetGroupList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *OUTPUT /*lpcGroups*/, LPECGROUP *OUTPUT /*lppsGroups*/) = 0;
+	virtual HRESULT GetGroupList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *OUTPUT /*lpcGroups*/, ECGROUP **OUTPUT /*lppsGroups*/) = 0;
 
 	virtual HRESULT DeleteGroupUser(ULONG cbGroupId, LPENTRYID lpGroupId, ULONG cbUserId, LPENTRYID lpUserId) = 0;
 	virtual HRESULT AddGroupUser(ULONG cbGroupId, LPENTRYID lpGroupId, ULONG cbUserId, LPENTRYID lpUserId) = 0;
 	virtual HRESULT GetUserListOfGroup(ULONG cbGroupId, LPENTRYID lpGroupId, ULONG ulFlags, ULONG *OUTPUT /*lpcUsers*/, LPECUSER *OUTPUT /*lppsUsers*/) = 0;
-	virtual HRESULT GetGroupListOfUser(ULONG cbUserId, LPENTRYID lpUserId, ULONG ulFlags, ULONG *OUTPUT /*lpcGroups*/, LPECGROUP *OUTPUT /*lppsGroups*/) = 0;
+	virtual HRESULT GetGroupListOfUser(ULONG cbUserId, LPENTRYID lpUserId, ULONG ulFlags, ULONG *OUTPUT /*lpcGroups*/, ECGROUP **OUTPUT /*lppsGroups*/) = 0;
 
 	// Company functions
 	virtual HRESULT CreateCompany(LPECCOMPANY lpECCompany, ULONG ulFlags, ULONG *OUTPUT, LPENTRYID *OUTPUT) = 0;

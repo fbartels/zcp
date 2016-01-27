@@ -211,7 +211,7 @@ typedef struct _sECGroup {
 	unsigned int	ulIsABHidden;	// Is group hidden from address book
 	SPROPMAP		sPropmap;		// Extra anonymous properties for addressbook
 	MVPROPMAP		sMVPropmap;		// Extra anonymous MV properties for addressbook
-}ECGROUP, *LPECGROUP;
+} ECGROUP;
 
 typedef struct _sECCompany {
 	ECENTRYID		sAdministrator; // userid of the administrator

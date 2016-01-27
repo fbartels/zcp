@@ -87,8 +87,8 @@ HRESULT CopyABPropsFromSoap(const struct propmapPairArray *lpsoapPropmap, const 
 HRESULT SoapUserArrayToUserArray(const struct userArray *lpUserArray, ULONG ulFLags, ULONG *lpcUsers, LPECUSER *lppsUsers);
 HRESULT SoapUserToUser(const struct user *lpUser, ULONG ulFLags, LPECUSER *lppsUser);
 
-HRESULT SoapGroupArrayToGroupArray(const struct groupArray *lpGroupArray, ULONG ulFLags, ULONG *lpcGroups, LPECGROUP *lppsGroups);
-HRESULT SoapGroupToGroup(const struct group *lpGroup, ULONG ulFLags, LPECGROUP *lppsGroup);
+HRESULT SoapGroupArrayToGroupArray(const struct groupArray *lpGroupArray, ULONG ulFLags, ULONG *lpcGroups, ECGROUP **lppsGroups);
+HRESULT SoapGroupToGroup(const struct group *lpGroup, ULONG ulFLags, ECGROUP **lppsGroup);
 
 HRESULT SoapCompanyArrayToCompanyArray(const struct companyArray *lpCompanyArray, ULONG ulFLags, ULONG *lpcCompanies, LPECCOMPANY *lppsCompanies);
 HRESULT SoapCompanyToCompany(const struct company *lpCompany, ULONG ulFLags, LPECCOMPANY *lppsCompany);

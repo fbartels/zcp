@@ -5166,7 +5166,7 @@ ZEND_FUNCTION(mapi_zarafa_getgroup_by_id)
 	// locals
 	IECUnknown		*lpUnknown = NULL;
 	IECServiceAdmin *lpServiceAdmin = NULL;
-	LPECGROUP		lpsGroup = NULL;
+	ECGROUP *lpsGroup = NULL;
 
 	RETVAL_FALSE;
 	MAPI_G(hr) = MAPI_E_INVALID_PARAMETER;
@@ -5217,7 +5217,7 @@ ZEND_FUNCTION(mapi_zarafa_getgroup_by_name)
 	// locals
 	IECUnknown		*lpUnknown = NULL;
 	IECServiceAdmin *lpServiceAdmin = NULL;
-	LPECGROUP		lpsGroup = NULL;
+	ECGROUP *lpsGroup = NULL;
 
 	RETVAL_FALSE;
 	MAPI_G(hr) = MAPI_E_INVALID_PARAMETER;
@@ -5276,7 +5276,7 @@ ZEND_FUNCTION(mapi_zarafa_getgrouplist)
 	IECUnknown		*lpUnknown = NULL;
 	IECServiceAdmin *lpServiceAdmin = NULL;
 	ULONG			ulGroups;
-	LPECGROUP		lpsGroups = NULL;
+	ECGROUP *lpsGroups = NULL;
 	unsigned int	i;
 
 	RETVAL_FALSE;
@@ -5337,7 +5337,7 @@ ZEND_FUNCTION(mapi_zarafa_getgrouplistofuser)
 	IECUnknown		*lpUnknown = NULL;
 	IECServiceAdmin *lpServiceAdmin = NULL;
 	ULONG			ulGroups;
-	LPECGROUP		lpsGroups = NULL;
+	ECGROUP *lpsGroups = NULL;
 	unsigned int	i;
 
 	RETVAL_FALSE;

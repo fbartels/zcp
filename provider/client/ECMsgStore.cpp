@@ -2246,7 +2246,7 @@ HRESULT ECMsgStore::CreateStore(ULONG ulStoreType, ULONG cbUserId, LPENTRYID lpU
 
 	LPECUSER			lpECUser = NULL;
 	LPECCOMPANY			lpECCompany = NULL;
-	LPECGROUP			lpECGroup = NULL;
+	ECGROUP *lpECGroup = NULL;
 
 	std::string			strBuffer;
 
@@ -3122,7 +3122,8 @@ HRESULT ECMsgStore::ResolveGroupName(LPCTSTR lpszGroupName, ULONG ulFlags, ULONG
 	return hr;
 }
 
-HRESULT ECMsgStore::CreateGroup(LPECGROUP lpECGroup, ULONG ulFlags, ULONG *lpcbGroupId, LPENTRYID *lppGroupId)
+HRESULT ECMsgStore::CreateGroup(ECGROUP *lpECGroup, ULONG ulFlags,
+    ULONG *lpcbGroupId, LPENTRYID *lppGroupId)
 {
 	HRESULT	hr = hrSuccess;
 
@@ -3131,7 +3132,7 @@ HRESULT ECMsgStore::CreateGroup(LPECGROUP lpECGroup, ULONG ulFlags, ULONG *lpcbG
 	return hr;
 }
 
-HRESULT ECMsgStore::SetGroup(LPECGROUP lpECGroup, ULONG ulFlags)
+HRESULT ECMsgStore::SetGroup(ECGROUP *lpECGroup, ULONG ulFlags)
 {
 	HRESULT	hr = hrSuccess;
 
@@ -3140,7 +3141,8 @@ HRESULT ECMsgStore::SetGroup(LPECGROUP lpECGroup, ULONG ulFlags)
 	return hr;
 }
 
-HRESULT ECMsgStore::GetGroup(ULONG cbGroupId, LPENTRYID lpGroupId, ULONG ulFlags, LPECGROUP *lppECGroup)
+HRESULT ECMsgStore::GetGroup(ULONG cbGroupId, LPENTRYID lpGroupId,
+    ULONG ulFlags, ECGROUP **lppECGroup)
 {
 	HRESULT	hr = hrSuccess;
 
@@ -3187,7 +3189,8 @@ HRESULT ECMsgStore::GetUserListOfGroup(ULONG cbGroupId, LPENTRYID lpGroupId, ULO
 	return hr;
 }
 
-HRESULT ECMsgStore::GetGroupListOfUser(ULONG cbUserId, LPENTRYID lpUserId, ULONG ulFlags, ULONG *lpcGroups, LPECGROUP *lppsGroups)
+HRESULT ECMsgStore::GetGroupListOfUser(ULONG cbUserId, LPENTRYID lpUserId,
+    ULONG ulFlags, ULONG *lpcGroups, ECGROUP **lppsGroups)
 {
 	HRESULT	hr = hrSuccess;
 
@@ -4336,7 +4339,8 @@ HRESULT ECMsgStore::xECServiceAdmin::ResolveUserName(LPCTSTR lpszUserName, ULONG
 	return hr;
 }
 
-HRESULT ECMsgStore::xECServiceAdmin::CreateGroup(LPECGROUP lpECGroup, ULONG ulFlags, ULONG *lpcbGroupId, LPENTRYID *lppGroupId)
+HRESULT ECMsgStore::xECServiceAdmin::CreateGroup(ECGROUP *lpECGroup,
+    ULONG ulFlags, ULONG *lpcbGroupId, LPENTRYID *lppGroupId)
 {
 	TRACE_MAPI(TRACE_ENTRY, "IECServiceAdmin::CreateGroup", "%s", (lpECGroup->lpszGroupname)?lpECGroup->lpszGroupname:(LPTSTR)"NULL");
 	METHOD_PROLOGUE_(ECMsgStore, ECServiceAdmin);
@@ -4345,7 +4349,8 @@ HRESULT ECMsgStore::xECServiceAdmin::CreateGroup(LPECGROUP lpECGroup, ULONG ulFl
 	return hr;
 }
 
-HRESULT ECMsgStore::xECServiceAdmin::SetGroup(LPECGROUP lpECGroup, ULONG ulFlags)
+HRESULT ECMsgStore::xECServiceAdmin::SetGroup(ECGROUP *lpECGroup,
+    ULONG ulFlags)
 {
 	TRACE_MAPI(TRACE_ENTRY, "IECServiceAdmin::SetGroup", "");
 	METHOD_PROLOGUE_(ECMsgStore, ECServiceAdmin);
@@ -4354,7 +4359,8 @@ HRESULT ECMsgStore::xECServiceAdmin::SetGroup(LPECGROUP lpECGroup, ULONG ulFlags
 	return hr;
 }
 
-HRESULT ECMsgStore::xECServiceAdmin::GetGroup(ULONG cbGroupId, LPENTRYID lpGroupId, ULONG ulFlags, LPECGROUP *lppECGroup)
+HRESULT ECMsgStore::xECServiceAdmin::GetGroup(ULONG cbGroupId,
+    LPENTRYID lpGroupId, ULONG ulFlags, ECGROUP **lppECGroup)
 {
 	TRACE_MAPI(TRACE_ENTRY, "IECServiceAdmin::GetGroup", "");
 	METHOD_PROLOGUE_(ECMsgStore, ECServiceAdmin);
@@ -4372,7 +4378,9 @@ HRESULT ECMsgStore::xECServiceAdmin::DeleteGroup(ULONG cbGroupId, LPENTRYID lpGr
 	return hr;
 }
 
-HRESULT ECMsgStore::xECServiceAdmin::GetGroupList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcGroups, LPECGROUP *lppsGroups)
+HRESULT ECMsgStore::xECServiceAdmin::GetGroupList(ULONG cbCompanyId,
+    LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcGroups,
+    ECGROUP **lppsGroups)
 {
 	TRACE_MAPI(TRACE_ENTRY, "IECServiceAdmin::GetGroupList", "");
 	METHOD_PROLOGUE_(ECMsgStore, ECServiceAdmin);
@@ -4409,7 +4417,8 @@ HRESULT ECMsgStore::xECServiceAdmin::GetUserListOfGroup(ULONG cbGroupId, LPENTRY
 	return hr;
 }
 
-HRESULT ECMsgStore::xECServiceAdmin::GetGroupListOfUser(ULONG cbUserId, LPENTRYID lpUserId, ULONG ulFlags, ULONG *lpcGroups, LPECGROUP *lppsGroups)
+HRESULT ECMsgStore::xECServiceAdmin::GetGroupListOfUser(ULONG cbUserId,
+    LPENTRYID lpUserId, ULONG ulFlags, ULONG *lpcGroups, ECGROUP **lppsGroups)
 {
 	TRACE_MAPI(TRACE_ENTRY, "IECServiceAdmin::GetGroupListOfUser", "user=%d", ABEID_ID(lpUserId));
 	METHOD_PROLOGUE_(ECMsgStore, ECServiceAdmin);

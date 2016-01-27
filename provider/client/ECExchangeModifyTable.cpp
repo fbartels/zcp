@@ -373,7 +373,7 @@ HRESULT ECExchangeModifyTable::OpenACLS(ECMAPIProp *lpecMapiProp, ULONG ulFlags,
 	ECPERMISSION *lpECPerms = NULL;
 	SPropValue	lpsPropMember[4];
 	LPECUSER lpECUser = NULL;
-	LPECGROUP lpECGroup = NULL;
+	ECGROUP *lpECGroup = NULL;
 	WCHAR* lpMemberName = NULL;
 	unsigned int ulUserid = 0;
 
