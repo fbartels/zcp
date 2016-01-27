@@ -127,6 +127,4 @@ public:
 	virtual HRESULT __stdcall UpdateSyncState(ULONG ulSyncId, ULONG ulChangeId) = 0;
 };
 
-typedef IECChangeAdvisor* LPECCHANGEADVISOR;
-
 #endif

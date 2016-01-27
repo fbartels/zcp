@@ -254,7 +254,7 @@ exit:
 }
 
 
-HRESULT ECSyncContext::HrGetChangeAdvisor(LPECCHANGEADVISOR *lppChangeAdvisor)
+HRESULT ECSyncContext::HrGetChangeAdvisor(IECChangeAdvisor **lppChangeAdvisor)
 {
 	HRESULT	hr = hrSuccess;
 

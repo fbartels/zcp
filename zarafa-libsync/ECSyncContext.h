@@ -120,7 +120,7 @@ public:
 	 *					pointer to the change advisor upon successful completion.
 	 * @return MAPI_E_NO_SUPPORT if the change notification system is disabled.
 	 */
-	HRESULT HrGetChangeAdvisor(LPECCHANGEADVISOR *lppChangeAdvisor);
+	HRESULT HrGetChangeAdvisor(IECChangeAdvisor **lppChangeAdvisor);
 
 	/**
 	 * Replace the change advisor. This causes all the registered change advises
@@ -363,7 +363,7 @@ private:	// members
 	ECLogger				*m_lpLogger;
 	ECSyncSettings			*m_lpSettings;
 
-	LPECCHANGEADVISOR		m_lpChangeAdvisor;
+	IECChangeAdvisor *m_lpChangeAdvisor;
 	LPECCHANGEADVISESINK	m_lpChangeAdviseSink;
 
 	StatusStreamMap			m_mapSyncStatus;
