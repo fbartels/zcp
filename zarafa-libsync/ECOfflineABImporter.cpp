@@ -113,9 +113,9 @@ HRESULT OfflineABImporter::ImportABChange(ULONG ulObjType, ULONG cbObjId, LPENTR
 	std::list<ECENTRYID>::iterator iterSrcMembers;
 	std::list<ECENTRYID>::iterator iterDstMembers;
 	ULONG cDstUsers = 0;		
-	LPECUSER lpDstUsers = NULL;
+	ECUSER *lpDstUsers = NULL;
 	ULONG cSrcUsers = 0;
-	LPECUSER lpSrcUsers = NULL;
+	ECUSER *lpSrcUsers = NULL;
 	ULONG cDstGroups = 0;		
 	ECGROUP *lpDstGroups = NULL;
 	ULONG cSrcGroups = 0;		

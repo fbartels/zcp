@@ -316,7 +316,7 @@ HRESULT ECQuotaMonitor::CheckCompanyQuota(ECCOMPANY *lpecCompany)
 	IECServiceAdmin		*lpServiceAdmin = NULL;
 	LPSPropValue		lpsObject = NULL;
 	/* Userlist */
-	LPECUSER			lpsUserList = NULL;
+	ECUSER *lpsUserList = NULL;
 	ULONG				cUsers = 0;
 	/* 2nd Server connection */
 	LPMAPISESSION		lpSession = NULL;
@@ -451,7 +451,7 @@ exit:
  * @param[in]	lpAdminStore IMsgStore of SYSTEM user on a specific server instance.
  * @return hrSuccess or any MAPI error code.
  */
-HRESULT ECQuotaMonitor::CheckServerQuota(ULONG cUsers, LPECUSER lpsUserList,
+HRESULT ECQuotaMonitor::CheckServerQuota(ULONG cUsers, ECUSER *lpsUserList,
     ECCOMPANY *lpecCompany, LPMDB lpAdminStore)
 {
 	HRESULT hr = hrSuccess;
@@ -731,9 +731,9 @@ exit:
  * @param[out]	lppPropArray	The properties to write to the IMessage
  * @retval	MAPI_E_NOT_ENOUGH_MEMORY	unable to allocate more memory
  */
-HRESULT ECQuotaMonitor::CreateMessageProperties(LPECUSER lpecToUser, LPECUSER lpecFromUser,
-												string strSubject, string strBody,
-												ULONG *lpcPropSize, LPSPropValue *lppPropArray)
+HRESULT ECQuotaMonitor::CreateMessageProperties(ECUSER *lpecToUser,
+    ECUSER *lpecFromUser, std::string strSubject, std::string strBody,
+    ULONG *lpcPropSize, LPSPropValue *lppPropArray)
 {
 	HRESULT hr = hrSuccess;
 	LPSPropValue lpPropArray = NULL;
@@ -981,7 +981,8 @@ exit:
  * @param[out]	lppAddrList	Addresslist for the recipient table
  * @retval	MAPI_E_NOT_ENOUGH_MEMORY	unable to allocate more memory
  */
-HRESULT ECQuotaMonitor::CreateRecipientList(ULONG cToUsers, LPECUSER lpToUsers, LPADRLIST *lppAddrList)
+HRESULT ECQuotaMonitor::CreateRecipientList(ULONG cToUsers, ECUSER *lpToUsers,
+    LPADRLIST *lppAddrList)
 {
 	HRESULT hr = hrSuccess;
 	LPADRLIST lpAddrList = NULL;
@@ -1155,8 +1156,8 @@ exit:
  * @return MAPI error code
  */
 HRESULT ECQuotaMonitor::CreateQuotaWarningMail(TemplateVariables *lpVars,
-											   IMsgStore* lpMDB, LPECUSER lpecToUser, LPECUSER lpecFromUser,
-											   LPADRLIST lpAddrList)
+    IMsgStore* lpMDB, ECUSER *lpecToUser, ECUSER *lpecFromUser,
+    LPADRLIST lpAddrList)
 {
 	HRESULT hr = hrSuccess;
 	ULONG cPropSize = 0;
@@ -1314,7 +1315,7 @@ exit:
  * @param[in]	lpStore The store that is over quota
  * @return MAPI error code
  */
-HRESULT ECQuotaMonitor::Notify(LPECUSER lpecUser, ECCOMPANY *lpecCompany,
+HRESULT ECQuotaMonitor::Notify(ECUSER *lpecUser, ECCOMPANY *lpecCompany,
     ECQUOTASTATUS *lpecQuotaStatus, LPMDB lpStore)
 {
 	HRESULT hr = hrSuccess;
@@ -1325,9 +1326,9 @@ HRESULT ECQuotaMonitor::Notify(LPECUSER lpecUser, ECCOMPANY *lpecCompany,
 	bool bTimeout;
 	LPSPropValue lpsObject = NULL;
 	LPADRLIST lpAddrList = NULL;
-	LPECUSER lpecFromUser = NULL;
+	ECUSER *lpecFromUser = NULL;
 	ULONG cToUsers = 0;
-	LPECUSER lpToUsers = NULL;
+	ECUSER *lpToUsers = NULL;
 	ECQUOTA *lpecQuota = NULL;
 	ULONG cbUserId = 0;
 	LPENTRYID lpUserId = NULL;

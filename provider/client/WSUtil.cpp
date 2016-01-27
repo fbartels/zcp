@@ -1787,7 +1787,7 @@ HRESULT FreeABProps(struct propmapPairArray *lpsoapPropmap, struct propmapMVPair
 	return hrSuccess;
 }
 
-static HRESULT SoapUserToUser(const struct user *lpUser, LPECUSER lpsUser,
+static HRESULT SoapUserToUser(const struct user *lpUser, ECUSER *lpsUser,
     ULONG ulFlags, void *lpBase, convert_context &converter)
 {
 	HRESULT 	hr		= hrSuccess;
@@ -1865,10 +1865,10 @@ exit:
 }
 
 HRESULT SoapUserArrayToUserArray(const struct userArray *lpUserArray,
-    ULONG ulFlags, ULONG *lpcUsers, LPECUSER *lppsUsers)
+    ULONG ulFlags, ULONG *lpcUsers, ECUSER **lppsUsers)
 {
 	HRESULT 		hr = hrSuccess;
-	LPECUSER 		lpECUsers = NULL;
+	ECUSER *lpECUsers = NULL;
 	unsigned 		int i = 0;
 	convert_context	converter;
 
@@ -1894,10 +1894,10 @@ exit:
 }
 
 HRESULT SoapUserToUser(const struct user *lpUser, ULONG ulFlags,
-    LPECUSER *lppsUser)
+    ECUSER **lppsUser)
 {
 	HRESULT			hr		= hrSuccess;
-	LPECUSER		lpsUser	= NULL;
+	ECUSER *lpsUser = NULL;
 	convert_context	converter;
 
 	if (lpUser == NULL || lppsUser == NULL)

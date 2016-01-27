@@ -2244,7 +2244,7 @@ HRESULT ECMsgStore::CreateStore(ULONG ulStoreType, ULONG cbUserId, LPENTRYID lpU
 
 	ECPERMISSION		sPermission;
 
-	LPECUSER			lpECUser = NULL;
+	ECUSER *lpECUser = NULL;
 	ECCOMPANY *lpECCompany = NULL;
 	ECGROUP *lpECGroup = NULL;
 
@@ -3022,7 +3022,8 @@ exit:
 	return hr;
 }
 
-HRESULT ECMsgStore::CreateUser(LPECUSER lpECUser, ULONG ulFlags, ULONG *lpcbUserId, LPENTRYID *lppUserId)
+HRESULT ECMsgStore::CreateUser(ECUSER *lpECUser, ULONG ulFlags,
+    ULONG *lpcbUserId, LPENTRYID *lppUserId)
 {
 	HRESULT hr = hrSuccess;
 
@@ -3031,7 +3032,7 @@ HRESULT ECMsgStore::CreateUser(LPECUSER lpECUser, ULONG ulFlags, ULONG *lpcbUser
 	return hr;
 }
 
-HRESULT ECMsgStore::SetUser(LPECUSER lpECUser, ULONG ulFlags)
+HRESULT ECMsgStore::SetUser(ECUSER *lpECUser, ULONG ulFlags)
 {
 	HRESULT hr = hrSuccess;
 
@@ -3040,7 +3041,8 @@ HRESULT ECMsgStore::SetUser(LPECUSER lpECUser, ULONG ulFlags)
 	return hr;
 }
 
-HRESULT ECMsgStore::GetUser(ULONG cbUserId, LPENTRYID lpUserId, ULONG ulFlags, LPECUSER *lppECUser)
+HRESULT ECMsgStore::GetUser(ULONG cbUserId, LPENTRYID lpUserId, ULONG ulFlags,
+    ECUSER **lppECUser)
 {
 	HRESULT hr = hrSuccess;
 
@@ -3067,7 +3069,8 @@ HRESULT ECMsgStore::ResolveUserName(LPCTSTR lpszUserName, ULONG ulFlags, ULONG *
 	return hr;
 }
 
-HRESULT ECMsgStore::GetSendAsList(ULONG cbUserId, LPENTRYID lpUserId, ULONG ulFlags, ULONG *lpcSenders, LPECUSER *lppSenders)
+HRESULT ECMsgStore::GetSendAsList(ULONG cbUserId, LPENTRYID lpUserId,
+    ULONG ulFlags, ULONG *lpcSenders, ECUSER **lppSenders)
 {
 	HRESULT	hr = hrSuccess;
 
@@ -3180,7 +3183,8 @@ HRESULT ECMsgStore::AddGroupUser(ULONG cbGroupId, LPENTRYID lpGroupId, ULONG cbU
 	return hr;
 }
 
-HRESULT ECMsgStore::GetUserListOfGroup(ULONG cbGroupId, LPENTRYID lpGroupId, ULONG ulFlags, ULONG *lpcUsers, LPECUSER *lppsUsers)
+HRESULT ECMsgStore::GetUserListOfGroup(ULONG cbGroupId, LPENTRYID lpGroupId,
+    ULONG ulFlags, ULONG *lpcUsers, ECUSER **lppsUsers)
 {
 	HRESULT	hr = hrSuccess;
 
@@ -3302,7 +3306,8 @@ HRESULT ECMsgStore::DelUserFromRemoteAdminList(ULONG cbUserId, LPENTRYID lpUserI
 	return hr;
 }
 
-HRESULT ECMsgStore::GetRemoteAdminList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcUsers, LPECUSER *lppsUsers)
+HRESULT ECMsgStore::GetRemoteAdminList(ULONG cbCompanyId,
+    LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcUsers, ECUSER **lppsUsers)
 {
 	HRESULT hr = hrSuccess;
 
@@ -3358,7 +3363,8 @@ HRESULT ECMsgStore::DeleteQuotaRecipient(ULONG cbCompanyId, LPENTRYID lpCmopanyI
 	return hr;
 }
 
-HRESULT ECMsgStore::GetQuotaRecipients(ULONG cbUserId, LPENTRYID lpUserId, ULONG ulFlags, ULONG *lpcUsers, LPECUSER *lppsUsers)
+HRESULT ECMsgStore::GetQuotaRecipients(ULONG cbUserId, LPENTRYID lpUserId,
+    ULONG ulFlags, ULONG *lpcUsers, ECUSER **lppsUsers)
 {
 	HRESULT hr = hrSuccess;
 
@@ -4234,7 +4240,8 @@ HRESULT ECMsgStore::xECServiceAdmin::ResolveStore(LPGUID lpGuid, ULONG *lpulUser
 	return hr;
 }
 
-HRESULT ECMsgStore::xECServiceAdmin::CreateUser(LPECUSER lpECUser, ULONG ulFlags, ULONG *lpcbUserId, LPENTRYID *lppUserId)
+HRESULT ECMsgStore::xECServiceAdmin::CreateUser(ECUSER *lpECUser,
+    ULONG ulFlags, ULONG *lpcbUserId, LPENTRYID *lppUserId)
 {
 	TRACE_MAPI(TRACE_ENTRY, "IECServiceAdmin::CreateUser", "");
 	METHOD_PROLOGUE_(ECMsgStore, ECServiceAdmin);
@@ -4243,7 +4250,7 @@ HRESULT ECMsgStore::xECServiceAdmin::CreateUser(LPECUSER lpECUser, ULONG ulFlags
 	return hr;
 }
 
-HRESULT ECMsgStore::xECServiceAdmin::SetUser(LPECUSER lpECUser, ULONG ulFlags)
+HRESULT ECMsgStore::xECServiceAdmin::SetUser(ECUSER *lpECUser, ULONG ulFlags)
 {
 	TRACE_MAPI(TRACE_ENTRY, "IECServiceAdmin::SetUser", "");
 	METHOD_PROLOGUE_(ECMsgStore, ECServiceAdmin);
@@ -4252,7 +4259,8 @@ HRESULT ECMsgStore::xECServiceAdmin::SetUser(LPECUSER lpECUser, ULONG ulFlags)
 	return hr;
 }
 
-HRESULT ECMsgStore::xECServiceAdmin::GetUser(ULONG cbUserId, LPENTRYID lpUserId, ULONG ulFlags, LPECUSER *lppECUser)
+HRESULT ECMsgStore::xECServiceAdmin::GetUser(ULONG cbUserId,
+    LPENTRYID lpUserId, ULONG ulFlags, ECUSER **lppECUser)
 {
 	TRACE_MAPI(TRACE_ENTRY, "IECServiceAdmin::GetUser", "userid=%d", ABEID_ID(lpUserId));
 	METHOD_PROLOGUE_(ECMsgStore, ECServiceAdmin);
@@ -4270,7 +4278,8 @@ HRESULT ECMsgStore::xECServiceAdmin::DeleteUser(ULONG cbUserId, LPENTRYID lpUser
 	return hr;
 }
 
-HRESULT ECMsgStore::xECServiceAdmin::GetUserList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcUsers, LPECUSER* lpsUsers)
+HRESULT ECMsgStore::xECServiceAdmin::GetUserList(ULONG cbCompanyId,
+    LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcUsers, ECUSER **lpsUsers)
 {
 	TRACE_MAPI(TRACE_ENTRY, "IECServiceAdmin::GetUserList", "");
 	METHOD_PROLOGUE_(ECMsgStore, ECServiceAdmin);
@@ -4279,7 +4288,8 @@ HRESULT ECMsgStore::xECServiceAdmin::GetUserList(ULONG cbCompanyId, LPENTRYID lp
 	return hr;
 }
 
-HRESULT ECMsgStore::xECServiceAdmin::GetSendAsList(ULONG cbUserId, LPENTRYID lpUserId, ULONG ulFlags, ULONG *lpcSenders, LPECUSER *lppSenders)
+HRESULT ECMsgStore::xECServiceAdmin::GetSendAsList(ULONG cbUserId,
+    LPENTRYID lpUserId, ULONG ulFlags, ULONG *lpcSenders, ECUSER **lppSenders)
 {
 	TRACE_MAPI(TRACE_ENTRY, "IECServiceAdmin::GetSendAsList", "");
 	METHOD_PROLOGUE_(ECMsgStore, ECServiceAdmin);
@@ -4412,7 +4422,8 @@ HRESULT ECMsgStore::xECServiceAdmin::AddGroupUser(ULONG cbGroupId, LPENTRYID lpG
 	return hr;
 }
 
-HRESULT ECMsgStore::xECServiceAdmin::GetUserListOfGroup(ULONG cbGroupId, LPENTRYID lpGroupId, ULONG ulFlags, ULONG *lpcUsers, LPECUSER *lppsUsers)
+HRESULT ECMsgStore::xECServiceAdmin::GetUserListOfGroup(ULONG cbGroupId,
+    LPENTRYID lpGroupId, ULONG ulFlags, ULONG *lpcUsers, ECUSER **lppsUsers)
 {
 	TRACE_MAPI(TRACE_ENTRY, "IECServiceAdmin::GetUserListOfGroup", "group=%s", bin2hex(cbGroupId, (unsigned char*)lpGroupId).c_str());
 	METHOD_PROLOGUE_(ECMsgStore, ECServiceAdmin);
@@ -4536,7 +4547,8 @@ HRESULT ECMsgStore::xECServiceAdmin::DelUserFromRemoteAdminList(ULONG cbUserId, 
 	return hr;
 }
 
-HRESULT ECMsgStore::xECServiceAdmin::GetRemoteAdminList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcUsers, LPECUSER *lppsUsers)
+HRESULT ECMsgStore::xECServiceAdmin::GetRemoteAdminList(ULONG cbCompanyId,
+    LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcUsers, ECUSER **lppsUsers)
 {
 	TRACE_MAPI(TRACE_ENTRY, "IECServiceAdmin::GetRemoteAdminList", "");
 	METHOD_PROLOGUE_(ECMsgStore, ECServiceAdmin);
@@ -4588,7 +4600,8 @@ HRESULT ECMsgStore::xECServiceAdmin::DeleteQuotaRecipient(ULONG cbCompanyId, LPE
 	return pThis->DeleteQuotaRecipient(cbCompanyId, lpCmopanyId, cbRecipientId, lpRecipientId, ulType);
 }
 
-HRESULT ECMsgStore::xECServiceAdmin::GetQuotaRecipients(ULONG cbUserId, LPENTRYID lpUserId, ULONG ulFlags, ULONG *lpcUsers, LPECUSER *lppsUsers)
+HRESULT ECMsgStore::xECServiceAdmin::GetQuotaRecipients(ULONG cbUserId,
+    LPENTRYID lpUserId, ULONG ulFlags, ULONG *lpcUsers, ECUSER **lppsUsers)
 {
 	TRACE_MAPI(TRACE_ENTRY, "IECServiceAdmin::GetQuotarecipients", "");
 	METHOD_PROLOGUE_(ECMsgStore, ECServiceAdmin);

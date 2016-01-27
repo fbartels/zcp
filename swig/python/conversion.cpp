@@ -2740,7 +2740,8 @@ exit:
 	return list;
 }
 
-LPECUSER Object_to_LPECUSER(PyObject *elem, ULONG ulFlags) {
+ECUSER *Object_to_LPECUSER(PyObject *elem, ULONG ulFlags)
+{
 	static conv_out_info<ECUSER> conv_info[] = {
 		{conv_out_default<ECUSER, LPTSTR, &ECUSER::lpszUsername>, "Username"},
 		{conv_out_default<ECUSER, LPTSTR, &ECUSER::lpszPassword>, "Password"},
@@ -2755,7 +2756,7 @@ LPECUSER Object_to_LPECUSER(PyObject *elem, ULONG ulFlags) {
 	};
 
 	HRESULT hr = hrSuccess;
-	LPECUSER lpUser = NULL;
+	ECUSER *lpUser = NULL;
 
 	if (elem == Py_None)
 		goto exit;
@@ -2778,7 +2779,7 @@ exit:
 	return lpUser;
 }
 
-PyObject * Object_from_LPECUSER(LPECUSER lpUser, ULONG ulFlags)
+PyObject *Object_from_LPECUSER(ECUSER *lpUser, ULONG ulFlags)
 {
     if(ulFlags & MAPI_UNICODE)
         return PyObject_CallFunction(PyTypeECUser, "(uuuuulllls#)", lpUser->lpszUsername, lpUser->lpszPassword, lpUser->lpszMailAddress, lpUser->lpszFullName, lpUser->lpszServername, lpUser->ulObjClass, lpUser->ulIsAdmin, lpUser->ulIsABHidden, lpUser->ulCapacity, lpUser->sUserId.lpb, lpUser->sUserId.cb);
@@ -2788,7 +2789,7 @@ PyObject * Object_from_LPECUSER(LPECUSER lpUser, ULONG ulFlags)
 }
 
 
-PyObject * List_from_LPECUSER(LPECUSER lpUser, ULONG cElements, ULONG ulFlags)
+PyObject *List_from_LPECUSER(ECUSER *lpUser, ULONG cElements, ULONG ulFlags)
 {
 	PyObject *list = PyList_New(0);
 	PyObject *item = NULL;

@@ -1021,7 +1021,8 @@ exit:
 	return hr;
 }
 
-HRESULT ECMAPIProp::GetUserList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcUsers, LPECUSER* lppsUsers)
+HRESULT ECMAPIProp::GetUserList(ULONG cbCompanyId, LPENTRYID lpCompanyId,
+    ULONG ulFlags, ULONG *lpcUsers, ECUSER **lppsUsers)
 {
 	HRESULT	hr = hrSuccess;
 	
@@ -1226,7 +1227,8 @@ HRESULT ECMAPIProp::xECSecurity::GetOwner(ULONG *lpcbOwner, LPENTRYID *lppOwner)
 	return pThis->GetOwner(lpcbOwner, lppOwner);
 }
 
-HRESULT ECMAPIProp::xECSecurity::GetUserList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcUsers, LPECUSER* lpsUsers)
+HRESULT ECMAPIProp::xECSecurity::GetUserList(ULONG cbCompanyId,
+    LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcUsers, ECUSER **lpsUsers)
 {
 	METHOD_PROLOGUE_(ECMAPIProp, ECSecurity);
 	return pThis->GetUserList(cbCompanyId, lpCompanyId, ulFlags, lpcUsers, lpsUsers);

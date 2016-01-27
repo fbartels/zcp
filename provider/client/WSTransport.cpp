@@ -2108,7 +2108,8 @@ exit:
  * @param[out]	lppUserId	The entry id of the new user
  * @return		HRESULT		MAPI error code.
  */
-HRESULT WSTransport::HrCreateUser(LPECUSER lpECUser, ULONG ulFlags, ULONG *lpcbUserId, LPENTRYID *lppUserId)
+HRESULT WSTransport::HrCreateUser(ECUSER *lpECUser, ULONG ulFlags,
+    ULONG *lpcbUserId, LPENTRYID *lppUserId)
 {
 	HRESULT	hr = hrSuccess;
 	ECRESULT er = erSuccess;
@@ -2170,12 +2171,13 @@ exit:
  * @param[out]	lppECUser	Pointer to an ECUSER object that contains the user details
  * @return		HRESULT		MAPI error code.
  */
-HRESULT WSTransport::HrGetUser(ULONG cbUserID, LPENTRYID lpUserID, ULONG ulFlags, LPECUSER *lppECUser)
+HRESULT WSTransport::HrGetUser(ULONG cbUserID, LPENTRYID lpUserID,
+    ULONG ulFlags, ECUSER **lppECUser)
 {
 	HRESULT	hr = hrSuccess;
 	ECRESULT er = erSuccess;
 	struct getUserResponse	sResponse;
-	LPECUSER lpECUser = NULL;
+	ECUSER *lpECUser = NULL;
 	entryId	sUserId = {0};
 	ULONG ulUserId = 0;
 
@@ -2227,7 +2229,7 @@ exit:
  * @param[in]	ulFlags		MAPI_UNICODE, values in user struct will be PT_UNICODE, otherwise in PT_STRING8
  * @return		HRESULT		MAPI error code.
  */
-HRESULT WSTransport::HrSetUser(LPECUSER lpECUser, ULONG ulFlags)
+HRESULT WSTransport::HrSetUser(ECUSER *lpECUser, ULONG ulFlags)
 {
 	HRESULT	hr = hrSuccess;
 	ECRESULT er = erSuccess;
@@ -2477,7 +2479,8 @@ exit:
  * @param[out]	lppsUsers		Array of ECUSER objects.
  * @return		HRESULT			MAPI error code.
  */
-HRESULT WSTransport::HrGetUserList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcUsers, LPECUSER* lppsUsers)
+HRESULT WSTransport::HrGetUserList(ULONG cbCompanyId, LPENTRYID lpCompanyId,
+    ULONG ulFlags, ULONG *lpcUsers, ECUSER **lppsUsers)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;
@@ -2729,7 +2732,8 @@ exit:
  * @param[out]	lppSenders	Array of ECUSER objects.
  * @return		HRESULT		MAPI error code.
  */
-HRESULT WSTransport::HrGetSendAsList(ULONG cbUserId, LPENTRYID lpUserId, ULONG ulFlags, ULONG *lpcSenders, LPECUSER *lppSenders)
+HRESULT WSTransport::HrGetSendAsList(ULONG cbUserId, LPENTRYID lpUserId,
+    ULONG ulFlags, ULONG *lpcSenders, ECUSER **lppSenders)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;
@@ -3123,7 +3127,8 @@ exit:
  * @param[out]	lppsUsers		Array of ECUSER objects.
  * @return		HRESULT			MAPI error code.
  */
-HRESULT WSTransport::HrGetUserListOfGroup(ULONG cbGroupId, LPENTRYID lpGroupId, ULONG ulFlags, ULONG *lpcUsers, LPECUSER *lppsUsers)
+HRESULT WSTransport::HrGetUserListOfGroup(ULONG cbGroupId, LPENTRYID lpGroupId,
+    ULONG ulFlags, ULONG *lpcUsers, ECUSER **lppsUsers)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;
@@ -3696,7 +3701,8 @@ exit:
  * @param[out]	lppsUsers		Array of ECUSER objects.
  * @return		HRESULT			MAPI error code.
  */
-HRESULT WSTransport::HrGetRemoteAdminList(ULONG cbCompanyId, LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcUsers, LPECUSER *lppsUsers)
+HRESULT WSTransport::HrGetRemoteAdminList(ULONG cbCompanyId,
+    LPENTRYID lpCompanyId, ULONG ulFlags, ULONG *lpcUsers, ECUSER **lppsUsers)
 {
 	ECRESULT er = erSuccess;
 	HRESULT hr = hrSuccess;
@@ -4188,7 +4194,8 @@ exit:
 	return hr;
 }
 
-HRESULT WSTransport::GetQuotaRecipients(ULONG cbUserId, LPENTRYID lpUserId, ULONG ulFlags, ULONG *lpcUsers, LPECUSER *lppsUsers)
+HRESULT WSTransport::GetQuotaRecipients(ULONG cbUserId, LPENTRYID lpUserId,
+    ULONG ulFlags, ULONG *lpcUsers, ECUSER **lppsUsers)
 {
 	ECRESULT	er = erSuccess;
 	HRESULT		hr = hrSuccess;

@@ -84,8 +84,8 @@ HRESULT CopyABPropsToSoap(const SPROPMAP *lpPropmap, const MVPROPMAP *lpMVPropma
 HRESULT CopyABPropsFromSoap(const struct propmapPairArray *lpsoapPropmap, const struct propmapMVPairArray *lpsoapMVPropmap,
 							SPROPMAP *lpPropmap, MVPROPMAP *lpMVPropmap, void *lpBase, ULONG ulFlags);
 
-HRESULT SoapUserArrayToUserArray(const struct userArray *lpUserArray, ULONG ulFLags, ULONG *lpcUsers, LPECUSER *lppsUsers);
-HRESULT SoapUserToUser(const struct user *lpUser, ULONG ulFLags, LPECUSER *lppsUser);
+HRESULT SoapUserArrayToUserArray(const struct userArray *lpUserArray, ULONG ulFLags, ULONG *lpcUsers, ECUSER **lppsUsers);
+HRESULT SoapUserToUser(const struct user *lpUser, ULONG ulFLags, ECUSER **lppsUser);
 
 HRESULT SoapGroupArrayToGroupArray(const struct groupArray *lpGroupArray, ULONG ulFLags, ULONG *lpcGroups, ECGROUP **lppsGroups);
 HRESULT SoapGroupToGroup(const struct group *lpGroup, ULONG ulFLags, ECGROUP **lppsGroup);

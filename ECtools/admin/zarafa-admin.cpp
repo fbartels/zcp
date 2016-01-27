@@ -1403,7 +1403,7 @@ exit:
 	return hr;
 }
 
-static LPMVPROPMAPENTRY FindMVPropmapEntry(LPECUSER lpUser, ULONG ulPropTag)
+static LPMVPROPMAPENTRY FindMVPropmapEntry(ECUSER *lpUser, ULONG ulPropTag)
 {
 	for (unsigned i = 0; i < lpUser->sMVPropmap.cEntries; ++i) {
 		if (lpUser->sMVPropmap.lpEntries[i].ulPropId == ulPropTag) {
@@ -1430,14 +1430,14 @@ static HRESULT print_details(LPMAPISESSION lpSession, IECUnknown *lpECMsgStore,
     objectclass_t ulClass, const char *lpszName)
 {
 	HRESULT hr = hrSuccess;
-	LPECUSER lpECUser = NULL;
+	ECUSER *lpECUser = NULL;
 	ECGROUP *lpECGroup = NULL;
 	ECCOMPANY *lpECCompany = NULL;
 	ECQUOTASTATUS *lpsQuotaStatus = NULL;
 	ECQUOTA *lpsQuota = NULL;
 	ECGROUP *lpECGroups = NULL;
-	LPECUSER lpECUsers = NULL;
-	LPECUSER lpECAdmins = NULL;
+	ECUSER *lpECUsers = NULL;
+	ECUSER *lpECAdmins = NULL;
 	ECCOMPANY *lpECViews = NULL;
 	ULONG cGroups = 0;
 	ULONG cUsers = 0;
@@ -2416,7 +2416,7 @@ int main(int argc, char* argv[])
 	ECSERVERLIST *lpServerDetails = NULL;
 
 	ULONG cSenders = 0;
-	LPECUSER lpSenders = NULL;
+	ECUSER *lpSenders = NULL;
 
 	objectclass_t ulClass = OBJECTCLASS_UNKNOWN;
 	const char *detailstype = NULL;

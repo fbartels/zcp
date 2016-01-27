@@ -4562,7 +4562,7 @@ ZEND_FUNCTION(mapi_zarafa_getuserlist)
 
 	// local
 	ULONG		nUsers, i;
-	LPECUSER	lpUsers = NULL;
+	ECUSER *lpUsers = NULL;
 	IECUnknown	*lpUnknown = NULL;
 	IECSecurity 	*lpSecurity = NULL;
 
@@ -4782,7 +4782,7 @@ ZEND_FUNCTION(mapi_zarafa_getuser_by_name)
 	// return value
 
 	// local
-	LPECUSER		lpUsers = NULL;
+	ECUSER *lpUsers = NULL;
 	IECUnknown		*lpUnknown = NULL;
 	IECServiceAdmin *lpServiceAdmin = NULL;
 	LPENTRYID		lpUserId = NULL;
@@ -4854,7 +4854,7 @@ ZEND_FUNCTION(mapi_zarafa_getuser_by_id)
 	// return value
 
 	// local
-	LPECUSER		lpUsers = NULL;
+	ECUSER *lpUsers = NULL;
 	IECUnknown		*lpUnknown = NULL;
 	IECServiceAdmin *lpServiceAdmin = NULL;
 
@@ -5397,7 +5397,7 @@ ZEND_FUNCTION(mapi_zarafa_getuserlistofgroup)
 	IECUnknown		*lpUnknown = NULL;
 	IECServiceAdmin *lpServiceAdmin = NULL;
 	ULONG			ulUsers;
-	LPECUSER		lpsUsers;
+	ECUSER *lpsUsers;
 	unsigned int	i;
 
 	RETVAL_FALSE;
@@ -5978,7 +5978,7 @@ ZEND_FUNCTION(mapi_zarafa_get_remote_adminlist)
 	IECServiceAdmin	*lpServiceAdmin = NULL;
 	IMsgStore		*lpMsgStore = NULL;
 	ULONG			ulUsers = 0;
-	LPECUSER		lpsUsers = NULL;
+	ECUSER *lpsUsers = NULL;
 
 	RETVAL_FALSE;
 	MAPI_G(hr) = MAPI_E_INVALID_PARAMETER;
@@ -6131,7 +6131,7 @@ ZEND_FUNCTION(mapi_zarafa_get_quota_recipientlist)
 	IECServiceAdmin	*lpServiceAdmin = NULL;
 	IMsgStore		*lpMsgStore = NULL;
 	ULONG			ulUsers = 0;
-	LPECUSER		lpsUsers = NULL;
+	ECUSER *lpsUsers = NULL;
 
 	RETVAL_FALSE;
 	MAPI_G(hr) = MAPI_E_INVALID_PARAMETER;

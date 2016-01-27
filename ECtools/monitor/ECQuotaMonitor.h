@@ -71,26 +71,22 @@ public:
 
 	HRESULT	CheckQuota();
 	HRESULT CheckCompanyQuota(ECCOMPANY *lpecCompany);
-	HRESULT CheckServerQuota(ULONG cUsers, LPECUSER lpsUserList, ECCOMPANY *lpecCompany, LPMDB lpAdminStore);
+	HRESULT CheckServerQuota(ULONG cUsers, ECUSER *lpsUserList, ECCOMPANY *lpecCompany, LPMDB lpAdminStore);
 
 private:
 	HRESULT CreateMailFromTemplate(TemplateVariables *lpVars, std::string *lpstrSubject, std::string *lpstrBody);
-	HRESULT CreateMessageProperties(LPECUSER lpecToUser, LPECUSER lpecFromUser,
-									std::string strSubject, std::string strBody,
-									ULONG *lpcPropSize, LPSPropValue *lppPropArray);
-	HRESULT CreateRecipientList(ULONG cToUsers, LPECUSER lpToUsers, LPADRLIST *lppAddrList);
+	HRESULT CreateMessageProperties(ECUSER *lpecToUser, ECUSER *lpecFromUser, std::string strSubject, std::string strBody, ULONG *lpcPropSize, LPSPropValue *lppPropArray);
+	HRESULT CreateRecipientList(ULONG cToUsers, ECUSER *lpToUsers, LPADRLIST *lppAddrList);
 
 	HRESULT SendQuotaWarningMail(IMsgStore* lpMDB, ULONG cPropSize, LPSPropValue lpPropArray, LPADRLIST lpAddrList);
 
-	HRESULT CreateQuotaWarningMail(TemplateVariables *lpVars,
-								   IMsgStore* lpMDB, LPECUSER lpecToUser, LPECUSER lpecFromUser,
-								   LPADRLIST lpAddrList);
+	HRESULT CreateQuotaWarningMail(TemplateVariables *lpVars, IMsgStore* lpMDB, ECUSER *lpecToUser, ECUSER *lpecFromUser, LPADRLIST lpAddrList);
 
 	HRESULT OpenUserStore(LPTSTR szStoreName, objectclass_t objclass, LPMDB *lppStore);
 	HRESULT CheckQuotaInterval(LPMDB lpStore, LPMESSAGE *lppMessage, bool *lpbTimeout);
 	HRESULT UpdateQuotaTimestamp(LPMESSAGE lpMessage);
 
-	HRESULT Notify(LPECUSER lpecUser, ECCOMPANY *lpecCompany, ECQUOTASTATUS *lpecQuotaStatus, LPMDB lpStore);
+	HRESULT Notify(ECUSER *lpecUser, ECCOMPANY *lpecCompany, ECQUOTASTATUS *lpecQuotaStatus, LPMDB lpStore);
 
 private:
 	ECTHREADMONITOR *m_lpThreadMonitor;

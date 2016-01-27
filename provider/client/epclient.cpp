@@ -790,7 +790,7 @@ extern "C" HRESULT __stdcall MSGServiceEntry(HINSTANCE hInst, LPMALLOC lpMalloc,
 #ifdef _WIN32
 	unsigned int	d = 0;
 	LPCTSTR			lpszDisplayName = NULL;
-	LPECUSER		lpECUser = NULL;
+	ECUSER *lpECUser = NULL;
 	ULONG			UIFlags = 0;
 	CProgressDlg	*lpProgressDlg = NULL;
 #endif

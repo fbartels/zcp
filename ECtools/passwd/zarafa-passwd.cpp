@@ -115,7 +115,7 @@ static HRESULT UpdatePassword(const char *lpPath, const char *lpUsername,
 	LPENTRYID lpUserId = NULL;
 	LPSPropValue lpPropValue = NULL;
 	
-	LPECUSER lpECUser = NULL;
+	ECUSER *lpECUser = NULL;
 	convert_context converter;
 
 	std::wstring strwUsername, strwPassword;

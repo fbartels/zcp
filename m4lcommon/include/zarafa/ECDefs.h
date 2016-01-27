@@ -201,7 +201,7 @@ typedef struct _sECUser {
 	SPROPMAP		sPropmap;		// Extra anonymous properties for addressbook
 	MVPROPMAP		sMVPropmap;		// Extra anonymous MV properties for addressbook
 	ECENTRYID		sUserId;
-} ECUSER, *LPECUSER;
+} ECUSER;
 
 typedef struct _sECGroup {
 	LPTSTR			lpszGroupname; // groupname@companyname

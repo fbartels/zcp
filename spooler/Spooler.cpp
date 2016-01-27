@@ -388,7 +388,7 @@ exit:
  */
 static HRESULT GetErrorObjects(const SendData &sSendData,
     IMAPISession *lpAdminSession, IAddrBook **lppAddrBook,
-    ECSender **lppMailer, LPECUSER *lppUserAdmin, IMsgStore **lppUserStore,
+    ECSender **lppMailer, ECUSER **lppUserAdmin, IMsgStore **lppUserStore,
     IMessage **lppMessage)
 {
 	HRESULT hr = hrSuccess;
@@ -481,7 +481,7 @@ static HRESULT CleanFinishedMessages(IMAPISession *lpAdminSession,
 	// error message creation
 	IAddrBook *lpAddrBook = NULL;
 	ECSender *lpMailer = NULL;
-	LPECUSER lpUserAdmin = NULL;
+	ECUSER *lpUserAdmin = NULL;
 	// user error message, release after using
 	IMsgStore *lpUserStore = NULL;
 	IMessage *lpMessage = NULL;
