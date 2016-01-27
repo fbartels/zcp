@@ -1,5 +1,6 @@
 %include "typemaps.i"
 typedef ECUSERCLIENTUPDATESTATUS *LPECUSERCLIENTUPDATESTATUS;
+typedef ECSVRNAMELIST *LPECSVRNAMELIST;
 
 %apply (ULONG cbEntryID, LPENTRYID lpEntryID) {(ULONG cbUserId, LPENTRYID lpUserId), (ULONG cbStoreId, LPENTRYID lpStoreId), (ULONG cbRootId, LPENTRYID lpRootId), (ULONG cbCompanyId, LPENTRYID lpCompanyId), (ULONG cbGroupId, LPENTRYID lpGroupId), (ULONG cbSenderId, LPENTRYID lpSenderId), (ULONG cbRecipientId, LPENTRYID lpRecipientId), (ULONG cbSetCompanyId, LPENTRYID lpSetCompanyId)};
 
@@ -111,7 +112,7 @@ public:
 	virtual HRESULT OpenUserStoresTable(ULONG ulFlags, IMAPITable **OUTPUT /*lppTable*/) = 0;
 
 	// Multiserver functions
-	virtual HRESULT GetServerDetails(LPECSVRNAMELIST lpServerNameList, ULONG ulFlags, LPECSERVERLIST* OUTPUT/*lppsServerList*/) = 0;
+	virtual HRESULT GetServerDetails(ECSVRNAMELIST *lpServerNameList, ULONG ulFlags, LPECSERVERLIST* OUTPUT/*lppsServerList*/) = 0;
 	virtual HRESULT ResolvePseudoUrl(char *lpszPseudoUrl, char** OUTMAPICHAR/*lppszServerPath*/, bool *OUTPUT /*lpbIsPeer*/) = 0;
 	
 	// Public store function(s)

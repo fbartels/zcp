@@ -93,7 +93,7 @@ HRESULT SoapGroupToGroup(const struct group *lpGroup, ULONG ulFLags, LPECGROUP *
 HRESULT SoapCompanyArrayToCompanyArray(const struct companyArray *lpCompanyArray, ULONG ulFLags, ULONG *lpcCompanies, LPECCOMPANY *lppsCompanies);
 HRESULT SoapCompanyToCompany(const struct company *lpCompany, ULONG ulFLags, LPECCOMPANY *lppsCompany);
 
-HRESULT SvrNameListToSoapMvString8(LPECSVRNAMELIST lpSvrNameList, ULONG ulFLags, struct mv_string8 **lppsSvrNameList);
+HRESULT SvrNameListToSoapMvString8(ECSVRNAMELIST *lpSvrNameList, ULONG ulFLags, struct mv_string8 **lppsSvrNameList);
 HRESULT SoapServerListToServerList(const struct serverList *lpsServerList, ULONG ulFLags, LPECSERVERLIST *lppServerList);
 
 #ifdef LINUX

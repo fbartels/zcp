@@ -2413,7 +2413,7 @@ int main(int argc, char* argv[])
 	LPECQUOTASTATUS	lpsQuotaStatus = NULL;
 	LPECQUOTA lpsQuota = NULL;
 
-	LPECSVRNAMELIST lpsServer = NULL;
+	ECSVRNAMELIST *lpsServer = NULL;
 	LPECSERVERLIST lpServerDetails = NULL;
 
 	ULONG cSenders = 0;

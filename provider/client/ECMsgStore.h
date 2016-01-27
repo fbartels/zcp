@@ -179,7 +179,7 @@ public:
 	virtual HRESULT PurgeCache(ULONG ulFlags);
 	virtual HRESULT PurgeSoftDelete(ULONG ulDays);	
 	virtual HRESULT PurgeDeferredUpdates(ULONG *lpulDeferredRemaining);
-	virtual HRESULT GetServerDetails(LPECSVRNAMELIST lpServerNameList, ULONG ulFlags, LPECSERVERLIST* lppsServerList);
+	virtual HRESULT GetServerDetails(ECSVRNAMELIST *lpServerNameList, ULONG ulFlags, LPECSERVERLIST* lppsServerList);
 	virtual HRESULT OpenUserStoresTable(ULONG ulFlags, LPMAPITABLE *lppTable);
 	virtual HRESULT ResolvePseudoUrl(char *lpszPseudoUrl, char **lppszServerPath, bool *lpbIsPeer);
 	virtual HRESULT GetPublicStoreEntryID(ULONG ulFlags, ULONG* lpcbStoreID, LPENTRYID* lppStoreID);
@@ -380,7 +380,7 @@ public:
 		virtual HRESULT __stdcall PurgeCache(ULONG ulFlags) _zcp_override;
 		virtual HRESULT __stdcall PurgeSoftDelete(ULONG ulDays) _zcp_override;
 		virtual HRESULT __stdcall PurgeDeferredUpdates(ULONG *lpulDeferredRemaining) _zcp_override;
-		virtual HRESULT __stdcall GetServerDetails(LPECSVRNAMELIST lpServerNameList, ULONG ulFlags, LPECSERVERLIST *lppsServerList) _zcp_override;
+		virtual HRESULT __stdcall GetServerDetails(ECSVRNAMELIST *lpServerNameList, ULONG ulFlags, LPECSERVERLIST *lppsServerList) _zcp_override;
 		virtual HRESULT __stdcall OpenUserStoresTable(ULONG ulFlags, LPMAPITABLE *lppTable) _zcp_override;
 		virtual HRESULT __stdcall ResolvePseudoUrl(char *lpszPseudoUrl, char **lppszServerPath, bool *lpbIsPeer) _zcp_override;
 		virtual HRESULT __stdcall GetPublicStoreEntryID(ULONG ulFlags, ULONG *lpcbStoreID, LPENTRYID *lppStoreID) _zcp_override;

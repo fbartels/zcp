@@ -165,7 +165,7 @@ typedef struct _sECServerNameList
 {
 	unsigned int	cServers;
 	LPTSTR*			lpszaServer;
-} ECSVRNAMELIST, *LPECSVRNAMELIST;
+} ECSVRNAMELIST;
 
 typedef struct _sPropmapEntry {
 	unsigned int	ulPropId;

@@ -122,7 +122,7 @@ public:
 	virtual HRESULT __stdcall PurgeDeferredUpdates(ULONG *lpulDeferredRemaining) = 0;
 
 	// Multiserver functions
-	virtual HRESULT __stdcall GetServerDetails(LPECSVRNAMELIST lpServerNameList, ULONG ulFlags, LPECSERVERLIST* lppsServerList) = 0;
+	virtual HRESULT __stdcall GetServerDetails(ECSVRNAMELIST *lpServerNameList, ULONG ulFlags, LPECSERVERLIST* lppsServerList) = 0;
 	virtual HRESULT __stdcall ResolvePseudoUrl(char *lpszPseudoUrl, char **lppszServerPath, bool *lpbIsPeer) = 0;
 
 	// Public store function(s)

@@ -2146,7 +2146,7 @@ exit:
 	return hr;
 }
 
-HRESULT SvrNameListToSoapMvString8(LPECSVRNAMELIST lpSvrNameList,
+HRESULT SvrNameListToSoapMvString8(ECSVRNAMELIST *lpSvrNameList,
     ULONG ulFlags, struct mv_string8 **lppsSvrNameList)
 {
 	HRESULT				hr = hrSuccess;

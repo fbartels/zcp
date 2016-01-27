@@ -3151,13 +3151,13 @@ PyObject *Object_from_LPECQUOTASTATUS(LPECQUOTASTATUS lpQuotaStatus)
 	return PyObject_CallFunction(PyTypeECQuotaStatus, "Ll", lpQuotaStatus->llStoreSize, lpQuotaStatus->quotaStatus);
 }
 
-LPECSVRNAMELIST List_to_LPECSVRNAMELIST(PyObject *object)
+ECSVRNAMELIST *List_to_LPECSVRNAMELIST(PyObject *object)
 {
 	HRESULT hr = hrSuccess;
 	Py_ssize_t len = 0;
 	PyObject *iter = NULL;
 	PyObject *elem = NULL;
-	LPECSVRNAMELIST lpSvrNameList = NULL;
+	ECSVRNAMELIST *lpSvrNameList = NULL;
 
 	if (object == Py_None)
 		goto exit;
