@@ -58,6 +58,6 @@ typedef struct _sECMonitor
 		lpConfig = NULL;
 		bShutdown = false;
 	};
-}ECTHREADMONITOR, *LPECTHREADMONITOR;
+} ECTHREADMONITOR;
 
 #endif

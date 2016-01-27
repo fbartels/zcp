@@ -77,7 +77,7 @@
 
 using namespace std;
 
-static void deleteThreadMonitor(LPECTHREADMONITOR lpThreadMonitor,
+static void deleteThreadMonitor(ECTHREADMONITOR *lpThreadMonitor,
     bool base = false)
 {
 	if(lpThreadMonitor == NULL)
@@ -91,7 +91,7 @@ static void deleteThreadMonitor(LPECTHREADMONITOR lpThreadMonitor,
 		delete lpThreadMonitor;
 }
 
-static LPECTHREADMONITOR	m_lpThreadMonitor;
+static ECTHREADMONITOR *m_lpThreadMonitor;
 
 static pthread_mutex_t		m_hExitMutex;
 static pthread_cond_t		m_hExitSignal;

@@ -63,7 +63,7 @@ struct TemplateVariables {
 class ECQuotaMonitor
 {
 private:
-	ECQuotaMonitor(LPECTHREADMONITOR lpThreadMonitor, LPMAPISESSION lpMAPIAdminSession, LPMDB lpMDBAdmin);
+	ECQuotaMonitor(ECTHREADMONITOR *lpThreadMonitor, LPMAPISESSION lpMAPIAdminSession, LPMDB lpMDBAdmin);
 	virtual ~ECQuotaMonitor();
 
 public:
@@ -93,7 +93,7 @@ private:
 	HRESULT Notify(LPECUSER lpecUser, LPECCOMPANY lpecCompany, LPECQUOTASTATUS lpecQuotaStatus, LPMDB lpStore);
 
 private:
-	LPECTHREADMONITOR	m_lpThreadMonitor;
+	ECTHREADMONITOR *m_lpThreadMonitor;
 	LPMAPISESSION		m_lpMAPIAdminSession;
 	LPMDB				m_lpMDBAdmin;
 	ULONG				m_ulProcessed;

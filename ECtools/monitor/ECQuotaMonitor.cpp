@@ -86,7 +86,8 @@ using namespace std;
  * ECQuotaMonitor constructor
  * Takes an extra reference to the passed MAPI objects which have refcounting.
  */
-ECQuotaMonitor::ECQuotaMonitor(LPECTHREADMONITOR lpThreadMonitor, LPMAPISESSION lpMAPIAdminSession, LPMDB lpMDBAdmin)
+ECQuotaMonitor::ECQuotaMonitor(ECTHREADMONITOR *lpThreadMonitor,
+    LPMAPISESSION lpMAPIAdminSession, LPMDB lpMDBAdmin)
 {
 	m_lpThreadMonitor = lpThreadMonitor;
 
@@ -118,13 +119,13 @@ ECQuotaMonitor::~ECQuotaMonitor()
 /** Creates ECQuotaMonitor object and calls
  * ECQuotaMonitor::CheckQuota(). Entry point for this class.
  *
- * @param[in] lpVoid LPECTHREADMONITOR struct
+ * @param[in] lpVoid ECTHREADMONITOR struct
  * @return NULL
  */
 void* ECQuotaMonitor::Create(void* lpVoid)
 {
 	HRESULT				hr = hrSuccess;
-	LPECTHREADMONITOR	lpThreadMonitor = (LPECTHREADMONITOR)lpVoid;
+	ECTHREADMONITOR *lpThreadMonitor = reinterpret_cast<ECTHREADMONITOR *>(lpVoid);
 	ECQuotaMonitor*		lpecQuotaMonitor = NULL;
 
 	LPMAPISESSION		lpMAPIAdminSession = NULL;
