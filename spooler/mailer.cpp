@@ -887,8 +887,8 @@ HRESULT SendUndeliverable(LPADRBOOK lpAddrBook, ECSender *lpMailer, LPMDB lpStor
 	unsigned int	ulPropAttachPos;
 	ULONG		ulAttachNum;
 
-	std::vector<sFailedRecip> temporaryFailedRecipients = lpMailer->getTemporaryFailedRecipients();
-	std::vector<sFailedRecip> permanentFailedRecipients = lpMailer->getPermanentFailedRecipients();
+	const std::vector<sFailedRecip> & temporaryFailedRecipients = lpMailer->getTemporaryFailedRecipients();
+	const std::vector<sFailedRecip> & permanentFailedRecipients = lpMailer->getPermanentFailedRecipients();
 
 	enum eORPos {
 		OR_DISPLAY_TO, OR_DISPLAY_CC, OR_DISPLAY_BCC, OR_SEARCH_KEY, OR_SENDER_ADDRTYPE,
