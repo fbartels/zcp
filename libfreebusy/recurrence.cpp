@@ -1148,12 +1148,13 @@ time_t recurrence::calcStartDate()
 
 
 			// If the previous calculation gave us a start date *before* the original start date, then we need to skip to the next occurrence
-			if ( m_sRecState.ulRecurFrequency == RF_MONTHLY && m_sRecState.ulDayOfMonth < tm.tm_mday) {
+			if (m_sRecState.ulRecurFrequency == RF_MONTHLY &&
+			    static_cast<int>(m_sRecState.ulDayOfMonth) < tm.tm_mday) {
 				// Monthly, go to next occurrence in 'everyn' months
 				count = m_sRecState.ulPeriod;
 			} else if (m_sRecState.ulRecurFrequency == RF_YEARLY) {
 
-				if (getMonth() - 1 < tm.tm_mon || (getMonth() - 1 == tm.tm_mon && m_sRecState.ulDayOfMonth < tm.tm_mday))
+				if (getMonth() - 1 < tm.tm_mon || (getMonth() - 1 == tm.tm_mon && static_cast<int>(m_sRecState.ulDayOfMonth) < tm.tm_mday))
 					// Yearly, go to next occurrence in 'everyn' months minus difference in first occurence and original date
 					count = (m_sRecState.ulPeriod - (tm.tm_mon - (getMonth()-1)));
 				else if (getMonth()-1 > tm.tm_mon)
@@ -1174,9 +1175,8 @@ time_t recurrence::calcStartDate()
             // month.
 			if ( m_sRecState.ulDayOfMonth >= 28 &&  m_sRecState.ulDayOfMonth <=31) {
 				gmtime_safe(&tStart, &tm);
-				if(tm.tm_mday < m_sRecState.ulDayOfMonth) {
+				if (tm.tm_mday < static_cast<int>(m_sRecState.ulDayOfMonth))
 					tStart -= tm.tm_mday * 24 * 60 *60;
-				}
 			}
 		} else if (m_sRecState.ulPatternType == PT_MONTH_NTH) {
 
