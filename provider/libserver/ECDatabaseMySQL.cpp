@@ -909,10 +909,10 @@ ECRESULT ECDatabaseMySQL::DoSelect(const string &strQuery, DB_RESULT *lppResult,
 		goto exit;
 	}
 
-	if(fStreamResult)
-    	lpResult = mysql_use_result( &m_lpMySQL );
-    else
-    	lpResult = mysql_store_result( &m_lpMySQL );
+	if (fStreamResult)
+		lpResult = mysql_use_result(&m_lpMySQL);
+	else
+		lpResult = mysql_store_result(&m_lpMySQL);
     
 	if( lpResult == NULL ) {
 		er = ZARAFA_E_DATABASE_ERROR;
@@ -1794,9 +1794,8 @@ ECRESULT ECDatabaseMySQL::IsUpdateDone(unsigned int ulDatabaseRevision, unsigned
 		er = ZARAFA_E_NOT_FOUND;
 
 exit:
-    if(lpResult)
-        FreeResult(lpResult);
-
+	if(lpResult != NULL)
+		FreeResult(lpResult);
 	return er;
 }
 
@@ -1821,9 +1820,8 @@ ECRESULT ECDatabaseMySQL::GetFirstUpdate(unsigned int *lpulDatabaseRevision)
 
 
 exit:
-    if(lpResult)
-        FreeResult(lpResult);
-
+	if (lpResult != NULL)
+		FreeResult(lpResult);
 	return er;
 }
 

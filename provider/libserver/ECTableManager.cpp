@@ -369,8 +369,8 @@ ECRESULT ECTableManager::OpenGenericTable(unsigned int ulParent, unsigned int ul
         }
 	} else if(ulObjType == MAPI_FOLDER && (ulFlags & CONVENIENT_DEPTH))
 		er = ECConvenientDepthObjectTable::Create(lpSession, ulStoreId, &sGuid, ulParent, ulObjType, ulFlags, locale, (ECConvenientDepthObjectTable**)&lpTable);
-    else
-    	er = ECStoreObjectTable::Create(lpSession, ulStoreId, &sGuid, ulParent, ulObjType, ulFlags, 0, locale, &lpTable);
+	else
+		er = ECStoreObjectTable::Create(lpSession, ulStoreId, &sGuid, ulParent, ulObjType, ulFlags, 0, locale, &lpTable);
 
 	if (er != erSuccess)
 		goto exit;

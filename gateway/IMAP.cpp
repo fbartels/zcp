@@ -3184,8 +3184,8 @@ HRESULT IMAP::HrResponse(const string &strUntag, const string &strResponse)
     // Early cutoff of debug messages. This means the current process's config
     // determines if we log debug info (so HUP will only affect new processes if
     // you want debug output)
-    if(lpLogger->Log(EC_LOGLEVEL_DEBUG))
-      	lpLogger->Log(EC_LOGLEVEL_DEBUG, "> %s%s", strUntag.c_str(), strResponse.c_str());
+	if (lpLogger->Log(EC_LOGLEVEL_DEBUG))
+		lpLogger->Log(EC_LOGLEVEL_DEBUG, "> %s%s", strUntag.c_str(), strResponse.c_str());
 	return lpChannel->HrWriteLine(strUntag + strResponse);
 }
 
@@ -3218,8 +3218,8 @@ HRESULT IMAP::HrResponse(const string &strResult, const string &strTag, const st
 		return MAPI_E_END_OF_SESSION;
 	}
 		
-    if(lpLogger->Log(EC_LOGLEVEL_DEBUG))
-      	lpLogger->Log(EC_LOGLEVEL_DEBUG, "> %s%s%s", strTag.c_str(), strResult.c_str(), strResponse.c_str());
+	if (lpLogger->Log(EC_LOGLEVEL_DEBUG))
+		lpLogger->Log(EC_LOGLEVEL_DEBUG, "> %s%s%s", strTag.c_str(), strResult.c_str(), strResponse.c_str());
 	return lpChannel->HrWriteLine(strTag + strResult + strResponse);
 }
 
@@ -7816,13 +7816,13 @@ bool IMAP::IsSentItemFolder(IMAPIFolder *lpFolder)
 	LPSPropValue lpPropStore = NULL;
     HRESULT hr = hrSuccess;
     
-    hr = HrGetOneProp(lpFolder, PR_ENTRYID, &lpProp);
-    if(hr != hrSuccess)
-        goto exit;
+	hr = HrGetOneProp(lpFolder, PR_ENTRYID, &lpProp);
+	if (hr != hrSuccess)
+		goto exit;
 
 	hr = HrGetOneProp(lpStore, PR_IPM_SENTMAIL_ENTRYID, &lpPropStore);
-    if(hr != hrSuccess)
-        goto exit;
+	if (hr != hrSuccess)
+		goto exit;
 
 	hr = lpStore->CompareEntryIDs(lpProp->Value.bin.cb, (LPENTRYID)lpProp->Value.bin.lpb, lpPropStore->Value.bin.cb, (LPENTRYID)lpPropStore->Value.bin.lpb , 0, &ulResult);
 	if (hr != hrSuccess)
@@ -7848,9 +7848,9 @@ HRESULT IMAP::HrOpenParentFolder(ULONG cbEntryID, LPENTRYID lpEntryID, IMAPIFold
     IMAPIFolder *lpFolder = NULL;
     ULONG ulObjType = 0;
 
-    hr = lpSession->OpenEntry(cbEntryID, lpEntryID, NULL, MAPI_MODIFY, &ulObjType, (IUnknown **)&lpFolder);
-    if(hr != hrSuccess)
-        goto exit;
+	hr = lpSession->OpenEntry(cbEntryID, lpEntryID, NULL, MAPI_MODIFY, &ulObjType, reinterpret_cast<IUnknown **>(&lpFolder));
+	if (hr != hrSuccess)
+		goto exit;
 	if (ulObjType != MAPI_FOLDER) {
 		hr = MAPI_E_NOT_FOUND;
 		goto exit;

@@ -225,8 +225,8 @@ HRESULT M4LMAPISupport::ModifyStatusRow(ULONG cValues, LPSPropValue lpColumnVals
 
 HRESULT M4LMAPISupport::OpenProfileSection(LPMAPIUID lpUid, ULONG ulFlags, LPPROFSECT * lppProfileObj) {
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LMAPISupport::OpenProfileSection", "");
-    if(lpUid == NULL)
-        lpUid = lpsProviderUID;
+	if (lpUid == NULL)
+		lpUid = lpsProviderUID;
         
 	HRESULT hr = session->OpenProfileSection(lpUid, NULL, ulFlags, lppProfileObj);
 

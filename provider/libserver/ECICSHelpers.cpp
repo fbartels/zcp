@@ -1071,12 +1071,12 @@ ECRESULT ECGetContentChangesHelper::MatchRestriction(const SOURCEKEY &sSourceKey
 
 	// Add change key and predecessor change list
 	er = g_lpSessionManager->GetCacheManager()->GetObjectFromProp(PROP_ID(PR_SOURCE_KEY), sSourceKey.size(), sSourceKey, &ulObjId);
-    if(er != erSuccess)
-        goto exit;
+	if (er != erSuccess)
+		goto exit;
 
-    er = g_lpSessionManager->GetCacheManager()->GetObject(ulObjId, NULL, NULL, NULL, &sODStore.ulObjType);
-    if(er != erSuccess)
-    	goto exit;
+	er = g_lpSessionManager->GetCacheManager()->GetObject(ulObjId, NULL, NULL, NULL, &sODStore.ulObjType);
+	if (er != erSuccess)
+		goto exit;
 
 	sODStore.lpGuid = new GUID;
 

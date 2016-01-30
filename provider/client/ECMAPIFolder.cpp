@@ -500,13 +500,13 @@ HRESULT ECMAPIFolder::CreateMessageWithEntryID(LPCIID lpInterface, ULONG ulFlags
 
     if(cbEntryID == 0 || lpEntryID == NULL || HrCompareEntryIdWithStoreGuid(cbEntryID, lpEntryID, &this->GetMsgStore()->GetStoreGuid()) != hrSuccess) {
 		// No entryid passed or bad entryid passed, create one
-    	hr = HrCreateEntryId(GetMsgStore()->GetStoreGuid(), MAPI_MESSAGE, &cbNewEntryId, &lpNewEntryId);
-    	if(hr != hrSuccess)
-		    goto exit;
+		hr = HrCreateEntryId(GetMsgStore()->GetStoreGuid(), MAPI_MESSAGE, &cbNewEntryId, &lpNewEntryId);
+		if (hr != hrSuccess)
+			goto exit;
 
-    	hr = lpMessage->SetEntryId(cbNewEntryId, lpNewEntryId);
-    	if(hr != hrSuccess)
-    		goto exit;
+		hr = lpMessage->SetEntryId(cbNewEntryId, lpNewEntryId);
+		if (hr != hrSuccess)
+			goto exit;
 
 		hr = this->GetMsgStore()->lpTransport->HrOpenPropStorage(m_cbEntryId, m_lpEntryId, cbNewEntryId, lpNewEntryId, ulFlags & MAPI_ASSOCIATED, &lpStorage);
 		if(hr != hrSuccess)
@@ -698,9 +698,8 @@ HRESULT ECMAPIFolder::CopyMessages(LPENTRYLIST lpMsgList, LPCIID lpInterface, LP
 	}	
 
 exit:
-    if(lpDestPropArray)
-        ECFreeBuffer(lpDestPropArray);
-        
+	if (lpDestPropArray != NULL)
+		ECFreeBuffer(lpDestPropArray);
 	if(lpMsgListEC)
 		ECFreeBuffer(lpMsgListEC);
 
@@ -828,10 +827,8 @@ HRESULT ECMAPIFolder::CopyFolder(ULONG cbEntryID, LPENTRYID lpEntryID, LPCIID lp
 exit:
 	if(lpMapiFolder)
 		lpMapiFolder->Release();
-		
-    if(lpPropArray)
-        ECFreeBuffer(lpPropArray);
-
+	if (lpPropArray != NULL)
+		ECFreeBuffer(lpPropArray);
 	return hr;
 }
 

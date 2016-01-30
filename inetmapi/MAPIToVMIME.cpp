@@ -2454,12 +2454,10 @@ tnef_anyway:
 	}
 
 exit:
-    if (lpAttachRows)
-        FreeProws(lpAttachRows);
-        
-    if (lpAttachTable)
-        lpAttachTable->Release();
-    
+	if (lpAttachRows != NULL)
+		FreeProws(lpAttachRows);
+	if (lpAttachTable != NULL)
+		lpAttachTable->Release();
 	delete mapiical;
 	if (lpStream)
 		lpStream->Release();

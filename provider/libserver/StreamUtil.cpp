@@ -1117,16 +1117,15 @@ ECRESULT SerializeMessage(ECSession *lpecSession, ECDatabase *lpStreamDatabase, 
 					goto exit;
 				}
 				
-	            ulSubObjType = atoi(lpDBRow[1]);
-                er = lpSink->Write(&ulSubObjType, sizeof(ulSubObjType), 1);
-                if (er != erSuccess)
-    	            goto exit;
-                                                    
-	            ulSubObjId = atoi(lpDBRow[0]);
-                er = lpSink->Write(&ulSubObjId, sizeof(ulSubObjId), 1);
-                if (er != erSuccess)
-    	            goto exit;
-				
+				ulSubObjType = atoi(lpDBRow[1]);
+				er = lpSink->Write(&ulSubObjType, sizeof(ulSubObjType), 1);
+				if (er != erSuccess)
+					goto exit;
+				ulSubObjId = atoi(lpDBRow[0]);
+				er = lpSink->Write(&ulSubObjId, sizeof(ulSubObjId), 1);
+				if (er != erSuccess)
+					goto exit;
+
 				// Recurse into subobject, depth is ignored when not using sql procedures
 				er = SerializeMessage(lpecSession, lpStreamDatabase, lpAttachmentStorage, lpStreamCaps, ulSubObjId, ulSubObjType, ulStoreId, lpsGuid, ulFlags, lpSink, false);
 				if (er != erSuccess)

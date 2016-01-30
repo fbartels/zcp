@@ -167,16 +167,16 @@ ECRESULT ECCacheManager::PurgeCache(unsigned int ulFlags)
 	// cache mutex items
 	pthread_mutex_lock(&m_hCacheMutex);
 
-	if(ulFlags & PURGE_CACHE_QUOTA)
-    	m_QuotaCache.ClearCache();
-    if(ulFlags & PURGE_CACHE_QUOTADEFAULT)
-    	m_QuotaUserDefaultCache.ClearCache();
-    if(ulFlags & PURGE_CACHE_OBJECTS)
-    	m_ObjectsCache.ClearCache();
-    if(ulFlags & PURGE_CACHE_STORES)
-    	m_StoresCache.ClearCache();
-    if(ulFlags & PURGE_CACHE_ACL)
-    	m_AclCache.ClearCache();
+	if (ulFlags & PURGE_CACHE_QUOTA)
+		m_QuotaCache.ClearCache();
+	if (ulFlags & PURGE_CACHE_QUOTADEFAULT)
+		m_QuotaUserDefaultCache.ClearCache();
+	if (ulFlags & PURGE_CACHE_OBJECTS)
+		m_ObjectsCache.ClearCache();
+	if (ulFlags & PURGE_CACHE_STORES)
+		m_StoresCache.ClearCache();
+	if (ulFlags & PURGE_CACHE_ACL)
+		m_AclCache.ClearCache();
 
 	pthread_mutex_unlock(&m_hCacheMutex);
 	
@@ -191,28 +191,28 @@ ECRESULT ECCacheManager::PurgeCache(unsigned int ulFlags)
 	// Indexed properties mutex
 	pthread_mutex_lock(&m_hCacheIndPropMutex);
 	
-	if(ulFlags & PURGE_CACHE_INDEX1)
-    	m_PropToObjectCache.ClearCache();
-    if(ulFlags & PURGE_CACHE_INDEX2)
-    	m_ObjectToPropCache.ClearCache();
+	if (ulFlags & PURGE_CACHE_INDEX1)
+		m_PropToObjectCache.ClearCache();
+	if (ulFlags & PURGE_CACHE_INDEX2)
+		m_ObjectToPropCache.ClearCache();
 	
 	pthread_mutex_unlock(&m_hCacheIndPropMutex);
 
 	pthread_mutex_lock(&m_hExcludedIndexPropertiesMutex);
-	if(ulFlags & PURGE_CACHE_INDEXEDPROPERTIES)
-    	m_setExcludedIndexProperties.clear();
+	if (ulFlags & PURGE_CACHE_INDEXEDPROPERTIES)
+		m_setExcludedIndexProperties.clear();
 	pthread_mutex_unlock(&m_hExcludedIndexPropertiesMutex);
 
 	pthread_mutex_lock(&m_hCacheMutex);
 
-	if(ulFlags & PURGE_CACHE_USEROBJECT)
-    	m_UserObjectCache.ClearCache();
-    if(ulFlags & PURGE_CACHE_EXTERNID)
-    	m_UEIdObjectCache.ClearCache();
-    if(ulFlags & PURGE_CACHE_USERDETAILS)
-    	m_UserObjectDetailsCache.ClearCache();
-    if(ulFlags & PURGE_CACHE_SERVER)
-    	m_ServerDetailsCache.ClearCache();
+	if (ulFlags & PURGE_CACHE_USEROBJECT)
+		m_UserObjectCache.ClearCache();
+	if (ulFlags & PURGE_CACHE_EXTERNID)
+		m_UEIdObjectCache.ClearCache();
+	if (ulFlags & PURGE_CACHE_USERDETAILS)
+		m_UserObjectDetailsCache.ClearCache();
+	if (ulFlags & PURGE_CACHE_SERVER)
+		m_ServerDetailsCache.ClearCache();
 
 	pthread_mutex_unlock(&m_hCacheMutex);
 
@@ -344,10 +344,8 @@ ECRESULT ECCacheManager::_GetStore(unsigned int ulObjId, unsigned int *ulStore, 
 
 	if(ulStore)
 		*ulStore = sStores->ulStore;
-		
-    if(lpulType)
-        *lpulType = sStores->ulType;
-
+	if (lpulType != NULL)
+		*lpulType = sStores->ulType;
 	if(lpGuid)
 		memcpy(lpGuid, &sStores->guidStore, sizeof(GUID) );
 		
@@ -579,8 +577,8 @@ ECRESULT ECCacheManager::GetObjects(std::list<sObjectTableKey> &lstObjects, std:
     }
     
 exit:
-    if (lpDBResult)
-        lpDatabase->FreeResult(lpDBResult);
+	if (lpDBResult != NULL)
+		lpDatabase->FreeResult(lpDBResult);
     
 	if (er)	 {
 		LOG_CACHE_DEBUG("Get object ids error 0x%08x", er);
@@ -1161,11 +1159,11 @@ ECRESULT ECCacheManager::GetACLs(unsigned int ulObjId, struct rightsArray **lppR
 
 	LOG_USERCACHE_DEBUG("Get ACLs for objectid %d", ulObjId);
 
-    // Try cache first
-    if(_GetACLs(ulObjId, lppRights) == erSuccess)
-        goto exit;
+	/* Try cache first */
+	if (_GetACLs(ulObjId, lppRights) == erSuccess)
+		goto exit;
 
-    // Failed, get it from the cache
+	/* Failed, get it from the cache */
 	er = GetThreadLocalDatabase(this->m_lpDatabaseFactory, &lpDatabase);
 
 	if(er != erSuccess)
@@ -1487,8 +1485,8 @@ ECRESULT ECCacheManager::SetCell(sObjectTableKey* lpsRowItem, unsigned int ulPro
     ECRESULT er = erSuccess;
     ECsCells *sCell;
 
-    if(lpsRowItem->ulOrderId != 0)
-        return ZARAFA_E_NOT_FOUND;
+	if (lpsRowItem->ulOrderId != 0)
+		return ZARAFA_E_NOT_FOUND;
 
 	scoped_lock lock(m_hCacheCellsMutex);
 
@@ -1863,10 +1861,9 @@ ECRESULT ECCacheManager::GetObjectFromProp(unsigned int ulTag, unsigned int cbDa
 	sObject.cbData = cbData;
 	sObject.lpData = lpData; // Cheap copy, Set this item on NULL before you exit
 
-    er = _AddIndexData(&sNewIndexObject, &sObject);
-    if(er != erSuccess)
-        goto exit;
-        
+	er = _AddIndexData(&sNewIndexObject, &sObject);
+	if (er != erSuccess)
+		goto exit;
 	*lpulObjId = sNewIndexObject.ulObjId;
 
 exit:

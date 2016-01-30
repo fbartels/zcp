@@ -321,12 +321,11 @@ HRESULT MAPINotifSink::GetNotifications(ULONG *lpcNotif, LPNOTIFICATION *lppNoti
 		for(iterNotif = m_lstNotifs.begin(); iterNotif != m_lstNotifs.end(); iterNotif++) {
 			if(CopyNotification(*iterNotif, lpNotifications, &lpNotifications[cNotifs]) == 0) 
 				cNotifs++;
-				MAPIFreeBuffer(*iterNotif);
-			}
-
+			MAPIFreeBuffer(*iterNotif);
 		}
+	}
 
-		m_lstNotifs.clear();
+	m_lstNotifs.clear();
     
 	pthread_mutex_unlock(&m_hMutex);       
 

@@ -198,9 +198,8 @@ ECRESULT RunSubRestriction(ECSession *lpSession, void *lpECODStore, struct restr
     ECDatabase *lpDatabase = NULL;
 
 	er = lpSession->GetDatabase(&lpDatabase);
-    if(er != erSuccess)
-        goto exit;
-
+	if (er != erSuccess)
+		goto exit;
 	if (lpObjects->empty())
 		goto exit;				// nothing to search in, return success.
     

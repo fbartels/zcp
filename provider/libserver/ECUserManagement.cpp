@@ -4760,9 +4760,9 @@ ECRESULT ECUserManagement::GetUserCount(usercount_t *lpUserCount)
     unsigned int ulEquipment = 0;
     unsigned int ulContact = 0;
 
-    er = m_lpSession->GetDatabase(&lpDatabase);
-    if(er != erSuccess)
-        goto exit;
+	er = m_lpSession->GetDatabase(&lpDatabase);
+	if (er != erSuccess)
+		goto exit;
 
 	strQuery =
 		"SELECT COUNT(*), objectclass "
@@ -4770,9 +4770,9 @@ ECRESULT ECUserManagement::GetUserCount(usercount_t *lpUserCount)
 		"WHERE externid IS NOT NULL " // Keep local entries outside of COUNT()
 			"AND " + OBJECTCLASS_COMPARE_SQL("objectclass", OBJECTCLASS_USER) + " "
 		"GROUP BY objectclass";
-    er = lpDatabase->DoSelect(strQuery, &lpResult);
-    if(er != erSuccess)
-        goto exit;
+	er = lpDatabase->DoSelect(strQuery, &lpResult);
+	if (er != erSuccess)
+		goto exit;
 
 	while((lpRow = lpDatabase->FetchRow(lpResult)) != NULL) {
 		if(lpRow[0] == NULL || lpRow[1] == NULL)

@@ -1233,8 +1233,8 @@ ECRESULT GetSyncStates(struct soap *soap, ECSession *lpSession, mv_long ulaSyncI
 	strQuery += ")";
 
 	er = lpDatabase->DoSelect(strQuery, &lpDBResult);
-    if (er != erSuccess)
-        goto exit;
+	if (er != erSuccess)
+		goto exit;
 
 	ulResults = lpDatabase->GetNumRows(lpDBResult);
     if (ulResults == 0){
@@ -1258,9 +1258,8 @@ ECRESULT GetSyncStates(struct soap *soap, ECSession *lpSession, mv_long ulaSyncI
 	ASSERT(lpsaSyncState->__size == ulResults);
 
 exit:
-    if(lpDBResult)
-        lpDatabase->FreeResult(lpDBResult);
-
+	if (lpDBResult != NULL)
+		lpDatabase->FreeResult(lpDBResult);
 	return er;
 }
 
