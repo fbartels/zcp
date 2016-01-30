@@ -1162,7 +1162,7 @@ time_t recurrence::calcStartDate()
 
 			int curmonth = tm.tm_mon + 1;
 			int curyear = tm.tm_year + 1900;
-			for (int i=0; i < count; i++) {
+			for (unsigned int i = 0; i < count; ++i) {
 				tStart += MonthInSeconds(curyear, curmonth); 
 				if (curmonth == 12) { curmonth = 0; curyear++; }
 				curmonth++;
@@ -1218,7 +1218,7 @@ time_t recurrence::calcStartDate()
 
 				int curmonth = tm.tm_mon + 1;
 				int curyear = tm.tm_year + 1900;
-				for (int i=0; i < count; i++) {
+				for (unsigned int i = 0; i < count; ++i) {
 					tStart += MonthInSeconds(curyear, curmonth); 
 					if (curmonth == 12) { curmonth = 0; curyear++; }
 					curmonth++;
@@ -1234,7 +1234,7 @@ time_t recurrence::calcStartDate()
 						curmonth++;
 					}
 
-					for (int i = 0; i < m_sRecState.ulPeriod; i++) {
+					for (unsigned int i = 0; i < m_sRecState.ulPeriod; ++i) {
 						tStart += MonthInSeconds(curyear, curmonth);
 						if (curmonth == 12) { curmonth = 0; curyear++; }
 						curmonth++;
