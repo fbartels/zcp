@@ -5093,8 +5093,8 @@ exit:
 
 std::string WSTransport::GetAppName()
 {
-    if(!m_strAppName.empty())
-        return m_strAppName;
+	if (!m_strAppName.empty())
+		return m_strAppName;
 #ifdef LINUX
 	std::string procpath = "/proc/" + stringify(getpid()) + "/cmdline";
 	std::string s;

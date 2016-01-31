@@ -527,10 +527,8 @@ exit:
 
 	if (lpRootFolder)
 		lpRootFolder->Release();
-
-    if (lpAltStore)
-        lpAltStore->Release();
-
+	if (lpAltStore != NULL)
+		lpAltStore->Release();
 	if (lpStore)
 		lpStore->Release();
 

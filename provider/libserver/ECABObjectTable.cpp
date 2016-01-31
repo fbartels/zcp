@@ -486,9 +486,9 @@ ECRESULT ECABObjectTable::Load()
 	if(lpODAB->ulABParentId != 0 && parseBool(lpSession->GetSessionManager()->GetConfig()->GetSetting("enable_gab")) == false && lpSession->GetSecurity()->GetAdminLevel() == 0)
 	    goto exit;
 
-    er = lpSession->GetSecurity()->IsUserObjectVisible(lpODAB->ulABParentId);
-    if (er != erSuccess)
-        goto exit;
+	er = lpSession->GetSecurity()->IsUserObjectVisible(lpODAB->ulABParentId);
+	if (er != erSuccess)
+		goto exit;
 
 	/*
 	 * Check if we are loading the contents or hierarchy

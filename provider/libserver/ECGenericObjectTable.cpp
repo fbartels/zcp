@@ -211,9 +211,10 @@ ECGenericObjectTable::~ECGenericObjectTable()
 	if(this->lpsRestrict)
 		FreeRestrictTable(this->lpsRestrict);
 		
-    for(iterCategories = m_mapCategories.begin(); iterCategories != m_mapCategories.end(); iterCategories++)
-        delete iterCategories->second;
-		
+	for (iterCategories = m_mapCategories.begin();
+	     iterCategories != m_mapCategories.end(); ++iterCategories)
+		delete iterCategories->second;
+
 	pthread_mutex_destroy(&m_hLock);
 }
 
@@ -294,10 +295,10 @@ ECRESULT ECGenericObjectTable::FindRow(struct restrictTable *lpsRestrict, unsign
 	if(er != erSuccess)
 	    goto exit;
 	
-    // We may need the table position later (ulCount is not used)
+	/* We may need the table position later (ulCount is not used) */
 	er = lpKeyTable->GetRowCount(&ulCount, &ulRow);
-    if(er != erSuccess)
-        goto exit;
+	if (er != erSuccess)
+		goto exit;
 
 	// Start searching at the right place
 	if(ulBookmark == BOOKMARK_END && ulFlags & DIR_BACKWARD) {
@@ -305,10 +306,8 @@ ECRESULT ECGenericObjectTable::FindRow(struct restrictTable *lpsRestrict, unsign
 	} else {
 		er = SeekRow(ulBookmark, 0, NULL);
 	}
-	
-    if(er != erSuccess)
-        goto exit;
-
+	if (er != erSuccess)
+		goto exit;
 
 	// Special optimisation case: if you're searching the PR_INSTANCE_KEY, we can
 	// look this up directly!
@@ -1264,10 +1263,9 @@ ECRESULT ECGenericObjectTable::QueryRows(struct soap *soap, unsigned int ulRowCo
 	ECObjectTableList	ecRowList;
 
 	pthread_mutex_lock(&m_hLock);
-
-    er = Populate();
-    if(er != erSuccess)
-        goto exit;
+	er = Populate();
+	if (er != erSuccess)
+		goto exit;
 
 	if(lpsSortOrderArray == NULL) {
 		er = SetSortOrder(&sDefaultSortOrder, 0, 0);
@@ -2895,9 +2893,9 @@ ECRESULT ECGenericObjectTable::AddCategoryBeforeAddRow(sObjectTableKey sObjKey, 
     
     m_mapLeafs[sObjKey] = sLeafInfo;
     
-    // The item that the request was for is hidden if the deepest category was collapsed
-    if(lpfHidden)
-        *lpfHidden = fCollapsed;
+	// The item that the request was for is hidden if the deepest category was collapsed
+	if (lpfHidden != NULL)
+		*lpfHidden = fCollapsed;
         
 	if(lppCategory)
 		*lppCategory = lpCategory;

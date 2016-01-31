@@ -873,9 +873,8 @@ ECRESULT ECStoreObjectTable::QueryRowDataByColumn(ECGenericObjectTable *lpThis, 
     std::string		strSubquery;
     std::string		strPropColOrder;
 
-
-    if(mapColumns.empty() || mapObjIds.empty())
-    	goto exit;
+	if (mapColumns.empty() || mapObjIds.empty())
+		goto exit;
 
 	er = lpSession->GetDatabase(&lpDatabase);
 	if (er != erSuccess)

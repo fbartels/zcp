@@ -482,9 +482,9 @@ ECRESULT ECSession::AddChangeAdvise(unsigned int ulConnection, notifySyncState *
 	if (er != hrSuccess)
 		goto exit;
 
-    er = GetDatabase(&lpDatabase);
-    if (er != erSuccess)
-        goto exit;
+	er = GetDatabase(&lpDatabase);
+	if (er != erSuccess)
+		goto exit;
 
 	strQuery =	"SELECT c.id FROM changes AS c JOIN syncs AS s "
 					"ON s.sourcekey=c.parentsourcekey "

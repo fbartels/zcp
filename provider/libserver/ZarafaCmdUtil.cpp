@@ -1841,10 +1841,10 @@ ECRESULT ResetFolderCount(ECSession *lpSession, unsigned int ulObjId, unsigned i
 
     // Lock the counters now since the locking order is normally counters/foldercontent/storesize/localcommittimemax. So our lock order
     // is now counters/foldercontent/counters which is compatible (*cough* in theory *cough*)
-    strQuery = "SELECT val_ulong FROM properties WHERE hierarchyid = " + stringify(ulObjId) + " FOR UPDATE";
-    er = lpDatabase->DoSelect(strQuery, NULL); // don't care about the result
-    if (er != erSuccess)
-        goto exit;
+	strQuery = "SELECT val_ulong FROM properties WHERE hierarchyid = " + stringify(ulObjId) + " FOR UPDATE";
+	er = lpDatabase->DoSelect(strQuery, NULL); // don't care about the result
+	if (er != erSuccess)
+		goto exit;
 	
 	// Gets counters from hierarchy: cc, acc, dmc, dac, cfc, dfc
 	// use for update, since the update query below must see the same values, mysql should already block here.
@@ -2536,9 +2536,8 @@ ECRESULT PrepareReadProps(struct soap *soap, ECDatabase *lpDatabase, bool fDoQue
     }
 
 exit:
-    if(lpDBResult)
-        lpDatabase->FreeResult(lpDBResult);
-
+	if (lpDBResult != NULL)
+		lpDatabase->FreeResult(lpDBResult);
 	return er;
 }
 

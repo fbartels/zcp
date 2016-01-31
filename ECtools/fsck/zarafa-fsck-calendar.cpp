@@ -565,23 +565,24 @@ HRESULT ZarafaFsckCalendar::ValidateRecurrence(LPMESSAGE lpMessage)
                 Value.bin.lpb = reinterpret_cast<BYTE *>(lpData);
                 Value.bin.cb = ulLen;
     
-                // Update the recurrence if there is a change            
-                if(ulLen != lpPropertyArray[E_RECURRENCE_STATE].Value.bin.cb || memcmp(lpPropertyArray[E_RECURRENCE_STATE].Value.bin.lpb, lpData, ulLen) != 0)
-                    hr = ReplaceProperty(lpMessage, "dispidRecurrenceState", CHANGE_PROP_TYPE(lpPropertyArray[E_RECURRENCE_STATE].ulPropTag, PT_BINARY), "Recoverable recurrence state.", Value);
-	            break;
-	        default:
-	            // Recurrence state is useless
-                Value.l = 0;
+			// Update the recurrence if there is a change
+			if (ulLen != lpPropertyArray[E_RECURRENCE_STATE].Value.bin.cb ||
+			    memcmp(lpPropertyArray[E_RECURRENCE_STATE].Value.bin.lpb, lpData, ulLen) != 0)
+				hr = ReplaceProperty(lpMessage, "dispidRecurrenceState", CHANGE_PROP_TYPE(lpPropertyArray[E_RECURRENCE_STATE].ulPropTag, PT_BINARY), "Recoverable recurrence state.", Value);
+			break;
+		default:
+			/* Recurrence state is useless */
+			Value.l = 0;
 
-                hr = ReplaceProperty(lpMessage, "dispidRecurrenceState",
-                             CHANGE_PROP_TYPE(lpPropertyTagArray->aulPropTag[E_RECURRENCE], PT_LONG),
-                             "Invalid recurrence state, disabling recurrence.",
-                             Value);
-	            break;
-	    }
+			hr = ReplaceProperty(lpMessage, "dispidRecurrenceState",
+			     CHANGE_PROP_TYPE(lpPropertyTagArray->aulPropTag[E_RECURRENCE], PT_LONG),
+			     "Invalid recurrence state, disabling recurrence.",
+			     Value);
+			break;
+		}
 
-        if (hr != hrSuccess)
-            goto exit;
+		if (hr != hrSuccess)
+			goto exit;
 	}
 
     /* If we are here, we were succcessful. */

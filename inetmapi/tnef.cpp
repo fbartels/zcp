@@ -303,10 +303,14 @@ HRESULT ECTNEF::AddProps(ULONG ulFlags, LPSPropTagArray lpPropList)
 		goto exit;
 
 	for (i = 0; i < lpPropListMessage->cValues; i++) {
-	    // do not send properties in 0x67XX range, since these seem to be blacklisted in recent exchange servers, which
-	    // causes exchange to drop the entire message
-	    if(PROP_ID(lpPropListMessage->aulPropTag[i]) >= 0x6700 && PROP_ID(lpPropListMessage->aulPropTag[i]) <= 0x67FF)
-	        continue;
+		/*
+		 * Do not send properties in 0x67XX range, since these seem to
+		 * be blacklisted in recent exchange servers, which causes
+		 * exchange to drop the entire message.
+		 */
+		if (PROP_ID(lpPropListMessage->aulPropTag[i]) >= 0x6700 &&
+		    PROP_ID(lpPropListMessage->aulPropTag[i]) <= 0x67FF)
+			continue;
 
 		// unable to save these properties
 		if(PROP_TYPE(lpPropListMessage->aulPropTag[i]) == PT_OBJECT || 

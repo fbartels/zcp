@@ -245,7 +245,7 @@ static void strmatch(const char *lpszBuffer, unsigned int cbBuffer,
 	const char		*lpszPatCur = NULL;
 	unsigned int	ulCount = 0;
 	const char		*lpszMatch = NULL;
-	char			cbMatch = 0;
+	unsigned int cbMatch = 0;
 
 	while (cbMatch < cbPattern && lpszBufCur + cbMatch < lpszBuffer + cbBuffer)
 	{

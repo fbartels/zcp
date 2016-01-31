@@ -372,10 +372,10 @@ ECRESULT ECSearchFolders::IsSearchFolder(unsigned int ulStoreID, unsigned int ul
 	DB_ROW			lpDBRow = NULL;
 	std::string		strQuery;
 
-    // Get database
-    er = GetThreadLocalDatabase(m_lpDatabaseFactory, &lpDatabase);
-    if(er != erSuccess)
-        goto exit;
+	/* Get database */
+	er = GetThreadLocalDatabase(m_lpDatabaseFactory, &lpDatabase);
+	if (er != erSuccess)
+		goto exit;
 
 	// Find out what kind of table this is
 	strQuery = "SELECT flags FROM hierarchy WHERE id=" + stringify(ulFolderId);
@@ -1626,9 +1626,9 @@ ECRESULT ECSearchFolders::DeleteResults(unsigned int ulStoreId, unsigned int ulF
     
     unsigned int ulAffected = 0;
     
-    er = GetThreadLocalDatabase(this->m_lpDatabaseFactory, &lpDatabase);
-    if(er != erSuccess)
-        goto exit;
+	er = GetThreadLocalDatabase(this->m_lpDatabaseFactory, &lpDatabase);
+	if (er != erSuccess)
+		goto exit;
 
 	if(lpulOldFlags) {
 		strQuery = "SELECT flags FROM searchresults WHERE folderid=" + stringify(ulFolderId) + " AND hierarchyid=" + stringify(ulObjId);

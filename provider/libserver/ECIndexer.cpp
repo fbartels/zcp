@@ -443,8 +443,8 @@ ECRESULT GetIndexerResults(ECDatabase *lpDatabase, ECConfig *lpConfig, ECLogger 
             lpLogger->Log(EC_LOGLEVEL_ERROR, "Error while querying search on %s, 0x%08x", szSocket, er);
 		} else
 			lpLogger->Log(EC_LOGLEVEL_DEBUG, "Indexed query results found in %.4f ms", llelapsedtime/1000.0);
-			if(lpLogger->Log(EC_LOGLEVEL_DEBUG))
-    			lpLogger->Log(EC_LOGLEVEL_DEBUG, "%d indexed matches found", (unsigned int)lstMatches.size());
+		if (lpLogger->Log(EC_LOGLEVEL_DEBUG))
+			lpLogger->Log(EC_LOGLEVEL_DEBUG, "%u indexed matches found", static_cast<unsigned int>(lstMatches.size()));
 	} else {
 	    er = ZARAFA_E_NOT_FOUND;
 	    goto exit;
@@ -454,9 +454,8 @@ ECRESULT GetIndexerResults(ECDatabase *lpDatabase, ECConfig *lpConfig, ECLogger 
     lpOptimizedRestrict = NULL;
     
 exit:
-    if (lpOptimizedRestrict)
-        FreeRestrictTable(lpOptimizedRestrict);
-        
+	if (lpOptimizedRestrict != NULL)
+		FreeRestrictTable(lpOptimizedRestrict);
 	delete lpSearchClient;
 
 	if (er != erSuccess)

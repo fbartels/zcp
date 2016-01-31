@@ -1625,9 +1625,8 @@ HRESULT ECMessage::SubmitMessage(ULONG ulFlags)
 	}
 
 exit:
-    if(lpRecip)
-        ECFreeBuffer(lpRecip);
-
+	if (lpRecip != NULL)
+		ECFreeBuffer(lpRecip);
 	if(lpsRow)
 		FreeProws(lpsRow);
 
@@ -1766,9 +1765,8 @@ HRESULT ECMessage::SetReadFlag(ULONG ulFlags)
         goto exit;
 
 exit:
-    if(lpPropFlags)
-        ECFreeBuffer(lpPropFlags);
-
+	if (lpPropFlags != NULL)
+		ECFreeBuffer(lpPropFlags);
 	if(lpsPropTagArray)
 		ECFreeBuffer(lpsPropTagArray);
 
@@ -1869,8 +1867,7 @@ HRESULT ECMessage::SyncRecips()
 exit:
 	if(lpRows)
 		FreeProws(lpRows);
-		lpRows = NULL;
-
+	lpRows = NULL;
 	if(lpTable)
 		lpTable->Release();
 
