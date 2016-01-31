@@ -164,8 +164,6 @@ typedef HRESULT (MAPIADMINPROFILES)(
 typedef MAPIADMINPROFILES *LPMAPIADMINPROFILES;
 MAPIADMINPROFILES MAPIAdminProfiles;
 
-void HrSetLogger(void *const pl);
-
 } // EXTERN "C"
 
 /*

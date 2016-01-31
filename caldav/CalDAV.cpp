@@ -281,6 +281,7 @@ int main(int argc, char **argv) {
 #else
 		g_lpLogger = new ECLogger_File(1, 0, "-", false);
 #endif
+		ec_log_set(g_lpLogger);
 		LogConfigErrors(g_lpConfig, g_lpLogger);
 		goto exit;
 	}
@@ -290,7 +291,7 @@ int main(int argc, char **argv) {
 		fprintf(stderr, "Error loading configuration or parsing commandline arguments.\n");
 		goto exit;
 	}
-
+	ec_log_set(g_lpLogger);
 	if ((bIgnoreUnknownConfigOptions && g_lpConfig->HasErrors()) || g_lpConfig->HasWarnings())
 		LogConfigErrors(g_lpConfig, g_lpLogger);
 
@@ -351,6 +352,7 @@ int main(int argc, char **argv) {
 		g_lpLogger = StartLoggerProcess(g_lpConfig, g_lpLogger);
 	else
 		g_lpLogger->SetLogprefix(LP_TID);
+	ec_log_set(g_lpLogger);
 #endif
 
 	if (g_bThreads)

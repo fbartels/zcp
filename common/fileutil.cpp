@@ -45,6 +45,8 @@
 #include <zarafa/stringutil.h>
 #include <zarafa/charset/convert.h>
 #include <string>
+#include <cerrno>
+#include <cstring>
 #include <zarafa/ECIConv.h>
 #include <zarafa/ECLogger.h>
 
@@ -270,7 +272,6 @@ exit:
 /**
  * Duplicate a file, to a given location
  *
- * @param[in]	lpLogger Pointer to logger, if NULL the errors are sent to stderr
  * @param[in]	lpFile Pointer to the source file
  * @param[in]	strFileName	The new file name
  *
@@ -278,7 +279,7 @@ exit:
  *
  * @todo on error delete file?
  */
-bool DuplicateFile(ECLogger *lpLogger, FILE *lpFile, std::string &strFileName) 
+bool DuplicateFile(FILE *lpFile, std::string &strFileName)
 {
 	bool bResult = true;
 	size_t	ulReadsize = 0;
@@ -288,11 +289,7 @@ bool DuplicateFile(ECLogger *lpLogger, FILE *lpFile, std::string &strFileName)
 	// create new file
 	pfNew = fopen(strFileName.c_str(), "wb");
 	if(pfNew == NULL) {
-		if (lpLogger)
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to create file, error %d", errno);
-		else
-			perror("Unable to create file");
-
+		ec_log_err("Unable to create file %s: %s", strFileName.c_str(), strerror(errno), errno);
 		bResult = false;
 		goto exit;
 	}
@@ -302,8 +299,7 @@ bool DuplicateFile(ECLogger *lpLogger, FILE *lpFile, std::string &strFileName)
 
 	lpBuffer = (char*)malloc(BLOCKSIZE); 
 	if (!lpBuffer) {
-		if (lpLogger)
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "Duplicate file is out of memory");
+		ec_log_err("DuplicateFile is out of memory");
 
 		bResult = false;
 		goto exit;
@@ -313,22 +309,14 @@ bool DuplicateFile(ECLogger *lpLogger, FILE *lpFile, std::string &strFileName)
 	while (!feof(lpFile)) {
 		ulReadsize = fread(lpBuffer, 1, BLOCKSIZE, lpFile);
 		if (ferror(lpFile)) {
-			if (lpLogger)
-				lpLogger->Log(EC_LOGLEVEL_FATAL, "Read error, error %d", errno);
-			else
-				perror("Read error");
-
+			ec_log_err("DuplicateFile: fread: %s", strerror(errno));
 			bResult = false;
 			goto exit;
 		}
 		
 
 		if (fwrite(lpBuffer, 1, ulReadsize , pfNew) != ulReadsize) {
-			if (lpLogger)
-				lpLogger->Log(EC_LOGLEVEL_FATAL, "Write error, error %d", errno);
-			else
-				perror("Write error");
-
+			ec_log_err("Error during write to %s: %s", strFileName.c_str(), strerror(errno));
 			bResult = false;
 			goto exit;
 		}
@@ -345,11 +333,10 @@ exit:
 /**
  * Convert file from UCS2 to UTF8
  *
- * @param[in] lpLogger Pointer to a log object
  * @param[in] strSrcFileName Source filename
  * @param[in] strDstFileName Destination filename
  */
-bool ConvertFileFromUCS2ToUTF8(ECLogger *lpLogger, const std::string &strSrcFileName, const std::string &strDstFileName)
+bool ConvertFileFromUCS2ToUTF8(const std::string &strSrcFileName, const std::string &strDstFileName)
 {
 	bool bResult = false;
 	int ulBufferSize = 0;
@@ -361,22 +348,14 @@ bool ConvertFileFromUCS2ToUTF8(ECLogger *lpLogger, const std::string &strSrcFile
 
 	pfSrc = fopen(strSrcFileName.c_str(), "rb");
 	if(pfSrc == NULL) {
-		if (lpLogger)
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to open file '%s', error %d", strSrcFileName.c_str(), errno);
-		else
-			perror("Unable to open file");
-
+		ec_log_err("%s: Unable to open file \"%s\": %s", __PRETTY_FUNCTION__, strSrcFileName.c_str(), strerror(errno));
 		goto exit;
 	}
 
 	// create new file
 	pfDst = fopen(strDstFileName.c_str(), "wb");
 	if(pfDst == NULL) {
-		if (lpLogger)
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to create file '%s', error %d", strDstFileName.c_str(), errno);
-		else
-			perror("Unable to create file");
-
+		ec_log_err("%s: Unable to create file \"%s\": %s", __PRETTY_FUNCTION__, strDstFileName.c_str(), strerror(errno));
 		goto exit;
 	}
 
@@ -390,11 +369,7 @@ bool ConvertFileFromUCS2ToUTF8(ECLogger *lpLogger, const std::string &strSrcFile
 	}
 	
 	if (fwrite(strConverted.c_str(), 1, strConverted.size(), pfDst) != strConverted.size()) { 
-		if (lpLogger)
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to write to file '%s', error %d", strDstFileName.c_str(), errno);
-		else
-			perror("Write error");
-
+		ec_log_err("%s: Unable to write to file \"%s\": %s", __PRETTY_FUNCTION__, strDstFileName.c_str(), strerror(errno));
 		goto exit;
 	}
 

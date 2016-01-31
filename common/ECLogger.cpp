@@ -91,6 +91,9 @@ static const char *const ll_names[] = {
 	"debug  "
 };
 
+static ECLogger_File ec_log_fallback_target(EC_LOGLEVEL_WARNING, false, "-", false);
+static ECLogger *ec_log_target = &ec_log_fallback_target;
+
 ECLogger::ECLogger(int max_ll) {
 	max_loglevel = max_ll;
 	// get system locale for time, NULL is returned if locale was not found.
@@ -101,6 +104,9 @@ ECLogger::ECLogger(int max_ll) {
 }
 
 ECLogger::~ECLogger() {
+	if (ec_log_target == this)
+		ec_log_set(NULL);
+
 	if (timelocale)
 		freelocale(timelocale);
 
@@ -1219,4 +1225,42 @@ void generic_sigsegv_handler(ECLogger *lpLogger, const char *const app_name, con
 #endif
 
 	exit(1);
+}
+
+/**
+ * The expectation here is that ec_log_set is only called when the program is
+ * single-threaded, i.e. during startup or at shutdown. As a consequence, all
+ * of this is written without locks and without shared_ptr.
+ *
+ * This function gets called from destructors, so you must not invoke
+ * ec_log_target->anyfunction at this point any more.
+ */
+void ec_log_set(ECLogger *logger)
+{
+	if (logger == NULL)
+		logger = &ec_log_fallback_target;
+	ec_log_target = logger;
+}
+
+ECLogger *ec_log_get(void)
+{
+	return ec_log_target;
+}
+
+bool ec_log_has_target(void)
+{
+	return ec_log_target != &ec_log_fallback_target;
+}
+
+void ec_log(unsigned int level, const char *fmt, ...)
+{
+	va_list argp;
+	va_start(argp, fmt);
+	ec_log_target->Log(level, fmt, argp);
+	va_end(argp);
+}
+
+void ec_log(unsigned int level, const std::string &msg)
+{
+	ec_log_target->Log(level, msg);
 }

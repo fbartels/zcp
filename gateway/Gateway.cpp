@@ -428,6 +428,7 @@ int main(int argc, char *argv[]) {
 #else
 		g_lpLogger = new ECLogger_File(EC_LOGLEVEL_INFO, 0, "-", false);	// create logger without a timestamp to stderr
 #endif
+		ec_log_set(g_lpLogger);
 		LogConfigErrors(g_lpConfig, g_lpLogger);
 		hr = E_FAIL;
 		goto exit;
@@ -435,6 +436,7 @@ int main(int argc, char *argv[]) {
 
 	// Setup logging
 	g_lpLogger = CreateLogger(g_lpConfig, argv[0], "ZarafaGateway");
+	ec_log_set(g_lpLogger);
 
 	if ((bIgnoreUnknownConfigOptions && g_lpConfig->HasErrors()) || g_lpConfig->HasWarnings())
 		LogConfigErrors(g_lpConfig, g_lpLogger);
@@ -651,6 +653,7 @@ static HRESULT running_service(const char *szPath, const char *servicename)
 
 	if (bThreads == false)
 		g_lpLogger = StartLoggerProcess(g_lpConfig, g_lpLogger); // maybe replace logger
+	ec_log_set(g_lpLogger);
 #endif
 
 	g_lpLogger->Log(EC_LOGLEVEL_ALWAYS, "Starting zarafa-gateway version " PROJECT_VERSION_GATEWAY_STR " (" PROJECT_SVN_REV_STR "), pid %d", getpid());

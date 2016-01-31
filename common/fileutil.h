@@ -51,8 +51,8 @@ HRESULT HrMapFileToString(FILE *f, std::string *lpstrBuffer, int *lpSize = NULL)
 HRESULT HrMapFileToBuffer(FILE *f, char **lppBuffer, int *lpSize, bool *lpImmap);
 HRESULT HrUnmapFileBuffer(char *lpBuffer, int ulSize, bool bImmap);
 
-bool DuplicateFile(ECLogger *lpLogger, FILE *lpFile, std::string &strFileName);
+bool DuplicateFile(FILE *lpFile, std::string &strFileName);
 
-bool ConvertFileFromUCS2ToUTF8(ECLogger *lpLogger, const std::string &strSrcFileName, const std::string &strDstFileName);
+bool ConvertFileFromUCS2ToUTF8(const std::string &strSrcFileName, const std::string &strDstFileName);
 
 #endif

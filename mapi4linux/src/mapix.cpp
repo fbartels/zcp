@@ -81,15 +81,6 @@ ECConfig *m4l_lpConfig = NULL;
 ECLogger *m4l_lpLogger = NULL;
 MAPISVC *m4l_lpMAPISVC = NULL;
 
-void HrSetLogger(void *const pl) {
-	if (pl == NULL) {
-		m4l_lpLogger = new ECLogger_Null();
-	} else {
-		m4l_lpLogger = (ECLogger *)pl;
-		m4l_lpLogger->AddRef();
-}
-}
-
 /**
  * Internal MAPI4Linux function to create m4l internal ECConfig and ECLogger objects
  */
@@ -145,12 +136,20 @@ static HRESULT HrCreateM4LServices(void)
 		m4l_lpConfig->LoadSettings(configfile.c_str());
 	}
 
-	if (!m4l_lpLogger) {
+	if (!ec_log_has_target()) {
 		m4l_lpLogger = CreateLogger(m4l_lpConfig, "exchange-redirector", "ExchangeRedirector");
 		if (!m4l_lpLogger) {
 			hr = MAPI_E_NOT_ENOUGH_MEMORY;
 			goto exit;
 		}
+		/*
+		 * You already knew that MAPIInitialize() could only be called
+		 * from single-threaded context.
+		 */
+		ec_log_set(m4l_lpLogger);
+	} else {
+		m4l_lpLogger = ec_log_get();
+		m4l_lpLogger->AddRef();
 	}
 
 exit:
@@ -272,20 +271,20 @@ HRESULT M4LProfAdmin::GetProfileTable(ULONG ulFlags, LPMAPITABLE* lppTable) {
 
 		hr = lpTable->HrModifyRow(ECKeyTable::TABLE_ROW_ADD, NULL, sProps, 3);
 		if (hr != hrSuccess) {
-			m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LProfAdmin::GetProfileTable(): HrModifyRow failed %x: %s", hr, GetMAPIErrorMessage(hr));
+			ec_log_err("M4LProfAdmin::GetProfileTable(): HrModifyRow failed %x: %s", hr, GetMAPIErrorMessage(hr));
 			goto exit;
 		}
 	}
 
 	hr = lpTable->HrGetView(createLocaleFromName(""), ulFlags, &lpTableView);
 	if(hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LProfAdmin::GetProfileTable(): HrGetView failed %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LProfAdmin::GetProfileTable(): HrGetView failed %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 		
 	hr = lpTableView->QueryInterface(IID_IMAPITable, (void **)lppTable);
 	if(hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LProfAdmin::GetProfileTable(): QueryInterface failed %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LProfAdmin::GetProfileTable(): QueryInterface failed %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
@@ -324,21 +323,21 @@ HRESULT M4LProfAdmin::CreateProfile(LPTSTR lpszProfileName, LPTSTR lpszPassword,
     pthread_mutex_lock(&m_mutexProfiles);
     
     if(lpszProfileName == NULL) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LProfAdmin::CreateProfile(): invalid parameters");
+	ec_log_err("M4LProfAdmin::CreateProfile(): invalid parameters");
     	hr = MAPI_E_INVALID_PARAMETER;
     	goto exit;
 	}
     
     i = findProfile(lpszProfileName);
     if (i != profiles.end()) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LProfAdmin::CreateProfile(): duplicate profile name");
+		ec_log_err("M4LProfAdmin::CreateProfile(): duplicate profile name");
 		hr = MAPI_E_NO_ACCESS;	// duplicate profile name
 		goto exit;
     }
 
     entry = new profEntry;
     if (!entry) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LProfAdmin::CreateProfile(): ENOMEM");
+		ec_log_err("M4LProfAdmin::CreateProfile(): ENOMEM");
 		hr = MAPI_E_NOT_ENOUGH_MEMORY;
 		goto exit;
     }
@@ -351,7 +350,7 @@ HRESULT M4LProfAdmin::CreateProfile(LPTSTR lpszProfileName, LPTSTR lpszPassword,
 	sPropValue.Value.lpszA = (char*)lpszProfileName;
 	hr = profilesection->SetProps(1 ,&sPropValue, NULL);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LProfAdmin::CreateProfile(): SetProps failed %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LProfAdmin::CreateProfile(): SetProps failed %x: %s", hr, GetMAPIErrorMessage(hr));
 		delete entry;
 		goto exit;
 	}
@@ -359,7 +358,7 @@ HRESULT M4LProfAdmin::CreateProfile(LPTSTR lpszProfileName, LPTSTR lpszPassword,
     entry->serviceadmin = new(std::nothrow) M4LMsgServiceAdmin(profilesection);
     if (!entry->serviceadmin) {
 		delete entry;
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LProfAdmin::CreateProfile(): M4LMsgServiceAdmin failed");
+		ec_log_err("M4LProfAdmin::CreateProfile(): M4LMsgServiceAdmin failed");
 		hr = MAPI_E_NOT_ENOUGH_MEMORY;
 		goto exit;
     }
@@ -413,28 +412,28 @@ HRESULT M4LProfAdmin::DeleteProfile(LPTSTR lpszProfileName, ULONG ulFlags) {
 }
 
 HRESULT M4LProfAdmin::ChangeProfilePassword(LPTSTR lpszProfileName, LPTSTR lpszOldPassword, LPTSTR lpszNewPassword, ULONG ulFlags) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LProfAdmin::ChangeProfilePassword is not implemented");
+	ec_log_err("M4LProfAdmin::ChangeProfilePassword is not implemented");
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LProfAdmin::ChangeProfilePassword", "");
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LProfAdmin::ChangeProfilePassword", "0x%08x", MAPI_E_NO_SUPPORT);
     return MAPI_E_NO_SUPPORT;
 }
 
 HRESULT M4LProfAdmin::CopyProfile(LPTSTR lpszOldProfileName, LPTSTR lpszOldPassword, LPTSTR lpszNewProfileName, ULONG ulUIParam, ULONG ulFlags) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LProfAdmin::CopyProfile is not implemented");
+	ec_log_err("M4LProfAdmin::CopyProfile is not implemented");
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LProfAdmin::CopyProfile", "");
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LProfAdmin::CopyProfile", "0x%08x", MAPI_E_NO_SUPPORT);
     return MAPI_E_NO_SUPPORT;
 }
 
 HRESULT M4LProfAdmin::RenameProfile(LPTSTR lpszOldProfileName, LPTSTR lpszOldPassword, LPTSTR lpszNewProfileName, ULONG ulUIParam, ULONG ulFlags) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LProfAdmin::RenameProfile is not implemented");
+	ec_log_err("M4LProfAdmin::RenameProfile is not implemented");
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LProfAdmin::RenameProfile", "");
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LProfAdmin::RenameProfile", "0x%08x", MAPI_E_NO_SUPPORT);
     return MAPI_E_NO_SUPPORT;
 }
 
 HRESULT M4LProfAdmin::SetDefaultProfile(LPTSTR lpszProfileName, ULONG ulFlags) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LProfAdmin::SetDefaultProfile is not implemented");
+	ec_log_err("M4LProfAdmin::SetDefaultProfile is not implemented");
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LProfAdmin::SetDefaultProfile", "");
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LProfAdmin::SetDefaultProfile", "0x%08x", MAPI_E_NO_SUPPORT);
     return MAPI_E_NO_SUPPORT;
@@ -461,20 +460,20 @@ HRESULT M4LProfAdmin::AdminServices(LPTSTR lpszProfileName, LPTSTR lpszPassword,
 
     if(lpszProfileName == NULL) {
     	hr = MAPI_E_INVALID_PARAMETER;
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LProfAdmin::AdminServices invalid parameters");
+	ec_log_err("M4LProfAdmin::AdminServices invalid parameters");
     	goto exit;
 	}
 
     i = findProfile(lpszProfileName);
     if (i == profiles.end()) {
         hr = MAPI_E_NOT_FOUND;
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LProfAdmin::AdminServices profile not found");
+	ec_log_err("M4LProfAdmin::AdminServices profile not found");
         goto exit;
     }
     
 	hr = (*i)->serviceadmin->QueryInterface(IID_IMsgServiceAdmin,(void**)lppServiceAdmin);
 	if (hr != hrSuccess)
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LProfAdmin::AdminServices QueryInterface failed %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LProfAdmin::AdminServices QueryInterface failed %x: %s", hr, GetMAPIErrorMessage(hr));
 
 exit:
     pthread_mutex_unlock(&m_mutexProfiles);
@@ -622,7 +621,7 @@ HRESULT M4LMsgServiceAdmin::GetMsgServiceTable(ULONG ulFlags, LPMAPITABLE* lppTa
 	else
 		hr = ECMemTable::Create((LPSPropTagArray)&sptaProviderColsAscii, PR_ROWID, &lpTable);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::GetMsgServiceTable(): failed to create memtable %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMsgServiceAdmin::GetMsgServiceTable(): failed to create memtable %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 	
@@ -658,13 +657,13 @@ HRESULT M4LMsgServiceAdmin::GetMsgServiceTable(ULONG ulFlags, LPMAPITABLE* lppTa
 	
 	hr = lpTable->HrGetView(createLocaleFromName(""), ulFlags, &lpTableView);
 	if(hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::GetMsgServiceTable(): failed to create memtable view %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMsgServiceAdmin::GetMsgServiceTable(): failed to create memtable view %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 		
 	hr = lpTableView->QueryInterface(IID_IMAPITable, (void **)lppTable);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::GetMsgServiceTable(): failed to query memtable interface %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMsgServiceAdmin::GetMsgServiceTable(): failed to query memtable interface %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
@@ -703,7 +702,7 @@ HRESULT M4LMsgServiceAdmin::CreateMsgService(LPTSTR lpszService, LPTSTR lpszDisp
 	pthread_mutex_lock(&m_mutexserviceadmin);
 	
 	if(lpszService == NULL || lpszDisplayName == NULL) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::CreateMsgService(): invalid parameters");
+		ec_log_err("M4LMsgServiceAdmin::CreateMsgService(): invalid parameters");
 		hr = MAPI_E_INVALID_PARAMETER;
 		goto exit;
 	}
@@ -713,28 +712,28 @@ HRESULT M4LMsgServiceAdmin::CreateMsgService(LPTSTR lpszService, LPTSTR lpszDisp
 #endif
 	hr = m4l_lpMAPISVC->GetService(lpszService, ulFlags, &service);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::CreateMsgService(): get service failed %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMsgServiceAdmin::CreateMsgService(): get service failed %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
 	// Create a Zarafa message service
 	entry = findServiceAdmin(lpszService);
 	if (entry) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::CreateMsgService(): service already exists %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMsgServiceAdmin::CreateMsgService(): service already exists %x: %s", hr, GetMAPIErrorMessage(hr));
 		hr = MAPI_E_NO_ACCESS; // already exists
 		goto exit;
 	}
 
 	entry = new serviceEntry;
 	if (!entry) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::CreateMsgService(): ENOMEM");
+		ec_log_err("M4LMsgServiceAdmin::CreateMsgService(): ENOMEM");
 		hr = MAPI_E_NOT_ENOUGH_MEMORY;
 		goto exit;
 	}
 
 	entry->provideradmin = new(std::nothrow) M4LProviderAdmin(this, reinterpret_cast<char *>(lpszService));
 	if (!entry->provideradmin) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::CreateMsgService(): ENOMEM(2)");
+		ec_log_err("M4LMsgServiceAdmin::CreateMsgService(): ENOMEM(2)");
 		delete entry;
 		hr = MAPI_E_NOT_ENOUGH_MEMORY;
 		goto exit;
@@ -797,7 +796,7 @@ HRESULT M4LMsgServiceAdmin::DeleteMsgService(LPMAPIUID lpUID) {
     }
     
     if(name.empty()) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::DeleteMsgService(): GUID not found");
+		ec_log_err("M4LMsgServiceAdmin::DeleteMsgService(): GUID not found");
     	hr = MAPI_E_NOT_FOUND;
 		goto exit;
 	}
@@ -822,14 +821,14 @@ exit:
 }
 
 HRESULT M4LMsgServiceAdmin::CopyMsgService(LPMAPIUID lpUID, LPTSTR lpszDisplayName, LPCIID lpInterfaceToCopy, LPCIID lpInterfaceDst, LPVOID lpObjectDst, ULONG ulUIParam, ULONG ulFlags) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::CopyMsgService() not implemented");
+	ec_log_err("M4LMsgServiceAdmin::CopyMsgService() not implemented");
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LMsgServiceAdmin::CopyMsgService", "");
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LMsgServiceAdmin::CopyMsgService", "0x%08x", MAPI_E_NO_SUPPORT);
     return MAPI_E_NO_SUPPORT;
 }
 
 HRESULT M4LMsgServiceAdmin::RenameMsgService(LPMAPIUID lpUID, ULONG ulFlags, LPTSTR lpszDisplayName) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::RenameMsgService() not implemented");
+	ec_log_err("M4LMsgServiceAdmin::RenameMsgService() not implemented");
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LMsgServiceAdmin::RenameMsgService", "");
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LMsgServiceAdmin::RenameMsgService", "0x%08x", MAPI_E_NO_SUPPORT);
     return MAPI_E_NO_SUPPORT;
@@ -860,7 +859,7 @@ HRESULT M4LMsgServiceAdmin::ConfigureMsgService(LPMAPIUID lpUID, ULONG ulUIParam
 	pthread_mutex_lock(&m_mutexserviceadmin);
 	
 	if (lpUID == NULL) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::ConfigureMsgService() invalid parameters");
+		ec_log_err("M4LMsgServiceAdmin::ConfigureMsgService() invalid parameters");
 		hr = MAPI_E_INVALID_PARAMETER;
 		goto exit;
 	}
@@ -871,7 +870,7 @@ HRESULT M4LMsgServiceAdmin::ConfigureMsgService(LPMAPIUID lpUID, ULONG ulUIParam
 
 	entry = findServiceAdmin(lpUID);
 	if (!entry) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::ConfigureMsgService() service not found");
+		ec_log_err("M4LMsgServiceAdmin::ConfigureMsgService() service not found");
 		hr = MAPI_E_NOT_FOUND;
 		goto exit;
 	}
@@ -883,7 +882,7 @@ HRESULT M4LMsgServiceAdmin::ConfigureMsgService(LPMAPIUID lpUID, ULONG ulUIParam
 
 		hr = GetConnectionProperties(lpServer, lpUsername, &ulcTmpValues, &lpTmpProps); 
 		if (hr != hrSuccess) {
-			m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::ConfigureMsgService() GetConnectionProperties failed %x: %s", hr, GetMAPIErrorMessage(hr));
+			ec_log_err("M4LMsgServiceAdmin::ConfigureMsgService() GetConnectionProperties failed %x: %s", hr, GetMAPIErrorMessage(hr));
 			goto exit;
 		}
 
@@ -896,7 +895,7 @@ HRESULT M4LMsgServiceAdmin::ConfigureMsgService(LPMAPIUID lpUID, ULONG ulUIParam
 	// call zarafa client Message Service Entry (provider/client/EntryPoint.cpp)
 	hr = entry->service->MSGServiceEntry()(0, NULL, NULL, ulUIParam, ulFlags, MSG_SERVICE_CONFIGURE, cValues, lpProps, (LPPROVIDERADMIN)entry->provideradmin, NULL);
 	if(hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_ERROR, "M4LMsgServiceAdmin::ConfigureMsgService() MSGServiceEntry failed %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMsgServiceAdmin::ConfigureMsgService() MSGServiceEntry failed %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 	
@@ -946,19 +945,19 @@ HRESULT M4LMsgServiceAdmin::OpenProfileSection(LPMAPIUID lpUID, LPCIID lpInterfa
 		// Set the default profilename
 		hr = this->profilesection->QueryInterface(IID_IMAPIProp, (void**)&lpMapiProp); 
 		if (hr != hrSuccess) {
-			m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::OpenProfileSection(): QueryInterface fail %x: %s", hr, GetMAPIErrorMessage(hr));
+			ec_log_err("M4LMsgServiceAdmin::OpenProfileSection(): QueryInterface fail %x: %s", hr, GetMAPIErrorMessage(hr));
 			goto exit;
 		}
 
 		hr = HrGetOneProp(lpMapiProp, PR_PROFILE_NAME_A, &lpsPropVal);
 		if (hr != hrSuccess) {
-			m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::OpenProfileSection(): HrGetOneProp fail %x: %s", hr, GetMAPIErrorMessage(hr));
+			ec_log_err("M4LMsgServiceAdmin::OpenProfileSection(): HrGetOneProp fail %x: %s", hr, GetMAPIErrorMessage(hr));
 			goto exit;
 		}
 
 		hr = (*lppProfSect)->SetProps(1, lpsPropVal, NULL);
 		if (hr != hrSuccess) {
-			m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::OpenProfileSection(): SetProps fail %x: %s", hr, GetMAPIErrorMessage(hr));
+			ec_log_err("M4LMsgServiceAdmin::OpenProfileSection(): SetProps fail %x: %s", hr, GetMAPIErrorMessage(hr));
 			goto exit;
 		}
 		
@@ -982,7 +981,7 @@ HRESULT M4LMsgServiceAdmin::OpenProfileSection(LPMAPIUID lpUID, LPCIID lpInterfa
 
 	hr = entry->profilesection->QueryInterface( (lpInterface)?*lpInterface:IID_IProfSect, (void**)lppProfSect);
 	if (hr != hrSuccess)
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::OpenProfileSection(): QueryInterface fail(2) %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMsgServiceAdmin::OpenProfileSection(): QueryInterface fail(2) %x: %s", hr, GetMAPIErrorMessage(hr));
 
 exit:
 	pthread_mutex_unlock(&m_mutexserviceadmin);
@@ -995,7 +994,7 @@ exit:
 }
 
 HRESULT M4LMsgServiceAdmin::MsgServiceTransportOrder(ULONG cUID, LPMAPIUID lpUIDList, ULONG ulFlags) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::MsgServiceTransportOrder not implemented");
+	ec_log_err("M4LMsgServiceAdmin::MsgServiceTransportOrder not implemented");
 
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LMsgServiceAdmin::MsgServiceTransportOrder", "");
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LMsgServiceAdmin::MsgServiceTransportOrder", "0x%08x", MAPI_E_NO_SUPPORT);
@@ -1020,14 +1019,14 @@ HRESULT M4LMsgServiceAdmin::AdminProviders(LPMAPIUID lpUID, ULONG ulFlags, LPPRO
 
 	entry = findServiceAdmin(lpUID);
 	if (!entry) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::AdminProviders(): service admin not found");
+		ec_log_err("M4LMsgServiceAdmin::AdminProviders(): service admin not found");
 		hr = MAPI_E_NOT_FOUND;
 		goto exit;
 	}
 
 	hr = entry->provideradmin->QueryInterface(IID_IProviderAdmin, (void**)lppProviderAdmin);
 	if (hr != hrSuccess)
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::AdminProviders(): QueryInterface fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMsgServiceAdmin::AdminProviders(): QueryInterface fail %x: %s", hr, GetMAPIErrorMessage(hr));
 
 exit:
 	pthread_mutex_unlock(&m_mutexserviceadmin);
@@ -1037,7 +1036,7 @@ exit:
 }
 
 HRESULT M4LMsgServiceAdmin::SetPrimaryIdentity(LPMAPIUID lpUID, ULONG ulFlags) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::SetPrimaryIdentity not implemented");
+	ec_log_err("M4LMsgServiceAdmin::SetPrimaryIdentity not implemented");
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LMsgServiceAdmin::SetPrimaryIdentity", "");
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LMsgServiceAdmin::SetPrimaryIdentity", "0x%08x", MAPI_E_NO_SUPPORT);
 	return MAPI_E_NO_SUPPORT;
@@ -1077,7 +1076,7 @@ HRESULT M4LMsgServiceAdmin::GetProviderTable(ULONG ulFlags, LPMAPITABLE* lppTabl
 		if ((*j)->bInitialize == false) {
 			hr = (*j)->service->MSGServiceEntry()(0, NULL, NULL, 0, 0, MSG_SERVICE_CREATE, 0, NULL, (LPPROVIDERADMIN)(*j)->provideradmin, NULL);
 			if(hr !=hrSuccess) {
-				m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::GetProviderTable(): MSGServiceEntry fail %x: %s", hr, GetMAPIErrorMessage(hr));
+				ec_log_err("M4LMsgServiceAdmin::GetProviderTable(): MSGServiceEntry fail %x: %s", hr, GetMAPIErrorMessage(hr));
 				goto exit;
 			}
 			
@@ -1087,13 +1086,13 @@ HRESULT M4LMsgServiceAdmin::GetProviderTable(ULONG ulFlags, LPMAPITABLE* lppTabl
 
 	hr = Util::HrCopyUnicodePropTagArray(ulFlags, (LPSPropTagArray)&sptaProviderCols, &lpPropTagArray);
 	if(hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::GetProviderTable(): Util::HrCopyUnicodePropTagArray fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMsgServiceAdmin::GetProviderTable(): Util::HrCopyUnicodePropTagArray fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
 	hr = ECMemTable::Create(lpPropTagArray, PR_ROWID, &lpTable);
 	if(hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::GetProviderTable(): ECMemTable::Create fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMsgServiceAdmin::GetProviderTable(): ECMemTable::Create fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 	
@@ -1101,7 +1100,7 @@ HRESULT M4LMsgServiceAdmin::GetProviderTable(ULONG ulFlags, LPMAPITABLE* lppTabl
 	for(i=providers.begin(); i != providers.end(); i++) {
 		hr = (*i)->profilesection->GetProps(lpPropTagArray, 0, &cValues, &lpsProps);
 		if (FAILED(hr)) {
-			m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::GetProviderTable(): GetProps fail %x: %s", hr, GetMAPIErrorMessage(hr));
+			ec_log_err("M4LMsgServiceAdmin::GetProviderTable(): GetProps fail %x: %s", hr, GetMAPIErrorMessage(hr));
 			goto exit;
 		}
 		
@@ -1110,13 +1109,13 @@ HRESULT M4LMsgServiceAdmin::GetProviderTable(ULONG ulFlags, LPMAPITABLE* lppTabl
 		
 		hr = Util::HrAddToPropertyArray(lpsProps, cValues, &sPropID, &lpDest, &cValuesDest);
 		if(hr != hrSuccess) {
-			m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::GetProviderTable(): Util::HrAddToPropertyArray fail %x: %s", hr, GetMAPIErrorMessage(hr));
+			ec_log_err("M4LMsgServiceAdmin::GetProviderTable(): Util::HrAddToPropertyArray fail %x: %s", hr, GetMAPIErrorMessage(hr));
 			goto exit;
 		}
 		
 		hr = lpTable->HrModifyRow(ECKeyTable::TABLE_ROW_ADD, NULL, lpDest, cValuesDest);
 		if(hr != hrSuccess) {
-			m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::GetProviderTable(): HrModifyRow fail %x: %s", hr, GetMAPIErrorMessage(hr));
+			ec_log_err("M4LMsgServiceAdmin::GetProviderTable(): HrModifyRow fail %x: %s", hr, GetMAPIErrorMessage(hr));
 			goto exit;
 		}
 		
@@ -1128,13 +1127,13 @@ HRESULT M4LMsgServiceAdmin::GetProviderTable(ULONG ulFlags, LPMAPITABLE* lppTabl
 	
 	hr = lpTable->HrGetView(createLocaleFromName(""), ulFlags, &lpTableView);
 	if(hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::GetProviderTable(): HrGetView fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMsgServiceAdmin::GetProviderTable(): HrGetView fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 		
 	hr = lpTableView->QueryInterface(IID_IMAPITable, (void **)lppTable);
 	if (hr != hrSuccess)
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::GetProviderTable(): QueryInterface(2) fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMsgServiceAdmin::GetProviderTable(): QueryInterface(2) fail %x: %s", hr, GetMAPIErrorMessage(hr));
 
 exit:
 	pthread_mutex_unlock(&m_mutexserviceadmin);
@@ -1242,13 +1241,13 @@ HRESULT M4LMAPISession::GetMsgStoresTable(ULONG ulFlags, LPMAPITABLE* lppTable) 
 
 	hr = Util::HrCopyUnicodePropTagArray(ulFlags, (LPSPropTagArray)&sptaProviderCols, &lpPropTagArray);
 	if(hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::GetMsgStoresTable(): Util::HrCopyUnicodePropTagArray fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMAPISession::GetMsgStoresTable(): Util::HrCopyUnicodePropTagArray fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
 	hr = ECMemTable::Create(lpPropTagArray, PR_ROWID, &lpTable);
 	if(hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::GetMsgStoresTable(): ECMemTable::Create fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMAPISession::GetMsgStoresTable(): ECMemTable::Create fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 	
@@ -1256,7 +1255,7 @@ HRESULT M4LMAPISession::GetMsgStoresTable(ULONG ulFlags, LPMAPITABLE* lppTable) 
 	for (i = serviceAdmin->providers.begin(); i != serviceAdmin->providers.end(); i++) {
 		hr = (*i)->profilesection->GetProps(lpPropTagArray, 0, &cValues, &lpsProps);
 		if (FAILED(hr)) {
-			m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::GetMsgStoresTable(): GetProps fail %x: %s", hr, GetMAPIErrorMessage(hr));
+			ec_log_err("M4LMAPISession::GetMsgStoresTable(): GetProps fail %x: %s", hr, GetMAPIErrorMessage(hr));
 			goto exit;
 		}
 
@@ -1291,13 +1290,13 @@ HRESULT M4LMAPISession::GetMsgStoresTable(ULONG ulFlags, LPMAPITABLE* lppTable) 
 		
 		hr = Util::HrAddToPropertyArray(lpsProps, cValues, &sPropID, &lpDest, &cValuesDest);
 		if(hr != hrSuccess) {
-			m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::GetMsgStoresTable(): Util::HrAddToPropertyArray fail %x: %s", hr, GetMAPIErrorMessage(hr));
+			ec_log_err("M4LMAPISession::GetMsgStoresTable(): Util::HrAddToPropertyArray fail %x: %s", hr, GetMAPIErrorMessage(hr));
 			goto exit;
 		}
 
 		hr = lpTable->HrModifyRow(ECKeyTable::TABLE_ROW_ADD, NULL, lpDest, cValuesDest);
 		if(hr != hrSuccess) {
-			m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::GetMsgStoresTable(): HrModifyRow fail %x: %s", hr, GetMAPIErrorMessage(hr));
+			ec_log_err("M4LMAPISession::GetMsgStoresTable(): HrModifyRow fail %x: %s", hr, GetMAPIErrorMessage(hr));
 			goto exit;
 		}
 
@@ -1310,13 +1309,13 @@ next:
 	
 	hr = lpTable->HrGetView(createLocaleFromName(""), ulFlags, &lpTableView);
 	if(hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::GetMsgStoresTable(): HrGetView fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMAPISession::GetMsgStoresTable(): HrGetView fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 		
 	hr = lpTableView->QueryInterface(IID_IMAPITable, (void **)lppTable);
 	if(hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::GetMsgStoresTable(): QueryInterface fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMAPISession::GetMsgStoresTable(): QueryInterface fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 	
@@ -1366,7 +1365,7 @@ HRESULT M4LMAPISession::OpenMsgStore(ULONG ulUIParam, ULONG cbEntryID, LPENTRYID
 	SizedSPropTagArray(2, sptaProviders) = { 2, {PR_RECORD_KEY, PR_PROVIDER_UID} };
 
 	if (lpEntryID == NULL || lppMDB == NULL) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenMsgStore() invalid parameters");
+		ec_log_err("M4LMAPISession::OpenMsgStore() invalid parameters");
 		hr = MAPI_E_INVALID_PARAMETER;
 		goto exit;
 	}
@@ -1374,34 +1373,34 @@ HRESULT M4LMAPISession::OpenMsgStore(ULONG ulUIParam, ULONG cbEntryID, LPENTRYID
 	// unwrap mapi store entry
 	hr = UnWrapStoreEntryID(cbEntryID, lpEntryID, &cbStoreEntryID, &lpStoreEntryID);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenMsgStore() UnWrapStoreEntryID failed %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMAPISession::OpenMsgStore() UnWrapStoreEntryID failed %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
 	// padding in entryid solves string ending
 	hr = m4l_lpMAPISVC->GetService((char*)lpEntryID+4+sizeof(GUID)+2, &service);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenMsgStore() GetService failed %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMAPISession::OpenMsgStore() GetService failed %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 	
 	// Find the profile section associated with this entryID
 	hr = serviceAdmin->GetProviderTable(0, &lpTable);
 	if(hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenMsgStore() GetProviderTable failed %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMAPISession::OpenMsgStore() GetProviderTable failed %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 		
 	hr = lpTable->SetColumns((LPSPropTagArray)&sptaProviders, 0);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenMsgStore() SetColumns failed %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMAPISession::OpenMsgStore() SetColumns failed %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 		
 	while(TRUE) {
 		hr = lpTable->QueryRows(1, 0, &lpsRows);
 		if(hr != hrSuccess) {
-			m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenMsgStore() QueryRows failed %x: %s", hr, GetMAPIErrorMessage(hr));
+			ec_log_err("M4LMAPISession::OpenMsgStore() QueryRows failed %x: %s", hr, GetMAPIErrorMessage(hr));
 			goto exit;
 		}
 			
@@ -1431,19 +1430,19 @@ HRESULT M4LMAPISession::OpenMsgStore(ULONG ulUIParam, ULONG cbEntryID, LPENTRYID
 	// call zarafa client for the Message Store Provider (provider/client/EntryPoint.cpp)
 	hr = service->MSProviderInit()(0, NULL, MAPIAllocateBuffer, MAPIAllocateMore, MAPIFreeBuffer, ulFlags, CURRENT_SPI_VERSION, &mdbver, &msp);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenMsgStore() MSProviderInit failed %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMAPISession::OpenMsgStore() MSProviderInit failed %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
 	hr = msp->Logon(lpISupport, 0, (LPTSTR)profileName.c_str(), cbStoreEntryID, lpStoreEntryID, ulFlags, NULL, &sizeSpoolSec, &pSpoolSec, NULL, NULL, &mdb);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenMsgStore() msp->Logon failed %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMAPISession::OpenMsgStore() msp->Logon failed %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
 	hr = mdb->QueryInterface(lpInterface ? (*lpInterface) : IID_IMsgStore, (void**)lppMDB);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenMsgStore() QueryInterface failed %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMAPISession::OpenMsgStore() QueryInterface failed %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
@@ -1493,7 +1492,7 @@ HRESULT M4LMAPISession::OpenAddressBook(ULONG ulUIParam, LPCIID lpInterface, ULO
 
 	lpMAPISup = new(std::nothrow) M4LMAPISupport(this, NULL, NULL);
 	if (!lpMAPISup) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenAddressBook(): ENOMEM");
+		ec_log_err("M4LMAPISession::OpenAddressBook(): ENOMEM");
 		hr = MAPI_E_NOT_ENOUGH_MEMORY;
 		goto exit;
 	}
@@ -1501,7 +1500,7 @@ HRESULT M4LMAPISession::OpenAddressBook(ULONG ulUIParam, LPCIID lpInterface, ULO
 	myAddrBook = new(std::nothrow) M4LAddrBook(serviceAdmin, lpMAPISup);
 	lpAddrBook = myAddrBook;
 	if (!lpAddrBook) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenAddressBook(): ENOMEM(2)");
+		ec_log_err("M4LMAPISession::OpenAddressBook(): ENOMEM(2)");
 		hr = MAPI_E_NOT_ENOUGH_MEMORY;
 		goto exit;
 	}
@@ -1512,13 +1511,13 @@ HRESULT M4LMAPISession::OpenAddressBook(ULONG ulUIParam, LPCIID lpInterface, ULO
 
 	hr = lpAddrBook->SetProps(1, sProps, NULL);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenAddressBook(): SetProps failed %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMAPISession::OpenAddressBook(): SetProps failed %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
 	hr = lpAddrBook->QueryInterface(lpInterface ? (*lpInterface) : IID_IAddrBook, (void**)lppAdrBook);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenAddressBook(): QueryInterface failed %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMAPISession::OpenAddressBook(): QueryInterface failed %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
@@ -1572,7 +1571,7 @@ HRESULT M4LMAPISession::OpenProfileSection(LPMAPIUID lpUID, LPCIID lpInterface, 
 }
 
 HRESULT M4LMAPISession::GetStatusTable(ULONG ulFlags, LPMAPITABLE* lppTable) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::GetStatusTable not implemented");
+	ec_log_err("M4LMAPISession::GetStatusTable not implemented");
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LMAPISession::GetStatusTable", "");
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LMAPISession::GetStatusTable", "0x%08x", MAPI_E_NO_SUPPORT);
 	return MAPI_E_NO_SUPPORT;
@@ -1611,13 +1610,13 @@ HRESULT M4LMAPISession::OpenEntry(ULONG cbEntryID, LPENTRYID lpEntryID, LPCIID l
 	std::map<GUID, IMsgStore *>::iterator iterStores;
 
     if (lpEntryID == NULL) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenEntry() invalid parameters");
+	ec_log_err("M4LMAPISession::OpenEntry() invalid parameters");
         hr = MAPI_E_NOT_FOUND;
         goto exit;
     }
 
 	if (cbEntryID <= (4 + sizeof(GUID)) ) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenEntry() cbEntryId too small");
+		ec_log_err("M4LMAPISession::OpenEntry() cbEntryId too small");
 		hr = MAPI_E_INVALID_ENTRYID;
 		goto exit;
 	}
@@ -1626,7 +1625,7 @@ HRESULT M4LMAPISession::OpenEntry(ULONG cbEntryID, LPENTRYID lpEntryID, LPCIID l
 	if (memcmp(&muidStoreWrap, &lpEntryID->ab, sizeof(GUID)) == 0) {
 		hr = UnWrapStoreEntryID(cbEntryID, lpEntryID, &cbUnWrappedID, &lpUnWrappedID);
 		if (hr != hrSuccess) {
-			m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenEntry() UnWrapStoreEntryID failed");
+			ec_log_err("M4LMAPISession::OpenEntry() UnWrapStoreEntryID failed");
 			goto exit;
 		}
 
@@ -1651,7 +1650,7 @@ HRESULT M4LMAPISession::OpenEntry(ULONG cbEntryID, LPENTRYID lpEntryID, LPCIID l
 		}
 
 		if (hr != hrSuccess)
-			m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenEntry() store open check fail %x: %s", hr, GetMAPIErrorMessage(hr));
+			ec_log_err("M4LMAPISession::OpenEntry() store open check fail %x: %s", hr, GetMAPIErrorMessage(hr));
 
 		goto exit;
 	}
@@ -1660,13 +1659,13 @@ HRESULT M4LMAPISession::OpenEntry(ULONG cbEntryID, LPENTRYID lpEntryID, LPCIID l
 	if (memcmp(&guidProvider, &muidOneOff, sizeof(GUID)) == 0) {
 		hr = OpenAddressBook(0, NULL, AB_NO_DIALOG, &lpAddrBook);
 		if(hr != hrSuccess) {
-			m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenEntry() OpenAddressBook fail %x: %s", hr, GetMAPIErrorMessage(hr));
+			ec_log_err("M4LMAPISession::OpenEntry() OpenAddressBook fail %x: %s", hr, GetMAPIErrorMessage(hr));
 			goto exit;
 		}
 
 		hr = lpAddrBook->OpenEntry(cbEntryID, lpEntryID, lpInterface, ulFlags, lpulObjType, lppUnk);
 		if(hr != hrSuccess) {
-			m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenEntry() OpenEntry fail %x: %s", hr, GetMAPIErrorMessage(hr));
+			ec_log_err("M4LMAPISession::OpenEntry() OpenEntry fail %x: %s", hr, GetMAPIErrorMessage(hr));
 			goto exit;
 		}
 		
@@ -1678,25 +1677,25 @@ HRESULT M4LMAPISession::OpenEntry(ULONG cbEntryID, LPENTRYID lpEntryID, LPCIID l
 	// Find the profile section associated with this entryID
 	hr = serviceAdmin->GetProviderTable(0, &lpTable);
 	if(hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenEntry() GetProviderTable fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMAPISession::OpenEntry() GetProviderTable fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 		
 	hr = lpTable->SetColumns((LPSPropTagArray)&sptaProviders, 0);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenEntry() SetColumns fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMAPISession::OpenEntry() SetColumns fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 		
 	while(TRUE) {
 		hr = lpTable->QueryRows(1, 0, &lpsRows);
 		if (hr != hrSuccess) {
-			m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenEntry() QueryRows fail %x: %s", hr, GetMAPIErrorMessage(hr));
+			ec_log_err("M4LMAPISession::OpenEntry() QueryRows fail %x: %s", hr, GetMAPIErrorMessage(hr));
 			goto exit;
 		}
 			
 		if(lpsRows->cRows != 1) {
-			m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenEntry() row-count (%d) != 1", lpsRows->cRows);
+			ec_log_err("M4LMAPISession::OpenEntry() row-count (%d) != 1", lpsRows->cRows);
 			hr = MAPI_E_NOT_FOUND;
 			break;
 		}
@@ -1709,20 +1708,20 @@ HRESULT M4LMAPISession::OpenEntry(ULONG cbEntryID, LPENTRYID lpEntryID, LPCIID l
 			if (lpsRows->aRow[0].lpProps[2].ulPropTag == PR_RESOURCE_TYPE && lpsRows->aRow[0].lpProps[2].Value.ul == MAPI_AB_PROVIDER) {
 				hr = OpenAddressBook(0, NULL, AB_NO_DIALOG, &lpAddrBook);
 				if(hr != hrSuccess) {
-					m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenEntry() OpenAddressBook(2) fail %x: %s", hr, GetMAPIErrorMessage(hr));
+					ec_log_err("M4LMAPISession::OpenEntry() OpenAddressBook(2) fail %x: %s", hr, GetMAPIErrorMessage(hr));
 					goto exit;
 				}
 
 				hr = lpAddrBook->OpenEntry(cbEntryID, lpEntryID, lpInterface, ulFlags, lpulObjType, lppUnk);
 				if(hr != hrSuccess)
-					m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenEntry() OpenEntry(2) fail %x: %s", hr, GetMAPIErrorMessage(hr));
+					ec_log_err("M4LMAPISession::OpenEntry() OpenEntry(2) fail %x: %s", hr, GetMAPIErrorMessage(hr));
 
 				break;
 			} else {
                 hr = OpenMsgStore(0, lpsRows->aRow[0].lpProps[0].Value.bin.cb, (LPENTRYID)lpsRows->aRow[0].lpProps[0].Value.bin.lpb,
 								  &IID_IMsgStore, MDB_WRITE | MDB_NO_DIALOG | MDB_TEMPORARY, &lpMDB);
                 if(hr != hrSuccess) {
-			m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenEntry() OpenMsgStore fail %x: %s", hr, GetMAPIErrorMessage(hr));
+			ec_log_err("M4LMAPISession::OpenEntry() OpenMsgStore fail %x: %s", hr, GetMAPIErrorMessage(hr));
                     goto exit;
 		}
                   
@@ -1737,7 +1736,7 @@ HRESULT M4LMAPISession::OpenEntry(ULONG cbEntryID, LPENTRYID lpEntryID, LPCIID l
 				else {
 					hr = lpMDB->OpenEntry(cbEntryID, lpEntryID, lpInterface, ulFlags, lpulObjType, lppUnk);
 					if (hr != hrSuccess)
-						m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::OpenEntry() OpenEntry(3) fail %x: %s", hr, GetMAPIErrorMessage(hr));
+						ec_log_err("M4LMAPISession::OpenEntry() OpenEntry(3) fail %x: %s", hr, GetMAPIErrorMessage(hr));
 				}
 			
 				break;
@@ -1822,13 +1821,13 @@ HRESULT M4LMAPISession::Advise(ULONG cbEntryID, LPENTRYID lpEntryID, ULONG ulEve
 
 	hr = HrOpenDefaultStore(this, &lpMsgStore);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::Advise() HrOpenDefaultStore fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMAPISession::Advise() HrOpenDefaultStore fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
 	hr = lpMsgStore->Advise(cbEntryID, lpEntryID, ulEventMask, lpAdviseSink, lpulConnection);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::Advise() Advise fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMAPISession::Advise() Advise fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
@@ -1855,13 +1854,13 @@ HRESULT M4LMAPISession::Unadvise(ULONG ulConnection) {
 	// FIXME: should work with an internal list of connections ids, see M4LMAPISession::Advise for more information.
 	hr = HrOpenDefaultStore(this, &lpMsgStore);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::Unadvise() HrOpenDefaultStore fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMAPISession::Unadvise() HrOpenDefaultStore fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
 	hr = lpMsgStore->Unadvise(ulConnection);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::Unadvise() Unadvise fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMAPISession::Unadvise() Unadvise fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
@@ -1874,21 +1873,21 @@ exit:
 }
 
 HRESULT M4LMAPISession::MessageOptions(ULONG ulUIParam, ULONG ulFlags, LPTSTR lpszAdrType, LPMESSAGE lpMessage) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISessionM4LMAPISession::MessageOptions not implemented");
+	ec_log_err("M4LMAPISessionM4LMAPISession::MessageOptions not implemented");
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LMAPISession::MessageOptions", "");
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LMAPISession::MessageOptions", "0x%08x", MAPI_E_NO_SUPPORT);
 	return MAPI_E_NO_SUPPORT;
 }
 
 HRESULT M4LMAPISession::QueryDefaultMessageOpt(LPTSTR lpszAdrType, ULONG ulFlags, ULONG* lpcValues, LPSPropValue* lppOptions) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::QueryDefaultMessageOpt not implemented");
+	ec_log_err("M4LMAPISession::QueryDefaultMessageOpt not implemented");
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LMAPISession::QueryDefaultMessageOpt", "");
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LMAPISession::QueryDefaultMessageOpt", "0x%08x", MAPI_E_NO_SUPPORT);
 	return MAPI_E_NO_SUPPORT;
 }
 
 HRESULT M4LMAPISession::EnumAdrTypes(ULONG ulFlags, ULONG* lpcAdrTypes, LPTSTR** lpppszAdrTypes) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::EnumAdrTypes not implemented");
+	ec_log_err("M4LMAPISession::EnumAdrTypes not implemented");
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LMAPISession::EnumAdrTypes", "");
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LMAPISession::EnumAdrTypes", "0x%08x", MAPI_E_NO_SUPPORT);
 	return MAPI_E_NO_SUPPORT;
@@ -1904,7 +1903,7 @@ HRESULT M4LMAPISession::QueryIdentity(ULONG* lpcbEntryID, LPENTRYID* lppEntryID)
 
 	lpProp = PpropFindProp(this->m_lpPropsStatus, this->m_cValuesStatus, PR_IDENTITY_ENTRYID);
 	if(lpProp == NULL) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::QueryIdentity(): PpropFindProp failed");
+		ec_log_err("M4LMAPISession::QueryIdentity(): PpropFindProp failed");
 		hr = MAPI_E_NOT_FOUND;
 		goto exit;
 	}
@@ -1930,7 +1929,7 @@ HRESULT M4LMAPISession::Logoff(ULONG ulUIParam, ULONG ulFlags, ULONG ulReserved)
 }
 
 HRESULT M4LMAPISession::SetDefaultStore(ULONG ulFlags, ULONG cbEntryID, LPENTRYID lpEntryID) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::SetDefaultStore(): not implemented");
+	ec_log_err("M4LMAPISession::SetDefaultStore(): not implemented");
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LMAPISession::SetDefaultStore", "");
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LMAPISession::SetDefaultStore", "0x%08x", MAPI_E_NO_SUPPORT);
 	return MAPI_E_NO_SUPPORT;
@@ -1947,14 +1946,14 @@ HRESULT M4LMAPISession::AdminServices(ULONG ulFlags, LPSERVICEADMIN* lppServiceA
 HRESULT M4LMAPISession::ShowForm(ULONG ulUIParam, LPMDB lpMsgStore, LPMAPIFOLDER lpParentFolder, LPCIID lpInterface,
 								 ULONG ulMessageToken, LPMESSAGE lpMessageSent, ULONG ulFlags, ULONG ulMessageStatus,
 								 ULONG ulMessageFlags, ULONG ulAccess, LPSTR lpszMessageClass) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::ShowForm(): not implemented");
+	ec_log_err("M4LMAPISession::ShowForm(): not implemented");
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LMAPISession::ShowForm", "");
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LMAPISession::ShowForm", "0x%08x", MAPI_E_NO_SUPPORT);
 	return MAPI_E_NO_SUPPORT;
 }
 
 HRESULT M4LMAPISession::PrepareForm(LPCIID lpInterface, LPMESSAGE lpMessage, ULONG* lpulMessageToken) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::PrepareForm(): not implemented");
+	ec_log_err("M4LMAPISession::PrepareForm(): not implemented");
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LMAPISession::PrepareForm", "");
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LMAPISession::PrepareForm", "0x%08x", MAPI_E_NO_SUPPORT);
 	return MAPI_E_NO_SUPPORT;
@@ -1995,7 +1994,7 @@ HRESULT M4LMAPISession::setStatusRow(ULONG cValues, LPSPropValue lpProps)
 
 	hr = Util::HrCopyPropertyArray(lpProps, cValues, &m_lpPropsStatus, &m_cValuesStatus, true);
 	if(hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMAPISession::setStatusRow(): Util::HrCopyPropertyArray fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LMAPISession::setStatusRow(): Util::HrCopyPropertyArray fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
@@ -2038,7 +2037,7 @@ HRESULT M4LAddrBook::addProvider(const std::string &profilename, const std::stri
 
 	hr = newProvider->Logon(m_lpMAPISup, 0, (TCHAR*)profilename.c_str(), 0, &cbSecurity, &lpSecurity, &lpMAPIError, &lpABLogon);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::addProvider(): logon fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LAddrBook::addProvider(): logon fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
@@ -2070,13 +2069,13 @@ HRESULT M4LAddrBook::getDefaultSearchPath(ULONG ulFlags, LPSRowSet* lppSearchPat
 
 	hr = this->OpenEntry(0, NULL, &IID_IABContainer, 0, &ulObjType, (LPUNKNOWN*)&lpRoot);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::getDefaultSearchPath(): OpenEntry fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LAddrBook::getDefaultSearchPath(): OpenEntry fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
 	hr = lpRoot->GetHierarchyTable((ulFlags & MAPI_UNICODE) | CONVENIENT_DEPTH, &lpTable);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::getDefaultSearchPath(): GetHierarchyTable fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LAddrBook::getDefaultSearchPath(): GetHierarchyTable fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
@@ -2096,19 +2095,19 @@ HRESULT M4LAddrBook::getDefaultSearchPath(ULONG ulFlags, LPSRowSet* lppSearchPat
 
 	hr = cRes.CreateMAPIRestriction(&lpRes);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::getDefaultSearchPath(): cRes.CreateMAPIRestriction fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LAddrBook::getDefaultSearchPath(): cRes.CreateMAPIRestriction fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
 	hr = lpTable->Restrict(lpRes, 0);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::getDefaultSearchPath(): Restrict fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LAddrBook::getDefaultSearchPath(): Restrict fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
 	hr = lpTable->QueryRows(-1, 0, lppSearchPath);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::getDefaultSearchPath(): QueryRows fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LAddrBook::getDefaultSearchPath(): QueryRows fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
@@ -2205,7 +2204,7 @@ HRESULT M4LAddrBook::OpenEntry(ULONG cbEntryID, LPENTRYID lpEntryID, LPCIID lpIn
 		hr = lpCont->QueryInterface(IID_IABContainer, (void**)lppUnk);
 		if (hr != hrSuccess) {
 			delete lpCont;
-			m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::OpenEntry(): QueryInterface fail %x: %s", hr, GetMAPIErrorMessage(hr));
+			ec_log_err("M4LAddrBook::OpenEntry(): QueryInterface fail %x: %s", hr, GetMAPIErrorMessage(hr));
 			goto exit;
 		}
 
@@ -2264,14 +2263,14 @@ HRESULT M4LAddrBook::CompareEntryIDs(ULONG cbEntryID1, LPENTRYID lpEntryID1, ULO
 }
 
 HRESULT M4LAddrBook::Advise(ULONG cbEntryID, LPENTRYID lpEntryID, ULONG ulEventMask, LPMAPIADVISESINK lpAdviseSink, ULONG* lpulConnection) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::Advise not implemented");
+	ec_log_err("M4LAddrBook::Advise not implemented");
     TRACE_MAPILIB(TRACE_ENTRY, "M4LAddrBook::Advise", "");
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LAddrBook::Advise", "0x%08x", MAPI_E_NO_SUPPORT);
 	return MAPI_E_NO_SUPPORT;
 }
 
 HRESULT M4LAddrBook::Unadvise(ULONG ulConnection) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::Unadvise not implemented");
+	ec_log_err("M4LAddrBook::Unadvise not implemented");
     TRACE_MAPILIB(TRACE_ENTRY, "M4LAddrBook::Unadvise", "");
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LAddrBook::Unadvise", "0x%08x", MAPI_E_NO_SUPPORT);
 	return MAPI_E_NO_SUPPORT;
@@ -2298,7 +2297,7 @@ HRESULT M4LAddrBook::CreateOneOff(LPTSTR lpszName, LPTSTR lpszAdrType, LPTSTR lp
 }
 
 HRESULT M4LAddrBook::NewEntry(ULONG ulUIParam, ULONG ulFlags, ULONG cbEIDContainer, LPENTRYID lpEIDContainer, ULONG cbEIDNewEntryTpl, LPENTRYID lpEIDNewEntryTpl, ULONG* lpcbEIDNewEntry, LPENTRYID* lppEIDNewEntry) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::NewEntry not implemented");
+	ec_log_err("M4LAddrBook::NewEntry not implemented");
     TRACE_MAPILIB(TRACE_ENTRY, "M4LAddrBook::NewEntry", "");
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LAddrBook::NewEntry", "0x%08x", MAPI_E_NO_SUPPORT);
 	return MAPI_E_NO_SUPPORT;
@@ -2334,14 +2333,14 @@ HRESULT M4LAddrBook::ResolveName(ULONG ulUIParam, ULONG ulFlags, LPTSTR lpszNewE
 	bool bContinue = true;
 
 	if (lpAdrList == NULL) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::ResolveName() invalid parameters");
+		ec_log_err("M4LAddrBook::ResolveName() invalid parameters");
 		hr = MAPI_E_INVALID_PARAMETER;
 		goto exit;
 	}
 
 	hr = MAPIAllocateBuffer(CbNewFlagList(lpAdrList->cEntries), (void**)&lpFlagList);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::ResolveName() MAPIAllocateBuffer fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LAddrBook::ResolveName() MAPIAllocateBuffer fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
@@ -2389,7 +2388,7 @@ HRESULT M4LAddrBook::ResolveName(ULONG ulUIParam, ULONG ulFlags, LPTSTR lpszNewE
 			lpNewProps[0].ulPropTag = PR_ENTRYID;
 			hr = CreateOneOff((LPTSTR)strwDisplay.c_str(), (LPTSTR)strwType.c_str(), (LPTSTR)strwAddress.c_str(), MAPI_UNICODE, &cbOneEntryID, &lpOneEntryID);
 			if(hr != hrSuccess) {
-				m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::ResolveName() CreateOneOff fail %x: %s", hr, GetMAPIErrorMessage(hr));
+				ec_log_err("M4LAddrBook::ResolveName() CreateOneOff fail %x: %s", hr, GetMAPIErrorMessage(hr));
 				goto exit;
 			}
 
@@ -2442,7 +2441,7 @@ HRESULT M4LAddrBook::ResolveName(ULONG ulUIParam, ULONG ulFlags, LPTSTR lpszNewE
 			// Copy old properties + lpNewProps into row
 			hr = Util::HrMergePropertyArrays(lpAdrList->aEntries[i].rgPropVals, lpAdrList->aEntries[i].cValues, lpNewProps, 4, &lpNewRow, &cNewRow);
 			if(hr != hrSuccess) {
-				m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::ResolveName() Util::HrMergePropertyArrays fail %x: %s", hr, GetMAPIErrorMessage(hr));
+				ec_log_err("M4LAddrBook::ResolveName() Util::HrMergePropertyArrays fail %x: %s", hr, GetMAPIErrorMessage(hr));
 				goto exit;
 			}
 
@@ -2458,7 +2457,7 @@ HRESULT M4LAddrBook::ResolveName(ULONG ulUIParam, ULONG ulFlags, LPTSTR lpszNewE
 
 	hr = this->GetSearchPath(MAPI_UNICODE, &lpSearchRows);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::ResolveName() GetSearchPath fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LAddrBook::ResolveName() GetSearchPath fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
@@ -2470,13 +2469,13 @@ HRESULT M4LAddrBook::ResolveName(ULONG ulUIParam, ULONG ulFlags, LPTSTR lpszNewE
 
 		hr = this->OpenEntry(lpEntryID->Value.bin.cb, (LPENTRYID)lpEntryID->Value.bin.lpb, &IID_IABContainer, 0, &objType, (IUnknown**)&lpABContainer);
 		if (hr != hrSuccess) {
-			m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::ResolveName() OpenEntry fail %x: %s", hr, GetMAPIErrorMessage(hr));
+			ec_log_err("M4LAddrBook::ResolveName() OpenEntry fail %x: %s", hr, GetMAPIErrorMessage(hr));
 			goto next;
 		}
 
 		hr = lpABContainer->ResolveNames(NULL, ulFlags, lpAdrList, lpFlagList);
 		if (FAILED(hr)) {
-			m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::ResolveName() ResolveNames fail %x: %s", hr, GetMAPIErrorMessage(hr));
+			ec_log_err("M4LAddrBook::ResolveName() ResolveNames fail %x: %s", hr, GetMAPIErrorMessage(hr));
 			goto next;
 		}
 
@@ -2524,28 +2523,28 @@ exit:
 }
 
 HRESULT M4LAddrBook::Address(ULONG* lpulUIParam, LPADRPARM lpAdrParms, LPADRLIST* lppAdrList) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "not implemented: M4LAddrBook::Address");
+	ec_log_err("not implemented: M4LAddrBook::Address");
     TRACE_MAPILIB(TRACE_ENTRY, "M4LAddrBook::Address", "");
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LAddrBook::Address", "0x%08x", MAPI_E_NO_SUPPORT);
 	return MAPI_E_NO_SUPPORT;
 }
 
 HRESULT M4LAddrBook::Details(ULONG* lpulUIParam, LPFNDISMISS lpfnDismiss, LPVOID lpvDismissContext, ULONG cbEntryID, LPENTRYID lpEntryID, LPFNBUTTON lpfButtonCallback, LPVOID lpvButtonContext, LPTSTR lpszButtonText, ULONG ulFlags) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "not implemented: M4LAddrBook::Details");
+	ec_log_err("not implemented: M4LAddrBook::Details");
     TRACE_MAPILIB(TRACE_ENTRY, "M4LAddrBook::Details", "");
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LAddrBook::Details", "0x%08x", MAPI_E_NO_SUPPORT);
 	return MAPI_E_NO_SUPPORT;
 }
 
 HRESULT M4LAddrBook::RecipOptions(ULONG ulUIParam, ULONG ulFlags, LPADRENTRY lpRecip) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "not implemented: M4LAddrBook::RecipOptions");
+	ec_log_err("not implemented: M4LAddrBook::RecipOptions");
     TRACE_MAPILIB(TRACE_ENTRY, "M4LAddrBook::RecipOptions", "");
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LAddrBook::RecipOptions", "0x%08x", MAPI_E_NO_SUPPORT);
 	return MAPI_E_NO_SUPPORT;
 }
 
 HRESULT M4LAddrBook::QueryDefaultRecipOpt(LPTSTR lpszAdrType, ULONG ulFlags, ULONG* lpcValues, LPSPropValue* lppOptions) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "not implemented: M4LAddrBook::QueryDefaultRecipOpt");
+	ec_log_err("not implemented: M4LAddrBook::QueryDefaultRecipOpt");
     TRACE_MAPILIB(TRACE_ENTRY, "M4LAddrBook::QueryDefaultRecipOpt", "");
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LAddrBook::QueryDefaultRecipOpt", "0x%08x", MAPI_E_NO_SUPPORT);
 	return MAPI_E_NO_SUPPORT;
@@ -2553,7 +2552,7 @@ HRESULT M4LAddrBook::QueryDefaultRecipOpt(LPTSTR lpszAdrType, ULONG ulFlags, ULO
 
 // Get Personal AddressBook
 HRESULT M4LAddrBook::GetPAB(ULONG* lpcbEntryID, LPENTRYID* lppEntryID) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "not implemented: M4LAddrBook::GetPAB");
+	ec_log_err("not implemented: M4LAddrBook::GetPAB");
     TRACE_MAPILIB(TRACE_ENTRY, "M4LAddrBook::GetPAB", "");
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LAddrBook::GetPAB", "0x%08x", MAPI_E_NO_SUPPORT);
 	return MAPI_E_NO_SUPPORT;
@@ -2561,7 +2560,7 @@ HRESULT M4LAddrBook::GetPAB(ULONG* lpcbEntryID, LPENTRYID* lppEntryID) {
 
 // Set Personal AddressBook
 HRESULT M4LAddrBook::SetPAB(ULONG cbEntryID, LPENTRYID lpEntryID) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "not implemented: M4LAddrBook::SetPAB");
+	ec_log_err("not implemented: M4LAddrBook::SetPAB");
     TRACE_MAPILIB(TRACE_ENTRY, "M4LAddrBook::SetPAB", "");
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LAddrBook::SetPAB", "0x%08x", MAPI_E_NO_SUPPORT);
 	return MAPI_E_NO_SUPPORT;
@@ -2591,7 +2590,7 @@ HRESULT M4LAddrBook::GetDefaultDir(ULONG* lpcbEntryID, LPENTRYID* lppEntryID) {
 
 	if (lpcbEntryID == NULL || lppEntryID == NULL) {
 		hr = MAPI_E_INVALID_PARAMETER;
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::GetDefaultDir(): invalid parameters");
+		ec_log_err("M4LAddrBook::GetDefaultDir(): invalid parameters");
 		goto exit;
 	}
 
@@ -2604,20 +2603,20 @@ HRESULT M4LAddrBook::GetDefaultDir(ULONG* lpcbEntryID, LPENTRYID* lppEntryID) {
 	}
 
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::GetDefaultDir(): OpenEntry fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LAddrBook::GetDefaultDir(): OpenEntry fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
 	// more steps with gethierarchy() -> get entryid -> OpenEntry() ?
 	hr = lpABContainer->GetHierarchyTable(0, &lpTable);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::GetDefaultDir(): GetHierarchyTable fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LAddrBook::GetDefaultDir(): GetHierarchyTable fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto no_hierarchy;
 	}
 
 	hr = lpTable->QueryRows(1, 0, &lpRowSet); // can only return 1 row, as there is only 1 
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::GetDefaultDir(): QueryRows fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LAddrBook::GetDefaultDir(): QueryRows fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto no_hierarchy;
 	}
 
@@ -2630,7 +2629,7 @@ no_hierarchy:
 		// fallback to getprops on lpABContainer, actually a level too high, but it should work too.
 		hr = HrGetOneProp(lpABContainer, 0, &propEntryID);
 		if (hr != hrSuccess) {
-			m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::GetDefaultDir(): HrGetOneProp fail %x: %s", hr, GetMAPIErrorMessage(hr));
+			ec_log_err("M4LAddrBook::GetDefaultDir(): HrGetOneProp fail %x: %s", hr, GetMAPIErrorMessage(hr));
 			goto exit;
 		}
 
@@ -2661,7 +2660,7 @@ exit:
 }
 
 HRESULT M4LAddrBook::SetDefaultDir(ULONG cbEntryID, LPENTRYID lpEntryID) {
-	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "not implemented M4LAddrBook::SetDefaultDir");
+	ec_log_err("not implemented M4LAddrBook::SetDefaultDir");
     TRACE_MAPILIB(TRACE_ENTRY, "M4LAddrBook::SetDefaultDir", "");
 	TRACE_MAPILIB1(TRACE_RETURN, "M4LAddrBook::SetDefaultDir", "0x%08x", MAPI_E_NO_SUPPORT);
 	return MAPI_E_NO_SUPPORT;
@@ -2685,20 +2684,20 @@ HRESULT M4LAddrBook::GetSearchPath(ULONG ulFlags, LPSRowSet* lppSearchPath) {
 	if (!m_lpSavedSearchPath) {
 		hr = this->getDefaultSearchPath(ulFlags, &m_lpSavedSearchPath);
 		if (hr != hrSuccess) {
-			m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::GetSearchPath(): getDefaultSearchPath fail %x: %s", hr, GetMAPIErrorMessage(hr));
+			ec_log_err("M4LAddrBook::GetSearchPath(): getDefaultSearchPath fail %x: %s", hr, GetMAPIErrorMessage(hr));
 			goto exit;
 		}
 	}
 
 	hr = MAPIAllocateBuffer(CbNewSRowSet(m_lpSavedSearchPath->cRows), (void**)&lpSearchPath);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::GetSearchPath(): MAPIAllocateBuffer fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LAddrBook::GetSearchPath(): MAPIAllocateBuffer fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
 	hr = Util::HrCopySRowSet(lpSearchPath, m_lpSavedSearchPath, NULL);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::GetSearchPath(): Util::HrCopySRowSet fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LAddrBook::GetSearchPath(): Util::HrCopySRowSet fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
@@ -2724,13 +2723,13 @@ HRESULT M4LAddrBook::SetSearchPath(ULONG ulFlags, LPSRowSet lpSearchPath) {
 
 	hr = MAPIAllocateBuffer(CbNewSRowSet(lpSearchPath->cRows), (void**)&m_lpSavedSearchPath);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::SetSearchPath(): MAPIAllocateBuffer fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LAddrBook::SetSearchPath(): MAPIAllocateBuffer fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
 	hr = Util::HrCopySRowSet(m_lpSavedSearchPath, lpSearchPath, NULL);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::SetSearchPath(): Util::HrCopySRowSet fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("M4LAddrBook::SetSearchPath(): Util::HrCopySRowSet fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
@@ -2771,7 +2770,7 @@ HRESULT M4LAddrBook::PrepareRecips(ULONG ulFlags, LPSPropTagArray lpPropTagArray
 
 	if (lpRecipList == NULL) {
 		hr = MAPI_E_INVALID_PARAMETER;
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::PrepareRecips(): invalid parameters");
+		ec_log_err("M4LAddrBook::PrepareRecips(): invalid parameters");
 		goto exit;
 	}
 
@@ -2783,13 +2782,13 @@ HRESULT M4LAddrBook::PrepareRecips(ULONG ulFlags, LPSPropTagArray lpPropTagArray
 
 		hr = OpenEntry(lpEntryId->Value.bin.cb, (LPENTRYID)lpEntryId->Value.bin.lpb, &IID_IMailUser, 0, &ulType, (IUnknown **)&lpMailUser);
 		if(hr != hrSuccess) {
-			m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::PrepareRecips(): OpenEntry failed %x: %s", hr, GetMAPIErrorMessage(hr));
+			ec_log_err("M4LAddrBook::PrepareRecips(): OpenEntry failed %x: %s", hr, GetMAPIErrorMessage(hr));
 			goto exit;
 		}
 
 		hr = lpMailUser->GetProps(lpPropTagArray, 0, &cValues, &lpProps);
 		if(FAILED(hr)) {
-			m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::PrepareRecips(): GetProps failed %x: %s", hr, GetMAPIErrorMessage(hr));
+			ec_log_err("M4LAddrBook::PrepareRecips(): GetProps failed %x: %s", hr, GetMAPIErrorMessage(hr));
 			goto exit;
 		}
 
@@ -2810,7 +2809,7 @@ HRESULT M4LAddrBook::PrepareRecips(ULONG ulFlags, LPSPropTagArray lpPropTagArray
 			} else {
 				hr = Util::HrCopyProperty(&lpRecipList->aEntries[i].rgPropVals[j], lpProp, lpRecipList->aEntries[i].rgPropVals);
 				if(hr != hrSuccess) {
-					m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LAddrBook::PrepareRecips(): Util::HrCopyProperty failed %x: %s", hr, GetMAPIErrorMessage(hr));
+					ec_log_err("M4LAddrBook::PrepareRecips(): Util::HrCopyProperty failed %x: %s", hr, GetMAPIErrorMessage(hr));
 					goto exit;
 				}
 			}
@@ -3043,7 +3042,7 @@ SCODE __stdcall MAPIAllocateMore(ULONG cbSize, LPVOID lpObject, LPVOID* lppBuffe
 
 	hr = MAPIAllocate(cbSize, lppBuffer);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "MAPIAllocateMore(): MAPIAllocate fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("MAPIAllocateMore(): MAPIAllocate fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
@@ -3157,13 +3156,13 @@ HRESULT __stdcall MAPIAdminProfiles(ULONG ulFlags, LPPROFADMIN *lppProfAdmin) {
 
 	if (!localProfileAdmin) {
 		hr = MAPI_E_CALL_FAILED;
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "MAPIAdminProfiles(): localProfileAdmin not set");
+		ec_log_err("MAPIAdminProfiles(): localProfileAdmin not set");
 		goto exit;
 	}
 
 	if (!lppProfAdmin) {
 		hr = MAPI_E_INVALID_PARAMETER;
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "MAPIAdminProfiles(): invalid parameter");
+		ec_log_err("MAPIAdminProfiles(): invalid parameter");
 		goto exit;
 	}
 
@@ -3198,13 +3197,13 @@ HRESULT __stdcall MAPILogonEx(ULONG ulUIParam, LPTSTR lpszProfileName, LPTSTR lp
 
 	if (!lpszProfileName || !lppSession) {
 		hr = MAPI_E_INVALID_PARAMETER;
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "MAPILogonEx(): invalid parameter");
+		ec_log_err("MAPILogonEx(): invalid parameter");
 		goto exit;
 	}
 
 	if (!localProfileAdmin) {
 		hr = MAPI_E_CALL_FAILED;
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "MAPILogonEx(): localProfileAdmin not set");
+		ec_log_err("MAPILogonEx(): localProfileAdmin not set");
 		goto exit;
 	}
 
@@ -3217,20 +3216,20 @@ HRESULT __stdcall MAPILogonEx(ULONG ulUIParam, LPTSTR lpszProfileName, LPTSTR lp
 
 	hr = localProfileAdmin->AdminServices((LPTSTR)strProfname.c_str(), lpszPassword, ulUIParam, ulFlags & ~MAPI_UNICODE, &sa);
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "MAPILogonEx(): AdminServices fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("MAPILogonEx(): AdminServices fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
 	ms = new(std::nothrow) M4LMAPISession(lpszProfileName,(M4LMsgServiceAdmin *)sa);
 	if (!ms) {
 		hr = MAPI_E_NOT_ENOUGH_MEMORY;
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "MAPILogonEx(): M4LMAPISession fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("MAPILogonEx(): M4LMAPISession fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
 	hr = ms->QueryInterface(IID_IMAPISession, (void**)lppSession);
 	if (hr != hrSuccess)
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "MAPILogonEx(): QueryInterface fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("MAPILogonEx(): QueryInterface fail %x: %s", hr, GetMAPIErrorMessage(hr));
 
 exit:
 	if (sa)
@@ -3279,7 +3278,7 @@ HRESULT __stdcall MAPIInitialize(LPVOID lpMapiInit) {
 	/* Allocate special M4L services (logger, config, ...) */
 	hr = HrCreateM4LServices();
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "MAPIInitialize(): HrCreateM4LServices fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("MAPIInitialize(): HrCreateM4LServices fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
@@ -3290,7 +3289,7 @@ HRESULT __stdcall MAPIInitialize(LPVOID lpMapiInit) {
 	m4l_lpMAPISVC = new MAPISVC();
 	hr = m4l_lpMAPISVC->Init();
 	if (hr != hrSuccess) {
-		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "MAPIInitialize(): MAPISVC::Init fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_err("MAPIInitialize(): MAPISVC::Init fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
