@@ -2751,28 +2751,55 @@ void Object_to_MVPROPMAP(PyObject *elem, ECUSER *&lpUser, ULONG ulFlags)
 	/* Multi-Value PropMap support. */
 	MVPropMaps = PyObject_GetAttrString(elem, "MVPropMap");
 
-	if (MVPropMaps != NULL && MVPropMaps != Py_None && PyList_Check(MVPropMaps)) {
-		MVPropMapsSize = PyList_Size(MVPropMaps);
-		/* No PropMaps - bail out */
-		if (MVPropMapsSize != 2) {
-			PyErr_SetString(PyExc_TypeError, "MVPropMap should contain two entries");
+	if (MVPropMaps == NULL || MVPropMaps == Py_None || !PyList_Check(MVPropMaps)) {
+		if (MVPropMaps != NULL)
+			Py_DECREF(MVPropMaps);
+		return;
+	}
+
+	MVPropMapsSize = PyList_Size(MVPropMaps);
+	/* No PropMaps - bail out */
+	if (MVPropMapsSize != 2) {
+		PyErr_SetString(PyExc_TypeError, "MVPropMap should contain two entries");
+		if (MVPropMaps != NULL)
+			Py_DECREF(MVPropMaps);
+		return;
+	}
+
+	/* If we have more mv props than the feature lists, adjust this value! */
+	lpUser->sMVPropmap.cEntries = 2;
+	hr = MAPIAllocateMore(sizeof(MVPROPMAPENTRY) * lpUser->sMVPropmap.cEntries, lpUser, reinterpret_cast<void **>(&lpUser->sMVPropmap.lpEntries));
+
+	for (int i = 0; i < MVPropMapsSize; ++i) {
+		Item = PyList_GetItem(MVPropMaps, i);
+		PropID = PyObject_GetAttrString(Item, "ulPropId");
+		Values = PyObject_GetAttrString(Item, "Values");
+
+		if (PropID == NULL || Values == NULL || PropID == Py_None || !PyList_Check(Values)) {
+			PyErr_SetString(PyExc_TypeError, "ulPropId or Values is empty or values is not a list");
+
+			if (PropID != NULL)
+				Py_DECREF(PropID);
+			if (Values != NULL)
+				Py_DECREF(Values);
 			if (MVPropMaps != NULL)
 				Py_DECREF(MVPropMaps);
 			return;
 		}
 
-		/* If we have more mv props than the feature lists, adjust this value! */
-		lpUser->sMVPropmap.cEntries = 2;
-		hr = MAPIAllocateMore(sizeof(MVPROPMAPENTRY) * lpUser->sMVPropmap.cEntries, lpUser, reinterpret_cast<void **>(&lpUser->sMVPropmap.lpEntries));
+		/* Set default struct entry to empty stub values */
+		lpUser->sMVPropmap.lpEntries[i].ulPropId = PyLong_AsUnsignedLong(PropID);
+		lpUser->sMVPropmap.lpEntries[i].cValues = 0;
+		lpUser->sMVPropmap.lpEntries[i].lpszValues = NULL;
 
-		for (int i = 0; i < MVPropMapsSize; ++i) {
-			Item = PyList_GetItem(MVPropMaps, i);
-			PropID = PyObject_GetAttrString(Item, "ulPropId");
-			Values = PyObject_GetAttrString(Item, "Values");
+		//if ((PropID != NULL && PropID != Py_None) && (Values != NULL && Values != Py_None && PyList_Check(Values)))
+		ValuesLength = PyList_Size(Values);
+		lpUser->sMVPropmap.lpEntries[i].cValues = ValuesLength;
 
-			if (PropID == NULL || Values == NULL || PropID == Py_None || !PyList_Check(Values)) {
-				PyErr_SetString(PyExc_TypeError, "ulPropId or Values is empty or values is not a list");
-
+		if (ValuesLength > 0) {
+			hr = MAPIAllocateMore(sizeof(LPTSTR) * lpUser->sMVPropmap.lpEntries[i].cValues, lpUser, reinterpret_cast<void **>(&lpUser->sMVPropmap.lpEntries[i].lpszValues));
+			if (hr != hrSuccess) {
+				PyErr_SetString(PyExc_RuntimeError, "Out of memory");
 				if (PropID != NULL)
 					Py_DECREF(PropID);
 				if (Values != NULL)
@@ -2781,46 +2808,23 @@ void Object_to_MVPROPMAP(PyObject *elem, ECUSER *&lpUser, ULONG ulFlags)
 					Py_DECREF(MVPropMaps);
 				return;
 			}
-
-			/* Set default struct entry to empty stub values */
-			lpUser->sMVPropmap.lpEntries[i].ulPropId = PyLong_AsUnsignedLong(PropID);
-			lpUser->sMVPropmap.lpEntries[i].cValues = 0;
-			lpUser->sMVPropmap.lpEntries[i].lpszValues = NULL;
-
-			//if ((PropID != NULL && PropID != Py_None) && (Values != NULL && Values != Py_None && PyList_Check(Values)))
-			ValuesLength = PyList_Size(Values);
-			lpUser->sMVPropmap.lpEntries[i].cValues = ValuesLength;
-
-			if (ValuesLength > 0) {
-				hr = MAPIAllocateMore(sizeof(LPTSTR) * lpUser->sMVPropmap.lpEntries[i].cValues, lpUser, reinterpret_cast<void **>(&lpUser->sMVPropmap.lpEntries[i].lpszValues));
-				if (hr != hrSuccess) {
-					PyErr_SetString(PyExc_RuntimeError, "Out of memory");
-					if (PropID != NULL)
-						Py_DECREF(PropID);
-					if (Values != NULL)
-						Py_DECREF(Values);
-					if (MVPropMaps != NULL)
-						Py_DECREF(MVPropMaps);
-					return;
-				}
-			}
-
-			for (int j = 0; j < ValuesLength; ++j) {
-				ListItem = PyList_GetItem(Values, j);
-
-				if (ListItem != Py_None) {
-					if ((ulFlags & MAPI_UNICODE) == 0)
-						// XXX: meh, not sure what todo here. Maybe use process_conv_out??
-						lpUser->sMVPropmap.lpEntries[i].lpszValues[j] = reinterpret_cast<TCHAR *>(PyString_AsString(ListItem));
-					else
-						CopyPyUnicode(&lpUser->sMVPropmap.lpEntries[i].lpszValues[j], ListItem, lpUser);
-				}
-				Py_DECREF(ListItem);
-			}
-
-			Py_DECREF(PropID);
-			Py_DECREF(Values);
 		}
+
+		for (int j = 0; j < ValuesLength; ++j) {
+			ListItem = PyList_GetItem(Values, j);
+
+			if (ListItem != Py_None) {
+				if ((ulFlags & MAPI_UNICODE) == 0)
+					// XXX: meh, not sure what todo here. Maybe use process_conv_out??
+					lpUser->sMVPropmap.lpEntries[i].lpszValues[j] = reinterpret_cast<TCHAR *>(PyString_AsString(ListItem));
+				else
+					CopyPyUnicode(&lpUser->sMVPropmap.lpEntries[i].lpszValues[j], ListItem, lpUser);
+			}
+			Py_DECREF(ListItem);
+		}
+
+		Py_DECREF(PropID);
+		Py_DECREF(Values);
 	}
 
 	if (MVPropMaps != NULL)
@@ -2854,16 +2858,16 @@ PyObject *Object_from_MVPROPMAP(MVPROPMAP propmap, ULONG ulFlags)
 			LPTSTR strval = lpMVPropmap->lpEntries[i].lpszValues[j];
 			std::string str = reinterpret_cast<LPSTR>(strval);
 
-			if (!str.empty()) {
-				if (ulFlags & MAPI_UNICODE)
-					MVPropValue = PyUnicode_FromWideChar(strval, wcslen(strval));
-				else
-					MVPropValue = PyString_FromStringAndSize(str.c_str(), str.length());
+			if (str.empty())
+				continue;
+			if (ulFlags & MAPI_UNICODE)
+				MVPropValue = PyUnicode_FromWideChar(strval, wcslen(strval));
+			else
+				MVPropValue = PyString_FromStringAndSize(str.c_str(), str.length());
 
-				PyList_Append(MVPropValues, MVPropValue);
-				Py_DECREF(MVPropValue);
-				MVPropValue = NULL;
-			}
+			PyList_Append(MVPropValues, MVPropValue);
+			Py_DECREF(MVPropValue);
+			MVPropValue = NULL;
 		}
 
 		MVPropMap = PyObject_CallFunction(PyTypeMVPROPMAP, "(lO)", lpMVPropmap->lpEntries[i].ulPropId, MVPropValues);
