@@ -3235,6 +3235,7 @@ static void *HandlerLMTP(void *lpArg)
 
 	char *lpEnvGDB  = getenv("GDB");
 	if (lpEnvGDB && parseBool(lpEnvGDB)) {
+		lmtp.HrResponse("220-DEBUG MODE, please wait");
 		Sleep(10000); //wait 10 seconds so you can attach gdb
 		g_lpLogger->Log(EC_LOGLEVEL_INFO, "Starting worker for LMTP request");
 	}
