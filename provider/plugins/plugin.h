@@ -172,7 +172,7 @@ public:
 	 *
 	 * @throw std::exception
 	 */
-	virtual void InitPlugin() throw(std::exception) = 0;
+	virtual void InitPlugin() = 0;
 
 	/**
 	 * Resolve name and company to objectsignature
@@ -188,7 +188,7 @@ public:
 	 * @return The object signature of the resolved object
 	 * @throw std::exception
 	 */
-	virtual objectsignature_t resolveName(objectclass_t objclass, const string &name, const objectid_t &company) throw(std::exception) = 0;
+	virtual objectsignature_t resolveName(objectclass_t objclass, const string &name, const objectid_t &company) = 0;
 
 	/**
 	 * Authenticate user with username and password
@@ -203,7 +203,7 @@ public:
 	 * @return The objectsignature of the authenticated user
 	 * @throw std::exception
 	 */
-	virtual objectsignature_t authenticateUser(const string &username, const string &password, const objectid_t &company) throw(std::exception) = 0;
+	virtual objectsignature_t authenticateUser(const string &username, const string &password, const objectid_t &company) = 0;
 
 	/**
 	 * Request a list of objects for a particular company and specified objectclass.
@@ -217,7 +217,7 @@ public:
 	 * @return The list of object signatures of all objects which were found
 	 * @throw std::exception
 	 */
-	virtual auto_ptr<signatures_t> getAllObjects(const objectid_t &company, objectclass_t objclass) throw(std::exception) = 0;
+	virtual auto_ptr<signatures_t> getAllObjects(const objectid_t &company, objectclass_t objclass) = 0;
 
 	/**
 	 * Obtain the object details for the given object
@@ -227,7 +227,7 @@ public:
 	 * @return The objectdetails for the given objectid
 	 * @throw std::exception
 	 */
-	virtual auto_ptr<objectdetails_t> getObjectDetails(const objectid_t &objectid) throw(std::exception) = 0;
+	virtual auto_ptr<objectdetails_t> getObjectDetails(const objectid_t &objectid) = 0;
 
 	/**
 	 * Obtain the object details for the given objects
@@ -237,7 +237,7 @@ public:
 	 * @return A map of objectid with the matching objectdetails
 	 * @throw std::exception
 	 */
-	virtual auto_ptr<map<objectid_t, objectdetails_t> > getObjectDetails(const list<objectid_t> &objectids) throw(std::exception) = 0;
+	virtual auto_ptr<map<objectid_t, objectdetails_t> > getObjectDetails(const list<objectid_t> &objectids) = 0;
 
 	/**
 	 * Get all children for a parent for a given relation type.
@@ -250,7 +250,7 @@ public:
 	 * @return A list of object signatures of the children of the parent.
 	 * @throw std::exception
 	 */
-	virtual auto_ptr<signatures_t> getSubObjectsForObject(userobject_relation_t relation, const objectid_t &parentobject) throw(std::exception) = 0;
+	virtual auto_ptr<signatures_t> getSubObjectsForObject(userobject_relation_t relation, const objectid_t &parentobject) = 0;
 
 	/**
 	 * Request all parents for a childobject for a given relation type.
@@ -263,7 +263,7 @@ public:
 	 * @return A list of object signatures of the parents of the child.
 	 * @throw std::exception
 	 */
-	virtual auto_ptr<signatures_t> getParentObjectsForObject(userobject_relation_t relation, const objectid_t &childobject) throw(std::exception) = 0;
+	virtual auto_ptr<signatures_t> getParentObjectsForObject(userobject_relation_t relation, const objectid_t &childobject) = 0;
 
 	/**
 	 * Search for all objects which match the given string,
@@ -277,7 +277,7 @@ public:
 	 * @return List of object signatures which match the given string
 	 * @throw std::exception
 	 */
-	virtual auto_ptr<signatures_t> searchObject(const string &match, unsigned int ulFlags) throw(std::exception) = 0;
+	virtual auto_ptr<signatures_t> searchObject(const string &match, unsigned int ulFlags) = 0;
 
 	/**
 	 * Obtain details for the public store
@@ -287,7 +287,7 @@ public:
 	 * @return The public store details
 	 * @throw std::exception
 	 */
-	virtual auto_ptr<objectdetails_t> getPublicStoreDetails() throw(std::exception) = 0;
+	virtual auto_ptr<objectdetails_t> getPublicStoreDetails() = 0;
 
 	/**
 	 * Obtain the objectdetails for a server
@@ -299,7 +299,7 @@ public:
 	 * @return The server details
 	 * @throw std::exception
 	 */
-	virtual auto_ptr<serverdetails_t> getServerDetails(const string &server) throw(std::exception) = 0;
+	virtual auto_ptr<serverdetails_t> getServerDetails(const string &server) = 0;
 
 	/**
 	 * Obtain server list
@@ -307,7 +307,7 @@ public:
 	 * @return list of servers
 	 * @throw runtime_error LDAP query failure
 	 */
-	virtual auto_ptr<serverlist_t> getServers() throw(std::exception) = 0;
+	virtual auto_ptr<serverlist_t> getServers() = 0;
 
 	/**
 	 * Update an object with new details
@@ -322,7 +322,7 @@ public:
 	 *					List of configuration names which should be removed from the object
 	 * @throw std::exception
 	 */
-	virtual void changeObject(const objectid_t &id, const objectdetails_t &details, const std::list<std::string> *lpRemove) throw(std::exception) = 0;
+	virtual void changeObject(const objectid_t &id, const objectdetails_t &details, const std::list<std::string> *lpRemove) = 0;
 
 	/**
 	 * Create object in plugin
@@ -334,7 +334,7 @@ public:
 	 * @return The objectsignature of the created object.
 	 * @throw std::exception
 	 */
-	virtual objectsignature_t createObject(const objectdetails_t &details) throw(std::exception) = 0;
+	virtual objectsignature_t createObject(const objectdetails_t &details) = 0;
 
 	/**
 	 * Delete object from plugin
@@ -345,7 +345,7 @@ public:
 	 *					The objectid which should be deleted
 	 * @throw std::exception
 	 */
-	virtual void deleteObject(const objectid_t &id) throw(std::exception) = 0;
+	virtual void deleteObject(const objectid_t &id) = 0;
 
 	/**
 	 * Modify id of object in plugin
@@ -358,7 +358,7 @@ public:
 	 *					The new objectid
 	 * @throw std::exception
 	 */
-	virtual void modifyObjectId(const objectid_t &oldId, const objectid_t &newId) throw(std::exception) = 0;
+	virtual void modifyObjectId(const objectid_t &oldId, const objectid_t &newId) = 0;
 
 	/**
  	 * Add relation between child and parent. This can be used
@@ -377,7 +377,7 @@ public:
 	 * @throw std::exception
 	 */
 	virtual void addSubObjectRelation(userobject_relation_t relation,
-									  const objectid_t &parentobject, const objectid_t &childobject) throw(std::exception) = 0;
+									  const objectid_t &parentobject, const objectid_t &childobject) = 0;
 
 	/**
 	 * Delete relation between child and parent, this can be used
@@ -396,7 +396,7 @@ public:
 	 * @throw std::exception
 	 */
 	virtual void deleteSubObjectRelation(userobject_relation_t relation,
-										 const objectid_t &parentobject, const objectid_t &childobject) throw(std::exception) = 0;
+										 const objectid_t &parentobject, const objectid_t &childobject) = 0;
 	
 	/**
 	 * Get quota information from object.
@@ -411,7 +411,7 @@ public:
 	 *					Boolean to indicate if the userdefault quota must be requested.
 	 * @throw std::exception
 	 */
-	virtual auto_ptr<quotadetails_t> getQuota(const objectid_t &id, bool bGetUserDefault) throw(std::exception) = 0;
+	virtual auto_ptr<quotadetails_t> getQuota(const objectid_t &id, bool bGetUserDefault) = 0;
 
 	/**
 	 * Set quota information on object
@@ -424,7 +424,7 @@ public:
 	 *					The quota information which should be written to the object
 	 * @throw std::exception
 	 */
-	virtual void setQuota(const objectid_t &id, const quotadetails_t &quotadetails) throw(std::exception) = 0;
+	virtual void setQuota(const objectid_t &id, const quotadetails_t &quotadetails) = 0;
 
 	/**
 	 * Get extra properties which are set in the object details for the addressbook
@@ -434,7 +434,7 @@ public:
 	 * @return	a list of properties
 	 * @throw std::exception
 	 */
-	virtual auto_ptr<abprops_t> getExtraAddressbookProperties() throw(std::exception) = 0;
+	virtual auto_ptr<abprops_t> getExtraAddressbookProperties() = 0;
 
 	/**
 	 * Reset entire plugin - use with care - this deletes (almost) all entries in the user database
@@ -443,7 +443,7 @@ public:
 	 *               of the caller)
 	 *
 	 */
-	virtual void removeAllObjects(objectid_t except) throw(std::exception) = 0;
+	virtual void removeAllObjects(objectid_t except) = 0;
 	
 
 protected:

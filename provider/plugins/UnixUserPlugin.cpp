@@ -96,7 +96,7 @@ extern "C" {
 	}
 }
 
-UnixUserPlugin::UnixUserPlugin(pthread_mutex_t *pluginlock, ECPluginSharedData *shareddata) throw(exception)
+UnixUserPlugin::UnixUserPlugin(pthread_mutex_t *pluginlock, ECPluginSharedData *shareddata)
 	: DBPlugin(pluginlock, shareddata), m_iconv(NULL)
 {
 	const configsetting_t lpDefaults [] = {
@@ -127,7 +127,7 @@ UnixUserPlugin::~UnixUserPlugin()
 	delete m_iconv;
 }
 
-void UnixUserPlugin::InitPlugin() throw(std::exception) {
+void UnixUserPlugin::InitPlugin() {
 	DBPlugin::InitPlugin();
 
 	// we only need unix_charset -> zarafa charset
@@ -137,7 +137,7 @@ void UnixUserPlugin::InitPlugin() throw(std::exception) {
 		throw runtime_error(string("Cannot setup charset converter, check \"fullname_charset\" in cfg"));
 }
 
-void UnixUserPlugin::findUserID(const string &id, struct passwd *pwd, char *buffer) throw(std::exception)
+void UnixUserPlugin::findUserID(const string &id, struct passwd *pwd, char *buffer)
 {
 	struct passwd *pw = NULL;
 	uid_t minuid = fromstring<const char *, uid_t>(m_config->GetSetting("min_user_uid"));
@@ -160,7 +160,7 @@ void UnixUserPlugin::findUserID(const string &id, struct passwd *pwd, char *buff
 			throw objectnotfound(id);
 }
 
-void UnixUserPlugin::findUser(const string &name, struct passwd *pwd, char *buffer) throw(std::exception)
+void UnixUserPlugin::findUser(const string &name, struct passwd *pwd, char *buffer)
 {
 	struct passwd *pw = NULL;
 	uid_t minuid = fromstring<const char *, uid_t>(m_config->GetSetting("min_user_uid"));
@@ -183,7 +183,7 @@ void UnixUserPlugin::findUser(const string &name, struct passwd *pwd, char *buff
 			throw objectnotfound(name);
 }
 
-void UnixUserPlugin::findGroupID(const string &id, struct group *grp, char *buffer) throw(std::exception)
+void UnixUserPlugin::findGroupID(const string &id, struct group *grp, char *buffer)
 {
 	struct group *gr = NULL;
 	gid_t mingid = fromstring<const char *, gid_t>(m_config->GetSetting("min_group_gid"));
@@ -206,7 +206,7 @@ void UnixUserPlugin::findGroupID(const string &id, struct group *grp, char *buff
 			throw objectnotfound(id);
 }
 
-void UnixUserPlugin::findGroup(const string &name, struct group *grp, char *buffer) throw(std::exception)
+void UnixUserPlugin::findGroup(const string &name, struct group *grp, char *buffer)
 {
 	struct group *gr = NULL;
 	gid_t mingid = fromstring<const char *, gid_t>(m_config->GetSetting("min_group_gid"));
@@ -229,7 +229,7 @@ void UnixUserPlugin::findGroup(const string &name, struct group *grp, char *buff
 			throw objectnotfound(name);
 }
 
-objectsignature_t UnixUserPlugin::resolveUserName(const string &name) throw(std::exception)
+objectsignature_t UnixUserPlugin::resolveUserName(const string &name)
 {
 	char buffer[PWBUFSIZE];
 	struct passwd pws;
@@ -246,7 +246,7 @@ objectsignature_t UnixUserPlugin::resolveUserName(const string &name) throw(std:
 	return objectsignature_t(objectid, getDBSignature(objectid) + pws.pw_gecos + pws.pw_name);
 }
 
-objectsignature_t UnixUserPlugin::resolveGroupName(const string &name) throw(std::exception)
+objectsignature_t UnixUserPlugin::resolveGroupName(const string &name)
 {
 	char buffer[PWBUFSIZE];
 	struct group grp;
@@ -258,7 +258,7 @@ objectsignature_t UnixUserPlugin::resolveGroupName(const string &name) throw(std
 	return objectsignature_t(objectid, grp.gr_name);
 }
 
-objectsignature_t UnixUserPlugin::resolveName(objectclass_t objclass, const string &name, const objectid_t &company) throw(std::exception)
+objectsignature_t UnixUserPlugin::resolveName(objectclass_t objclass, const string &name, const objectid_t &company)
 {
 	objectsignature_t user;
 	objectsignature_t group;
@@ -306,7 +306,7 @@ objectsignature_t UnixUserPlugin::resolveName(objectclass_t objclass, const stri
 	}
 }
 
-objectsignature_t UnixUserPlugin::authenticateUser(const string &username, const string &password, const objectid_t &companyname) throw(std::exception) {
+objectsignature_t UnixUserPlugin::authenticateUser(const string &username, const string &password, const objectid_t &companyname) {
 	struct passwd pws, *pw = NULL;
 	char buffer[PWBUFSIZE];
 	uid_t minuid = fromstring<const char *, uid_t>(m_config->GetSetting("min_user_uid"));
@@ -387,7 +387,7 @@ bool UnixUserPlugin::matchGroupObject(struct group *gr, const string &match, uns
 	return matched;
 }
 
-auto_ptr<signatures_t> UnixUserPlugin::getAllUserObjects(const string &match, unsigned int ulFlags) throw(std::exception)
+auto_ptr<signatures_t> UnixUserPlugin::getAllUserObjects(const string &match, unsigned int ulFlags)
 {
 	auto_ptr<signatures_t> objectlist = auto_ptr<signatures_t>(new signatures_t());;
 	char buffer[PWBUFSIZE];
@@ -429,7 +429,7 @@ auto_ptr<signatures_t> UnixUserPlugin::getAllUserObjects(const string &match, un
 	return objectlist;
 }
 
-auto_ptr<signatures_t> UnixUserPlugin::getAllGroupObjects(const string &match, unsigned int ulFlags) throw(std::exception)
+auto_ptr<signatures_t> UnixUserPlugin::getAllGroupObjects(const string &match, unsigned int ulFlags)
 {
 	auto_ptr<signatures_t> objectlist = auto_ptr<signatures_t>(new signatures_t());;
 	char buffer[PWBUFSIZE];
@@ -466,7 +466,7 @@ auto_ptr<signatures_t> UnixUserPlugin::getAllGroupObjects(const string &match, u
 	return objectlist;
 }
 
-auto_ptr<signatures_t> UnixUserPlugin::getAllObjects(const objectid_t &companyid, objectclass_t objclass) throw(exception)
+auto_ptr<signatures_t> UnixUserPlugin::getAllObjects(const objectid_t &companyid, objectclass_t objclass)
 {
 	ECRESULT er = erSuccess;
 	auto_ptr<signatures_t> objectlist = auto_ptr<signatures_t>(new signatures_t());
@@ -608,7 +608,7 @@ exit:
 	return objectlist;
 }
 
-auto_ptr<objectdetails_t> UnixUserPlugin::getObjectDetails(const objectid_t &externid) throw(exception)
+auto_ptr<objectdetails_t> UnixUserPlugin::getObjectDetails(const objectid_t &externid)
 {
 	ECRESULT er = erSuccess;
 	char buffer[PWBUFSIZE];
@@ -664,7 +664,7 @@ auto_ptr<objectdetails_t> UnixUserPlugin::getObjectDetails(const objectid_t &ext
 	return ud;
 }
 
-void UnixUserPlugin::changeObject(const objectid_t &id, const objectdetails_t &details, const std::list<std::string> *lpRemove) throw(std::exception)
+void UnixUserPlugin::changeObject(const objectid_t &id, const objectdetails_t &details, const std::list<std::string> *lpRemove)
 {
 	objectdetails_t tmp(details);
 
@@ -683,20 +683,20 @@ void UnixUserPlugin::changeObject(const objectid_t &id, const objectdetails_t &d
 	DBPlugin::changeObject(id, tmp, lpRemove);
 }
 
-objectsignature_t UnixUserPlugin::createObject(const objectdetails_t &details) throw(std::exception) {
+objectsignature_t UnixUserPlugin::createObject(const objectdetails_t &details) {
 	throw notimplemented("Creating objects is not supported when using the Unix user plugin.");
 }
 
-void UnixUserPlugin::deleteObject(const objectid_t &id) throw(std::exception) {
+void UnixUserPlugin::deleteObject(const objectid_t &id) {
 	throw notimplemented("Deleting objects is not supported when using the Unix user plugin.");
 }
 
-void UnixUserPlugin::modifyObjectId(const objectid_t &oldId, const objectid_t &newId) throw(std::exception)
+void UnixUserPlugin::modifyObjectId(const objectid_t &oldId, const objectid_t &newId)
 {
 	throw notimplemented("Modifying objectid is not supported when using the Unix user plugin.");
 }
 
-auto_ptr<signatures_t> UnixUserPlugin::getParentObjectsForObject(userobject_relation_t relation, const objectid_t &childid) throw(std::exception)
+auto_ptr<signatures_t> UnixUserPlugin::getParentObjectsForObject(userobject_relation_t relation, const objectid_t &childid)
 {
 	auto_ptr<signatures_t> objectlist = auto_ptr<signatures_t>(new signatures_t());
 	char buffer[PWBUFSIZE];
@@ -758,7 +758,7 @@ auto_ptr<signatures_t> UnixUserPlugin::getParentObjectsForObject(userobject_rela
 	return objectlist;
 }
 
-auto_ptr<signatures_t> UnixUserPlugin::getSubObjectsForObject(userobject_relation_t relation, const objectid_t &parentid) throw(std::exception)
+auto_ptr<signatures_t> UnixUserPlugin::getSubObjectsForObject(userobject_relation_t relation, const objectid_t &parentid)
 {
 	auto_ptr<signatures_t> objectlist = auto_ptr<signatures_t>(new signatures_t());
 	char buffer[PWBUFSIZE];
@@ -824,21 +824,21 @@ auto_ptr<signatures_t> UnixUserPlugin::getSubObjectsForObject(userobject_relatio
 	return objectlist;
 }
 
-void UnixUserPlugin::addSubObjectRelation(userobject_relation_t relation, const objectid_t &id, const objectid_t &member) throw(std::exception)
+void UnixUserPlugin::addSubObjectRelation(userobject_relation_t relation, const objectid_t &id, const objectid_t &member)
 {
 	if (relation != OBJECTRELATION_QUOTA_USERRECIPIENT && relation != OBJECTRELATION_USER_SENDAS)
 		throw notimplemented("Adding object relations is not supported when using the Unix user plugin.");
 	DBPlugin::addSubObjectRelation(relation, id, member);
 }
 
-void UnixUserPlugin::deleteSubObjectRelation(userobject_relation_t relation, const objectid_t &id, const objectid_t &member) throw(std::exception)
+void UnixUserPlugin::deleteSubObjectRelation(userobject_relation_t relation, const objectid_t &id, const objectid_t &member)
 {
 	if (relation != OBJECTRELATION_QUOTA_USERRECIPIENT && relation != OBJECTRELATION_USER_SENDAS)
 		throw notimplemented("Deleting object relations is not supported when using the Unix user plugin.");
 	DBPlugin::deleteSubObjectRelation(relation, id, member);
 }
 
-auto_ptr<signatures_t> UnixUserPlugin::searchObject(const string &match, unsigned int ulFlags) throw(std::exception)
+auto_ptr<signatures_t> UnixUserPlugin::searchObject(const string &match, unsigned int ulFlags)
 {
 	char buffer[PWBUFSIZE];
 	struct passwd pws, *pw = NULL;
@@ -883,22 +883,22 @@ auto_ptr<signatures_t> UnixUserPlugin::searchObject(const string &match, unsigne
 	return objectlist;
 }
 
-auto_ptr<objectdetails_t> UnixUserPlugin::getPublicStoreDetails() throw(std::exception)
+auto_ptr<objectdetails_t> UnixUserPlugin::getPublicStoreDetails()
 {
 	throw notsupported("public store details");
 }
 
-auto_ptr<serverdetails_t> UnixUserPlugin::getServerDetails(const string &server) throw(std::exception)
+auto_ptr<serverdetails_t> UnixUserPlugin::getServerDetails(const string &server)
 {
 	throw notsupported("server details");
 }
 
-auto_ptr<serverlist_t> UnixUserPlugin::getServers() throw(std::exception)
+auto_ptr<serverlist_t> UnixUserPlugin::getServers()
 {
 	throw notsupported("server list");
 }
 
-auto_ptr<map<objectid_t, objectdetails_t> > UnixUserPlugin::getObjectDetails(const list<objectid_t> &objectids) throw (std::exception) {
+auto_ptr<map<objectid_t, objectdetails_t> > UnixUserPlugin::getObjectDetails(const list<objectid_t> &objectids) {
 	auto_ptr<map<objectid_t, objectdetails_t> > mapdetails = auto_ptr<map<objectid_t, objectdetails_t> >(new map<objectid_t,objectdetails_t>);
 	auto_ptr<objectdetails_t> uDetails;
 	list<objectid_t>::const_iterator iterID;
