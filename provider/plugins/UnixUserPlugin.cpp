@@ -312,8 +312,8 @@ objectsignature_t UnixUserPlugin::authenticateUser(const string &username, const
 	uid_t minuid = fromstring<const char *, uid_t>(m_config->GetSetting("min_user_uid"));
 	uid_t maxuid = fromstring<const char *, uid_t>(m_config->GetSetting("max_user_uid"));
 	vector<string> exceptuids = tokenize(m_config->GetSetting("except_user_uids"), " \t");
-	auto_ptr<struct crypt_data> cryptdata = auto_ptr<struct crypt_data>(NULL);
-	auto_ptr<objectdetails_t> ud = auto_ptr<objectdetails_t>(NULL);
+	auto_ptr<struct crypt_data> cryptdata;
+	auto_ptr<objectdetails_t> ud;
 	objectid_t objectid;
 	const char *crpw = NULL;
 
@@ -612,7 +612,7 @@ auto_ptr<objectdetails_t> UnixUserPlugin::getObjectDetails(const objectid_t &ext
 {
 	ECRESULT er = erSuccess;
 	char buffer[PWBUFSIZE];
-	auto_ptr<objectdetails_t> ud = auto_ptr<objectdetails_t>(NULL);
+	auto_ptr<objectdetails_t> ud;
 	struct passwd pws;
 	struct group grp;
 	DB_RESULT_AUTOFREE lpResult(m_lpDatabase);

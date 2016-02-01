@@ -92,7 +92,7 @@ auto_ptr<signatures_t> DBPlugin::getAllObjects(const objectid_t &company, object
 
 auto_ptr<objectdetails_t> DBPlugin::getObjectDetails(const objectid_t &objectid) throw(std::exception)
 {
-	auto_ptr<map<objectid_t, objectdetails_t> > objectdetails = auto_ptr<map<objectid_t, objectdetails_t> >(NULL);
+	auto_ptr<map<objectid_t, objectdetails_t> > objectdetails;
 	list<objectid_t> objectids;
 
 	objectids.push_back(objectid);
