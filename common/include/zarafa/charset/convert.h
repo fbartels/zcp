@@ -132,7 +132,7 @@ namespace details {
 		 * @param[in] lpBuf		Pointer to the data to be appended.
 		 * @param[in] cbBuf		Size of the data to be appended in bytes.
 		 */
-		virtual void append(const char *lpBuf, size_t cbBuf) throw() = 0;
+		virtual void append(const char *lpBuf, size_t cbBuf) = 0;
 		
 	private:
 		iconv_t	m_cd;
@@ -208,7 +208,7 @@ namespace details {
 		}
 		
 	private:
-		void append(const char *lpBuf, size_t cbBuf) throw() _zcp_override {
+		void append(const char *lpBuf, size_t cbBuf) _zcp_override {
 			m_to.append(reinterpret_cast<typename _To_Type::const_pointer>(lpBuf), cbBuf / sizeof(typename _To_Type::value_type));
 		}
 
@@ -234,7 +234,7 @@ namespace details {
 		 * @param[in] _from		The string to be converted.
 		 * @return				The converted string.
 		 */
-		static _Type convert(const _Type &_from) throw() { return _from; }
+		static _Type convert(const _Type &_from) { return _from; }
 
 		/**
 		 * @brief Converts a string to a string with a different charset.
@@ -334,7 +334,7 @@ public:
 	/**
 	 * @brief Constructor.
 	 */
-	convert_context() throw();
+	convert_context();
 	
 	/**
 	 * @brief Destructor.
@@ -400,7 +400,7 @@ private:
 		/**
 		 * @brief Constructor.
 		 */
-		helper(convert_context &context) throw()
+		helper(convert_context &context)
 			: m_context(context) 
 		{}
 
@@ -411,7 +411,7 @@ private:
 		 * @param[in] _from		The string to be converted.
 		 * @return				The converted string.
 		 */
-		_Type convert(const _Type &_from) throw() {
+		_Type convert(const _Type &_from) {
 			return _from;
 		}
 
@@ -481,7 +481,7 @@ private:
 		/**
 		 * @brief Constructor.
 		 */
-		helper(convert_context &context) throw()
+		helper(convert_context &context)
 			: m_context(context) 
 			, m_helper(context)
 		{}
@@ -580,7 +580,7 @@ private:
 	 */
 	class context_predicate _zcp_final {
 	public:
-		bool operator()(const context_key &lhs, const context_key &rhs) const throw() {
+		bool operator()(const context_key &lhs, const context_key &rhs) const {
 			int r = strcmp(lhs.fromtype, rhs.fromtype);
 			if (r != 0)
 				return (r < 0);
@@ -782,7 +782,7 @@ namespace details {
  * @return				HRESULT.
  */
 template <typename _To_Type, typename _From_Type>
-HRESULT TryConvert(const _From_Type &_from, _To_Type &_to) throw() {
+HRESULT TryConvert(const _From_Type &_from, _To_Type &_to) {
 	try {
 		_to = convert_to<_To_Type>(_from);
 		return hrSuccess;
@@ -803,7 +803,7 @@ HRESULT TryConvert(const _From_Type &_from, _To_Type &_to) throw() {
  * @return				HRESULT.
  */
 template <typename _To_Type, typename _From_Type>
-HRESULT TryConvert(const _From_Type &_from, size_t cbBytes, const char *fromcode, _To_Type &_to) throw() {
+HRESULT TryConvert(const _From_Type &_from, size_t cbBytes, const char *fromcode, _To_Type &_to) {
 	try {
 		_to = convert_to<_To_Type>(_from, cbBytes, fromcode);
 		return hrSuccess;
@@ -823,7 +823,7 @@ HRESULT TryConvert(const _From_Type &_from, size_t cbBytes, const char *fromcode
  * @return				HRESULT.
  */
 template <typename _To_Type, typename _From_Type>
-HRESULT TryConvert(convert_context &context, const _From_Type &_from, _To_Type &_to) throw() {
+HRESULT TryConvert(convert_context &context, const _From_Type &_from, _To_Type &_to) {
 	try {
 		_to = context.convert_to<_To_Type>(_from);
 		return hrSuccess;
@@ -845,7 +845,7 @@ HRESULT TryConvert(convert_context &context, const _From_Type &_from, _To_Type &
  * @return				HRESULT.
  */
 template <typename _To_Type, typename _From_Type>
-HRESULT TryConvert(convert_context &context, const _From_Type &_from, size_t cbBytes, const char *fromcode, _To_Type &_to) throw() {
+HRESULT TryConvert(convert_context &context, const _From_Type &_from, size_t cbBytes, const char *fromcode, _To_Type &_to) {
 	try {
 		_to = context.convert_to<_To_Type>(_from, cbBytes, fromcode);
 		return hrSuccess;
