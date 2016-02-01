@@ -257,7 +257,7 @@ namespace details {
 	
 } // namespace details
 
-convert_context::convert_context() throw()
+convert_context::convert_context()
 {}
 
 convert_context::~convert_context()
