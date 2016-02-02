@@ -338,7 +338,7 @@ static int http_get(struct soap *soap)
 {
 	int nRet = 404;
 
-	if (!soap || !soap->path)
+	if (soap == NULL)
 		goto exit;
 
 	if (strncmp(soap->path, "/autoupdate", strlen("/autoupdate")) == 0) {

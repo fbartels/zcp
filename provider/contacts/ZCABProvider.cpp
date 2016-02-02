@@ -54,7 +54,7 @@
 #include <zarafa/Trace.h>
 
 ZCABProvider::ZCABProvider(ULONG ulFlags, const char *szClassName) :
-    ECUnknown(szClassName), m_ulFlags(ulFlags)
+    ECUnknown(szClassName)
 {
 }
 

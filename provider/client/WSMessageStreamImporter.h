@@ -74,7 +74,6 @@ private:
 private:
 	ECFifoBuffer	*m_lpFifoBuffer;
 	WSMessageStreamImporter *m_lpImporter;
-	ULONG			m_ulTimeout;
 };
 
 typedef mapi_object_ptr<WSMessageStreamSink> WSMessageStreamSinkPtr;

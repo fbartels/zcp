@@ -171,8 +171,6 @@ private:
     ECConfig *			m_lpConfig;
     ECDispatcher *		m_lpDispatcher;
     ECThreadManager*	m_lpThreadManager;
-    double				m_dblAge;
-    double				m_dblMaxFreq;
     pthread_t			m_thread;
     bool				m_bExit;
     pthread_mutex_t		m_mutexExit;
