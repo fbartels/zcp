@@ -74,8 +74,6 @@ private:
 		virtual HRESULT __stdcall Logon(LPMAPISUP lpMAPISup, ULONG ulUIParam, LPTSTR lpszProfileName, ULONG ulFlags, ULONG * lpulcbSecurity, LPBYTE * lppbSecurity, LPMAPIERROR * lppMAPIError, LPABLOGON * lppABLogon);
 
 	}m_xABProvider;
-
-	ULONG m_ulFlags;
 };
 
 #endif

@@ -121,7 +121,6 @@ HRESULT WSMessageStreamSink::Write(LPVOID lpData, ULONG cbData)
 WSMessageStreamSink::WSMessageStreamSink(ECFifoBuffer *lpFifoBuffer, ULONG ulTimeout, WSMessageStreamImporter *lpImporter)
 : m_lpFifoBuffer(lpFifoBuffer)
 , m_lpImporter(lpImporter)
-, m_ulTimeout(ulTimeout)
 { }
 
 /**

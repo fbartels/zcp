@@ -78,8 +78,6 @@ private:
 
 	ECConfig*	m_lpConfig;
 	ECLogger*	m_lpLogger;
-	int*		m_lpQuit;
-	
 	std::string	m_strPipeName;
 };
 

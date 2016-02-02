@@ -105,8 +105,6 @@ private:
 	HRESULT ClearFolderList();
 
 	LPMAPISUP			m_lpMAPISup;
-
-	GUID				m_guid;
 	GUID				m_ABPGuid;
 
 	std::vector<zcabFolderEntry> m_lFolders;

@@ -119,7 +119,6 @@ public:
 
 
 private:
-    unsigned int m_ulChangeId;
     IECImportAddressbookChanges *m_lpImporter;
 };
 

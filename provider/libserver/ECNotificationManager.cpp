@@ -90,7 +90,7 @@ static int soapresponse(struct notifyResponse notifications, struct soap *soap)
     return soap_closesock(soap);
 }
 
-ECNotificationManager::ECNotificationManager(ECLogger *lpLogger, ECConfig *lpConfig) : m_lpLogger(lpLogger), m_lpConfig(lpConfig)
+ECNotificationManager::ECNotificationManager(ECLogger *lpLogger) : m_lpLogger(lpLogger)
 {
     m_bExit = false;
     pthread_mutex_init(&m_mutexSessions, NULL);

@@ -241,7 +241,6 @@ private:
 	pthread_mutex_t			mLock;			// Locks the entire b-tree
 	ECTableRow				*lpRoot;		// The root node, which is infinitely 'low', ie all nodes are such that *node > *root
 	ECTableRow				*lpCurrent;		// The current node
-	pthread_mutex_t			hTableMutex;
 	ECTableRowMap			mapRow;
 	ECBookmarkMap			m_mapBookmarks;
 	unsigned int			m_ulBookmarkPosition;

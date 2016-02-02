@@ -91,7 +91,6 @@ private:
 
 	/* Notification information */
 	ECNotifyMaster*		m_lpNotifyMaster;
-	ULONG				m_ulTransportFlags;
 
 	/* Mutex */
 	pthread_mutex_t		m_hMutex;
