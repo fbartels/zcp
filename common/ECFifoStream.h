@@ -98,8 +98,8 @@ private:
         virtual ULONG   __stdcall Release(void) _zcp_override;
         virtual HRESULT __stdcall QueryInterface(REFIID refiid, LPVOID *lppInterface) _zcp_override;
 
-        virtual HRESULT __stdcall Read(void *pv, ULONG cb, ULONG *pcbRead);
-        virtual HRESULT __stdcall Write(const void *pv, ULONG cb, ULONG *pcbWritten);
+        virtual HRESULT __stdcall Read(void *pv, ULONG cb, ULONG *pcbRead) _zcp_override;
+        virtual HRESULT __stdcall Write(const void *pv, ULONG cb, ULONG *pcbWritten) _zcp_override;
         virtual HRESULT __stdcall Seek(LARGE_INTEGER dlibmove, DWORD dwOrigin, ULARGE_INTEGER *plibNewPosition) _zcp_override;
         virtual HRESULT __stdcall SetSize(ULARGE_INTEGER libNewSize) _zcp_override;
         virtual HRESULT __stdcall CopyTo(IStream *pstm, ULARGE_INTEGER cb, ULARGE_INTEGER *pcbRead, ULARGE_INTEGER *pcbWritten) _zcp_override;
@@ -132,8 +132,8 @@ private:
         virtual ULONG   __stdcall Release(void) _zcp_override;
         virtual HRESULT __stdcall QueryInterface(REFIID refiid, LPVOID *lppInterface) _zcp_override;
 
-        virtual HRESULT __stdcall Read(void *pv, ULONG cb, ULONG *pcbRead);
-        virtual HRESULT __stdcall Write(const void *pv, ULONG cb, ULONG *pcbWritten);
+        virtual HRESULT __stdcall Read(void *pv, ULONG cb, ULONG *pcbRead) _zcp_override;
+        virtual HRESULT __stdcall Write(const void *pv, ULONG cb, ULONG *pcbWritten) _zcp_override;
         virtual HRESULT __stdcall Seek(LARGE_INTEGER dlibmove, DWORD dwOrigin, ULARGE_INTEGER *plibNewPosition) _zcp_override;
         virtual HRESULT __stdcall SetSize(ULARGE_INTEGER libNewSize) _zcp_override;
         virtual HRESULT __stdcall CopyTo(IStream *pstm, ULARGE_INTEGER cb, ULARGE_INTEGER *pcbRead, ULARGE_INTEGER *pcbWritten) _zcp_override;

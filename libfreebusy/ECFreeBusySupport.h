@@ -124,32 +124,30 @@ public:
 			virtual ULONG __stdcall Release(void) _zcp_override;
 
 			// From IFreeBusySupport
-			virtual HRESULT __stdcall Open(IMAPISession* lpMAPISession, IMsgStore* lpMsgStore, BOOL bStore);
-			virtual HRESULT __stdcall Close();
-			virtual HRESULT __stdcall LoadFreeBusyData(	ULONG cMax, FBUser *rgfbuser, IFreeBusyData **prgfbdata,
-												HRESULT *phrStatus, ULONG *pcRead);
-
-			virtual HRESULT __stdcall LoadFreeBusyUpdate(ULONG cUsers, FBUser *lpUsers, IFreeBusyUpdate **lppFBUpdate, ULONG *lpcFBUpdate, void *lpData4);
-			virtual HRESULT __stdcall CommitChanges();
-			virtual HRESULT __stdcall GetDelegateInfo(FBUser fbUser, void *lpData);
-			virtual HRESULT __stdcall SetDelegateInfo(void *lpData);
-			virtual HRESULT __stdcall AdviseFreeBusy(void *lpData);
-			virtual HRESULT __stdcall Reload(void *lpData);
-			virtual HRESULT __stdcall GetFBDetailSupport(void **lppData, BOOL bData);
-			virtual HRESULT __stdcall HrHandleServerSched(void *lpData);
-			virtual HRESULT __stdcall HrHandleServerSchedAccess();
-			virtual BOOL __stdcall FShowServerSched(BOOL bData);
-			virtual HRESULT __stdcall HrDeleteServerSched();
-			virtual HRESULT __stdcall GetFReadOnly(void *lpData);
-			virtual HRESULT __stdcall SetLocalFB(void *lpData);
-			virtual HRESULT __stdcall PrepareForSync();
-			virtual HRESULT __stdcall GetFBPublishMonthRange(void *lpData);
-			virtual HRESULT __stdcall PublishRangeChanged();
-			virtual HRESULT __stdcall CleanTombstone();
-			virtual HRESULT __stdcall GetDelegateInfoEx(FBUser fbUser, unsigned int *lpData1, unsigned int *lpData2, unsigned int *lpData3);
-			virtual HRESULT __stdcall PushDelegateInfoToWorkspace();
-			virtual HRESULT __stdcall Placeholder21(void *lpData, HWND hwnd, BOOL bData);
-			virtual HRESULT __stdcall Placeholder22();
+			virtual HRESULT __stdcall Open(IMAPISession *lpMAPISession, IMsgStore *lpMsgStore, BOOL bStore) _zcp_override;
+			virtual HRESULT __stdcall Close(void) _zcp_override;
+			virtual HRESULT __stdcall LoadFreeBusyData(ULONG cMax, FBUser *rgfbuser, IFreeBusyData **prgfbdata, HRESULT *phrStatus, ULONG *pcRead) _zcp_override;
+			virtual HRESULT __stdcall LoadFreeBusyUpdate(ULONG cUsers, FBUser *lpUsers, IFreeBusyUpdate **lppFBUpdate, ULONG *lpcFBUpdate, void *lpData4) _zcp_override;
+			virtual HRESULT __stdcall CommitChanges(void) _zcp_override;
+			virtual HRESULT __stdcall GetDelegateInfo(FBUser fbUser, void *lpData) _zcp_override;
+			virtual HRESULT __stdcall SetDelegateInfo(void *lpData) _zcp_override;
+			virtual HRESULT __stdcall AdviseFreeBusy(void *lpData) _zcp_override;
+			virtual HRESULT __stdcall Reload(void *lpData) _zcp_override;
+			virtual HRESULT __stdcall GetFBDetailSupport(void **lppData, BOOL bData) _zcp_override;
+			virtual HRESULT __stdcall HrHandleServerSched(void *lpData) _zcp_override;
+			virtual HRESULT __stdcall HrHandleServerSchedAccess(void) _zcp_override;
+			virtual BOOL __stdcall FShowServerSched(BOOL bData) _zcp_override;
+			virtual HRESULT __stdcall HrDeleteServerSched(void) _zcp_override;
+			virtual HRESULT __stdcall GetFReadOnly(void *lpData) _zcp_override;
+			virtual HRESULT __stdcall SetLocalFB(void *lpData) _zcp_override;
+			virtual HRESULT __stdcall PrepareForSync(void) _zcp_override;
+			virtual HRESULT __stdcall GetFBPublishMonthRange(void *lpData) _zcp_override;
+			virtual HRESULT __stdcall PublishRangeChanged(void) _zcp_override;
+			virtual HRESULT __stdcall CleanTombstone(void) _zcp_override;
+			virtual HRESULT __stdcall GetDelegateInfoEx(FBUser fbUser, unsigned int *lpData1, unsigned int *lpData2, unsigned int *lpData3) _zcp_override;
+			virtual HRESULT __stdcall PushDelegateInfoToWorkspace(void) _zcp_override;
+			virtual HRESULT __stdcall Placeholder21(void *lpData, HWND hwnd, BOOL bData) _zcp_override;
+			virtual HRESULT __stdcall Placeholder22(void) _zcp_override;
 	} m_xFreeBusySupport;
 
 	// Interface for Outlook 2000
@@ -161,32 +159,30 @@ public:
 			virtual ULONG __stdcall Release(void) _zcp_override;
 
 			// From IFreeBusySupport
-			virtual HRESULT __stdcall Open(IMAPISession* lpMAPISession, IMsgStore* lpMsgStore, BOOL bStore);
-			virtual HRESULT __stdcall Close();
-			virtual HRESULT __stdcall LoadFreeBusyData(	ULONG cMax, FBUser *rgfbuser, IFreeBusyData **prgfbdata,
-												HRESULT *phrStatus, ULONG *pcRead);
-
-			virtual HRESULT __stdcall LoadFreeBusyUpdate(ULONG cUsers, FBUser *lpUsers, IFreeBusyUpdate **lppFBUpdate, ULONG *lpcFBUpdate, void *lpData4);
-			virtual HRESULT __stdcall CommitChanges();
-			virtual HRESULT __stdcall GetDelegateInfo(FBUser fbUser, void *lpData);
-			virtual HRESULT __stdcall SetDelegateInfo(void *lpData);
-			virtual HRESULT __stdcall AdviseFreeBusy(void *lpData);
-			virtual HRESULT __stdcall Reload(void *lpData);
-			virtual HRESULT __stdcall GetFBDetailSupport(void **lppData, BOOL bData);
-			virtual HRESULT __stdcall HrHandleServerSched(void *lpData);
-			virtual HRESULT __stdcall HrHandleServerSchedAccess();
-			virtual BOOL __stdcall FShowServerSched(BOOL bData);
-			virtual HRESULT __stdcall HrDeleteServerSched();
-			virtual HRESULT __stdcall GetFReadOnly(void *lpData);
-			virtual HRESULT __stdcall SetLocalFB(void *lpData);
-			virtual HRESULT __stdcall PrepareForSync();
-			virtual HRESULT __stdcall GetFBPublishMonthRange(void *lpData);
-			virtual HRESULT __stdcall PublishRangeChanged();
-			//virtual HRESULT __stdcall CleanTombstone();
-			virtual HRESULT __stdcall GetDelegateInfoEx(FBUser fbUser, unsigned int *lpData1, unsigned int *lpData2, unsigned int *lpData3);
-			virtual HRESULT __stdcall PushDelegateInfoToWorkspace();
-			virtual HRESULT __stdcall Placeholder21(void *lpData, HWND hwnd, BOOL bData);
-			virtual HRESULT __stdcall Placeholder22();
+			virtual HRESULT __stdcall Open(IMAPISession *lpMAPISession, IMsgStore *lpMsgStore, BOOL bStore) _zcp_override;
+			virtual HRESULT __stdcall Close(void) _zcp_override;
+			virtual HRESULT __stdcall LoadFreeBusyData(ULONG cMax, FBUser *rgfbuser, IFreeBusyData **prgfbdata, HRESULT *phrStatus, ULONG *pcRead) _zcp_override;
+			virtual HRESULT __stdcall LoadFreeBusyUpdate(ULONG cUsers, FBUser *lpUsers, IFreeBusyUpdate **lppFBUpdate, ULONG *lpcFBUpdate, void *lpData4) _zcp_override;
+			virtual HRESULT __stdcall CommitChanges(void) _zcp_override;
+			virtual HRESULT __stdcall GetDelegateInfo(FBUser fbUser, void *lpData) _zcp_override;
+			virtual HRESULT __stdcall SetDelegateInfo(void *lpData) _zcp_override;
+			virtual HRESULT __stdcall AdviseFreeBusy(void *lpData) _zcp_override;
+			virtual HRESULT __stdcall Reload(void *lpData) _zcp_override;
+			virtual HRESULT __stdcall GetFBDetailSupport(void **lppData, BOOL bData) _zcp_override;
+			virtual HRESULT __stdcall HrHandleServerSched(void *lpData) _zcp_override;
+			virtual HRESULT __stdcall HrHandleServerSchedAccess(void) _zcp_override;
+			virtual BOOL __stdcall FShowServerSched(BOOL bData) _zcp_override;
+			virtual HRESULT __stdcall HrDeleteServerSched(void) _zcp_override;
+			virtual HRESULT __stdcall GetFReadOnly(void *lpData) _zcp_override;
+			virtual HRESULT __stdcall SetLocalFB(void *lpData) _zcp_override;
+			virtual HRESULT __stdcall PrepareForSync(void) _zcp_override;
+			virtual HRESULT __stdcall GetFBPublishMonthRange(void *lpData) _zcp_override;
+			virtual HRESULT __stdcall PublishRangeChanged(void) _zcp_override;
+			//virtual HRESULT __stdcall CleanTombstone(void) _zcp_override;
+			virtual HRESULT __stdcall GetDelegateInfoEx(FBUser fbUser, unsigned int *lpData1, unsigned int *lpData2, unsigned int *lpData3) _zcp_override;
+			virtual HRESULT __stdcall PushDelegateInfoToWorkspace(void) _zcp_override;
+			virtual HRESULT __stdcall Placeholder21(void *lpData, HWND hwnd, BOOL bData) _zcp_override;
+			virtual HRESULT __stdcall Placeholder22(void) _zcp_override;
 	} m_xFreeBusySupportOutlook2000;
 
 private:
