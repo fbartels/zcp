@@ -481,7 +481,7 @@ inline unsigned int IPRSHash(const ECsIndexProp& _Keyval1)
 namespace HASH_NAMESPACE {
 	// hash function for type ECsIndexProp
 	template<>
-	class hash<ECsIndexProp> {
+	struct hash<ECsIndexProp> {
 		public:
 			hash() {};
 			~hash() {};
@@ -491,7 +491,7 @@ namespace HASH_NAMESPACE {
 
 	// hash function for type ECsIndexObject
 	template<>
-	class hash<ECsIndexObject> {
+	struct hash<ECsIndexObject> {
 		public:
 			hash() {};
 			~hash() {};
