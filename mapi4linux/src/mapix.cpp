@@ -1695,7 +1695,6 @@ HRESULT M4LMAPISession::OpenEntry(ULONG cbEntryID, LPENTRYID lpEntryID, LPCIID l
 		}
 			
 		if(lpsRows->cRows != 1) {
-			ec_log_err("M4LMAPISession::OpenEntry() row-count (%d) != 1", lpsRows->cRows);
 			hr = MAPI_E_NOT_FOUND;
 			break;
 		}
