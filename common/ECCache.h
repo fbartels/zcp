@@ -45,9 +45,10 @@
 #define ECCACHE_INCLUDED
 
 #include <zarafa/zcdefs.h>
-#include <cassert>
 #include <list>
 #include <string>
+#include <vector>
+#include <cassert>
 
 #include <zarafa/platform.h>
 
@@ -175,24 +176,26 @@ public:
 		ECRESULT er = erSuccess;
 		time_t	tNow  = GetProcessTime();
 		typename _MapType::iterator iter;
-		typename _MapType::iterator iterDelete;
 
 		iter = m_map.find(key);
 		
 		if (iter != m_map.end()) {
 			// Cache age of the cached item, if expired remove the item from the cache
 			if (MaxAge() != 0 && (long)(tNow - iter->second.ulLastAccess) >= MaxAge()) {
+				/*
+				 * Because of templates, there is no guarantee
+				 * that m_map keeps iterators valid while
+				 * elements are deleted from it. Track them in
+				 * a separate delete list.
+				 */
+				std::vector<key_type> dl;
 
 				// Loop through all items and check
-				for (iter = m_map.begin(); iter != m_map.end();) {
-					if ((long)(tNow - iter->second.ulLastAccess) >= MaxAge()) {
-						iterDelete = iter;
-						iter++;
-						m_map.erase(iterDelete);
-					} else {
-						iter++;
-					}
-				}
+				for (iter = m_map.begin(); iter != m_map.end(); ++iter)
+					if ((long)(tNow - iter->second.ulLastAccess) >= MaxAge())
+						dl.push_back(iter->first);
+				for (typename std::vector<key_type>::const_iterator i = dl.begin(); i != dl.end(); ++i)
+					m_map.erase(*i);
 				er = ZARAFA_E_NOT_FOUND;
 			} else {
 				*lppValue = &iter->second;
@@ -267,19 +270,19 @@ public:
 private:
 	ECRESULT PurgeCache(float ratio)
 	{
-		std::list<KeyEntry<typename _MapType::iterator> > lstEntries;
-		typename std::list<KeyEntry<typename _MapType::iterator> >::iterator iterEntry;
+		std::list<KeyEntry<key_type> > lstEntries;
+		typename std::list<KeyEntry<key_type> >::iterator iterEntry;
 		typename _MapType::iterator iterMap;
 
 		for(iterMap = m_map.begin(); iterMap != m_map.end(); iterMap++) {
-			KeyEntry<typename _MapType::iterator> k;
-			k.key = iterMap;
+			KeyEntry<key_type> k;
+			k.key = iterMap->first;
 			k.ulLastAccess = iterMap->second.ulLastAccess;
 
 			lstEntries.push_back(k);
 		}
 
-		lstEntries.sort(KeyEntryOrder<typename _MapType::iterator>);
+		lstEntries.sort(KeyEntryOrder<key_type>);
 
 		// We now have a list of all cache items, sorted by access time, (oldest first)
 		unsigned int ulDelete = (unsigned int)(m_map.size() * ratio);
@@ -287,11 +290,9 @@ private:
 		// Remove the oldest ulDelete entries from the cache, removing [ratio] % of all
 		// cache entries.
 		for (iterEntry = lstEntries.begin(); iterEntry != lstEntries.end() && ulDelete > 0; ++iterEntry, --ulDelete) {
-			iterMap = iterEntry->key;
-
 			m_ulSize -= GetCacheAdditionalSize(iterMap->second);
 			m_ulSize -= GetCacheAdditionalSize(iterMap->first);
-			m_map.erase(iterMap);
+			m_map.erase(iterEntry->key);
 		}
 
 		return erSuccess;
