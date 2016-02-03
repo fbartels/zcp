@@ -1207,7 +1207,7 @@ HRESULT VConverter::HrAddRecipients(icalcomponent *lpicEvent, icalitem *lpIcalIt
 	icalproperty *lpicProp = NULL;
 	icalparameter *lpicParam = NULL;
 	icalrecip icrAttendee;
-	ULONG cbEntryID;
+	ULONG cbEntryID = 0;
 	LPENTRYID lpEntryID = NULL;
 	ULONG cbEntryIDOneOff;
 	LPENTRYID lpEntryIDOneOff = NULL;
