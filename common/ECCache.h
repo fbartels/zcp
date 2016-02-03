@@ -290,9 +290,11 @@ private:
 		// Remove the oldest ulDelete entries from the cache, removing [ratio] % of all
 		// cache entries.
 		for (iterEntry = lstEntries.begin(); iterEntry != lstEntries.end() && ulDelete > 0; ++iterEntry, --ulDelete) {
+			iterMap = m_map.find(iterEntry->key);
+			assert(iterMap != m_map.end());
 			m_ulSize -= GetCacheAdditionalSize(iterMap->second);
 			m_ulSize -= GetCacheAdditionalSize(iterMap->first);
-			m_map.erase(iterEntry->key);
+			m_map.erase(iterMap);
 		}
 
 		return erSuccess;
