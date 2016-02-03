@@ -3771,6 +3771,7 @@ Encapsulates everything to create a simple Zarafa service, such as:
     def start(self):
         for sig in (signal.SIGTERM, signal.SIGINT):
             signal.signal(sig, lambda *args: sys.exit(-sig))
+        signal.signal(signal.SIGHUP, signal.SIG_IGN) # XXX long term, reload config?
         with log_exc(self.log):
             daemonize(self.main, options=self.options, args=[], log=self.log, config=self.config, service=self)
 
@@ -3793,6 +3794,7 @@ class Worker(Process):
 
     def run(self):
         signal.signal(signal.SIGINT, signal.SIG_IGN)
+        signal.signal(signal.SIGHUP, signal.SIG_IGN)
         with log_exc(self.log):
             self.main()
 
