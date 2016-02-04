@@ -8358,7 +8358,8 @@ exit:
 
 	if(lpDatabase && er != erSuccess && er != ZARAFA_W_PARTIAL_COMPLETION)
 		lpDatabase->Rollback();
-	lpDatabase->FreeResult(lpDBResult);
+	if (lpDBResult != NULL)
+		lpDatabase->FreeResult(lpDBResult);
 	if(lpsNewEntryId)
 		FreeEntryId(lpsNewEntryId, true);
 
