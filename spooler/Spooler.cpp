@@ -1168,7 +1168,7 @@ int main(int argc, char *argv[]) {
 		{ "run_as_user", "zarafa" },
 		{ "run_as_group", "zarafa" },
 		{ "pid_file", "/var/run/zarafad/spooler.pid" },
-		{ "running_path", "/" },
+		{ "running_path", "/var/lib/zarafa" },
 		{ "coredump_enabled", "no" },
 #endif
 		{ "log_method","file" },

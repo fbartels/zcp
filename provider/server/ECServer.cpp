@@ -997,7 +997,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 		{ "run_as_user",			"zarafa" }, // drop root privileges, and run as this user/group
 		{ "run_as_group",			"zarafa" },
 		{ "pid_file",					"/var/run/zarafad/server.pid" },
-		{ "running_path",				"/" },
+		{ "running_path",			"/var/lib/zarafa" },
 		{ "coredump_enabled",			"yes" },
 
 		{ "license_path",			"/etc/zarafa/license", CONFIGSETTING_UNUSED },

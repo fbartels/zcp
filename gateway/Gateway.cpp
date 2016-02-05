@@ -326,7 +326,7 @@ int main(int argc, char *argv[]) {
 		{ "run_as_user", "zarafa" },
 		{ "run_as_group", "zarafa" },
 		{ "pid_file", "/var/run/zarafad/gateway.pid" },
-		{ "running_path", "/" },
+		{ "running_path", "/var/lib/zarafa" },
 		{ "process_model", "fork" },
 		{ "coredump_enabled", "no" },
 #endif
