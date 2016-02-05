@@ -91,6 +91,8 @@ ECSessionManager::ECSessionManager(ECConfig *lpConfig, ECLogger *lpLogger, ECLog
 	m_lpLogger				= lpLogger;
 	m_lpLogger->AddRef();
 	m_lpAudit				= lpAudit;
+	if (m_lpAudit)
+		m_lpAudit->AddRef();
 	m_bHostedZarafa			= bHostedZarafa;
 	m_bDistributedZarafa	= bDistributedZarafa;
 	m_lpDatabase			= NULL;
@@ -186,6 +188,8 @@ ECSessionManager::~ECSessionManager()
 	delete m_lpServerGuid;
 
 	m_lpLogger->Release();
+	if (m_lpAudit != NULL)
+		m_lpAudit->Release();
 
 	// Release ownership of the rwlock object.
 	pthread_rwlock_unlock(&m_hCacheRWLock);

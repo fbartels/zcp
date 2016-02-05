@@ -160,12 +160,18 @@ public:
 		m_logger(shareddata->GetLogger()),
 		m_lpStatsCollector(shareddata->GetStatsCollector()),
 		m_bHosted(shareddata->IsHosted()),
-		m_bDistributed(shareddata->IsDistributed()) { };
+		m_bDistributed(shareddata->IsDistributed())
+	{
+		m_logger->AddRef();
+	}
 
 	/**
 	 * Destructor
 	 */
-	virtual ~UserPlugin() {};
+	virtual ~UserPlugin(void)
+	{
+		m_logger->Release();
+	}
 
 	/**
 	 * Initialize plugin
