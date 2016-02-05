@@ -1088,8 +1088,8 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 		// internal server contols
 		{ "softdelete_lifetime",		"0" },							// time expressed in days, 0 == never delete anything
 		{ "cache_cell_size",			"16M", CONFIGSETTING_SIZE },	// default 16 Mb, default in config 256M
-		{ "cache_object_size",			"5M", CONFIGSETTING_SIZE },		// 5Mb
-		{ "cache_indexedobject_size",	"16M", CONFIGSETTING_SIZE },	// 16Mb
+		{ "cache_object_size",		"16M", CONFIGSETTING_SIZE },
+		{ "cache_indexedobject_size",	"32M", CONFIGSETTING_SIZE },
 		{ "cache_quota_size",			"1M", CONFIGSETTING_SIZE },		// 1Mb
 		{ "cache_quota_lifetime",		"1" },							// 1 minute
 		{ "cache_user_size",			"1M", CONFIGSETTING_SIZE },		// 48 bytes per struct, can hold 21k+ users, allocated 2x (user and ueid cache)
