@@ -238,8 +238,8 @@ ECLogger_File::ECLogger_File(const unsigned int max_ll, const bool add_timestamp
 		}
 
 		log = fnOpen(logname, szMode);
-		reinit_buffer(0);
 	}
+	reinit_buffer(0);
 
 	// read/write is for the handle, not the f*-calls
 	// so read is because we're only reading the handle ('log')
