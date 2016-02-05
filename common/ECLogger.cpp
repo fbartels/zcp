@@ -44,6 +44,7 @@
 #include <zarafa/platform.h>
 #include <zarafa/ECLogger.h>
 #include <cassert>
+#include <climits>
 #include <clocale>
 #include <pthread.h>
 #include <cstdarg>
@@ -170,7 +171,10 @@ int ECLogger::GetFileDescriptor() {
 	return -1;
 }
 
-unsigned ECLogger::AddRef() { return ++m_ulRef;
+unsigned int ECLogger::AddRef(void)
+{
+	assert(m_ulRef < UINT_MAX);
+	return ++m_ulRef;
 }
 
 unsigned ECLogger::Release() {
