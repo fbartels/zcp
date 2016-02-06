@@ -1379,6 +1379,12 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 		}
 	}
 
+#ifdef LINUX
+	if (unix_runas(g_lpConfig, g_lpLogger)) {
+		er = MAPI_E_CALL_FAILED;
+		goto exit;
+	}
+#endif
 #ifndef HAVE_OFFLINE_SUPPORT
 	// Priority queue is always enabled, create as first socket, so this socket is returned first too on activity
 	er = g_lpSoapServerConn->ListenPipe(g_lpConfig->GetSetting("server_pipe_priority"), true);
@@ -1459,10 +1465,6 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 	if (!daemonize)
 		setsid();
 	unix_create_pidfile(szName, g_lpConfig, g_lpLogger);
-	if (unix_runas(g_lpConfig, g_lpLogger)) {
-		er = MAPI_E_CALL_FAILED;
-		goto exit;
-	}
 #endif
 
 	mainthread = pthread_self();

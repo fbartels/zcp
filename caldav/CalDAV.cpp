@@ -339,14 +339,13 @@ int main(int argc, char **argv) {
 
 	// fork if needed and drop privileges as requested.
 	// this must be done before we do anything with pthreads
+	if (unix_runas(g_lpConfig, g_lpLogger))
+		goto exit;
 	if (g_bDaemonize && unix_daemonize(g_lpConfig, g_lpLogger))
 		goto exit;
 	if (!g_bDaemonize)
 		setsid();
 	unix_create_pidfile(argv[0], g_lpConfig, g_lpLogger);
-	if (unix_runas(g_lpConfig, g_lpLogger))
-		goto exit;
-
 	if (g_bThreads == false)
 		g_lpLogger = StartLoggerProcess(g_lpConfig, g_lpLogger);
 	else

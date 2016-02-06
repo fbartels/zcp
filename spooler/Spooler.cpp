@@ -1395,6 +1395,10 @@ int main(int argc, char *argv[]) {
 
 	// fork if needed and drop privileges as requested.
 	// this must be done before we do anything with pthreads
+	if (unix_runas(g_lpConfig, g_lpLogger)) {
+		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "main(): run-as failed");
+		goto exit;
+	}
 	if (daemonize && unix_daemonize(g_lpConfig, g_lpLogger)) {
 		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "main(): failed daemonizing");
 		goto exit;
@@ -1407,12 +1411,6 @@ int main(int argc, char *argv[]) {
 		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "main(): Failed creating PID file");
 		goto exit;
 	}
-
-	if (unix_runas(g_lpConfig, g_lpLogger)) {
-		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "main(): run-as failed");
-		goto exit;
-	}
-
 	g_lpLogger = StartLoggerProcess(g_lpConfig, g_lpLogger);
 #endif
 	g_lpLogger->SetLogprefix(LP_PID);
