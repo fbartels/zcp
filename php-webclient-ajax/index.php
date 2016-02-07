@@ -134,6 +134,8 @@
 			} else {
 				$_SESSION['password'] = openssl_encrypt($password,"des-ede3-cbc",PASSWORD_KEY,0,PASSWORD_IV);
 			}
+		} else if (function_exists("mcrypt_encrypt")) {
+			$_SESSION["password"] = base64_encode(mcrypt_encrypt(MCRYPT_TRIPLEDES, PASSWORD_KEY, $password, MCRYPT_MODE_CBC, PASSWORD_IV));
 		} else {
 			$_SESSION["password"] = $password;
 		}

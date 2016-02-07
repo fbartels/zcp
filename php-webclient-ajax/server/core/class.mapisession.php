@@ -131,6 +131,8 @@
 					} else { 
 						$password = openssl_decrypt($password,"des-ede3-cbc",PASSWORD_KEY,0,PASSWORD_IV);
 					}
+				} else if (function_exists("mcrypt_decrypt")) {
+					$password = trim(mcrypt_decrypt(MCRYPT_TRIPLEDES, PASSWORD_KEY, base64_decode($password), MCRYPT_MODE_CBC, PASSWORD_IV));
 				}
 				// logon
 				$this->session = mapi_logon_zarafa($username, $password, $server, $sslcert_file, $sslcert_pass);
@@ -143,6 +145,8 @@
 					} else {
 						$password = openssl_encrypt($password,"des-ede3-cbc",PASSWORD_KEY,0,PASSWORD_IV);
 					}
+				} else if (function_exists("mcrypt_encrypt")) {
+					$password = base64_encode(mcrypt_encrypt(MCRYPT_TRIPLEDES, PASSWORD_KEY, $password, MCRYPT_MODE_CBC, PASSWORD_IV));
 				}
 
 				if ($result == NOERROR && $this->session !== false){

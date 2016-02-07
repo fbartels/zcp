@@ -94,6 +94,9 @@ HRESULT ECChannel::HrSetCtx(ECConfig *lpConfig, ECLogger *lpLogger) {
 	const char *ssl_ciphers = lpConfig->GetSetting("ssl_ciphers");
  	char *ssl_name = NULL;
  	int ssl_op = 0, ssl_include = 0, ssl_exclude = 0;
+#if !defined(OPENSSL_NO_ECDH) && defined(NID_X9_62_prime256v1)
+	EC_KEY *ecdh;
+#endif
 
 	if (lpConfig == NULL) {
 		lpLogger->Log(EC_LOGLEVEL_ERROR, "ECChannel::HrSetCtx(): invalid parameters");
@@ -175,6 +178,16 @@ HRESULT ECChannel::HrSetCtx(ECConfig *lpConfig, ECLogger *lpLogger) {
 	if (ssl_protocols) {
 		SSL_CTX_set_options(lpCTX, ssl_op);
 	}
+
+#if !defined(OPENSSL_NO_ECDH) && defined(NID_X9_62_prime256v1)
+	ecdh = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
+	if (ecdh != NULL) {
+		/* SINGLE_ECDH_USE = renegotiate exponent for each handshake */
+		SSL_CTX_set_options(lpCTX, SSL_OP_SINGLE_ECDH_USE);
+		SSL_CTX_set_tmp_ecdh(lpCTX, ecdh);
+		EC_KEY_free(ecdh);
+	}
+#endif
 
 	if (ssl_ciphers && SSL_CTX_set_cipher_list(lpCTX, ssl_ciphers) != 1) {
 		lpLogger->Log(EC_LOGLEVEL_ERROR, "Can not set SSL cipher list to '%s': %s", ssl_ciphers, ERR_error_string(ERR_get_error(), 0));

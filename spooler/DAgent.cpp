@@ -1512,6 +1512,52 @@ static bool dagent_oof_enabled(const SPropValue *prop)
 	return start <= now && now <= end;
 }
 
+/**
+ * Determines whether @s is a header that inhibits autoreplies.
+ */
+static bool dagent_stop_autoreply_hdr(const char *s)
+{
+#define S(x) do { if (strcasecmp(s, (x)) == 0) return true; } while (false)
+	/* Zarafa - Vacation header already present, do not send vacation reply. */
+	S("X-Zarafa-Vacation");
+	/* RFC 3834 - Precedence: list/bulk/junk, do not reply to these mails. */
+	S("Auto-Submitted");
+	S("Precedence");
+	/* RFC 2919 */
+	S("List-Id");
+	/* RFC 2369 */
+	S("List-Help");
+	S("List-Subscribe");
+	S("List-Unsubscribe");
+	S("List-Post");
+	S("List-Owner");
+	S("List-Archive");
+	return false;
+#undef S
+}
+
+/**
+ * Determines from a set of lines from internet headers (can be wrapped or
+ * not) whether to inhibit autoreplies.
+ */
+static bool dagent_avoid_autoreply(const std::vector<std::string> &hl)
+{
+	for (std::vector<std::string>::const_iterator sline = hl.begin();
+	     sline != hl.end(); ++sline)
+	{
+		const std::string &line = *sline;
+		/* no-throw guarantee because const string & */
+		if (isspace(line[0]))
+			continue;
+		size_t pos = line.find_first_of(':');
+		if (pos == std::string::npos || pos == 0)
+			continue;
+		if (dagent_stop_autoreply_hdr(line.substr(0, pos).c_str()))
+			return true;
+	}
+	return false;
+}
+
 /** 
  * Create an out-of-office mail, and start the script to trigger its
  * optional sending.
@@ -1610,11 +1656,7 @@ static HRESULT SendOutOfOffice(LPADRBOOK lpAdrBook, LPMDB lpMDB,
 
 	// See if we're looping
 	if (lpMessageProps[0].ulPropTag == PR_TRANSPORT_MESSAGE_HEADERS_A) {
-		if ( (strstr(lpMessageProps[0].Value.lpszA, "X-Zarafa-Vacation:") != NULL) ||
-			 (strstr(lpMessageProps[0].Value.lpszA, "Auto-Submitted:") != NULL) ||
-			 (strstr(lpMessageProps[0].Value.lpszA, "Precedence:") != NULL) )
-			// Vacation header already present, do not send vacation reply
-			// Precedence: list/bulk/junk, do not reply to these mails
+		if (dagent_avoid_autoreply(tokenize(lpMessageProps[0].Value.lpszA, "\n")))
 			goto exit;
 		// save headers to a file so they can also be tested from the script we're runing
 		snprintf(szTemp, PATH_MAX, "%s/autorespond-headers.XXXXXX", TmpPath::getInstance() -> getTempPath().c_str());
@@ -1661,11 +1703,34 @@ static HRESULT SendOutOfOffice(LPADRBOOK lpAdrBook, LPMDB lpMDB,
 		goto exit;
 	}
 
-	// add anti-loop header
+	// add anti-loop header for Zarafa
 	snprintf(szHeader, PATH_MAX, "\nX-Zarafa-Vacation: autorespond");
 	hr = WriteOrLogError(fd, szHeader, strlen(szHeader));
 	if (hr != hrSuccess) {
 		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "SendOutOfOffice(): WriteOrLogError failed(3) %x", hr);
+		goto exit;
+	}
+
+	/*
+	 * Add anti-loop header for Exchange, see
+	 * http://msdn.microsoft.com/en-us/library/ee219609(v=exchg.80).aspx
+	 */
+	snprintf(szHeader, PATH_MAX, "\nX-Auto-Response-Suppress: All");
+	hr = WriteOrLogError(fd, szHeader, strlen(szHeader));
+	if (hr != hrSuccess) {
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "SendOutOfOffice(): WriteOrLogError failed(4) %x", hr);
+		goto exit;
+	}
+
+	/*
+	 * Add anti-loop header for vacation(1) compatible implementations,
+	 * see book "Sendmail" (ISBN 0596555342), section 10.9.
+	 * RFC 3834 §3.1.8.
+	 */
+	snprintf(szHeader, PATH_MAX, "\nPrecedence: bulk");
+	hr = WriteOrLogError(fd, szHeader, strlen(szHeader));
+	if (hr != hrSuccess) {
+		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "SendOutOfOffice(): WriteOrLogError failed(5) %x", hr);
 		goto exit;
 	}
 
