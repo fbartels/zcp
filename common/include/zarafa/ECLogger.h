@@ -128,6 +128,7 @@ enum logprefix { LP_NONE, LP_TID, LP_PID };
  */
 class ECLogger {
 	private:
+		pthread_mutex_t m_mutex;
 		unsigned m_ulRef;
 
 	protected:

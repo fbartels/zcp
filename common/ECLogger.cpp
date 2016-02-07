@@ -94,6 +94,7 @@ static const char *const ll_names[] = {
 
 ECLogger::ECLogger(int max_ll) {
 	max_loglevel = max_ll;
+	pthread_mutex_init(&m_mutex, NULL);
 	// get system locale for time, NULL is returned if locale was not found.
 	timelocale = createlocale(LC_TIME, "C");
 	datalocale = createUTF8Locale();
@@ -107,6 +108,7 @@ ECLogger::~ECLogger() {
 
 	if (datalocale)
 		freelocale(datalocale);
+	pthread_mutex_destroy(&m_mutex);
 }
 
 void ECLogger::SetLoglevel(unsigned int max_ll) {
@@ -173,12 +175,17 @@ int ECLogger::GetFileDescriptor() {
 
 unsigned int ECLogger::AddRef(void)
 {
+	pthread_mutex_lock(&m_mutex);
 	assert(m_ulRef < UINT_MAX);
-	return ++m_ulRef;
+	unsigned int ret = ++m_ulRef;
+	pthread_mutex_unlock(&m_mutex);
+	return ret;
 }
 
 unsigned ECLogger::Release() {
-	unsigned ulRef = --m_ulRef;
+	pthread_mutex_lock(&m_mutex);
+	unsigned int ulRef = --m_ulRef;
+	pthread_mutex_unlock(&m_mutex);
 	if (ulRef == 0)
 		delete this;
 	return ulRef;
