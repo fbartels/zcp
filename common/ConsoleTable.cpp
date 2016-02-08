@@ -43,6 +43,7 @@
 
 #include <zarafa/platform.h>
 #include "ConsoleTable.h"
+#include <algorithm>
 #include <iostream>
 using namespace std;
 
@@ -213,11 +214,12 @@ void ConsoleTable::DumpRow(const vector<wstring>& vRow)
 	vector<wstring>::const_iterator iCol;
 	size_t nCol;
 	for (nCol = 0, iCol = vRow.begin(); iCol != vRow.end(); ++iCol, ++nCol) {
+		std::wstring temp = *iCol;
+		std::replace(temp.begin(), temp.end(), '\n', ' ');
 		// cout can't print wstring, and wcout is not allowed to mix with cout.
-		printf("%ls", iCol->c_str());
-		if (nCol+1 < m_iColumns) {
+		printf("%ls", temp.c_str());
+		if (nCol + 1 < m_iColumns)
 			printf(";");
-		}
 	}
 	printf("\n");
 }
