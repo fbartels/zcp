@@ -76,7 +76,8 @@ import threading
 import time
 import traceback
 import mailbox
-from email.parser import Parser
+import email.parser
+import email.utils
 import signal
 import ssl
 import time
@@ -1042,6 +1043,19 @@ Looks at command-line to see if another server address or other related options 
 
     def __repr__(self):
         return _encode(unicode(self))
+
+# interactive shortcuts
+def user(name):
+    return Server().user(name)
+
+def users(*args, **kwargs):
+    return Server().users(*args, **kwargs)
+
+def store(guid):
+    return Server().store(guid)
+
+def stores(*args, **kwargs):
+    return Server().stores(*args, **kwargs)
 
 class Group(object):
     def __init__(self, name, server=None):
@@ -2215,7 +2229,7 @@ class Item(object):
 
         try:
             message_headers = self.prop(PR_TRANSPORT_MESSAGE_HEADERS)
-            headers = Parser().parsestr(message_headers.value, headersonly=True)
+            headers = email.parser.Parser().parsestr(message_headers.value, headersonly=True)
             return headers
         except MAPIErrorNotFound:
             return {}
@@ -2344,12 +2358,8 @@ class Item(object):
         else:
             addr = unicode(addr)
             pr_addrtype = 'SMTP'
-            if '<' in addr: # XXX standard email lib?
-                pr_dispname = addr[:addr.find('<')].strip()
-                pr_email = addr[addr.find('<')+1:addr.find('>')].strip()
-            else:
-                pr_dispname = u'nobody' # XXX
-                pr_email  = addr.strip()
+            pr_dispname, pr_email = email.utils.parseaddr(addr)
+            pr_dispname = pr_dispname or u'nobody'
             pr_entryid = self.server.ab.CreateOneOff(pr_dispname, u'SMTP', unicode(pr_email), MAPI_UNICODE)
         return pr_addrtype, pr_dispname, pr_email, pr_entryid
 
@@ -2925,14 +2935,18 @@ class Address:
 class Attachment(object):
     """ Attachment """
 
-    def __init__(self, att):
-        self.att = att
+    def __init__(self, mapiobj):
+        self.mapiobj = mapiobj
         self._data = None
+
+    @property
+    def hierarchyid(self):
+        return self.prop(PR_EC_HIERARCHYID).value
 
     @property
     def number(self):
         try:
-            return HrGetOneProp(self.att, PR_ATTACH_NUM).Value
+            return HrGetOneProp(self.mapiobj, PR_ATTACH_NUM).Value
         except MAPIErrorNotFound:
             return 0
 
@@ -2941,7 +2955,7 @@ class Attachment(object):
         """ Mime-type or *None* if not found """
 
         try:
-            return HrGetOneProp(self.att, PR_ATTACH_MIME_TAG).Value
+            return HrGetOneProp(self.mapiobj, PR_ATTACH_MIME_TAG).Value
         except MAPIErrorNotFound:
             pass
 
@@ -2950,7 +2964,7 @@ class Attachment(object):
         """ Filename or *None* if not found """
 
         try:
-            return HrGetOneProp(self.att, PR_ATTACH_LONG_FILENAME_W).Value
+            return HrGetOneProp(self.mapiobj, PR_ATTACH_LONG_FILENAME_W).Value
         except MAPIErrorNotFound:
             pass
 
@@ -2960,7 +2974,7 @@ class Attachment(object):
         # XXX size of the attachment object, so more than just the attachment data
         # XXX (useful when calculating store size, for example.. sounds interesting to fix here)
         try:
-            return int(HrGetOneProp(self.att, PR_ATTACH_SIZE).Value)
+            return int(HrGetOneProp(self.mapiobj, PR_ATTACH_SIZE).Value)
         except MAPIErrorNotFound:
             return 0 # XXX
         
@@ -2972,7 +2986,7 @@ class Attachment(object):
         """ Binary data """
 
         if self._data is None:
-            self._data = _stream(self.att, PR_ATTACH_DATA_BIN)
+            self._data = _stream(self.mapiobj, PR_ATTACH_DATA_BIN)
         return self._data
 
     # file-like behaviour
@@ -2984,10 +2998,10 @@ class Attachment(object):
         return self.filename
 
     def prop(self, proptag):
-        return _prop(self, self.att, proptag)
+        return _prop(self, self.mapiobj, proptag)
 
     def props(self):
-        return _props(self.att)
+        return _props(self.mapiobj)
 
     def __unicode__(self):
         return u'Attachment("%s")' % self.name
