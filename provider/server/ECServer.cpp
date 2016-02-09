@@ -1380,6 +1380,19 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 	}
 
 #ifdef LINUX
+	// Set max open file descriptors to FD_SETSIZE .. higher than this number
+	// is a bad idea, as it will start breaking select() calls.
+	struct rlimit limit;
+
+	limit.rlim_cur = FD_SETSIZE;
+	limit.rlim_max = FD_SETSIZE;
+	if(setrlimit(RLIMIT_NOFILE, &limit) < 0) {
+		g_lpLogger->Log(EC_LOGLEVEL_WARNING, "WARNING: setrlimit(RLIMIT_NOFILE, %d) failed, you will only be able to connect up to %d sockets.", FD_SETSIZE, getdtablesize());
+		g_lpLogger->Log(EC_LOGLEVEL_WARNING, "WARNING: Either start the process as root, or increase user limits for open file descriptors.");
+	}
+
+	if (parseBool(g_lpConfig->GetSetting("coredump_enabled")))
+		unix_coredump_enable(g_lpLogger);
 	if (unix_runas(g_lpConfig, g_lpLogger)) {
 		er = MAPI_E_CALL_FAILED;
 		goto exit;
@@ -1441,21 +1454,6 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 #endif
 
 #ifdef LINUX
-
-	// Set max open file descriptors to FD_SETSIZE .. higher than this number
-	// is a bad idea, as it will start breaking select() calls.
-	struct rlimit limit;
-
-	limit.rlim_cur = FD_SETSIZE;
-	limit.rlim_max = FD_SETSIZE;
-	if(setrlimit(RLIMIT_NOFILE, &limit) < 0) {
-		g_lpLogger->Log(EC_LOGLEVEL_WARNING, "WARNING: setrlimit(RLIMIT_NOFILE, %d) failed, you will only be able to connect up to %d sockets.", FD_SETSIZE, getdtablesize());
-		g_lpLogger->Log(EC_LOGLEVEL_WARNING, "WARNING: Either start the process as root, or increase user limits for open file descriptors.");
-	}
-
-	if (parseBool(g_lpConfig->GetSetting("coredump_enabled")))
-		unix_coredump_enable(g_lpLogger);
-
 	// fork if needed and drop privileges as requested.
 	// this must be done before we do anything with pthreads
 	if (daemonize && unix_daemonize(g_lpConfig, g_lpLogger)) {
