@@ -326,7 +326,7 @@ int main(int argc, char *argv[]) {
 		{ "run_as_user", "zarafa" },
 		{ "run_as_group", "zarafa" },
 		{ "pid_file", "/var/run/zarafad/gateway.pid" },
-		{ "running_path", "/" },
+		{ "running_path", "/var/lib/zarafa" },
 		{ "process_model", "fork" },
 		{ "coredump_enabled", "no" },
 #endif
@@ -643,14 +643,13 @@ static HRESULT running_service(const char *szPath, const char *servicename)
 
 	// fork if needed and drop privileges as requested.
 	// this must be done before we do anything with pthreads
+	if (unix_runas(g_lpConfig, g_lpLogger))
+		goto exit;
 	if (daemonize && unix_daemonize(g_lpConfig, g_lpLogger))
 		goto exit;
 	if (!daemonize)
 		setsid();
 	unix_create_pidfile(servicename, g_lpConfig, g_lpLogger);
-	if (unix_runas(g_lpConfig, g_lpLogger))
-		goto exit;
-
 	if (bThreads == false)
 		g_lpLogger = StartLoggerProcess(g_lpConfig, g_lpLogger); // maybe replace logger
 	ec_log_set(g_lpLogger);

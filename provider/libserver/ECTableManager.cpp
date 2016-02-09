@@ -100,17 +100,17 @@ unsigned int sCompanyStatsProps[] = { PR_EC_COMPANY_NAME, PR_EC_COMPANY_ADMIN, P
 unsigned int sServerStatsProps[] = { PR_EC_STATS_SERVER_NAME, PR_EC_STATS_SERVER_HOST, PR_EC_STATS_SERVER_HTTPPORT, PR_EC_STATS_SERVER_SSLPORT, PR_EC_STATS_SERVER_PROXYURL, PR_EC_STATS_SERVER_HTTPURL,
 									 PR_EC_STATS_SERVER_HTTPSURL, PR_EC_STATS_SERVER_FILEURL };
 
-struct propTagArray sPropTagArrayContents = { (unsigned int *)&sContentsProps, arraySize(sContentsProps)};
-struct propTagArray sPropTagArrayHierarchy = { (unsigned int *)&sHierarchyProps, arraySize(sHierarchyProps)};
-struct propTagArray sPropTagArrayABContents = { (unsigned int *)&sABContentsProps, arraySize(sABContentsProps)};
-struct propTagArray sPropTagArrayABHierarchy = { (unsigned int *)&sABHierarchyProps, arraySize(sABHierarchyProps)};
-struct propTagArray sPropTagArrayUserStores = { (unsigned int *)&sUserStoresProps, arraySize(sUserStoresProps)};
+struct propTagArray sPropTagArrayContents = { (unsigned int *)&sContentsProps, ARRAY_SIZE(sContentsProps)};
+struct propTagArray sPropTagArrayHierarchy = { (unsigned int *)&sHierarchyProps, ARRAY_SIZE(sHierarchyProps)};
+struct propTagArray sPropTagArrayABContents = { (unsigned int *)&sABContentsProps, ARRAY_SIZE(sABContentsProps)};
+struct propTagArray sPropTagArrayABHierarchy = { (unsigned int *)&sABHierarchyProps, ARRAY_SIZE(sABHierarchyProps)};
+struct propTagArray sPropTagArrayUserStores = { (unsigned int *)&sUserStoresProps, ARRAY_SIZE(sUserStoresProps)};
 
-struct propTagArray sPropTagArraySystemStats = { (unsigned int *)&sSystemStatsProps, arraySize(sSystemStatsProps)};
-struct propTagArray sPropTagArraySessionStats = { (unsigned int *)&sSessionStatsProps, arraySize(sSessionStatsProps)};
-struct propTagArray sPropTagArrayUserStats = { (unsigned int *)&sUserStatsProps, arraySize(sUserStatsProps)};
-struct propTagArray sPropTagArrayCompanyStats = { (unsigned int *)&sCompanyStatsProps, arraySize(sCompanyStatsProps)};
-struct propTagArray sPropTagArrayServerStats = { (unsigned int *)&sServerStatsProps, arraySize(sServerStatsProps)};
+struct propTagArray sPropTagArraySystemStats = { (unsigned int *)&sSystemStatsProps, ARRAY_SIZE(sSystemStatsProps)};
+struct propTagArray sPropTagArraySessionStats = { (unsigned int *)&sSessionStatsProps, ARRAY_SIZE(sSessionStatsProps)};
+struct propTagArray sPropTagArrayUserStats = { (unsigned int *)&sUserStatsProps, ARRAY_SIZE(sUserStatsProps)};
+struct propTagArray sPropTagArrayCompanyStats = { (unsigned int *)&sCompanyStatsProps, ARRAY_SIZE(sCompanyStatsProps)};
+struct propTagArray sPropTagArrayServerStats = { (unsigned int *)&sServerStatsProps, ARRAY_SIZE(sServerStatsProps)};
 
 ECTableManager::ECTableManager(ECSession *lpSession)
 {

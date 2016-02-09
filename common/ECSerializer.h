@@ -47,8 +47,8 @@
 #include <zarafa/zcdefs.h>
 #include <zarafa/ZarafaCode.h>
 
-struct IStream;
 class ECFifoBuffer;
+class IStream;
 
 #ifdef DEBUG
 #define STR_DEF_TIMEOUT 0

@@ -124,7 +124,7 @@ public:
 
 public:
 	// Freememory methods
-	void			FreeResult(DB_RESULT sResult);
+	void FreeResult(DB_RESULT sResult) _zcp_override;
 
 private:
     

@@ -997,7 +997,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 		{ "run_as_user",			"zarafa" }, // drop root privileges, and run as this user/group
 		{ "run_as_group",			"zarafa" },
 		{ "pid_file",					"/var/run/zarafad/server.pid" },
-		{ "running_path",				"/" },
+		{ "running_path",			"/var/lib/zarafa" },
 		{ "coredump_enabled",			"yes" },
 
 		{ "license_path",			"/etc/zarafa/license", CONFIGSETTING_UNUSED },
@@ -1088,8 +1088,8 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 		// internal server contols
 		{ "softdelete_lifetime",		"0" },							// time expressed in days, 0 == never delete anything
 		{ "cache_cell_size",			"16M", CONFIGSETTING_SIZE },	// default 16 Mb, default in config 256M
-		{ "cache_object_size",			"5M", CONFIGSETTING_SIZE },		// 5Mb
-		{ "cache_indexedobject_size",	"16M", CONFIGSETTING_SIZE },	// 16Mb
+		{ "cache_object_size",		"16M", CONFIGSETTING_SIZE },
+		{ "cache_indexedobject_size",	"32M", CONFIGSETTING_SIZE },
 		{ "cache_quota_size",			"1M", CONFIGSETTING_SIZE },		// 1Mb
 		{ "cache_quota_lifetime",		"1" },							// 1 minute
 		{ "cache_user_size",			"1M", CONFIGSETTING_SIZE },		// 48 bytes per struct, can hold 21k+ users, allocated 2x (user and ueid cache)
@@ -1380,6 +1380,25 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 		}
 	}
 
+#ifdef LINUX
+	// Set max open file descriptors to FD_SETSIZE .. higher than this number
+	// is a bad idea, as it will start breaking select() calls.
+	struct rlimit limit;
+
+	limit.rlim_cur = FD_SETSIZE;
+	limit.rlim_max = FD_SETSIZE;
+	if(setrlimit(RLIMIT_NOFILE, &limit) < 0) {
+		g_lpLogger->Log(EC_LOGLEVEL_WARNING, "WARNING: setrlimit(RLIMIT_NOFILE, %d) failed, you will only be able to connect up to %d sockets.", FD_SETSIZE, getdtablesize());
+		g_lpLogger->Log(EC_LOGLEVEL_WARNING, "WARNING: Either start the process as root, or increase user limits for open file descriptors.");
+	}
+
+	if (parseBool(g_lpConfig->GetSetting("coredump_enabled")))
+		unix_coredump_enable(g_lpLogger);
+	if (unix_runas(g_lpConfig, g_lpLogger)) {
+		er = MAPI_E_CALL_FAILED;
+		goto exit;
+	}
+#endif
 #ifndef HAVE_OFFLINE_SUPPORT
 	// Priority queue is always enabled, create as first socket, so this socket is returned first too on activity
 	er = g_lpSoapServerConn->ListenPipe(g_lpConfig->GetSetting("server_pipe_priority"), true);
@@ -1436,21 +1455,6 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 #endif
 
 #ifdef LINUX
-
-	// Set max open file descriptors to FD_SETSIZE .. higher than this number
-	// is a bad idea, as it will start breaking select() calls.
-	struct rlimit limit;
-
-	limit.rlim_cur = FD_SETSIZE;
-	limit.rlim_max = FD_SETSIZE;
-	if(setrlimit(RLIMIT_NOFILE, &limit) < 0) {
-		g_lpLogger->Log(EC_LOGLEVEL_WARNING, "WARNING: setrlimit(RLIMIT_NOFILE, %d) failed, you will only be able to connect up to %d sockets.", FD_SETSIZE, getdtablesize());
-		g_lpLogger->Log(EC_LOGLEVEL_WARNING, "WARNING: Either start the process as root, or increase user limits for open file descriptors.");
-	}
-
-	if (parseBool(g_lpConfig->GetSetting("coredump_enabled")))
-		unix_coredump_enable(g_lpLogger);
-
 	// fork if needed and drop privileges as requested.
 	// this must be done before we do anything with pthreads
 	if (daemonize && unix_daemonize(g_lpConfig, g_lpLogger)) {
@@ -1460,10 +1464,6 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 	if (!daemonize)
 		setsid();
 	unix_create_pidfile(szName, g_lpConfig, g_lpLogger);
-	if (unix_runas(g_lpConfig, g_lpLogger)) {
-		er = MAPI_E_CALL_FAILED;
-		goto exit;
-	}
 #endif
 
 	mainthread = pthread_self();

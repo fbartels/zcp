@@ -97,15 +97,15 @@ public:
 			virtual ULONG __stdcall Release(void) _zcp_override;
 
 			// From IFreeBusyData
-			virtual HRESULT __stdcall Reload(void*);
-			virtual HRESULT __stdcall EnumBlocks(IEnumFBBlock **ppenumfb, FILETIME ftmStart, FILETIME ftmEnd);
-			virtual HRESULT __stdcall Merge(void *);
-			virtual HRESULT __stdcall GetDeligateInfo(void *);
-			virtual HRESULT __stdcall FindFreeBlock(LONG, LONG, LONG, BOOL, LONG, LONG, LONG, FBBlock_1 *);
-			virtual HRESULT __stdcall InterSect(void *, LONG, void *);
-			virtual HRESULT __stdcall SetFBRange(LONG rtmStart, LONG rtmEnd);
-			virtual HRESULT __stdcall NextFBAppt(void *, ULONG, void *, ULONG, void *, void *);
-			virtual HRESULT __stdcall GetFBPublishRange(LONG *prtmStart, LONG *prtmEnd);
+			virtual HRESULT __stdcall Reload(void *) _zcp_override;
+			virtual HRESULT __stdcall EnumBlocks(IEnumFBBlock **ppenumfb, FILETIME ftmStart, FILETIME ftmEnd) _zcp_override;
+			virtual HRESULT __stdcall Merge(void *) _zcp_override;
+			virtual HRESULT __stdcall GetDeligateInfo(void *) _zcp_override;
+			virtual HRESULT __stdcall FindFreeBlock(LONG, LONG, LONG, BOOL, LONG, LONG, LONG, FBBlock_1 *) _zcp_override;
+			virtual HRESULT __stdcall InterSect(void *, LONG, void *) _zcp_override;
+			virtual HRESULT __stdcall SetFBRange(LONG rtmStart, LONG rtmEnd) _zcp_override;
+			virtual HRESULT __stdcall NextFBAppt(void *, ULONG, void *, ULONG, void *, void *) _zcp_override;
+			virtual HRESULT __stdcall GetFBPublishRange(LONG *prtmStart, LONG *prtmEnd) _zcp_override;
 	}m_xFreeBusyData;
 
 private:

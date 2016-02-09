@@ -147,7 +147,8 @@ HRESULT ECExchangeExportChanges::SetLogger(ECLogger *lpLogger)
 		m_lpLogger->Release();
 
 	m_lpLogger = lpLogger;
-	m_lpLogger->AddRef();
+	if (m_lpLogger != NULL)
+		m_lpLogger->AddRef();
 
 	return hrSuccess;
 }

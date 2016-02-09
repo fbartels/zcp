@@ -439,7 +439,6 @@ public:
 	unsigned int GetMaxChangeId() const;
 	
 private:
-	unsigned int	m_ulChangeId;
 	unsigned int	m_ulSyncId;
 	MESSAGESET		m_setMessages;
 	unsigned int	m_ulMaxFolderChange;
@@ -447,8 +446,7 @@ private:
 };
 
 LegacyProcessor::LegacyProcessor(unsigned int ulChangeId, unsigned int ulSyncId, const MESSAGESET &setMessages, unsigned int ulMaxFolderChange)
-	: m_ulChangeId(ulChangeId)
-	, m_ulSyncId(ulSyncId)
+	: m_ulSyncId(ulSyncId)
 	, m_setMessages(setMessages)
 	, m_ulMaxFolderChange(ulMaxFolderChange)
 	, m_ulMaxChangeId(ulChangeId)

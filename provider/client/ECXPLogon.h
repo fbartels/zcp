@@ -127,8 +127,6 @@ private:
 	bool			m_bCancel;
 	pthread_cond_t	m_hExitSignal;
 	pthread_mutex_t	m_hExitMutex;
-	ULONG			m_cbSubmitEntryID;
-	LPENTRYID		m_lpSubmitEntryID;
 	ULONG			m_bOffline;
 };
 

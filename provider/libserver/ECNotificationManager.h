@@ -67,7 +67,7 @@ struct NOTIFREQUEST {
 
 class ECNotificationManager {
 public:
-    ECNotificationManager(ECLogger *lpLogger, ECConfig *lpConfig);
+    ECNotificationManager(ECLogger *lpLogger);
     ~ECNotificationManager();
     
     // Called by the SOAP handler
@@ -87,7 +87,6 @@ private:
     unsigned int m_ulTimeout;
 
     ECLogger *m_lpLogger;
-    ECConfig *m_lpConfig;
 
     // A map of all sessions that are waiting for a SOAP response to be sent (an item can be in here for up to 60 seconds)
     std::map<ECSESSIONID, NOTIFREQUEST> 	m_mapRequests;

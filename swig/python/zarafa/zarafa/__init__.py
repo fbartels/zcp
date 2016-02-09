@@ -3860,7 +3860,7 @@ CONFIG = {
     'pid_file': Config.string(default=None),
     'run_as_user': Config.string(default=None),
     'run_as_group': Config.string(default=None),
-    'running_path': Config.string(check_path=True, default='/'),
+    'running_path': Config.string(check_path=True, default='/var/lib/zarafa'),
     'server_socket': Config.string(default=None),
     'sslkey_file': Config.string(default=None),
     'sslkey_pass': Config.string(default=None),

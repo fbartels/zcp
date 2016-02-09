@@ -4737,9 +4737,7 @@ HRESULT WSTransport::HrSetLockState(ULONG cbEntryID, LPENTRYID lpEntryID, bool b
 	{
 		if (SOAP_OK != m_lpCmd->ns__setLockState(m_ecSessionId, eidMessage, bLocked, &er))
 			er = ZARAFA_E_NETWORK_ERROR;
-		else
-			er = er;
-        
+		/* else: er is already set and good to use */
 	}
 	END_SOAP_CALL
 

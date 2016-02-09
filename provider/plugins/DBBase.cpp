@@ -61,13 +61,13 @@ DBPlugin::~DBPlugin() {
     // Do not delete m_lpDatabase as it is freed when the thread exits
 }
 
-void DBPlugin::InitPlugin() throw(std::exception) {
+void DBPlugin::InitPlugin() {
 
 	if(GetDatabaseObject(&m_lpDatabase) != erSuccess)
 	    throw runtime_error(string("db_init: cannot get handle to database"));
 }
 
-auto_ptr<signatures_t> DBPlugin::getAllObjects(const objectid_t &company, objectclass_t objclass) throw(std::exception)
+auto_ptr<signatures_t> DBPlugin::getAllObjects(const objectid_t &company, objectclass_t objclass)
 {
 	string strQuery =
 		"SELECT om.externid, om.objectclass, op.value "
@@ -90,7 +90,7 @@ auto_ptr<signatures_t> DBPlugin::getAllObjects(const objectid_t &company, object
 	return CreateSignatureList(strQuery);
 }
 
-auto_ptr<objectdetails_t> DBPlugin::getObjectDetails(const objectid_t &objectid) throw(std::exception)
+auto_ptr<objectdetails_t> DBPlugin::getObjectDetails(const objectid_t &objectid)
 {
 	auto_ptr<map<objectid_t, objectdetails_t> > objectdetails;
 	list<objectid_t> objectids;
@@ -104,7 +104,7 @@ auto_ptr<objectdetails_t> DBPlugin::getObjectDetails(const objectid_t &objectid)
 	return auto_ptr<objectdetails_t>(new objectdetails_t(objectdetails->begin()->second));
 }
 
-auto_ptr<map<objectid_t, objectdetails_t> > DBPlugin::getObjectDetails(const list<objectid_t> &objectids) throw (std::exception)
+auto_ptr<map<objectid_t, objectdetails_t> > DBPlugin::getObjectDetails(const list<objectid_t> &objectids)
 {
 	map<objectid_t,objectdetails_t> *mapdetails = new map<objectid_t,objectdetails_t>;
 	map<objectid_t,objectdetails_t>::iterator iterDetails;
@@ -265,7 +265,7 @@ auto_ptr<map<objectid_t, objectdetails_t> > DBPlugin::getObjectDetails(const lis
 	return auto_ptr<map<objectid_t, objectdetails_t> >(mapdetails);
 }
 
-auto_ptr<signatures_t> DBPlugin::getSubObjectsForObject(userobject_relation_t relation, const objectid_t &parentobject) throw(std::exception)
+auto_ptr<signatures_t> DBPlugin::getSubObjectsForObject(userobject_relation_t relation, const objectid_t &parentobject)
 {
 	string strQuery =
 		"SELECT o.externid, o.objectclass, modtime.value "
@@ -286,7 +286,7 @@ auto_ptr<signatures_t> DBPlugin::getSubObjectsForObject(userobject_relation_t re
 	return CreateSignatureList(strQuery);
 }
 
-auto_ptr<signatures_t> DBPlugin::getParentObjectsForObject(userobject_relation_t relation, const objectid_t &childobject) throw(std::exception)
+auto_ptr<signatures_t> DBPlugin::getParentObjectsForObject(userobject_relation_t relation, const objectid_t &childobject)
 {
 	string strQuery =
 		"SELECT o.externid, o.objectclass, modtime.value "
@@ -312,7 +312,7 @@ struct props {
 	const char *column;
 };
 
-void DBPlugin::changeObject(const objectid_t &objectid, const objectdetails_t &details, const std::list<std::string> *lpDeleteProps) throw(std::exception)
+void DBPlugin::changeObject(const objectid_t &objectid, const objectdetails_t &details, const std::list<std::string> *lpDeleteProps)
 {
 	ECRESULT er;
 	string strQuery;
@@ -530,7 +530,7 @@ void DBPlugin::changeObject(const objectid_t &objectid, const objectdetails_t &d
 	}
 }
 
-objectsignature_t DBPlugin::createObject(const objectdetails_t &details) throw(std::exception)
+objectsignature_t DBPlugin::createObject(const objectdetails_t &details)
 {
 	objectid_t objectid;
 
@@ -553,7 +553,7 @@ objectsignature_t DBPlugin::createObject(const objectdetails_t &details) throw(s
 	return objectsignature_t(objectid, string());
 }
 
-void DBPlugin::deleteObject(const objectid_t &objectid) throw(std::exception)
+void DBPlugin::deleteObject(const objectid_t &objectid)
 {
 	ECRESULT er;
 	string strQuery;
@@ -649,7 +649,7 @@ void DBPlugin::deleteObject(const objectid_t &objectid) throw(std::exception)
 		throw objectnotfound("db_user: " + objectid.id);
 }
 
-void DBPlugin::addSubObjectRelation(userobject_relation_t relation, const objectid_t &parentobject, const objectid_t &childobject) throw(std::exception)
+void DBPlugin::addSubObjectRelation(userobject_relation_t relation, const objectid_t &parentobject, const objectid_t &childobject)
 {
 	ECRESULT er = erSuccess;
 	DB_RESULT_AUTOFREE lpResult(m_lpDatabase);
@@ -695,7 +695,7 @@ void DBPlugin::addSubObjectRelation(userobject_relation_t relation, const object
 		throw runtime_error(string("db_query: ") + strerror(er));
 }
 
-void DBPlugin::deleteSubObjectRelation(userobject_relation_t relation, const objectid_t &parentobject, const objectid_t &childobject) throw(std::exception)
+void DBPlugin::deleteSubObjectRelation(userobject_relation_t relation, const objectid_t &parentobject, const objectid_t &childobject)
 {
 	ECRESULT er = erSuccess;
 	string strQuery;
@@ -729,7 +729,7 @@ void DBPlugin::deleteSubObjectRelation(userobject_relation_t relation, const obj
 		throw objectnotfound("db_user: relation " + parentobject.id);
 }
 
-auto_ptr<signatures_t> DBPlugin::searchObjects(const string &match, const char *search_props[], const char *return_prop, unsigned int ulFlags) throw(std::exception) {
+auto_ptr<signatures_t> DBPlugin::searchObjects(const string &match, const char *search_props[], const char *return_prop, unsigned int ulFlags) {
 	string signature;
 	objectid_t objectid;
 	auto_ptr<signatures_t> lpSignatures = auto_ptr<signatures_t>(new signatures_t());
@@ -787,7 +787,7 @@ auto_ptr<signatures_t> DBPlugin::searchObjects(const string &match, const char *
 	return lpSignatures;
 }
 
-auto_ptr<quotadetails_t> DBPlugin::getQuota(const objectid_t &objectid, bool bGetUserDefault) throw(std::exception)
+auto_ptr<quotadetails_t> DBPlugin::getQuota(const objectid_t &objectid, bool bGetUserDefault)
 {
 	auto_ptr<quotadetails_t> lpDetails;
 	ECRESULT er = erSuccess;
@@ -840,7 +840,7 @@ auto_ptr<quotadetails_t> DBPlugin::getQuota(const objectid_t &objectid, bool bGe
 	return lpDetails;
 }
 
-void DBPlugin::setQuota(const objectid_t &objectid, const quotadetails_t &quotadetails) throw(std::exception)
+void DBPlugin::setQuota(const objectid_t &objectid, const quotadetails_t &quotadetails)
 {
 	ECRESULT er = erSuccess;
 	string strQuery;
@@ -882,7 +882,7 @@ void DBPlugin::setQuota(const objectid_t &objectid, const quotadetails_t &quotad
 		throw runtime_error(string("db_query: ") + strerror(er));
 }
 
-auto_ptr<signatures_t> DBPlugin::CreateSignatureList(const std::string &query) throw(std::exception)
+auto_ptr<signatures_t> DBPlugin::CreateSignatureList(const std::string &query)
 {
 	ECRESULT er = erSuccess;
 	auto_ptr<signatures_t> objectlist = auto_ptr<signatures_t>(new signatures_t());
@@ -951,7 +951,7 @@ void DBPlugin::addSendAsToDetails(const objectid_t &objectid, objectdetails_t *l
 		lpDetails->AddPropObject(OB_PROP_LO_SENDAS, iter->id);
 }
 
-auto_ptr<abprops_t> DBPlugin::getExtraAddressbookProperties() throw(std::exception)
+auto_ptr<abprops_t> DBPlugin::getExtraAddressbookProperties()
 {
 	ECRESULT er = erSuccess;
 	auto_ptr<abprops_t> proplist = auto_ptr<abprops_t>(new abprops_t());
@@ -989,7 +989,7 @@ auto_ptr<abprops_t> DBPlugin::getExtraAddressbookProperties() throw(std::excepti
 	return proplist;
 }
 
-void DBPlugin::removeAllObjects(objectid_t except) throw(std::exception)
+void DBPlugin::removeAllObjects(objectid_t except)
 {
 	ECRESULT er = erSuccess;
 	std::string strQuery;

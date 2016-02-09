@@ -3640,6 +3640,8 @@ static HRESULT running_service(const char *servicename, bool bDaemonize,
 
 	// fork if needed and drop privileges as requested.
 	// this must be done before we do anything with pthreads
+	if (unix_runas(g_lpConfig, g_lpLogger))
+		goto exit;
 	if (bDaemonize && unix_daemonize(g_lpConfig, g_lpLogger))
 		goto exit;
 	
@@ -3647,9 +3649,6 @@ static HRESULT running_service(const char *servicename, bool bDaemonize,
 		setsid();
 
 	unix_create_pidfile(servicename, g_lpConfig, g_lpLogger);
-	if (unix_runas(g_lpConfig, g_lpLogger))
-		goto exit;
-
 	g_lpLogger = StartLoggerProcess(g_lpConfig, g_lpLogger); // maybe replace logger
 	ec_log_set(g_lpLogger);
 #endif

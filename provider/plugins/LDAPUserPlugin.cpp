@@ -464,7 +464,7 @@ LDAPUserPlugin::LDAPUserPlugin(pthread_mutex_t *pluginlock,
 		throw ldap_error(string("No LDAP servers configured in ldap.cfg"));
 }
 
-void LDAPUserPlugin::InitPlugin() throw(exception)
+void LDAPUserPlugin::InitPlugin()
 {
 	const char *ldap_binddn = m_config->GetSetting("ldap_bind_user");
 	const char *ldap_bindpw = m_config->GetSetting("ldap_bind_passwd");
@@ -482,7 +482,7 @@ void LDAPUserPlugin::InitPlugin() throw(exception)
 		throw ldap_error(format("Cannot convert UTF-8 to %s", ldap_server_charset));
 }
 
-LDAP *LDAPUserPlugin::ConnectLDAP(const char *bind_dn, const char *bind_pw) throw(exception) {
+LDAP *LDAPUserPlugin::ConnectLDAP(const char *bind_dn, const char *bind_pw) {
 	int rc = -1;
 	LDAP *ld = NULL;
 	struct timeval tstart, tend;
@@ -610,7 +610,7 @@ LDAPUserPlugin::~LDAPUserPlugin() {
 	delete m_iconvrev;
 }
 
-void LDAPUserPlugin::my_ldap_search_s(char *base, int scope, char *filter, char *attrs[], int attrsonly, LDAPMessage **lppres, LDAPControl **serverControls) throw(exception)
+void LDAPUserPlugin::my_ldap_search_s(char *base, int scope, char *filter, char *attrs[], int attrsonly, LDAPMessage **lppres, LDAPControl **serverControls)
 {
 	int result=LDAP_SUCCESS;
 	string req;
@@ -929,7 +929,7 @@ objectid_t LDAPUserPlugin::GetObjectIdForEntry(LDAPMessage *entry)
 	return objectid_t(object_uid, objclass);
 }
 
-auto_ptr<signatures_t> LDAPUserPlugin::getAllObjectsByFilter(const string &basedn, const int scope, const string &search_filter, const string &strCompanyDN, bool bCache) throw(exception)
+auto_ptr<signatures_t> LDAPUserPlugin::getAllObjectsByFilter(const string &basedn, const int scope, const string &search_filter, const string &strCompanyDN, bool bCache)
 {
 	auto_ptr<signatures_t>	signatures = auto_ptr<signatures_t>(new signatures_t());
 	objectid_t				objectid;
@@ -1023,7 +1023,7 @@ auto_ptr<signatures_t> LDAPUserPlugin::getAllObjectsByFilter(const string &based
 	return signatures;
 }
 
-string LDAPUserPlugin::getSearchBase(const objectid_t &company) throw(std::exception)
+string LDAPUserPlugin::getSearchBase(const objectid_t &company)
 {
 	const char *lpszSearchBase = m_config->GetSetting("ldap_search_base");
 	string search_base;
@@ -1071,7 +1071,7 @@ string LDAPUserPlugin::getServerSearchFilter()
 	return filter;
 }
 
-string LDAPUserPlugin::getSearchFilter(objectclass_t objclass) throw(std::exception)
+string LDAPUserPlugin::getSearchFilter(objectclass_t objclass)
 {
 	string filter, subfilter;
 	const char *objecttype = m_config->GetSetting("ldap_object_type_attribute", "", NULL);
@@ -1268,7 +1268,7 @@ string LDAPUserPlugin::getObjectSearchFilter(const objectid_t &id, const char *a
 	}
 }
 
-string LDAPUserPlugin::objectUniqueIDtoAttributeData(const objectid_t &uniqueid, const char* lpAttr) throw(std::exception)
+string LDAPUserPlugin::objectUniqueIDtoAttributeData(const objectid_t &uniqueid, const char* lpAttr)
 {
 	auto_free_ldap_message res;
 	string			strData;
@@ -1319,7 +1319,7 @@ string LDAPUserPlugin::objectUniqueIDtoAttributeData(const objectid_t &uniqueid,
 	return strData;
 }
 
-string LDAPUserPlugin::objectDNtoAttributeData(const string &dn, const char *lpAttr) throw(std::exception)
+string LDAPUserPlugin::objectDNtoAttributeData(const string &dn, const char *lpAttr)
 {
 	auto_free_ldap_message res;
 	LDAPMessage*	entry = NULL;
@@ -1365,7 +1365,7 @@ string LDAPUserPlugin::objectDNtoAttributeData(const string &dn, const char *lpA
 	return strData;
 }
 
-string LDAPUserPlugin::objectUniqueIDtoObjectDN(const objectid_t &uniqueid, bool cache) throw(std::exception)
+string LDAPUserPlugin::objectUniqueIDtoObjectDN(const objectid_t &uniqueid, bool cache)
 {
 	std::auto_ptr<dn_cache_t> lpCache = m_lpCache->getObjectDNCache(this, uniqueid.objclass);
 	auto_free_ldap_message res;
@@ -1419,7 +1419,7 @@ string LDAPUserPlugin::objectUniqueIDtoObjectDN(const objectid_t &uniqueid, bool
 	return dn;
 }
 
-objectsignature_t LDAPUserPlugin::objectDNtoObjectSignature(objectclass_t objclass, const string &dn) throw(std::exception)
+objectsignature_t LDAPUserPlugin::objectDNtoObjectSignature(objectclass_t objclass, const string &dn)
 {
 	auto_ptr<signatures_t> signatures;
 	string ldap_filter;
@@ -1435,7 +1435,7 @@ objectsignature_t LDAPUserPlugin::objectDNtoObjectSignature(objectclass_t objcla
 	return signatures->front();
 }
 
-auto_ptr<signatures_t> LDAPUserPlugin::objectDNtoObjectSignatures(objectclass_t objclass, const list<string> &dn) throw(std::exception)
+auto_ptr<signatures_t> LDAPUserPlugin::objectDNtoObjectSignatures(objectclass_t objclass, const list<string> &dn)
 {
 	auto_ptr<signatures_t> signatures = auto_ptr<signatures_t>(new signatures_t());;
 
@@ -1458,7 +1458,7 @@ auto_ptr<signatures_t> LDAPUserPlugin::objectDNtoObjectSignatures(objectclass_t 
 	return signatures;
 }
 
-objectsignature_t LDAPUserPlugin::resolveObjectFromAttribute(objectclass_t objclass, const string &AttrData, const char* lpAttr, const objectid_t &company) throw(std::exception)
+objectsignature_t LDAPUserPlugin::resolveObjectFromAttribute(objectclass_t objclass, const string &AttrData, const char* lpAttr, const objectid_t &company)
 {
 	auto_ptr<signatures_t> signatures;
 	list<string> objects;
@@ -1475,7 +1475,7 @@ objectsignature_t LDAPUserPlugin::resolveObjectFromAttribute(objectclass_t objcl
 	return signatures->front();
 }
 
-auto_ptr<signatures_t> LDAPUserPlugin::resolveObjectsFromAttribute(objectclass_t objclass, const list<string> &objects, const char* lpAttr, const objectid_t &company) throw (std::exception)
+auto_ptr<signatures_t> LDAPUserPlugin::resolveObjectsFromAttribute(objectclass_t objclass, const list<string> &objects, const char* lpAttr, const objectid_t &company)
 {
 	const char *lpAttrs[2] = {
 		lpAttr,
@@ -1485,7 +1485,7 @@ auto_ptr<signatures_t> LDAPUserPlugin::resolveObjectsFromAttribute(objectclass_t
 	return resolveObjectsFromAttributes(objclass, objects, lpAttrs, company);
 }
 
-auto_ptr<signatures_t> LDAPUserPlugin::resolveObjectsFromAttributes(objectclass_t objclass, const list<string> &objects, const char** lppAttr, const objectid_t &company) throw(std::exception)
+auto_ptr<signatures_t> LDAPUserPlugin::resolveObjectsFromAttributes(objectclass_t objclass, const list<string> &objects, const char** lppAttr, const objectid_t &company)
 {
 	string ldap_basedn;
 	string ldap_filter;
@@ -1510,7 +1510,7 @@ auto_ptr<signatures_t> LDAPUserPlugin::resolveObjectsFromAttributes(objectclass_
 	return getAllObjectsByFilter(ldap_basedn, LDAP_SCOPE_SUBTREE, ldap_filter, companyDN, false);
 }
 
-objectsignature_t LDAPUserPlugin::resolveObjectFromAttributeType(objectclass_t objclass, const string &object, const char* lpAttr, const char* lpAttrType, const objectid_t &company) throw (std::exception)
+objectsignature_t LDAPUserPlugin::resolveObjectFromAttributeType(objectclass_t objclass, const string &object, const char* lpAttr, const char* lpAttrType, const objectid_t &company)
 {
 	auto_ptr<signatures_t> signatures;
 	list<string> objects;
@@ -1524,7 +1524,7 @@ objectsignature_t LDAPUserPlugin::resolveObjectFromAttributeType(objectclass_t o
 	return signatures->front();
 }
 
-auto_ptr<signatures_t> LDAPUserPlugin::resolveObjectsFromAttributeType(objectclass_t objclass, const list<string> &objects, const char* lpAttr, const char* lpAttrType, const objectid_t &company) throw (std::exception)
+auto_ptr<signatures_t> LDAPUserPlugin::resolveObjectsFromAttributeType(objectclass_t objclass, const list<string> &objects, const char* lpAttr, const char* lpAttrType, const objectid_t &company)
 {
 	const char *lpAttrs[2] = {
 		lpAttr,
@@ -1534,7 +1534,7 @@ auto_ptr<signatures_t> LDAPUserPlugin::resolveObjectsFromAttributeType(objectcla
 	return resolveObjectsFromAttributesType(objclass, objects, lpAttrs, lpAttrType, company);
 }
 
-auto_ptr<signatures_t> LDAPUserPlugin::resolveObjectsFromAttributesType(objectclass_t objclass, const list<string> &objects, const char** lppAttr, const char* lpAttrType, const objectid_t &company) throw (std::exception)
+auto_ptr<signatures_t> LDAPUserPlugin::resolveObjectsFromAttributesType(objectclass_t objclass, const list<string> &objects, const char** lppAttr, const char* lpAttrType, const objectid_t &company)
 {
 	auto_ptr<signatures_t> signatures;
 
@@ -1555,7 +1555,7 @@ auto_ptr<signatures_t> LDAPUserPlugin::resolveObjectsFromAttributesType(objectcl
 	return signatures;
 }
 
-objectsignature_t LDAPUserPlugin::resolveName(objectclass_t objclass, const string &name, const objectid_t &company) throw(std::exception)
+objectsignature_t LDAPUserPlugin::resolveName(objectclass_t objclass, const string &name, const objectid_t &company)
 {
 	list<string> objects;
 	auto_ptr<attrArray> attrs = auto_ptr<attrArray>(new attrArray(6));
@@ -1650,7 +1650,7 @@ objectsignature_t LDAPUserPlugin::resolveName(objectclass_t objclass, const stri
 	return signatures->front();
 }
 
-objectsignature_t LDAPUserPlugin::authenticateUser(const string &username, const string &password, const objectid_t &company) throw(std::exception)
+objectsignature_t LDAPUserPlugin::authenticateUser(const string &username, const string &password, const objectid_t &company)
 {
 	struct timeval tstart, tend;
 	const char *authmethod = m_config->GetSetting("ldap_authentication_method");
@@ -1681,7 +1681,7 @@ objectsignature_t LDAPUserPlugin::authenticateUser(const string &username, const
 	return id;
 }
 
-objectsignature_t LDAPUserPlugin::authenticateUserBind(const string &username, const string &password, const objectid_t &company) throw(std::exception)
+objectsignature_t LDAPUserPlugin::authenticateUserBind(const string &username, const string &password, const objectid_t &company)
 {
 	LDAP*		ld = NULL;
 	string		dn;
@@ -1710,7 +1710,7 @@ objectsignature_t LDAPUserPlugin::authenticateUserBind(const string &username, c
 	return signature;
 }
 
-objectsignature_t LDAPUserPlugin::authenticateUserPassword(const string &username, const string &password, const objectid_t &company) throw(std::exception)
+objectsignature_t LDAPUserPlugin::authenticateUserPassword(const string &username, const string &password, const objectid_t &company)
 {
 	auto_free_ldap_message res;
 	objectdetails_t	d;
@@ -1807,7 +1807,7 @@ objectsignature_t LDAPUserPlugin::authenticateUserPassword(const string &usernam
 	return signature;
 }
 
-auto_ptr<signatures_t> LDAPUserPlugin::getAllObjects(const objectid_t &company, objectclass_t objclass) throw(exception)
+auto_ptr<signatures_t> LDAPUserPlugin::getAllObjects(const objectid_t &company, objectclass_t objclass)
 {
 	string companyDN;
 	if (!company.id.empty()) {
@@ -1870,7 +1870,7 @@ typedef struct {
 	std::string result_attr;	//!< optional: attribute to use from resulting object(s), if none then unique id
 } postaction;
 
-auto_ptr<map<objectid_t, objectdetails_t> > LDAPUserPlugin::getObjectDetails(const list<objectid_t> &objectids) throw(std::exception)
+auto_ptr<map<objectid_t, objectdetails_t> > LDAPUserPlugin::getObjectDetails(const list<objectid_t> &objectids)
 {
 	auto_ptr<map<objectid_t, objectdetails_t> > mapdetails = auto_ptr<map<objectid_t, objectdetails_t> >(new map<objectid_t, objectdetails_t>);
 	auto_free_ldap_message res;
@@ -2427,7 +2427,7 @@ auto_ptr<map<objectid_t, objectdetails_t> > LDAPUserPlugin::getObjectDetails(con
 	return mapdetails;
 }
 
-auto_ptr<objectdetails_t> LDAPUserPlugin::getObjectDetails(const objectid_t &id) throw(exception) {
+auto_ptr<objectdetails_t> LDAPUserPlugin::getObjectDetails(const objectid_t &id) {
     auto_ptr<map<objectid_t, objectdetails_t> > mapDetails;
 	map<objectid_t, objectdetails_t>::iterator iterDetails;
     list<objectid_t> objectids;
@@ -2512,19 +2512,19 @@ int LDAPUserPlugin::changeAttribute(const char *dn, char *attribute, const std::
 	return 0;
 }
 
-void LDAPUserPlugin::changeObject(const objectid_t &id, const objectdetails_t &details, const std::list<std::string> *lpDelProps) throw(std::exception) {
+void LDAPUserPlugin::changeObject(const objectid_t &id, const objectdetails_t &details, const std::list<std::string> *lpDelProps) {
 	throw notimplemented("Change object is not supported when using the LDAP user plugin.");
 }
 
-objectsignature_t LDAPUserPlugin::createObject(const objectdetails_t &details) throw(std::exception) {
+objectsignature_t LDAPUserPlugin::createObject(const objectdetails_t &details) {
 	throw notimplemented("Creating objects is not supported when using the LDAP user plugin.");
 }
 
-void LDAPUserPlugin::deleteObject(const objectid_t &id) throw(std::exception) {
+void LDAPUserPlugin::deleteObject(const objectid_t &id) {
 	throw notimplemented("Deleting users is not supported when using the LDAP user plugin.");
 }
 
-void LDAPUserPlugin::modifyObjectId(const objectid_t &oldId, const objectid_t &newId) throw(std::exception)
+void LDAPUserPlugin::modifyObjectId(const objectid_t &oldId, const objectid_t &newId)
 {
 	throw notimplemented("Modifying objectid is not supported when using the LDAP user plugin.");
 }
@@ -2534,7 +2534,7 @@ void LDAPUserPlugin::modifyObjectId(const objectid_t &oldId, const objectid_t &n
  * @note Missing one group: with linux you have one group id on the user and other objectid on every possible group.
  *  this function checks all groups from searchfilter for an existing objectid.
  */
-auto_ptr<signatures_t> LDAPUserPlugin::getParentObjectsForObject(userobject_relation_t relation, const objectid_t &childobject) throw(std::exception)
+auto_ptr<signatures_t> LDAPUserPlugin::getParentObjectsForObject(userobject_relation_t relation, const objectid_t &childobject)
 {
 	string				ldap_filter;
 	string				member_data;
@@ -2643,7 +2643,7 @@ auto_ptr<signatures_t> LDAPUserPlugin::getParentObjectsForObject(userobject_rela
 	return getAllObjectsByFilter(ldap_basedn, LDAP_SCOPE_SUBTREE, ldap_filter, string(), false);
 }
 
-auto_ptr<signatures_t> LDAPUserPlugin::getSubObjectsForObject(userobject_relation_t relation, const objectid_t &sExternId) throw(std::exception)
+auto_ptr<signatures_t> LDAPUserPlugin::getSubObjectsForObject(userobject_relation_t relation, const objectid_t &sExternId)
 {
 	enum LISTTYPE { MEMBERS, FILTER } ulType = MEMBERS;
 
@@ -2839,15 +2839,15 @@ auto_ptr<signatures_t> LDAPUserPlugin::getSubObjectsForObject(userobject_relatio
 	return members;
 }
 
-void LDAPUserPlugin::addSubObjectRelation(userobject_relation_t relation, const objectid_t &id, const objectid_t &member) throw(std::exception) {
+void LDAPUserPlugin::addSubObjectRelation(userobject_relation_t relation, const objectid_t &id, const objectid_t &member) {
 	throw notimplemented("add object relations is not supported when using the LDAP user plugin.");
 }
 
-void LDAPUserPlugin::deleteSubObjectRelation(userobject_relation_t relation, const objectid_t &id, const objectid_t &member) throw(std::exception) {
+void LDAPUserPlugin::deleteSubObjectRelation(userobject_relation_t relation, const objectid_t &id, const objectid_t &member) {
 	throw notimplemented("Delete object relations is not supported when using the LDAP user plugin.");
 }
 
-auto_ptr<signatures_t> LDAPUserPlugin::searchObject(const string &match, unsigned int ulFlags) throw(std::exception)
+auto_ptr<signatures_t> LDAPUserPlugin::searchObject(const string &match, unsigned int ulFlags)
 {
 	auto_ptr<signatures_t> signatures;
 	string escMatch;
@@ -2902,7 +2902,7 @@ auto_ptr<signatures_t> LDAPUserPlugin::searchObject(const string &match, unsigne
 	return signatures;
 }
 
-auto_ptr<objectdetails_t> LDAPUserPlugin::getPublicStoreDetails() throw(std::exception)
+auto_ptr<objectdetails_t> LDAPUserPlugin::getPublicStoreDetails()
 {
 #ifndef WITH_MULTISERVER
 	throw notimplemented("distributed");
@@ -2962,7 +2962,7 @@ auto_ptr<objectdetails_t> LDAPUserPlugin::getPublicStoreDetails() throw(std::exc
 #endif
 }
 
-auto_ptr<serverlist_t> LDAPUserPlugin::getServers() throw(std::exception)
+auto_ptr<serverlist_t> LDAPUserPlugin::getServers()
 {
 #ifndef WITH_MULTISERVER
 	throw notimplemented("distributed");
@@ -3011,7 +3011,7 @@ auto_ptr<serverlist_t> LDAPUserPlugin::getServers() throw(std::exception)
 #endif
 }
 
-auto_ptr<serverdetails_t> LDAPUserPlugin::getServerDetails(const string &server) throw(std::exception)
+auto_ptr<serverdetails_t> LDAPUserPlugin::getServerDetails(const string &server)
 {
 #ifndef WITH_MULTISERVER
 	throw notimplemented("distributed");
@@ -3153,7 +3153,7 @@ std::string LDAPUserPlugin::StringEscapeSequence(const char* lpdata, size_t size
 	return strEscaped;
 }
 
-auto_ptr<quotadetails_t> LDAPUserPlugin::getQuota(const objectid_t &id, bool bGetUserDefault) throw(std::exception)
+auto_ptr<quotadetails_t> LDAPUserPlugin::getQuota(const objectid_t &id, bool bGetUserDefault)
 {
 	auto_free_ldap_message res;
 	string dn;
@@ -3225,12 +3225,12 @@ auto_ptr<quotadetails_t> LDAPUserPlugin::getQuota(const objectid_t &id, bool bGe
 	return auto_ptr<quotadetails_t>(quotaDetails);
 }
 
-void LDAPUserPlugin::setQuota(const objectid_t &id, const quotadetails_t &quotadetails) throw(std::exception)
+void LDAPUserPlugin::setQuota(const objectid_t &id, const quotadetails_t &quotadetails)
 {
 	throw notimplemented("set quota is not supported when using the LDAP user plugin.");
 }
 
-auto_ptr<abprops_t> LDAPUserPlugin::getExtraAddressbookProperties() throw(std::exception)
+auto_ptr<abprops_t> LDAPUserPlugin::getExtraAddressbookProperties()
 {
 	auto_ptr<abprops_t> lProps = auto_ptr<abprops_t>(new abprops_t());
 	list<configsetting_t> lExtraAttrs = m_config->GetSettingGroup(CONFIGGROUP_PROPMAP);
@@ -3244,7 +3244,7 @@ auto_ptr<abprops_t> LDAPUserPlugin::getExtraAddressbookProperties() throw(std::e
 	return lProps;
 }
 
-void LDAPUserPlugin::removeAllObjects(objectid_t except) throw(std::exception)
+void LDAPUserPlugin::removeAllObjects(objectid_t except)
 {
     throw notimplemented("removeAllObjects is not implemented in the LDAP user plugin.");
 }

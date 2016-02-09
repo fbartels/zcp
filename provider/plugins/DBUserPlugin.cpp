@@ -93,12 +93,12 @@ DBUserPlugin::~DBUserPlugin()
 {
 }
 
-void DBUserPlugin::InitPlugin() throw(exception)
+void DBUserPlugin::InitPlugin()
 {
 	DBPlugin::InitPlugin();
 }
 
-objectsignature_t DBUserPlugin::resolveName(objectclass_t objclass, const string &name, const objectid_t &company) throw(exception)
+objectsignature_t DBUserPlugin::resolveName(objectclass_t objclass, const string &name, const objectid_t &company)
 {
 	objectid_t	id;
 	ECRESULT	er;
@@ -200,7 +200,7 @@ objectsignature_t DBUserPlugin::resolveName(objectclass_t objclass, const string
 }
 
 
-objectsignature_t DBUserPlugin::authenticateUser(const string &username, const string &password, const objectid_t &company) throw(exception)
+objectsignature_t DBUserPlugin::authenticateUser(const string &username, const string &password, const objectid_t &company)
 {
 	objectid_t	objectid;
 	std::string signature;
@@ -290,7 +290,7 @@ objectsignature_t DBUserPlugin::authenticateUser(const string &username, const s
 	throw login_error("Trying to authenticate failed: wrong username or password");
 }
 
-auto_ptr<signatures_t> DBUserPlugin::searchObject(const string &match, unsigned int ulFlags) throw(std::exception)
+auto_ptr<signatures_t> DBUserPlugin::searchObject(const string &match, unsigned int ulFlags)
 {
 	const char *search_props[] =
 	{
@@ -305,7 +305,7 @@ auto_ptr<signatures_t> DBUserPlugin::searchObject(const string &match, unsigned 
 	return searchObjects(match.c_str(), search_props, NULL, ulFlags);
 }
 
-void DBUserPlugin::modifyObjectId(const objectid_t &oldId, const objectid_t &newId) throw(std::exception)
+void DBUserPlugin::modifyObjectId(const objectid_t &oldId, const objectid_t &newId)
 {
 #ifdef HAVE_OFFLINE_SUPPORT
 	ECRESULT er = erSuccess;
@@ -327,7 +327,7 @@ void DBUserPlugin::modifyObjectId(const objectid_t &oldId, const objectid_t &new
 #endif
 }
 
-void DBUserPlugin::setQuota(const objectid_t &objectid, const quotadetails_t &quotadetails) throw(std::exception)
+void DBUserPlugin::setQuota(const objectid_t &objectid, const quotadetails_t &quotadetails)
 {
 	string strQuery;
 	ECRESULT er = erSuccess;
@@ -355,22 +355,22 @@ void DBUserPlugin::setQuota(const objectid_t &objectid, const quotadetails_t &qu
 	DBPlugin::setQuota(objectid, quotadetails);
 }
 
-auto_ptr<objectdetails_t> DBUserPlugin::getPublicStoreDetails() throw(std::exception)
+auto_ptr<objectdetails_t> DBUserPlugin::getPublicStoreDetails()
 {
 	throw notsupported("public store details");
 }
 
-auto_ptr<serverdetails_t> DBUserPlugin::getServerDetails(const string &server) throw(std::exception)
+auto_ptr<serverdetails_t> DBUserPlugin::getServerDetails(const string &server)
 {
 	throw notsupported("server details");
 }
 
-auto_ptr<serverlist_t> DBUserPlugin::getServers() throw(std::exception)
+auto_ptr<serverlist_t> DBUserPlugin::getServers()
 {
 	throw notsupported("server list");
 }
 
-void DBUserPlugin::addSubObjectRelation(userobject_relation_t relation, const objectid_t &parentobject, const objectid_t &childobject) throw(std::exception)
+void DBUserPlugin::addSubObjectRelation(userobject_relation_t relation, const objectid_t &parentobject, const objectid_t &childobject)
 {
 	ECRESULT er = erSuccess;
 	string strQuery;

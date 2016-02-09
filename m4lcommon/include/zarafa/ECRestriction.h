@@ -223,7 +223,7 @@ public:
 	ECContentRestriction(ULONG ulFuzzyLevel, ULONG ulPropTag, LPSPropValue lpProp, ULONG ulFlags = 0);
 
 	HRESULT GetMAPIRestriction(LPVOID lpBase, LPSRestriction lpRestriction, ULONG ulFlags) const _zcp_override;
-	ECRestriction *Clone() const;
+	ECRestriction *Clone() const _zcp_override;
 
 private:
 	ECContentRestriction(ULONG ulFuzzyLevel, ULONG ulPropTag, PropPtr ptrProp);

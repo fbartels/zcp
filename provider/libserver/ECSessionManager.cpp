@@ -91,6 +91,8 @@ ECSessionManager::ECSessionManager(ECConfig *lpConfig, ECLogger *lpLogger, ECLog
 	m_lpLogger				= lpLogger;
 	m_lpLogger->AddRef();
 	m_lpAudit				= lpAudit;
+	if (m_lpAudit)
+		m_lpAudit->AddRef();
 	m_bHostedZarafa			= bHostedZarafa;
 	m_bDistributedZarafa	= bDistributedZarafa;
 	m_lpDatabase			= NULL;
@@ -136,7 +138,7 @@ ECSessionManager::ECSessionManager(ECConfig *lpConfig, ECLogger *lpLogger, ECLog
 	if (err != 0)
 		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to spawn thread for session cleaner! Sessions will live forever!: %s", strerror(err));
 
-    m_lpNotificationManager = new ECNotificationManager(m_lpLogger, m_lpConfig);
+	m_lpNotificationManager = new ECNotificationManager(m_lpLogger);
 }
 
 ECSessionManager::~ECSessionManager()
@@ -186,6 +188,8 @@ ECSessionManager::~ECSessionManager()
 	delete m_lpServerGuid;
 
 	m_lpLogger->Release();
+	if (m_lpAudit != NULL)
+		m_lpAudit->Release();
 
 	// Release ownership of the rwlock object.
 	pthread_rwlock_unlock(&m_hCacheRWLock);
