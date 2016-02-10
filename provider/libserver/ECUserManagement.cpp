@@ -256,7 +256,7 @@ ECRESULT ECUserManagement::AuthUserAndSync(const char* szLoginname, const char* 
 	string error;
 	const char *szAuthMethod = NULL;
 
-	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin, m_lpLogger);
+	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin);
 	if(er != erSuccess)
 		goto exit;
 
@@ -404,7 +404,7 @@ ECRESULT ECUserManagement::GetLocalObjectListFromSignatures(const list<objectsig
 
 	UserPlugin *lpPlugin = NULL;
 
-	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin, m_lpLogger);
+	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin);
 	if(er != erSuccess)
 		goto exit;
 
@@ -530,7 +530,7 @@ ECRESULT ECUserManagement::GetCompanyObjectListAndSync(objectclass_t objclass, u
 	ECSecurity *lpSecurity = NULL;
 	UserPlugin *lpPlugin = NULL;
 
-	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin, m_lpLogger);
+	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin);
 	if (er != erSuccess)
 		goto exit;
 
@@ -727,7 +727,7 @@ ECRESULT ECUserManagement::GetSubObjectsOfObjectAndSync(userobject_relation_t re
 
 	UserPlugin *lpPlugin = NULL;
 
-	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin, m_lpLogger);
+	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin);
 	if(er != erSuccess)
 		goto exit;
 
@@ -850,7 +850,7 @@ ECRESULT ECUserManagement::GetParentObjectsOfObjectAndSync(userobject_relation_t
 	ECSecurity *lpSecurity = NULL;
 	UserPlugin *lpPlugin = NULL;
 
-	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin, m_lpLogger);
+	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin);
 	if (er != erSuccess)
 		goto exit;
 
@@ -953,7 +953,7 @@ ECRESULT ECUserManagement::SetObjectDetailsAndSync(unsigned int ulObjectId, cons
 	objectid_t objectid;
 	UserPlugin *lpPlugin = NULL;
 
-	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin, m_lpLogger);
+	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin);
 	if(er != erSuccess)
 		goto exit;
 
@@ -997,7 +997,7 @@ ECRESULT ECUserManagement::CreateOrModifyObject(const objectid_t &sExternId, con
 	if (sExternId.id.empty())
 		goto exit;
 
-	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin, m_lpLogger);
+	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin);
 	if(er != erSuccess)
 		goto exit;
 
@@ -1101,7 +1101,7 @@ ECRESULT ECUserManagement::ModifyExternId(unsigned int ulObjectId, const objecti
 		goto exit;
 	}
 
-	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin, m_lpLogger);
+	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin);
 	if(er != erSuccess)
 		goto exit;
 
@@ -1148,7 +1148,7 @@ ECRESULT ECUserManagement::AddSubObjectToObjectAndSync(userobject_relation_t rel
 		goto exit;
 	}
 
-	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin, m_lpLogger);
+	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin);
 	if(er != erSuccess)
 		goto exit;
 
@@ -1218,7 +1218,7 @@ ECRESULT ECUserManagement::DeleteSubObjectFromObjectAndSync(userobject_relation_
 		goto exit;
 	}
 
-	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin, m_lpLogger);
+	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin);
 	if(er != erSuccess)
 		goto exit;
 
@@ -1278,7 +1278,7 @@ ECRESULT ECUserManagement::ResolveObject(objectclass_t objclass, const std::stri
 	UserPlugin *lpPlugin = NULL;
 	objectsignature_t objectsignature;
 
-	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin, m_lpLogger);
+	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin);
 	if(er != erSuccess)
 		goto exit;
 
@@ -1371,7 +1371,7 @@ ECRESULT ECUserManagement::ResolveObjectAndSync(objectclass_t objclass, const ch
 		}
 	}
 
-	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin, m_lpLogger);
+	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin);
 	if(er != erSuccess)
 		goto exit;
 
@@ -1505,7 +1505,7 @@ ECRESULT ECUserManagement::GetExternalObjectDetails(unsigned int ulId, objectdet
 		goto exit;
 	}
 
-	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin, m_lpLogger);
+	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin);
 	if(er != erSuccess)
 		goto exit;
 
@@ -1686,7 +1686,7 @@ ECRESULT ECUserManagement::CreateObjectAndSync(const objectdetails_t &details, u
 	objectsignature_t objectsignature;
 	UserPlugin *lpPlugin = NULL;
 
-	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin, m_lpLogger);
+	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin);
 	if(er != erSuccess)
 		goto exit;
 
@@ -1734,7 +1734,7 @@ ECRESULT ECUserManagement::DeleteObjectAndSync(unsigned int ulId)
 	objectid_t objectid;
 	UserPlugin *lpPlugin = NULL;
 
-	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin, m_lpLogger);
+	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin);
 	if(er != erSuccess)
 		goto exit;
 
@@ -1769,7 +1769,7 @@ ECRESULT ECUserManagement::SetQuotaDetailsAndSync(unsigned int ulId, const quota
 	objectid_t externid;
 	UserPlugin *lpPlugin = NULL;
 
-	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin, m_lpLogger);
+	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin);
 	if(er != erSuccess)
 		goto exit;
 
@@ -1823,7 +1823,7 @@ ECRESULT ECUserManagement::GetQuotaDetailsAndSync(unsigned int ulId, quotadetail
 	if (er == erSuccess)
 		goto exit; /* Cache contained requested information, we're done. */
 
-	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin, m_lpLogger);
+	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin);
 	if(er != erSuccess)
 		goto exit;
 
@@ -1907,7 +1907,7 @@ ECRESULT ECUserManagement::SearchObjectAndSync(const char* szSearchString, unsig
 		goto exit;
 	}
 
-	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin, m_lpLogger);
+	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin);
 	if(er != erSuccess)
 		goto exit;
 
@@ -2086,7 +2086,7 @@ ECRESULT ECUserManagement::QueryContentsRowData(struct soap *soap, ECObjectTable
 	UserPlugin *lpPlugin = NULL;
 	string signature;
 
-	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin, m_lpLogger);
+	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin);
 	if (er != erSuccess)
 		goto exit;
 
@@ -2836,7 +2836,7 @@ ECRESULT ECUserManagement::CreateLocalObject(const objectsignature_t &signature,
 	if(er != erSuccess)
 		goto exit;
 
-	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin, m_lpLogger);
+	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin);
 	if(er != erSuccess)
 		goto exit;
 
@@ -3005,7 +3005,7 @@ ECRESULT ECUserManagement::CreateLocalObjectSimple(const objectsignature_t &sign
 
 	// No user count checking or script starting in this function; it is only used in for addressbook synchronization in the offline server
 
-	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin, m_lpLogger);
+	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin);
 	if(er != erSuccess)
 		goto exit;
 
@@ -4837,7 +4837,7 @@ ECRESULT ECUserManagement::GetPublicStoreDetails(objectdetails_t *lpDetails)
 	if (er == erSuccess)
 		goto exit; /* Cache contained requested information, we're done.*/
 
-	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin, m_lpLogger);
+	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin);
 	if(er != erSuccess)
 		goto exit;
 
@@ -4878,7 +4878,7 @@ ECRESULT ECUserManagement::GetServerDetails(const std::string &strServer, server
 		goto exit;
 
 
-	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin, m_lpLogger);
+	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin);
 	if(er != erSuccess)
 		goto exit;
 
@@ -4920,7 +4920,7 @@ ECRESULT ECUserManagement::GetServerList(serverlist_t *lpServerList)
 	auto_ptr<serverlist_t> list;
 	UserPlugin *lpPlugin = NULL;
 	
-	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin, m_lpLogger);
+	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin);
 	if(er != erSuccess)
 		goto exit;
 
@@ -5163,7 +5163,7 @@ ECRESULT ECUserManagement::RemoveAllObjectsAndSync(unsigned int ulObjId)
 	UserPlugin *lpPlugin = NULL;
 	objectid_t id;
 
-	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin, m_lpLogger);
+	er = GetThreadLocalPlugin(m_lpPluginFactory, &lpPlugin);
 	if(er != erSuccess)
 		goto exit;
 		

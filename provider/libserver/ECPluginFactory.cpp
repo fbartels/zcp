@@ -168,7 +168,8 @@ void ECPluginFactory::SignalPlugins(int signal)
 
 // Returns a plugin local to this thread. Works the same as GetThreadLocalDatabase
 extern pthread_key_t plugin_key;
-ECRESULT GetThreadLocalPlugin(ECPluginFactory *lpPluginFactory, UserPlugin **lppPlugin, ECLogger *lpLogger)
+ECRESULT GetThreadLocalPlugin(ECPluginFactory *lpPluginFactory,
+    UserPlugin **lppPlugin)
 {
 	ECRESULT er = erSuccess;
 	UserPlugin *lpPlugin = NULL;
@@ -180,7 +181,7 @@ ECRESULT GetThreadLocalPlugin(ECPluginFactory *lpPluginFactory, UserPlugin **lpp
 
 		if (er != erSuccess) {
 			lpPlugin = NULL;
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to instantiate user plugin");
+			ec_log_crit("Unable to instantiate user plugin");
 			goto exit;
 		}
 

@@ -10042,9 +10042,8 @@ SOAP_ENTRY_START(readABProps, readPropsResponse->er, entryId sEntryId, struct re
 	/* Load the additional addressbook properties */
 	try {
 		UserPlugin *lpPlugin = NULL;
-		if (GetThreadLocalPlugin(g_lpSessionManager->GetPluginFactory(), &lpPlugin, g_lpSessionManager->GetLogger()) == erSuccess) {
+		if (GetThreadLocalPlugin(g_lpSessionManager->GetPluginFactory(), &lpPlugin) == erSuccess)
 			lExtraProps = lpPlugin->getExtraAddressbookProperties();
-		}
 	} catch (...) { }
 
 	ptaProps.__size = ulProps;
