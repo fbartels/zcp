@@ -95,7 +95,8 @@ static const char THIS_FILE[] = __FILE__;
 
 extern ECSessionManager*	g_lpSessionManager;
 
-static bool execute_script(const char *scriptname, ECLogger *lpLogger, ...) {
+static bool execute_script(const char *scriptname, ...)
+{
 	va_list v;
 	char *envname, *envval;
 	const char *env[32];
@@ -104,7 +105,7 @@ static bool execute_script(const char *scriptname, ECLogger *lpLogger, ...) {
 	std::string strEnv;
 	int n = 0;
 	
-	va_start(v, lpLogger);
+	va_start(v, scriptname);
 	/* Set environment */
 	for (;;) {
 		envname = va_arg(v, char *);
@@ -122,7 +123,7 @@ static bool execute_script(const char *scriptname, ECLogger *lpLogger, ...) {
 	}
 	va_end(v);
 
-	lpLogger->Log(EC_LOGLEVEL_DEBUG, "Running script %s", scriptname);
+	ec_log_debug("Running script `%s`", scriptname);
 
 	for(i=lstEnv.begin(); i!=lstEnv.end(); i++) {
 		env[n++] = i->c_str();
@@ -281,7 +282,7 @@ ECRESULT ECUserManagement::AuthUserAndSync(const char* szLoginname, const char* 
 	if (bHosted & !companyname.empty()) {
 		er = ResolveObject(CONTAINER_COMPANY, companyname, objectid_t(), &sCompany);
 		if (er != erSuccess || sCompany.objclass != CONTAINER_COMPANY) {
-			m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Company %s not found for Authentication by plugin failed for user %s", companyname.c_str(), szLoginname);
+			ec_log_warn("Company \"%s\" not found for authentication by plugin failed for user \"%s\"", companyname.c_str(), szLoginname);
 			goto exit;
 		}
 	}
@@ -292,19 +293,19 @@ ECRESULT ECUserManagement::AuthUserAndSync(const char* szLoginname, const char* 
 		// authenticate through pam
 		er = ECPAMAuthenticateUser(m_lpConfig->GetSetting("pam_service"), username, password, &error);
 		if (er != erSuccess) {
-			m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Authentication through pam failed for user %s: %s", szLoginname, error.c_str());
+			ec_log_warn("Authentication through PAM failed for user \"%s\": %s", szLoginname, error.c_str());
 			goto exit;
 		}
 		try {
 			external = lpPlugin->resolveName(ACTIVE_USER, username, sCompany);
 		}
 		catch (objectnotfound &e) {
-			m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Authentication through pam succeeded for %s, but not found by plugin: %s", szLoginname, e.what());
+			ec_log_warn("Authentication through PAM succeeded for \"%s\", but not found by plugin: %s", szLoginname, e.what());
 			er = ZARAFA_E_LOGON_FAILED;
 			goto exit;
 		}
 		catch (std::exception &e) {
-			m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Authentication through pam succeeded for %s, but plugin returns error: %s", szLoginname, e.what());
+			ec_log_warn("Authentication through PAM succeeded for \"%s\", but plugin returned an error: %s", szLoginname, e.what());
 			er = ZARAFA_E_LOGON_FAILED;
 			goto exit;
 		}
@@ -312,19 +313,19 @@ ECRESULT ECUserManagement::AuthUserAndSync(const char* szLoginname, const char* 
 		// authenticate through kerberos
 		er = ECKrb5AuthenticateUser(username, password, &error);
 		if (er != erSuccess) {
-			m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Authentication through kerberos failed for user %s: %s", szLoginname, error.c_str());
+			ec_log_warn("Authentication through Kerberos failed for user \"%s\": %s", szLoginname, error.c_str());
 			goto exit;
 		}
 		try {
 			external = lpPlugin->resolveName(ACTIVE_USER, username, sCompany);
 		}
 		catch (objectnotfound &e) {
-			m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Authentication through kerberos succeeded for %s, but not found by plugin: %s", szLoginname, e.what());
+			ec_log_warn("Authentication through Kerberos succeeded for \"%s\", but not found by plugin: %s", szLoginname, e.what());
 			er = ZARAFA_E_LOGON_FAILED;
 			goto exit;
 		}
 		catch (std::exception &e) {
-			m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Authentication through kerberos succeeded for %s, but plugin returns error: %s", szLoginname, e.what());
+			ec_log_warn("Authentication through Kerberos succeeded for \"%s\", but plugin returned an error: %s", szLoginname, e.what());
 			er = ZARAFA_E_LOGON_FAILED;
 			goto exit;
 		}
@@ -335,15 +336,15 @@ ECRESULT ECUserManagement::AuthUserAndSync(const char* szLoginname, const char* 
 		try {
 			external = lpPlugin->authenticateUser(username, password, sCompany);
 		} catch (login_error &e) {
-			m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Authentication by plugin failed for user %s: %s", szLoginname, e.what());
+			ec_log_warn("Authentication by plugin failed for user \"%s\": %s", szLoginname, e.what());
 			er = ZARAFA_E_LOGON_FAILED;
 			goto exit;
 		} catch (objectnotfound &e) {
-			m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Authentication by plugin failed for user %s: %s", szLoginname, e.what());
+			ec_log_warn("Authentication by plugin failed for user \"%s\": %s", szLoginname, e.what());
 			er = ZARAFA_E_NOT_FOUND;
 			goto exit;
 		} catch (std::exception &e) {
-			m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Authentication error by plugin for user %s: %s", szLoginname, e.what());
+			ec_log_warn("Authentication error by plugin for user \"%s\": %s", szLoginname, e.what());
 			er = ZARAFA_E_PLUGIN_ERROR;
 			goto exit;
 		}
@@ -452,7 +453,7 @@ ECRESULT ECUserManagement::GetLocalObjectListFromSignatures(const list<objectsig
 			er = ZARAFA_E_NOT_FOUND;
 			goto exit;
 		} catch(std::exception &e) {
-			m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to retrieve details from external user source: %s", e.what());
+			ec_log_warn("Unable to retrieve details from external user source: %s", e.what());
 			er = ZARAFA_E_PLUGIN_ERROR;
 			goto exit;
 		}
@@ -603,7 +604,7 @@ ECRESULT ECUserManagement::GetCompanyObjectListAndSync(objectclass_t objclass, u
 			er = ZARAFA_E_NOT_FOUND;
 			goto exit;
 		} catch(std::exception &e) {
-			m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to retrieve list from external user source: %s", e.what());
+			ec_log_warn("Unable to retrieve list from external user source: %s", e.what());
 			er = ZARAFA_E_PLUGIN_ERROR;
 			goto exit;
 		}
@@ -653,7 +654,7 @@ ECRESULT ECUserManagement::GetCompanyObjectListAndSync(objectclass_t objclass, u
 		}
 	} else {
 		if (bIsSafeMode)
-			m_lpLogger->Log(EC_LOGLEVEL_INFO, "user_safe_mode: skipping retrieve/sync users from LDAP");
+			ec_log_info("user_safe_mode: skipping retrieve/sync users from LDAP");
 
 		lpExternSignatures = auto_ptr<signatures_t>(new signatures_t());;
 		
@@ -673,7 +674,7 @@ ECRESULT ECUserManagement::GetCompanyObjectListAndSync(objectclass_t objclass, u
 	// mapSignatureIdToLocal is now a map of objects that were NOT in the external user database
 	if(bSync) {
 		if (bIsSafeMode) {
-			m_lpLogger->Log(EC_LOGLEVEL_FATAL, "user_safe_mode: would normally now delete %lu local users (you may see this message more often as the delete is now omitted)", static_cast<unsigned long>(mapExternIdToLocal.size() - lpExternSignatures->size()));
+			ec_log_err("user_safe_mode: would normally now delete %lu local users (you may see this message more often as the delete is now omitted)", static_cast<unsigned long>(mapExternIdToLocal.size() - lpExternSignatures->size()));
 		}
 		else {
 		for (iterSignatureIdToLocal = mapSignatureIdToLocal.begin(); iterSignatureIdToLocal != mapSignatureIdToLocal.end(); iterSignatureIdToLocal++)
@@ -780,7 +781,7 @@ ECRESULT ECUserManagement::GetSubObjectsOfObjectAndSync(userobject_relation_t re
 			er = ZARAFA_E_NO_SUPPORT;
 			goto exit;
 		} catch(std::exception &e) {
-			m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to retrieve members for relation %s: %s.", RelationTypeToName(relation), e.what());
+			ec_log_warn("Unable to retrieve members for relation %s: %s.", RelationTypeToName(relation), e.what());
 			er = ZARAFA_E_PLUGIN_ERROR;
 			goto exit;
 		}
@@ -882,7 +883,7 @@ ECRESULT ECUserManagement::GetParentObjectsOfObjectAndSync(userobject_relation_t
 			er = ZARAFA_E_NO_SUPPORT;
 			goto exit;
 		} catch(std::exception &e) {
-			m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to retrieve parents for relation %s: %s.", RelationTypeToName(relation), e.what());
+			ec_log_warn("Unable to retrieve parents for relation %s: %s.", RelationTypeToName(relation), e.what());
 			er = ZARAFA_E_PLUGIN_ERROR;
 			goto exit;
 		}
@@ -969,11 +970,11 @@ ECRESULT ECUserManagement::SetObjectDetailsAndSync(unsigned int ulObjectId, cons
 		er = ZARAFA_E_NOT_FOUND;
 		goto exit;
 	} catch (notimplemented &e) {
-		m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to set details for external %s: %s", ObjectClassToName(objectid.objclass), e.what());
+		ec_log_warn("Unable to set details for external %s: %s", ObjectClassToName(objectid.objclass), e.what());
 		er = ZARAFA_E_NOT_IMPLEMENTED;
 		goto exit;
 	} catch (std::exception &e) {
-		m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to set details for external %s: %s", ObjectClassToName(objectid.objclass), e.what());
+		ec_log_warn("Unable to set details for external %s: %s", ObjectClassToName(objectid.objclass), e.what());
 		er = ZARAFA_E_PLUGIN_ERROR;
 		goto exit;
 	}
@@ -1010,11 +1011,11 @@ ECRESULT ECUserManagement::CreateOrModifyObject(const objectid_t &sExternId, con
 			er = ZARAFA_E_NOT_FOUND;
 			goto exit;
 		} catch (notimplemented &e) {
-			m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to set details for external %s (1): %s", ObjectClassToName(sExternId.objclass), e.what());
+			ec_log_warn("Unable to set details for external %s (1): %s", ObjectClassToName(sExternId.objclass), e.what());
 			er = ZARAFA_E_NOT_IMPLEMENTED;
 			goto exit;
 		} catch (std::exception &e) {
-			m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to set details for external %s (2): %s", ObjectClassToName(sExternId.objclass), e.what());
+			ec_log_warn("Unable to set details for external %s (2): %s", ObjectClassToName(sExternId.objclass), e.what());
 			er = ZARAFA_E_PLUGIN_ERROR;
 			goto exit;
 		}
@@ -1024,15 +1025,15 @@ ECRESULT ECUserManagement::CreateOrModifyObject(const objectid_t &sExternId, con
 		try {
 			signature = lpPlugin->createObject(sDetails);
 		} catch (notimplemented &e) {
-			m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to create %s in external database(1): %s", ObjectClassToName(sExternId.objclass), e.what());
+			ec_log_warn("Unable to create %s in external database(1): %s", ObjectClassToName(sExternId.objclass), e.what());
 			er = ZARAFA_E_NOT_IMPLEMENTED;
 			goto exit;
 		} catch (collision_error &e) {
-			m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to create %s in external database(2): %s", ObjectClassToName(sExternId.objclass), e.what());
+			ec_log_warn("Unable to create %s in external database(2): %s", ObjectClassToName(sExternId.objclass), e.what());
 			er = ZARAFA_E_COLLISION;
 			goto exit;
 		} catch (std::exception &e) {
-			m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to create %s in external database(3): %s", ObjectClassToName(sExternId.objclass), e.what());
+			ec_log_warn("Unable to create %s in external database(3): %s", ObjectClassToName(sExternId.objclass), e.what());
 			er = ZARAFA_E_PLUGIN_ERROR;
 			goto exit;
 		}
@@ -1050,7 +1051,7 @@ ECRESULT ECUserManagement::CreateOrModifyObject(const objectid_t &sExternId, con
 			try {
 				lpPlugin->deleteObject(signature.id);
 			} catch (std::exception &e) {
-				m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to delete %s from external database after failed (partial) creation: %s",
+				ec_log_warn("Unable to delete %s from external database after failed (partial) creation: %s",
 								ObjectClassToName(sExternId.objclass), e.what());
 			}
 
@@ -1097,7 +1098,7 @@ ECRESULT ECUserManagement::ModifyExternId(unsigned int ulObjectId, const objecti
 
 	if (ulRows != 1) {
 		er = ZARAFA_E_DATABASE_ERROR;
-		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "ECUserManagement::ModifyExternId(): unexpected row count");
+		ec_log_crit("ECUserManagement::ModifyExternId(): unexpected row count");
 		goto exit;
 	}
 
@@ -1171,10 +1172,10 @@ ECRESULT ECUserManagement::AddSubObjectToObjectAndSync(userobject_relation_t rel
 		goto exit;
 	} catch (collision_error &) {
 		er = ZARAFA_E_COLLISION;
-		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "ECUserManagement::AddSubObjectToObjectAndSync(): addSubObjectRelation failed with a collision error");
+		ec_log_crit("ECUserManagement::AddSubObjectToObjectAndSync(): addSubObjectRelation failed with a collision error");
 		goto exit;
 	} catch(std::exception &e) {
-		m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to add relation %s to external user database: %s", RelationTypeToName(relation), e.what());
+		ec_log_warn("Unable to add relation %s to external user database: %s", RelationTypeToName(relation), e.what());
 		er = ZARAFA_E_PLUGIN_ERROR;
 		goto exit;
 	}
@@ -1240,7 +1241,7 @@ ECRESULT ECUserManagement::DeleteSubObjectFromObjectAndSync(userobject_relation_
 		er = ZARAFA_E_NOT_IMPLEMENTED;
 		goto exit;
 	} catch(std::exception &e) {
-		m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to remove relation %s from external user database: %s.", RelationTypeToName(relation), e.what());
+		ec_log_warn("Unable to remove relation %s from external user database: %s.", RelationTypeToName(relation), e.what());
 		er = ZARAFA_E_PLUGIN_ERROR;
 		goto exit;
 	}
@@ -1311,11 +1312,11 @@ ECRESULT ECUserManagement::ResolveObjectAndSync(objectclass_t objclass, const ch
 	objectid_t sCompany(CONTAINER_COMPANY);
 
 	if (!szName) {
-		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Invalid argument szName in call to ECUserManagement::ResolveObjectAndSync()");
+		ec_log_crit("Invalid argument szName in call to ECUserManagement::ResolveObjectAndSync()");
 		goto exit;
 	}
 	if (!lpulObjectId) {
-		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Invalid argument lpulObjectId call to ECUserManagement::ResolveObjectAndSync()");
+		ec_log_crit("Invalid argument lpulObjectId call to ECUserManagement::ResolveObjectAndSync()");
 		goto exit;
 	}
 
@@ -1366,7 +1367,7 @@ ECRESULT ECUserManagement::ResolveObjectAndSync(objectclass_t objclass, const ch
 	if (bHosted && !companyname.empty()) {
 		er = ResolveObject(CONTAINER_COMPANY, companyname, objectid_t(), &sCompany);
 		if (er == ZARAFA_E_NOT_FOUND) {
-			m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Search company error by plugin for company %s", companyname.c_str());
+			ec_log_warn("Search company error by plugin for company \"%s\"", companyname.c_str());
 			goto exit;
 		}
 	}
@@ -1381,11 +1382,11 @@ ECRESULT ECUserManagement::ResolveObjectAndSync(objectclass_t objclass, const ch
 		er = ZARAFA_E_NO_SUPPORT;
 		goto exit;
 	} catch (objectnotfound &e) {
-		m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Object not found %s '%s': %s", ObjectClassToName(objclass), szName, e.what());
+		ec_log_warn("Object not found %s \"%s\": %s", ObjectClassToName(objclass), szName, e.what());
 		er = ZARAFA_E_NOT_FOUND;
 		goto exit;
 	} catch(std::exception &e) {
-		m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to resolve %s '%s': %s", ObjectClassToName(objclass), szName, e.what());
+		ec_log_warn("Unable to resolve %s \"%s\": %s", ObjectClassToName(objclass), szName, e.what());
 		er = ZARAFA_E_NOT_FOUND;
 		goto exit;
 	}
@@ -1524,7 +1525,7 @@ ECRESULT ECUserManagement::GetExternalObjectDetails(unsigned int ulId, objectdet
 		er = ZARAFA_E_NO_SUPPORT;
 		goto exit;
 	} catch (std::exception &e) {
-		m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to get %s details for object id %d: %s", ObjectClassToName(externid.objclass), ulId, e.what());
+		ec_log_warn("Unable to get %s details for object id %d: %s", ObjectClassToName(externid.objclass), ulId, e.what());
 		er = ZARAFA_E_NOT_FOUND;
 		goto exit;
 	}
@@ -1693,15 +1694,15 @@ ECRESULT ECUserManagement::CreateObjectAndSync(const objectdetails_t &details, u
 	try {
 		objectsignature = lpPlugin->createObject(details);
 	} catch (notimplemented &e) {
-		m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to create %s in user database(1): %s", ObjectClassToName(details.GetClass()), e.what());
+		ec_log_warn("Unable to create %s in user database(1): %s", ObjectClassToName(details.GetClass()), e.what());
 		er = ZARAFA_E_NOT_IMPLEMENTED;
 		goto exit;
 	} catch (collision_error &e) {
-		m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to create %s in user database(2): %s", ObjectClassToName(details.GetClass()), e.what());
+		ec_log_warn("Unable to create %s in user database(2): %s", ObjectClassToName(details.GetClass()), e.what());
 		er = ZARAFA_E_COLLISION;
 		goto exit;
 	} catch(std::exception &e) {
-		m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to create %s in user database(3): %s", ObjectClassToName(details.GetClass()), e.what());
+		ec_log_warn("Unable to create %s in user database(3): %s", ObjectClassToName(details.GetClass()), e.what());
 		er = ZARAFA_E_PLUGIN_ERROR;
 		goto exit;
 	}
@@ -1718,7 +1719,7 @@ ECRESULT ECUserManagement::CreateObjectAndSync(const objectdetails_t &details, u
 		try {
 			lpPlugin->deleteObject(objectsignature.id);
 		} catch(std::exception &e) {
-			m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to delete %s from plugin database after failed creation: %s", ObjectClassToName(details.GetClass()), e.what());
+			ec_log_warn("Unable to delete %s from plugin database after failed creation: %s", ObjectClassToName(details.GetClass()), e.what());
 			er = ZARAFA_E_PLUGIN_ERROR;
 			goto exit;
 		}
@@ -1748,11 +1749,11 @@ ECRESULT ECUserManagement::DeleteObjectAndSync(unsigned int ulId)
 		er = ZARAFA_E_NOT_FOUND;
 		goto exit;
 	} catch (notimplemented &e) {
-		m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to delete %s in user database: %s", ObjectClassToName(objectid.objclass), e.what());
+		ec_log_warn("Unable to delete %s in user database: %s", ObjectClassToName(objectid.objclass), e.what());
 		er = ZARAFA_E_NOT_IMPLEMENTED;
 		goto exit;
 	} catch(std::exception &e) {
-		m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to delete %s in user database: %s", ObjectClassToName(objectid.objclass), e.what());
+		ec_log_warn("Unable to delete %s in user database: %s", ObjectClassToName(objectid.objclass), e.what());
 		er = ZARAFA_E_PLUGIN_ERROR;
 		goto exit;
 	}
@@ -1784,11 +1785,11 @@ ECRESULT ECUserManagement::SetQuotaDetailsAndSync(unsigned int ulId, const quota
 		er = ZARAFA_E_NOT_FOUND;
 		goto exit;
 	} catch (notimplemented &e) {
-		m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to set quota for %s: %s", ObjectClassToName(externid.objclass), e.what());
+		ec_log_warn("Unable to set quota for %s: %s", ObjectClassToName(externid.objclass), e.what());
 		er = ZARAFA_E_NOT_IMPLEMENTED;
 		goto exit;
 	} catch(std::exception &e) {
-		m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to set quota for %s: %s", ObjectClassToName(externid.objclass), e.what());
+		ec_log_warn("Unable to set quota for %s: %s", ObjectClassToName(externid.objclass), e.what());
 		er = ZARAFA_E_PLUGIN_ERROR;
 		goto exit;
 	}
@@ -1844,7 +1845,7 @@ ECRESULT ECUserManagement::GetQuotaDetailsAndSync(unsigned int ulId, quotadetail
 		er = ZARAFA_E_NOT_FOUND;
 		goto exit;
 	} catch(std::exception &e) {
-		m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to get quota for %s: %s", ObjectClassToName(userid.objclass), e.what());
+		ec_log_warn("Unable to get quota for %s: %s", ObjectClassToName(userid.objclass), e.what());
 		er = ZARAFA_E_PLUGIN_ERROR;
 		goto exit;
 	}
@@ -1975,7 +1976,7 @@ ECRESULT ECUserManagement::SearchObjectAndSync(const char* szSearchString, unsig
 		er = ZARAFA_E_NO_SUPPORT;
 		goto exit;
 	} catch(std::exception &e) {
-		m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to perform search for string '%s' on user database: %s", szSearchString, e.what());
+		ec_log_warn("Unable to perform search for string \"%s\" on user database: %s", szSearchString, e.what());
 		er = ZARAFA_E_PLUGIN_ERROR;
 		goto exit;
 	}
@@ -2009,7 +2010,7 @@ done:
 				ulId = ulIdTmp;
 			} else if (ulId != ulIdTmp) {
 				er = ZARAFA_E_COLLISION;
-				m_lpLogger->Log(EC_LOGLEVEL_FATAL, "ECUserManagement::SearchObjectAndSync() unexpected id %u/%u", ulId, ulIdTmp);
+				ec_log_crit("ECUserManagement::SearchObjectAndSync() unexpected id %u/%u", ulId, ulIdTmp);
 				goto exit;
 			}
 		} else {
@@ -2044,7 +2045,7 @@ done:
 			ulId = *mapMatches.begin()->second.begin();
 		} else {
 			// size() cannot be 0. Otherwise, it would not be there at all. So apparently, it is > 1, so it is ambiguous.
-			m_lpLogger->Log(EC_LOGLEVEL_INFO, "Resolved multiple users for search %s.", szSearchString);
+			ec_log_info("Resolved multiple users for search \"%s\".", szSearchString);
 			er = ZARAFA_E_COLLISION;
 			goto exit;
 		}
@@ -2150,7 +2151,7 @@ ECRESULT ECUserManagement::QueryContentsRowData(struct soap *soap, ECObjectTable
 		er = ZARAFA_E_NO_SUPPORT;
 		goto exit;
 	} catch(std::exception &e) {
-		m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to retrieve details map from external user source: %s", e.what());
+		ec_log_warn("Unable to retrieve details map from external user source: %s", e.what());
 		er = ZARAFA_E_PLUGIN_ERROR;
 		goto exit;
 	}
@@ -2456,7 +2457,7 @@ ECRESULT ECUserManagement::ConvertUserAndCompanyToLogin(objectdetails_t *lpDetai
 	sCompany = lpDetails->GetPropObject(OB_PROP_O_COMPANYID);
 	er = GetLocalId(sCompany, &ulCompanyId);
 	if (er != erSuccess) {
-		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to find company id for object " + lpDetails->GetPropString(OB_PROP_S_FULLNAME));
+		ec_log_crit("Unable to find company id for object " + lpDetails->GetPropString(OB_PROP_S_FULLNAME));
 		goto exit;
 	}
 
@@ -2782,14 +2783,14 @@ ECRESULT ECUserManagement::CheckUserLicense(unsigned int *lpulLicenseStatus)
 
 	er = GetUserCount(&ulActive, &ulNonActive);
 	if (er != erSuccess) {
-		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to query user count");
+		ec_log_crit("Unable to query user count");
 		goto exit;
 	}
 	ulTotalUsers = ulActive + ulNonActive;
 
 	er = m_lpSession->GetSessionManager()->GetLicensedUsers(0 /*SERVICE_TYPE_ZCP*/, &ulLicensedUsers);
 	if (er != erSuccess) {
-		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to query license user count");
+		ec_log_crit("Unable to query license user count");
 		goto exit;
 	}
 
@@ -2846,17 +2847,17 @@ ECRESULT ECUserManagement::CreateLocalObject(const objectsignature_t &signature,
 			goto exit;
 
 		if (signature.id.objclass == ACTIVE_USER && (ulLicenseStatus & USERMANAGEMENT_BLOCK_CREATE_ACTIVE_USER)) {
-			m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to create active user: Your license doesn't permit this amount of users.");
+			ec_log_crit("Unable to create active user: Your license does not permit this amount of users.");
 			er = ZARAFA_E_UNABLE_TO_COMPLETE;
 			goto exit;
 		} else if (ulLicenseStatus & USERMANAGEMENT_BLOCK_CREATE_NONACTIVE_USER) {
-			m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to create non-active user: Your license doesn't permit this amount of users.");
+			ec_log_crit("Unable to create non-active user: Your license does not permit this amount of users.");
 			er = ZARAFA_E_UNABLE_TO_COMPLETE;
 			goto exit;
 		}
 	}
 
-	m_lpLogger->Log(EC_LOGLEVEL_INFO, "Auto-creating %s from external source", ObjectClassToName(signature.id.objclass));
+	ec_log_info("Auto-creating %s from external source", ObjectClassToName(signature.id.objclass));
 
 	try {
 		details = *lpPlugin->getObjectDetails(signature.id);
@@ -2867,7 +2868,7 @@ ECRESULT ECUserManagement::CreateLocalObject(const objectsignature_t &signature,
 		 * with the Database.
 		 */
 		if (signature.id.objclass != NONACTIVE_CONTACT && details.GetPropString(OB_PROP_S_LOGIN).empty()) {
-			m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to create object in local database: %s has no name", ObjectClassToName(signature.id.objclass));
+			ec_log_warn("Unable to create object in local database: %s has no name", ObjectClassToName(signature.id.objclass));
 			er = ZARAFA_E_UNKNOWN_OBJECT;
 			goto exit;
 		}
@@ -2883,13 +2884,13 @@ ECRESULT ECUserManagement::CreateLocalObject(const objectsignature_t &signature,
 		er = ZARAFA_E_NO_SUPPORT;
 		goto exit;
 	} catch(std::exception &e) {
-		m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to get object data while adding new %s: %s", ObjectClassToName(signature.id.objclass), e.what());
+		ec_log_warn("Unable to get object data while adding new %s: %s", ObjectClassToName(signature.id.objclass), e.what());
 		er = ZARAFA_E_PLUGIN_ERROR;
 		goto exit;
 	}
 
 	if (parseBool(m_lpConfig->GetSetting("user_safe_mode"))) {
-		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "user_safe_mode: Would create new %s with name %s", ObjectClassToName(signature.id.objclass), details.GetPropString(OB_PROP_S_FULLNAME).c_str());
+		ec_log_crit("user_safe_mode: Would create new %s with name \"%s\"", ObjectClassToName(signature.id.objclass), details.GetPropString(OB_PROP_S_FULLNAME).c_str());
 		goto exit;
 	}
 
@@ -2949,7 +2950,6 @@ ECRESULT ECUserManagement::CreateLocalObject(const objectsignature_t &signature,
 		strUserServer = details.GetPropString(OB_PROP_S_SERVERNAME);
 		if (!bDistributed || stricmp(strUserServer.c_str(), strThisServer.c_str()) == 0) {
 			execute_script(m_lpConfig->GetSetting("createuser_script"),
-						   m_lpLogger,
 						   "ZARAFA_USER", details.GetPropString(OB_PROP_S_LOGIN).c_str(),
 						   NULL);
 		}
@@ -2957,7 +2957,6 @@ ECRESULT ECUserManagement::CreateLocalObject(const objectsignature_t &signature,
 	case DISTLIST_GROUP:
 	case DISTLIST_SECURITY:
 		execute_script(m_lpConfig->GetSetting("creategroup_script"),
-					   m_lpLogger,
 					   "ZARAFA_GROUP", details.GetPropString(OB_PROP_S_LOGIN).c_str(),
 					   NULL);
 		break;
@@ -2965,7 +2964,6 @@ ECRESULT ECUserManagement::CreateLocalObject(const objectsignature_t &signature,
 		strUserServer = details.GetPropString(OB_PROP_S_SERVERNAME);
 		if (!bDistributed || stricmp(strUserServer.c_str(), strThisServer.c_str()) == 0) {
 			execute_script(m_lpConfig->GetSetting("createcompany_script"),
-						   m_lpLogger,
 						   "ZARAFA_COMPANY", details.GetPropString(OB_PROP_S_FULLNAME).c_str(),
 						   NULL);
 		}
@@ -3020,7 +3018,7 @@ ECRESULT ECUserManagement::CreateLocalObjectSimple(const objectsignature_t &sign
 		er = ZARAFA_E_NO_SUPPORT;
 		goto exit;
 	} catch(std::exception &e) {
-		m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to get details while adding new %s: %s", ObjectClassToName(signature.id.objclass), e.what());
+		ec_log_warn("Unable to get details while adding new %s: %s", ObjectClassToName(signature.id.objclass), e.what());
 		er = ZARAFA_E_PLUGIN_ERROR;
 		goto exit;
 	}
@@ -3121,7 +3119,7 @@ ECRESULT ECUserManagement::UpdateObjectclassOrDelete(const objectid_t &sExternId
 		  (objClass != NONACTIVE_CONTACT && sExternId.objclass == NONACTIVE_CONTACT) ))
 	{
 		if (parseBool(m_lpConfig->GetSetting("user_safe_mode"))) {
-			m_lpLogger->Log(EC_LOGLEVEL_FATAL, "user_safe_mode: Would update %d from %s to %s", ulObjectId, ObjectClassToName(objClass), ObjectClassToName(sExternId.objclass));
+			ec_log_crit("user_safe_mode: Would update %d from %s to %s", ulObjectId, ObjectClassToName(objClass), ObjectClassToName(sExternId.objclass));
 			goto exit;
 		}
 
@@ -3311,7 +3309,7 @@ ECRESULT ECUserManagement::MoveOrDeleteLocalObject(unsigned int ulObjectId, obje
 		if (er != erSuccess)
 			goto exit;
 	} else
-		m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to move object %s %s (id=%d)", ObjectClassToName(objclass), details.GetPropString(OB_PROP_S_LOGIN).c_str(), ulObjectId);
+		ec_log_err("Unable to move object %s \"%s\" (id=%d)", ObjectClassToName(objclass), details.GetPropString(OB_PROP_S_LOGIN).c_str(), ulObjectId);
 
 exit:
 	return er;
@@ -3338,11 +3336,11 @@ ECRESULT ECUserManagement::MoveLocalObject(unsigned int ulObjectId, objectclass_
 	}
 
 	if (parseBool(m_lpConfig->GetSetting("user_safe_mode"))) {
-		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "user_safe_mode: Would move %s %d to company %d", ObjectClassToName(objclass), ulObjectId, ulCompanyId);
+		ec_log_crit("user_safe_mode: Would move %s %d to company %d", ObjectClassToName(objclass), ulObjectId, ulCompanyId);
 		goto exit;
 	}
 
-	m_lpLogger->Log(EC_LOGLEVEL_INFO, "Auto-moving %s to different company from external source", ObjectClassToName(objclass));
+	ec_log_info("Auto-moving %s to different company from external source", ObjectClassToName(objclass));
 
 	er = m_lpSession->GetDatabase(&lpDatabase);
 	if(er != erSuccess)
@@ -3421,9 +3419,9 @@ ECRESULT ECUserManagement::DeleteLocalObject(unsigned int ulObjectId, objectclas
 	}
 
 	if (parseBool(m_lpConfig->GetSetting("user_safe_mode"))) {
-		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "user_safe_mode: Would delete %s %d", ObjectClassToName(objclass), ulObjectId);
+		ec_log_crit("user_safe_mode: Would delete %s %d", ObjectClassToName(objclass), ulObjectId);
 		if (objclass == CONTAINER_COMPANY)
-			m_lpLogger->Log(EC_LOGLEVEL_FATAL, "user_safe_mode: Would delete all objects from company %d", ulObjectId);
+			ec_log_crit("user_safe_mode: Would delete all objects from company %d", ulObjectId);
 		goto exit;
 	}
 
@@ -3431,7 +3429,7 @@ ECRESULT ECUserManagement::DeleteLocalObject(unsigned int ulObjectId, objectclas
 	if(er != erSuccess)
 		goto exit;
 
-	m_lpLogger->Log(EC_LOGLEVEL_INFO, "Auto-deleting %s %d from external source", ObjectClassToName(objclass), ulObjectId);
+	ec_log_info("Auto-deleting %s %d from external source", ObjectClassToName(objclass), ulObjectId);
 
 	if (objclass == CONTAINER_COMPANY) {
 		/* We are removing a company, delete all company members as well since
@@ -3445,7 +3443,7 @@ ECRESULT ECUserManagement::DeleteLocalObject(unsigned int ulObjectId, objectclas
 		if (er != erSuccess)
 			goto exit;
 
-		m_lpLogger->Log(EC_LOGLEVEL_INFO, "Start auto-deleting %s members", ObjectClassToName(objclass));
+		ec_log_info("Start auto-deleting %s members", ObjectClassToName(objclass));
 
 		while (1) {
 			lpRow = lpDatabase->FetchRow(lpResult);
@@ -3462,7 +3460,7 @@ ECRESULT ECUserManagement::DeleteLocalObject(unsigned int ulObjectId, objectclas
 		lpResult = NULL;
 		lpRow = NULL;
 
-		m_lpLogger->Log(EC_LOGLEVEL_INFO, "Done auto-deleting %s members", ObjectClassToName(objclass));
+		ec_log_info("Done auto-deleting %s members", ObjectClassToName(objclass));
 	}
 
 	bTransaction = true;
@@ -3543,29 +3541,26 @@ ECRESULT ECUserManagement::DeleteLocalObject(unsigned int ulObjectId, objectclas
 		lpRow = lpDatabase->FetchRow(lpResult);
 
 		if(lpRow == NULL) {
-			m_lpLogger->Log(EC_LOGLEVEL_INFO, "User script not executed. No store exists.");
+			ec_log_info("User script not executed. No store exists.");
 			goto exit;
 		} else if (lpRow[0] == NULL) {
 			er = ZARAFA_E_DATABASE_ERROR;
-			m_lpLogger->Log(EC_LOGLEVEL_FATAL, "ECUserManagement::DeleteLocalObject(): column null");
+			ec_log_err("ECUserManagement::DeleteLocalObject(): column null");
 			goto exit;
 		}
 
 		execute_script(m_lpConfig->GetSetting("deleteuser_script"),
-					   m_lpLogger,
 					   "ZARAFA_STOREGUID", lpRow[0],
 					   NULL);
 		break;
 	case DISTLIST_GROUP:
 	case DISTLIST_SECURITY:
 		execute_script(m_lpConfig->GetSetting("deletegroup_script"),
-					   m_lpLogger,
 					   "ZARAFA_GROUPID", stringify(ulObjectId).c_str(),
 					   NULL);
 		break;
 	case CONTAINER_COMPANY:
 		execute_script(m_lpConfig->GetSetting("deletecompany_script"),
-					   m_lpLogger,
 					   "ZARAFA_COMPANYID", stringify(ulObjectId).c_str(),
 					   NULL);
 		break;
@@ -3576,9 +3571,9 @@ ECRESULT ECUserManagement::DeleteLocalObject(unsigned int ulObjectId, objectclas
 
 exit:
 	if (er)
-		m_lpLogger->Log(EC_LOGLEVEL_INFO, "Auto-deleting %s %d done. Error code 0x%08X", ObjectClassToName(objclass), ulObjectId, er);
+		ec_log_info("Auto-deleting %s %d done. Error code 0x%08X", ObjectClassToName(objclass), ulObjectId, er);
 	else
-		m_lpLogger->Log(EC_LOGLEVEL_INFO, "Auto-deleting %s %d done.", ObjectClassToName(objclass), ulObjectId);
+		ec_log_info("Auto-deleting %s %d done.", ObjectClassToName(objclass), ulObjectId);
 	
 	if (lpDatabase) {
 		if (bTransaction && er != erSuccess)
@@ -3792,7 +3787,7 @@ ECRESULT ECUserManagement::ConvertObjectDetailsToProps(struct soap *soap, unsign
 
 		switch(lpDetails->GetClass()) {
 		default:
-			m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Details failed for object id %d (type %d)", ulId, lpDetails->GetClass());
+			ec_log_err("Details failed for object id %d (type %d)", ulId, lpDetails->GetClass());
 			er = ZARAFA_E_NOT_FOUND;
 			goto exit;
 		case ACTIVE_USER:
@@ -4850,7 +4845,7 @@ ECRESULT ECUserManagement::GetPublicStoreDetails(objectdetails_t *lpDetails)
 		er = ZARAFA_E_NO_SUPPORT;
 		goto exit;
 	} catch (std::exception &e) {
-		m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to get %s details for object id %d: %s", ObjectClassToName(CONTAINER_COMPANY), ZARAFA_UID_EVERYONE, e.what());
+		ec_log_warn("Unable to get %s details for object id %d: %s", ObjectClassToName(CONTAINER_COMPANY), ZARAFA_UID_EVERYONE, e.what());
 		er = ZARAFA_E_NOT_FOUND;
 		goto exit;
 	}
@@ -4892,7 +4887,7 @@ ECRESULT ECUserManagement::GetServerDetails(const std::string &strServer, server
 		er = ZARAFA_E_NO_SUPPORT;
 		goto exit;
 	} catch (std::exception &e) {
-		m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to get server details for %s: %s", strServer.c_str(), e.what());
+		ec_log_warn("Unable to get server details for \"%s\": %s", strServer.c_str(), e.what());
 		er = ZARAFA_E_NOT_FOUND;
 		goto exit;
 	}
@@ -4927,7 +4922,7 @@ ECRESULT ECUserManagement::GetServerList(serverlist_t *lpServerList)
 	try {
 		list = lpPlugin->getServers();
 	} catch (std::exception &e) {
-		m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to get server list: %s", e.what());
+		ec_log_warn("Unable to get server list: %s", e.what());
 		er = ZARAFA_E_NOT_FOUND;
 		goto exit;
 	}
@@ -5210,10 +5205,10 @@ ECRESULT ECUserManagement::SyncAllObjects()
 	if (er == ZARAFA_E_NO_SUPPORT) {
 		er = erSuccess;
 	} else if (er != erSuccess) {
-		m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Error synchronizing company list: %08X", er);
+		ec_log_err("Error synchronizing company list: %08X", er);
 		goto exit;
 	} else { 
-		m_lpLogger->Log(EC_LOGLEVEL_INFO, "Synchronized company list");
+		ec_log_info("Synchronized company list");
 	}
 		
 
@@ -5221,19 +5216,19 @@ ECRESULT ECUserManagement::SyncAllObjects()
 		// get all users of server
 		er = GetCompanyObjectListAndSync(OBJECTCLASS_UNKNOWN, 0, &lplstUserObjects, ulFlags);
 		if (er != erSuccess) {
-			m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Error synchronizing user list: %08X", er);
+			ec_log_err("Error synchronizing user list: %08X", er);
 			goto exit;
 		}
-		m_lpLogger->Log(EC_LOGLEVEL_INFO, "Synchronized user list");
+		ec_log_info("Synchronized user list");
 	} else {
 		// per company, get all users
 		for (iCompany = lplstCompanyObjects->begin(); iCompany != lplstCompanyObjects->end(); iCompany++) {
 			er = GetCompanyObjectListAndSync(OBJECTCLASS_UNKNOWN, iCompany->ulId, &lplstUserObjects, ulFlags);
 			if (er != erSuccess) {
-				m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Error synchronizing user list for company %d: %08X", iCompany->ulId, er);
+				ec_log_err("Error synchronizing user list for company %d: %08X", iCompany->ulId, er);
 				goto exit;
 			}
-			m_lpLogger->Log(EC_LOGLEVEL_INFO, "Synchronized list for company %d", iCompany->ulId);
+			ec_log_info("Synchronized list for company %d", iCompany->ulId);
 		}
 	}
 
