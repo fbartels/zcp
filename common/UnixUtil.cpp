@@ -278,7 +278,9 @@ int unix_fork_function(void*(func)(void*), void *param, int nCloseFDs, int *pClo
  * 
  * @return new process pid, or -1 on failure.
  */
-pid_t unix_popen_rw(ECLogger *lpLogger, const char *lpszCommand, int *lpulIn, int *lpulOut, popen_rlimit_array *lpLimits, const char **env, bool bNonBlocking, bool bStdErr)
+static pid_t unix_popen_rw(ECLogger *lpLogger, const char *lpszCommand,
+    int *lpulIn, int *lpulOut, popen_rlimit_array *lpLimits, const char **env,
+    bool bNonBlocking, bool bStdErr)
 {
 	int ulIn[2];
 	int ulOut[2];
