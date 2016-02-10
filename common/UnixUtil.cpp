@@ -337,56 +337,6 @@ pid_t unix_popen_rw(ECLogger *lpLogger, const char *lpszCommand, int *lpulIn, in
 	return pid;
 }
 
-/** 
- * Closes the filedescriptors opened by unix_popen_rw, and waits for
- * the given pid to exit. If pid did not yet exit, a TERM signal will
- * be sent to the pid, and wait for it to close.
- * 
- * @param rfd The read part of the pipe, will be closed, except when -1 is passed
- * @param wfd The write part of the pipe, will be closed, except when -1 is passed
- * @param pid The pid to handle on
- * 
- * @return The exit code of the pid, or -1 for failure of this function
- */
-int unix_pclose(int rfd, int wfd, pid_t pid)
-{
-	int rc = 0;
-	int retval = 0;
-	int signal = SIGTERM;
-	int kills = 0;
-
-	// close the filedescriptors, makes the child exit if it didn't already.
-	if (wfd >= 0)
-		close(wfd);
-
-	if (rfd >= 0)
-		close(rfd);
-
-	while (true) {
-		// we need to send the pid a signal if waitpid fails, so add WNOHANG
-		rc = waitpid(pid, &retval, WNOHANG | WUNTRACED);
-		if (rc == 0) {
-			if (kills > 1) {
-				// we've tried everything, so let this slide and maybe leave some zombie hanging around
-				retval = -1;
-				break;
-			}
-			// The child pid has not exited yet. Send it the TERM signal to the complete group and try again
-			kill(-pid, signal);
-			kills++;
-			// next time this happens, it really needs to die!
-			signal = SIGKILL;
-			// we need to sleep to give the kernel some time to progress the death of the child
-			sleep(1);
-			continue;
-		} else {
-			break;
-		}
-	}
-
-	return retval;
-}
-
 /**
  * Start an external process
  *
