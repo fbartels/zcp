@@ -62,6 +62,7 @@ class ECLogger;
 
 static const unsigned int EC_LOGLEVEL_NONE       = 0;
 static const unsigned int EC_LOGLEVEL_FATAL	 = 1;
+static const unsigned int EC_LOGLEVEL_CRIT	 = 1;
 static const unsigned int EC_LOGLEVEL_ERROR	 = 2;
 static const unsigned int EC_LOGLEVEL_WARNING    = 3;
 static const unsigned int EC_LOGLEVEL_NOTICE	 = 4;
@@ -393,7 +394,8 @@ extern void ec_log(unsigned int, const char *, ...);
 extern void ec_log(unsigned int, const std::string &);
 
 #define ec_log_always(...)  ec_log(EC_LOGLEVEL_ALWAYS, ## __VA_ARGS__)
-#define ec_log_fatal(...)   ec_log(EC_LOGLEVEL_FATAL, ## __VA_ARGS__)
+#define ec_log_fatal(...)   ec_log(EC_LOGLEVEL_CRIT, ## __VA_ARGS__)
+#define ec_log_crit(...)    ec_log(EC_LOGLEVEL_CRIT, ## __VA_ARGS__)
 #define ec_log_err(...)     ec_log(EC_LOGLEVEL_ERROR, ## __VA_ARGS__)
 #define ec_log_warn(...)    ec_log(EC_LOGLEVEL_WARNING, ## __VA_ARGS__)
 #define ec_log_notice(...)  ec_log(EC_LOGLEVEL_NOTICE, ## __VA_ARGS__)

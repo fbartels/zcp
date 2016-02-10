@@ -84,7 +84,7 @@ using namespace std;
 
 static const char *const ll_names[] = {
 	" notice",
-	"fatal  ",
+	"crit   ",
 	"error  ",
 	"warning",
 	"notice ",
@@ -448,7 +448,7 @@ ECLogger_Syslog::ECLogger_Syslog(unsigned int max_ll, const char *ident, int fac
 		openlog(m_ident, LOG_PID, facility);
 	}
 	levelmap[EC_LOGLEVEL_NONE] = LOG_DEBUG;
-	levelmap[EC_LOGLEVEL_FATAL] = LOG_CRIT;
+	levelmap[EC_LOGLEVEL_CRIT] = LOG_CRIT;
 	levelmap[EC_LOGLEVEL_ERROR] = LOG_ERR;
 	levelmap[EC_LOGLEVEL_WARNING] = LOG_WARNING;
 	levelmap[EC_LOGLEVEL_NOTICE] = LOG_NOTICE;
@@ -505,7 +505,7 @@ ECLogger_Eventlog::ECLogger_Eventlog(unsigned int max_ll, const char *lpszServic
 		m_szServiceName[0] = 0;
 
 	levelmap[EC_LOGLEVEL_NONE] = EVENTLOG_ERROR_TYPE;
-	levelmap[EC_LOGLEVEL_FATAL] = EVENTLOG_ERROR_TYPE;
+	levelmap[EC_LOGLEVEL_CRIT] = EVENTLOG_ERROR_TYPE;
 	levelmap[EC_LOGLEVEL_ERROR] = EVENTLOG_ERROR_TYPE;
 	levelmap[EC_LOGLEVEL_WARNING] = EVENTLOG_WARNING_TYPE;
 	levelmap[EC_LOGLEVEL_NOTICE] = EVENTLOG_INFORMATION_TYPE;
