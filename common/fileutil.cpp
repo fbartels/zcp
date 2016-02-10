@@ -299,7 +299,7 @@ bool DuplicateFile(FILE *lpFile, std::string &strFileName)
 
 	lpBuffer = (char*)malloc(BLOCKSIZE); 
 	if (!lpBuffer) {
-		ec_log_err("DuplicateFile is out of memory");
+		ec_log_crit("DuplicateFile is out of memory");
 
 		bResult = false;
 		goto exit;
@@ -309,14 +309,14 @@ bool DuplicateFile(FILE *lpFile, std::string &strFileName)
 	while (!feof(lpFile)) {
 		ulReadsize = fread(lpBuffer, 1, BLOCKSIZE, lpFile);
 		if (ferror(lpFile)) {
-			ec_log_err("DuplicateFile: fread: %s", strerror(errno));
+			ec_log_crit("DuplicateFile: fread: %s", strerror(errno));
 			bResult = false;
 			goto exit;
 		}
 		
 
 		if (fwrite(lpBuffer, 1, ulReadsize , pfNew) != ulReadsize) {
-			ec_log_err("Error during write to %s: %s", strFileName.c_str(), strerror(errno));
+			ec_log_crit("Error during write to \"%s\": %s", strFileName.c_str(), strerror(errno));
 			bResult = false;
 			goto exit;
 		}
@@ -369,7 +369,7 @@ bool ConvertFileFromUCS2ToUTF8(const std::string &strSrcFileName, const std::str
 	}
 	
 	if (fwrite(strConverted.c_str(), 1, strConverted.size(), pfDst) != strConverted.size()) { 
-		ec_log_err("%s: Unable to write to file \"%s\": %s", __PRETTY_FUNCTION__, strDstFileName.c_str(), strerror(errno));
+		ec_log_crit("%s: Unable to write to file \"%s\": %s", __PRETTY_FUNCTION__, strDstFileName.c_str(), strerror(errno));
 		goto exit;
 	}
 

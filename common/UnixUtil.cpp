@@ -70,7 +70,7 @@ int unix_runas(ECConfig *lpConfig, ECLogger *lpLogger) {
 			return -1;
 		}
 		if (getgid() != gr->gr_gid && setgid(gr->gr_gid) != 0) {
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "Changing to group \"%s\" failed: %s", gr->gr_name, strerror(errno));
+			lpLogger->Log(EC_LOGLEVEL_CRIT, "Changing to group \"%s\" failed: %s", gr->gr_name, strerror(errno));
 			return -1;
 		}
 	}
@@ -82,7 +82,7 @@ int unix_runas(ECConfig *lpConfig, ECLogger *lpLogger) {
 			return -1;
 		}
 		if (getuid() != pw->pw_uid && setuid(pw->pw_uid) != 0) {
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "Changing to user \"%s\" failed: %s", pw->pw_name, strerror(errno));
+			lpLogger->Log(EC_LOGLEVEL_CRIT, "Changing to user \"%s\" failed: %s", pw->pw_name, strerror(errno));
 			return -1;
 		}
 	}

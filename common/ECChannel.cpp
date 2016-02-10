@@ -771,7 +771,7 @@ HRESULT HrListen(ECLogger *lpLogger, const char *szPath, int *lpulListenSocket)
 	// TODO: backlog of SOMAXCONN should be configurable
 	if (listen(fd, SOMAXCONN) == -1) {
 		if (lpLogger)
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to start listening on socket %s.", szPath);
+			lpLogger->Log(EC_LOGLEVEL_CRIT, "Unable to start listening on socket \"%s\".", szPath);
 		hr = MAPI_E_NETWORK_ERROR;
 		goto exit;
 	}
@@ -895,7 +895,7 @@ HRESULT HrListen(ECLogger *lpLogger, const char *szBind, uint16_t ulPort,
 		break;
 	}
 	if (fd < 0 && sock_last != NULL) {
-		lpLogger->Log(EC_LOGLEVEL_ERROR,
+		lpLogger->Log(EC_LOGLEVEL_CRIT,
 			"Unable to create socket(%u,%u,%u): %s",
 			sock_last->ai_family, sock_last->ai_socktype,
 			sock_last->ai_protocol, strerror(errno));

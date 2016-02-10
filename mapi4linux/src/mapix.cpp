@@ -323,9 +323,9 @@ HRESULT M4LProfAdmin::CreateProfile(LPTSTR lpszProfileName, LPTSTR lpszPassword,
     pthread_mutex_lock(&m_mutexProfiles);
     
     if(lpszProfileName == NULL) {
-	ec_log_err("M4LProfAdmin::CreateProfile(): invalid parameters");
-    	hr = MAPI_E_INVALID_PARAMETER;
-    	goto exit;
+		ec_log_err("M4LProfAdmin::CreateProfile(): invalid parameters");
+		hr = MAPI_E_INVALID_PARAMETER;
+		goto exit;
 	}
     
     i = findProfile(lpszProfileName);
@@ -337,7 +337,7 @@ HRESULT M4LProfAdmin::CreateProfile(LPTSTR lpszProfileName, LPTSTR lpszPassword,
 
     entry = new profEntry;
     if (!entry) {
-		ec_log_err("M4LProfAdmin::CreateProfile(): ENOMEM");
+		ec_log_crit("M4LProfAdmin::CreateProfile(): ENOMEM");
 		hr = MAPI_E_NOT_ENOUGH_MEMORY;
 		goto exit;
     }
@@ -726,14 +726,14 @@ HRESULT M4LMsgServiceAdmin::CreateMsgService(LPTSTR lpszService, LPTSTR lpszDisp
 
 	entry = new serviceEntry;
 	if (!entry) {
-		ec_log_err("M4LMsgServiceAdmin::CreateMsgService(): ENOMEM");
+		ec_log_crit("M4LMsgServiceAdmin::CreateMsgService(): ENOMEM");
 		hr = MAPI_E_NOT_ENOUGH_MEMORY;
 		goto exit;
 	}
 
 	entry->provideradmin = new(std::nothrow) M4LProviderAdmin(this, reinterpret_cast<char *>(lpszService));
 	if (!entry->provideradmin) {
-		ec_log_err("M4LMsgServiceAdmin::CreateMsgService(): ENOMEM(2)");
+		ec_log_crit("M4LMsgServiceAdmin::CreateMsgService(): ENOMEM(2)");
 		delete entry;
 		hr = MAPI_E_NOT_ENOUGH_MEMORY;
 		goto exit;
@@ -1492,7 +1492,7 @@ HRESULT M4LMAPISession::OpenAddressBook(ULONG ulUIParam, LPCIID lpInterface, ULO
 
 	lpMAPISup = new(std::nothrow) M4LMAPISupport(this, NULL, NULL);
 	if (!lpMAPISup) {
-		ec_log_err("M4LMAPISession::OpenAddressBook(): ENOMEM");
+		ec_log_crit("M4LMAPISession::OpenAddressBook(): ENOMEM");
 		hr = MAPI_E_NOT_ENOUGH_MEMORY;
 		goto exit;
 	}
@@ -1500,7 +1500,7 @@ HRESULT M4LMAPISession::OpenAddressBook(ULONG ulUIParam, LPCIID lpInterface, ULO
 	myAddrBook = new(std::nothrow) M4LAddrBook(serviceAdmin, lpMAPISup);
 	lpAddrBook = myAddrBook;
 	if (!lpAddrBook) {
-		ec_log_err("M4LMAPISession::OpenAddressBook(): ENOMEM(2)");
+		ec_log_crit("M4LMAPISession::OpenAddressBook(): ENOMEM(2)");
 		hr = MAPI_E_NOT_ENOUGH_MEMORY;
 		goto exit;
 	}
@@ -2339,7 +2339,7 @@ HRESULT M4LAddrBook::ResolveName(ULONG ulUIParam, ULONG ulFlags, LPTSTR lpszNewE
 
 	hr = MAPIAllocateBuffer(CbNewFlagList(lpAdrList->cEntries), (void**)&lpFlagList);
 	if (hr != hrSuccess) {
-		ec_log_err("M4LAddrBook::ResolveName() MAPIAllocateBuffer fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_crit("M4LAddrBook::ResolveName() MAPIAllocateBuffer fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
@@ -2690,7 +2690,7 @@ HRESULT M4LAddrBook::GetSearchPath(ULONG ulFlags, LPSRowSet* lppSearchPath) {
 
 	hr = MAPIAllocateBuffer(CbNewSRowSet(m_lpSavedSearchPath->cRows), (void**)&lpSearchPath);
 	if (hr != hrSuccess) {
-		ec_log_err("M4LAddrBook::GetSearchPath(): MAPIAllocateBuffer fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_crit("M4LAddrBook::GetSearchPath(): MAPIAllocateBuffer fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
@@ -2722,7 +2722,7 @@ HRESULT M4LAddrBook::SetSearchPath(ULONG ulFlags, LPSRowSet lpSearchPath) {
 
 	hr = MAPIAllocateBuffer(CbNewSRowSet(lpSearchPath->cRows), (void**)&m_lpSavedSearchPath);
 	if (hr != hrSuccess) {
-		ec_log_err("M4LAddrBook::SetSearchPath(): MAPIAllocateBuffer fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_crit("M4LAddrBook::SetSearchPath(): MAPIAllocateBuffer fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
@@ -3041,7 +3041,7 @@ SCODE __stdcall MAPIAllocateMore(ULONG cbSize, LPVOID lpObject, LPVOID* lppBuffe
 
 	hr = MAPIAllocate(cbSize, lppBuffer);
 	if (hr != hrSuccess) {
-		ec_log_err("MAPIAllocateMore(): MAPIAllocate fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_crit("MAPIAllocateMore(): MAPIAllocate fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
@@ -3288,7 +3288,7 @@ HRESULT __stdcall MAPIInitialize(LPVOID lpMapiInit) {
 	m4l_lpMAPISVC = new MAPISVC();
 	hr = m4l_lpMAPISVC->Init();
 	if (hr != hrSuccess) {
-		ec_log_err("MAPIInitialize(): MAPISVC::Init fail %x: %s", hr, GetMAPIErrorMessage(hr));
+		ec_log_crit("MAPIInitialize(): MAPISVC::Init fail %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
 	}
 
