@@ -338,7 +338,6 @@ ECRESULT GetDatabaseObject(ECDatabase **lppDatabase)
 		return ZARAFA_E_INVALID_PARAMETER;
 	}
 
-	ECDatabaseFactory db(g_lpSessionManager->GetConfig(), g_lpSessionManager->GetLogger());
-
+	ECDatabaseFactory db(g_lpSessionManager->GetConfig());
 	return GetThreadLocalDatabase(&db, lppDatabase);
 }

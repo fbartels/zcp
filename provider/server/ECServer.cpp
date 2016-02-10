@@ -1415,7 +1415,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 #endif
 
 	// Test database settings
-	lpDatabaseFactory = new ECDatabaseFactory(g_lpConfig, g_lpLogger);
+	lpDatabaseFactory = new ECDatabaseFactory(g_lpConfig);
 
 	// open database
 	er = lpDatabaseFactory->CreateDatabaseObject(&lpDatabase, dbError);

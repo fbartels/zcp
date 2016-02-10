@@ -108,7 +108,7 @@ ECSessionManager::ECSessionManager(ECConfig *lpConfig, ECLogger *lpLogger, ECLog
 	//Terminate Event
 	pthread_cond_init(&m_hExitSignal, NULL);
 
-	m_lpDatabaseFactory = new ECDatabaseFactory(lpConfig, lpLogger);
+	m_lpDatabaseFactory = new ECDatabaseFactory(lpConfig);
 	m_lpPluginFactory = new ECPluginFactory(lpConfig, lpLogger, g_lpStatsCollector, bHostedZarafa, bDistributedZarafa);
 
 	m_lpECCacheManager = new ECCacheManager(lpConfig, m_lpDatabaseFactory, lpLogger);

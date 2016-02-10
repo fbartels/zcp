@@ -51,22 +51,18 @@
 // The ECDatabaseFactory creates database objects connected to the server database. Which
 // database is returned is chosen by the database_engine configuration setting.
 
-class ECDatabaseFactory {
+class ECDatabaseFactory _zcp_final {
 public:
-	ECDatabaseFactory(ECConfig *lpConfig, ECLogger *lpLogger);
-	~ECDatabaseFactory();
+	ECDatabaseFactory(ECConfig *lpConfig);
 	
 	ECRESULT		CreateDatabaseObject(ECDatabase **lppDatabase, std::string &ConnectError);
 	ECRESULT		CreateDatabase();
 	ECRESULT		UpdateDatabase(bool bForceUpdate, std::string &strError);
-	ECLogger *		GetLogger();
 
 private:
 	ECRESULT GetDatabaseFactory(ECDatabase **lppDatabase);
 
 	ECConfig*		m_lpConfig;
-	ECLogger*		m_lpLogger;
-
 };
 
 ECRESULT	GetThreadLocalDatabase(ECDatabaseFactory *lpFactory, ECDatabase **lppDatabase);
