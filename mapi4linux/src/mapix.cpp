@@ -336,7 +336,7 @@ HRESULT M4LProfAdmin::CreateProfile(LPTSTR lpszProfileName, LPTSTR lpszPassword,
 		goto exit;
     }
 
-    entry = new profEntry;
+    entry = new(std::nothrow) profEntry;
     if (!entry) {
 	m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LProfAdmin::CreateProfile(): ENOMEM");
 		hr = MAPI_E_NOT_ENOUGH_MEMORY;
@@ -725,7 +725,7 @@ HRESULT M4LMsgServiceAdmin::CreateMsgService(LPTSTR lpszService, LPTSTR lpszDisp
 		goto exit;
 	}
 
-	entry = new serviceEntry;
+	entry = new(std::nothrow) serviceEntry;
 	if (!entry) {
 		m4l_lpLogger -> Log(EC_LOGLEVEL_FATAL, "M4LMsgServiceAdmin::CreateMsgService(): ENOMEM");
 		hr = MAPI_E_NOT_ENOUGH_MEMORY;
