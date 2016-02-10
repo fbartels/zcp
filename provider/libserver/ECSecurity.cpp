@@ -699,7 +699,7 @@ ECRESULT ECSecurity::GetRights(unsigned int objid, int ulType, struct rightsArra
 
 			if(lpDBRow == NULL) {
 				er = ZARAFA_E_DATABASE_ERROR;
-				m_lpLogger->Log(EC_LOGLEVEL_FATAL, "ECSecurity::GetRights(): row is null");
+				ec_log_err("ECSecurity::GetRights(): row is null");
 				goto exit;
 			}
 
@@ -1348,7 +1348,7 @@ ECRESULT ECSecurity::GetStoreSize(unsigned int ulObjId, long long* lpllStoreSize
 	lpDBRow = lpDatabase->FetchRow(lpDBResult);
 	if(lpDBRow == NULL || lpDBRow[0] == NULL) {
 		er = ZARAFA_E_DATABASE_ERROR;
-		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "ECSecurity::GetStoreSize(): row is null");
+		ec_log_err("ECSecurity::GetStoreSize(): row is null");
 		goto exit;
 	}
 
@@ -1404,7 +1404,7 @@ ECRESULT ECSecurity::GetUserSize(unsigned int ulUserId, long long* lpllUserSize)
 	lpDBRow = lpDatabase->FetchRow(lpDBResult);
 	if (lpDBRow == NULL) {
 		er = ZARAFA_E_DATABASE_ERROR;
-		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "ECSecurity::GetUserSize(): row is null");
+		ec_log_err("ECSecurity::GetUserSize(): row is null");
 		goto exit;
 	}
 
