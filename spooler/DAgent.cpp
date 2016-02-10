@@ -520,7 +520,7 @@ static HRESULT HrAutoAccept(ECLogger *lpLogger, IMAPISession *lpMAPISession,
 	hr = MAPI_E_NO_SUPPORT;
 #else
 	g_lpLogger->Log(EC_LOGLEVEL_DEBUG, "Starting autoaccept with command line %s", strCmdLine.c_str());
-	if(!unix_system(lpLogger, autoresponder, strCmdLine.c_str(), (const char **)environ)) {
+	if (!unix_system(autoresponder, strCmdLine.c_str(), const_cast<const char **>(environ))) {
 		hr = MAPI_E_CALL_FAILED;
 		lpLogger->Log(EC_LOGLEVEL_ERROR, "HrAutoAccept(): invoking autoaccept script failed %x", hr);
 	}
@@ -611,7 +611,7 @@ static HRESULT HrAutoProcess(ECLogger *lpLogger, IMAPISession *lpMAPISession,
 	hr = MAPI_E_NO_SUPPORT;
 #else
 	g_lpLogger->Log(EC_LOGLEVEL_DEBUG, "Starting autoaccept with command line %s", strCmdLine.c_str());
-	if(!unix_system(lpLogger, autoprocessor, strCmdLine.c_str(), (const char **)environ))
+	if (!unix_system(autoprocessor, strCmdLine.c_str(), const_cast<const char **>(environ)))
 		hr = MAPI_E_CALL_FAILED;
 #endif
 
@@ -1759,10 +1759,8 @@ static HRESULT SendOutOfOffice(LPADRBOOK lpAdrBook, LPMDB lpMDB,
 
 	g_lpLogger->Log(EC_LOGLEVEL_INFO, "Starting autoresponder for out-of-office message");
 	command += " 2>&1";
-
-	if(unix_system(g_lpLogger, strBaseCommand.c_str(), command.c_str(), env) == false) {
+	if (!unix_system(strBaseCommand.c_str(), command.c_str(), env))
 		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Autoresponder failed");
-	}
 
 exit:
 	if (fd != -1)

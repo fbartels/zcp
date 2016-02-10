@@ -130,9 +130,9 @@ static bool execute_script(const char *scriptname, ECLogger *lpLogger, ...) {
 	env[n] = NULL;
 
 #ifdef LINUX
-	return unix_system(lpLogger, scriptname, scriptname, env);
+	return unix_system(scriptname, scriptname, env);
 #else
-	return win_system(lpLogger, scriptname, scriptname, env);
+	return win_system(scriptname, scriptname, env);
 #endif
 }
 

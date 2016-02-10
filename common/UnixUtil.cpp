@@ -353,7 +353,7 @@ static pid_t unix_popen_rw(const char *lpszCommand, int *lpulIn, int *lpulOut,
  *
  * @return Returns TRUE on success, FALSE on failure
  */
-bool unix_system(ECLogger *lpLogger, const char *lpszLogName, const char *lpszCommand, const char **env)
+bool unix_system(const char *lpszLogName, const char *lpszCommand, const char **env)
 {
 	int fdin = 0, fdout = 0;
 	int pid = unix_popen_rw(lpszCommand, &fdin, &fdout, NULL, env, false, true);
@@ -365,8 +365,7 @@ bool unix_system(ECLogger *lpLogger, const char *lpszLogName, const char *lpszCo
 	
 	while (fgets(buffer, sizeof(buffer), fp)) {
 		buffer[strlen(buffer) - 1] = '\0'; // strip enter
-		if(lpLogger)
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "%s[%d]: %s", lpszLogName, pid, buffer);
+		ec_log_err("%s[%d]: %s", lpszLogName, pid, buffer);
 	}
 	
 	fclose(fp);
@@ -377,26 +376,26 @@ bool unix_system(ECLogger *lpLogger, const char *lpszLogName, const char *lpszCo
 #ifdef WEXITSTATUS
 		if(WIFEXITED(status)) { /* Child exited by itself */
 			if(WEXITSTATUS(status)) {
-				lpLogger->Log(EC_LOGLEVEL_ERROR, "Command '%s' exited with non-zero status %d", lpszCommand, WEXITSTATUS(status));
+				ec_log_err("Command `%s` exited with non-zero status %d", lpszCommand, WEXITSTATUS(status));
 				rv = false;
 			}
 			else
-				lpLogger->Log(EC_LOGLEVEL_INFO, "Command '%s' run successful", lpszCommand);
+				ec_log_info("Command `%s` ran successfully", lpszCommand);
 		} else if(WIFSIGNALED(status)) {        /* Child was killed by a signal */
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "Command '%s' was killed by signal %d", lpszCommand, WTERMSIG(status));
+			ec_log_err("Command `%s` was killed by signal %d", lpszCommand, WTERMSIG(status));
 			rv = false;
 		} else {                        /* Something strange happened */
-			lpLogger->Log(EC_LOGLEVEL_ERROR, string("Command ") + lpszCommand + " terminated abnormally");
+			ec_log_err(string("Command `") + lpszCommand + "` terminated abnormally");
 			rv = false;
 		}
 #else
 		if (status)
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "Command '%s' exited with status %d", lpszCommand, status);
+			ec_log_err("Command `%s` exited with status %d", lpszCommand, status);
 		else
-			lpLogger->Log(EC_LOGLEVEL_INFO, "Command '%s' run successful", lpszCommand);
+			ec_log_info("Command `%s` ran successfully", lpszCommand);
 #endif
 	} else {
-		lpLogger->Log(EC_LOGLEVEL_ERROR, string("System call `system' failed: ") + strerror(errno));
+		ec_log_err(string("System call \"system\" failed: ") + strerror(errno));
 		rv = false;
 	}
 	
