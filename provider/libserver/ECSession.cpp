@@ -361,11 +361,11 @@ ECSession::ECSession(const std::string& strSourceAddr, ECSESSIONID sessionID, EC
 	// Offline implements its own versions of these objects
 	if (bIsOffline == false) {
 		m_lpUserManagement = new ECUserManagement(this, m_lpSessionManager->GetPluginFactory(), m_lpSessionManager->GetConfig());
-		m_lpEcSecurity = new ECSecurity(this, m_lpSessionManager->GetConfig(), m_lpSessionManager->GetLogger(), m_lpSessionManager->GetAudit());
+		m_lpEcSecurity = new ECSecurity(this, m_lpSessionManager->GetConfig(), m_lpSessionManager->GetAudit());
 	} else {
 		m_lpUserManagement = new ECUserManagementOffline(this, m_lpSessionManager->GetPluginFactory(), m_lpSessionManager->GetConfig());
 
-		m_lpEcSecurity = new ECSecurityOffline(this, m_lpSessionManager->GetConfig(), m_lpSessionManager->GetLogger());
+		m_lpEcSecurity = new ECSecurityOffline(this, m_lpSessionManager->GetConfig());
 	}
 
 	// Atomically get and AddSession() on the sessiongroup. Needs a ReleaseSession() on the session group to clean up.

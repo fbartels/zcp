@@ -52,7 +52,8 @@
 static const char THIS_FILE[] = __FILE__;
 #endif
 
-ECSecurityOffline::ECSecurityOffline(ECSession *lpSession, ECConfig *lpConfig, ECLogger *lpLogger) : ECSecurity(lpSession, lpConfig, lpLogger, NULL)
+ECSecurityOffline::ECSecurityOffline(ECSession *lpSession, ECConfig *lpConfig) :
+	ECSecurity(lpSession, lpConfig, NULL)
 {
 }
 
