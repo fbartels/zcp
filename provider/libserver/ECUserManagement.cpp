@@ -221,12 +221,12 @@ static const char *RelationTypeToName(userobject_relation_t type)
 	return "Unknown relation type";
 }
 
-ECUserManagement::ECUserManagement(BTSession *lpSession, ECPluginFactory *lpPluginFactory, ECConfig *lpConfig, ECLogger *lpLogger) {
+ECUserManagement::ECUserManagement(BTSession *lpSession,
+    ECPluginFactory *lpPluginFactory, ECConfig *lpConfig)
+{
 	this->m_lpSession = lpSession;
 	this->m_lpPluginFactory = lpPluginFactory;
 	this->m_lpConfig = lpConfig;
-	this->m_lpLogger = lpLogger;
-	this->m_lpLogger->AddRef();
 
 	pthread_mutexattr_t attr;
 	pthread_mutexattr_init(&attr);
@@ -239,7 +239,6 @@ ECUserManagement::ECUserManagement(BTSession *lpSession, ECPluginFactory *lpPlug
 
 ECUserManagement::~ECUserManagement(void)
 {
-	m_lpLogger->Release();
 	pthread_mutex_destroy(&m_hMutex);
 }
 

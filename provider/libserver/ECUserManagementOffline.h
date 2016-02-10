@@ -46,7 +46,7 @@
 class ECUserManagementOffline :	public ECUserManagement
 {
 public:
-	ECUserManagementOffline(ECSession *lpSession, ECPluginFactory *lpPluginFactory, ECConfig *lpConfig, ECLogger *lpLogger);
+	ECUserManagementOffline(ECSession *lpSession, ECPluginFactory *lpPluginFactory, ECConfig *lpConfig);
 	virtual ~ECUserManagementOffline(void);
 
 

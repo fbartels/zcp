@@ -360,10 +360,10 @@ ECSession::ECSession(const std::string& strSourceAddr, ECSESSIONID sessionID, EC
 
 	// Offline implements its own versions of these objects
 	if (bIsOffline == false) {
-		m_lpUserManagement = new ECUserManagement(this, m_lpSessionManager->GetPluginFactory(), m_lpSessionManager->GetConfig(), m_lpSessionManager->GetLogger());
+		m_lpUserManagement = new ECUserManagement(this, m_lpSessionManager->GetPluginFactory(), m_lpSessionManager->GetConfig());
 		m_lpEcSecurity = new ECSecurity(this, m_lpSessionManager->GetConfig(), m_lpSessionManager->GetLogger(), m_lpSessionManager->GetAudit());
 	} else {
-		m_lpUserManagement = new ECUserManagementOffline(this, m_lpSessionManager->GetPluginFactory(), m_lpSessionManager->GetConfig(), m_lpSessionManager->GetLogger());
+		m_lpUserManagement = new ECUserManagementOffline(this, m_lpSessionManager->GetPluginFactory(), m_lpSessionManager->GetConfig());
 
 		m_lpEcSecurity = new ECSecurityOffline(this, m_lpSessionManager->GetConfig(), m_lpSessionManager->GetLogger());
 	}
@@ -785,7 +785,7 @@ ECAuthSession::ECAuthSession(const std::string& strSourceAddr, ECSESSIONID sessi
 	m_bValidated = false;
 	m_ulSessionTimeout = 30;	// authenticate within 30 seconds, or else!
 
-	m_lpUserManagement = new ECUserManagement(this, m_lpSessionManager->GetPluginFactory(), m_lpSessionManager->GetConfig(), m_lpSessionManager->GetLogger());
+	m_lpUserManagement = new ECUserManagement(this, m_lpSessionManager->GetPluginFactory(), m_lpSessionManager->GetConfig());
 
 	m_ulConnectingPid = 0;
 

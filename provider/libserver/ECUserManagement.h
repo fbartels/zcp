@@ -164,7 +164,7 @@ private:
 
 class ECUserManagement {
 public:
-	ECUserManagement(BTSession *lpSession, ECPluginFactory *lpPluginFactory, ECConfig *lpConfig, ECLogger *lpLogger);
+	ECUserManagement(BTSession *lpSession, ECPluginFactory *lpPluginFactory, ECConfig *lpConfig);
 	virtual ~ECUserManagement();
 
 	// Authenticate a user
@@ -310,7 +310,6 @@ private:
 protected:
 	ECPluginFactory 	*m_lpPluginFactory;
 	BTSession			*m_lpSession;
-	ECLogger			*m_lpLogger;
 	ECConfig			*m_lpConfig;
 
 private:
