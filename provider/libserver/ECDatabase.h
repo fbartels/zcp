@@ -45,7 +45,6 @@
 #define ECDATABASE_H
 
 #include <zarafa/ECConfig.h>
-#include <zarafa/ECLogger.h>
 #include <zarafa/ZarafaCode.h>
 
 #include <string>
@@ -69,8 +68,6 @@ protected:
 	bool m_bForceUpdate;
 
 public:
-	ECLogger *m_lpLogger;
-
 	virtual 				~ECDatabase() {};
 	
 	virtual ECRESULT		Connect() = 0;
@@ -121,9 +118,6 @@ public:
 	virtual ECRESULT		CreateDatabase() = 0;
 	virtual ECRESULT		UpdateDatabase(bool bForceUpdate, std::string &strReport) = 0;
 	virtual ECRESULT		InitializeDBState() = 0;
-
-	// Get logger
-	virtual ECLogger*		GetLogger() = 0;
 
 	// Get Database path
 	virtual std::string		GetDatabaseDir() = 0;

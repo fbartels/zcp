@@ -75,7 +75,7 @@ ECRESULT ECDatabaseFactory::GetDatabaseFactory(ECDatabase **lppDatabase)
 	const char *szEngine = m_lpConfig->GetSetting("database_engine");
 
 	if(stricmp(szEngine, "mysql") == 0) {
-		*lppDatabase = new ECDatabaseMySQL(m_lpLogger, m_lpConfig);
+		*lppDatabase = new ECDatabaseMySQL(m_lpConfig);
 	} else {
 		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "ECDatabaseFactory::GetDatabaseFactory(): database not mysql");
 		er = ZARAFA_E_DATABASE_ERROR;

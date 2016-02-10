@@ -387,13 +387,11 @@ int zcp_versiontuple::compare(const zcp_versiontuple &rhs) const
 	return 0;
 }
 
-ECDatabaseMySQL::ECDatabaseMySQL(ECLogger *lpLogger, ECConfig *lpConfig)
+ECDatabaseMySQL::ECDatabaseMySQL(ECConfig *lpConfig)
 {
 	m_bMysqlInitialize	= false;
 	m_bConnected		= false;
 	m_bAutoLock			= true;
-	m_lpLogger			= lpLogger;
-	m_lpLogger->AddRef();
 	m_lpConfig			= lpConfig;
 	m_bSuppressLockErrorLogging = false;
 
@@ -412,8 +410,6 @@ ECDatabaseMySQL::ECDatabaseMySQL(ECLogger *lpLogger, ECConfig *lpConfig)
 ECDatabaseMySQL::~ECDatabaseMySQL()
 {
 	Close();
-	m_lpLogger->Release();
-
 	// Close the mutex handle of mysql
 	pthread_mutex_destroy(&m_hMutexMySql);
 }
@@ -598,12 +594,6 @@ ECRESULT ECDatabaseMySQL::InitEngine()
 
 exit:
 	return er;
-}
-
-ECLogger* ECDatabaseMySQL::GetLogger()
-{
-	ASSERT(m_lpLogger);
-	return m_lpLogger;
 }
 
 std::string ECDatabaseMySQL::GetDatabaseDir()

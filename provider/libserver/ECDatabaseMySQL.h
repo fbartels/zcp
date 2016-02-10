@@ -56,12 +56,13 @@
 #include "ECDatabase.h"
 
 class ECConfig;
+class ECLogger;
 class zcp_versiontuple;
 
 class ECDatabaseMySQL _zcp_final : public ECDatabase
 {
 public:
-	ECDatabaseMySQL(ECLogger *lpLogger, ECConfig *lpConfig);
+	ECDatabaseMySQL(ECConfig *lpConfig);
 	virtual ~ECDatabaseMySQL();
 
 	// Embedded mysql
@@ -114,8 +115,6 @@ public:
 	// Main update unit
 	ECRESULT UpdateDatabase(bool bForceUpdate, std::string &strReport) _zcp_override;
 	ECRESULT InitializeDBState(void) _zcp_override;
-
-	ECLogger *GetLogger(void) _zcp_override;
 
 	std::string GetDatabaseDir(void) _zcp_override;
 	
