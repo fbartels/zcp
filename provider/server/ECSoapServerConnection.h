@@ -81,6 +81,6 @@ private:
 	std::string	m_strPipeName;
 };
 
-extern int relocate_fd(int fd, ECLogger *lpLogger);
+extern int relocate_fd(int fd);
 
 #endif // #ifndef ECSOAPSERVERCONNECTION_H

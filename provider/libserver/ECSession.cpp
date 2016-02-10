@@ -102,7 +102,7 @@ static const char THIS_FILE[] = __FILE__;
 #endif
 
 // hackish import of relocate_fd
-int relocate_fd(int fd, ECLogger *lpLogger);
+int relocate_fd(int fd);
 
 // possible missing ssl function
 #ifndef HAVE_EVP_PKEY_CMP
@@ -1568,9 +1568,9 @@ ECRESULT ECAuthSession::ValidateSSOData_NTLM(struct soap* soap, const char* lpsz
 			close(m_NTLM_stdin[0]);
 			close(m_NTLM_stdout[1]);
 			close(m_NTLM_stderr[1]);
-			m_stdin = relocate_fd(m_NTLM_stdin[1],  m_lpSessionManager->GetLogger());
-			m_stdout = relocate_fd(m_NTLM_stdout[0],  m_lpSessionManager->GetLogger());
-			m_stderr = relocate_fd(m_NTLM_stderr[0],  m_lpSessionManager->GetLogger());
+			m_stdin = relocate_fd(m_NTLM_stdin[1]);
+			m_stdout = relocate_fd(m_NTLM_stdout[0]);
+			m_stderr = relocate_fd(m_NTLM_stderr[0]);
 
 			// Yo! Refresh!
 			write(m_stdin, "YR ", 3);
