@@ -184,7 +184,7 @@ ECRESULT NamedPropertyMapper::GetId(const GUID &guid, unsigned int ulNameId, uns
 	if ((lpRow = m_lpDatabase->FetchRow(lpResult)) != NULL) {
 		if (lpRow[0] == NULL) {
 			er = ZARAFA_E_DATABASE_ERROR;
-			m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "NamedPropertyMapper::GetId(): column null");
+			ec_log_err("NamedPropertyMapper::GetId(): column null");
 			goto exit;
 		}
 
@@ -242,7 +242,7 @@ ECRESULT NamedPropertyMapper::GetId(const GUID &guid, const std::string &strName
 	if ((lpRow = m_lpDatabase->FetchRow(lpResult)) != NULL) {
 		if (lpRow[0] == NULL) {
 			er = ZARAFA_E_DATABASE_ERROR;
-			m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "NamedPropertyMapper::GetId(): column null");
+			ec_log_err("NamedPropertyMapper::GetId(): column null");
 			goto exit;
 		}
 
@@ -894,7 +894,7 @@ static ECRESULT SerializeProps(ECSession *lpecSession, ECDatabase *lpDatabase,
 		lpDBLen = lpDatabase->FetchRowLengths(lpDBResult);
 		if (lpDBRow == NULL || lpDBLen == NULL) {
 			er = ZARAFA_E_DATABASE_ERROR;
-			lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "SerializeProps(): fetchrow/fetchrowlengths failed");
+			ec_log_err("SerializeProps(): fetchrow/fetchrowlengths failed");
 			goto exit;
 		}
 
@@ -1033,7 +1033,7 @@ ECRESULT SerializeMessage(ECSession *lpecSession, ECDatabase *lpStreamDatabase, 
 
 		if (lpDBRow == NULL || lpDBLen == NULL) {
 			er = ZARAFA_E_DATABASE_ERROR;
-			lpStreamDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "SerializeMessage(): fetchrow/fetchrowlengths failed");
+			ec_log_err("SerializeMessage(): fetchrow/fetchrowlengths failed");
 			goto exit;
 		}
 
@@ -1113,7 +1113,7 @@ ECRESULT SerializeMessage(ECSession *lpecSession, ECDatabase *lpStreamDatabase, 
 			if(lpDBRow != NULL) {
 				if(lpDBRow[0] == NULL) {
 					er = ZARAFA_E_DATABASE_ERROR;
-					lpStreamDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "SerializeMessage(): column null");
+					ec_log_err("SerializeMessage(): column null");
 					goto exit;
 				}
 				
@@ -1525,7 +1525,7 @@ ECRESULT DeserializeProps(ECSession *lpecSession, ECDatabase *lpDatabase, ECAtta
 					goto exit;
 				if (ulAffected != 1) {
 					er = ZARAFA_E_DATABASE_ERROR;
-					lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "DeserializeProps(): Unexpected affected row count");
+					ec_log_err("DeserializeProps(): Unexpected affected row count");
 					goto exit;
 				}
 			}
@@ -1969,7 +1969,7 @@ ECRESULT GetValidatedPropCount(ECDatabase *lpDatabase, DB_RESULT lpDBResult, uns
 		unsigned int ulType;
 		er = GetValidatedPropType(lpRow, &ulType);	// Ignore ulType, we just need the validation
 		if (er == ZARAFA_E_DATABASE_ERROR) {
-			lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "GetValidatedPropCount(): GetValidatedPropType failed");
+			ec_log_err("GetValidatedPropCount(): GetValidatedPropType failed");
 			er = erSuccess;
 			continue;
 		} else if (er != erSuccess)

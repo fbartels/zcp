@@ -187,7 +187,7 @@ ECRESULT ECAttachmentStorage::GetSingleInstanceId(ULONG ulObjId, ULONG ulTag, UL
 
 	er = m_lpDatabase->DoSelect(strQuery, &lpDBResult);
 	if (er != erSuccess) {
-		m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECAttachmentStorage::GetSingleInstanceId(): DoSelect() failed %x", er);
+		ec_log_err("ECAttachmentStorage::GetSingleInstanceId(): DoSelect() failed %x", er);
 		goto exit;
 	}
 
@@ -195,7 +195,7 @@ ECRESULT ECAttachmentStorage::GetSingleInstanceId(ULONG ulObjId, ULONG ulTag, UL
 
 	if (!lpDBRow || !lpDBRow[0]) {
 		er = ZARAFA_E_NOT_FOUND;
-		// m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECAttachmentStorage::GetSingleInstanceId(): FetchRow() failed %x", er);
+		// ec_log_err("ECAttachmentStorage::GetSingleInstanceId(): FetchRow() failed %x", er);
 		goto exit;
 	}
 
@@ -250,7 +250,7 @@ ECRESULT ECAttachmentStorage::GetSingleInstanceIds(const std::list<ULONG> &lstOb
 
 	while ((lpDBRow = m_lpDatabase->FetchRow(lpDBResult)) != NULL) {
 		if (lpDBRow[0] == NULL) {
-			m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECAttachmentStorage::GetSingleInstanceIds(): column contains NULL");
+			ec_log_err("ECAttachmentStorage::GetSingleInstanceIds(): column contains NULL");
 			er = ZARAFA_E_DATABASE_ERROR;
 			goto exit;
 		}
@@ -332,7 +332,7 @@ ECRESULT ECAttachmentStorage::GetSingleInstanceParents(ULONG ulInstanceId, std::
 	while ((lpDBRow = m_lpDatabase->FetchRow(lpDBResult)) != NULL) {
 		if (lpDBRow[0] == NULL) {
 			er = ZARAFA_E_DATABASE_ERROR;
-			m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECAttachmentStorage::GetSingleInstanceParents(): column contains NULL");
+			ec_log_err("ECAttachmentStorage::GetSingleInstanceParents(): column contains NULL");
 			goto exit;
 		}
 
@@ -416,7 +416,7 @@ ECRESULT ECAttachmentStorage::GetOrphanedSingleInstances(const std::list<ULONG> 
 
 	er = m_lpDatabase->DoSelect(strQuery, &lpDBResult);
 	if (er != erSuccess) {
-		m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECAttachmentStorage::GetOrphanedSingleInstances(): DoSelect failed %x", er);
+		ec_log_err("ECAttachmentStorage::GetOrphanedSingleInstances(): DoSelect failed %x", er);
 		goto exit;
 	}
 
@@ -430,7 +430,7 @@ ECRESULT ECAttachmentStorage::GetOrphanedSingleInstances(const std::list<ULONG> 
 	while ((lpDBRow = m_lpDatabase->FetchRow(lpDBResult)) != NULL) {
 		if (lpDBRow[0] == NULL) {
 			er = ZARAFA_E_DATABASE_ERROR;
-			m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECAttachmentStorage::GetOrphanedSingleInstances(): column contains NULL");
+			ec_log_err("ECAttachmentStorage::GetOrphanedSingleInstances(): column contains NULL");
 			goto exit;
 		}
 
@@ -569,7 +569,7 @@ ECRESULT ECAttachmentStorage::SaveAttachment(ULONG ulObjId, ULONG ulPropId, bool
 		"(" + stringify(ulObjId) + ", " + stringify(ulPropId) + ")";
 	er = m_lpDatabase->DoInsert(strQuery, (unsigned int*)&ulInstanceId);
 	if (er != erSuccess) {
-		m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECAttachmentStorage::SaveAttachment(): DoInsert failed %x", er);
+		ec_log_err("ECAttachmentStorage::SaveAttachment(): DoInsert failed %x", er);
 		goto exit;
 	}
 
@@ -620,7 +620,7 @@ ECRESULT ECAttachmentStorage::SaveAttachment(ULONG ulObjId, ULONG ulPropId, bool
 		"(" + stringify(ulObjId) + ", " + stringify(ulPropId) + ")";
 	er = m_lpDatabase->DoInsert(strQuery, (unsigned int*)&ulInstanceId);
 	if (er != erSuccess) {
-		m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECAttachmentStorage::SaveAttachment(): DoInsert failed %x", er);
+		ec_log_err("ECAttachmentStorage::SaveAttachment(): DoInsert failed %x", er);
 		goto exit;
 	}
 
@@ -705,7 +705,7 @@ ECRESULT ECAttachmentStorage::CopyAttachment(ULONG ulObjId, ULONG ulNewObjId)
 
 	er = m_lpDatabase->DoInsert(strQuery);
 	if (er != erSuccess) {
-		m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECAttachmentStorage::CopyAttachment(): DoInsert failed %x", er);
+		ec_log_err("ECAttachmentStorage::CopyAttachment(): DoInsert failed %x", er);
 		goto exit;
 	}
 
@@ -758,7 +758,7 @@ ECRESULT ECAttachmentStorage::DeleteAttachments(const std::list<ULONG> &lstDelet
 
 	er = m_lpDatabase->DoDelete(strQuery);
 	if (er != erSuccess) {
-		m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECAttachmentStorage::DeleteAttachments(): DoDelete failed %x", er);
+		ec_log_err("ECAttachmentStorage::DeleteAttachments(): DoDelete failed %x", er);
 		goto exit;
 	}
 
@@ -829,7 +829,7 @@ ECRESULT ECAttachmentStorage::DeleteAttachment(ULONG ulObjId, ULONG ulPropId, bo
 
 	er = m_lpDatabase->DoDelete(strQuery);
 	if (er != erSuccess) {
-		m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECAttachmentStorage::DeleteAttachment(): DoDelete failed %x", er);
+		ec_log_err("ECAttachmentStorage::DeleteAttachment(): DoDelete failed %x", er);
 		goto exit;
 	}
 
@@ -910,7 +910,7 @@ bool ECDatabaseAttachment::ExistAttachmentInstance(ULONG ulInstanceId)
 
 	er = m_lpDatabase->DoSelect(strQuery, &lpDBResult);
 	if (er != erSuccess) {
-		m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECAttachmentStorage::ExistAttachmentInstance(): DoSelect failed %x", er);
+		ec_log_err("ECAttachmentStorage::ExistAttachmentInstance(): DoSelect failed %x", er);
 		goto exit;
 	}
 
@@ -951,14 +951,14 @@ ECRESULT ECDatabaseAttachment::LoadAttachmentInstance(struct soap *soap, ULONG u
 	strQuery = "SELECT SUM(LENGTH(val_binary)) FROM lob WHERE instanceid = " + stringify(ulInstanceId);
 	er = m_lpDatabase->DoSelect(strQuery, &lpDBResult);
 	if (er != erSuccess) {
-		m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECAttachmentStorage::LoadAttachmentInstance(): DoSelect failed %x", er);
+		ec_log_err("ECAttachmentStorage::LoadAttachmentInstance(): DoSelect failed %x", er);
 		goto exit;
 	}
 
 	lpDBRow = m_lpDatabase->FetchRow(lpDBResult);
 	if (lpDBRow == NULL || lpDBRow[0] == NULL) {
 		er = ZARAFA_E_DATABASE_ERROR;
-		m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECDatabaseAttachment::LoadAttachmentInstance(): no row returned");
+		ec_log_err("ECDatabaseAttachment::LoadAttachmentInstance(): no row returned");
 		goto exit;
 	}
 
@@ -972,7 +972,7 @@ ECRESULT ECDatabaseAttachment::LoadAttachmentInstance(struct soap *soap, ULONG u
 
 	er = m_lpDatabase->DoSelect(strQuery, &lpDBResult);
 	if (er != erSuccess) {
-		m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECAttachmentStorage::LoadAttachmentInstance(): DoSelect(2) failed %x", er);
+		ec_log_err("ECAttachmentStorage::LoadAttachmentInstance(): DoSelect(2) failed %x", er);
 		goto exit;
 	}
 
@@ -982,7 +982,7 @@ ECRESULT ECDatabaseAttachment::LoadAttachmentInstance(struct soap *soap, ULONG u
 		if (lpDBRow[0] == NULL) {
 			// broken attachment!
 			er = ZARAFA_E_DATABASE_ERROR;
-			m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECDatabaseAttachment::LoadAttachmentInstance(): column contained NULL");
+			ec_log_err("ECDatabaseAttachment::LoadAttachmentInstance(): column contained NULL");
 			goto exit;
 		}
 
@@ -1028,7 +1028,7 @@ ECRESULT ECDatabaseAttachment::LoadAttachmentInstance(ULONG ulInstanceId, size_t
 
 	er = m_lpDatabase->DoSelect(strQuery, &lpDBResult);
 	if (er != erSuccess) {
-		m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECAttachmentStorage::LoadAttachmentInstance(): DoSelect failed %x", er);
+		ec_log_err("ECAttachmentStorage::LoadAttachmentInstance(): DoSelect failed %x", er);
 		goto exit;
 	}
 
@@ -1036,14 +1036,14 @@ ECRESULT ECDatabaseAttachment::LoadAttachmentInstance(ULONG ulInstanceId, size_t
 		if (lpDBRow[0] == NULL) {
 			// broken attachment !
 			er = ZARAFA_E_DATABASE_ERROR;
-			m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECDatabaseAttachment::LoadAttachmentInstance(): column contained NULL");
+			ec_log_err("ECDatabaseAttachment::LoadAttachmentInstance(): column contained NULL");
 			goto exit;
 		}
 
 		lpDBLen = m_lpDatabase->FetchRowLengths(lpDBResult);
 		er = lpSink->Write(lpDBRow[0], 1, lpDBLen[0]);
 		if (er != erSuccess) {
-			m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECAttachmentStorage::LoadAttachmentInstance(): Write failed %x", er);
+			ec_log_err("ECAttachmentStorage::LoadAttachmentInstance(): Write failed %x", er);
 			goto exit;
 		}
 
@@ -1093,7 +1093,7 @@ ECRESULT ECDatabaseAttachment::SaveAttachmentInstance(ULONG ulInstanceId, ULONG 
 
 		er = m_lpDatabase->DoInsert(strQuery);
 		if (er != erSuccess) {
-			m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECAttachmentStorage::SaveAttachmentInstance(): DoInsert failed %x", er);
+			ec_log_err("ECAttachmentStorage::SaveAttachmentInstance(): DoInsert failed %x", er);
 			goto exit;
 		}
 
@@ -1144,7 +1144,7 @@ ECRESULT ECDatabaseAttachment::SaveAttachmentInstance(ULONG ulInstanceId, ULONG 
 
 		er = m_lpDatabase->DoInsert(strQuery);
 		if (er != erSuccess) {
-			m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECAttachmentStorage::SaveAttachmentInstance(): DoInsert failed %x", er);
+			ec_log_err("ECAttachmentStorage::SaveAttachmentInstance(): DoInsert failed %x", er);
 			goto exit;
 		}
 
@@ -1224,14 +1224,14 @@ ECRESULT ECDatabaseAttachment::GetSizeInstance(ULONG ulInstanceId, size_t *lpulS
 	strQuery = "SELECT SUM(LENGTH(val_binary)) FROM lob WHERE instanceid = " + stringify(ulInstanceId);
 	er = m_lpDatabase->DoSelect(strQuery, &lpDBResult); 
 	if (er != erSuccess)  {
-		m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECAttachmentStorage::GetSizeInstance(): DoSelect failed %x", er);
+		ec_log_err("ECAttachmentStorage::GetSizeInstance(): DoSelect failed %x", er);
 		goto exit; 
 	}
 
 	lpDBRow = m_lpDatabase->FetchRow(lpDBResult); 
 	if (lpDBRow == NULL || lpDBRow[0] == NULL) { 
 		er = ZARAFA_E_DATABASE_ERROR; 
-		m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECDatabaseAttachment::GetSizeInstance(): now row or column contained NULL");
+		ec_log_err("ECDatabaseAttachment::GetSizeInstance(): now row or column contained NULL");
 		goto exit; 
 	} 
  	 
@@ -2253,14 +2253,14 @@ ECRESULT ECFileAttachment::GetSizeInstance(ULONG ulInstanceId, size_t *lpulSize,
 	}
 
 	if (fd == -1) {
-		m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECFileAttachment::GetSizeInstance(): file %s cannot be accessed (%s)", filename.c_str(), strerror(errno));
+		ec_log_err("ECFileAttachment::GetSizeInstance(): file \"%s\" cannot be accessed: %s", filename.c_str(), strerror(errno));
 		er = ZARAFA_E_NOT_FOUND;
 		goto exit;
 	}
 
 	/* Uncompressed attachment */
 	if (fstat(fd, &st) == -1) {
-		m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECFileAttachment::GetSizeInstance(): file %s fstat failed: %s", filename.c_str(), strerror(errno));
+		ec_log_err("ECFileAttachment::GetSizeInstance(): file \"%s\" fstat failed: %s", filename.c_str(), strerror(errno));
 		// FIXME er = ZARAFA_E_DATABASE_ERROR;
 		goto exit;
 	}
@@ -2273,7 +2273,7 @@ ECRESULT ECFileAttachment::GetSizeInstance(ULONG ulInstanceId, size_t *lpulSize,
 		// make this minimum size bigger
 		if (st.st_size >= 4) {
 			if (lseek(fd, -4, SEEK_END) == -1) {
-				m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECFileAttachment::GetSizeInstance(): file %s fseek (compressed file) failed: %s", filename.c_str(), strerror(errno));
+				ec_log_err("ECFileAttachment::GetSizeInstance(): file \"%s\" fseek (compressed file) failed: %s", filename.c_str(), strerror(errno));
 				// FIXME er = ZARAFA_E_DATABASE_ERROR;
 				goto exit;
 			}
@@ -2281,7 +2281,7 @@ ECRESULT ECFileAttachment::GetSizeInstance(ULONG ulInstanceId, size_t *lpulSize,
 			// FIXME endianness
 			uint32_t atsize;
 			if (read_retry(fd, &atsize, 4) != 4) {
-				m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "ECFileAttachment::GetSizeInstance(): file %s fread failed: %s", filename.c_str(), strerror(errno));
+				ec_log_err("ECFileAttachment::GetSizeInstance(): file \"%s\" fread failed: %s", filename.c_str(), strerror(errno));
 				// FIXME er = ZARAFA_E_DATABASE_ERROR;
 				goto exit;
 			}
@@ -2289,7 +2289,7 @@ ECRESULT ECFileAttachment::GetSizeInstance(ULONG ulInstanceId, size_t *lpulSize,
 			*lpulSize = atsize;
 		} else {
 			*lpulSize = 0;
-			m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_DEBUG, "ECFileAttachment::GetSizeInstance(): file %s truncated!", filename.c_str());
+			ec_log_debug("ECFileAttachment::GetSizeInstance(): file \"%s\" is truncated!", filename.c_str());
 			// FIXME return some error
 		}
 	}

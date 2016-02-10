@@ -314,7 +314,7 @@ ECRESULT InsertServerGUID(ECDatabase *lpDatabase)
 
 	if (CoCreateGuid(&guid) != S_OK) {
 		er = ZARAFA_E_DATABASE_ERROR;
-		lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "InsertServerGUID(): CoCreateGuid failed");
+		ec_log_err("InsertServerGUID(): CoCreateGuid failed");
 		goto exit;
 	}
 
@@ -355,7 +355,7 @@ ECRESULT UpdateDatabaseCreateSourceKeys(ECDatabase *lpDatabase)
 	lpDBLenths = lpDatabase->FetchRowLengths(lpResult);
 	if(lpDBRow == NULL || lpDBRow[0] == NULL || lpDBLenths == NULL || lpDBLenths[0] != sizeof(GUID)) {
 		er = ZARAFA_E_DATABASE_ERROR;
-		lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "UpdateDatabaseCreateSourceKeys(): row or columns NULL");
+		ec_log_err("UpdateDatabaseCreateSourceKeys(): row or columns NULL");
 		goto exit;
 	}
 	
@@ -401,7 +401,7 @@ ECRESULT UpdateDatabaseConvertEntryIDs(ECDatabase *lpDatabase)
 
 	nStores = lpDatabase->GetNumRows(lpResult);
 
-	lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL,"  Stores to convert: %d", nStores);
+	ec_log_notice("  Stores to convert: %d", nStores);
 
 	for(i=0; i < nStores; i++ ) {
 		lpDBRow = lpDatabase->FetchRow(lpResult);
@@ -410,21 +410,21 @@ ECRESULT UpdateDatabaseConvertEntryIDs(ECDatabase *lpDatabase)
 			lpDBLenths == NULL || lpDBLenths[0] != sizeof(GUID) )
 		{
 			er = ZARAFA_E_DATABASE_ERROR;
-			lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL,"  Failed to convert store: %s", (lpDBRow && lpDBRow[1])?lpDBRow[1]:"Unknown");
+			ec_log_crit("  Failed to convert store \"%s\"", (lpDBRow && lpDBRow[1])?lpDBRow[1]:"Unknown");
 			
 			if(lpDBRow == NULL || lpDBRow[0] == NULL || lpDBLenths == NULL || lpDBLenths[0] != sizeof(GUID) )
-				lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL,"  The table 'stores' includes a wrong guid");
+				ec_log_crit("  The table \"stores\" includes a wrong GUID");
 			else
-				lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL,"  Check the data in table 'stores'");
+				ec_log_crit("  Check the data in table \"stores\"");
 			
 			goto exit;
 		}
 
-		lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL,"  Convert entryids of store: %d", atoui(lpDBRow[1]));
+		ec_log_notice("  Converting entryids of store %d", atoui(lpDBRow[1]));
 
 		er = CreateRecursiveStoreEntryIds(lpDatabase, atoui(lpDBRow[1]), (unsigned char*)lpDBRow[0]);
 		if(er != erSuccess) {
-			lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL,"  Failed to convert store: %d", atoui(lpDBRow[1]));
+			ec_log_crit("  Failed to convert store %d", atoui(lpDBRow[1]));
 			goto exit;	
 		}
 
@@ -502,7 +502,7 @@ ECRESULT CreateRecursiveStoreEntryIds(ECDatabase *lpDatabase, unsigned int ulSto
 			
 			if (lpDBRow[0] == NULL) {
 				er = ZARAFA_E_DATABASE_ERROR;
-				lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "CreateRecursiveStoreEntryIds(): column is NULL");
+				ec_log_err("CreateRecursiveStoreEntryIds(): column is NULL");
 				goto exit;
 			}
 
@@ -549,21 +549,21 @@ ECRESULT UpdateDatabaseSearchCriteria(ECDatabase *lpDatabase)
 		ulStoreId = atoui(lpDBRow[0]);
 
 		if (ulStoreLast != ulStoreId) {
-			lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL," Convert store %d", ulStoreId);
+			ec_log_notice(" Convert store %d", ulStoreId);
 			ulStoreLast = ulStoreId;
 		}
 		
 		// convert the entryidlist
 		if (ConvertSearchCriteria52XTo6XX(lpDatabase, lpDBRow[2], &lpNewSearchCriteria) != erSuccess)
 		{
-			lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL,"  WARNING: Unable to convert the search criteria of folder %d",  atoui(lpDBRow[1]));
+			ec_log_crit("  WARNING: Unable to convert the search criteria of folder %d", atoui(lpDBRow[1]));
 			goto next;
 		}
 
 		// Save criteria in new format
 		er = ECSearchFolders::SaveSearchCriteria(lpDatabase, atoui(lpDBRow[0]), atoui(lpDBRow[1]), lpNewSearchCriteria);
 		if (er != erSuccess) {
-			lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL,"  Unable to save the new search criteria of folder %d", atoui(lpDBRow[1]));
+			ec_log_crit("  Unable to save the new search criteria of folder %d", atoui(lpDBRow[1]));
 			goto exit;
 		}
 next: //Free
@@ -817,7 +817,7 @@ ECRESULT UpdateDatabaseKeysChanges(ECDatabase *lpDatabase)
 				
 				if (lpDBRow[0] == NULL) {
 					er = ZARAFA_E_DATABASE_ERROR;
-					lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "UpdateDatabaseKeysChanges(): column is NULL");
+					ec_log_err("UpdateDatabaseKeysChanges(): column is NULL");
 					goto exit;
 				}
 
@@ -898,7 +898,7 @@ ECRESULT UpdateDatabaseMoveFoldersInPublicFolder(ECDatabase *lpDatabase)
 			break;
 		
 		if (lpDBRow[0] == NULL || lpDBRow[1] == NULL) {
-			lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL,"  Skip store: Unable to get the store information, storeid: %s", (lpDBRow[0])?lpDBRow[0]:"Unknown");
+			ec_log_crit("  Skip store: Unable to get the store information for storeid \"%s\"", (lpDBRow[0])?lpDBRow[0]:"Unknown");
 			continue;
 		}
 
@@ -1063,7 +1063,7 @@ ECRESULT UpdateDatabaseAddExternIdToObject(ECDatabase *lpDatabase)
 	while ((lpDBRow = lpDatabase->FetchRow(lpResult))) {
 		if (lpDBRow[0] == NULL || lpDBRow[1] == NULL) {
 			er = ZARAFA_E_DATABASE_ERROR;
-			lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "  object table contains invalid NULL records");
+			ec_log_err("  object table contains invalid NULL records");
 			goto exit;
 		}
 
@@ -1097,13 +1097,13 @@ ECRESULT UpdateDatabaseAddExternIdToObject(ECDatabase *lpDatabase)
 			lpDBLen = lpDatabase->FetchRowLengths(lpResult);
 			if (lpDBLen == NULL) {
 				er = ZARAFA_E_DATABASE_ERROR;
-				lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "UpdateDatabaseAddExternIdToObject(): FetchRowLengths failed");
+				ec_log_err("UpdateDatabaseAddExternIdToObject(): FetchRowLengths failed");
 				goto exit;
 			}
 
 			if (lpDBRow[0] == NULL) {
 				er = ZARAFA_E_DATABASE_ERROR;
-				lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "UpdateDatabaseAddExternIdToObject(): column NULL");
+				ec_log_err("UpdateDatabaseAddExternIdToObject(): column NULL");
 				goto exit;
 			}
 
@@ -1149,7 +1149,7 @@ ECRESULT UpdateDatabaseAddExternIdToObject(ECDatabase *lpDatabase)
 	while ((lpDBRow = lpDatabase->FetchRow(lpResult))) {
 		if (lpDBRow[0] == NULL || lpDBRow[1] == NULL || lpDBRow[2] == NULL) {
 			er = ZARAFA_E_DATABASE_ERROR;
-			lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "  objectrelation table contains invalid NULL records");
+			ec_log_crit("  objectrelation table contains invalid NULL records");
 			goto exit;
 		}
 
@@ -1387,7 +1387,7 @@ ECRESULT UpdateDatabaseCreateABChangesTable(ECDatabase *lpDatabase)
 
 		if (lpDBRow[0] == NULL || lpDBRow[1] == NULL || lpDBLen[1] == 0 || lpDBRow[2] == NULL || lpDBLen[2] == 0) {
 			er = ZARAFA_E_DATABASE_ERROR;
-			lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "  changes table contains invalid NULL records");
+			ec_log_crit("  changes table contains invalid NULL records");
 			goto exit;
 		}
 
@@ -1564,7 +1564,7 @@ ECRESULT UpdateDatabaseConvertObjectTypeToObjectClass(ECDatabase *lpDatabase)
 			lpDBLen = lpDatabase->FetchRowLengths(lpResult);
 			if (lpDBRow[0] == NULL || lpDBLen == NULL || lpDBLen[0] == 0) {
 				er = ZARAFA_E_DATABASE_ERROR;
-				lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "  users table contains invalid NULL records for type %d", iTypes->first);
+				ec_log_crit("  users table contains invalid NULL records for type %d", iTypes->first);
 				goto exit;
 			}
 
@@ -1992,11 +1992,11 @@ ECRESULT UpdateDatabaseConvertToUnicode(ECDatabase *lpDatabase)
 		PROGRESS_DONE
 #ifndef HAVE_OFFLINE_SUPPORT
 	} else {
-		lpDatabase->m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Will not upgrade your database from 6.40.x to 7.0.");
-		lpDatabase->m_lpLogger->Log(EC_LOGLEVEL_FATAL, "The recommended upgrade procedure is to use the zarafa7-upgrade commandline tool.");
-		lpDatabase->m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Please consult the Zarafa administrator manual on how to correctly upgrade your database.");
-		lpDatabase->m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Alternatively you may try to upgrade using --force-database-upgrade,");
-		lpDatabase->m_lpLogger->Log(EC_LOGLEVEL_FATAL, "but no progress and estimates within the updates will be available.");
+		ec_log_crit("Will not upgrade your database from 6.40.x to 7.0.");
+		ec_log_crit("The recommended upgrade procedure is to use the zarafa7-upgrade commandline tool.");
+		ec_log_crit("Please consult the Zarafa administrator manual on how to correctly upgrade your database.");
+		ec_log_crit("Alternatively you may try to upgrade using --force-database-upgrade,");
+		ec_log_crit("but no progress and estimates within the updates will be available.");
 		er = ZARAFA_E_USER_CANCEL;
 		goto exit;
 	}
@@ -2053,7 +2053,7 @@ ECRESULT UpdateDatabaseConvertRules(ECDatabase *lpDatabase)
 	while ((lpDBRow = lpDatabase->FetchRow(lpResult))) {
 		if (lpDBRow[0] == NULL || lpDBRow[1] == NULL || lpDBRow[2] == NULL) {
 			er = ZARAFA_E_DATABASE_ERROR;
-			lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "UpdateDatabaseConvertRules(): column NULL");
+			ec_log_err("UpdateDatabaseConvertRules(): column NULL");
 			goto exit;
 		}
 
@@ -2112,7 +2112,7 @@ ECRESULT UpdateDatabaseConvertSearchFolders(ECDatabase *lpDatabase)
 	while ((lpDBRow = lpDatabase->FetchRow(lpResult))) {
 		if (lpDBRow[0] == NULL || lpDBRow[1] == NULL || lpDBRow[2] == NULL) {
 			er = ZARAFA_E_DATABASE_ERROR;
-			lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "UpdateDatabaseConvertSearchFolders(): column NULL");
+			ec_log_err("UpdateDatabaseConvertSearchFolders(): column NULL");
 			goto exit;
 		}
 
@@ -2172,7 +2172,7 @@ ECRESULT UpdateDatabaseConvertProperties(ECDatabase *lpDatabase)
 	lpDBRow = lpDatabase->FetchRow(lpResult);
 	if (lpDBRow == NULL) {
 		er = ZARAFA_E_DATABASE_ERROR;
-		lpDatabase->m_lpLogger->Log(EC_LOGLEVEL_FATAL, "UpdateDatabaseConvertProperties(): row non existing");
+		ec_log_err("UpdateDatabaseConvertProperties(): row non existing");
 		goto exit;
 	}
 
@@ -2420,7 +2420,7 @@ ECRESULT UpdateDatabaseCreateTProperties(ECDatabase *lpDatabase)
 	lpDBRow = lpDatabase->FetchRow(lpResult);
 	if (lpDBRow == NULL) {
 		er = ZARAFA_E_DATABASE_ERROR;
-		lpDatabase->m_lpLogger->Log(EC_LOGLEVEL_FATAL, "UpdateDatabaseCreateTProperties(): row non existing");
+		ec_log_err("UpdateDatabaseCreateTProperties(): row non existing");
 		goto exit;
 	}
 
@@ -2553,7 +2553,7 @@ ECRESULT UpdateDatabaseConvertChanges(ECDatabase *lpDatabase)
 	lpDBRow = lpDatabase->FetchRow(lpResult);
 	if (lpDBRow == NULL) {
 		er = ZARAFA_E_DATABASE_ERROR;
-		lpDatabase->m_lpLogger->Log(EC_LOGLEVEL_FATAL, "UpdateDatabaseConvertChanges(): row non existing");
+		ec_log_err("UpdateDatabaseConvertChanges(): row non existing");
 		goto exit;
 	}
 
@@ -2676,7 +2676,7 @@ ECRESULT UpdateDatabaseConvertStores(ECDatabase *lpDatabase)
 					"DROP KEY `user_hierarchy_id` ";
 	er = lpDatabase->DoUpdate(strQuery);
 	if (er != erSuccess) {
-		lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "Ignoring optional index error, and continuing database upgrade");
+		ec_log_err("Ignoring optional index error, and continuing database upgrade");
 		er = erSuccess;
 	}
 

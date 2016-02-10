@@ -2061,13 +2061,13 @@ static ECRESULT WriteProps(struct soap *soap, ECSession *lpecSession,
 
 				er = lpDatabase->DoSelect(strQuery, &lpDBResult);
 				if(er != erSuccess) {
-					lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "WriteProps(): DoSelect failed %x", er);
+					ec_log_err("WriteProps(): DoSelect failed %x", er);
 					goto exit;
 				}
 
 				if(lpDatabase->GetNumRows(lpDBResult) > 0) {
 					er = ZARAFA_E_COLLISION;
-					lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "WriteProps(): Folder already exists while putting folder");
+					ec_log_err("WriteProps(): Folder already exists while putting folder");
 					goto exit;
 				}
 
@@ -3647,7 +3647,7 @@ static ECRESULT CreateFolder(ECSession *lpecSession, ECDatabase *lpDatabase,
 		// Object exists
 		if (!openifexists) {
 			er = ZARAFA_E_COLLISION;
-			lpDatabase->GetLogger()->Log(EC_LOGLEVEL_ERROR, "CreateFolder(): folder already exists");
+			ec_log_err("CreateFolder(): folder already exists");
 			goto exit;
 		}
 		

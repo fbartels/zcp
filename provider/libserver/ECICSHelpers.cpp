@@ -668,7 +668,7 @@ ECRESULT ECGetContentChangesHelper::Init()
 		
 	if ((lpDBRow = m_lpDatabase->FetchRow(lpDBResult)) == NULL || lpDBRow == NULL) {
 		er = ZARAFA_E_DATABASE_ERROR;
-		m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "ECGetContentChangesHelper::Init(): fetchrow failed");
+		ec_log_err("ECGetContentChangesHelper::Init(): fetchrow failed");
 		goto exit;
 	}
 	
@@ -810,7 +810,7 @@ ECRESULT ECGetContentChangesHelper::ProcessRow(DB_ROW lpDBRow, DB_LENGTHS lpDBLe
 	
 	if (lpDBRow[icsSourceKey] == NULL || lpDBRow[icsParentSourceKey] == NULL) {
 		er = ZARAFA_E_DATABASE_ERROR;
-		m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "ECGetContentChangesHelper::ProcessRow(): row null");
+		ec_log_err("ECGetContentChangesHelper::ProcessRow(): row null");
 		goto exit;
 	}
 
@@ -972,7 +972,7 @@ ECRESULT ECGetContentChangesHelper::Finalize(unsigned int *lpulMaxChange, icsCha
 		while ((lpDBRow = m_lpDatabase->FetchRow(lpDBResult))) {
 			if (lpDBRow == NULL || lpDBRow[0] == NULL) {
 				er = ZARAFA_E_DATABASE_ERROR; // this should never happen
-				m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "ECGetContentChangesHelper::Finalize(): row null or column null");
+				ec_log_err("ECGetContentChangesHelper::Finalize(): row null or column null");
 				goto exit;
 			}
 			setChangeIds.insert(atoui(lpDBRow[0]));
@@ -1099,7 +1099,7 @@ ECRESULT ECGetContentChangesHelper::MatchRestriction(const SOURCEKEY &sSourceKey
 
 	if(lpRowSet->__size != 1) {
 		er = ZARAFA_E_DATABASE_ERROR;
-		m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "ECGetContentChangesHelper::MatchRestriction(): unexpected row count");
+		ec_log_err("ECGetContentChangesHelper::MatchRestriction(): unexpected row count");
 		goto exit;
 	}
 
@@ -1149,7 +1149,7 @@ ECRESULT ECGetContentChangesHelper::GetSyncedMessages(unsigned int ulSyncId, uns
 		lpDBLen = m_lpDatabase->FetchRowLengths(lpDBResult);
 		if (lpDBRow == NULL || lpDBLen == NULL || lpDBRow[0] == NULL || lpDBRow[1] == NULL) {
 			er = ZARAFA_E_DATABASE_ERROR; // this should never happen
-			m_lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "ECGetContentChangesHelper::GetSyncedMessages(): row or columns null");
+			ec_log_err("ECGetContentChangesHelper::GetSyncedMessages(): row or columns null");
 			goto exit;
 		}
 

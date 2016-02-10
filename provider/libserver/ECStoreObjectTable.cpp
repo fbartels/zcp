@@ -1089,7 +1089,7 @@ ECRESULT ECStoreObjectTable::GetMVRowCount(unsigned int ulObjId, unsigned int *l
     
     if(lpRow == NULL || lpRow[0] == NULL) {
         er = ZARAFA_E_DATABASE_ERROR;
-	lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "ECStoreObjectTable::GetMVRowCount(): row or column null");
+	ec_log_err("ECStoreObjectTable::GetMVRowCount(): row or column null");
         goto exit;
     }
 	

@@ -227,7 +227,7 @@ ECRESULT ECTPropsPurge::GetDeferredCount(ECDatabase *lpDatabase, unsigned int *l
     lpRow = lpDatabase->FetchRow(lpResult);
     if(!lpRow || !lpRow[0]) {
         er = ZARAFA_E_DATABASE_ERROR;
-	lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "ECTPropsPurge::GetDeferredCount(): row or column null");
+	ec_log_err("ECTPropsPurge::GetDeferredCount(): row or column null");
         goto exit;
     }
     
