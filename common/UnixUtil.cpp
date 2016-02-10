@@ -278,9 +278,9 @@ int unix_fork_function(void*(func)(void*), void *param, int nCloseFDs, int *pClo
  * 
  * @return new process pid, or -1 on failure.
  */
-static pid_t unix_popen_rw(ECLogger *lpLogger, const char *lpszCommand,
-    int *lpulIn, int *lpulOut, popen_rlimit_array *lpLimits, const char **env,
-    bool bNonBlocking, bool bStdErr)
+static pid_t unix_popen_rw(const char *lpszCommand, int *lpulIn, int *lpulOut,
+    popen_rlimit_array *lpLimits, const char **env, bool bNonBlocking,
+    bool bStdErr)
 {
 	int ulIn[2];
 	int ulOut[2];
@@ -318,7 +318,7 @@ static pid_t unix_popen_rw(ECLogger *lpLogger, const char *lpszCommand,
 		if (lpLimits) {
 			for (unsigned int i = 0; i < lpLimits->cValues; i++) {
 				if (setrlimit(lpLimits->sLimit[i].resource, &lpLimits->sLimit[i].limit) != 0)
-					lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to set rlimit for popen - resource %d, errno %d",
+					ec_log_err("Unable to set rlimit for popen - resource %d, errno %d",
 								  lpLimits->sLimit[i].resource, errno);
 			}
 		}
@@ -356,7 +356,7 @@ static pid_t unix_popen_rw(ECLogger *lpLogger, const char *lpszCommand,
 bool unix_system(ECLogger *lpLogger, const char *lpszLogName, const char *lpszCommand, const char **env)
 {
 	int fdin = 0, fdout = 0;
-	int pid = unix_popen_rw(lpLogger, lpszCommand, &fdin, &fdout, NULL, env, false, true);
+	int pid = unix_popen_rw(lpszCommand, &fdin, &fdout, NULL, env, false, true);
 	char buffer[1024];
 	int status = 0;
 	bool rv = true;
