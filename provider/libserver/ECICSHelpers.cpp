@@ -992,12 +992,12 @@ ECRESULT ECGetContentChangesHelper::Finalize(unsigned int *lpulMaxChange, icsCha
 			 *    We do this since if the client requests state X, it can never request state X+1
 			 *    later unless X+1 is the state that was generated from this request. We can therefore
 			 *    remove any state > X at this point, since state X+1 will be inserted later
-			 * 2) Remove any states that are older than the state that was requested minus two
+			 * 2) Remove any states that are older than the state that was requested minus nine
 			 *    We cannot remove state X since the client may re-request this state (eg if the export
 			 *    failed due to network error, or if the export is interrupted before ending). We also
-			 *    do not remove state X-1 and X-2 so that we support some sort of rollback of the client.
-			 *    This may happen if the client is restored to an old state. In practice removing X-1 and
-			 *    X-2 will probably not cause any real problems though, and the number 2 is pretty
+			 *    do not remove state X-9 to X-1 so that we support some sort of rollback of the client.
+			 *    This may happen if the client is restored to an old state. In practice removing X-9 to
+			 *    X-1 will probably not cause any real problems though, and the number 9 is pretty
 			 *    arbitrary.
 			 */
 
@@ -1010,13 +1010,13 @@ ECRESULT ECGetContentChangesHelper::Finalize(unsigned int *lpulMaxChange, icsCha
 
 			// Find all message states that are equal or lower than the changeset that changes were requested from
 			iter = setChangeIds.lower_bound(m_ulChangeId);
-			// Reverse up to two message states (less if they do not exist)
-			for (int i = 0; iter != setChangeIds.begin() && i < 2; ++i, --iter);
-			// Remove message states that are older than X-2 (rule 2)
+			// Reverse up to nine message states (less if they do not exist)
+			for (int i = 0; iter != setChangeIds.begin() && i < 9; ++i, --iter);
+			// Remove message states that are older than X-9 (rule 2)
 			std::copy(setChangeIds.begin(), iter, std::inserter(setDeleteIds, setDeleteIds.begin()));
 
 			if (!setDeleteIds.empty()) {
-				ASSERT(setChangeIds.size() - setDeleteIds.size() <= 2);
+				ASSERT(setChangeIds.size() - setDeleteIds.size() <= 9);
 				
 				strQuery = "DELETE FROM syncedmessages WHERE sync_id=" + stringify(m_ulSyncId) + " AND change_id IN (";
 				for (iter = setDeleteIds.begin(); iter != setDeleteIds.end(); ++iter) {
