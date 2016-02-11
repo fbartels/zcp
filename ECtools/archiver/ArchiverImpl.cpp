@@ -99,6 +99,7 @@ eResult ArchiverImpl::Init(const char *lpszAppName, const char *lpszConfig, cons
 	} else if (m_lpsConfig->HasErrors()) {
 		if (!(ulFlags & InhibitErrorLogging)) {
 			ECLogger *lpLogger = new ECLogger_File(EC_LOGLEVEL_FATAL, 0, "-", false);
+			ec_log_set(lpLogger);
 			LogConfigErrors(m_lpsConfig, lpLogger);
 			lpLogger->Release();
 		}
@@ -142,6 +143,7 @@ eResult ArchiverImpl::Init(const char *lpszAppName, const char *lpszConfig, cons
 		m_lpLogger->AddRef();
 	}
 
+	ec_log_set(m_lpLogger);
 	if (m_lpsConfig->HasWarnings())
 		LogConfigErrors(m_lpsConfig, m_lpLogger);
 
