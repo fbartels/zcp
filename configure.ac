@@ -155,7 +155,7 @@ AC_ARG_ENABLE(profiling,
   AS_HELP_STRING([--enable-profiling], [enable profiling (-pg)]),
     [ if test "${enableval}" = "yes"; then
 		ZCXXFLAGS="$ZCXXFLAGS -pg"
-		ZLDFLAGS="$LDFLAGS -pg"
+		ZLDFLAGS="$ZLDFLAGS -pg"
 	  fi
     ])
 
@@ -163,7 +163,7 @@ AC_ARG_ENABLE(coverage,
   AS_HELP_STRING([--enable-coverage], [enable coverage (--coverage)]),
     [ if test "${enableval}" = "yes"; then
 		ZCXXFLAGS="$ZCXXFLAGS -g --coverage -fprofile-arcs -ftest-coverage"
-		ZLDFLAGS="$LDFLAGS -lgcov"
+		ZLDFLAGS="$ZLDFLAGS -lgcov"
 	  fi
     ])
 
