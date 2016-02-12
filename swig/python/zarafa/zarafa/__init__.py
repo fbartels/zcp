@@ -57,6 +57,7 @@ import fnmatch
 import lockfile
 import daemon.pidlockfile
 import datetime
+from functools import wraps
 import grp
 try:
     import libcommon # XXX distribute with python-mapi? or rewrite functionality here?
@@ -109,6 +110,7 @@ except NameError:
 
 PS_INTERNET_HEADERS = DEFINE_OLEGUID(0x00020386, 0, 0)
 NAMED_PROPS_INTERNET_HEADERS = [MAPINAMEID(PS_INTERNET_HEADERS, MNID_STRING, u'x-original-to'),]
+NAMED_PROP_CATEGORY = MAPINAMEID(PS_PUBLIC_STRINGS, MNID_STRING, u'Keywords')
 
 # XXX from common/mapiguidext.h
 PSETID_Archive = DEFINE_GUID(0x72e98ebc, 0x57d2, 0x4ab5, 0xb0, 0xaa, 0xd5, 0x0a, 0x7b, 0x53, 0x1c, 0xb9)
@@ -449,6 +451,21 @@ class ZarafaLogonException(ZarafaException):
 class ZarafaNotSupported(ZarafaException):
     pass
 
+class PersistentList(list):
+    def __init__(self, mapiobj, proptag, *args, **kwargs):
+        self.mapiobj = mapiobj
+        self.proptag = proptag
+        for attr in ('append', 'extend', 'insert', 'pop', 'remove', 'reverse', 'sort'):
+            setattr(self, attr, self._autosave(getattr(self, attr)))
+        list.__init__(self, *args, **kwargs)
+    def _autosave(self, func):
+        @wraps(func)
+        def _func(*args, **kwargs):
+            ret = func(*args, **kwargs)
+            self.mapiobj.SetProps([SPropValue(self.proptag, self)])
+            self.mapiobj.SaveChanges(KEEP_OPEN_READWRITE)
+            return ret
+        return _func
 
 class SPropDelayedValue(SPropValue):
     def __init__(self, mapiobj, proptag):
@@ -2139,6 +2156,23 @@ class Item(object):
             self.mapiobj.SetReadFlag(0)
         else:
             self.mapiobj.SetReadFlag(CLEAR_READ_FLAG)
+
+    @property
+    def categories(self):
+        proptag = self.mapiobj.GetIDsFromNames([NAMED_PROP_CATEGORY], MAPI_CREATE)[0]
+        proptag = CHANGE_PROP_TYPE(proptag, PT_MV_STRING8)
+        try:
+            value = self.prop(proptag).value
+        except MAPIErrorNotFound:
+            value = []
+        return PersistentList(self.mapiobj, proptag, value)
+
+    @categories.setter
+    def categories(self, value):
+        proptag = self.mapiobj.GetIDsFromNames([NAMED_PROP_CATEGORY], MAPI_CREATE)[0]
+        proptag = CHANGE_PROP_TYPE(proptag, PT_MV_STRING8)
+        self.mapiobj.SetProps([SPropValue(proptag, list(value))])
+        self.mapiobj.SaveChanges(KEEP_OPEN_READWRITE)
 
     @property
     def folder(self):
