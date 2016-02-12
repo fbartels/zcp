@@ -100,7 +100,7 @@ eResult ArchiverImpl::Init(const char *lpszAppName, const char *lpszConfig, cons
 		if (!(ulFlags & InhibitErrorLogging)) {
 			ECLogger *lpLogger = new ECLogger_File(EC_LOGLEVEL_FATAL, 0, "-", false);
 			ec_log_set(lpLogger);
-			LogConfigErrors(m_lpsConfig, lpLogger);
+			LogConfigErrors(m_lpsConfig);
 			lpLogger->Release();
 		}
 
@@ -145,7 +145,7 @@ eResult ArchiverImpl::Init(const char *lpszAppName, const char *lpszConfig, cons
 
 	ec_log_set(m_lpLogger);
 	if (m_lpsConfig->HasWarnings())
-		LogConfigErrors(m_lpsConfig, m_lpLogger);
+		LogConfigErrors(m_lpsConfig);
 
 	if (m_MAPI.Initialize(&sMapiInit) != hrSuccess) {
 		r = Failure;

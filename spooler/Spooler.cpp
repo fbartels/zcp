@@ -1292,7 +1292,7 @@ int main(int argc, char *argv[]) {
 			g_lpLogger = new ECLogger_File(EC_LOGLEVEL_INFO, 0, "-", false); // create info logger without a timestamp to stderr
 #endif
 			ec_log_set(g_lpLogger);
-			LogConfigErrors(g_lpConfig, g_lpLogger);
+			LogConfigErrors(g_lpConfig);
 			hr = E_FAIL;
 			goto exit;
 		}
@@ -1326,7 +1326,7 @@ int main(int argc, char *argv[]) {
 
 	ec_log_set(g_lpLogger);
 	if ((bIgnoreUnknownConfigOptions && g_lpConfig->HasErrors()) || g_lpConfig->HasWarnings())
-		LogConfigErrors(g_lpConfig, g_lpLogger);
+		LogConfigErrors(g_lpConfig);
 
 	if (!TmpPath::getInstance() -> OverridePath(g_lpConfig))
 		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Ignoring invalid path-setting!");

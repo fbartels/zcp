@@ -404,7 +404,7 @@ extern void ec_log(unsigned int, const std::string &);
 
 ECLogger* CreateLogger(ECConfig *config, const char *argv0, const char *lpszServiceName, bool bAudit = false);
 int DeleteLogger(ECLogger *lpLogger);
-void LogConfigErrors(ECConfig *lpConfig, ECLogger *lpLogger);
+extern void LogConfigErrors(ECConfig *lpConfig);
 
 #endif
 

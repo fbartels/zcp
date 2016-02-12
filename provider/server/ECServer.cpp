@@ -1198,7 +1198,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 		g_lpLogger = new ECLogger_File(EC_LOGLEVEL_INFO, 0, "-", false); // create info logger without a timestamp to stderr
 #endif
 		ec_log_set(g_lpLogger);
-		LogConfigErrors(g_lpConfig, g_lpLogger);
+		LogConfigErrors(g_lpConfig);
 		er = MAPI_E_UNCONFIGURED;
 		goto exit;
 #endif
@@ -1213,7 +1213,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 	}
 	ec_log_set(g_lpLogger);
 	if (m_bIgnoreUnknownConfigOptions && g_lpConfig->HasErrors())
-		LogConfigErrors(g_lpConfig, g_lpLogger);
+		LogConfigErrors(g_lpConfig);
 
 	if (!TmpPath::getInstance() -> OverridePath(g_lpConfig))
 		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Ignoring invalid path-setting!");
@@ -1234,7 +1234,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 	g_lpLogger->Log(EC_LOGLEVEL_ALWAYS, "Starting zarafa-server version " PROJECT_VERSION_SERVER_STR ", pid %d", getpid());
 
 	if (g_lpConfig->HasWarnings())
-		LogConfigErrors(g_lpConfig, g_lpLogger);
+		LogConfigErrors(g_lpConfig);
 
 	if (strcmp(g_lpConfig->GetSetting("attachment_storage"), "files") == 0) {
 		// directory will be created using startup (probably root) and then chowned to the new 'runas' username

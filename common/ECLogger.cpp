@@ -1141,20 +1141,20 @@ int DeleteLogger(ECLogger *lpLogger) {
 	return 0;
 }
 
-void LogConfigErrors(ECConfig *lpConfig, ECLogger *lpLogger) {
+void LogConfigErrors(ECConfig *lpConfig) {
 	const list<string> *strings;
 	list<string>::const_iterator i;
 
-	if (!lpConfig || !lpLogger)
+	if (lpConfig == NULL)
 		return;
 
 	strings = lpConfig->GetWarnings();
 	for (i = strings->begin() ; i != strings->end(); i++)
-		lpLogger->Log(EC_LOGLEVEL_WARNING, "Config warning: " + *i);
+		ec_log_warn("Config warning: " + *i);
 
 	strings = lpConfig->GetErrors();
 	for (i = strings->begin() ; i != strings->end(); i++)
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "Config error: " + *i);
+		ec_log_crit("Config error: " + *i);
 }
 
 void generic_sigsegv_handler(ECLogger *lpLogger, const char *const app_name, const char *const version_string, const int signr)

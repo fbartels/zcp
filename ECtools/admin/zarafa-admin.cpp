@@ -3141,7 +3141,7 @@ int main(int argc, char* argv[])
 			// create fatal logger without a timestamp to stderr
 			lpLogger = new ECLogger_File(EC_LOGLEVEL_FATAL, 0, "-", false);
 			ec_log_set(lpLogger);
-			LogConfigErrors(lpsConfig, lpLogger);
+			LogConfigErrors(lpsConfig);
 			lpLogger->Release();
 			return 1;
 		}
