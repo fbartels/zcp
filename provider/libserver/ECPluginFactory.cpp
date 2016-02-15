@@ -69,9 +69,7 @@ ECPluginFactory::ECPluginFactory(ECConfig *config, ECLogger *logger, IECStatsCol
 	m_config = config;
 	m_logger = logger;
 	pthread_mutex_init(&m_plugin_lock, NULL);
-
-	ECPluginSharedData::GetSingleton(&m_shareddata, m_config, m_logger, lpStatsCollector, bHosted, bDistributed);
-
+	ECPluginSharedData::GetSingleton(&m_shareddata, m_config, lpStatsCollector, bHosted, bDistributed);
 	m_dl = NULL;
 }
 
