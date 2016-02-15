@@ -61,11 +61,16 @@
 
 #include <string>
 #include <map>
+#include <vector>
 
 #ifndef HAVE_UUID_CREATE
 #	include <uuid/uuid.h>
 #else
 #	include <uuid.h>
+#endif
+#if defined(__linux__) && defined(__GLIBC__)
+#	include <cxxabi.h>
+#	include <execinfo.h>
 #endif
 #include "TmpPath.h"
 
@@ -380,3 +385,18 @@ std::string dump_pthread_locks()
 }
 #endif
 
+std::vector<std::string> get_backtrace(void)
+{
+#define BT_MAX 256
+	std::vector<std::string> result;
+	void *addrlist[BT_MAX];
+	int addrlen = backtrace(addrlist, BT_MAX);
+	if (addrlen == 0)
+		return result;
+	char **symbollist = backtrace_symbols(addrlist, addrlen);
+	for (int i = 0; i < addrlen; ++i)
+		result.push_back(symbollist[i]);
+	free(symbollist);
+	return result;
+#undef BT_MAX
+}

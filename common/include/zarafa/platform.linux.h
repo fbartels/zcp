@@ -48,6 +48,7 @@
  * Functions and (type)definitions that are needed for the Linux platform
  *
  */
+#include <vector>
 #include <cstdio>
 #include <cstdlib>
 
@@ -727,5 +728,7 @@ time_t GetProcessTime();
 
 #define z_tms tms
 #define z_times times
+
+std::vector<std::string> get_backtrace();
 
 #endif // PLATFORM_LINUX_H

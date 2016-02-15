@@ -1170,10 +1170,6 @@ void LogConfigErrors(ECConfig *lpConfig) {
 
 void generic_sigsegv_handler(ECLogger *lpLogger, const char *const app_name, const char *const version_string, const int signr)
 {
-#define N_TRACEBACK 64
-	void *bt[N_TRACEBACK];
-	char **btsymbols = NULL;
-
 #ifdef _WIN32
 	ECLogger_Eventlog localLogger(EC_LOGLEVEL_DEBUG, app_name);
 #else
@@ -1227,19 +1223,8 @@ void generic_sigsegv_handler(ECLogger *lpLogger, const char *const app_name, con
 	}
 
 #ifndef _WIN32
-	int n = backtrace(bt, N_TRACEBACK);
-	lpLogger->Log(EC_LOGLEVEL_FATAL, "backtrace length: %d", n);
-
-	btsymbols = backtrace_symbols(bt, n);
-
-	for (int i = 0; i < n; ++i) {
-		if (btsymbols)
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "%i %p %s", i, bt[i], btsymbols[i]);
-		else
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "%i %16p", i, bt[i]);
-	}
+	ec_log_bt(EC_LOGLEVEL_CRIT, "Backtrace:");
 #endif
-
 	lpLogger->Log(EC_LOGLEVEL_FATAL, "When reporting this traceback, please include Linux distribution name (and version), system architecture and Zarafa version.");
 
 #ifndef _WIN32
@@ -1287,4 +1272,24 @@ void ec_log(unsigned int level, const char *fmt, ...)
 void ec_log(unsigned int level, const std::string &msg)
 {
 	ec_log_target->Log(level, msg);
+}
+
+void ec_log_bt(unsigned int level, const char *fmt, ...)
+{
+	if (!ec_log_target->Log(level))
+		return;
+	va_list argp;
+	va_start(argp, fmt);
+	ec_log_target->LogVA(level, fmt, argp);
+	va_end(argp);
+
+	static bool notified = false;
+	std::vector<std::string> bt = get_backtrace();
+	if (!bt.empty()) {
+		for (size_t i = 0; i < bt.size(); ++i)
+			ec_log(level, "#%zu. %s", i, bt[i].c_str());
+	} else if (!notified) {
+		ec_log_info("Backtrace not available");
+		notified = true;
+	}
 }
