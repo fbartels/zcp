@@ -53,6 +53,7 @@ import cPickle as pickle
 import csv
 import daemon
 import errno
+import fnmatch
 import lockfile
 import daemon.pidlockfile
 import datetime
@@ -269,8 +270,8 @@ def _state(mapiobj, associated=False):
     stream.Seek(0, MAPI.STREAM_SEEK_SET)
     return bin2hex(stream.Read(0xFFFFF))
 
-def _sync(server, syncobj, importer, state, log, max_changes, associated=False, window=None):
-    importer = TrackingContentsImporter(server, importer, log)
+def _sync(server, syncobj, importer, state, log, max_changes, associated=False, window=None, begin=None, end=None, stats=None):
+    importer = TrackingContentsImporter(server, importer, log, stats)
     exporter = syncobj.OpenProperty(PR_CONTENTS_SYNCHRONIZER, IID_IExchangeExportChanges, 0, 0)
 
     stream = IStream()
@@ -281,6 +282,17 @@ def _sync(server, syncobj, importer, state, log, max_changes, associated=False, 
     if window:
         # sync window of last N seconds
         restriction = SPropertyRestriction(RELOP_GE, PR_MESSAGE_DELIVERY_TIME, SPropValue(PR_MESSAGE_DELIVERY_TIME, MAPI.Time.unixtime(int(time.time()) - window)))
+
+    elif begin or end:
+        restrs = []
+        if begin:
+            restrs.append(SPropertyRestriction(RELOP_GE, PR_MESSAGE_DELIVERY_TIME, SPropValue(PR_MESSAGE_DELIVERY_TIME, MAPI.Time.unixtime(time.mktime(begin.timetuple())))))
+        if end:
+            restrs.append(SPropertyRestriction(RELOP_LT, PR_MESSAGE_DELIVERY_TIME, SPropValue(PR_MESSAGE_DELIVERY_TIME, MAPI.Time.unixtime(time.mktime(end.timetuple())))))
+        if len(restrs) == 1:
+            restriction = restrs[0]
+        else:
+            restriction = SAndRestriction(restrs)
 
     if associated:
         exporter.Config(stream, SYNC_NORMAL | SYNC_ASSOCIATED | SYNC_UNICODE, importer, restriction, None, None, 0)
@@ -317,6 +329,8 @@ def _sync(server, syncobj, importer, state, log, max_changes, associated=False, 
             else:
                 if log:
                     log.error("Too many retries, skipping change")
+                if stats:
+                    stats['errors'] += 1
 
                 importer.skip = True # in case of a timeout or other issue, try to skip the change after trying several times
 
@@ -402,6 +416,9 @@ def _extract_ipm_ol2007_entryids(blob, offset):
             return blob[pos:pos+sublen].encode('hex').upper()
         else:
             pos += totallen
+
+def _encode(s):
+    return s.encode(getattr(sys.stdout, 'encoding', 'utf8') or 'utf8') # sys.stdout can be StringIO (nosetests)
 
 class ZarafaException(Exception):
     pass
@@ -528,7 +545,7 @@ Wrapper around MAPI properties
 
     # TODO: check if data is binary and convert it to hex
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
 class Table(object):
     """
@@ -782,11 +799,18 @@ Looks at command-line to see if another server address or other related options 
 
         if parse and getattr(self.options, 'users', None):
             for username in self.options.users:
-                yield User(username.decode(sys.stdin.encoding), self) # XXX can optparse output unicode?
+                if '*' in username or '?' in username: # XXX unicode.. need to use something like boost::wregex in ZCP?
+                    regex = username.replace('*', '.*').replace('?', '.')
+                    restriction = SPropertyRestriction(RELOP_RE, PR_DISPLAY_NAME_A, SPropValue(PR_DISPLAY_NAME_A, regex))
+                    for match in AddressBook.GetAbObjectList(self.mapisession, restriction):
+                        if fnmatch.fnmatch(match, username):
+                            yield User(match, self)
+                else:
+                    yield User(username.decode(sys.stdin.encoding), self) # XXX can optparse output unicode?
             return
         try:
             for name in self._companylist():
-                for user in Company(self, name).users(): # XXX remote/system check
+                for user in Company(name, self).users(): # XXX remote/system check
                     yield user
         except MAPIErrorNoSupport:
             for username in AddressBook.GetUserList(self.mapisession, None, MAPI_UNICODE):
@@ -837,7 +861,7 @@ Looks at command-line to see if another server address or other related options 
         """ Return :class:`company <Company>` with given name; raise exception if not found """
 
         try:
-            return Company(self, name)
+            return Company(name, self)
         except ZarafaNotFoundException:
             if create:
                 return self.create_company(name)
@@ -867,13 +891,17 @@ Looks at command-line to see if another server address or other related options 
         """
         if parse and getattr(self.options, 'companies', None):
             for name in self.options.companies:
-                yield Company(self, name.decode(sys.stdin.encoding)) # XXX can optparse output unicode?
+                name = name.decode(sys.stdin.encoding) # can optparse give us unicode?
+                try:
+                    yield Company(name, self)
+                except MAPIErrorNoSupport:
+                    raise ZarafaNotFoundException('no such company: %s' % name)
             return
         try:
             for name in self._companylist():
-                yield Company(self, name)
+                yield Company(name, self)
         except MAPIErrorNoSupport:
-            yield Company(self, u'Default')
+            yield Company(u'Default', self)
 
     def create_company(self, name): # XXX deprecated because of company(create=True)?
         name = unicode(name)
@@ -892,7 +920,7 @@ Looks at command-line to see if another server address or other related options 
         table.Restrict(SPropertyRestriction(RELOP_EQ, PR_STORE_RECORD_KEY, SPropValue(PR_STORE_RECORD_KEY, storeid)), TBL_BATCH)
         for row in table.QueryRows(-1, 0):
             return self.mapisession.OpenMsgStore(0, row[0].Value, None, MDB_WRITE)
-        raise ZarafaException("no such store: '%s'" % guid)
+        raise ZarafaNotFoundException("no such store: '%s'" % guid)
 
     def groups(self):
         for name in MAPI.Util.AddressBook.GetGroupList(self.mapisession, None, MAPI_UNICODE):
@@ -978,7 +1006,7 @@ Looks at command-line to see if another server address or other related options 
 
         return _state(self.mapistore)
 
-    def sync(self, importer, state, log=None, max_changes=None, window=None):
+    def sync(self, importer, state, log=None, max_changes=None, window=None, begin=None, end=None, stats=None):
         """ Perform synchronization against server node
 
         :param importer: importer instance with callbacks to process changes
@@ -987,13 +1015,13 @@ Looks at command-line to see if another server address or other related options 
         """
 
         importer.store = None
-        return _sync(self, self.mapistore, importer, state, log or self.log, max_changes, window=window)
+        return _sync(self, self.mapistore, importer, state, log or self.log, max_changes, window=window, begin=begin, end=end, stats=stats)
 
     def __unicode__(self):
         return u'Server(%s)' % self.server_socket
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
 class Group(object):
     def __init__(self, name, server=None):
@@ -1069,15 +1097,15 @@ class Group(object):
         return u"Group('%s')" % self.name
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
 
 class Company(object):
     """ Company class """
 
-    def __init__(self, server, name): # XXX Company(name)
+    def __init__(self, name, server=None):
         self._name = name = unicode(name)
-        self.server = server
+        self.server = server or Server()
         if name != u'Default': # XXX
             try:
                 self._eccompany = self.server.sa.GetCompany(self.server.sa.ResolveCompanyName(self._name, MAPI_UNICODE), MAPI_UNICODE)
@@ -1141,8 +1169,13 @@ class Company(object):
         except ZarafaException:
             pass
 
-    def users(self):
+    def users(self, parse=True):
         """ Return all :class:`users <User>` within company """
+
+        if parse and getattr(self.server.options, 'users', None):
+            for username in self.server.options.users:
+                yield User(username, self.server)
+            return
 
         for username in AddressBook.GetUserList(self.server.mapisession, self._name if self._name != u'Default' else None, MAPI_UNICODE): # XXX serviceadmin?
             if username != 'SYSTEM':
@@ -1173,7 +1206,7 @@ class Company(object):
         return u"Company('%s')" % self._name
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
 class Store(object):
     """ 
@@ -1332,12 +1365,11 @@ class Store(object):
         except ZarafaException:
             pass
 
-    def folders(self, recurse=True, mail=False, parse=True): # XXX mail flag semantic difference?
+    def folders(self, recurse=True, parse=True):
         """ Return all :class:`folders <Folder>` in store
 
         :param recurse: include all sub-folders
         :param system: include system folders
-        :param mail: only include mail folders
 
         """
 
@@ -1345,12 +1377,11 @@ class Store(object):
         filter_names = None
         if parse and getattr(self.server.options, 'folders', None):
             for path in self.server.options.folders:
-                yield self.folder(path.decode(sys.stdin.encoding)) # XXX can optparse output unicode?
+                yield self.folder(path.decode(sys.stdin.encoding or 'utf8')) # XXX can optparse output unicode?
             return
 
         for folder in self.subtree.folders(recurse=recurse):
-            if not mail or folder.prop(PR_CONTAINER_CLASS) == 'IPF.Note':
-                yield folder
+            yield folder
 
     def item(self, entryid):
         """ Return :class:`Item` with given entryid; raise exception of not found """ # XXX better exception?
@@ -1420,6 +1451,9 @@ class Store(object):
         else:
             return (self.user.store is None or self.user.store.guid != self.guid)
 
+    def create_prop(self, proptag, value, proptype=None):
+        return _create_prop(self, self.mapiobj, proptag, value, proptype)
+
     def prop(self, proptag):
         return _prop(self, self.mapiobj, proptag)
 
@@ -1438,7 +1472,7 @@ class Store(object):
         return u"Store('%s')" % self.guid
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
 class Folder(object):
     """
@@ -1473,7 +1507,8 @@ class Folder(object):
     @property
     def parent(self):
         """Return :class:`parent <Folder>` or None"""
-        # PR_PARENT_ENTRYID for the message store root folder is its own PR_ENTRYID
+        if self.entryid == self.store.root.entryid:
+            return None
         try:
             return Folder(self.store, self.prop(PR_PARENT_ENTRYID).value)
         except MAPIErrorNotFound: # XXX: Should not happen
@@ -1498,7 +1533,7 @@ class Folder(object):
         """ Folder name """
 
         try:
-            return self.prop(PR_DISPLAY_NAME_W).value
+            return self.prop(PR_DISPLAY_NAME_W).value.replace('/', '\\/')
         except MAPIErrorNotFound:
             if self.entryid == self.store.root.entryid: # Root folder's PR_DISPLAY_NAME_W is never set
                 return u'ROOT'
@@ -1533,7 +1568,10 @@ class Folder(object):
         https://msdn.microsoft.com/en-us/library/aa125193(v=exchg.65).aspx
         '''
 
-        return self.prop(PR_CONTAINER_CLASS).value
+        try:
+            return self.prop(PR_CONTAINER_CLASS).value
+        except MAPIErrorNotFound:
+            pass
 
     @container_class.setter
     def container_class(self, value):
@@ -1704,18 +1742,19 @@ class Folder(object):
             :param key: name or entryid
         """
 
-        if len(key) == 96:
+        if '/' in key.replace('\\/', ''): # XXX MAPI folders may contain '/' (and '\') in their names..
+            subfolder = self
+            for name in key.replace('\\/', '\\SLASH\\').split('/'): # XXX SLASH, unicode?
+                name = name.replace('\\SLASH\\', '\\/')
+                subfolder = subfolder.folder(name, create=create, recurse=False)
+            return subfolder
+
+        elif len(key) == 96:
             try:
                 folder = Folder(self, key.decode('hex')) # XXX: What about creat=True, do we want to check if it is a valid entryid and then create the folder?
                 return folder
             except (MAPIErrorInvalidEntryid, MAPIErrorNotFound, TypeError):
                 pass
-
-        elif '/' in key: # XXX MAPI folders may contain '/' (and '\') in their names..
-            subfolder = self
-            for name in key.split('/'):
-                subfolder = subfolder.folder(name, create=create, recurse=False)
-            return subfolder
 
         matches = [f for f in self.folders(recurse=recurse) if f.entryid == key or f.name == key]
         if len(matches) == 0:
@@ -1760,6 +1799,7 @@ class Folder(object):
                     yield subfolder
 
     def create_folder(self, name, **kwargs):
+        name = name.replace('\\/', '/')
         mapifolder = self.mapiobj.CreateFolder(FOLDER_GENERIC, unicode(name), u'', None, MAPI_UNICODE)
         folder = Folder(self.store, HrGetOneProp(mapifolder, PR_ENTRYID).Value)
         for key, val in kwargs.items():
@@ -1770,10 +1810,19 @@ class Folder(object):
         rule_table = self.mapiobj.OpenProperty(PR_RULES_TABLE, IID_IExchangeModifyTable, 0, 0)
         table = Table(self.server, rule_table.GetTable(0), PR_RULES_TABLE)
         for row in table.dict_rows():
-            yield Rule(row[PR_RULE_NAME], row[PR_RULE_STATE]) # XXX fix args
+            yield Rule(row)
+
+    def acls(self):
+        rule_table = self.mapiobj.OpenProperty(PR_ACL_TABLE, IID_IExchangeModifyTable, 0, 0)
+        table = Table(self.server, rule_table.GetTable(0), PR_ACL_TABLE)
+        for row in table.dict_rows():
+            yield ACL(row, self.server)
 
     def prop(self, proptag):
         return _prop(self, self.mapiobj, proptag)
+
+    def create_prop(self, proptag, value, proptype=None):
+        return _create_prop(self, self.mapiobj, proptag, value, proptype)
 
     def props(self):
         return _props(self.mapiobj)
@@ -1792,7 +1841,7 @@ class Folder(object):
 
         return _state(self.mapiobj, self.content_flag == MAPI_ASSOCIATED)
 
-    def sync(self, importer, state=None, log=None, max_changes=None, associated=False, window=None):
+    def sync(self, importer, state=None, log=None, max_changes=None, associated=False, window=None, begin=None, end=None, stats=None):
         """ Perform synchronization against folder
 
         :param importer: importer instance with callbacks to process changes
@@ -1803,7 +1852,7 @@ class Folder(object):
         if state is None:
             state = (8*'\0').encode('hex').upper()
         importer.store = self.store
-        return _sync(self.store.server, self.mapiobj, importer, state, log, max_changes, associated, window=window)
+        return _sync(self.store.server, self.mapiobj, importer, state, log, max_changes, associated, window=window, begin=begin, end=end, stats=stats)
 
     def readmbox(self, location):
         for message in mailbox.mbox(location):
@@ -1852,7 +1901,7 @@ class Folder(object):
         return u'Folder(%s)' % self.name
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
 class Item(object):
     """ Item """
@@ -2092,9 +2141,14 @@ class Item(object):
     def create_prop(self, proptag, value, proptype=None):
         return _create_prop(self, self.mapiobj, proptag, value, proptype)
 
-
     def prop(self, proptag):
         return _prop(self, self.mapiobj, proptag)
+
+    def get_prop(self, proptag):
+        try:
+            return self.prop(proptag)
+        except MAPIErrorNotFound:
+            pass
 
     def props(self, namespace=None):
         return _props(self.mapiobj, namespace)
@@ -2245,22 +2299,32 @@ class Item(object):
     @to.setter
     def to(self, addrs):
         if isinstance(addrs, (str, unicode)):
-            addrs2 = []
-            for addr in unicode(addrs).split(';'): # XXX use python email module here?
-                if '<' in addr:
-                    name = addr[:addr.find('<')].strip()
-                    email = addr[addr.find('<')+1:addr.find('>')].strip()
-                    addrs2.append(Address(name=name, email=email))
-                else:
-                    addrs2.append(Address(email=addr.strip()))
+            addrs = unicode(addrs).split(';')
+        elif isinstance(addrs, User):
+            adders = [addrs]
         names = []
-        for addr in addrs2:
+        for addr in addrs:
+            if isinstance(addr, User):
+                pr_addrtype = 'ZARAFA'
+                pr_dispname = addr.name
+                pr_email = addr.email
+                pr_entryid = addr.userid.decode('hex')
+            else:
+                addr = unicode(addr)
+                pr_addrtype = 'SMTP'
+                if '<' in addr: # XXX standard email lib?
+                    pr_dispname = addr[:addr.find('<')].strip()
+                    pr_email = addr[addr.find('<')+1:addr.find('>')].strip()
+                else:
+                    pr_dispname = u'nobody' # XXX
+                    pr_email  = addr.strip()
+                pr_entryid = self.server.ab.CreateOneOff(pr_dispname, u'SMTP', unicode(pr_email), MAPI_UNICODE)
             names.append([
                 SPropValue(PR_RECIPIENT_TYPE, MAPI_TO), 
-                SPropValue(PR_DISPLAY_NAME_W, addr.name or u'nobody'), 
-                SPropValue(PR_ADDRTYPE, 'SMTP'), 
-                SPropValue(PR_EMAIL_ADDRESS, unicode(addr.email)),
-                SPropValue(PR_ENTRYID, self.server.ab.CreateOneOff(addr.name or u'nobody', u'SMTP', unicode(addr.email), MAPI_UNICODE)),
+                SPropValue(PR_DISPLAY_NAME_W, pr_dispname),
+                SPropValue(PR_ADDRTYPE, pr_addrtype),
+                SPropValue(PR_EMAIL_ADDRESS, pr_email),
+                SPropValue(PR_ENTRYID, pr_entryid),
             ])
         self.mapiobj.ModifyRecipients(0, names)
         self.mapiobj.SaveChanges(KEEP_OPEN_READWRITE) # XXX needed?
@@ -2309,7 +2373,7 @@ class Item(object):
             else:
                 props.append([searchkey, key, None])
 
-    def _dump(self):
+    def _dump(self, attachments=True, archiver=True):
         # props
         props = []
         tag_data = {}
@@ -2319,6 +2383,8 @@ class Item(object):
                 continue
             if prop.id_ >= 0x8000: # named prop: prop.id_ system dependant..
                 data = [prop.proptag, prop.mapiobj.Value, self.mapiobj.GetNamesFromIDs([prop.proptag], None, 0)[0]]
+                if not archiver and data[2].guid == PSETID_Archive:
+                    continue
             else:
                 data = [prop.proptag, prop.mapiobj.Value, None]
             props.append(data)
@@ -2326,7 +2392,7 @@ class Item(object):
         self._convert_to_smtp(props, tag_data)
 
         # recipients
-        recipients = []
+        recs = []
         for row in self.table(PR_MESSAGE_RECIPIENTS):
             rprops = []
             tag_data = {}
@@ -2334,11 +2400,11 @@ class Item(object):
                 data = [prop.proptag, prop.mapiobj.Value, None]
                 rprops.append(data)
                 tag_data[prop.proptag] = data
-            recipients.append(rprops)
+            recs.append(rprops)
             self._convert_to_smtp(rprops, tag_data)
 
         # attachments
-        attachments = []
+        atts = []
         # XXX optimize by looking at PR_MESSAGE_FLAGS?
         for row in self.table(PR_MESSAGE_ATTACHMENTS).dict_rows(): # XXX should we use GetAttachmentTable?
             num = row[PR_ATTACH_NUM]
@@ -2349,23 +2415,24 @@ class Item(object):
                 item = Item(mapiobj=msg)
                 item.server = self.server # XXX
                 data = item._dump() # recursion
-            else:
+                atts.append(([[a, b, None] for a, b in row.items()], data))
+            elif attachments:
                 data = _stream(att, PR_ATTACH_DATA_BIN)
-            attachments.append(([[a, b, None] for a, b in row.items()], data))
+                atts.append(([[a, b, None] for a, b in row.items()], data))
 
         return {
             'props': props,
-            'recipients': recipients,
-            'attachments': attachments,
+            'recipients': recs,
+            'attachments': atts,
         }
 
-    def dump(self, f):
-        pickle.dump(self._dump(), f, pickle.HIGHEST_PROTOCOL)
+    def dump(self, f, attachments=True, archiver=True):
+        pickle.dump(self._dump(attachments=attachments, archiver=archiver), f, pickle.HIGHEST_PROTOCOL)
 
-    def dumps(self):
-        return pickle.dumps(self._dump(), pickle.HIGHEST_PROTOCOL)
+    def dumps(self, attachments=True, archiver=True):
+        return pickle.dumps(self._dump(attachments=attachments, archiver=archiver), pickle.HIGHEST_PROTOCOL)
 
-    def _load(self, d):
+    def _load(self, d, attachments):
         # props
         props = []
         for proptag, value, nameid in d['props']:
@@ -2383,28 +2450,40 @@ class Item(object):
             props = [SPropValue(proptag, value) for (proptag, value, nameid) in props]
             (id_, attach) = self.mapiobj.CreateAttach(None, 0)
             attach.SetProps(props)
-            if isinstance(data, dict):
+            if isinstance(data, dict): # embedded message
                 msg = attach.OpenProperty(PR_ATTACH_DATA_OBJ, IID_IMessage, 0, MAPI_CREATE | MAPI_MODIFY)
                 item = Item(mapiobj=msg)
-                item._load(data) # recursion
-            else:
+                item._load(data, attachments) # recursion
+            elif attachments:
                 stream = attach.OpenProperty(PR_ATTACH_DATA_BIN, IID_IStream, STGM_WRITE|STGM_TRANSACTED, MAPI_MODIFY | MAPI_CREATE)
                 stream.Write(data)
                 stream.Commit(0)
             attach.SaveChanges(KEEP_OPEN_READWRITE)
         self.mapiobj.SaveChanges(KEEP_OPEN_READWRITE) # XXX needed?
 
-    def load(self, f):
-        self._load(pickle.load(f))
+    def load(self, f, attachments=True):
+        self._load(pickle.load(f), attachments)
 
-    def loads(self, s):
-        self._load(pickle.loads(s))
+    def loads(self, s, attachments=True):
+        self._load(pickle.loads(s), attachments)
+
+    @property
+    def embedded(self): # XXX multiple?
+        for row in self.table(PR_MESSAGE_ATTACHMENTS).dict_rows(): # XXX should we use GetAttachmentTable?
+            num = row[PR_ATTACH_NUM]
+            method = row[PR_ATTACH_METHOD] # XXX default
+            if method == ATTACH_EMBEDDED_MSG:
+                att = self.mapiobj.OpenAttach(num, IID_IAttachment, 0)
+                msg = att.OpenProperty(PR_ATTACH_DATA_OBJ, IID_IMessage, 0, MAPI_MODIFY | MAPI_DEFERRED_ERRORS)
+                item = Item(mapiobj=msg)
+                item.server = self.server # XXX
+                return item
 
     def __unicode__(self):
         return u'Item(%s)' % self.subject
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
 class Body:
     """ Body """
@@ -2459,7 +2538,7 @@ class Body:
         return u'Body()'
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
 class Occurrence(object):
     def __init__(self, item, start, end):
@@ -2474,7 +2553,7 @@ class Occurrence(object):
         return u'Occurrence(%s)' % self.subject
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
 
 class Recurrence:
@@ -2662,7 +2741,7 @@ class Recurrence:
         return u'Recurrence(start=%s - end=%s)' % (self.start, self.end)
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
 
 class Outofoffice(object):
@@ -2757,7 +2836,7 @@ class Outofoffice(object):
         return u'Outofoffice(%s)' % self.subject
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
     def update(self, **kwargs):
         """ Update function for outofoffice """
@@ -2798,7 +2877,7 @@ class Address:
         return u'Address(%s)' % (self._name or self.email)
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
 class Attachment(object):
     """ Attachment """
@@ -2866,6 +2945,12 @@ class Attachment(object):
 
     def props(self):
         return _props(self.att)
+
+    def __unicode__(self):
+        return u'Attachment("%s")' % self.name
+
+    def __repr__(self):
+        return _encode(unicode(self))
 
 class User(object):
     """ User class """
@@ -2943,9 +3028,9 @@ class User(object):
         """ :class:`Company` the user belongs to """
         
         try:
-            return Company(self.server, HrGetOneProp(self.mapiobj, PR_EC_COMPANY_NAME_W).Value)
+            return Company(HrGetOneProp(self.mapiobj, PR_EC_COMPANY_NAME_W).Value, self.server)
         except MAPIErrorNoSupport:
-            return Company(self.server, u'Default')
+            return Company(u'Default', self.server)
 
     @property # XXX
     def local(self):
@@ -3049,7 +3134,7 @@ class User(object):
         return u"User('%s')" % self._name
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
     def _update(self, **kwargs):
         username = kwargs.get('username', self.name)
@@ -3154,10 +3239,12 @@ class Quota(object):
         return u'Quota(warning=%s, soft=%s, hard=%s)' % (_bytes_to_human(self.warning_limit), _bytes_to_human(self.soft_limit), _bytes_to_human(self.hard_limit))
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
 class Rule:
-    def __init__(self, name, state): # XXX fix args
+    def __init__(self, mapirow):
+        self.mapirow = mapirow
+        name, state = mapirow[PR_RULE_NAME], mapirow[PR_RULE_STATE]
         self.name = unicode(name)
         self.active = bool(state & ST_ENABLED)
 
@@ -3165,15 +3252,34 @@ class Rule:
         return u"Rule('%s')" % self.name
 
     def __repr__(self):
-        return unicode(self).encode(sys.stdout.encoding or 'utf8')
+        return _encode(unicode(self))
 
+class ACL:
+    def __init__(self, mapirow, server): # XXX fix args
+        self.mapirow = mapirow
+        self.server = server
+
+    @property
+    def name(self):
+        return self.mapirow[PR_MEMBER_NAME]
+
+    @property
+    def member(self): # XXX non-user
+        return self.server.user(self.name)
+
+    def __unicode__(self):
+        return u"ACL('%s')" % self.name
+
+    def __repr__(self):
+        return _encode(unicode(self))
 
 class TrackingContentsImporter(ECImportContentsChanges):
-    def __init__(self, server, importer, log):
+    def __init__(self, server, importer, log, stats):
         ECImportContentsChanges.__init__(self, [IID_IExchangeImportContentsChanges, IID_IECImportContentsChanges])
         self.server = server
         self.importer = importer
         self.log = log
+        self.stats = stats
         self.skip = False
 
     def ImportMessageChangeAsAStream(self, props, flags):
@@ -3211,6 +3317,8 @@ class TrackingContentsImporter(ECImportContentsChanges):
                 self.log.error(traceback.format_exc(e))
             else:
                 traceback.print_exc(e)
+            if self.stats:
+                self.stats['errors'] += 1
         raise MAPIError(SYNC_E_IGNORE)
 
     def ImportMessageDeletion(self, flags, entries):
@@ -3229,6 +3337,8 @@ class TrackingContentsImporter(ECImportContentsChanges):
                 self.log.error(traceback.format_exc(e))
             else:
                 traceback.print_exc(e)
+            if self.stats:
+                self.stats['errors'] += 1
 
     def ImportPerUserReadStateChange(self, states):
         pass
@@ -3440,7 +3550,7 @@ Available options:
     return parser
 
 @contextlib.contextmanager # it logs errors, that's all you need to know :-)
-def log_exc(log):
+def log_exc(log, stats=None):
     """
 Context-manager to log any exception in sub-block to given logger instance
 
@@ -3453,7 +3563,10 @@ Example usage::
 
 """
     try: yield
-    except Exception as e: log.error(traceback.format_exc(e))
+    except Exception as e:
+        log.error(traceback.format_exc(e))
+        if stats:
+            stats['errors'] += 1
 
 def _bytes_to_human(b):
     suffixes = ['b', 'kb', 'mb', 'gb', 'tb', 'pb']
@@ -3703,7 +3816,7 @@ class QueueListener(object):
                 self.handle(record)
                 if has_task_done:
                     q.task_done()
-            except Empty:
+            except (Empty, EOFError):
                 pass
         # There might still be records in the queue.
         while True:
@@ -3714,7 +3827,7 @@ class QueueListener(object):
                 self.handle(record)
                 if has_task_done:
                     q.task_done()
-            except Empty:
+            except (Empty, EOFError):
                 break
 
     def stop(self):
