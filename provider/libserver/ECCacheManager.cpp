@@ -110,7 +110,7 @@ unsigned int GetCacheAdditionalSize(const ECsUEIdKey &val) {
 	return MEMORY_USAGE_STRING(val.strExternId);
 }
 
-ECCacheManager::ECCacheManager(ECConfig *lpConfig, ECDatabaseFactory *lpDatabaseFactory, ECLogger *lpLogger)
+ECCacheManager::ECCacheManager(ECConfig *lpConfig, ECDatabaseFactory *lpDatabaseFactory)
 : m_QuotaCache("quota", atoi(lpConfig->GetSetting("cache_quota_size")), atoi(lpConfig->GetSetting("cache_quota_lifetime")) * 60)
 , m_QuotaUserDefaultCache("uquota", atoi(lpConfig->GetSetting("cache_quota_size")), atoi(lpConfig->GetSetting("cache_quota_lifetime")) * 60)
 , m_ObjectsCache("obj", atoll(lpConfig->GetSetting("cache_object_size")), 0)
@@ -138,9 +138,6 @@ ECCacheManager::ECCacheManager(ECConfig *lpConfig, ECDatabaseFactory *lpDatabase
 
  	/* Initialization of constants */
  	m_lpDatabaseFactory = lpDatabaseFactory;
- 	m_lpLogger = lpLogger;
-	m_lpLogger->AddRef();
- 	
  	m_bCellCacheDisabled = false;
 
 	/* Initial cleaning/initialization of cache */
@@ -162,8 +159,6 @@ ECCacheManager::ECCacheManager(ECConfig *lpConfig, ECDatabaseFactory *lpDatabase
 ECCacheManager::~ECCacheManager()
 {
 	PurgeCache(PURGE_CACHE_ALL);
-	m_lpLogger->Release();
-
 	pthread_mutex_destroy(&m_hCacheIndPropMutex);
 	pthread_mutex_destroy(&m_hCacheMutex);
 	pthread_mutex_destroy(&m_hCacheCellsMutex);
