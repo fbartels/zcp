@@ -3404,6 +3404,7 @@ def daemonize(func, options=None, foreground=False, args=[], log=None, config=No
                 os.chown(h.baseFilename, uid, gid)
     if options and options.foreground:
         foreground = options.foreground
+        working_directory = os.getcwd()
     with daemon.DaemonContext(
             pidfile=pidfile,
             uid=uid,
@@ -3412,6 +3413,8 @@ def daemonize(func, options=None, foreground=False, args=[], log=None, config=No
             files_preserve=[h.stream for h in log.handlers if isinstance(h, logging.handlers.WatchedFileHandler)] if log else None,
             prevent_core=False,
             detach_process=not foreground,
+            stdout=sys.stdout,
+            stderr=sys.stderr,
         ):
         daemon_helper(func, service, log)
 

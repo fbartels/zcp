@@ -213,13 +213,18 @@ class Service(zarafa.Service):
         t0 = time.time()
         stats = {'changes': 0, 'errors': 0}
 
-        # restore metadata (webapp settings, delegate users)
+        # restore metadata (webapp/mapi settings)
         if user and not self.options.folders and not self.options.skip_meta:
             if os.path.exists('%s/store' % self.data_path):
-                # XXX the change of prop type should not be necessary
-                settings = pickle.loads(file('%s/store' % self.data_path).read()).get(CHANGE_PROP_TYPE(PR_EC_WEBACCESS_SETTINGS_JSON, PT_UNICODE))
-                if settings:
-                    store.create_prop(PR_EC_WEBACCESS_SETTINGS_JSON, settings)
+                storeprops = pickle.loads(file('%s/store' % self.data_path).read())
+                for proptag in (PR_EC_WEBACCESS_SETTINGS_JSON, PR_EC_OUTOFOFFICE_SUBJECT, PR_EC_OUTOFOFFICE_MSG,
+                                PR_EC_OUTOFOFFICE, PR_EC_OUTOFOFFICE_FROM, PR_EC_OUTOFOFFICE_UNTIL):
+                    if PROP_TYPE(proptag) == PT_TSTRING:
+                        proptag = CHANGE_PROP_TYPE(proptag, PT_UNICODE)
+                    value = storeprops.get(proptag)
+                    if value:
+                        store.mapiobj.SetProps([SPropValue(proptag, value)])
+                store.mapiobj.SaveChanges(KEEP_OPEN_READWRITE)
             if os.path.exists('%s/delegates' % self.data_path):
                 load_delegates(user, self.server, file('%s/delegates' % self.data_path).read(), self.log)
 
@@ -426,28 +431,33 @@ def dump_props(props):
 def dump_acl(folder, user, server, log):
     """ dump acl for given folder """
 
-    # XXX groups/distlists
     rows = []
     acl_table = folder.mapiobj.OpenProperty(PR_ACL_TABLE, IID_IExchangeModifyTable, 0, 0)
     table = acl_table.GetTable(0)
     for row in table.QueryRows(-1,0):
-        row[1].Value = server.sa.GetUser(row[1].Value, MAPI_UNICODE).Username
+        try:
+            row[1].Value = ('user', server.sa.GetUser(row[1].Value, MAPI_UNICODE).Username)
+        except MAPIErrorNotFound:
+            row[1].Value = ('group', server.sa.GetGroup(row[1].Value, MAPI_UNICODE).Groupname)
         rows.append(row)
     return pickle.dumps(rows)
 
 def load_acl(folder, user, server, data, log):
     """ load acl for given folder """
 
-    # XXX groups/distlists
     data = pickle.loads(data)
     rows = []
     for row in data:
+        member_type, value = row[1].Value
         try:
-            u = server.user(row[1].Value)
+            if member_type == 'user':
+                entryid = server.user(value).userid
+            else:
+                entryid = server.group(value).groupid
         except zarafa.ZarafaNotFoundException:
-            log.warning("skipping ACE for unknown user '%s'" % row[1].Value)
+            log.warning("skipping access control entry for unknown user/group '%s'" % row[1].Value)
             continue
-        row[1].Value = u.userid.decode('hex')
+        row[1].Value = entryid.decode('hex')
         rows.append(row)
     acltab = folder.mapiobj.OpenProperty(PR_ACL_TABLE, IID_IExchangeModifyTable, 0, MAPI_MODIFY)
     acltab.ModifyTable(0, [ROWENTRY(ROW_ADD, row) for row in rows])
@@ -464,7 +474,7 @@ def dump_rules(folder, user, server, log):
         for actions in etxml.findall('./item/item/actions'):
             for movecopy in actions.findall('.//moveCopy'):
                 s = movecopy.findall('store')[0]
-                store = server.mapisession.OpenMsgStore(0, s.text.decode('base64'), None, 0) # XXX server.store(entryid=..)
+                store = server.mapisession.OpenMsgStore(0, s.text.decode('base64'), None, 0)
                 guid = HrGetOneProp(store, PR_STORE_RECORD_KEY).Value.encode('hex')
                 store = server.store(guid)
                 if store.public:
@@ -472,7 +482,7 @@ def dump_rules(folder, user, server, log):
                 else:
                     s.text = store.user.name if store != user.store else ''
                 f = movecopy.findall('folder')[0]
-                path = store.folder(f.text.decode('base64').encode('hex')).path # XXX store.folder(entryid=..)
+                path = store.folder(f.text.decode('base64').encode('hex')).path
                 f.text = path
         ruledata = ElementTree.tostring(etxml)
     return pickle.dumps(ruledata)
