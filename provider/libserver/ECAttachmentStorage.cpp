@@ -1348,7 +1348,7 @@ exit:
 /**
  * @uclen:	number of uncompressed bytes that is requested
  */
-static ssize_t gzread_retry(ECLogger *log, gzFile fp, void *data, size_t uclen)
+static ssize_t gzread_retry(gzFile fp, void *data, size_t uclen)
 {
 	ssize_t read_total = 0;
 	char *buf = static_cast<char *>(data);
@@ -1374,13 +1374,12 @@ static ssize_t gzread_retry(ECLogger *log, gzFile fp, void *data, size_t uclen)
 			/* Server delay (cf. gzread_write) */
 			continue;
 		if (ret < 0 && zerror == Z_ERRNO) {
-			log->Log(EC_LOGLEVEL_ERROR, "gzread: %s (%d): %s",
+			ec_log_err("gzread: %s (%d): %s",
 			         zerrstr, zerror, strerror(saved_errno));
 			return ret;
 		}
 		if (ret < 0) {
-			log->Log(EC_LOGLEVEL_ERROR, "gzread: %s (%d)",
-			         zerrstr, zerror);
+			ec_log_err("gzread: %s (%d)", zerrstr, zerror);
 			return ret;
 		}
 		if (ret == 0)
@@ -1396,8 +1395,7 @@ static ssize_t gzread_retry(ECLogger *log, gzFile fp, void *data, size_t uclen)
 	return read_total;
 }
 
-static ssize_t
-gzwrite_retry(ECLogger *log, gzFile fp, const void *data, size_t uclen)
+static ssize_t gzwrite_retry(gzFile fp, const void *data, size_t uclen)
 {
 	size_t wrote_total = 0;
 	const char *buf = static_cast<const char *>(data);
@@ -1422,13 +1420,12 @@ gzwrite_retry(ECLogger *log, gzFile fp, const void *data, size_t uclen)
 			 */
 			continue;
 		if (ret < 0 && zerror == Z_ERRNO) {
-			log->Log(EC_LOGLEVEL_ERROR, "gzwrite: %s (%d): %s",
+			ec_log_err("gzwrite: %s (%d): %s",
 			         zerrstr, zerror, strerror(saved_errno));
 			return ret;
 		}
 		if (ret < 0) {
-			log->Log(EC_LOGLEVEL_ERROR, "gzwrite: %s (%d)",
-			         zerrstr, zerror);
+			ec_log_err("gzwrite: %s (%d)", zerrstr, zerror);
 			return ret;
 		}
 		if (ret == 0)
@@ -1548,7 +1545,7 @@ ECRESULT ECFileAttachment::LoadAttachmentInstance(struct soap *soap, ULONG ulIns
 				temp = new_temp;
 			}
 
-			ret = gzread_retry(m_lpLogger, gzfp, &temp[*lpiSize], memory_block_size - *lpiSize);
+			ret = gzread_retry(gzfp, &temp[*lpiSize], memory_block_size - *lpiSize);
 
 			if (ret < 0) {
 				m_lpLogger->Log(EC_LOGLEVEL_ERROR, "ECFileAttachment::LoadAttachmentInstance(SOAP): Error while gzreading attachment data from %s", filename.c_str());
@@ -1691,7 +1688,7 @@ ECRESULT ECFileAttachment::LoadAttachmentInstance(ULONG ulInstanceId, size_t *lp
 #endif
 
 		for(;;) {
-			ssize_t lReadNow = gzread_retry(m_lpLogger, gzfp, buffer, sizeof(buffer));
+			ssize_t lReadNow = gzread_retry(gzfp, buffer, sizeof(buffer));
 			if (lReadNow < 0) {
 				m_lpLogger->Log(EC_LOGLEVEL_ERROR, "ECFileAttachment::LoadAttachmentInstance(): Error while gzreading attachment data from %s.", filename.c_str());
 				er = ZARAFA_E_DATABASE_ERROR;
@@ -1824,7 +1821,7 @@ ECRESULT ECFileAttachment::SaveAttachmentInstance(ULONG ulInstanceId,
 			goto exit;
 		}
 
-		ssize_t iWritten = gzwrite_retry(m_lpLogger, gzfp, lpData, iSize);
+		ssize_t iWritten = gzwrite_retry(gzfp, lpData, iSize);
 		if (iWritten != static_cast<ssize_t>(iSize)) {
 			m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to gzwrite %lu bytes to attachment %s, returned %lu.",
 				static_cast<unsigned long>(iSize), filename.c_str(), static_cast<unsigned long>(iWritten));
@@ -1929,7 +1926,7 @@ ECRESULT ECFileAttachment::SaveAttachmentInstance(ULONG ulInstanceId,
 				break;
 			}
 
-			ssize_t iWritten = gzwrite_retry(m_lpLogger, gzfp, szBuffer, iChunkSize);
+			ssize_t iWritten = gzwrite_retry(gzfp, szBuffer, iChunkSize);
 			if (iWritten != static_cast<ssize_t>(iChunkSize)) {
 				m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to gzwrite %lu bytes to attachment %s, returned %lu",
 					static_cast<unsigned long>(iChunkSize), filename.c_str(), static_cast<unsigned long>(iWritten));
