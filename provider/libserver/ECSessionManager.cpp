@@ -133,7 +133,7 @@ ECSessionManager::ECSessionManager(ECConfig *lpConfig, ECLogger *lpLogger, ECLog
         set_thread_name(m_hSessionCleanerThread, "SessionCleanUp");
 	
 	if (err != 0)
-		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to spawn thread for session cleaner! Sessions will live forever!: %s", strerror(err));
+		ec_log_crit("Unable to spawn thread for session cleaner! Sessions will live forever!: %s", strerror(err));
 
 	m_lpNotificationManager = new ECNotificationManager();
 }
@@ -154,9 +154,8 @@ ECSessionManager::~ECSessionManager()
 		
 	err = pthread_join(m_hSessionCleanerThread, NULL);
 	
-	if(err != 0) {
-		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to join session cleaner thread: %s", strerror(err));
-	}
+	if (err != 0)
+		ec_log_crit("Unable to join session cleaner thread: %s", strerror(err));
 
 	pthread_rwlock_wrlock(&m_hCacheRWLock);
 			
@@ -167,7 +166,7 @@ ECSessionManager::~ECSessionManager()
 		iSessionNext = iSession;
 		iSessionNext++;
 
-		m_lpLogger->Log(EC_LOGLEVEL_INFO, "End of session (shutdown) %llu",
+		ec_log_info("End of session (shutdown) %llu",
 			static_cast<unsigned long long>(iSession->first));
 
 		m_mapSessions.erase(iSession);
@@ -282,8 +281,8 @@ ECRESULT ECSessionManager::CheckUserLicense()
 		goto exit;
 
 	if (ulLicense & USERMANAGEMENT_USER_LICENSE_EXCEEDED) {
-		m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Failed to start server: Your license doesn't permit this amount of users.");
-		m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Stop your zarafa-license service, start the zarafa-server and remove users to resolve the problem.");
+		ec_log_err("Failed to start server: Your license does not permit this amount of users.");
+		ec_log_err("Stop your zarafa-license service, start the zarafa-server and remove users to resolve the problem.");
 		er = ZARAFA_E_NO_ACCESS;
 		goto exit;
 	}
@@ -409,7 +408,7 @@ ECRESULT ECSessionManager::RemoveAllSessions()
 	// Lock the session map since we're going to remove all the sessions.
 	pthread_rwlock_wrlock(&m_hCacheRWLock);
 
-	m_lpLogger->Log(EC_LOGLEVEL_INFO, "Shutdown all current sessions");
+	ec_log_info("Shutdown all current sessions");
 
 	iIterSession = m_mapSessions.begin();
 	while(iIterSession != m_mapSessions.end())
@@ -447,7 +446,7 @@ ECRESULT ECSessionManager::CancelAllSessions(ECSESSIONID sessionIDException)
 	// Lock the session map since we're going to remove all the sessions.
 	pthread_rwlock_wrlock(&m_hCacheRWLock);
 
-	m_lpLogger->Log(EC_LOGLEVEL_INFO, "Shutdown all current sessions");
+	ec_log_info("Shutdown all current sessions");
 
 	iIterSession = m_mapSessions.begin();
 	while(iIterSession != m_mapSessions.end())
@@ -670,7 +669,7 @@ ECRESULT ECSessionManager::CreateSession(struct soap *soap, char *szName, char *
 	}
 
 	// whoops, out of auth options.
-	m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Failed to authenticate user %s from %s using program %s",
+	ec_log_warn("Failed to authenticate user \"%s\" from \"%s\" using program \"%s\"",
 					szName, from.c_str(), szClientApp ? szClientApp : "<unknown>");
 
 	ZLOG_AUDIT(m_lpAudit, "authenticate failed user='%s' from='%s' program='%s'",
@@ -682,7 +681,7 @@ ECRESULT ECSessionManager::CreateSession(struct soap *soap, char *szName, char *
 
 
 authenticated:
-	m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "User %s from %s authenticated through %s using program %s", szName, from.c_str(), method, szClientApp ? szClientApp : "<unknown>");
+	ec_log_debug("User \"%s\" from \"%s\" authenticated through \"%s\" using program %s", szName, from.c_str(), method, szClientApp ? szClientApp : "<unknown>");
 	if (strcmp(ZARAFA_SYSTEM_USER, szName) != 0) {
 		/* Do not log successful SYSTEM logins */
 		ZLOG_AUDIT(m_lpAudit, "authenticate ok user='%s' from='%s' method='%s' program='%s'",
@@ -692,18 +691,18 @@ authenticated:
 	er = RegisterSession(lpAuthSession, sessionGroupID, szClientVersion, szClientApp, szClientAppVersion, szClientAppMisc, lpSessionID, &lpSession, fLockSession);
 	if (er != erSuccess) {
 		if (er == ZARAFA_E_NO_ACCESS && szImpersonateUser != NULL && *szImpersonateUser != '\0') {
-			m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Failed attempt to impersonate user %s by user %s", szImpersonateUser, szName);
+			ec_log_err("Failed attempt to impersonate user \"%s\" by user \"%s\"", szImpersonateUser, szName);
 			ZLOG_AUDIT(m_lpAudit, "impersonate failed user='%s', from='%s' program='%s' impersonator='%s'",
 					  szImpersonateUser, from.c_str(), szClientApp ? szClientApp : "<unknown>", szName);
 		} else
-			m_lpLogger->Log(EC_LOGLEVEL_FATAL, "User %s authenticated, but failed to create session. Error 0x%08X", szName, er);
+			ec_log_err("User \"%s\" authenticated, but failed to create session. Error 0x%08X", szName, er);
 		goto exit;
 	}
 	if (!szImpersonateUser || *szImpersonateUser == '\0')
-		m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "User %s receives session %llu",
+		ec_log_debug("User \"%s\" receives session %llu",
 			szName, static_cast<unsigned long long>(*lpSessionID));
 	else {
-		m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "User %s impersonated by %s receives session %llu",
+		ec_log_debug("User \"%s\" impersonated by \"%s\" receives session %llu",
 			szImpersonateUser, szName,
 			static_cast<unsigned long long>(*lpSessionID));
 		ZLOG_AUDIT(m_lpAudit, "impersonate ok user='%s', from='%s' program='%s' impersonator='%s'",
@@ -768,7 +767,7 @@ ECRESULT ECSessionManager::CreateSessionInternal(ECSession **lppSession, unsigne
 		goto exit;
 	}
 
-	m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "New internal session (%llu)",
+	ec_log_debug("New internal session (%llu)",
 		static_cast<unsigned long long>(newSID));
 
 	g_lpStatsCollector->Increment(SCN_SESSIONS_INTERNAL_CREATED);
@@ -792,7 +791,7 @@ ECRESULT ECSessionManager::RemoveSession(ECSESSIONID sessionID){
 	ECRESULT	hr			= erSuccess;
 	BTSession	*lpSession	= NULL;
 	
-	m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "End of session (logoff) %llu",
+	ec_log_debug("End of session (logoff) %llu",
 		static_cast<unsigned long long>(sessionID));
 	g_lpStatsCollector->Increment(SCN_SESSIONS_DELETED);
 
@@ -818,7 +817,7 @@ ECRESULT ECSessionManager::RemoveSession(ECSESSIONID sessionID){
 		if(lpSession->Shutdown(5 * 60 * 1000) == erSuccess)
 			delete lpSession;
 		else
-			m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Session failed to shut down: skipping logoff");
+			ec_log_err("Session failed to shut down: skipping logoff");
 	}
 		
     // Tell the notification manager to wake up anyone waiting for this session
@@ -942,7 +941,7 @@ void* ECSessionManager::SessionCleaner(void *lpTmpSessionManager)
 				iRemove = iIterator++;
 				// Remove the session from the list, no new threads can start on this session after this point.
 				g_lpStatsCollector->Increment(SCN_SESSIONS_TIMEOUT);
-				lpSessionManager->m_lpLogger->Log(EC_LOGLEVEL_INFO, "End of session (timeout) %llu",
+				ec_log_info("End of session (timeout) %llu",
 					static_cast<unsigned long long>(iRemove->first));
 				lpSessionManager->m_mapSessions.erase(iRemove);
 			} else {
@@ -962,7 +961,7 @@ void* ECSessionManager::SessionCleaner(void *lpTmpSessionManager)
 				// should only happen if some bit of code has locked the session and failed to unlock it. There are now
 				// two options: delete the session anyway and hope we don't segfault, or leak the session. We choose
 				// the latter.
-				lpSessionManager->m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Session failed to shut down: skipping clean");
+				ec_log_err("Session failed to shut down: skipping clean");
 			}
 		}
 
@@ -1445,28 +1444,23 @@ ECRESULT ECSessionManager::DumpStats()
 	sSearchFolderStats sSearchStats;
 
 	GetStats(sSessionStats);
-
-	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Session stats:");
-	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  Sessions : %u (%llu bytes)", sSessionStats.session.ulItems, static_cast<unsigned long long>(sSessionStats.session.ullSize));
-	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  Locked   : %d", sSessionStats.session.ulLocked);
-	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  Groups   : %u (%llu bytes)" ,sSessionStats.group.ulItems, static_cast<unsigned long long>(sSessionStats.group.ullSize));
-	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  PersistentByConnection : %u (%u bytes)" ,sSessionStats.ulPersistentByConnection, sSessionStats.ulPersistentByConnectionSize);
-	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  PersistentBySession    : %u (%u bytes)" , sSessionStats.ulPersistentBySession, sSessionStats.ulPersistentBySessionSize);
-	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Subscription stats:");
-	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  Table : %u (%u bytes)", sSessionStats.ulTableSubscriptions,  sSessionStats.ulTableSubscriptionSize);
-	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  Object: %u (%u bytes)", sSessionStats.ulObjectSubscriptions, sSessionStats.ulObjectSubscriptionSize);
-
-	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Table stats:");
-	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  Open tables: %u (%llu bytes)", sSessionStats.session.ulOpenTables, static_cast<unsigned long long>(sSessionStats.session.ulTableSize));
-
+	ec_log_info("Session stats:");
+	ec_log_info("  Sessions : %u (%llu bytes)", sSessionStats.session.ulItems, static_cast<unsigned long long>(sSessionStats.session.ullSize));
+	ec_log_info("  Locked   : %d", sSessionStats.session.ulLocked);
+	ec_log_info("  Groups   : %u (%llu bytes)" ,sSessionStats.group.ulItems, static_cast<unsigned long long>(sSessionStats.group.ullSize));
+	ec_log_info("  PersistentByConnection : %u (%u bytes)" ,sSessionStats.ulPersistentByConnection, sSessionStats.ulPersistentByConnectionSize);
+	ec_log_info("  PersistentBySession    : %u (%u bytes)" , sSessionStats.ulPersistentBySession, sSessionStats.ulPersistentBySessionSize);
+	ec_log_info("Subscription stats:");
+	ec_log_info("  Table : %u (%u bytes)", sSessionStats.ulTableSubscriptions,  sSessionStats.ulTableSubscriptionSize);
+	ec_log_info("  Object: %u (%u bytes)", sSessionStats.ulObjectSubscriptions, sSessionStats.ulObjectSubscriptionSize);
+	ec_log_info("Table stats:");
+	ec_log_info("  Open tables: %u (%llu bytes)", sSessionStats.session.ulOpenTables, static_cast<unsigned long long>(sSessionStats.session.ulTableSize));
 	m_lpSearchFolders->GetStats(sSearchStats);
-
-	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "SearchFolders:");
-	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  Stores    : %u", sSearchStats.ulStores);
-	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  Folders   : %u", sSearchStats.ulFolders);
-	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  Queue     : %u", sSearchStats.ulEvents);
-	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "  Mem usage : %llu Bytes", static_cast<unsigned long long>(sSearchStats.ullSize));
-
+	ec_log_info("SearchFolders:");
+	ec_log_info("  Stores    : %u", sSearchStats.ulStores);
+	ec_log_info("  Folders   : %u", sSearchStats.ulFolders);
+	ec_log_info("  Queue     : %u", sSearchStats.ulEvents);
+	ec_log_info("  Mem usage : %llu Bytes", static_cast<unsigned long long>(sSearchStats.ullSize));
 	return this->m_lpECCacheManager->DumpStats();
 }
 
@@ -1692,7 +1686,7 @@ ECRESULT ECSessionManager::CreateDatabaseConnection()
 	if(m_lpDatabase == NULL) {
 		er = m_lpDatabaseFactory->CreateDatabaseObject(&m_lpDatabase, strError);
 		if(er != erSuccess) {
-			m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to open connection to database: %s", strError.c_str());
+			ec_log_crit("Unable to open connection to database: %s", strError.c_str());
 			goto exit;
 		}
 	}
