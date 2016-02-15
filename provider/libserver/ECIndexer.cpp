@@ -370,7 +370,10 @@ exit:
  * 
  * @return Zarafa error code
  */
-ECRESULT GetIndexerResults(ECDatabase *lpDatabase, ECConfig *lpConfig, ECLogger *lpLogger, ECCacheManager *lpCacheManager, GUID *guidServer, GUID *guidStore, ECListInt &lstFolders, struct restrictTable *lpRestrict, struct restrictTable **lppNewRestrict, std::list<unsigned int> &lstMatches)
+ECRESULT GetIndexerResults(ECDatabase *lpDatabase, ECConfig *lpConfig,
+    ECCacheManager *lpCacheManager, GUID *guidServer, GUID *guidStore,
+    ECListInt &lstFolders, struct restrictTable *lpRestrict,
+    struct restrictTable **lppNewRestrict, std::list<unsigned int> &lstMatches)
 {
     ECRESULT er = erSuccess;
 	ECSearchClient *lpSearchClient = NULL;

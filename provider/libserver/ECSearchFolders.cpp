@@ -1220,7 +1220,7 @@ ECRESULT ECSearchFolders::Search(unsigned int ulStoreId, unsigned int ulFolderId
 	if(er != erSuccess)
 		goto exit;
 	
-	if(GetIndexerResults(lpDatabase, m_lpSessionManager->GetConfig(), m_lpLogger, m_lpSessionManager->GetCacheManager(), &guidServer, &guidStore, lstFolders, lpSearchCrit->lpRestrict, &lpAdditionalRestrict, lstIndexerResults) == erSuccess) {
+	if (GetIndexerResults(lpDatabase, m_lpSessionManager->GetConfig(), m_lpSessionManager->GetCacheManager(), &guidServer, &guidStore, lstFolders, lpSearchCrit->lpRestrict, &lpAdditionalRestrict, lstIndexerResults) == erSuccess) {
 		// Get the additional restriction properties ready
 		er = ECGenericObjectTable::GetRestrictPropTags(lpAdditionalRestrict, &lstPrefix, &lpPropTags);
 		if(er != erSuccess) {
