@@ -1,6 +1,6 @@
 # -*- Makefile -*-
 
-dist_sbin_SCRIPTS = zarafa-backup
+dist_sbin_SCRIPTS = zarafa-backup-plus
 
 EXTRA_DIST = setup.py \
 	zarafa_backup/__init__.py

@@ -561,7 +561,7 @@ def main():
         show_contents(args[0], options)
     else:
         # start backup/restore
-        Service('backup', options=options, args=args).start()
+        Service('backup-plus', options=options, args=args).start()
 
 if __name__ == '__main__':
     main()
