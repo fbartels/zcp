@@ -586,6 +586,65 @@ exit:
     return er;
 }
 
+ECRESULT ECCacheManager::GetObjectsFromProp(unsigned int ulTag,
+    const std::vector<unsigned int> &cbdata,
+    const std::vector<unsigned char *> &lpdata,
+    std::map<ECsIndexProp, unsigned int> &mapObjects)
+{
+	ECRESULT er = erSuccess;
+	ECDatabase *lpDatabase = NULL;
+	std::string strQuery;
+	DB_RESULT lpDBResult = NULL;
+	DB_ROW lpDBRow = NULL;
+	DB_LENGTHS lpDBLen = NULL;
+	ECsIndexProp sObject;
+	unsigned int objid;
+	std::vector<size_t> uncached;
+
+	for (size_t i = 0; i < lpdata.size(); ++i) {
+		if (QueryObjectFromProp(ulTag, cbdata[i], lpdata[i], &objid) == erSuccess) {
+			sObject.SetValue(PROP_ID(ulTag), lpdata[i], cbdata[i]);
+			mapObjects[sObject] = objid;
+		} else {
+			uncached.push_back(i);
+		}
+	}
+
+	if (!uncached.empty()) {
+		er = GetThreadLocalDatabase(this->m_lpDatabaseFactory, &lpDatabase);
+		if (er != erSuccess)
+			goto exit;
+
+		strQuery = "SELECT hierarchyid, val_binary FROM indexedproperties FORCE INDEX(bin) WHERE tag="+stringify(ulTag)+" AND val_binary IN(";
+		for (size_t j = 0; j < uncached.size(); ++j) {
+			strQuery += lpDatabase->EscapeBinary(lpdata[j], cbdata[j]);
+			strQuery += ",";
+		}
+		strQuery.resize(strQuery.size() - 1);
+		strQuery += ")";
+		if (lpDBResult != NULL)
+			lpDatabase->FreeResult(lpDBResult);
+		er = lpDatabase->DoSelect(strQuery, &lpDBResult);
+		if (er != erSuccess)
+			goto exit;
+
+		while ((lpDBRow = lpDatabase->FetchRow(lpDBResult)) != NULL) {
+			lpDBLen = lpDatabase->FetchRowLengths(lpDBResult);
+			sObject.SetValue(PROP_ID(ulTag), reinterpret_cast<unsigned char *>(lpDBRow[1]), lpDBLen[1]);
+			mapObjects[sObject] = atoui(lpDBRow[0]);
+		}
+	}
+ exit:
+	sObject.lpData = NULL;
+	if (lpDBResult != NULL)
+		lpDatabase->FreeResult(lpDBResult);
+	if (er != erSuccess)
+		LOG_CACHE_DEBUG("Get object ids from props error: 0x%08x", er);
+	else
+		LOG_CACHE_DEBUG("Get object ids from props total ids %zu from disk %zu", cbdata.size(), uncached.size());
+	return er;
+}
+
 // Get the store that the specified object belongs to
 ECRESULT ECCacheManager::GetStore(unsigned int ulObjId, unsigned int *lpulStore, GUID *lpGuid, unsigned int maxdepth)
 {

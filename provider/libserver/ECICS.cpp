@@ -759,10 +759,29 @@ ECRESULT GetChanges(struct soap *soap, ECSession *lpSession, SOURCEKEY sFolderSo
 		if (er != erSuccess)
 			goto exit;
 			
+		std::vector<DB_ROW> db_rows;
+		std::vector<DB_LENGTHS> db_lengths;
 		while (lpDBResult && (lpDBRow = lpDatabase->FetchRow(lpDBResult))) {
 			lpDBLen = lpDatabase->FetchRowLengths(lpDBResult);
-		
-			er = lpHelper->ProcessRow(lpDBRow, lpDBLen);
+
+			if (lpDBRow[icsSourceKey] == NULL || lpDBRow[icsParentSourceKey] == NULL) {
+				er = ZARAFA_E_DATABASE_ERROR;
+				ec_log_crit("ECGetContentChangesHelper::ProcessRow(): row null");
+				goto exit;
+			}
+			db_rows.push_back(lpDBRow);
+			db_lengths.push_back(lpDBLen);
+			if (db_rows.size() >= 1000) {
+				er = lpHelper->ProcessRows(db_rows, db_lengths);
+				if (er != erSuccess)
+					goto exit;
+				db_rows.clear();
+				db_lengths.clear();
+			}
+		}
+
+		if (!db_rows.empty()) {
+			er = lpHelper->ProcessRows(db_rows, db_lengths);
 			if (er != erSuccess)
 				goto exit;
 		}

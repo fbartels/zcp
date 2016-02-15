@@ -798,64 +798,66 @@ exit:
 	return er;
 }
 
-ECRESULT ECGetContentChangesHelper::ProcessRow(DB_ROW lpDBRow, DB_LENGTHS lpDBLen)
+ECRESULT ECGetContentChangesHelper::ProcessRows(const std::vector<DB_ROW> &db_rows, const std::vector<DB_LENGTHS> &db_lengths)
 {
 	ECRESULT		er = erSuccess;
-	bool			fMatch = true;
 	unsigned int	ulChangeType = 0;
 	unsigned int	ulFlags = 0;
-	
-	ASSERT(lpDBRow);
-	ASSERT(lpDBLen);
-	
-	if (lpDBRow[icsSourceKey] == NULL || lpDBRow[icsParentSourceKey] == NULL) {
-		er = ZARAFA_E_DATABASE_ERROR;
-		ec_log_err("ECGetContentChangesHelper::ProcessRow(): row null");
-		goto exit;
-	}
+	DB_ROW lpDBRow;
+	DB_LENGTHS lpDBLen;
+	std::set<SOURCEKEY> *matches = NULL;
 
 	if (m_lpsRestrict) {
 		ASSERT(m_lpSession);
-		er = MatchRestriction(SOURCEKEY(lpDBLen[icsSourceKey], lpDBRow[icsSourceKey]), m_lpsRestrict, &fMatch);
-		if (er == ZARAFA_E_NOT_FOUND) {
-			er = erSuccess;
-			fMatch = false;
-		} else if (er != erSuccess)
+		er = MatchRestrictions(db_rows, db_lengths, m_lpsRestrict, &matches);
+		if (er != erSuccess)
 			goto exit;
 	}
-	
+
 	ASSERT(m_lpMsgProcessor);
-	if (fMatch) {
-		er = m_lpMsgProcessor->ProcessAccepted(lpDBRow, lpDBLen, &ulChangeType, &ulFlags);
-		if (m_lpsRestrict)
-			m_setNewMessages.insert(MESSAGESET::value_type(SOURCEKEY(lpDBLen[icsSourceKey], lpDBRow[icsSourceKey]), SAuxMessageData(SOURCEKEY(lpDBLen[icsParentSourceKey], lpDBRow[icsParentSourceKey]), ICS_CHANGE_FLAG_NEW, ulFlags)));
-	} else
-		er = m_lpMsgProcessor->ProcessRejected(lpDBRow, lpDBLen, &ulChangeType);
-	
-	if (er != erSuccess)
-		goto exit;
-		
-	// If ulChangeType equals 0 we can skip this message
-	if (ulChangeType == 0)
-		goto exit;
-		
-	m_lpChanges->__ptr[m_ulChangeCnt].ulChangeId = lpDBRow[icsID] ? atoui(lpDBRow[icsID]) : 0;
-	
-	m_lpChanges->__ptr[m_ulChangeCnt].sSourceKey.__ptr = (unsigned char *)soap_malloc(m_soap, lpDBLen[icsSourceKey]);
-	m_lpChanges->__ptr[m_ulChangeCnt].sSourceKey.__size = lpDBLen[icsSourceKey];
-	memcpy(m_lpChanges->__ptr[m_ulChangeCnt].sSourceKey.__ptr, lpDBRow[icsSourceKey], lpDBLen[icsSourceKey]);
+	for (size_t i = 0; i < db_rows.size(); ++i) {
+		bool fMatch = true;
 
-	m_lpChanges->__ptr[m_ulChangeCnt].sParentSourceKey.__ptr = (unsigned char *)soap_malloc(m_soap, lpDBLen[icsParentSourceKey]);
-	m_lpChanges->__ptr[m_ulChangeCnt].sParentSourceKey.__size = lpDBLen[icsParentSourceKey];
-	memcpy(m_lpChanges->__ptr[m_ulChangeCnt].sParentSourceKey.__ptr, lpDBRow[icsParentSourceKey], lpDBLen[icsParentSourceKey]);
+		lpDBRow = db_rows[i];
+		lpDBLen = db_lengths[i];
+		if (m_lpsRestrict != NULL)
+			fMatch = matches->find(SOURCEKEY(lpDBLen[icsSourceKey], lpDBRow[icsSourceKey])) != matches->end();
+		ulChangeType = 0;
+		ulFlags = 0;
+		if (fMatch) {
+			er = m_lpMsgProcessor->ProcessAccepted(lpDBRow, lpDBLen, &ulChangeType, &ulFlags);
+			if (m_lpsRestrict != NULL)
+				m_setNewMessages.insert(MESSAGESET::value_type(SOURCEKEY(lpDBLen[icsSourceKey],
+					lpDBRow[icsSourceKey]), SAuxMessageData(SOURCEKEY(lpDBLen[icsParentSourceKey],
+					lpDBRow[icsParentSourceKey]), ICS_CHANGE_FLAG_NEW, ulFlags)));
+		} else {
+			er = m_lpMsgProcessor->ProcessRejected(lpDBRow, lpDBLen, &ulChangeType);
+		}
+		if (er != erSuccess)
+			goto exit;
 
-	m_lpChanges->__ptr[m_ulChangeCnt].ulChangeType = ulChangeType;
+		// If ulChangeType equals 0 we can skip this message
+		if (ulChangeType == 0)
+			continue;
 
-	m_lpChanges->__ptr[m_ulChangeCnt].ulFlags = ulFlags;
+		m_lpChanges->__ptr[m_ulChangeCnt].ulChangeId = lpDBRow[icsID] ? atoui(lpDBRow[icsID]) : 0;
 
-	m_ulChangeCnt++;
-	
+		m_lpChanges->__ptr[m_ulChangeCnt].sSourceKey.__ptr = (unsigned char *)soap_malloc(m_soap, lpDBLen[icsSourceKey]);
+		m_lpChanges->__ptr[m_ulChangeCnt].sSourceKey.__size = lpDBLen[icsSourceKey];
+		memcpy(m_lpChanges->__ptr[m_ulChangeCnt].sSourceKey.__ptr, lpDBRow[icsSourceKey], lpDBLen[icsSourceKey]);
+
+		m_lpChanges->__ptr[m_ulChangeCnt].sParentSourceKey.__ptr = (unsigned char *)soap_malloc(m_soap, lpDBLen[icsParentSourceKey]);
+		m_lpChanges->__ptr[m_ulChangeCnt].sParentSourceKey.__size = lpDBLen[icsParentSourceKey];
+		memcpy(m_lpChanges->__ptr[m_ulChangeCnt].sParentSourceKey.__ptr, lpDBRow[icsParentSourceKey], lpDBLen[icsParentSourceKey]);
+
+		m_lpChanges->__ptr[m_ulChangeCnt].ulChangeType = ulChangeType;
+
+		m_lpChanges->__ptr[m_ulChangeCnt].ulFlags = ulFlags;
+
+		m_ulChangeCnt++;
+	}
 exit:
+	free(matches);
 	return er;
 }
 
@@ -1059,71 +1061,92 @@ exit:
 	return er;
 }
 
-ECRESULT ECGetContentChangesHelper::MatchRestriction(const SOURCEKEY &sSourceKey, struct restrictTable *lpsRestrict, bool *lpfMatch)
+ECRESULT ECGetContentChangesHelper::MatchRestrictions(const std::vector<DB_ROW> &db_rows,
+    const std::vector<DB_LENGTHS> &db_lengths,
+    struct restrictTable *restrict, std::set<SOURCEKEY> **matches_p)
 {
-    ECRESULT er = erSuccess;
-    unsigned int ulObjId = 0;
-    ECObjectTableList lstRows;
-    ECObjectTableList::value_type sRow;
-    ECODStore sODStore;
-    bool fMatch = false;
-    struct propTagArray *lpPropTags = NULL;
-    struct rowSet *lpRowSet = NULL;
+	ECRESULT er = erSuccess;
+	unsigned int ulObjId = 0;
+	ECObjectTableList lstRows;
+	ECObjectTableList::value_type sRow;
+	ECODStore sODStore;
+	bool fMatch = false;
+	std::vector<SOURCEKEY> source_keys;
+	std::map<ECsIndexProp, unsigned int> index_objs;
+	struct propTagArray *lpPropTags = NULL;
+	struct rowSet *lpRowSet = NULL;
+	std::set<SOURCEKEY> *matches = new std::set<SOURCEKEY>;
+	std::vector<unsigned int> cbdata;
+	std::vector<unsigned char *> lpdata;
+	std::vector<unsigned int> objectids;
 
-    memset(&sODStore, 0, sizeof(sODStore));
+	memset(&sODStore, 0, sizeof(sODStore));
 
-	// Add change key and predecessor change list
-	er = g_lpSessionManager->GetCacheManager()->GetObjectFromProp(PROP_ID(PR_SOURCE_KEY), sSourceKey.size(), sSourceKey, &ulObjId);
+	for (size_t i = 0; i < db_rows.size(); ++i) {
+		lpdata.push_back(reinterpret_cast<unsigned char *>(db_rows[i][icsSourceKey]));
+		cbdata.push_back(db_lengths[i][icsSourceKey]);
+	}
+
+	er = g_lpSessionManager->GetCacheManager()->GetObjectsFromProp(PROP_ID(PR_SOURCE_KEY), cbdata, lpdata, index_objs);
 	if (er != erSuccess)
 		goto exit;
 
+	for (std::map<ECsIndexProp, unsigned int>::iterator i = index_objs.begin();
+	     i != index_objs.end(); ++i)
+	{
+		sRow.ulObjId = i->second;
+		sRow.ulOrderId = 0;
+		lstRows.push_back(sRow);
+		source_keys.push_back(SOURCEKEY(i->first.cbData, reinterpret_cast<const char *>(i->first.lpData)));
+		ulObjId = i->second; /* no need to split QueryRowData call per-objtype (always same) */
+	}
+
 	er = g_lpSessionManager->GetCacheManager()->GetObject(ulObjId, NULL, NULL, NULL, &sODStore.ulObjType);
+	if (er != erSuccess)
+		goto exit;
+
+	er = ECGenericObjectTable::GetRestrictPropTags(restrict, NULL, &lpPropTags);
 	if (er != erSuccess)
 		goto exit;
 
 	sODStore.lpGuid = new GUID;
 
 	er = g_lpSessionManager->GetCacheManager()->GetStore(ulObjId, &sODStore.ulStoreId, sODStore.lpGuid);
-	if(er != erSuccess)
+	if (er != erSuccess)
 		goto exit;
-
-	er = ECGenericObjectTable::GetRestrictPropTags(lpsRestrict, NULL, &lpPropTags);
-	if(er != erSuccess)
-		goto exit;
-
-	sRow.ulObjId = ulObjId;
-	sRow.ulOrderId = 0;
-
-	lstRows.push_back(sRow);
 
 	ASSERT(m_lpSession);
 	// NULL for soap, not m_soap. We'll free this ourselves
 	er = ECStoreObjectTable::QueryRowData(NULL, NULL, m_lpSession, &lstRows, lpPropTags, &sODStore, &lpRowSet, false, false);
-	if(er != erSuccess)
+	if (er != erSuccess)
 		goto exit;
 
-	if(lpRowSet->__size != 1) {
+	if (lpRowSet->__size < 0 ||
+	    static_cast<size_t>(lpRowSet->__size) != lstRows.size()) {
 		er = ZARAFA_E_DATABASE_ERROR;
 		ec_log_err("ECGetContentChangesHelper::MatchRestriction(): unexpected row count");
 		goto exit;
 	}
 
-	// @todo: Get a proper locale for the case insensitive comparisons inside MatchRowRestrict
-	er = ECGenericObjectTable::MatchRowRestrict(g_lpSessionManager->GetCacheManager(), &lpRowSet->__ptr[0], lpsRestrict, NULL, createLocaleFromName(""), &fMatch);
-	if(er != erSuccess)
-		goto exit;
+	for (int j = 0; j < lpRowSet->__size; ++j) {
+		// @todo: Get a proper locale for the case insensitive comparisons inside MatchRowRestrict
+		er = ECGenericObjectTable::MatchRowRestrict(g_lpSessionManager->GetCacheManager(), &lpRowSet->__ptr[j], restrict, NULL, createLocaleFromName(""), &fMatch);
+		if(er != erSuccess)
+			goto exit;
+		if (fMatch)
+			matches->insert(source_keys[j]);
+	}
 
-    *lpfMatch = fMatch;
+	*matches_p = matches;
 
 exit:
 	delete sODStore.lpGuid;
-    if(lpPropTags)
-        FreePropTagArray(lpPropTags);
 
-    if(lpRowSet)
-        FreeRowSet(lpRowSet, true);
-
-    return er;
+	if(lpPropTags)
+		FreePropTagArray(lpPropTags);
+	if(lpRowSet)
+		FreeRowSet(lpRowSet, true);
+	return er;
 }
 
 ECRESULT ECGetContentChangesHelper::GetSyncedMessages(unsigned int ulSyncId, unsigned int ulChangeId, LPMESSAGESET lpsetMessages)
