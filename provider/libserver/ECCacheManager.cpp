@@ -1396,32 +1396,26 @@ ECRESULT ECCacheManager::DumpStats()
 	m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Dumping cache stats:");
 
 	pthread_mutex_lock(&m_hCacheMutex);
-
-	m_ObjectsCache.DumpStats(m_lpLogger);
-	m_StoresCache.DumpStats(m_lpLogger);
-	m_AclCache.DumpStats(m_lpLogger);
-	m_QuotaCache.DumpStats(m_lpLogger);
-	m_QuotaUserDefaultCache.DumpStats(m_lpLogger);
-	m_UEIdObjectCache.DumpStats(m_lpLogger);
-	m_UserObjectCache.DumpStats(m_lpLogger);
-	m_UserObjectDetailsCache.DumpStats(m_lpLogger);
-	m_ServerDetailsCache.DumpStats(m_lpLogger);
-
+	m_ObjectsCache.DumpStats();
+	m_StoresCache.DumpStats();
+	m_AclCache.DumpStats();
+	m_QuotaCache.DumpStats();
+	m_QuotaUserDefaultCache.DumpStats();
+	m_UEIdObjectCache.DumpStats();
+	m_UserObjectCache.DumpStats();
+	m_UserObjectDetailsCache.DumpStats();
+	m_ServerDetailsCache.DumpStats();
 	pthread_mutex_unlock(&m_hCacheMutex);
 
 
 	pthread_mutex_lock(&m_hCacheCellsMutex);
-
-	m_CellCache.DumpStats(m_lpLogger);
-
+	m_CellCache.DumpStats();
 	pthread_mutex_unlock(&m_hCacheCellsMutex);
 
 
 	pthread_mutex_lock(&m_hCacheIndPropMutex);
-
-	m_PropToObjectCache.DumpStats(m_lpLogger);
-	m_ObjectToPropCache.DumpStats(m_lpLogger);
-
+	m_PropToObjectCache.DumpStats();
+	m_ObjectToPropCache.DumpStats();
 	pthread_mutex_unlock(&m_hCacheIndPropMutex);
 
 	return erSuccess;

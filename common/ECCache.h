@@ -103,8 +103,8 @@ public:
 	// Call the provided callback with some statistics.
 	void RequestStats(void(callback)(const std::string &, const std::string &, const std::string &, void*), void *obj);
 
-	// Dump statistics to the provided logger.
-	void DumpStats(ECLogger *lpLogger);
+	// Dump statistics
+	void DumpStats(void) const;
 
 protected:
 	ECCacheBase(const std::string &strCachename, size_type ulMaxSize, long lMaxAge);
