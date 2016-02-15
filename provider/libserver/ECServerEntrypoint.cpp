@@ -185,9 +185,9 @@ ECRESULT zarafa_init(ECConfig* lpConfig, ECLogger* lpLogger, ECLogger* lpAudit, 
 	}
 
 #ifdef HAVE_OFFLINE_SUPPORT
-    g_lpSessionManager = new ECSessionManagerOffline(lpConfig, lpLogger, bHostedZarafa, bDistributedZarafa);
+    g_lpSessionManager = new ECSessionManagerOffline(lpConfig, bHostedZarafa, bDistributedZarafa);
 #else
-    g_lpSessionManager = new ECSessionManager(lpConfig, lpLogger, lpAudit, bHostedZarafa, bDistributedZarafa);
+    g_lpSessionManager = new ECSessionManager(lpConfig, lpAudit, bHostedZarafa, bDistributedZarafa);
 #endif
 	
 	er = g_lpSessionManager->LoadSettings();

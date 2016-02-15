@@ -53,7 +53,9 @@
 static const char THIS_FILE[] = __FILE__;
 #endif
 
-ECSessionManagerOffline::ECSessionManagerOffline(ECConfig *lpConfig, ECLogger *lpLogger, bool bHostedZarafa, bool bDistributedZarafa) : ECSessionManager(lpConfig, lpLogger, NULL, bHostedZarafa, bDistributedZarafa)
+ECSessionManagerOffline::ECSessionManagerOffline(ECConfig *lpConfig,
+    bool bHostedZarafa, bool bDistributedZarafa) :
+	ECSessionManager(lpConfig, NULL, bHostedZarafa, bDistributedZarafa)
 {
 }
 

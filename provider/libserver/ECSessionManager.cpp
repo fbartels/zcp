@@ -82,14 +82,13 @@ static const char THIS_FILE[] = __FILE__;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-ECSessionManager::ECSessionManager(ECConfig *lpConfig, ECLogger *lpLogger, ECLogger *lpAudit, bool bHostedZarafa, bool bDistributedZarafa)
+ECSessionManager::ECSessionManager(ECConfig *lpConfig, ECLogger *lpAudit,
+    bool bHostedZarafa, bool bDistributedZarafa)
 {
 	int err = 0;
 
 	bExit					= FALSE;
 	m_lpConfig				= lpConfig;
-	m_lpLogger				= lpLogger;
-	m_lpLogger->AddRef();
 	m_lpAudit				= lpAudit;
 	if (m_lpAudit)
 		m_lpAudit->AddRef();
@@ -182,8 +181,6 @@ ECSessionManager::~ECSessionManager()
 	delete m_lpSearchFolders;
 	delete m_lpPluginFactory;
 	delete m_lpServerGuid;
-
-	m_lpLogger->Release();
 	if (m_lpAudit != NULL)
 		m_lpAudit->Release();
 
@@ -1467,11 +1464,6 @@ ECRESULT ECSessionManager::DumpStats()
 ECConfig* ECSessionManager::GetConfig()
 {
 	return m_lpConfig;
-}
-
-ECLogger* ECSessionManager::GetLogger()
-{
-	return m_lpLogger;
 }
 
 ECLogger* ECSessionManager::GetAudit()

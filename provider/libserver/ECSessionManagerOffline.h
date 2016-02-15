@@ -49,7 +49,7 @@
 class ECSessionManagerOffline :	public ECSessionManager
 {
 public:
-	ECSessionManagerOffline(ECConfig *lpConfig, ECLogger *lpLogger, bool bHostedZarafa, bool bDistributedZarafa);
+	ECSessionManagerOffline(ECConfig *lpConfig, bool bHostedZarafa, bool bDistributedZarafa);
 	virtual ~ECSessionManagerOffline(void);
 
 	virtual ECRESULT CreateAuthSession(struct soap *soap, unsigned int ulCapabilities, ECSESSIONID *sessionID, ECAuthSession **lppAuthSession, bool bRegisterSession, bool bLockSession);
