@@ -94,6 +94,7 @@ ECAttachmentStorage::ECAttachmentStorage(ECDatabase *lpDatabase, unsigned int ul
 	: m_lpDatabase(lpDatabase)
 {
 	m_ulRef = 0;
+	pthread_mutex_init(&m_refcnt_lock, NULL);
 	m_bFileCompression = ulCompressionLevel != 0;
 
 	if (ulCompressionLevel > Z_BEST_COMPRESSION)
@@ -107,12 +108,16 @@ ECAttachmentStorage::~ECAttachmentStorage()
 }
 
 ULONG ECAttachmentStorage::AddRef() {
-	return ++m_ulRef;
+	pthread_mutex_lock(&m_refcnt_lock);
+	ULONG ret = ++m_ulRef;
+	pthread_mutex_unlock(&m_refcnt_lock);
+	return ret;
 }
 
 ULONG ECAttachmentStorage::Release() {
+	pthread_mutex_lock(&m_refcnt_lock);
 	ULONG ulRef = --m_ulRef;
-
+	pthread_mutex_unlock(&m_refcnt_lock);
 	if (m_ulRef == 0)
 		delete this;
 
