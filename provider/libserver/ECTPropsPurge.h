@@ -45,14 +45,13 @@
 #define ECTPROPSPURGE_H
 
 class ECDatabase;
-class ECLogger;
 class ECConfig;
 class ECDatabaseFactory;
 class ECSession;
 
 class ECTPropsPurge {
 public:
-    ECTPropsPurge(ECConfig *lpConfig, ECLogger *lpLogger, ECDatabaseFactory *lpDatabaseFactory);
+    ECTPropsPurge(ECConfig *lpConfig, ECDatabaseFactory *lpDatabaseFactory);
     ~ECTPropsPurge();
 
     static ECRESULT PurgeDeferredTableUpdates(ECDatabase *lpDatabase, unsigned int ulFolderId);
@@ -74,7 +73,6 @@ private:
     pthread_t			m_hThread;
     bool				m_bExit;
 
-    ECLogger *m_lpLogger;
     ECConfig *m_lpConfig;    
     ECDatabaseFactory *m_lpDatabaseFactory;
 };

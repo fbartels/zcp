@@ -58,14 +58,12 @@
 
 extern ECStatsCollector*     g_lpStatsCollector;
 
-ECTPropsPurge::ECTPropsPurge(ECConfig *lpConfig, ECLogger *lpLogger, ECDatabaseFactory *lpDatabaseFactory)
+ECTPropsPurge::ECTPropsPurge(ECConfig *lpConfig, ECDatabaseFactory *lpDatabaseFactory)
 {
     pthread_mutex_init(&m_hMutexExit, NULL);
     pthread_cond_init(&m_hCondExit, NULL);
     
     m_lpConfig = lpConfig;
-    m_lpLogger = lpLogger;
-    m_lpLogger->AddRef();
     m_lpDatabaseFactory = lpDatabaseFactory;
     m_bExit = false;
     
@@ -76,8 +74,6 @@ ECTPropsPurge::ECTPropsPurge(ECConfig *lpConfig, ECLogger *lpLogger, ECDatabaseF
 
 ECTPropsPurge::~ECTPropsPurge()
 {
-	m_lpLogger->Release();
-
 	// Signal thread to exit
 	pthread_mutex_lock(&m_hMutexExit);
 	m_bExit = true;
@@ -130,7 +126,7 @@ ECRESULT ECTPropsPurge::PurgeThread()
         if(!lpDatabase) {
             er = GetThreadLocalDatabase(this->m_lpDatabaseFactory, &lpDatabase);
             if(er != erSuccess) {
-                m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to get database connection for delayed purge!");
+                ec_log_crit("Unable to get database connection for delayed purge!");
                 Sleep(60000);
                 continue;
             }

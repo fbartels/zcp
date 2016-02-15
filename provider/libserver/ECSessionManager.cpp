@@ -112,9 +112,7 @@ ECSessionManager::ECSessionManager(ECConfig *lpConfig, ECLogger *lpLogger, ECLog
 	m_lpPluginFactory = new ECPluginFactory(lpConfig, g_lpStatsCollector, bHostedZarafa, bDistributedZarafa);
 	m_lpECCacheManager = new ECCacheManager(lpConfig, m_lpDatabaseFactory, lpLogger);
 	m_lpSearchFolders = new ECSearchFolders(this, m_lpDatabaseFactory, lpLogger);
-
-	m_lpTPropsPurge = new ECTPropsPurge(lpConfig, lpLogger, m_lpDatabaseFactory);
-
+	m_lpTPropsPurge = new ECTPropsPurge(lpConfig, m_lpDatabaseFactory);
 	m_ptrLockManager = ECLockManager::Create();
 	
 	m_lpServerGuid = NULL;
