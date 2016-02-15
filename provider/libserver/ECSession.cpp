@@ -1274,34 +1274,33 @@ const char gss_display_status_fail_message[] = "Call to gss_display_status faile
 
 static ECRESULT LogKRB5Error_2(const char *msg, OM_uint32 code, OM_uint32 type)
 {
-	ECRESULT retval = ZARAFA_E_INVALID_PARAMETER;
 	gss_buffer_desc gssMessage = GSS_C_EMPTY_BUFFER;
 	OM_uint32 status = 0;
 	OM_uint32 context = 0;
 
-		if (!msg) {
-			ec_log_err("Invalid argument msg in call to ECAuthSession::LogKRB5Error()");
-		} else {
+	if (msg == NULL) {
+		ec_log_err("Invalid argument msg in call to ECAuthSession::LogKRB5Error()");
+		return ZARAFA_E_INVALID_PARAMETER;
+	}
+	ECRESULT retval = ZARAFA_E_CALL_FAILED;
+	do {
+		OM_uint32 result = gss_display_status(&status, code, type, GSS_C_NULL_OID, &context, &gssMessage);
+		switch (result) {
+		case GSS_S_COMPLETE:
+			ec_log_warn("%s: %s", msg, (char*)gssMessage.value);
+			retval = erSuccess;
+			break;
+		case GSS_S_BAD_MECH:
+			ec_log_warn("%s: %s", gss_display_status_fail_message, "unsupported mechanism type was requested.");
 			retval = ZARAFA_E_CALL_FAILED;
-			do {
-				OM_uint32 result = gss_display_status(&status, code, type, GSS_C_NULL_OID, &context, &gssMessage);
-				switch (result) {
-					case GSS_S_COMPLETE:
-						ec_log_warn("%s: %s", msg, (char*)gssMessage.value);
-						retval = erSuccess;
-						break;
-					case GSS_S_BAD_MECH:
-						ec_log_warn("%s: %s", gss_display_status_fail_message, "unsupported mechanism type was requested.");
-						retval = ZARAFA_E_CALL_FAILED;
-						break;
-					case GSS_S_BAD_STATUS:
-						ec_log_warn("%s: %s", gss_display_status_fail_message, "status value was not recognized, or the status type was neither GSS_C_GSS_CODE nor GSS_C_MECH_CODE.");
-						retval = ZARAFA_E_CALL_FAILED;
-						break;
-				}
-				gss_release_buffer(&status, &gssMessage);
-			} while (context != 0);
+			break;
+		case GSS_S_BAD_STATUS:
+			ec_log_warn("%s: %s", gss_display_status_fail_message, "status value was not recognized, or the status type was neither GSS_C_GSS_CODE nor GSS_C_MECH_CODE.");
+			retval = ZARAFA_E_CALL_FAILED;
+			break;
 		}
+		gss_release_buffer(&status, &gssMessage);
+	} while (context != 0);
 	return retval;
 }
 
@@ -1310,10 +1309,9 @@ ECRESULT ECAuthSession::LogKRB5Error(const char* msg, OM_uint32 major, OM_uint32
 	if (!msg) {
 		ec_log_err("Invalid argument msg in call to ECAuthSession::LogKRB5Error()");
 		return ZARAFA_E_INVALID_PARAMETER;
-	} else {
-		LogKRB5Error_2(msg, major, GSS_C_GSS_CODE);
-		return LogKRB5Error_2(msg, minor, GSS_C_MECH_CODE);
 	}
+	LogKRB5Error_2(msg, major, GSS_C_GSS_CODE);
+	return LogKRB5Error_2(msg, minor, GSS_C_MECH_CODE);
 }
 #endif
 
