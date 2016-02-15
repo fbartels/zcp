@@ -146,7 +146,7 @@ ECConfig *ECPluginSharedData::CreateConfig(const configsetting_t *lpDefaults,
 
 		m_lpConfig = ECConfig::Create(m_lpDefaults, m_lpszDirectives);
 		if (!m_lpConfig->LoadSettings(m_lpParentConfig->GetSetting("user_plugin_config")))
-			m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Failed to open plugin configuration file, using defaults.");
+			ec_log_err("Failed to open plugin configuration file, using defaults.");
 		if (m_lpConfig->HasErrors() || m_lpConfig->HasWarnings()) {
 			LogConfigErrors(m_lpConfig);
 			if(m_lpConfig->HasErrors()) {
@@ -190,10 +190,10 @@ void ECPluginSharedData::Signal(int signal)
 	switch (signal) {
 	case SIGHUP:
 		if (!m_lpConfig->ReloadSettings())
-			m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to reload plugin configuration file, continuing with current settings.");
+			ec_log_crit("Unable to reload plugin configuration file, continuing with current settings.");
 			
 		if (m_lpConfig->HasErrors()) {
-			m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to reload plugin configuration file.");
+			ec_log_err("Unable to reload plugin configuration file.");
 			LogConfigErrors(m_lpConfig);
 		}
 		break;
