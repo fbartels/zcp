@@ -44,7 +44,6 @@
 #ifndef ECSEARCHFOLDERS_H
 #define ECSEARCHFOLDERS_H
 
-#include <zarafa/ECLogger.h>
 #include "ECDatabaseFactory.h"
 #include <zarafa/ECKeyTable.h>
 #include "ECStoreObjectTable.h"
@@ -124,7 +123,7 @@ typedef struct tagsSearchFolderStats
  */
 class ECSearchFolders {
 public:
-    ECSearchFolders(ECSessionManager *lpSessionManager, ECDatabaseFactory *lpFactory, ECLogger *lpLogger);
+    ECSearchFolders(ECSessionManager *lpSessionManager, ECDatabaseFactory *lpFactory);
     virtual ~ECSearchFolders();
 
     /**
@@ -451,7 +450,6 @@ private:
 
     ECDatabaseFactory *m_lpDatabaseFactory;
     ECSessionManager *m_lpSessionManager;
-    ECLogger *m_lpLogger;
 
     // List of change events
     std::list<EVENT> m_lstEvents;

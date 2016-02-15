@@ -49,6 +49,7 @@
 #include "ECMAPI.h"
 #include "ECSession.h"
 #include <zarafa/ECKeyTable.h>
+#include <zarafa/ECLogger.h>
 #include "ECStoreObjectTable.h"
 #include "ECSubRestriction.h"
 #include "ECSearchFolders.h"
@@ -72,11 +73,11 @@ typedef struct {
     ECSearchFolders *lpSearchFolders;
 } THREADINFO;
 
-ECSearchFolders::ECSearchFolders(ECSessionManager *lpSessionManager, ECDatabaseFactory *lpFactory, ECLogger *lpLogger) {
+ECSearchFolders::ECSearchFolders(ECSessionManager *lpSessionManager,
+    ECDatabaseFactory *lpFactory)
+{
     this->m_lpSessionManager = lpSessionManager;
     this->m_lpDatabaseFactory = lpFactory;
-    this->m_lpLogger = lpLogger;
-    this->m_lpLogger->AddRef();
     this->m_bExitThread = false;
     this->m_bRunning = false;
 
@@ -108,7 +109,6 @@ ECSearchFolders::~ECSearchFolders() {
     }
     
 	m_mapSearchFolders.clear();
-	m_lpLogger->Release();
 	pthread_mutex_unlock(&m_mutexMapSearchFolders);
     
     pthread_mutex_destroy(&m_mutexMapSearchFolders);
