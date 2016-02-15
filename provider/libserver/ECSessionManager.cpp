@@ -135,7 +135,7 @@ ECSessionManager::ECSessionManager(ECConfig *lpConfig, ECLogger *lpLogger, ECLog
 	if (err != 0)
 		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to spawn thread for session cleaner! Sessions will live forever!: %s", strerror(err));
 
-	m_lpNotificationManager = new ECNotificationManager(m_lpLogger);
+	m_lpNotificationManager = new ECNotificationManager();
 }
 
 ECSessionManager::~ECSessionManager()

@@ -67,8 +67,8 @@ struct NOTIFREQUEST {
 
 class ECNotificationManager {
 public:
-    ECNotificationManager(ECLogger *lpLogger);
-    ~ECNotificationManager();
+	ECNotificationManager();
+	~ECNotificationManager();
     
     // Called by the SOAP handler
     HRESULT AddRequest(ECSESSIONID ecSessionId, struct soap *soap);
