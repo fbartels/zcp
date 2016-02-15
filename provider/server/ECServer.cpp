@@ -1330,7 +1330,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 
 #endif //#ifdef HAVE_OFFLINE_SUPPORT
 
-	zarafa_initlibrary(g_lpConfig->GetSetting("mysql_database_path"), g_lpConfig->GetSetting("mysql_config_file"), g_lpLogger);
+	zarafa_initlibrary(g_lpConfig->GetSetting("mysql_database_path"), g_lpConfig->GetSetting("mysql_config_file"));
 
 	if(!strcmp(g_lpConfig->GetSetting("server_pipe_enabled"), "yes"))
 		bPipeEnabled = true;
@@ -1677,7 +1677,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 
 	//Init the main system, now you can use the values like session manager
 	// This also starts several threads, like SessionCleaner, NotificationThread and TPropsPurge.
-	er = zarafa_init(g_lpConfig, g_lpLogger, g_lpAudit, hosted, distributed);
+	er = zarafa_init(g_lpConfig, g_lpAudit, hosted, distributed);
 	if (er != erSuccess) { // create SessionManager
 		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to initialize zarafa session manager");
 		goto exit;
@@ -1770,9 +1770,7 @@ exit:
 	ssl_threading_cleanup();
 
 	SSL_library_cleanup(); //cleanup memory so valgrind is happy
-
-	zarafa_unloadlibrary(g_lpLogger);
-
+	zarafa_unloadlibrary();
 	rand_free();
 
 	delete g_lpConfig;

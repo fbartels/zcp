@@ -66,8 +66,8 @@ public:
 	virtual ~ECDatabaseMySQL();
 
 	// Embedded mysql
-	static ECRESULT	InitLibrary(const char *lpDatabaseDir, const char *lpConfigFile, ECLogger *lpLogger);
-	static void UnloadLibrary(ECLogger * = NULL);
+	static ECRESULT	InitLibrary(const char *lpDatabaseDir, const char *lpConfigFile);
+	static void UnloadLibrary(void);
 
 	ECRESULT Connect(void) _zcp_override;
 	ECRESULT Close(void) _zcp_override;

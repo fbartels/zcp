@@ -415,7 +415,7 @@ ECDatabaseMySQL::~ECDatabaseMySQL()
 }
 
 ECRESULT ECDatabaseMySQL::InitLibrary(const char *lpDatabaseDir,
-    const char *lpConfigFile, ECLogger *lpLogger)
+    const char *lpConfigFile)
 {
 	ECRESULT	er = erSuccess;
 	string		strDatabaseDir;
@@ -446,7 +446,7 @@ ECRESULT ECDatabaseMySQL::InitLibrary(const char *lpDatabaseDir,
 	if ((ret = mysql_library_init(arraySize(server_args),
 	     const_cast<char **>(server_args),
 	     const_cast<char **>(server_groups))) != 0) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to initialize mysql: error 0x%08X", ret);
+		ec_log_crit("Unable to initialize mysql: error 0x%08X", ret);
 		er = ZARAFA_E_DATABASE_ERROR;
 		goto exit;
 	}
@@ -553,7 +553,7 @@ exit:
 	return er;
 }
 
-void ECDatabaseMySQL::UnloadLibrary(ECLogger *l)
+void ECDatabaseMySQL::UnloadLibrary(void)
 {
 	/*
 	 * MySQL will timeout waiting for its own threads if the mysql
@@ -561,12 +561,9 @@ void ECDatabaseMySQL::UnloadLibrary(ECLogger *l)
 	 * mysql_*_end() is called. [Global problem - it also affects
 	 * projects other than Zarafa's.] :(
 	 */
-	if (l != NULL)
-		l->Log(EC_LOGLEVEL_NOTICE, "Waiting for mysql_server_end");
+	ec_log_notice("Waiting for mysql_server_end");
 	mysql_server_end();// mysql > 4.1.10 = mysql_library_end();
-
-	if (l != NULL)
-		l->Log(EC_LOGLEVEL_NOTICE, "Waiting for mysql_library_end");
+	ec_log_notice("Waiting for mysql_library_end");
 	mysql_library_end();
 }
 
