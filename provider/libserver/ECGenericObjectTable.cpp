@@ -1591,9 +1591,9 @@ ECRESULT ECGenericObjectTable::SetCollapseState(struct xsd__base64Binary sCollap
     soap_get_collapseState(&xmlsoap, lpCollapseState, "CollapseState", NULL);
     
     if(xmlsoap.error) {
-        er = ZARAFA_E_DATABASE_ERROR;
-	lpSession->GetSessionManager()->GetLogger()->Log(EC_LOGLEVEL_FATAL, "ECGenericObjectTable::SetCollapseState(): xmlsoap error %d", xmlsoap.error);
-        goto exit;
+		er = ZARAFA_E_DATABASE_ERROR;
+		ec_log_crit("ECGenericObjectTable::SetCollapseState(): xmlsoap error %d", xmlsoap.error);
+		goto exit;
     }
     
     // lpCollapseState now contains the collapse state for all categories, apply them now

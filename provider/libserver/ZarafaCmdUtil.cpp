@@ -465,7 +465,7 @@ static ECRESULT CheckICSDeleteScope(ECDatabase *lpDatabase,
 		er = CheckWithinLastSyncedMessagesSet(lpDatabase, ulSyncId, iterDeleteItems->sSourceKey);
 		if (er == ZARAFA_E_NOT_FOUND) {
 			// ignore delete of message
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_DEBUG, "Message not in sync scope, ignoring delete");
+			ec_log_debug("Message not in sync scope, ignoring delete");
 			FreeDeleteItem(&(*iterDeleteItems));
 			lstDeleted.erase(iterDeleteItems++);
 			er = erSuccess;
@@ -1159,7 +1159,7 @@ ECRESULT DeleteObjects(ECSession *lpSession, ECDatabase *lpDatabase, ECListInt *
 	// Collect recursive parent objects, validate item and check the permissions
 	er = ExpandDeletedItems(lpSession, lpDatabase, lpsObjectList, ulFlags, bCheckPermission, &lstDeleteItems);
 	if (er != erSuccess) {
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Error while expanding delete item list, error code: %u", er);
+		ec_log_info("Error while expanding delete item list, error code %u", er);
 		goto exit;
 	}
 
@@ -1185,7 +1185,7 @@ ECRESULT DeleteObjects(ECSession *lpSession, ECDatabase *lpDatabase, ECListInt *
 	else
 		er = DeleteObjectSoft(lpSession, lpDatabase, ulFlags, lstDeleteItems, lstDeleted);
 	if (er != erSuccess) {
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Error while deleting expanded item list, error code: %u", er);
+		ec_log_info("Error while deleting expanded item list, error code %u", er);
 		goto exit;
 	}
 
@@ -1195,14 +1195,14 @@ ECRESULT DeleteObjects(ECSession *lpSession, ECDatabase *lpDatabase, ECListInt *
 		// Update store size
 		er = DeleteObjectStoreSize(lpSession, lpDatabase, ulFlags, lstDeleted);
 		if(er!= erSuccess) {
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Error while updating store sizes after delete, error code: %u", er);
+			ec_log_info("Error while updating store sizes after delete, error code %u", er);
 			goto exit;
 		}
 
 		// Update ICS
 		er = DeleteObjectUpdateICS(lpSession, ulFlags, lstDeleted, ulSyncId);
 		if (er != erSuccess) {
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Error while updating ICS after delete, error code: %u", er);
+			ec_log_info("Error while updating ICS after delete, error code %u", er);
 			goto exit;
 		}
 
@@ -1214,7 +1214,7 @@ ECRESULT DeleteObjects(ECSession *lpSession, ECDatabase *lpDatabase, ECListInt *
 				// directly hard-delete the item is not supported for updating PR_LOCAL_COMMIT_TIME_MAX
 				er = WriteLocalCommitTimeMax(NULL, lpDatabase, iterDeleteItems->ulParent, NULL);
 				if (er != erSuccess) {
-					g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Error while updating folder access time after delete, error code: %u", er);
+					ec_log_info("Error while updating folder access time after delete, error code %u", er);
 					goto exit;
 				}
 				// the folder will receive a changed notification anyway, since items are being deleted from it
@@ -1397,7 +1397,7 @@ ECRESULT UpdateFolderCount(ECDatabase *lpDatabase, unsigned int ulFolderId, unsi
 	if(er != erSuccess)
 		goto exit;
 	if (ulType != MAPI_FOLDER) {
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Not updating folder count %d for non-folder object %d type %d", lDelta, ulFolderId, ulType);
+		ec_log_info("Not updating folder count %d for non-folder object %d type %d", lDelta, ulFolderId, ulType);
 		ASSERT(ulType == MAPI_FOLDER);
 		goto exit;
 	}
@@ -1450,7 +1450,7 @@ ECRESULT MapEntryIdToObjectId(ECSession *lpecSession, ECDatabase *lpDatabase, UL
 
 	er = RemoveStaleIndexedProp(lpDatabase, PR_ENTRYID, sEntryId.__ptr, sEntryId.__size);
 	if(er != erSuccess) {
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_FATAL, "ERROR: Collision detected while setting entryid. objectid=%u, entryid=%s, user=%u", ulObjId, bin2hex(sEntryId.__size, (unsigned char *)sEntryId.__ptr).c_str(), lpecSession->GetSecurity()->GetUserId());
+		ec_log_crit("ERROR: Collision detected while setting entryid. objectid=%u, entryid=%s, user=%u", ulObjId, bin2hex(sEntryId.__size, (unsigned char *)sEntryId.__ptr).c_str(), lpecSession->GetSecurity()->GetUserId());
 		er = ZARAFA_E_DATABASE_ERROR;
 		goto exit;
 	}
@@ -1773,7 +1773,7 @@ ECRESULT GetNamesFromIDs(struct soap *soap, ECDatabase *lpDatabase, struct propT
 				}
 			} else {
 				er = ZARAFA_E_DATABASE_ERROR;
-				g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_FATAL, "GetNamesFromIDs(): row/col NULL");
+				ec_log_crit("GetNamesFromIDs(): row/col NULL");
 				goto exit;
 			}
 		} else {
@@ -1856,7 +1856,7 @@ ECRESULT ResetFolderCount(ECSession *lpSession, unsigned int ulObjId, unsigned i
 	lpDBRow = lpDatabase->FetchRow(lpDBResult);
 	if(lpDBRow == NULL || lpDBRow[0] == NULL || lpDBRow[1] == NULL || lpDBRow[2] == NULL || lpDBRow[3] == NULL || lpDBRow[4] == NULL) {
 		er = ZARAFA_E_DATABASE_ERROR;
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_FATAL, "ResetFolderCount(): row/col NULL (1)");
+		ec_log_crit("ResetFolderCount(): row/col NULL (1)");
 		goto exit;
 	}
 	
@@ -1885,7 +1885,7 @@ ECRESULT ResetFolderCount(ECSession *lpSession, unsigned int ulObjId, unsigned i
 	lpDBRow = lpDatabase->FetchRow(lpDBResult);
 	if(lpDBRow == NULL || lpDBRow[0] == NULL) {
 		er = ZARAFA_E_DATABASE_ERROR;
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_FATAL, "ResetFolderCount(): row/col NULL (2)");
+		ec_log_crit("ResetFolderCount(): row/col NULL (2)");
 		goto exit;
 	}
 	
@@ -2042,11 +2042,9 @@ ECRESULT RemoveStaleIndexedProp(ECDatabase *lpDatabase, unsigned int ulPropTag, 
         g_lpSessionManager->GetCacheManager()->RemoveIndexData(ulPropTag, cbSize, lpData);
     }
 	else {
-        // Caller wanted to remove the entry, but we can't since it is in use
-        er = ZARAFA_E_COLLISION;
-	g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_FATAL, "RemoveStaleIndexedProp(): caller wanted to remove the entry, but we can't since it is in use");
-    }
-
+		er = ZARAFA_E_COLLISION;
+		ec_log_crit("RemoveStaleIndexedProp(): caller wanted to remove the entry, but we cannot since it is in use");
+	}
 exit:
 	if (lpDBResult)
 		lpDatabase->FreeResult(lpDBResult);
@@ -2354,9 +2352,9 @@ ECRESULT PrepareReadProps(struct soap *soap, ECDatabase *lpDatabase, bool fDoQue
         lpDBLen = lpDatabase->FetchRowLengths(lpDBResult);
 
         if(lpDBLen == NULL) {
-            er = ZARAFA_E_DATABASE_ERROR; // this should never happen
-	g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_FATAL, "PrepareReadProps(): FetchRowLengths failed");
-            goto exit;
+		er = ZARAFA_E_DATABASE_ERROR; // this should never happen
+		ec_log_crit("PrepareReadProps(): FetchRowLengths failed");
+		goto exit;
         }
 
         ulPropTag = PROP_TAG(atoi(lpDBRow[FIELD_NR_TYPE]),atoi(lpDBRow[FIELD_NR_TAG]));
@@ -2366,9 +2364,9 @@ ECRESULT PrepareReadProps(struct soap *soap, ECDatabase *lpDatabase, bool fDoQue
             if (resInsert.second) {
                 // New entry
                 if (lpDBLen[FIELD_NR_NAMEGUID] != sizeof(resInsert.first->second.guid)) {
-                    er = ZARAFA_E_DATABASE_ERROR;
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_FATAL, "PrepareReadProps(): record size mismatch");
-                    goto exit;
+			er = ZARAFA_E_DATABASE_ERROR;
+			ec_log_err("PrepareReadProps(): record size mismatch");
+			goto exit;
                 }
                 memcpy(&resInsert.first->second.guid, lpDBRow[FIELD_NR_NAMEGUID], sizeof(resInsert.first->second.guid));
                 
@@ -2471,9 +2469,9 @@ ECRESULT PrepareReadProps(struct soap *soap, ECDatabase *lpDatabase, bool fDoQue
         lpDBLen = lpDatabase->FetchRowLengths(lpDBResult);
 
         if(lpDBLen == NULL) {
-            er = ZARAFA_E_DATABASE_ERROR; // this should never happen
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_FATAL, "PrepareReadProps(): FetchRowLengths failed(2)");
-            goto exit;
+			er = ZARAFA_E_DATABASE_ERROR; // this should never happen
+			ec_log_crit("PrepareReadProps(): FetchRowLengths failed(2)");
+			goto exit;
         }
         
         if (lpNamedPropDefs) {
@@ -2484,7 +2482,7 @@ ECRESULT PrepareReadProps(struct soap *soap, ECDatabase *lpDatabase, bool fDoQue
                     // New entry
                     if (lpDBLen[FIELD_NR_NAMEGUID] != sizeof(resInsert.first->second.guid)) {
                         er = ZARAFA_E_DATABASE_ERROR;
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_FATAL, "PrepareReadProps(): record size mismatch(2)");
+			ec_log_crit("PrepareReadProps(): record size mismatch(2)");
                         goto exit;
                     }
                     memcpy(&resInsert.first->second.guid, lpDBRow[FIELD_NR_NAMEGUID], sizeof(resInsert.first->second.guid));

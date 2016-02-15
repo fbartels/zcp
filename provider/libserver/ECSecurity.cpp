@@ -340,7 +340,7 @@ ECRESULT ECSecurity::GetObjectPermission(unsigned int ulObjId, unsigned int* lpu
 		ulDepth++;
 		
 		if(ulDepth > MAX_PARENT_LIMIT) {
-			m_lpSession->GetSessionManager()->GetLogger()->Log(EC_LOGLEVEL_FATAL, "Maximum depth reached for object %d, deepest object: %d", ulObjId, ulCurObj);
+			ec_log_err("Maximum depth reached for object %d, deepest object: %d", ulObjId, ulCurObj);
 			er = erSuccess;
 			goto exit;
 		}

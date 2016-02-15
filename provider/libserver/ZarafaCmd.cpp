@@ -125,7 +125,11 @@
 #define STROUT_FIX(s) (bSupportUnicode ? (s) : ECStringCompat::UTF8_to_WTF1252(soap, (s)))
 #define STROUT_FIX_CPY(s) (bSupportUnicode ? s_strcpy(soap, (s)) : ECStringCompat::UTF8_to_WTF1252(soap, (s)))
 
-#define LOG_SOAP_DEBUG(logger, _msg, ...) if (logger->Log(EC_LOGLEVEL_DEBUG|EC_LOGLEVEL_SOAP)) { logger->Log(EC_LOGLEVEL_DEBUG|EC_LOGLEVEL_SOAP, "soap: " _msg, ##__VA_ARGS__); }
+#define LOG_SOAP_DEBUG(_msg, ...) \
+	do { \
+		if (ec_log_get()->Log(EC_LOGLEVEL_DEBUG | EC_LOGLEVEL_SOAP)) \
+			ec_log(EC_LOGLEVEL_DEBUG | EC_LOGLEVEL_SOAP, "soap: " _msg, ##__VA_ARGS__); \
+	} while (false)
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -560,7 +564,7 @@ ECRESULT GetBestServerPath(struct soap *soap, ECSession *lpecSession, const std:
             *lpstrServerPath = strProxyPath;
             goto exit;
         } else {
-            lpecSession->GetSessionManager()->GetLogger()->Log(EC_LOGLEVEL_WARNING, "Proxy path not set for server '%s'! falling back to direct address.", strServerName.c_str());
+            ec_log_warn("Proxy path not set for server \"%s\"! falling back to direct address.", strServerName.c_str());
         }
     }    
 
@@ -640,7 +644,7 @@ int ns__logon(struct soap *soap, char *user, char *pass, char *impersonate, char
 
 	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &startTimes);
 
-	LOG_SOAP_DEBUG(g_lpSessionManager->GetLogger(), "%020llu: S logon", static_cast<unsigned long long>(sessionID));
+	LOG_SOAP_DEBUG("%020llu: S logon", static_cast<unsigned long long>(sessionID));
 
     if ((clientCaps & ZARAFA_CAP_UNICODE) == 0) {
 		user = ECStringCompat::WTF1252_to_UTF8(soap, user);
@@ -660,7 +664,7 @@ int ns__logon(struct soap *soap, char *user, char *pass, char *impersonate, char
 	// denied. We can't say what future clients may or may not be capable of. So we'll leave that to the
 	// clients.
 	if (ZARAFA_COMPARE_VERSION_TO_GENERAL(lpecSession->ClientVersion(), MAKE_ZARAFA_GENERAL(6)) < 0) {
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_WARNING, "Rejected logon attempt from a %s version client.", clientVersion ? clientVersion : "<unknown>");
+		ec_log_warn("Rejected logon attempt from a %s version client.", clientVersion ? clientVersion : "<unknown>");
 		er = ZARAFA_E_INVALID_VERSION;
 		goto exit;
 	}
@@ -717,8 +721,9 @@ int ns__logon(struct soap *soap, char *user, char *pass, char *impersonate, char
 		delete lpLicenseClient;
         
         if(er != erSuccess) {
-            g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "Client requested license but zarafa-licensed could not be contacted");
-            goto exit; // Note that Auth() succeeds even if the client request was denied. An error here is a real parsing error for example.
+			ec_log_err("Client requested license, but zarafa-licensed could not be contacted");
+			goto exit;
+			// Note that Auth() succeeds even if the client request was denied. An error here is a real parsing error for example.
         }
         
         lpsResponse->sLicenseResponse.__size = ulLicenseResponse;
@@ -746,7 +751,7 @@ exit:
 
 	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &endTimes);
 
-	LOG_SOAP_DEBUG(g_lpSessionManager->GetLogger(), "%020llu: E logon 0x%08x %f %f",
+	LOG_SOAP_DEBUG("%020llu: E logon 0x%08x %f %f",
 		static_cast<unsigned long long>(sessionID), er,
 		timespec2dbl(endTimes) - timespec2dbl(startTimes),
 		GetTimeOfDay() - dblStart);
@@ -772,7 +777,7 @@ int ns__ssoLogon(struct soap *soap, ULONG64 ulSessionId, char *szUsername, char 
 
 	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &startTimes);
 
-	LOG_SOAP_DEBUG(g_lpSessionManager->GetLogger(), "%020" PRIu64 ": S ssoLogon", ulSessionId);
+	LOG_SOAP_DEBUG("%020" PRIu64 ": S ssoLogon", ulSessionId);
 
 	if (!lpInput || lpInput->__size == 0 || lpInput->__ptr == NULL || !szUsername || !szClientVersion)
 		goto exit;
@@ -823,8 +828,9 @@ int ns__ssoLogon(struct soap *soap, ULONG64 ulSessionId, char *szUsername, char 
 			delete lpLicenseClient;
             
             if(er != erSuccess) {
-                g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "Client requested license but zarafa-licensed could not be contacted");
-                goto exit; // Note that Auth() succeeds even if the client request was denied. An error here is a real parsing error for example.
+			ec_log_err("Client requested license, but zarafa-licensed could not be contacted");
+			goto exit;
+			// Note that Auth() succeeds even if the client request was denied. An error here is a real parsing error for example.
             }
         }
 #endif
@@ -832,7 +838,7 @@ int ns__ssoLogon(struct soap *soap, ULONG64 ulSessionId, char *szUsername, char 
 		// create ecsession from ecauthsession, and place in session map
 		er = g_lpSessionManager->RegisterSession(lpecAuthSession, ullSessionGroup, szClientVersion, szClientApp, szClientAppVersion, szClientAppMisc, &newSessionID, &lpecSession, true);
 		if (er != erSuccess) {
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "User authenticated, but failed to create session. Error 0x%08X", er);
+			ec_log_err("User authenticated, but failed to create session. Error 0x%08X", er);
 			goto exit;
 		}
 
@@ -840,7 +846,7 @@ int ns__ssoLogon(struct soap *soap, ULONG64 ulSessionId, char *szUsername, char 
 	// denied. We can't say what future clients may or may not be capable of. So we'll leave that to the
 	// clients.
 	if (ZARAFA_COMPARE_VERSION_TO_GENERAL(lpecSession->ClientVersion(), MAKE_ZARAFA_GENERAL(6)) < 0) {
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_WARNING, "Rejected logon attempt from a %s version client.", szClientVersion ? szClientVersion : "<unknown>");
+		ec_log_warn("Rejected logon attempt from a %s version client.", szClientVersion ? szClientVersion : "<unknown>");
 		er = ZARAFA_E_INVALID_VERSION;
 		goto exit;
 	}
@@ -929,8 +935,7 @@ nosso:
 
 	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &endTimes);
 
-	LOG_SOAP_DEBUG(g_lpSessionManager->GetLogger(), "%020" PRIu64 ": E ssoLogon 0x%08x %f %f", ulSessionId, er, timespec2dbl(endTimes) - timespec2dbl(startTimes), GetTimeOfDay() - dblStart);
-
+	LOG_SOAP_DEBUG("%020" PRIu64 ": E ssoLogon 0x%08x %f %f", ulSessionId, er, timespec2dbl(endTimes) - timespec2dbl(startTimes), GetTimeOfDay() - dblStart);
 	return SOAP_OK;
 }
 
@@ -945,9 +950,7 @@ int ns__logoff(struct soap *soap, ULONG64 ulSessionId, unsigned int *result)
 	double          dblStart = GetTimeOfDay();
 
 	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &startTimes);
-
-	LOG_SOAP_DEBUG(g_lpSessionManager->GetLogger(), "%020" PRIu64 ": S logoff", ulSessionId);
-
+	LOG_SOAP_DEBUG("%020" PRIu64 ": S logoff", ulSessionId);
 	er = g_lpSessionManager->ValidateSession(soap, ulSessionId, &lpecSession, true);
 	if(er != erSuccess)
 		goto exit;
@@ -968,9 +971,8 @@ exit:
     *result = er;
 
 	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &endTimes);
-	LOG_SOAP_DEBUG(g_lpSessionManager->GetLogger(), "%020" PRIu64 ": E logoff 0x%08x %f %f", ulSessionId, 0, timespec2dbl(endTimes) - timespec2dbl(startTimes), GetTimeOfDay() - dblStart);
-
-    return SOAP_OK;
+	LOG_SOAP_DEBUG("%020" PRIu64 ": E logoff 0x%08x %f %f", ulSessionId, 0, timespec2dbl(endTimes) - timespec2dbl(startTimes), GetTimeOfDay() - dblStart);
+	return SOAP_OK;
 }
 
 #define SOAP_ENTRY_FUNCTION_HEADER(resultvar, fname) \
@@ -981,7 +983,7 @@ exit:
     unsigned int 	*lpResultVar = &resultvar; \
 	const char *szFname = #fname; \
     clock_gettime(CLOCK_THREAD_CPUTIME_ID, &startTimes); \
-	LOG_SOAP_DEBUG(g_lpSessionManager->GetLogger(), "%020" PRIu64 ": S %s", ulSessionId, szFname); \
+	LOG_SOAP_DEBUG("%020" PRIu64 ": S %s", ulSessionId, szFname); \
 	er = g_lpSessionManager->ValidateSession(soap, ulSessionId, &lpecSession, true);\
 	const bool bSupportUnicode = (er == erSuccess ? (lpecSession->GetCapabilities() & ZARAFA_CAP_UNICODE) != 0 : false); \
 	const ECStringCompat stringCompat(bSupportUnicode); \
@@ -996,7 +998,7 @@ __soapentry_exit: \
     *lpResultVar = er; \
     clock_gettime(CLOCK_THREAD_CPUTIME_ID, &endTimes); \
     if(lpecSession) { \
-		LOG_SOAP_DEBUG(g_lpSessionManager->GetLogger(), "%020" PRIu64 ": E %s 0x%08x %f %f", ulSessionId, szFname, er, timespec2dbl(endTimes) - timespec2dbl(startTimes), GetTimeOfDay() - dblStart); \
+		LOG_SOAP_DEBUG("%020" PRIu64 ": E %s 0x%08x %f %f", ulSessionId, szFname, er, timespec2dbl(endTimes) - timespec2dbl(startTimes), GetTimeOfDay() - dblStart); \
 		lpecSession->UpdateBusyState(pthread_self(), SESSION_STATE_SENDING); \
         lpecSession->Unlock(); \
     } \
@@ -1028,7 +1030,7 @@ int ns__##fname(struct soap *soap, ULONG64 ulSessionId, ##__VA_ARGS__) \
        er = lpecSession->GetDatabase(&lpDatabase); \
        if (er != erSuccess) { \
                er = ZARAFA_E_DATABASE_ERROR; \
-		lpecSession->GetSessionManager()->GetLogger()->Log(EC_LOGLEVEL_ERROR, " GetDatabase failed"); \
+		ec_log_err(" GetDatabase failed"); \
                goto __soapentry_exit; \
        }
 
@@ -1111,7 +1113,7 @@ static ECRESULT PurgeSoftDelete(ECSession *lpecSession,
 	bool 			bExitDummy = false;
 
 	if (g_bPurgeSoftDeleteStatus) {
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "Softdelete already running");
+		ec_log_err("Softdelete already running");
 		er = ZARAFA_E_BUSY;
 		goto exit;
 	}
@@ -1160,20 +1162,20 @@ static ECRESULT PurgeSoftDelete(ECSession *lpecSession,
 			goto exit;
 		}
 
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Start to purge %d stores", (int)lObjectIds.size());
+		ec_log_info("Start to purge %d stores", (int)lObjectIds.size());
 
 		for(iterObjectId = lObjectIds.begin(); iterObjectId != lObjectIds.end() && !(*lpbExit); iterObjectId++)
 		{
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, " purge store (%d)", *iterObjectId);
+			ec_log_info(" purge store (%d)", *iterObjectId);
 
 			er = DeleteObjects(lpecSession, lpDatabase, *iterObjectId, ulDeleteFlags|EC_DELETE_STORE, 0, false, false);
 			if(er != erSuccess) {
-				g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "Error while removing softdelete store objects, error code: 0x%x.", er);
+				ec_log_err("Error while removing softdelete store objects, error code: 0x%x.", er);
 				goto exit;
 			}
 		}
 
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Store purge done");
+		ec_log_info("Store purge done");
 
 	}
 	if(lpDBResult){	lpDatabase->FreeResult(lpDBResult); lpDBResult = NULL;}
@@ -1210,15 +1212,15 @@ static ECRESULT PurgeSoftDelete(ECSession *lpecSession,
 			goto exit;
 		}
 
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Start to purge %d folders", (int)lObjectIds.size());
+		ec_log_info("Start to purge %d folders", (int)lObjectIds.size());
 
 		er = DeleteObjects(lpecSession, lpDatabase, &lObjectIds, ulDeleteFlags, 0, false, false);
 		if(er != erSuccess) {
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "Error while removing softdelete folder objects, error code: 0x%x.", er);
+			ec_log_err("Error while removing softdelete folder objects, error code: 0x%x.", er);
 			goto exit;
 		}
 
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Folder purge done");
+		ec_log_info("Folder purge done");
 
 	}
 	if(lpDBResult){	lpDatabase->FreeResult(lpDBResult); lpDBResult = NULL;}
@@ -1255,15 +1257,15 @@ static ECRESULT PurgeSoftDelete(ECSession *lpecSession,
 			goto exit;
 		}
 
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Start to purge %d messages", (int)lObjectIds.size());
+		ec_log_info("Start to purge %d messages", (int)lObjectIds.size());
 
 		er = DeleteObjects(lpecSession, lpDatabase, &lObjectIds, ulDeleteFlags, 0, false, false);
 		if(er != erSuccess) {
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "Error while removing softdelete message objects, error code: 0x%x.", er);
+			ec_log_err("Error while removing softdelete message objects, error code: 0x%x.", er);
 			goto exit;
 		}
 
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Message purge done");
+		ec_log_info("Message purge done");
 	}
 
 	// these stats are only from toplevel objects
@@ -1339,9 +1341,9 @@ SOAP_ENTRY_START(getPublicStore, lpsResponse->er, unsigned int ulFlags, struct g
 	{
 		if (strStoreServer.empty()) {
 			if (!strCompanyName.empty())
-				g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "Company %s has no home server for its public store.", strCompanyName.c_str());
+				ec_log_err("Company \"%s\" has no home server for its public store.", strCompanyName.c_str());
 			else
-				g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "Public store has no home server.");
+				ec_log_err("Public store has no home server.");
 				
 			er = ZARAFA_E_NOT_FOUND;
 			goto exit;
@@ -1356,7 +1358,7 @@ SOAP_ENTRY_START(getPublicStore, lpsResponse->er, unsigned int ulFlags, struct g
 					goto exit;
 	            
 				lpsResponse->lpszServerPath = STROUT_FIX_CPY(strServerPath.c_str());
-				g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Redirecting request to '%s'", lpsResponse->lpszServerPath);
+				ec_log_info("Redirecting request to \"%s\"", lpsResponse->lpszServerPath);
 				g_lpStatsCollector->Increment(SCN_REDIRECT_COUNT, 1);
 				er = ZARAFA_E_UNABLE_TO_COMPLETE;
 				goto exit;
@@ -1389,7 +1391,7 @@ SOAP_ENTRY_START(getPublicStore, lpsResponse->er, unsigned int ulFlags, struct g
 		lpDBLen == NULL || lpDBLen[1] == 0)
 	{
 		er = ZARAFA_E_DATABASE_ERROR; // this should never happen
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "getPublicStore(): no rows from db");
+		ec_log_err("getPublicStore(): no rows from db");
 		goto exit;
 	}
 
@@ -1448,7 +1450,7 @@ SOAP_ENTRY_START(getStore, lpsResponse->er, entryId* lpsEntryId, struct getStore
                     goto exit;
                 
                 lpsResponse->lpszServerPath = STROUT_FIX_CPY(strServerPath.c_str());
-                g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Redirecting request to '%s'", lpsResponse->lpszServerPath);
+                ec_log_info("Redirecting request to \"%s\"", lpsResponse->lpszServerPath);
                 g_lpStatsCollector->Increment(SCN_REDIRECT_COUNT, 1);
                 er = ZARAFA_E_UNABLE_TO_COMPLETE;
                 goto exit;
@@ -1490,7 +1492,7 @@ SOAP_ENTRY_START(getStore, lpsResponse->er, entryId* lpsEntryId, struct getStore
 	lpDBRow = lpDatabase->FetchRow(lpDBResult);
 	if (lpDBRow == NULL) {
 		er = ZARAFA_E_DATABASE_ERROR; // this should never happen
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "getStore(): no rows from db");
+		ec_log_err("getStore(): no rows from db");
 		goto exit;
 	}
 	lpDBLen = lpDatabase->FetchRowLengths(lpDBResult);
@@ -1506,8 +1508,7 @@ SOAP_ENTRY_START(getStore, lpsResponse->er, entryId* lpsEntryId, struct getStore
 	    memchr(lpDBRow[2], '\0', lpDBLen[2] + 1) == NULL ||
 	    lpDBLen[1] == 0) {
 		er = ZARAFA_E_DATABASE_ERROR;
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR,
-			"getStore(): received trash rows from db");
+		ec_log_err("getStore(): received trash rows from db");
 		goto exit;
 	}
 
@@ -1841,7 +1842,7 @@ SOAP_ENTRY_START(loadProp, lpsResponse->er, entryId sEntryId, unsigned int ulObj
 		if (lpDBRow == NULL || lpDBLen == NULL)
 		{
 			er = ZARAFA_E_DATABASE_ERROR;
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "loadProp(): no rows from db");
+			ec_log_err("loadProp(): no rows from db");
 			goto exit;
 		}
 
@@ -2325,7 +2326,7 @@ static ECRESULT WriteProps(struct soap *soap, ECSession *lpecSession,
 				// was replaced with a new value, that it returned 1 the first time and 2 the second time.
 				// We'll allow both though.
 				if(ulAffected != 1 && ulAffected != 2) {
-					g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "Unable to update MVProperties during save: %d, object id: %d", ulAffected, ulObjId);
+					ec_log_err("Unable to update MVProperties during save: %d, object id: %d", ulAffected, ulObjId);
 					er = ZARAFA_E_DATABASE_ERROR;
 					goto exit;
 				}
@@ -3370,7 +3371,7 @@ static ECRESULT LoadObject(struct soap *soap, ECSession *lpecSession,
 
 			if(lpDBRow == NULL || lpDBLen == NULL) {
 				er = ZARAFA_E_DATABASE_ERROR; // this should never happen
-				g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "LoadObject(): no rows from db");
+				ec_log_err("LoadObject(): no rows from db");
 				goto exit;
 			}
 			
@@ -3629,7 +3630,7 @@ static ECRESULT CreateFolder(ECSession *lpecSession, ECDatabase *lpDatabase,
 	while (!bExist && (lpDBRow = lpDatabase->FetchRow(lpDBResult)) != NULL) {
 		if (lpDBRow[0] == NULL || lpDBRow[1] == NULL) {
 			er = ZARAFA_E_DATABASE_ERROR;
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "CreateFolder(): columns null");
+			ec_log_err("CreateFolder(): columns null");
 			goto exit;
 		}
 
@@ -5110,7 +5111,7 @@ SOAP_ENTRY_START(getReceiveFolder, lpsReceiveFolder->er, entryId sStoreId, char*
 
 		if(lpDBRow == NULL || lpDBRow[0] == NULL || lpDBRow[1] == NULL){
 			er = ZARAFA_E_DATABASE_ERROR;
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "getReceiveFolder(): row or columns null");
+			ec_log_err("getReceiveFolder(): row or columns null");
 			goto exit;
 		}
 
@@ -5198,7 +5199,7 @@ SOAP_ENTRY_START(setReceiveFolder, *result, entryId sStoreId, entryId* lpsEntryI
 
 			if(lpDBRow == NULL || lpDBRow[0] == NULL){
 				er = ZARAFA_E_DATABASE_ERROR;
-				g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "setReceiveFolder(): row or columns null");
+				ec_log_err("setReceiveFolder(): row or columns null");
 				goto exit;
 			}
 
@@ -5206,7 +5207,7 @@ SOAP_ENTRY_START(setReceiveFolder, *result, entryId sStoreId, entryId* lpsEntryI
 			ulId = atoi(lpDBRow[0]);
 		}else{
 			er = ZARAFA_E_DATABASE_ERROR; //FIXME: no default error ?
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "setReceiveFolder(): unexpected row count");
+			ec_log_err("setReceiveFolder(): unexpected row count");
 			goto exit;
 		}
 
@@ -5226,7 +5227,7 @@ SOAP_ENTRY_START(setReceiveFolder, *result, entryId sStoreId, entryId* lpsEntryI
 
 		if(lpDBRow == NULL || lpDBRow[0] == NULL || lpDBRow[1] == NULL){
 			er = ZARAFA_E_DATABASE_ERROR;
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "setReceiveFolder(): row or columns null");
+			ec_log_err("setReceiveFolder(): row or columns null");
 			goto exit;
 		}
 
@@ -5386,7 +5387,7 @@ SOAP_ENTRY_START(setReadFlags, *result, unsigned int ulFlags, entryId* lpsEntryI
 		{
 			if(lpDBRow[0] == NULL || lpDBRow[1] == NULL){
 				er = ZARAFA_E_DATABASE_ERROR;
-				g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "setReadFlags(): columns null");
+				ec_log_err("setReadFlags(): columns null");
 				goto exit;
 			}
 
@@ -5451,7 +5452,7 @@ SOAP_ENTRY_START(setReadFlags, *result, unsigned int ulFlags, entryId* lpsEntryI
 		{
 			if(lpDBRow[0] == NULL || lpDBRow[1] == NULL){
 				er = ZARAFA_E_DATABASE_ERROR;
-				g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "setReadFlags(): columns null(2)");
+				ec_log_err("setReadFlags(): columns null(2)");
 				goto exit;
 			}
 
@@ -5682,7 +5683,7 @@ SOAP_ENTRY_START(setUser, *result, struct user *lpsUser, unsigned int *result)
 	} else if (lpecSession->GetSecurity()->GetUserId() == ulUserId) {
 		// you're only allowed to set your password, force the lpsUser struct to only contain that update
 		if (lpsUser->lpszUsername && oldDetails.GetPropString(OB_PROP_S_LOGIN) != lpsUser->lpszUsername) {
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_WARNING, "Disallowing user %s to update its username to %s",
+			ec_log_warn("Disallowing user \"%s\" to update their username to \"%s\"",
 												 oldDetails.GetPropString(OB_PROP_S_LOGIN).c_str(), lpsUser->lpszUsername);
 			lpsUser->lpszUsername = NULL;
 		}
@@ -5690,39 +5691,39 @@ SOAP_ENTRY_START(setUser, *result, struct user *lpsUser, unsigned int *result)
 		// leave lpszPassword
 
 		if (lpsUser->lpszMailAddress && oldDetails.GetPropString(OB_PROP_S_EMAIL) != lpsUser->lpszMailAddress) {
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_WARNING, "Disallowing user %s to update its mail address to %s",
+			ec_log_warn("Disallowing user \"%s\" to update their mail address to \"%s\"",
 												 oldDetails.GetPropString(OB_PROP_S_LOGIN).c_str(), lpsUser->lpszMailAddress);
 			lpsUser->lpszMailAddress = NULL;
 		}
 
 		if (lpsUser->lpszFullName && oldDetails.GetPropString(OB_PROP_S_FULLNAME) != lpsUser->lpszFullName) {
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_WARNING, "Disallowing user %s to update its fullname to %s",
+			ec_log_warn("Disallowing user \"%s\" to update their fullname to \"%s\"",
 												 oldDetails.GetPropString(OB_PROP_S_LOGIN).c_str(), lpsUser->lpszFullName);
 			lpsUser->lpszFullName = NULL;
 		}
 
 		if (lpsUser->lpszServername && oldDetails.GetPropString(OB_PROP_S_SERVERNAME) != lpsUser->lpszServername) {
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_WARNING, "Disallowing user %s to update its home server to %s",
+			ec_log_warn("Disallowing user \"%s\" to update their home server to \"%s\"",
 												 oldDetails.GetPropString(OB_PROP_S_LOGIN).c_str(), lpsUser->lpszServername);
 			lpsUser->lpszServername = NULL;
 		}
 
 		// FIXME: check OB_PROP_B_NONACTIVE too? NOTE: ulIsNonActive is now ignored.
 		if (lpsUser->ulObjClass != (ULONG)-1 && oldDetails.GetClass() != (objectclass_t)lpsUser->ulObjClass) {
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_WARNING, "Disallowing user %s to update its active flag to %d",
+			ec_log_warn("Disallowing user \"%s\" to update their active flag to %d",
 												 oldDetails.GetPropString(OB_PROP_S_LOGIN).c_str(), lpsUser->ulObjClass);
 			lpsUser->ulObjClass = (ULONG)-1;
 		}
 
 		if (lpsUser->ulIsAdmin != (ULONG)-1 && oldDetails.GetPropInt(OB_PROP_I_ADMINLEVEL) != lpsUser->ulIsAdmin) {
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_WARNING, "Disallowing user %s to update its admin flag to %d",
+			ec_log_warn("Disallowing user \"%s\" to update their admin flag to %d",
 												 oldDetails.GetPropString(OB_PROP_S_LOGIN).c_str(), lpsUser->ulIsAdmin);
 			lpsUser->ulIsAdmin = (ULONG)-1;
 		}
 	} else {
 		// you cannot set any details if you're not an admin or not yourself
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_WARNING,
-			"Disallowing user %s to update details of user %s",
+		ec_log_warn(
+			"Disallowing user \"%s\" to update details of user \"%s\"",
 			oldDetails.GetPropString(OB_PROP_S_LOGIN).c_str(),
 			lpsUser->lpszUsername);
 		er = ZARAFA_E_NO_ACCESS;
@@ -5958,39 +5959,39 @@ SOAP_ENTRY_START(addSendAsUser, *result, unsigned int ulUserId, entryId sUserId,
 
 	er = GetLocalId(sUserId, ulUserId, &ulUserId, NULL);
 	if (er != erSuccess) {
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "addSendAsUser(): GetLocalId(ulUserId) failed %x", er);
+		ec_log_err("addSendAsUser(): GetLocalId(ulUserId) failed %x", er);
 		goto exit;
 	}
 
 	er = GetLocalId(sSenderId, ulSenderId, &ulSenderId, NULL);
 	if (er != erSuccess) {
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "addSendAsUser(): GetLocalId(ulSenderId) failed %x", er);
+		ec_log_err("addSendAsUser(): GetLocalId(ulSenderId) failed %x", er);
 		goto exit;
 	}
 
 	if (ulUserId == ulSenderId) {
 		er = ZARAFA_E_COLLISION;
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "addSendAsUser(): ulUserId == ulSenderId");
+		ec_log_err("addSendAsUser(): ulUserId == ulSenderId");
 		goto exit;
 	}
 
 	// Check security, only admins can set sendas users, not the user itself
 	if(lpecSession->GetSecurity()->IsAdminOverUserObject(ulUserId) != erSuccess) {
 		er = ZARAFA_E_NO_ACCESS;
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "addSendAsUser(): IsAdminOverUserObject failed %x", er);
+		ec_log_err("addSendAsUser(): IsAdminOverUserObject failed %x", er);
 		goto exit;
 	}
 
 	// needed?
 	er = lpecSession->GetSecurity()->IsUserObjectVisible(ulUserId);
 	if (er != erSuccess) {
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "addSendAsUser(): IsUserObjectVisible failed %x", er);
+		ec_log_err("addSendAsUser(): IsUserObjectVisible failed %x", er);
 		goto exit;
 	}
 
 	er = lpecSession->GetUserManagement()->AddSubObjectToObjectAndSync(OBJECTRELATION_USER_SENDAS, ulUserId, ulSenderId);
 	if (er != erSuccess)
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "addSendAsUser(): AddSubObjectToObjectAndSync failed %x", er);
+		ec_log_err("addSendAsUser(): AddSubObjectToObjectAndSync failed %x", er);
 	
 exit:
 	;
@@ -6014,7 +6015,7 @@ SOAP_ENTRY_START(delSendAsUser, *result, unsigned int ulUserId, entryId sUserId,
 
 	if (ulUserId == ulSenderId) {
 		er = ZARAFA_E_COLLISION;
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "delSendAsUser(): ulUserId == ulSenderId");
+		ec_log_err("delSendAsUser(): ulUserId == ulSenderId");
 		goto exit;
 	}
 
@@ -6048,16 +6049,16 @@ SOAP_ENTRY_START(purgeSoftDelete, *result, unsigned int ulDays, unsigned int *re
         goto exit;
     }
 
-    g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Start forced softdelete clean up");
+    ec_log_info("Start forced softdelete clean up");
 
     er = PurgeSoftDelete(lpecSession, ulDays * 24 * 60 * 60, &ulMessages, &ulFolders, &ulStores, NULL);
 
     if (er == erSuccess)
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Softdelete done: removed stores: %d, removed folders: %d, removed messages: %d", ulStores, ulFolders, ulMessages);
+		ec_log_info("Softdelete done: removed %d stores, %d folders, and %d messages", ulStores, ulFolders, ulMessages);
     else if (er == ZARAFA_E_BUSY)
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Softdelete already running");
+		ec_log_info("Softdelete already running");
 	else
-        g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Softdelete failed: removed stores: %d, removed folders: %d, removed messages: %d", ulStores, ulFolders, ulMessages);
+		ec_log_info("Softdelete failed: removed %d stores, %d folders, and %d messages", ulStores, ulFolders, ulMessages);
 
 exit:
     ;
@@ -6122,12 +6123,12 @@ SOAP_ENTRY_START(createStore, *result, unsigned int ulStoreType, unsigned int ul
 		goto exit;
 
 	if (!bHasLocalStore && (ulFlags & EC_OVERRIDE_HOMESERVER) == 0) {
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "Create store requested, but store is not on this server, or server property not set for object %d", ulUserId);
+		ec_log_err("Create store requested, but store is not on this server, or server property not set for object %d", ulUserId);
 		er = ZARAFA_E_NOT_FOUND;
 		goto exit;
 	}
 
-	g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Started to create store (userid=%d, type=%d)", ulUserId, ulStoreType);
+	ec_log_info("Started to create store (userid=%d, type=%d)", ulUserId, ulStoreType);
 
 	er = lpDatabase->Begin();
 	if (er != erSuccess)
@@ -6170,7 +6171,7 @@ SOAP_ENTRY_START(createStore, *result, unsigned int ulStoreType, unsigned int ul
 
 	if(lpDatabase->GetNumRows(lpDBResult) > 0) {
 		er = ZARAFA_E_COLLISION;
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "createStore(): already exists");
+		ec_log_err("createStore(): already exists");
 		goto exit;
 	}
 
@@ -6286,13 +6287,13 @@ SOAP_ENTRY_START(createStore, *result, unsigned int ulStoreType, unsigned int ul
 	if (er != erSuccess)
 		goto exit;
 
-	g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Finished create store (userid=%d, storeid=%d, type=%d)", ulUserId, ulStoreId, ulStoreType);
+	ec_log_info("Finished create store (userid=%d, storeid=%d, type=%d)", ulUserId, ulStoreId, ulStoreType);
 
 exit:
 	if(er == ZARAFA_E_NO_ACCESS)
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "Failed to create store access denied");
+		ec_log_err("Failed to create store access denied");
 	else if(er != erSuccess)
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "Failed to create store (id=%d), errorcode=0x%08X", ulUserId, er);
+		ec_log_err("Failed to create store (id=%d), errorcode=0x%08X", ulUserId, er);
 
 	if(srightsArray.__size > 0)
 		delete [] srightsArray.__ptr;
@@ -7491,8 +7492,7 @@ SOAP_ENTRY_START(finishedMessage, *result,  entryId sEntryId, unsigned int ulFla
 		// because ulObjId does not exist in the hierarchy table, so we remove the message
 		// fix table and notify and pass error to caller
 
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_WARNING, "Unable to find store for hierarchy id %d", ulObjId);
-
+		ec_log_warn("Unable to find store for hierarchy id %d", ulObjId);
 		ulStoreId = 0;
 		goto table;
 	default:
@@ -7511,9 +7511,9 @@ SOAP_ENTRY_START(finishedMessage, *result,  entryId sEntryId, unsigned int ulFla
         
     lpDBRow = lpDatabase->FetchRow(lpDBResult);
     if(lpDBRow == NULL || lpDBRow[0] == NULL) {
-        er = ZARAFA_E_DATABASE_ERROR;
-	g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "finishedMessages(): row/col null");
-        goto exit;
+	        er = ZARAFA_E_DATABASE_ERROR;
+		ec_log_err("finishedMessages(): row/col null");
+	        goto exit;
     }
     
     ulPrevFlags = atoui(lpDBRow[0]);
@@ -7648,7 +7648,7 @@ SOAP_ENTRY_START(abortSubmit, *result, entryId sEntryId, unsigned int *result)
 	lpDBRow = lpDatabase->FetchRow(lpDBResult);
 	if(lpDBRow == NULL || lpDBRow[0] == NULL || lpDBRow[1] == NULL) {
 		er = ZARAFA_E_DATABASE_ERROR;
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "abortSubmit(): row/col null");
+		ec_log_err("abortSubmit(): row/col null");
 		goto exit;
 	}
 
@@ -7717,7 +7717,7 @@ SOAP_ENTRY_START(isMessageInQueue, *result, entryId sEntryId, unsigned int *resu
 
 	if(lpDatabase->DoSelect(strQuery, &lpDBResult) != erSuccess) {
 		er = ZARAFA_E_DATABASE_ERROR;
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "isMessageInQueue(): select failed");
+		ec_log_err("isMessageInQueue(): select failed");
 		goto exit;
 	}
 
@@ -7751,7 +7751,7 @@ SOAP_ENTRY_START(resolveStore, lpsResponse->er, struct xsd__base64Binary sStoreG
 			"ON s.user_id = u.id "
 		"WHERE s.guid=" + strStoreGuid ;
 	if(lpDatabase->DoSelect(strQuery, &lpDBResult) != erSuccess) {
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "resolveStore(): select failed %x", er);
+		ec_log_err("resolveStore(): select failed %x", er);
 		er = ZARAFA_E_DATABASE_ERROR;
 		goto exit;
 	}
@@ -7861,7 +7861,7 @@ SOAP_ENTRY_START(resolveUserStore, lpsResponse->er, char *szUserName, unsigned i
 						goto exit;
 
 					lpsResponse->lpszServerPath = STROUT_FIX_CPY(strServerPath.c_str());
-					g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Redirecting request to '%s'", lpsResponse->lpszServerPath);
+					ec_log_info("Redirecting request to \"%s\'", lpsResponse->lpszServerPath);
 					g_lpStatsCollector->Increment(SCN_REDIRECT_COUNT, 1);
 					er = ZARAFA_E_UNABLE_TO_COMPLETE;
 					goto exit;
@@ -7890,7 +7890,7 @@ SOAP_ENTRY_START(resolveUserStore, lpsResponse->er, char *szUserName, unsigned i
 
 	strQuery = "SELECT hierarchy_id, guid FROM stores WHERE user_id = " + stringify(ulObjectId) + " AND (1 << type) & " + stringify(ulStoreTypeMask);
 	if ((er = lpDatabase->DoSelect(strQuery, &lpDBResult)) != erSuccess) {
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "resolveUserStore(): select failed %x", er);
+		ec_log_err("resolveUserStore(): select failed %x", er);
 		er = ZARAFA_E_DATABASE_ERROR;
 		goto exit;
 	}
@@ -7904,9 +7904,9 @@ SOAP_ENTRY_START(resolveUserStore, lpsResponse->er, char *szUserName, unsigned i
     }
 
     if (lpDBRow[0] == NULL || lpDBRow[1] == NULL || lpDBLen == NULL || lpDBLen[1] == 0) {
- 		   er = ZARAFA_E_DATABASE_ERROR;
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "resolveUserStore(): row/col null");
- 		   goto exit;
+		er = ZARAFA_E_DATABASE_ERROR;
+		ec_log_err("resolveUserStore(): row/col null");
+		goto exit;
     }
 
     /* We found the store, so we don't need to check if this is the correct server. */
@@ -7984,11 +7984,9 @@ static ECRESULT MoveObjects(ECSession *lpSession, ECDatabase *lpDatabase,
 	entryId*	lpsOldEntryId = NULL;
 	GUID		guidStore;
 
-	ECLogger *const logger = lpSession->GetSessionManager()->GetLogger();
 	ALLOC_DBRESULT();
-
 	if(lplObjectIds == NULL) {
-		logger->Log(EC_LOGLEVEL_ERROR, "MoveObjects: no list of objects given");
+		ec_log_err("MoveObjects: no list of objects given");
 		er = ZARAFA_E_INVALID_PARAMETER;
 		goto exit;
 	}
@@ -7999,13 +7997,13 @@ static ECRESULT MoveObjects(ECSession *lpSession, ECDatabase *lpDatabase,
 	// Check permission, Destination folder
 	er = lpSession->GetSecurity()->CheckPermission(ulDestFolderId, ecSecurityCreate);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "MoveObjects: failed checking permissions on %u: %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
+		ec_log_err("MoveObjects: failed checking permissions on %u: %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
 	er = lpSession->GetSessionManager()->GetCacheManager()->GetStore(ulDestFolderId, &ulDestStoreId, &guidStore);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "MoveObjects: failed retrieving store of %u: %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
+		ec_log_err("MoveObjects: failed retrieving store of %u: %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
@@ -8025,7 +8023,7 @@ static ECRESULT MoveObjects(ECSession *lpSession, ECDatabase *lpDatabase,
 
 	er = lpDatabase->DoSelect(strQuery, &lpDBResult);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "MoveObjects: failed retrieving list objects from database: %s (%x)", GetMAPIErrorMessage(er), er);
+		ec_log_err("MoveObjects: failed retrieving list objects from database: %s (%x)", GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
@@ -8086,7 +8084,7 @@ static ECRESULT MoveObjects(ECSession *lpSession, ECDatabase *lpDatabase,
 		// Quota check
 		er = lpSession->GetSecurity()->GetStoreSize(ulDestFolderId, &llStoreSize);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "MoveObjects: GetStoreSize(%u) failed: %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
+			ec_log_err("MoveObjects: GetStoreSize(%u) failed: %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 
@@ -8094,7 +8092,7 @@ static ECRESULT MoveObjects(ECSession *lpSession, ECDatabase *lpDatabase,
 		llStoreSize -= (llStoreSize >= (long long)ulItemSize)?(long long)ulItemSize:0;
 		er = lpSession->GetSecurity()->CheckQuota(ulDestFolderId, llStoreSize, &QuotaStatus);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "MoveObjects: CheckQuota(%u) failed: %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
+			ec_log_err("MoveObjects: CheckQuota(%u) failed: %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 
@@ -8120,7 +8118,7 @@ static ECRESULT MoveObjects(ECSession *lpSession, ECDatabase *lpDatabase,
 		er = g_lpSessionManager->GetCacheManager()->GetEntryIdFromObject(iterCopyItems->ulId, NULL, 0, &lpsOldEntryId);
 		if(er != erSuccess) {
 			// FIXME isn't this an error?
-			logger->Log(EC_LOGLEVEL_DEBUG, "MoveObjects: problem retrieving entry id of object %u: %s (%x)", iterCopyItems->ulId, GetMAPIErrorMessage(er), er);
+			ec_log_err("MoveObjects: problem retrieving entry id of object %u: %s (%x)", iterCopyItems->ulId, GetMAPIErrorMessage(er), er);
 			bPartialCompletion = true;
 			er = erSuccess;
 			// FIXME: Delete from list: iterCopyItems
@@ -8134,7 +8132,7 @@ static ECRESULT MoveObjects(ECSession *lpSession, ECDatabase *lpDatabase,
 
 		er = CreateEntryId(guidStore, MAPI_MESSAGE, &lpsNewEntryId);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "MoveObjects: CreateEntryID for type MAPI_MESSAGE failed: %s (%x)", GetMAPIErrorMessage(er), er);
+			ec_log_err("MoveObjects: CreateEntryID for type MAPI_MESSAGE failed: %s (%x)", GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 			
@@ -8147,13 +8145,13 @@ static ECRESULT MoveObjects(ECSession *lpSession, ECDatabase *lpDatabase,
 		strQuery = "REPLACE INTO indexedproperties(hierarchyid,tag,val_binary) VALUES (" + stringify(iterCopyItems->ulId) + ", 0x0FFF," + lpDatabase->EscapeBinary(iterCopyItems->sNewEntryId, iterCopyItems->sNewEntryId.size()) + ")";
 		er = lpDatabase->DoUpdate(strQuery);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "MoveObjects: problem setting new entry id: %s (%x)", GetMAPIErrorMessage(er), er);
+			ec_log_err("MoveObjects: problem setting new entry id: %s (%x)", GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 
 		er = lpSession->GetNewSourceKey(&iterCopyItems->sNewSourceKey);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "MoveObjects: GetNewSourceKey failed: %s (%x)", GetMAPIErrorMessage(er), er);
+			ec_log_err("MoveObjects: GetNewSourceKey failed: %s (%x)", GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 			
@@ -8161,14 +8159,14 @@ static ECRESULT MoveObjects(ECSession *lpSession, ECDatabase *lpDatabase,
 		strQuery = "REPLACE INTO indexedproperties(hierarchyid,tag,val_binary) VALUES (" + stringify(iterCopyItems->ulId) + "," + stringify(PROP_ID(PR_SOURCE_KEY)) + "," + lpDatabase->EscapeBinary(iterCopyItems->sNewSourceKey, iterCopyItems->sNewSourceKey.size()) + ")";
 		er = lpDatabase->DoUpdate(strQuery);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "MoveObjects: Update source key for %u failed: %s (%x)", iterCopyItems->ulId, GetMAPIErrorMessage(er), er);
+			ec_log_err("MoveObjects: Update source key for %u failed: %s (%x)", iterCopyItems->ulId, GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 
 		// Update IMAP ID (changes on move)
 		er = g_lpSessionManager->GetNewSequence(ECSessionManager::SEQ_IMAP, &ullIMAP);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "MoveObjects: problem retrieving new IMAP ID: %s (%x)", GetMAPIErrorMessage(er), er);
+			ec_log_err("MoveObjects: problem retrieving new IMAP ID: %s (%x)", GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 
@@ -8181,7 +8179,7 @@ static ECRESULT MoveObjects(ECSession *lpSession, ECDatabase *lpDatabase,
 
 		er = lpDatabase->DoInsert(strQuery);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "MoveObjects: problem updating new IMAP ID for %u to %llu: %s (%x)", iterCopyItems->ulId, ullIMAP, GetMAPIErrorMessage(er), er);
+			ec_log_err("MoveObjects: problem updating new IMAP ID for %u to %llu: %s (%x)", iterCopyItems->ulId, ullIMAP, GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 
@@ -8190,7 +8188,7 @@ static ECRESULT MoveObjects(ECSession *lpSession, ECDatabase *lpDatabase,
 		sPropIMAPId.__union = SOAP_UNION_propValData_ul;
 		er = g_lpSessionManager->GetCacheManager()->SetCell(&key, PR_EC_IMAP_ID, &sPropIMAPId);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "MoveObjects: problem cache sell for IMAP ID %llu: %s (%x)", ullIMAP, GetMAPIErrorMessage(er), er);
+			ec_log_err("MoveObjects: problem cache sell for IMAP ID %llu: %s (%x)", ullIMAP, GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 
@@ -8198,7 +8196,7 @@ static ECRESULT MoveObjects(ECSession *lpSession, ECDatabase *lpDatabase,
 		er = lpDatabase->DoUpdate(strQuery);
 		if (er != erSuccess) {
 			// FIXME isn't this an error?
-			logger->Log(EC_LOGLEVEL_DEBUG, "MoveObjects: problem updating hierarchy id for %u in %u: %s (%x)", iterCopyItems->ulId, ulDestFolderId, GetMAPIErrorMessage(er), er);
+			ec_log_debug("MoveObjects: problem updating hierarchy id for %u in %u: %s (%x)", iterCopyItems->ulId, ulDestFolderId, GetMAPIErrorMessage(er), er);
 			bPartialCompletion = true;
 			er = erSuccess;
 			// FIXME: Delete from list: iterCopyItems
@@ -8211,7 +8209,7 @@ static ECRESULT MoveObjects(ECSession *lpSession, ECDatabase *lpDatabase,
 		strQuery = "DELETE FROM properties WHERE hierarchyid="+stringify(iterCopyItems->ulId)+" AND tag="+stringify(PROP_ID(PR_DELETED_ON))+" AND type="+stringify(PROP_TYPE(PR_DELETED_ON));
 		er = lpDatabase->DoDelete(strQuery);
 		if(er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_DEBUG, "MoveObjects: problem removing PR_DELETED_ON for %u: %s (%x)", iterCopyItems->ulId, GetMAPIErrorMessage(er), er);
+			ec_log_debug("MoveObjects: problem removing PR_DELETED_ON for %u: %s (%x)", iterCopyItems->ulId, GetMAPIErrorMessage(er), er);
 			bPartialCompletion = true;
 			er = erSuccess; //ignore error // FIXME WHY?!
 		}
@@ -8227,7 +8225,7 @@ static ECRESULT MoveObjects(ECSession *lpSession, ECDatabase *lpDatabase,
 
 		er = ECTPropsPurge::AddDeferredUpdate(lpSession, lpDatabase, ulDestFolderId, iterCopyItems->ulParent, iterCopyItems->ulId);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_DEBUG, "MoveObjects: ECTPropsPurge::AddDeferredUpdate failed: %s (%x)", GetMAPIErrorMessage(er), er);
+			ec_log_debug("MoveObjects: ECTPropsPurge::AddDeferredUpdate failed: %s (%x)", GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 
@@ -8264,7 +8262,7 @@ static ECRESULT MoveObjects(ECSession *lpSession, ECDatabase *lpDatabase,
     
 	er = ApplyFolderCounts(lpDatabase, mapFolderCounts);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_DEBUG, "MoveObjects: ApplyFolderCounts failed: %s (%x)", GetMAPIErrorMessage(er), er);
+		ec_log_debug("MoveObjects: ApplyFolderCounts failed: %s (%x)", GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
@@ -8272,7 +8270,7 @@ static ECRESULT MoveObjects(ECSession *lpSession, ECDatabase *lpDatabase,
 	if(bUpdateDeletedSize == true) {
 		er = UpdateObjectSize(lpDatabase, ulDestStoreId, MAPI_STORE, UPDATE_ADD, ulItemSize);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_DEBUG, "MoveObjects: UpdateObjectSize(store %u) failed: %s (%x)", ulDestStoreId, GetMAPIErrorMessage(er), er);
+			ec_log_debug("MoveObjects: UpdateObjectSize(store %u) failed: %s (%x)", ulDestStoreId, GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 	}
@@ -8293,7 +8291,7 @@ static ECRESULT MoveObjects(ECSession *lpSession, ECDatabase *lpDatabase,
     
 	er = lpDatabase->Commit();
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_DEBUG, "MoveObjects: database commit failed: %s (%x)", GetMAPIErrorMessage(er), er);
+		ec_log_debug("MoveObjects: database commit failed: %s (%x)", GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
@@ -8410,24 +8408,23 @@ static ECRESULT CopyObject(ECSession *lpecSession,
 	entryId*		lpsNewEntryId = NULL;
 	unsigned long long ullIMAP = 0;
 	ECAttachmentStorage *lpInternalAttachmentStorage = NULL;
-	ECLogger *const logger = lpecSession->GetSessionManager()->GetLogger();
 
 	er = lpecSession->GetDatabase(&lpDatabase);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: cannot retrieve database: %s (%x)", GetMAPIErrorMessage(er), er);
+		ec_log_err("CopyObject: cannot retrieve database: %s (%x)", GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
 	if (!lpAttachmentStorage) {
 		if (!bIsRoot) {
-			logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: \"!attachmentstore && !isroot\" clause failed: %s (%x)", GetMAPIErrorMessage(er), er);
+			ec_log_err("CopyObject: \"!attachmentstore && !isroot\" clause failed: %s (%x)", GetMAPIErrorMessage(er), er);
 			er = ZARAFA_E_INVALID_PARAMETER;
 			goto exit;
 		}
 
 		er = CreateAttachmentStorage(lpDatabase, &lpInternalAttachmentStorage);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: CreateAttachmentStorage failed: %s (%x)", GetMAPIErrorMessage(er), er);
+			ec_log_err("CopyObject: CreateAttachmentStorage failed: %s (%x)", GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 
@@ -8437,7 +8434,7 @@ static ECRESULT CopyObject(ECSession *lpecSession,
 
 	er = lpecSession->GetSessionManager()->GetCacheManager()->GetStore(ulDestFolderId, &ulStoreId, &guidStore);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: GetStore(destination folder %u) failed: %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
+		ec_log_err("CopyObject: GetStore(destination folder %u) failed: %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
@@ -8446,7 +8443,7 @@ static ECRESULT CopyObject(ECSession *lpecSession,
 	{
 		er = lpecSession->GetSecurity()->CheckPermission(ulObjId, ecSecurityRead);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: check perfmissions of %u failed: %s (%x)", ulObjId, GetMAPIErrorMessage(er), er);
+			ec_log_err("CopyObject: check permissions of %u failed: %s (%x)", ulObjId, GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 
@@ -8454,13 +8451,13 @@ static ECRESULT CopyObject(ECSession *lpecSession,
 		// Quota check
 		er = lpecSession->GetSecurity()->GetStoreSize(ulDestFolderId, &llStoreSize);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: store size of dest folder %u failed: %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
+			ec_log_err("CopyObject: store size of dest folder %u failed: %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 
 		er = lpecSession->GetSecurity()->CheckQuota(ulDestFolderId, llStoreSize, &QuotaStatus);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: check quota of dest folder %u failed: %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
+			ec_log_err("CopyObject: check quota of dest folder %u failed: %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 
@@ -8473,13 +8470,13 @@ static ECRESULT CopyObject(ECSession *lpecSession,
 		if (lpInternalAttachmentStorage) {
 			er = lpInternalAttachmentStorage->Begin();
 			if (er != erSuccess) {
-				logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: starting transaction in attachment storage failed: %s (%x)", GetMAPIErrorMessage(er), er);
+				ec_log_err("CopyObject: starting transaction in attachment storage failed: %s (%x)", GetMAPIErrorMessage(er), er);
 				goto exit;
 			}
 
 			er = lpDatabase->Begin();
 			if (er != erSuccess) {
-				logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: starting transaction in database failed: %s (%x)", GetMAPIErrorMessage(er), er);
+				ec_log_err("CopyObject: starting transaction in database failed: %s (%x)", GetMAPIErrorMessage(er), er);
 				goto exit;
 			}
 		}
@@ -8490,7 +8487,7 @@ static ECRESULT CopyObject(ECSession *lpecSession,
 
 	er = lpDatabase->DoSelect(strQuery, &lpDBResult);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: failed retrieving hierarchy message root: %s (%x)", GetMAPIErrorMessage(er), er);
+		ec_log_err("CopyObject: failed retrieving hierarchy message root: %s (%x)", GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
@@ -8511,7 +8508,7 @@ static ECRESULT CopyObject(ECSession *lpecSession,
 		ulFlags		= atoui(lpDBRow[2]);
 
 	if (bIsRoot == true && ulObjType != MAPI_MESSAGE) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: \"isRoot && != MAPI_MESSAGE\" fail");
+		ec_log_err("CopyObject: \"isRoot && != MAPI_MESSAGE\" fail");
 		er = ZARAFA_E_INVALID_ENTRYID;
 		goto exit;
 	}
@@ -8525,7 +8522,7 @@ static ECRESULT CopyObject(ECSession *lpecSession,
 		stringify(lpecSession->GetSecurity()->GetUserId()) + ") ";
 	er = lpDatabase->DoInsert(strQuery, &ulNewObjectId);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: failed inserting entry in hierarchy table: %s (%x)", GetMAPIErrorMessage(er), er);
+		ec_log_err("CopyObject: failed inserting entry in hierarchy table: %s (%x)", GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
@@ -8536,7 +8533,7 @@ static ECRESULT CopyObject(ECSession *lpecSession,
 		// Create message entry
 		er = CreateEntryId(guidStore, MAPI_MESSAGE, &lpsNewEntryId);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: CreateEntryId failed: %s (%x)", GetMAPIErrorMessage(er), er);
+			ec_log_err("CopyObject: CreateEntryId failed: %s (%x)", GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 
@@ -8544,14 +8541,14 @@ static ECRESULT CopyObject(ECSession *lpecSession,
 		strQuery = "INSERT INTO indexedproperties (hierarchyid,tag,val_binary) VALUES("+stringify(ulNewObjectId)+", 0x0FFF, "+lpDatabase->EscapeBinary(lpsNewEntryId->__ptr, lpsNewEntryId->__size)+")";
 		er = lpDatabase->DoInsert(strQuery);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: PR_ENTRYID property insert failed: %s (%x)", GetMAPIErrorMessage(er), er);
+			ec_log_err("CopyObject: PR_ENTRYID property insert failed: %s (%x)", GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 
 		// Add a PR_EC_IMAP_ID
 		er = g_lpSessionManager->GetNewSequence(ECSessionManager::SEQ_IMAP, &ullIMAP);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: retrieving new seqnr for PR_EC_IMAP_ID failed: %s (%x)", GetMAPIErrorMessage(er), er);
+			ec_log_err("CopyObject: retrieving new seqnr for PR_EC_IMAP_ID failed: %s (%x)", GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 
@@ -8564,7 +8561,7 @@ static ECRESULT CopyObject(ECSession *lpecSession,
 
 		er = lpDatabase->DoInsert(strQuery);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: PR_EC_IMAP_ID property insert failed: %s (%x)", GetMAPIErrorMessage(er), er);
+			ec_log_err("CopyObject: PR_EC_IMAP_ID property insert failed: %s (%x)", GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 
@@ -8573,7 +8570,7 @@ static ECRESULT CopyObject(ECSession *lpecSession,
 		sProp.__union = SOAP_UNION_propValData_ul;
 		er = g_lpSessionManager->GetCacheManager()->SetCell(&key, PR_EC_IMAP_ID, &sProp);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: updating PR_EC_IMAP_ID sell in cache failed: %s (%x)", GetMAPIErrorMessage(er), er);
+			ec_log_err("CopyObject: updating PR_EC_IMAP_ID sell in cache failed: %s (%x)", GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 	}
@@ -8591,7 +8588,7 @@ static ECRESULT CopyObject(ECSession *lpecSession,
 	strQuery = "SELECT id FROM hierarchy WHERE parent="+stringify(ulObjId);
 	er = lpDatabase->DoSelect(strQuery, &lpDBResult);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: failed retriving child items of mesage: %s (%x)", GetMAPIErrorMessage(er), er);
+		ec_log_err("CopyObject: failed retriving child items of mesage: %s (%x)", GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
@@ -8604,7 +8601,7 @@ static ECRESULT CopyObject(ECSession *lpecSession,
 
 			er = CopyObject(lpecSession, lpAttachmentStorage, atoui(lpDBRow[0]), ulNewObjectId, false, false, false, ulSyncId);
 			if (er != erSuccess && er != ZARAFA_E_NOT_FOUND) {
-				logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: CopyObject(%s) failed: %s (%x)", lpDBRow[0], GetMAPIErrorMessage(er), er);
+				ec_log_err("CopyObject: CopyObject(%s) failed: %s (%x)", lpDBRow[0], GetMAPIErrorMessage(er), er);
 				goto exit;
 			} else {
 				er = erSuccess;
@@ -8628,7 +8625,7 @@ static ECRESULT CopyObject(ECSession *lpecSession,
 	strQuery = "INSERT INTO properties (hierarchyid, tag, type, val_ulong, val_string, val_binary,val_double,val_longint,val_hi,val_lo) SELECT "+stringify(ulNewObjectId)+", tag,type,val_ulong,val_string,val_binary,val_double,val_longint,val_hi,val_lo FROM properties WHERE hierarchyid ="+stringify(ulObjId)+strExclude;
 	er = lpDatabase->DoInsert(strQuery);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: copy properties failed: %s (%x)", GetMAPIErrorMessage(er), er);
+		ec_log_err("CopyObject: copy properties failed: %s (%x)", GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 		
@@ -8636,14 +8633,14 @@ static ECRESULT CopyObject(ECSession *lpecSession,
 	strQuery = "INSERT INTO mvproperties (hierarchyid, orderid, tag, type, val_ulong, val_string, val_binary,val_double,val_longint,val_hi,val_lo) SELECT "+stringify(ulNewObjectId)+", orderid, tag,type,val_ulong,val_string,val_binary,val_double,val_longint,val_hi,val_lo FROM mvproperties WHERE hierarchyid ="+stringify(ulObjId);
 	er = lpDatabase->DoInsert(strQuery);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: copy MVproperties failed: %s (%x)", GetMAPIErrorMessage(er), er);
+		ec_log_err("CopyObject: copy MVproperties failed: %s (%x)", GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
 	// Copy large objects... if present
 	er = lpAttachmentStorage->CopyAttachment(ulObjId, ulNewObjectId);
 	if (er != erSuccess && er != ZARAFA_E_NOT_FOUND) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: CopyAttachment(%u -> %u) failed: %s (%x)", ulObjId, ulNewObjectId, GetMAPIErrorMessage(er), er);
+		ec_log_err("CopyObject: CopyAttachment(%u -> %u) failed: %s (%x)", ulObjId, ulNewObjectId, GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 	er = erSuccess;
@@ -8653,14 +8650,14 @@ static ECRESULT CopyObject(ECSession *lpecSession,
 		// Create indexedproperties, Add new PR_SOURCE_KEY
 		er = lpecSession->GetNewSourceKey(&sSourceKey);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: GetNewSourceKey failed: %s (%x)", GetMAPIErrorMessage(er), er);
+			ec_log_err("CopyObject: GetNewSourceKey failed: %s (%x)", GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 
 		strQuery = "INSERT INTO indexedproperties(hierarchyid,tag,val_binary) VALUES(" + stringify(ulNewObjectId) + "," + stringify(PROP_ID(PR_SOURCE_KEY)) + "," + lpDatabase->EscapeBinary(sSourceKey, sSourceKey.size()) + ")";
 		er = lpDatabase->DoInsert(strQuery);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: insert %u in indexedproperties failed: %s (%x)", ulNewObjectId, GetMAPIErrorMessage(er), er);
+			ec_log_err("CopyObject: insert %u in indexedproperties failed: %s (%x)", ulNewObjectId, GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 
@@ -8678,7 +8675,7 @@ static ECRESULT CopyObject(ECSession *lpecSession,
 			}
 		}
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: UpdateFolderCount (%u) failed: %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
+			ec_log_err("CopyObject: UpdateFolderCount (%u) failed: %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 
@@ -8691,19 +8688,19 @@ static ECRESULT CopyObject(ECSession *lpecSession,
 			// Deferred tproperties
 			er = ECTPropsPurge::AddDeferredUpdate(lpecSession, lpDatabase, ulDestFolderId, 0, ulNewObjectId);
 			if (er != erSuccess) {
-				logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: ECTPropsPurge::AddDeferredUpdate(%u): %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
+				ec_log_err("CopyObject: ECTPropsPurge::AddDeferredUpdate(%u): %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
 				goto exit;
 			}
 
 			er = lpInternalAttachmentStorage->Commit();
 			if (er != erSuccess) {
-				logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: attachmentstorage commit failed: %s (%x)", GetMAPIErrorMessage(er), er);
+				ec_log_err("CopyObject: attachmentstorage commit failed: %s (%x)", GetMAPIErrorMessage(er), er);
 				goto exit;
 			}
 
 			er = lpDatabase->Commit();
 			if (er != erSuccess) {
-				logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: database commit failed: %s (%x)", GetMAPIErrorMessage(er), er);
+				ec_log_err("CopyObject: database commit failed: %s (%x)", GetMAPIErrorMessage(er), er);
 				goto exit;
 			}
 		} else {
@@ -8711,7 +8708,7 @@ static ECRESULT CopyObject(ECSession *lpecSession,
 			// of a complete folder.
 			er = ECTPropsPurge::AddDeferredUpdateNoPurge(lpDatabase, ulDestFolderId, 0, ulNewObjectId);
 			if(er != erSuccess) {
-				logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: ECTPropsPurge::AddDeferredUpdateNoPurge(%u, %u) failed: %s (%x)", ulDestFolderId, ulNewObjectId, GetMAPIErrorMessage(er), er);
+				ec_log_err("CopyObject: ECTPropsPurge::AddDeferredUpdateNoPurge(%u, %u) failed: %s (%x)", ulDestFolderId, ulNewObjectId, GetMAPIErrorMessage(er), er);
 				goto exit;
 			}
 		}
@@ -8724,7 +8721,7 @@ static ECRESULT CopyObject(ECSession *lpecSession,
 			if(lpecSession->GetSessionManager()->GetCacheManager()->GetStore(ulNewObjectId, &ulStoreId, NULL) == erSuccess) {
 				er = UpdateObjectSize(lpDatabase, ulStoreId, MAPI_STORE, UPDATE_ADD, ulSize);
 				if (er != erSuccess) {
-					logger->Log(EC_LOGLEVEL_ERROR, "CopyObject: UpdateObjectSize(store %u) failed: %s (%x)", ulStoreId, GetMAPIErrorMessage(er), er);
+					ec_log_err("CopyObject: UpdateObjectSize(store %u) failed: %s (%x)", ulStoreId, GetMAPIErrorMessage(er), er);
 					goto exit;
 				}
 			}
@@ -8793,47 +8790,46 @@ static ECRESULT CopyFolderObjects(struct soap *soap, ECSession *lpecSession,
 	SOURCEKEY		sSourceKey;
 	SOURCEKEY		sParentSourceKey;
 	ECAttachmentStorage *lpAttachmentStorage = NULL;
-	ECLogger *const logger = lpecSession->GetSessionManager()->GetLogger();
 
 	if(lpszNewFolderName == NULL) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyFolderObjects: \"new folder name\" missing");
+		ec_log_err("CopyFolderObjects: \"new folder name\" missing");
 		er = ZARAFA_E_INVALID_PARAMETER;
 		goto exit;
 	}
 
 	er = lpecSession->GetDatabase(&lpDatabase);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyFolderObjects: cannot retrieve database: %s (%x)", GetMAPIErrorMessage(er), er);
+		ec_log_err("CopyFolderObjects: cannot retrieve database: %s (%x)", GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
 	er = CreateAttachmentStorage(lpDatabase, &lpAttachmentStorage);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyFolderObjects: CreateAttachmentStorage failed: %s (%x)", GetMAPIErrorMessage(er), er);
+		ec_log_err("CopyFolderObjects: CreateAttachmentStorage failed: %s (%x)", GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
 	er = lpecSession->GetSessionManager()->GetCacheManager()->GetStore(ulDestFolderId, &ulDestStoreId, NULL);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyFolderObjects: GetStore for %u (from cache) failed: %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
+		ec_log_err("CopyFolderObjects: GetStore for %u (from cache) failed: %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
 	er = lpecSession->GetSessionManager()->GetCacheManager()->GetStore(ulFolderFrom, &ulSourceStoreId, NULL);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyFolderObjects: GetStore for %u (from cache) failed: %s (%x)", ulFolderFrom, GetMAPIErrorMessage(er), er);
+		ec_log_err("CopyFolderObjects: GetStore for %u (from cache) failed: %s (%x)", ulFolderFrom, GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
 	er = lpAttachmentStorage->Begin();
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyFolderObjects: Begin() on attachment storage failed: %s (%x)", GetMAPIErrorMessage(er), er);
+		ec_log_err("CopyFolderObjects: Begin() on attachment storage failed: %s (%x)", GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
 	er = lpDatabase->Begin();
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyFolderObjects: Begin() on database failed: %s (%x)", GetMAPIErrorMessage(er), er);
+		ec_log_err("CopyFolderObjects: Begin() on database failed: %s (%x)", GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
@@ -8841,13 +8837,13 @@ static ECRESULT CopyFolderObjects(struct soap *soap, ECSession *lpecSession,
 	// Quota check
 	er = lpecSession->GetSecurity()->GetStoreSize(ulDestFolderId, &llStoreSize);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyFolderObjects: GetStoreSize failed: %s (%x)", GetMAPIErrorMessage(er), er);
+		ec_log_err("CopyFolderObjects: GetStoreSize failed: %s (%x)", GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
 	er = lpecSession->GetSecurity()->CheckQuota(ulDestFolderId, llStoreSize, &QuotaStatus);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyFolderObjects: CheckQuota failed: %s (%x)", GetMAPIErrorMessage(er), er);
+		ec_log_err("CopyFolderObjects: CheckQuota failed: %s (%x)", GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
@@ -8859,7 +8855,7 @@ static ECRESULT CopyFolderObjects(struct soap *soap, ECSession *lpecSession,
 	// Create folder (with a sourcekey)
 	er = CreateFolder(lpecSession, lpDatabase, ulDestFolderId, NULL, FOLDER_GENERIC, lpszNewFolderName, NULL, false, true, ulSyncId, NULL, &ulNewDestFolderId, NULL);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyFolderObjects: CreateFolder \"%s\" in %u failed: %s (%x)", lpszNewFolderName, ulDestFolderId, GetMAPIErrorMessage(er), er);
+		ec_log_err("CopyFolderObjects: CreateFolder \"%s\" in %u failed: %s (%x)", lpszNewFolderName, ulDestFolderId, GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
@@ -8886,7 +8882,7 @@ static ECRESULT CopyFolderObjects(struct soap *soap, ECSession *lpecSession,
 	strQuery = "REPLACE INTO properties (hierarchyid, tag, type, val_ulong, val_string, val_binary,val_double,val_longint,val_hi,val_lo) SELECT "+stringify(ulNewDestFolderId)+", tag,type,val_ulong,val_string,val_binary,val_double,val_longint,val_hi,val_lo FROM properties WHERE hierarchyid ="+stringify(ulFolderFrom)+strExclude;
 	er = lpDatabase->DoInsert(strQuery);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyFolderObjects: copy properties step failed: %s (%x)", GetMAPIErrorMessage(er), er);
+		ec_log_err("CopyFolderObjects: copy properties step failed: %s (%x)", GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
@@ -8894,14 +8890,14 @@ static ECRESULT CopyFolderObjects(struct soap *soap, ECSession *lpecSession,
 	strQuery = "REPLACE INTO mvproperties (hierarchyid, orderid, tag, type, val_ulong, val_string, val_binary,val_double,val_longint,val_hi,val_lo) SELECT "+stringify(ulNewDestFolderId)+", orderid, tag,type,val_ulong,val_string,val_binary,val_double,val_longint,val_hi,val_lo FROM mvproperties WHERE hierarchyid ="+stringify(ulFolderFrom);
 	er = lpDatabase->DoInsert(strQuery);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyFolderObjects: copy mvproperties step failed: %s (%x)", GetMAPIErrorMessage(er), er);
+		ec_log_err("CopyFolderObjects: copy mvproperties step failed: %s (%x)", GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
 	// Copy large objects... if present .. probably not, on a folder
 	er = lpAttachmentStorage->CopyAttachment(ulFolderFrom, ulNewDestFolderId);
 	if (er != erSuccess && er != ZARAFA_E_NOT_FOUND) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyFolderObjects: copy attachment step failed: %s (%x)", GetMAPIErrorMessage(er), er);
+		ec_log_err("CopyFolderObjects: copy attachment step failed: %s (%x)", GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 	er = erSuccess;
@@ -8918,7 +8914,7 @@ static ECRESULT CopyFolderObjects(struct soap *soap, ECSession *lpecSession,
 	strQuery = "SELECT id FROM hierarchy WHERE parent="+stringify(ulFolderFrom)+ " AND type="+stringify(MAPI_MESSAGE)+" AND flags & " + stringify(MSGFLAG_DELETED|MSGFLAG_ASSOCIATED) + " = 0";
 	er = lpDatabase->DoSelect(strQuery, &lpDBResult);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyFolderObjects: retrieving list of messages from home folder failed: %s (%x)", GetMAPIErrorMessage(er), er);
+		ec_log_err("CopyFolderObjects: retrieving list of messages from home folder failed: %s (%x)", GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
@@ -8935,7 +8931,7 @@ static ECRESULT CopyFolderObjects(struct soap *soap, ECSession *lpecSession,
 		if(er == ZARAFA_E_NOT_FOUND) {
 			bPartialCompletion = true;
 		} else if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "CopyFolderObjects: CopyObject %s failed failed: %s (%x)", lpDBRow[0], GetMAPIErrorMessage(er), er);
+			ec_log_err("CopyFolderObjects: CopyObject %s failed failed: %s (%x)", lpDBRow[0], GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 	}
@@ -8946,25 +8942,25 @@ static ECRESULT CopyFolderObjects(struct soap *soap, ECSession *lpecSession,
 	// update the destination folder for disconnected clients
 	er = WriteLocalCommitTimeMax(NULL, lpDatabase, ulNewDestFolderId, NULL);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyFolderObjects: WriteLocalCommitTimeMax failed: %s (%x)", GetMAPIErrorMessage(er), er);
+		ec_log_err("CopyFolderObjects: WriteLocalCommitTimeMax failed: %s (%x)", GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
 	er = ECTPropsPurge::AddDeferredUpdate(lpecSession, lpDatabase, ulDestFolderId, 0, ulNewDestFolderId);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyFolderObjects: ECTPropsPurge::AddDeferredUpdate failed: %s (%x)", GetMAPIErrorMessage(er), er);
+		ec_log_err("CopyFolderObjects: ECTPropsPurge::AddDeferredUpdate failed: %s (%x)", GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
 	er = lpDatabase->Commit();
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyFolderObjects: database commit failed: %s (%x)", GetMAPIErrorMessage(er), er);
+		ec_log_err("CopyFolderObjects: database commit failed: %s (%x)", GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
 	er = lpAttachmentStorage->Commit();
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "CopyFolderObjects: attachment storage commit failed: %s (%x)", GetMAPIErrorMessage(er), er);
+		ec_log_err("CopyFolderObjects: attachment storage commit failed: %s (%x)", GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
@@ -8992,7 +8988,7 @@ static ECRESULT CopyFolderObjects(struct soap *soap, ECSession *lpecSession,
 		strQuery = "SELECT hierarchy.id, properties.val_string FROM hierarchy JOIN properties ON hierarchy.id = properties.hierarchyid WHERE hierarchy.parent=" + stringify(ulFolderFrom) +" AND hierarchy.type="+stringify(MAPI_FOLDER)+" AND (flags & " + stringify(MSGFLAG_DELETED) + ") = 0 AND properties.tag=" + stringify(ZARAFA_TAG_DISPLAY_NAME) + " AND properties.type="+stringify(PT_STRING8);
 		er = lpDatabase->DoSelect(strQuery, &lpDBResult);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "CopyFolderObjects: retrieving list of folders from home folder failed: %s (%x)", GetMAPIErrorMessage(er), er);
+			ec_log_err("CopyFolderObjects: retrieving list of folders from home folder failed: %s (%x)", GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 
@@ -9009,7 +9005,7 @@ static ECRESULT CopyFolderObjects(struct soap *soap, ECSession *lpecSession,
 				if (er == ZARAFA_W_PARTIAL_COMPLETION) {
 					bPartialCompletion = true;
 				} else if (er != erSuccess) {
-					logger->Log(EC_LOGLEVEL_ERROR, "CopyFolderObjects: CopyFolderObjects %s failed failed: %s (%x)", lpDBRow[0], GetMAPIErrorMessage(er), er);
+					ec_log_err("CopyFolderObjects: CopyFolderObjects %s failed failed: %s (%x)", lpDBRow[0], GetMAPIErrorMessage(er), er);
 					goto exit;
 				}
 			}
@@ -9048,11 +9044,10 @@ SOAP_ENTRY_START(copyObjects, *result, struct entryList *aMessages, entryId sDes
 
 	USE_DATABASE();
 
-	ECLogger *const logger = lpecSession->GetSessionManager()->GetLogger();
 	const EntryId dstEntryId(&sDestFolderId);
 
 	if(aMessages == NULL) {
-		logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyObjects: list of messages (entryList) missing");
+		ec_log_err("SOAP::copyObjects: list of messages (entryList) missing");
 		er = ZARAFA_E_INVALID_PARAMETER;
 		goto exit;
 	}
@@ -9064,21 +9059,21 @@ SOAP_ENTRY_START(copyObjects, *result, struct entryList *aMessages, entryId sDes
 	
 	er = BeginLockFolders(lpDatabase, setEntryIds, LOCK_EXCLUSIVE);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyObjects: failed locking folders: %s (%x)", GetMAPIErrorMessage(er), er);
+		ec_log_err("SOAP::copyObjects: failed locking folders: %s (%x)", GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
 	er = lpecSession->GetObjectFromEntryId(&sDestFolderId, &ulDestFolderId);
 	if (er != erSuccess) {
 		std::string dstEntryIdStr = dstEntryId;
-		logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyObjects: failed obtaining object by entry id (%s): %s (%x)", dstEntryIdStr.c_str(), GetMAPIErrorMessage(er), er);
+		ec_log_err("SOAP::copyObjects: failed obtaining object by entry id (%s): %s (%x)", dstEntryIdStr.c_str(), GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
 	// Check permission, Destination folder
 	er = lpecSession->GetSecurity()->CheckPermission(ulDestFolderId, ecSecurityCreate);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyObjects: failed checking permissions for folder id %u: %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
+		ec_log_err("SOAP::copyObjects: failed checking permissions for folder id %u: %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
@@ -9091,7 +9086,7 @@ SOAP_ENTRY_START(copyObjects, *result, struct entryList *aMessages, entryId sDes
 	if(ulFlags & FOLDER_MOVE ) { // A move
 		er = MoveObjects(lpecSession, lpDatabase, &lObjectIds, ulDestFolderId, ulSyncId);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyObjects: MoveObjects failed: %s (%x)", GetMAPIErrorMessage(er), er);
+			ec_log_err("SOAP::copyObjects: MoveObjects failed: %s (%x)", GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 	}else { // A copy
@@ -9101,7 +9096,7 @@ SOAP_ENTRY_START(copyObjects, *result, struct entryList *aMessages, entryId sDes
 		{
 			er = CopyObject(lpecSession, NULL, *iObjectId, ulDestFolderId, true, true, cObjectItems < EC_TABLE_CHANGE_THRESHOLD, ulSyncId);
 			if(er != erSuccess) {
-				logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyObjects: failed copying object %u: %s (%x)", *iObjectId, GetMAPIErrorMessage(er), er);
+				ec_log_err("SOAP::copyObjects: failed copying object %u: %s (%x)", *iObjectId, GetMAPIErrorMessage(er), er);
 				bPartialCompletion = true;
 				er = erSuccess;
 			}
@@ -9110,7 +9105,7 @@ SOAP_ENTRY_START(copyObjects, *result, struct entryList *aMessages, entryId sDes
 		// update the destination folder for disconnected clients
 		er = WriteLocalCommitTimeMax(NULL, lpDatabase, ulDestFolderId, NULL);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyObjects: WriteLocalCommitTimeMax failed: %s (%x)", GetMAPIErrorMessage(er), er);
+			ec_log_err("SOAP::copyObjects: WriteLocalCommitTimeMax failed: %s (%x)", GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 
@@ -9158,7 +9153,6 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 	std::string 	strSubQuery;
 	USE_DATABASE();
 
-	ECLogger *const logger = lpecSession->GetSessionManager()->GetLogger();
 	const EntryId srcEntryId(&sEntryId);
 	const EntryId dstEntryId(&sDestFolderId);
 	std::string name;
@@ -9170,33 +9164,33 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 	er = lpecSession->GetObjectFromEntryId(&sEntryId, &ulFolderId);
 	if (er != erSuccess) {
 		const std::string srcEntryIdStr = srcEntryId;
-		logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder GetObjectFromEntryId failed for %s: %s (%x)", srcEntryIdStr.c_str(), GetMAPIErrorMessage(er), er);
+		ec_log_err("SOAP::copyFolder GetObjectFromEntryId failed for %s: %s (%x)", srcEntryIdStr.c_str(), GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
 	// Get source store
 	er = g_lpSessionManager->GetCacheManager()->GetStore(ulFolderId, &ulSourceStoreId, NULL);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder GetStore failed for folder id %ul: %s (%x)", ulFolderId, GetMAPIErrorMessage(er), er);
+		ec_log_err("SOAP::copyFolder GetStore failed for folder id %ul: %s (%x)", ulFolderId, GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
 	er = lpecSession->GetObjectFromEntryId(&sDestFolderId, &ulDestFolderId);
 	if (er != erSuccess) {
 		const std::string dstEntryIdStr = dstEntryId;
-		logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder GetObjectFromEntryId failed for %s: %s (%x)", dstEntryIdStr.c_str(), GetMAPIErrorMessage(er), er);
+		ec_log_err("SOAP::copyFolder GetObjectFromEntryId failed for %s: %s (%x)", dstEntryIdStr.c_str(), GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
 	// Get dest store
 	er = g_lpSessionManager->GetCacheManager()->GetStore(ulDestFolderId, &ulDestStoreId, NULL);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder GetStore for folder %d failed: %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
+		ec_log_err("SOAP::copyFolder GetStore for folder %d failed: %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
 	if(ulDestStoreId != ulSourceStoreId) {
-		logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder copy from/to different stores (from %u to %u) is not supported", ulSourceStoreId, ulDestStoreId);
+		ec_log_err("SOAP::copyFolder copy from/to different stores (from %u to %u) is not supported", ulSourceStoreId, ulDestStoreId);
 		ASSERT(FALSE);
 		er = ZARAFA_E_NO_SUPPORT;
 		goto exit;
@@ -9205,7 +9199,7 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 	// Check permission
 	er = lpecSession->GetSecurity()->CheckPermission(ulDestFolderId, ecSecurityCreateFolder);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_DEBUG, "SOAP::copyFolder copy folder (to %u) is not allowed: %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
+		ec_log_debug("SOAP::copyFolder copy folder (to %u) is not allowed: %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
@@ -9215,13 +9209,13 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 		er = lpecSession->GetSecurity()->CheckPermission(ulFolderId, ecSecurityRead);
 
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_DEBUG, "SOAP::copyFolder folder (%u) is not editable: %s (%x)", ulFolderId, GetMAPIErrorMessage(er), er);
+		ec_log_debug("SOAP::copyFolder folder (%u) is not editable: %s (%x)", ulFolderId, GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
 	// Check MAPI_E_FOLDER_CYCLE
 	if(ulFolderId == ulDestFolderId) {
-		logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder target folder (%u) cannot be the same as source folder", ulDestFolderId);
+		ec_log_err("SOAP::copyFolder target folder (%u) cannot be the same as source folder", ulDestFolderId);
 		er = ZARAFA_E_FOLDER_CYCLE;
 		goto exit;
 	}
@@ -9229,20 +9223,20 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 	// Get the parent id, for notification and copy
 	er = g_lpSessionManager->GetCacheManager()->GetObject(ulFolderId, &ulOldParent, NULL, &ulObjFlags, &ulSourceType);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder cannot get parent folder id for %u: %s (%x)", ulFolderId, GetMAPIErrorMessage(er), er);
+		ec_log_err("SOAP::copyFolder cannot get parent folder id for %u: %s (%x)", ulFolderId, GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
 	er = g_lpSessionManager->GetCacheManager()->GetObject(ulDestFolderId, NULL, NULL, NULL, &ulDestType);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder cannot get type of destination folder (%u): %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
+		ec_log_err("SOAP::copyFolder cannot get type of destination folder (%u): %s (%x)", ulDestFolderId, GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
 	if (ulSourceType != MAPI_FOLDER || ulDestType != MAPI_FOLDER) {
 		const std::string srcEntryIdStr = srcEntryId;
 		const std::string dstEntryIdStr = dstEntryId;
-		logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder source (%u) or destination (%u) is not a folder, invalid entry id (%s / %s)", ulSourceType, ulDestType, srcEntryIdStr.c_str(), dstEntryIdStr.c_str());
+		ec_log_err("SOAP::copyFolder source (%u) or destination (%u) is not a folder, invalid entry id (%s / %s)", ulSourceType, ulDestType, srcEntryIdStr.c_str(), dstEntryIdStr.c_str());
 		er = ZARAFA_E_INVALID_ENTRYID;
 		goto exit;
 	}
@@ -9250,7 +9244,7 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 	// Check folder and dest folder are the same
 	if (!(ulObjFlags & MSGFLAG_DELETED) && (ulFlags & FOLDER_MOVE) &&
 	    ulDestFolderId == ulOldParent) {
-		logger->Log(EC_LOGLEVEL_DEBUG, "SOAP::copyFolder destination (%u) == source", ulDestFolderId);
+		ec_log_debug("SOAP::copyFolder destination (%u) == source", ulDestFolderId);
 		goto exit; // Do nothing... folder already on the right place
 	}
 
@@ -9258,7 +9252,7 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 	while (g_lpSessionManager->GetCacheManager()->GetParent(ulParentCycle, &ulParentCycle) == erSuccess) {
 		if(ulFolderId == ulParentCycle)
 		{
-			logger->Log(EC_LOGLEVEL_DEBUG, "SOAP::copyFolder infinite loop detected for %u", ulDestFolderId);
+			ec_log_debug("SOAP::copyFolder infinite loop detected for %u", ulDestFolderId);
 			er = ZARAFA_E_FOLDER_CYCLE;
 			goto exit;
 		}
@@ -9277,13 +9271,13 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 
 	er = lpDatabase->DoSelect(strQuery, &lpDBResult);
 	if (er != erSuccess) {
-		logger->Log(EC_LOGLEVEL_DEBUG, "SOAP::copyFolder check for existing name (%s) failed: %s (%x)", name.c_str(), GetMAPIErrorMessage(er), er);
+		ec_log_debug("SOAP::copyFolder check for existing name (%s) failed: %s (%x)", name.c_str(), GetMAPIErrorMessage(er), er);
 		goto exit;
 	}
 
 	if(lpDatabase->GetNumRows(lpDBResult) > 0 && !ulSyncId) {
 		er = ZARAFA_E_COLLISION;
-		logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): target name (%s) already exists", name.c_str());
+		ec_log_err("SOAP::copyFolder(): target name (%s) already exists", name.c_str());
 		goto exit;
 	}
 
@@ -9294,13 +9288,13 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 		strQuery = "SELECT properties.val_string FROM hierarchy JOIN properties ON hierarchy.id = properties.hierarchyid WHERE hierarchy.id=" + stringify(ulFolderId) + " AND properties.tag=" + stringify(ZARAFA_TAG_DISPLAY_NAME) + " AND properties.type=" + stringify(PT_STRING8);
 		er = lpDatabase->DoSelect(strQuery, &lpDBResult);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): problem retrieving source name for %u: %s (%x)", ulFolderId, GetMAPIErrorMessage(er), er);
+			ec_log_err("SOAP::copyFolder(): problem retrieving source name for %u: %s (%x)", ulFolderId, GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 
 		lpDBRow = lpDatabase->FetchRow(lpDBResult);
 		if( lpDBRow == NULL || lpDBRow[0] == NULL) {
-			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): source name (%s) not known", name.c_str());
+			ec_log_err("SOAP::copyFolder(): source name (%s) not known", name.c_str());
 			er = ZARAFA_E_NOT_FOUND;
 			goto exit;
 		}
@@ -9321,7 +9315,7 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 			 */
 			er = GetFolderSize(lpDatabase, ulFolderId, &llFolderSize);
 			if (er != erSuccess) {
-				logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): cannot find size of folder %u: %s (%x)", ulFolderId, GetMAPIErrorMessage(er), er);
+				ec_log_err("SOAP::copyFolder(): cannot find size of folder %u: %s (%x)", ulFolderId, GetMAPIErrorMessage(er), er);
 				goto exit;
 			}
 		}
@@ -9331,7 +9325,7 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 
 		er = lpDatabase->Begin();
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): cannot start transaction: %s (%x)", GetMAPIErrorMessage(er), er);
+			ec_log_err("SOAP::copyFolder(): cannot start transaction: %s (%x)", GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 
@@ -9341,14 +9335,14 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 		strQuery = "UPDATE hierarchy SET parent="+stringify(ulDestFolderId)+", flags=flags&"+stringify(~MSGFLAG_DELETED)+" WHERE id="+stringify(ulFolderId);
 		if ((er = lpDatabase->DoUpdate(strQuery, &ulAffRows)) != erSuccess) {
 			lpDatabase->Rollback();
-			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): update of modification time failed: %s (%x)", GetMAPIErrorMessage(er), er);
+			ec_log_err("SOAP::copyFolder(): update of modification time failed: %s (%x)", GetMAPIErrorMessage(er), er);
 			er = ZARAFA_E_DATABASE_ERROR;
 			goto exit;
 		}
 
 		if(ulAffRows != 1) {
 		    lpDatabase->Rollback();
-			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): unexpected number of affected rows (expected: 1, got: %u)", ulAffRows);
+			ec_log_err("SOAP::copyFolder(): unexpected number of affected rows (expected: 1, got: %u)", ulAffRows);
 			er = ZARAFA_E_DATABASE_ERROR;
 			goto exit;
 		}
@@ -9357,7 +9351,7 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 		//Info: Always an update, It's not faster first check and than update/or not
 		strQuery = "UPDATE properties SET val_string = '" + lpDatabase->Escape(lpszNewFolderName) + "' WHERE tag=" + stringify(ZARAFA_TAG_DISPLAY_NAME) + " AND hierarchyid="+stringify(ulFolderId) + " AND type=" + stringify(PT_STRING8);
 		if ((er = lpDatabase->DoUpdate(strQuery, &ulAffRows)) != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): actual move of folder %s failed: %s (%x)", lpszNewFolderName, GetMAPIErrorMessage(er), er);
+			ec_log_err("SOAP::copyFolder(): actual move of folder %s failed: %s (%x)", lpszNewFolderName, GetMAPIErrorMessage(er), er);
 			er = ZARAFA_E_DATABASE_ERROR;
 		    lpDatabase->Rollback();
 			goto exit;
@@ -9367,7 +9361,7 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 		strQuery = "DELETE FROM properties WHERE hierarchyid="+stringify(ulFolderId)+" AND tag="+stringify(PROP_ID(PR_DELETED_ON))+" AND type="+stringify(PROP_TYPE(PR_DELETED_ON));
 		er = lpDatabase->DoDelete(strQuery);
 		if(er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): cannot remove PR_DELETED_ON property for %u: %s (%x)", ulFolderId, GetMAPIErrorMessage(er), er);
+			ec_log_err("SOAP::copyFolder(): cannot remove PR_DELETED_ON property for %u: %s (%x)", ulFolderId, GetMAPIErrorMessage(er), er);
 			lpDatabase->Rollback();
 			er = ZARAFA_E_DATABASE_ERROR;
 			goto exit;
@@ -9377,7 +9371,7 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 		if (llFolderSize > 0) {
 			er = UpdateObjectSize(lpDatabase, ulSourceStoreId, MAPI_STORE, UPDATE_ADD, llFolderSize);
 			if (er != erSuccess) {
-				logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): problem updating store (%u) size: %s (%x)", ulSourceStoreId, GetMAPIErrorMessage(er), er);
+				ec_log_err("SOAP::copyFolder(): problem updating store (%u) size: %s (%x)", ulSourceStoreId, GetMAPIErrorMessage(er), er);
 				goto exit;
 			}
 		}
@@ -9410,19 +9404,19 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 		}
 
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): updating folder counts failed: %s (%x)", GetMAPIErrorMessage(er), er);
+			ec_log_err("SOAP::copyFolder(): updating folder counts failed: %s (%x)", GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 
 		er = ECTPropsPurge::AddDeferredUpdate(lpecSession, lpDatabase, ulDestFolderId, ulOldParent, ulFolderId);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): ECTPropsPurge::AddDeferredUpdate failed: %s (%x)", GetMAPIErrorMessage(er), er);
+			ec_log_err("SOAP::copyFolder(): ECTPropsPurge::AddDeferredUpdate failed: %s (%x)", GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 
 		er = lpDatabase->Commit();
 		if(er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): database commit failed: %s (%x)", GetMAPIErrorMessage(er), er);
+			ec_log_err("SOAP::copyFolder(): database commit failed: %s (%x)", GetMAPIErrorMessage(er), er);
 			lpDatabase->Rollback();
 			goto exit;
 		}
@@ -9451,7 +9445,7 @@ SOAP_ENTRY_START(copyFolder, *result, entryId sEntryId, entryId sDestFolderId, c
 	}else {// a copy
 		er = CopyFolderObjects(soap, lpecSession, ulFolderId, ulDestFolderId, lpszNewFolderName, !!(ulFlags&COPY_SUBFOLDERS), ulSyncId);
 		if (er != erSuccess) {
-			logger->Log(EC_LOGLEVEL_ERROR, "SOAP::copyFolder(): CopyFolderObjects (src folder: %u, dest folder: %u, new name: %s) failed: %s (%x)", ulFolderId, ulDestFolderId, lpszNewFolderName, GetMAPIErrorMessage(er), er);
+			ec_log_err("SOAP::copyFolder(): CopyFolderObjects (src folder: %u, dest folder: %u, new name: \"%s\") failed: %s (%x)", ulFolderId, ulDestFolderId, lpszNewFolderName, GetMAPIErrorMessage(er), er);
 			goto exit;
 		}
 	}
@@ -9528,7 +9522,7 @@ SOAP_ENTRY_START(getReceiveFolderTable, lpsReceiveFolderTable->er, entryId sStor
 	{
 		if(lpDBRow == NULL || lpDBRow[0] == NULL || lpDBRow[1] == NULL){
 			er = ZARAFA_E_DATABASE_ERROR;
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "getReceiveFolderTable(): row or col null");
+			ec_log_err("getReceiveFolderTable(): row or col null");
 			goto exit;
 		}
 
@@ -9618,7 +9612,7 @@ SOAP_ENTRY_START(unhookStore, *result, unsigned int ulStoreType, entryId sUserId
 	// ulAffected == 1: correctly disowned owner of store
 	if (ulAffected > 1) {
 		er = ZARAFA_E_COLLISION;
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "unhookStore(): more than expected");
+		ec_log_err("unhookStore(): more than expected");
 		goto exit;
 	}
 
@@ -9628,9 +9622,9 @@ SOAP_ENTRY_START(unhookStore, *result, unsigned int ulStoreType, entryId sUserId
 
 exit:
 	if (er != erSuccess)
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "Unhook of store (type %d) with userid %d and guid %s failed with error code 0x%x",  ulStoreType, ulUserId, strGUID.c_str(), er);
+		ec_log_err("Unhook of store (type %d) with userid %d and GUID %s failed with error code 0x%x",  ulStoreType, ulUserId, strGUID.c_str(), er);
 	else
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "Unhook of store (type %d) with userid %d and guid %s succeeded",  ulStoreType, ulUserId, strGUID.c_str());
+		ec_log_err("Unhook of store (type %d) with userid %d and GUID %s succeeded",  ulStoreType, ulUserId, strGUID.c_str());
 		
 	ROLLBACK_ON_ERROR();
 	FREE_DBRESULT();
@@ -9680,24 +9674,24 @@ SOAP_ENTRY_START(hookStore, *result, unsigned int ulStoreType, entryId sUserId, 
 
 	if (lpDBRow[4] == NULL) {
 		er = ZARAFA_E_DATABASE_ERROR;
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "hookStore(): col null");
+		ec_log_err("hookStore(): col null");
 		goto exit;
 	}
 
 	if (lpDBRow[0]) {
 		// this store already belongs to a user
 		er = ZARAFA_E_COLLISION;
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "hookStore(): store already belongs to a user");
+		ec_log_err("hookStore(): store already belongs to a user");
 		goto exit;
 	}
 
 	if (atoui(lpDBRow[4]) != ulStoreType) {
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "Requested store type is %u, actual store type is %s", ulStoreType, lpDBRow[4]);
+		ec_log_err("Requested store type is %u, actual store type is %s", ulStoreType, lpDBRow[4]);
 		er = ZARAFA_E_INVALID_TYPE;
 		goto exit;
 	}
 
-	g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Hooking store %s to user %d", lpDBRow[1], ulUserId);
+	ec_log_info("Hooking store \"%s\" to user %d", lpDBRow[1], ulUserId);
 
 	// lpDBRow[2] is the old user id, which is now orphaned. We'll use this id to make the other store orphaned, so we "trade" user id's.
 
@@ -9717,7 +9711,7 @@ SOAP_ENTRY_START(hookStore, *result, unsigned int ulStoreType, entryId sUserId, 
 	// ulAffected == 1: correctly disowned previous owner of store
 	if (ulAffected > 1) {
 		er = ZARAFA_E_COLLISION;
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "hookStore(): owned by multiple users");
+		ec_log_err("hookStore(): owned by multiple users");
 		goto exit;
 	}
 
@@ -9732,7 +9726,7 @@ SOAP_ENTRY_START(hookStore, *result, unsigned int ulStoreType, entryId sUserId, 
 	// we can't have one store being owned by multiple users
 	if (ulAffected != 1) {
 		er = ZARAFA_E_COLLISION;
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "hookStore(): owned by multiple users (2)");
+		ec_log_err("hookStore(): owned by multiple users (2)");
 		goto exit;
 	}
 
@@ -9747,7 +9741,7 @@ SOAP_ENTRY_START(hookStore, *result, unsigned int ulStoreType, entryId sUserId, 
 	// (may be zero, when the user returns to its original store, so the owner field stays the same)
 	if (ulAffected > 1) {
 		er = ZARAFA_E_COLLISION;
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "hookStore(): owned by multiple users (3)");
+		ec_log_err("hookStore(): owned by multiple users (3)");
 		goto exit;
 	}
 
@@ -9760,8 +9754,7 @@ SOAP_ENTRY_START(hookStore, *result, unsigned int ulStoreType, entryId sUserId, 
 
 exit:
 	if (er != erSuccess)
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "Hook of store failed: 0x%x", er);
-		
+		ec_log_err("Hook of store failed: 0x%x", er);
 	ROLLBACK_ON_ERROR();
 	FREE_DBRESULT();
 }
@@ -9808,7 +9801,7 @@ SOAP_ENTRY_START(removeStore, *result, struct xsd__base64Binary sStoreGuid, unsi
 		if (lpecSession->GetUserManagement()->GetObjectDetails(atoi(lpDBRow[0]), &sObjectDetails) == erSuccess)
 			strUsername = sObjectDetails.GetPropString(OB_PROP_S_LOGIN); // fullname?
 
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "Unable to remove store: store is in use by user %s", strUsername.c_str());
+		ec_log_err("Unable to remove store: store is in use by user \"%s\"", strUsername.c_str());
 		er = ZARAFA_E_COLLISION;
 		goto exit;
 	}
@@ -9822,7 +9815,7 @@ SOAP_ENTRY_START(removeStore, *result, struct xsd__base64Binary sStoreGuid, unsi
 	if (er != erSuccess)
 		goto exit;
 
-	g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Started to remove store (%s) with storename %s", bin2hex(lpDBLen[1], reinterpret_cast<const unsigned char *>(lpDBRow[1])).c_str(), lpDBRow[4]);
+	ec_log_info("Started to remove store (%s) with storename \"%s\"", bin2hex(lpDBLen[1], reinterpret_cast<const unsigned char *>(lpDBRow[1])).c_str(), lpDBRow[4]);
 
 	er = lpDatabase->Begin();
 	if(er != hrSuccess)
@@ -9856,19 +9849,19 @@ SOAP_ENTRY_START(removeStore, *result, struct xsd__base64Binary sStoreGuid, unsi
 	if(er != erSuccess)
 		goto exit;
 
-	g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Finished remove store (%s)", bin2hex(lpDBLen[1], reinterpret_cast<const unsigned char *>(lpDBRow[1])).c_str());
+	ec_log_info("Finished remove store (%s)", bin2hex(lpDBLen[1], reinterpret_cast<const unsigned char *>(lpDBRow[1])).c_str());
 
 exit:
 	FREE_DBRESULT();
 
 	if(er == ZARAFA_E_NO_ACCESS)
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "Failed to remove store access denied");
+		ec_log_err("Failed to remove store access denied");
 	else if(er != erSuccess) {
 
 		if(lpDatabase)
 			lpDatabase->Rollback();
 
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "Failed to remove store, errorcode=0x%08X", er);
+		ec_log_err("Failed to remove store, errorcode=0x%08X", er);
 	}
 }
 SOAP_ENTRY_END()
@@ -9899,18 +9892,18 @@ void *SoftDeleteRemover(void *lpTmpMain)
 	// Lock the session
 	lpecSession->Lock();
 
-	g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Start scheduled softdelete clean up");
+	ec_log_info("Start scheduled softdelete clean up");
 
 	er = PurgeSoftDelete(lpecSession, ulDeleteTime, &ulMessages, &ulFolders, &ulStores, (bool*)lpTmpMain);
 
 exit:
 	if(ulDeleteTime > 0) {
 		if (er == erSuccess)
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Softdelete done: removed stores: %d, removed folders: %d, removed messages: %d", ulStores, ulFolders, ulMessages);
+			ec_log_info("Softdelete done: removed %d stores, %d folders, and %d messages", ulStores, ulFolders, ulMessages);
 		else if (er == ZARAFA_E_BUSY)
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Softdelete already running");
+			ec_log_info("Softdelete already running");
 		else
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Softdelete failed: removed stores: %d, removed folders: %d, removed messages: %d", ulStores, ulFolders, ulMessages);
+			ec_log_info("Softdelete failed: removed %d stores, %d folders, and %d messages", ulStores, ulFolders, ulMessages);
 	}
 
 	if(lpecSession) {
@@ -10583,7 +10576,7 @@ SOAP_ENTRY_START(getMessageStatus, lpsStatus->er, entryId sEntryId, unsigned int
 	// Get the old flags
 	strQuery = "SELECT val_ulong FROM properties WHERE hierarchyid="+stringify(ulId)+" AND tag=3607 AND type=3";
 	if ((er = lpDatabase->DoSelect(strQuery, &lpDBResult)) != erSuccess) {
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "getMessageStatus(): select failed %x", er);
+		ec_log_err("getMessageStatus(): select failed %x", er);
 		er = ZARAFA_E_DATABASE_ERROR;
 		goto exit;
 	}
@@ -10591,7 +10584,7 @@ SOAP_ENTRY_START(getMessageStatus, lpsStatus->er, entryId sEntryId, unsigned int
 	if (lpDatabase->GetNumRows(lpDBResult) == 1) {
 		lpDBRow = lpDatabase->FetchRow(lpDBResult);
 		if(lpDBRow == NULL || lpDBRow[0] == NULL) {
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "getMessageStatus(): row or col null");
+			ec_log_err("getMessageStatus(): row or col null");
 			er = ZARAFA_E_DATABASE_ERROR;
 			goto exit;
 		}
@@ -10640,7 +10633,7 @@ SOAP_ENTRY_START(setMessageStatus, lpsOldStatus->er, entryId sEntryId, unsigned 
 	// Get the old flags (PR_MSG_STATUS)
 	strQuery = "SELECT val_ulong FROM properties WHERE hierarchyid="+stringify(ulId)+" AND tag=3607 AND type=3";
 	if((er = lpDatabase->DoSelect(strQuery, &lpDBResult)) != erSuccess) {
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "setMessageStatus(): select failed %x", er);
+		ec_log_err("setMessageStatus(): select failed %x", er);
 		er = ZARAFA_E_DATABASE_ERROR;
 		goto exit;
 	}
@@ -10650,7 +10643,7 @@ SOAP_ENTRY_START(setMessageStatus, lpsOldStatus->er, entryId sEntryId, unsigned 
 		lpDBRow = lpDatabase->FetchRow(lpDBResult);
 		if(lpDBRow == NULL || lpDBRow[0] == NULL) {
 			er = ZARAFA_E_DATABASE_ERROR;
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "setMessageStatus(): row or col null");
+			ec_log_err("setMessageStatus(): row or col null");
 			goto exit;
 		}
 
@@ -10669,7 +10662,7 @@ SOAP_ENTRY_START(setMessageStatus, lpsOldStatus->er, entryId sEntryId, unsigned 
 	}
 
 	if(er != erSuccess) {
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "setMessageStatus(): query failed");
+		ec_log_err("setMessageStatus(): query failed");
 		er = ZARAFA_E_DATABASE_ERROR;
 		goto exit;
 	}
@@ -10774,19 +10767,19 @@ SOAP_ENTRY_START(setSyncStatus, lpsResponse->er, struct xsd__base64Binary sSourc
 
 	if( lpDBRow == NULL || lpDBRow[0] == NULL || lpDBRow[1] == NULL || lpDBRow[2] == NULL){
 		er = ZARAFA_E_DATABASE_ERROR; // this should never happen
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "setSyncStatus(): row/col NULL");
+		ec_log_err("setSyncStatus(): row/col NULL");
 		goto exit;
 	}
 
 	if(lpDBLen[0] != sSourceKey.size() || memcmp(lpDBRow[0], sSourceKey, sSourceKey.size()) != 0){
 		er = ZARAFA_E_COLLISION;
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "setSyncStatus(): collision");
+		ec_log_err("setSyncStatus(): collision");
 		goto exit;
 	}
 
 	if((dummy = atoui(lpDBRow[2])) != ulChangeType){
 		er = ZARAFA_E_COLLISION;
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "SetSyncStatus(): unexpected change type %u/%u", dummy, ulChangeType);
+		ec_log_err("SetSyncStatus(): unexpected change type %u/%u", dummy, ulChangeType);
 		goto exit;
 	}
 
@@ -11149,7 +11142,7 @@ static void *MTOMReadOpen(struct soap *soap, void *handle, const char *id,
 	if (strncmp(id, "emcas-", 6) == 0) {
 		std::auto_ptr<task_type> ptrTask(new task_type(SerializeObject, lpStreamInfo));
 		if (ptrTask->dispatchOn(lpStreamInfo->lpSessionInfo->lpThreadPool) == false) {
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "Failed to dispatch serialization task for '%s'", id);
+			ec_log_err("Failed to dispatch serialization task for \"%s\"", id);
 			soap->error = SOAP_FATAL_ERROR;
 
 			delete lpStreamInfo->lpFifoBuffer;
@@ -11158,7 +11151,7 @@ static void *MTOMReadOpen(struct soap *soap, void *handle, const char *id,
 		}
 		lpStreamInfo->lpTask = ptrTask.release();
 	} else {
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "Got stream request for unknown id: '%s'", id);
+		ec_log_err("Got stream request for unknown ID \"%s\"", id);
 		soap->error = SOAP_FATAL_ERROR;
 
 		delete lpStreamInfo->lpFifoBuffer;
@@ -11181,10 +11174,8 @@ static size_t MTOMRead(struct soap * /*soap*/, void *handle,
 	ASSERT(lpStreamInfo->lpFifoBuffer != NULL);
 
 	er = lpStreamInfo->lpFifoBuffer->Read(buf, len, STR_DEF_TIMEOUT, &cbRead);
-	if (er != erSuccess) {
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "Failed to read data. er=%s", stringify(er).c_str());
-	}
-	
+	if (er != erSuccess)
+		ec_log_err("Failed to read data. er=%s", stringify(er).c_str());
 	return cbRead;
 }
 
@@ -11480,7 +11471,7 @@ static void *MTOMWriteOpen(struct soap *soap, void *handle,
 
 	std::auto_ptr<task_type> ptrTask(new task_type(DeserializeObject, lpStreamInfo));
 	if (ptrTask->dispatchOn(lpStreamInfo->lpSessionInfo->lpThreadPool) == false) {
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "Failed to dispatch deserialization task");
+		ec_log_err("Failed to dispatch deserialization task");
 		lpStreamInfo->lpSessionInfo->er = ZARAFA_E_UNABLE_TO_COMPLETE;
 		soap->error = SOAP_FATAL_ERROR;
 		return NULL;
@@ -11773,7 +11764,7 @@ SOAP_ENTRY_START(importMessageFromStream, *result, unsigned int ulFlags, unsigne
 				goto exit;
 			if (ulAffected != 1) {
 				er = ZARAFA_E_DATABASE_ERROR;
-				g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_ERROR, "importMessageFromStream(): affected row count != 1");
+				ec_log_err("importMessageFromStream(): affected row count != 1");
 				goto exit;
 			}
 		}

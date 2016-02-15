@@ -1142,10 +1142,8 @@ ECRESULT SerializeMessage(ECSession *lpecSession, ECDatabase *lpStreamDatabase, 
 		lpStreamDatabase->FinalizeMulti();
 
 exit:
-	if (er != erSuccess) {
-		lpecSession->GetSessionManager()->GetLogger()->Log(EC_LOGLEVEL_ERROR, "SerializeObject failed with error code 0x%08x for object %d", er, ulObjId );
-	}
-
+	if (er != erSuccess)
+		ec_log_err("SerializeObject failed with error code 0x%08x for object %d", er, ulObjId );
 	if (lpDBResult)
 		lpStreamDatabase->FreeResult(lpDBResult);
 		
@@ -1844,7 +1842,7 @@ ECRESULT DeserializeObject(ECSession *lpecSession, ECDatabase *lpDatabase, ECAtt
 exit:
 	if (er != erSuccess) {
 		lpSource->Flush(); // Flush the whole stream
-		lpecSession->GetSessionManager()->GetLogger()->Log(EC_LOGLEVEL_ERROR, "DeserializeObject failed with error code 0x%08x %s", er, GetMAPIErrorMessage(ZarafaErrorToMAPIError(er, ~0U /* anything that yields UNKNOWN */)));
+		ec_log_err("DeserializeObject failed with error code 0x%08x %s", er, GetMAPIErrorMessage(ZarafaErrorToMAPIError(er, ~0U /* anything that yields UNKNOWN */)));
 	}	
 
 	if (lpPropValArray)

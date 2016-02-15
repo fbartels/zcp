@@ -234,7 +234,7 @@ ECRESULT ECTableManager::OpenOutgoingQueueTable(unsigned int ulStoreId, unsigned
 
 		// Item found without entryid, item already deleted, so delete the item from the queue
 		if (lpDBRow[1] == NULL) {
-			lpSession->GetSessionManager()->GetLogger()->Log(EC_LOGLEVEL_ERROR, "Removing stray object %s from outgoing table", lpDBRow[0]);
+			ec_log_err("Removing stray object \"%s\" from outgoing table", lpDBRow[0]);
 			strQuery = "DELETE FROM outgoingqueue WHERE hierarchy_id=" + string(lpDBRow[0]);
 			
 			lpDatabase->DoDelete(strQuery); //ignore errors

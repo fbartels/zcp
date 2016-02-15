@@ -135,7 +135,7 @@ static ECRESULT FilterUserIdsByCompany(ECDatabase *lpDatabase, const std::set<un
 		for (unsigned int i = 0; i < ulRows; ++i) {
 			lpDBRow = lpDatabase->FetchRow(lpDBResult);
 			if (lpDBRow == NULL || lpDBRow[0] == NULL) {
-				g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_FATAL, "%s:%d unexpected null pointer", __FUNCTION__, __LINE__);
+				ec_log_crit("%s:%d unexpected null pointer", __FUNCTION__, __LINE__);
 				er = ZARAFA_E_DATABASE_ERROR;
 				goto exit;
 			}
@@ -456,7 +456,7 @@ void* CleanupSyncsTable(void* lpTmpMain){
 	unsigned int	ulSyncLifeTime = 0;
 	unsigned int	ulDeletedSyncs = 0;
 
-	g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Start syncs table clean up");
+	ec_log_info("Start syncs table clean up");
 
 	ulSyncLifeTime = atoui(g_lpSessionManager->GetConfig()->GetSetting("sync_lifetime"));
 
@@ -480,9 +480,9 @@ void* CleanupSyncsTable(void* lpTmpMain){
 
 exit:
 	if(er == erSuccess)
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "syncs table clean up done: removed syncs: %d", ulDeletedSyncs);
+		ec_log_info("syncs table clean up done: removed syncs: %d", ulDeletedSyncs);
 	else
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "syncs table clean up failed: error 0x%08X, removed syncs: %d", er, ulDeletedSyncs);
+		ec_log_info("syncs table clean up failed: error 0x%08X, removed syncs: %d", er, ulDeletedSyncs);
 
 	if(lpSession) {
 		lpSession->Unlock(); // Lock the session
@@ -505,7 +505,7 @@ void* CleanupChangesTable(void* lpTmpMain){
 	unsigned int	ulDeletedChanges = 0;
 	unsigned int	ulDeletedChangesJoin = 0;
 
-	g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Start changes table clean up");
+	ec_log_info("Start changes table clean up");
 
 	er = g_lpSessionManager->CreateSessionInternal(&lpSession);
 	if(er != erSuccess)
@@ -551,9 +551,9 @@ void* CleanupChangesTable(void* lpTmpMain){
 
 exit:
 	if(er == erSuccess)
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "changes table clean up done, %d entries removed", ulDeletedChanges + ulDeletedChangesJoin);
+		ec_log_info("changes table clean up done, %d entries removed", ulDeletedChanges + ulDeletedChangesJoin);
 	else
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "changes table clean up failed, error: 0x%08X, %d entries removed", er, ulDeletedChanges + ulDeletedChangesJoin);
+		ec_log_info("changes table clean up failed, error: 0x%08X, %d entries removed", er, ulDeletedChanges + ulDeletedChangesJoin);
 
 	if(lpDBResult)
 		lpDatabase->FreeResult(lpDBResult);
@@ -575,7 +575,7 @@ void *CleanupSyncedMessagesTable(void *lpTmpMain)
 	ECSession*		lpSession = NULL;
 	unsigned int	ulDeleted;
 
-	g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Start syncedmessages table clean up");
+	ec_log_info("Start syncedmessages table clean up");
 
 	er = g_lpSessionManager->CreateSessionInternal(&lpSession);
 	if(er != erSuccess)
@@ -597,9 +597,9 @@ void *CleanupSyncedMessagesTable(void *lpTmpMain)
 
 exit:
 	if(er == erSuccess)
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "syncedmessages table clean up done, %d entries removed", ulDeleted);
+		ec_log_info("syncedmessages table clean up done, %d entries removed", ulDeleted);
 	else
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "syncedmessages table clean up failed, error: 0x%08X, %d entries removed", er, ulDeleted);
+		ec_log_info("syncedmessages table clean up failed, error: 0x%08X, %d entries removed", er, ulDeleted);
 
 	if(lpSession) {
 		lpSession->Unlock(); // Lock the session
@@ -680,14 +680,14 @@ ECRESULT GetChanges(struct soap *soap, ECSession *lpSession, SOURCEKEY sFolderSo
 
             if( lpDBRow == NULL || lpDBRow[0] == NULL || lpDBRow[1] == NULL || lpDBRow[2] == NULL){
                 er = ZARAFA_E_DATABASE_ERROR; // this should never happen
-				lpSession->GetSessionManager()->GetLogger()->Log(EC_LOGLEVEL_FATAL, "%s:%d unexpected null pointer", __FUNCTION__, __LINE__);
+			ec_log_crit("%s:%d unexpected null pointer", __FUNCTION__, __LINE__);
                 goto exit;
             }
 
             if((dummy = atoui(lpDBRow[2])) != ulChangeType){
-                er = ZARAFA_E_COLLISION;
-		lpSession->GetSessionManager()->GetLogger()->Log(EC_LOGLEVEL_FATAL, "GetChanges(): unexpected change type %u/%u", dummy, ulChangeType);
-                goto exit;
+			er = ZARAFA_E_COLLISION;
+			ec_log_crit("GetChanges(): unexpected change type %u/%u", dummy, ulChangeType);
+			goto exit;
             }
 
 		} else {
@@ -704,12 +704,11 @@ ECRESULT GetChanges(struct soap *soap, ECSession *lpSession, SOURCEKEY sFolderSo
             lpDBLen = lpDatabase->FetchRowLengths(lpDBResult);
 
 			if( lpDBRow == NULL || lpDBRow[0] == NULL || lpDBRow[1] == NULL) {
-				ECLogger *log = lpSession->GetSessionManager()->GetLogger();
 				std::string username;
 
 				er = lpSession->GetSecurity()->GetUsername(&username);
 				er = ZARAFA_E_DATABASE_ERROR;
-				log->Log(EC_LOGLEVEL_WARNING,
+				ec_log_warn(
 					"%s:%d The sync ID %u does not exist. "
 					"(unexpected null pointer) "
 					"session user name: %s.",
@@ -826,7 +825,7 @@ ECRESULT GetChanges(struct soap *soap, ECSession *lpSession, SOURCEKEY sFolderSo
 				while( (lpDBRow = lpDatabase->FetchRow(lpDBResult)) ){
 					if( lpDBRow == NULL || lpDBRow[0] == NULL){
 						er = ZARAFA_E_DATABASE_ERROR; // this should never happen
-						lpSession->GetSessionManager()->GetLogger()->Log(EC_LOGLEVEL_FATAL, "%s:%d unexpected null pointer", __FUNCTION__, __LINE__);
+						ec_log_crit("%s:%d unexpected null pointer", __FUNCTION__, __LINE__);
 						goto exit;
 					}
 					lstChanges.push_back(atoui(lpDBRow[0]));
@@ -858,7 +857,7 @@ nextFolder:
 
                     if( lpDBRow == NULL || lpDBRow[0] == NULL){
                         er = ZARAFA_E_DATABASE_ERROR; // this should never happen
-						lpSession->GetSessionManager()->GetLogger()->Log(EC_LOGLEVEL_FATAL, "%s:%d unexpected null pointer", __FUNCTION__, __LINE__);
+			ec_log_crit("%s:%d unexpected null pointer", __FUNCTION__, __LINE__);
                         goto exit;
                     }
 
@@ -896,7 +895,7 @@ nextFolder:
 			lpDBRow = lpDatabase->FetchRow(lpDBResult);
 			if( lpDBRow == NULL){
 				er = ZARAFA_E_DATABASE_ERROR; // this should never happen
-				lpSession->GetSessionManager()->GetLogger()->Log(EC_LOGLEVEL_FATAL, "%s:%d unexpected null pointer", __FUNCTION__, __LINE__);
+				ec_log_crit("%s:%d unexpected null pointer", __FUNCTION__, __LINE__);
 				goto exit;
 			}
 			ulMaxChange = (lpDBRow[0] == NULL ? 0 : atoui(lpDBRow[0]));
@@ -970,7 +969,7 @@ nextFolder:
 
 				if(lpDBRow == NULL || lpDBRow[0] == NULL || lpDBRow[1] == NULL || lpDBRow[2] == NULL || lpDBRow[3] == NULL) {
 					er = ZARAFA_E_DATABASE_ERROR;
-					lpSession->GetSessionManager()->GetLogger()->Log(EC_LOGLEVEL_FATAL, "%s:%d unexpected null pointer", __FUNCTION__, __LINE__);
+					ec_log_crit("%s:%d unexpected null pointer", __FUNCTION__, __LINE__);
 					goto exit;
 				}
 
@@ -1032,13 +1031,13 @@ nextFolder:
 
                 if (lpDBRow == NULL || lpDBRow[0] == NULL || lpDBRow[1] == NULL || lpDBRow[2] == NULL || lpDBRow[3] == NULL) {
                     er = ZARAFA_E_DATABASE_ERROR; // this should never happen
-					lpSession->GetSessionManager()->GetLogger()->Log(EC_LOGLEVEL_FATAL, "%s:%d unexpected null pointer", __FUNCTION__, __LINE__);
+			ec_log_crit("%s:%d unexpected null pointer", __FUNCTION__, __LINE__);
                     goto exit;
                 }
 
 				if (lpDBLen[1] < CbNewABEID("")) {
                     er = ZARAFA_E_DATABASE_ERROR; // this should never happen
-					lpSession->GetSessionManager()->GetLogger()->Log(EC_LOGLEVEL_FATAL, "%s:%d invalid size for ab entryid: %lu", __FUNCTION__, __LINE__, static_cast<unsigned long>(lpDBLen[1]));
+					ec_log_crit("%s:%d invalid size for ab entryid %lu", __FUNCTION__, __LINE__, static_cast<unsigned long>(lpDBLen[1]));
                     goto exit;
 				}
 
@@ -1141,7 +1140,7 @@ nextFolder:
                     
                 if(lpDBRow[0] == NULL || lpDBRow[1] == NULL || lpDBRow[2] == NULL) {
                     er = ZARAFA_E_DATABASE_ERROR;
-					lpSession->GetSessionManager()->GetLogger()->Log(EC_LOGLEVEL_FATAL, "%s:%d unexpected null pointer", __FUNCTION__, __LINE__);
+			ec_log_crit("%s:%d unexpected null pointer", __FUNCTION__, __LINE__);
                     goto exit;
                 }
                 
@@ -1248,7 +1247,7 @@ ECRESULT GetSyncStates(struct soap *soap, ECSession *lpSession, mv_long ulaSyncI
 	while ((lpDBRow = lpDatabase->FetchRow(lpDBResult)) != NULL) {
 		if (lpDBRow[0] == NULL || lpDBRow[1] == NULL) {
 			er = ZARAFA_E_DATABASE_ERROR;
-			lpSession->GetSessionManager()->GetLogger()->Log(EC_LOGLEVEL_FATAL, "%s:%d unexpected null pointer", __FUNCTION__, __LINE__);
+			ec_log_crit("%s:%d unexpected null pointer", __FUNCTION__, __LINE__);
 			goto exit;
 		}
 
@@ -1278,7 +1277,7 @@ ECRESULT AddToLastSyncedMessagesSet(ECDatabase *lpDatabase, unsigned int ulSyncI
 	lpDBRow = lpDatabase->FetchRow(lpDBResult);
 	if (lpDBRow == NULL) {
 		er = ZARAFA_E_DATABASE_ERROR;
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_FATAL, "%s:%d unexpected null pointer", __FUNCTION__, __LINE__);
+		ec_log_crit("%s:%d unexpected null pointer", __FUNCTION__, __LINE__);
 		goto exit;
 	}
 	
@@ -1331,7 +1330,7 @@ ECRESULT CheckWithinLastSyncedMessagesSet(ECDatabase *lpDatabase, unsigned int u
 	lpDBRow = lpDatabase->FetchRow(lpDBResult);
 	if (lpDBRow == NULL) {
 		er = ZARAFA_E_DATABASE_ERROR;
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_FATAL, "%s:%d unexpected null pointer", __FUNCTION__, __LINE__);
+		ec_log_crit("%s:%d unexpected null pointer", __FUNCTION__, __LINE__);
 		goto exit;
 	}
 	
@@ -1377,7 +1376,7 @@ ECRESULT RemoveFromLastSyncedMessagesSet(ECDatabase *lpDatabase, unsigned int ul
 	lpDBRow = lpDatabase->FetchRow(lpDBResult);
 	if (lpDBRow == NULL) {
 		er = ZARAFA_E_DATABASE_ERROR;
-		g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_FATAL, "RemoveFromLastSyncedMessagesSet(): fetchrow return null");
+		ec_log_crit("RemoveFromLastSyncedMessagesSet(): fetchrow return null");
 		goto exit;
 	}
 	

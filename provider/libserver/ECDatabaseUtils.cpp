@@ -161,8 +161,7 @@ ECRESULT CopySOAPPropValToDatabasePropVal(struct propVal *lpPropVal, unsigned in
 		*lpulColNr = VALUE_NR_DOUBLE;
 		if (ci_find_substr(strColData, std::string("nan")) != std::string::npos) {
 			strColData = "0.0";
-			extern ECSessionManager* g_lpSessionManager;
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_DEBUG, "%s:%d double value (%f) found, stringified to %s.", __FUNCTION__, __LINE__, lpPropVal->Value.dbl, strColData.c_str());
+			ec_log_debug("%s:%d double value (%f) found, stringified to %s.", __FUNCTION__, __LINE__, lpPropVal->Value.dbl, strColData.c_str());
 		}
 	break;
 	case PT_CURRENCY:
