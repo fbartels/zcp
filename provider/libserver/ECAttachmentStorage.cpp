@@ -135,15 +135,14 @@ ECRESULT ECAttachmentStorage::CreateAttachmentStorage(ECDatabase *lpDatabase, EC
 	ECAttachmentStorage *lpAttachmentStorage = NULL;
 
 	if (lpDatabase == NULL) {
-	        lpLogger->Log(EC_LOGLEVEL_ERROR, "ECAttachmentStorage::CreateAttachmentStorage(): DB not available yet");
-
+		ec_log_err("ECAttachmentStorage::CreateAttachmentStorage(): DB not available yet");
 		return ZARAFA_E_DATABASE_ERROR; // somebody called this function too soon.
 	}
 
 	const char *ans = lpConfig->GetSetting("attachment_storage");
 	const char *dir = lpConfig->GetSetting("attachment_path");
 	if (dir == NULL) {
-		lpLogger->Log(EC_LOGLEVEL_ERROR, "No attachment_path set despite attachment_storage=files. Falling back to database attachments.");
+		ec_log_err("No attachment_path set despite attachment_storage=files. Falling back to database attachments.");
 		ans = NULL;
 	}
 	if (ans != NULL && strcmp(ans, "files") == 0) {
