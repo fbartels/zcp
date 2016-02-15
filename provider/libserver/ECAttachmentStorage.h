@@ -44,6 +44,7 @@
 #ifndef EC_ATTACHMENT_STORAGE
 #define EC_ATTACHMENT_STORAGE
 
+#include <zarafa/zcdefs.h>
 #include "ECDatabase.h"
 #include <list>
 #include <set>
@@ -64,7 +65,7 @@ public:
 	ULONG AddRef();
 	ULONG Release();
 
-	static ECRESULT CreateAttachmentStorage(ECDatabase *lpDatabase, ECConfig *lpConfig, ECLogger *lpLogger, ECAttachmentStorage **lppAttachmentStorage);
+	static ECRESULT CreateAttachmentStorage(ECDatabase *lpDatabase, ECConfig *lpConfig, ECAttachmentStorage **lppAttachmentStorage);
 
 	/* Single Instance Attachment wrappers (should not be overridden by subclasses) */
 	bool ExistAttachment(ULONG ulObjId, ULONG ulPropId);
@@ -121,13 +122,11 @@ protected:
 	ULONG m_ulRef;
 };
 
-class ECDatabaseAttachment : public ECAttachmentStorage {
+class ECDatabaseAttachment _zcp_final : public ECAttachmentStorage {
 public:
-	ECDatabaseAttachment(ECDatabase *lpDatabase, ECLogger *lpLogger);
+	ECDatabaseAttachment(ECDatabase *lpDatabase);
 
 protected:
-	virtual ~ECDatabaseAttachment();
-
 	/* Single Instance Attachment handlers */
 	virtual bool ExistAttachmentInstance(ULONG ulInstanceId);
 	virtual ECRESULT LoadAttachmentInstance(struct soap *soap, ULONG ulInstanceId, size_t *lpiSize, unsigned char **lppData);
@@ -141,13 +140,11 @@ protected:
 	virtual ECRESULT Begin();
 	virtual ECRESULT Commit();
 	virtual ECRESULT Rollback();
-	
-	ECLogger *m_lpLogger;
 };
 
-class ECFileAttachment : public ECAttachmentStorage {
+class ECFileAttachment _zcp_final : public ECAttachmentStorage {
 public:
-	ECFileAttachment(ECDatabase *lpDatabase, std::string basepath, unsigned int ulCompressionLevel, ECLogger *lpLogger, const bool force_changes_to_disk);
+	ECFileAttachment(ECDatabase *lpDatabase, std::string basepath, unsigned int ulCompressionLevel, const bool force_changes_to_disk);
 
 protected:
 	virtual ~ECFileAttachment();
@@ -189,7 +186,6 @@ private:
 	std::set<ULONG> m_setNewAttachment;
 	std::set<ULONG> m_setDeletedAttachment;
 	std::set<ULONG> m_setMarkedAttachment;
-	ECLogger * m_lpLogger;
 };
 
 #endif

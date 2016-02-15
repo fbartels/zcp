@@ -62,6 +62,7 @@
 
 #include "ECAttachmentStorage.h"
 #include "SOAPUtils.h"
+#include <zarafa/ECLogger.h>
 #include <zarafa/MAPIErrors.h>
 #include <mapitags.h>
 #include <zarafa/stringutil.h>
@@ -130,7 +131,8 @@ ULONG ECAttachmentStorage::Release() {
  * @return Zarafa error code
  * @retval ZARAFA_E_DATABASE_ERROR given database pointer wasn't valid
  */
-ECRESULT ECAttachmentStorage::CreateAttachmentStorage(ECDatabase *lpDatabase, ECConfig *lpConfig, ECLogger *lpLogger, ECAttachmentStorage **lppAttachmentStorage)
+ECRESULT ECAttachmentStorage::CreateAttachmentStorage(ECDatabase *lpDatabase,
+    ECConfig *lpConfig, ECAttachmentStorage **lppAttachmentStorage)
 {
 	ECAttachmentStorage *lpAttachmentStorage = NULL;
 
@@ -151,9 +153,9 @@ ECRESULT ECAttachmentStorage::CreateAttachmentStorage(ECDatabase *lpDatabase, EC
 		const char *comp = lpConfig->GetSetting("attachment_compression");
 		unsigned int complvl = (comp == NULL) ? 0 : strtoul(comp, NULL, 0);
 
-		lpAttachmentStorage = new ECFileAttachment(lpDatabase, dir, complvl, lpLogger, sync_files);
+		lpAttachmentStorage = new ECFileAttachment(lpDatabase, dir, complvl, sync_files);
 	} else {
-		lpAttachmentStorage = new ECDatabaseAttachment(lpDatabase, lpLogger);
+		lpAttachmentStorage = new ECDatabaseAttachment(lpDatabase);
 	}
 
 	lpAttachmentStorage->AddRef();
@@ -880,15 +882,9 @@ exit:
 }
 
 // Attachment storage is in database
-ECDatabaseAttachment::ECDatabaseAttachment(ECDatabase *lpDatabase, ECLogger *lpLogger)
-	: ECAttachmentStorage(lpDatabase, 0),  m_lpLogger(lpLogger)
+ECDatabaseAttachment::ECDatabaseAttachment(ECDatabase *lpDatabase) :
+	ECAttachmentStorage(lpDatabase, 0)
 {
-	m_lpLogger->AddRef();
-}
-
-ECDatabaseAttachment::~ECDatabaseAttachment()
-{
-	m_lpLogger->Release();
 }
 
 /** 
@@ -1262,11 +1258,12 @@ ECRESULT ECDatabaseAttachment::Rollback()
 
 
 // Attachment storage is in separate files
-ECFileAttachment::ECFileAttachment(ECDatabase *lpDatabase, std::string basepath, unsigned int ulCompressionLevel, ECLogger *lpLogger, const bool force_changes_to_disk) : ECAttachmentStorage(lpDatabase, ulCompressionLevel) {
+ECFileAttachment::ECFileAttachment(ECDatabase *lpDatabase,
+    std::string basepath, unsigned int ulCompressionLevel,
+    const bool force_changes_to_disk) :
+	ECAttachmentStorage(lpDatabase, ulCompressionLevel)
+{
 	m_basepath = basepath;
-	m_lpLogger = lpLogger;
-	m_lpLogger->AddRef();
-
 	if (m_basepath.empty())
 #ifdef WIN32
 		m_basepath = "Zarafa Data";
@@ -1302,7 +1299,6 @@ ECFileAttachment::ECFileAttachment(ECDatabase *lpDatabase, std::string basepath,
 
 ECFileAttachment::~ECFileAttachment()
 {
-	m_lpLogger->Release();
 #ifndef WIN32
 	if (m_dirp != NULL)
 		closedir(m_dirp);
