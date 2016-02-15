@@ -63,11 +63,12 @@
 static const char THIS_FILE[] = __FILE__;
 #endif
 
-ECPluginFactory::ECPluginFactory(ECConfig *config, ECLogger *logger, IECStatsCollector *lpStatsCollector, bool bHosted, bool bDistributed) {
+ECPluginFactory::ECPluginFactory(ECConfig *config, IECStatsCollector *lpStatsCollector,
+    bool bHosted, bool bDistributed)
+{
 	m_getUserPluginInstance = NULL;
 	m_deleteUserPluginInstance = NULL;
 	m_config = config;
-	m_logger = logger;
 	pthread_mutex_init(&m_plugin_lock, NULL);
 	ECPluginSharedData::GetSingleton(&m_shareddata, m_config, lpStatsCollector, bHosted, bDistributed);
 	m_dl = NULL;

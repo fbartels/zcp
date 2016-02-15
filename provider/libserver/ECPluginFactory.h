@@ -47,14 +47,13 @@
 
 #include <zarafa/ZarafaCode.h>
 #include <zarafa/ECConfig.h>
-#include <zarafa/ECLogger.h>
 #include <zarafa/ECPluginSharedData.h>
 #include "plugin.h"
 #include <pthread.h>
 
 class ECPluginFactory {
 public:
-	ECPluginFactory(ECConfig *config, ECLogger *logger, IECStatsCollector *lpStatsCollector, bool bHosted, bool bDistributed);
+	ECPluginFactory(ECConfig *config, IECStatsCollector *lpStatsCollector, bool bHosted, bool bDistributed);
 	~ECPluginFactory();
 
 	ECRESULT	CreateUserPlugin(UserPlugin **lppPlugin);
@@ -66,7 +65,6 @@ private:
 
 	ECPluginSharedData *m_shareddata;
 	ECConfig *m_config;
-	ECLogger *m_logger;
 	pthread_mutex_t m_plugin_lock;
 
 	DLIB m_dl;
