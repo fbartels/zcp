@@ -55,28 +55,6 @@
 
 class ECLogger;
 
-// Newmail Notify columns
-const static SizedSPropTagArray(4, sPropNewMailColumns) =
-{
-	4,
-	{
-		PR_ENTRYID,
-		PR_PARENT_ENTRYID,
-		PR_MESSAGE_CLASS_A,
-		PR_MESSAGE_FLAGS
-	}
-};
-
-// Indexes of the sPropNewMailColumns property array
-enum
-{
-	NEWMAIL_ENTRYID,		// Array Indexes
-	NEWMAIL_PARENT_ENTRYID,
-	NEWMAIL_MESSAGE_CLASS,
-	NEWMAIL_MESSAGE_FLAGS,
-	NUM_NEWMAIL_PROPS		// Array size
-};
-
 // Version of GetClientVersion
 #define CLIENT_VERSION_OLK2000			9
 #define CLIENT_VERSION_OLK2002			10

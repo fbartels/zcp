@@ -99,6 +99,25 @@ static const char THIS_FILE[] = __FILE__;
 
 #define PROFILEPREFIX		"ec-adm-"
 
+/* Indexes of the sPropNewMailColumns property array */
+enum {
+	NEWMAIL_ENTRYID,		// Array Indexes
+	NEWMAIL_PARENT_ENTRYID,
+	NEWMAIL_MESSAGE_CLASS,
+	NEWMAIL_MESSAGE_FLAGS,
+	NUM_NEWMAIL_PROPS,		// Array size
+};
+
+/* Newmail Notify columns */
+static const SizedSPropTagArray(4, sPropNewMailColumns) = {
+	4,
+	{
+		PR_ENTRYID,
+		PR_PARENT_ENTRYID,
+		PR_MESSAGE_CLASS_A,
+		PR_MESSAGE_FLAGS,
+	}
+};
 
 bool operator ==(SBinary left, SBinary right)
 {
