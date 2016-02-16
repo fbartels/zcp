@@ -583,20 +583,18 @@ exit:
  */
 HRESULT ECTNEF::HrWritePropStream(IStream *lpStream, std::list<SPropValue *> &proplist)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	std::list<SPropValue *>::iterator iterProps;
 
 	hr = HrWriteDWord(lpStream, proplist.size());
 	if(hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	for (iterProps = proplist.begin(); iterProps != proplist.end(); iterProps++) {
 		hr = HrWriteSingleProp(lpStream, *iterProps);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 	}
-
-exit:
 	return hr;
 }
 
@@ -1847,20 +1845,15 @@ exit:
  */
 HRESULT ECTNEF::HrReadDWord(IStream *lpStream, ULONG *ulData)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	ULONG ulRead = 0;
 
 	hr = lpStream->Read(ulData, sizeof(unsigned int), &ulRead);
 	if(hr != hrSuccess)
-		goto exit;
-
-	if(ulRead != sizeof(unsigned int)) {
-		hr = MAPI_E_NOT_FOUND;
-		goto exit;
-	}
-
-exit:
-	return hr;
+		return hr;
+	if (ulRead != sizeof(unsigned int))
+		return MAPI_E_NOT_FOUND;
+	return hrSuccess;
 }
 
 /**
@@ -1873,20 +1866,15 @@ exit:
  */
 HRESULT ECTNEF::HrReadWord(IStream *lpStream, unsigned short *ulData)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	ULONG ulRead = 0;
 
 	hr = lpStream->Read(ulData, sizeof(unsigned short), &ulRead);
 	if(hr != hrSuccess)
-		goto exit;
-
-	if(ulRead != sizeof(unsigned short)) {
-		hr = MAPI_E_NOT_FOUND;
-		goto exit;
-	}
-
-exit:
-	return hr;
+		return hr;
+	if (ulRead != sizeof(unsigned short))
+		return MAPI_E_NOT_FOUND;
+	return hrSuccess;
 }
 
 /**
@@ -1899,20 +1887,15 @@ exit:
  */
 HRESULT ECTNEF::HrReadByte(IStream *lpStream, unsigned char *ulData)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	ULONG ulRead = 0;
 
 	hr = lpStream->Read(ulData, 1, &ulRead);
 	if(hr != hrSuccess)
-		goto exit;
-
-	if(ulRead != 1) {
-		hr = MAPI_E_NOT_FOUND;
-		goto exit;
-	}
-
-exit:
-	return hr;
+		return hr;
+	if (ulRead != 1)
+		return MAPI_E_NOT_FOUND;
+	return hrSuccess;
 }
 
 /**
@@ -1927,7 +1910,7 @@ exit:
  */
 HRESULT ECTNEF::HrReadData(IStream *lpStream, char *lpData, ULONG ulLen)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	ULONG ulRead = 0;
 	ULONG ulToRead = 0;
 
@@ -1936,19 +1919,13 @@ HRESULT ECTNEF::HrReadData(IStream *lpStream, char *lpData, ULONG ulLen)
 
 		hr = lpStream->Read(lpData, ulToRead, &ulRead);
 		if(hr != hrSuccess)
-			goto exit;
-
-		if(ulRead != ulToRead) {
-			hr = MAPI_E_NOT_FOUND;
-			goto exit;
-		}
-
+			return hr;
+		if (ulRead != ulToRead)
+			return MAPI_E_NOT_FOUND;
 		ulLen -= ulRead;
 		lpData += ulRead;
 	}
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 /**
@@ -1961,20 +1938,15 @@ exit:
  */
 HRESULT ECTNEF::HrWriteDWord(IStream *lpStream, ULONG ulData)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	ULONG ulWritten = 0;
 
 	hr = lpStream->Write(&ulData, sizeof(unsigned int), &ulWritten);
 	if(hr != hrSuccess)
-		goto exit;
-
-	if(ulWritten != sizeof(unsigned int)) {
-		hr = MAPI_E_NOT_FOUND;
-		goto exit;
-	}
-
-exit:
-	return hr;
+		return hr;
+	if (ulWritten != sizeof(unsigned int))
+		return MAPI_E_NOT_FOUND;
+	return hrSuccess;
 }
 
 /**
@@ -1987,20 +1959,15 @@ exit:
  */
 HRESULT ECTNEF::HrWriteWord(IStream *lpStream, unsigned short ulData)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	ULONG ulWritten = 0;
 
 	hr = lpStream->Write(&ulData, sizeof(unsigned short), &ulWritten);
 	if(hr != hrSuccess)
-		goto exit;
-
-	if(ulWritten != sizeof(unsigned short)) {
-		hr = MAPI_E_NOT_FOUND;
-		goto exit;
-	}
-
-exit:
-	return hr;
+		return hr;
+	if (ulWritten != sizeof(unsigned short))
+		return MAPI_E_NOT_FOUND;
+	return hrSuccess;
 }
 
 /**
@@ -2013,20 +1980,15 @@ exit:
  */
 HRESULT ECTNEF::HrWriteByte(IStream *lpStream, unsigned char ulData)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	ULONG ulWritten = 0;
 
 	hr = lpStream->Write(&ulData, sizeof(unsigned char), &ulWritten);
 	if(hr != hrSuccess)
-		goto exit;
-
-	if(ulWritten != sizeof(unsigned char)) {
-		hr = MAPI_E_NOT_FOUND;
-		goto exit;
-	}
-
-exit:
-	return hr;
+		return hr;
+	if (ulWritten != sizeof(unsigned char))
+		return MAPI_E_NOT_FOUND;
+	return hrSuccess;
 }
 
 /**
@@ -2038,20 +2000,17 @@ exit:
  */
 HRESULT ECTNEF::HrWriteData(IStream *lpStream, char *data, ULONG ulLen)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	ULONG ulWritten = 0;
 
 	while(ulLen > 0) {
 		hr = lpStream->Write(data, ulLen > 4096 ? 4096 : ulLen, &ulWritten);
 		if(hr != hrSuccess)
-			goto exit;
-
+			return hr;
 		ulLen -= ulWritten;
 		data += ulWritten;
 	}
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 /**
@@ -2131,46 +2090,36 @@ ULONG ECTNEF::GetChecksum(char *lpData, unsigned int ulLen)
  */
 HRESULT ECTNEF::HrWriteBlock(IStream *lpDestStream, IStream *lpSourceStream, ULONG ulBlockID, ULONG ulLevel)
 {
-    HRESULT hr = hrSuccess;
+    HRESULT hr;
     ULONG ulChecksum = 0;
     LARGE_INTEGER zero = {{0,0}};
     STATSTG         sStat;
 
     hr = HrWriteByte(lpDestStream, ulLevel);
     if(hr != hrSuccess)
-        goto exit;
-        
+		return hr;
     hr = HrGetChecksum(lpSourceStream, &ulChecksum);
     if(hr != hrSuccess)
-        goto exit;
-    
+		return hr;
     hr = lpSourceStream->Seek(zero, STREAM_SEEK_SET, NULL);
     if(hr != hrSuccess)
-        goto exit;
-        
+		return hr;
     hr = HrWriteDWord(lpDestStream, ulBlockID);
     if(hr != hrSuccess)
-        goto exit;
-        
+		return hr;
     hr = lpSourceStream->Stat(&sStat, STATFLAG_NONAME);
     if(hr != hrSuccess)
-        goto exit;
-        
+		return hr;
     hr = HrWriteDWord(lpDestStream, sStat.cbSize.QuadPart);
     if(hr != hrSuccess)
-        goto exit;
-        
+		return hr;
     hr = lpSourceStream->CopyTo(lpDestStream, sStat.cbSize, NULL, NULL);
     if(hr != hrSuccess)
-        goto exit;
-        
+		return hr;
     hr = HrWriteWord(lpDestStream, ulChecksum);
     if(hr != hrSuccess)
-        goto exit;
-        
-exit:
-
-    return hr;
+		return hr;
+    return hrSuccess;
 }
 
 /** 
@@ -2220,32 +2169,26 @@ exit:
  */
 HRESULT ECTNEF::HrReadStream(IStream *lpStream, void *lpBase, BYTE **lppData, ULONG *lpulSize)
 {
-    HRESULT hr = hrSuccess;
+    HRESULT hr;
     STATSTG sStat;
     BYTE *lpBuffer = NULL;
     BYTE *lpWrite = NULL;
     ULONG ulSize = 0;
     ULONG ulRead = 0;
 
-	if (lpStream == NULL || lpBase == NULL || lppData == NULL || lpulSize == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
-    
+	if (lpStream == NULL || lpBase == NULL || lppData == NULL || lpulSize == NULL)
+		return MAPI_E_INVALID_PARAMETER;
     hr = lpStream->Stat(&sStat, STATFLAG_NONAME);
     if(hr != hrSuccess)
-        goto exit;
-    
+		return hr;
     hr = MAPIAllocateMore(sStat.cbSize.QuadPart, lpBase, (void **)&lpBuffer);    
     if(hr != hrSuccess)
-        goto exit;
-    
+		return hr;
     lpWrite = lpBuffer;
     while(sStat.cbSize.QuadPart > 0) {
         hr = lpStream->Read(lpWrite, sStat.cbSize.QuadPart, &ulRead);
         if(hr != hrSuccess)
-            goto exit;
-            
+			return hr;
         lpWrite += ulRead;
         ulSize += ulRead;
         sStat.cbSize.QuadPart -= ulRead;
@@ -2253,9 +2196,7 @@ HRESULT ECTNEF::HrReadStream(IStream *lpStream, void *lpBase, BYTE **lppData, UL
         
     *lppData = lpBuffer;
     *lpulSize = ulSize;
-    
-exit:    
-    return hr;
+    return hrSuccess;
 }
 
 /** @} */

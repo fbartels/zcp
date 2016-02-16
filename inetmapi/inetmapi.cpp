@@ -201,19 +201,18 @@ INETMAPI_API HRESULT IMToMAPI(IMAPISession *lpSession, IMsgStore *lpMsgStore, IA
 // Read properties from lpMessage object and fill a buffer with internet rfc822 format message
 INETMAPI_API HRESULT IMToINet(IMAPISession *lpSession, IAddrBook *lpAddrBook, IMessage *lpMessage, char** lppbuf, sending_options sopt, ECLogger *lpLogger)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	std::ostringstream oss;
 	char *lpszData = NULL;
 
 	hr = IMToINet(lpSession, lpAddrBook, lpMessage, oss, sopt, lpLogger);
 	if (hr != hrSuccess)
-		goto exit;
+		return hr;
         
 	lpszData = new char[oss.str().size()+1];
 	strcpy(lpszData, oss.str().c_str());
 
 	*lppbuf = lpszData;
-exit:    
 	return hr;
 }
 

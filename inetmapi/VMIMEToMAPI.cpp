@@ -400,7 +400,7 @@ exit:
  * @retval		MAPI_E_CALL_FAILED	Caught an exception, which breaks the conversion.
  */
 HRESULT VMIMEToMAPI::fillMAPIMail(vmime::ref<vmime::message> vmMessage, IMessage *lpMessage) {
-	HRESULT	hr = hrSuccess;
+	HRESULT	hr;
 	SPropValue sPropDefaults[3];
 
 	sPropDefaults[0].ulPropTag = PR_MESSAGE_CLASS_W;
@@ -421,7 +421,7 @@ HRESULT VMIMEToMAPI::fillMAPIMail(vmime::ref<vmime::message> vmMessage, IMessage
 	hr = lpMessage->SetProps(3, sPropDefaults, NULL);
 	if (hr != hrSuccess) {
 		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to set default mail properties");
-		goto exit;
+		return hr;
 	}
 
 	try {
@@ -436,14 +436,14 @@ HRESULT VMIMEToMAPI::fillMAPIMail(vmime::ref<vmime::message> vmMessage, IMessage
 		hr = handleRecipients(vmHeader, lpMessage);
 		if (hr != hrSuccess) {
 			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse mail recipients");
-			goto exit;
+			return hr;
 		}
 
 		// Headers
 		hr = handleHeaders(vmHeader, lpMessage);
 		if (hr != hrSuccess) {
 			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse mail headers");
-			goto exit;
+			return hr;
 		}
 
 		if (vmime::mdn::MDNHelper::isMDN(vmMessage) == true)
@@ -468,7 +468,7 @@ HRESULT VMIMEToMAPI::fillMAPIMail(vmime::ref<vmime::message> vmMessage, IMessage
 					hr = disectBody(bPart->getHeader(), bPart->getBody(), lpMessage, true);
 					if (hr != hrSuccess) {
 						lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse MDN mail body");
-						goto exit;
+						return hr;
 					}
 					// we have a body, lets skip the other parts
 					break;
@@ -491,39 +491,34 @@ HRESULT VMIMEToMAPI::fillMAPIMail(vmime::ref<vmime::message> vmMessage, IMessage
 			hr = lpMessage->SetProps(2, sPropDefaults, NULL);
 			if (hr != hrSuccess) {
 				lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to set MDN mail properties");
-				goto exit;
+				return hr;
 			}
 		} else {
 			// multiparts are handled in disectBody, if any
 			hr = disectBody(vmHeader, vmBody, lpMessage, mt->getType().compare("multipart") != 0);
 			if (hr != hrSuccess) {
 				lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse mail body");
-				goto exit;
+				return hr;
 			}
 		}
 	}
 	catch (vmime::exception& e) {
 		lpLogger->Log(EC_LOGLEVEL_ERROR, "VMIME exception on create message: %s", e.what());
-		hr = MAPI_E_CALL_FAILED;
-		goto exit;
+		return MAPI_E_CALL_FAILED;
 	}
 	catch (std::exception& e) {
 		lpLogger->Log(EC_LOGLEVEL_ERROR, "STD exception on create message: %s", e.what());
-		hr = MAPI_E_CALL_FAILED;
-		goto exit;
+		return MAPI_E_CALL_FAILED;
 	}
 	catch (...) {
 		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unknown generic exception occurred on create message");
-		hr = MAPI_E_CALL_FAILED;
-		goto exit;
+		return MAPI_E_CALL_FAILED;
 	}
 
 	createIMAPEnvelope(vmMessage, lpMessage);
 
 	// ignore error/warings from fixup function: it's not critical for correct delivery
 	postWriteFixups(lpMessage);
-
-exit:
 	return hr;
 }
 
@@ -1077,7 +1072,6 @@ exit:
  * @return		MAPI error code.
  */
 HRESULT VMIMEToMAPI::handleMessageToMeProps(IMessage *lpMessage, LPADRLIST lpRecipients) {
-	HRESULT hr = hrSuccess;
 	unsigned int i = 0;
 	LPSPropValue lpRecipType = NULL; // non-free
 	LPSPropValue lpEntryId = NULL;	// non-free
@@ -1086,10 +1080,8 @@ HRESULT VMIMEToMAPI::handleMessageToMeProps(IMessage *lpMessage, LPADRLIST lpRec
 	bool bRecipMe = false;
 	SPropValue sProps[3];
 
-	if(m_dopt.user_entryid == NULL) {
-		hr = hrSuccess; // Not an error, but don't do any processing
-		goto exit;
-	}
+	if (m_dopt.user_entryid == NULL)
+		return hrSuccess; /* Not an error, but do not do any processing */
 
 	// Loop through all recipients of the message to find ourselves in the recipient list.
 	for (i = 0; i < lpRecipients->cEntries; i++) {
@@ -1127,9 +1119,7 @@ HRESULT VMIMEToMAPI::handleMessageToMeProps(IMessage *lpMessage, LPADRLIST lpRec
 	sProps[2].Value.b = bCcMe;
 
 	lpMessage->SetProps(3, sProps, NULL);
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 /**
@@ -3419,8 +3409,7 @@ HRESULT VMIMEToMAPI::createIMAPEnvelope(vmime::ref<vmime::message> vmMessage, IM
 	sEnvelope.Value.lpszA = (char*)buffer.c_str();
 
 	hr = lpMessage->SetProps(1, &sEnvelope, NULL);
-
-exit:
+exit: /* label still needed for expansion of PROPMAP_INIT */
 	return hr;
 }
 
@@ -3563,7 +3552,6 @@ std::string VMIMEToMAPI::createIMAPEnvelope(vmime::ref<vmime::message> vmMessage
  */
 HRESULT VMIMEToMAPI::createIMAPBody(const string &input, vmime::ref<vmime::message> vmMessage, IMessage* lpMessage)
 {
-	HRESULT hr = hrSuccess;
 	SPropValue sProps[4];
 	string strBody;
 	string strBodyStructure;
@@ -3582,10 +3570,7 @@ HRESULT VMIMEToMAPI::createIMAPBody(const string &input, vmime::ref<vmime::messa
 
 	sProps[3].ulPropTag = PR_EC_IMAP_BODYSTRUCTURE;
 	sProps[3].Value.lpszA = (char*)strBodyStructure.c_str();
-
-	hr = lpMessage->SetProps(4, sProps, NULL);
-
-	return hr;
+	return lpMessage->SetProps(4, sProps, NULL);
 }
 
 /** 

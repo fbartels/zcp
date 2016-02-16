@@ -358,10 +358,8 @@ HRESULT ECVMIMESender::sendMail(LPADRBOOK lpAdrBook, LPMESSAGE lpMessage, vmime:
 	vmime::ref<vmime::messaging::transport>	vmTransport;
 	vmime::ref<vmime::net::smtp::MAPISMTPTransport> mapiTransport = NULL;
 
-	if (!lpMessage || !vmMessage) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (lpMessage == NULL || vmMessage == NULL)
+		return MAPI_E_INVALID_PARAMETER;
 
 	smtpresult = 0;
 	error.clear();
@@ -392,20 +390,18 @@ HRESULT ECVMIMESender::sendMail(LPADRBOOK lpAdrBook, LPMESSAGE lpMessage, vmime:
 
 		if (expeditor.isEmpty()) {
 			// cancel this message as unsendable, would otherwise be thrown out of transport::send()
-			hr = MAPI_W_CANCEL_MESSAGE;
 			error = L"No expeditor in e-mail";
-			goto exit;
+			return MAPI_W_CANCEL_MESSAGE;
 		}
 
 		hr = HrMakeRecipientsList(lpAdrBook, lpMessage, vmMessage, recipients, bAllowEveryone, bAlwaysExpandDistrList);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		if (recipients.isEmpty()) {
 			// cancel this message as unsendable, would otherwise be thrown out of transport::send()
-			hr = MAPI_W_CANCEL_MESSAGE;
 			error = L"No recipients in e-mail";
-			goto exit;
+			return MAPI_W_CANCEL_MESSAGE;
 		}
 
         // Remove BCC headers from the message we're about to send
@@ -442,8 +438,7 @@ HRESULT ECVMIMESender::sendMail(LPADRBOOK lpAdrBook, LPMESSAGE lpMessage, vmime:
 		} catch (vmime::exception &e) {
 			// special error, smtp server not respoding, so try later again
 			lpLogger->Log(EC_LOGLEVEL_ERROR, "Connect to SMTP: %s. E-Mail will be tried again later.", e.what());
-			hr = MAPI_W_NO_SERVICE;
-			goto exit;
+			return MAPI_W_NO_SERVICE;
 		}
 
 		try {
@@ -460,8 +455,7 @@ HRESULT ECVMIMESender::sendMail(LPADRBOOK lpAdrBook, LPMESSAGE lpMessage, vmime:
 			smtpresult = atoi(e.response().substr(0, e.response().find_first_of(" ")).c_str());
 			error = convert_to<wstring>(e.response());
 			// message should be cancelled, unsendable, test by smtp result code.
-			hr = MAPI_W_CANCEL_MESSAGE;
-			goto exit;
+			return MAPI_W_CANCEL_MESSAGE;
 		} 
 		catch (vmime::exceptions::no_recipient& e) {
 			if (mapiTransport != NULL) {
@@ -472,8 +466,7 @@ HRESULT ECVMIMESender::sendMail(LPADRBOOK lpAdrBook, LPMESSAGE lpMessage, vmime:
 			//smtpresult = atoi(e.response().substr(0, e.response().find_first_of(" ")).c_str());
 			//error = convert_to<wstring>(e.response());
 			// message should be cancelled, unsendable, test by smtp result code.
-			hr = MAPI_W_CANCEL_MESSAGE;
-			goto exit;
+			return MAPI_W_CANCEL_MESSAGE;
 		} 
 		catch (vmime::exception &e) {
 		}
@@ -488,18 +481,18 @@ HRESULT ECVMIMESender::sendMail(LPADRBOOK lpAdrBook, LPMESSAGE lpMessage, vmime:
 			mTemporaryFailedRecipients = mapiTransport->getTemporaryFailedRecipients();
 
 			if (mPermanentFailedRecipients.size() == static_cast<size_t>(recipients.getMailboxCount())) {
-				hr = MAPI_W_CANCEL_MESSAGE;
 				ec_log_err("SMTP: e-mail will be not be tried again: all recipients failed.");
+				return MAPI_W_CANCEL_MESSAGE;
 			} else if (!mTemporaryFailedRecipients.empty()) {
-				hr = MAPI_W_PARTIAL_COMPLETION;
 				ec_log_err("SMTP: e-mail will be tried again: some recipients failed.");
+				return MAPI_W_PARTIAL_COMPLETION;
 			} else if (!mPermanentFailedRecipients.empty()) {
-				hr = MAPI_W_PARTIAL_COMPLETION;
 				ec_log_err("SMTP: some recipients failed.");
+				return MAPI_W_PARTIAL_COMPLETION;
 			} else if (mTemporaryFailedRecipients.empty() && mPermanentFailedRecipients.empty() && !ok) {
 				// special error, smtp server not respoding, so try later again
-				hr = MAPI_W_NO_SERVICE;
 				ec_log_err("SMTP: e-mail will be tried again.");
+				return MAPI_W_NO_SERVICE;
 			}
 		}
 	}
@@ -507,14 +500,12 @@ HRESULT ECVMIMESender::sendMail(LPADRBOOK lpAdrBook, LPMESSAGE lpMessage, vmime:
 		// connection_greeting_error, ...?
 		lpLogger->Log(EC_LOGLEVEL_ERROR, "%s", e.what());
 		error = convert_to<wstring>(e.what());
-		hr = MAPI_E_NETWORK_ERROR;
+		return MAPI_E_NETWORK_ERROR;
 	}
 	catch (std::exception& e) {
 		lpLogger->Log(EC_LOGLEVEL_ERROR, "%s",e.what());
 		error = convert_to<wstring>(e.what());
-		hr = MAPI_E_NETWORK_ERROR;
+		return MAPI_E_NETWORK_ERROR;
 	}
-
-exit:
 	return hr;
 }

@@ -766,7 +766,7 @@ HRESULT MAPIToVMIME::setBoundaries(vmime::ref<vmime::header> vmHeader, vmime::re
 		vmCTF = vmHeader->findField(vmime::fields::CONTENT_TYPE).dynamicCast <vmime::contentTypeField>();
 	}
 	catch (vmime::exceptions::no_such_field) {
-		goto exit;
+		return hrSuccess;
 	}
 
 	if(vmCTF->getValue().dynamicCast<vmime::mediaType>()->getType() == vmime::mediaTypes::MULTIPART) {
@@ -784,8 +784,6 @@ HRESULT MAPIToVMIME::setBoundaries(vmime::ref<vmime::header> vmHeader, vmime::re
 			setBoundaries(vmBodyPart->getHeader(), vmBodyPart->getBody(), os.str());
 		}
 	}
-
-exit:    
 	return hrSuccess;
 }
 
@@ -1454,7 +1452,7 @@ exit:
  */
 HRESULT MAPIToVMIME::getMailBox(LPSRow lpRow, vmime::ref<vmime::address> *lpvmMailbox)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	vmime::ref<vmime::address> vmMailboxNew;
 	std::wstring strName, strEmail, strType;
 	LPSPropValue pPropObjectType = NULL;
@@ -1462,7 +1460,7 @@ HRESULT MAPIToVMIME::getMailBox(LPSRow lpRow, vmime::ref<vmime::address> *lpvmMa
 	hr = HrGetAddress(m_lpAdrBook, lpRow->lpProps, lpRow->cValues, PR_ENTRYID, PR_DISPLAY_NAME_W, PR_ADDRTYPE_W, PR_EMAIL_ADDRESS_W, strName, strType, strEmail);
 	if(hr != hrSuccess) {
 		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to create mailbox. Error: %08X", hr);
-		goto exit;
+		return hr;
 	}
 
 	pPropObjectType = PpropFindProp(lpRow->lpProps, lpRow->cValues, PR_OBJECT_TYPE);
@@ -1486,21 +1484,16 @@ HRESULT MAPIToVMIME::getMailBox(LPSRow lpRow, vmime::ref<vmime::address> *lpvmMa
 			// not an email address and not a group: invalid
 			m_strError = L"Invalid email address in recipient list found: \"" + strName + L"\". Email Address is empty.";
 			lpLogger->Log(EC_LOGLEVEL_ERROR, "%ls", m_strError.c_str());
-			hr = MAPI_E_INVALID_PARAMETER;
-			goto exit;
+			return MAPI_E_INVALID_PARAMETER;
 		}
 
 		// we only want to have this recipient fail, and not the whole message, if the user has a username
 		m_strError = L"Invalid email address in recipient list found: \"" + strName + L"\" <" + strEmail + L">.";
 		lpLogger->Log(EC_LOGLEVEL_ERROR, "%ls", m_strError.c_str());
-
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
+		return MAPI_E_INVALID_PARAMETER;
 	}
 
 	*lpvmMailbox = vmMailboxNew;
-
-exit:
 	return hr;
 }
 
