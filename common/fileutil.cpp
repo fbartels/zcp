@@ -289,7 +289,7 @@ bool DuplicateFile(FILE *lpFile, std::string &strFileName)
 	// create new file
 	pfNew = fopen(strFileName.c_str(), "wb");
 	if(pfNew == NULL) {
-		ec_log_err("Unable to create file %s: %s", strFileName.c_str(), strerror(errno), errno);
+		ec_log_err("Unable to create file %s: %s", strFileName.c_str(), strerror(errno));
 		bResult = false;
 		goto exit;
 	}

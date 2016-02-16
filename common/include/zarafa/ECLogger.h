@@ -46,6 +46,7 @@
 #define ECLOGGER_H
 
 #include <zarafa/zcdefs.h>
+#include <zarafa/platform.h>
 #include <list>
 #include <pthread.h>
 #include <csignal>
@@ -389,7 +390,7 @@ class ECLogger_Tee _zcp_final : public ECLogger {
 extern bool ec_log_has_target(void);
 extern ECLogger *ec_log_get(void);
 extern void ec_log_set(ECLogger *);
-extern void ec_log(unsigned int, const char *, ...);
+extern void ec_log(unsigned int, const char *, ...) __LIKE_PRINTF(2, 3);
 extern void ec_log(unsigned int, const std::string &);
 
 #define ec_log_always(...)  ec_log(EC_LOGLEVEL_ALWAYS, ## __VA_ARGS__)

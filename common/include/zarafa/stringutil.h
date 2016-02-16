@@ -211,6 +211,6 @@ _Tp join(_InputIterator __first, _InputIterator __last, _Tp __sep)
     return s;
 }
 
-std::string format(const char *const fmt, ...);
+std::string format(const char *const fmt, ...) __LIKE_PRINTF(1, 2);
 
 #endif
