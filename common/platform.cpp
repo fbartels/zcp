@@ -122,6 +122,9 @@ time_t FileTimeToUnixTime(unsigned int hi, unsigned int lo)
 	return t;
 }
 
+static const LONGLONG UnitsPerMinute = 600000000;
+static const LONGLONG UnitsPerHalfMinute = 300000000;
+
 void RTimeToFileTime(LONG rtime, FILETIME *pft)
 {
 	// ASSERT(pft != NULL);

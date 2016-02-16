@@ -98,9 +98,6 @@
 #define ZARAFA_SYSTEM_USER		"SYSTEM"
 #define ZARAFA_SYSTEM_USER_W	L"SYSTEM"
 
-static const LONGLONG UnitsPerMinute = 600000000;
-static const LONGLONG UnitsPerHalfMinute = 300000000;
-
 /*
  * Platform independent functions
  */
