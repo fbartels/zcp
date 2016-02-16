@@ -264,7 +264,7 @@ class Service(zarafa.Service):
                 companyname = company.name if company.name != 'Default' else ''
                 for user in company.users():
                     jobs.append((user.store, user.name, os.path.join(output_dir, companyname, user.name)))
-                if not self.options.skip_public:
+                if company.public_store and not self.options.skip_public:
                     target = 'public@'+companyname if companyname else 'public'
                     jobs.append((company.public_store, None, os.path.join(output_dir, companyname, target)))
 
@@ -337,8 +337,7 @@ class Service(zarafa.Service):
                     else:
                         # actually restore item
                         self.log.debug('restoring item with sourcekey %s' % sourcekey2)
-                        item = folder.create_item()
-                        item.loads(zlib.decompress(db[sourcekey2]), attachments=not self.options.skip_attachments)
+                        item = folder.create_item(loads=zlib.decompress(db[sourcekey2]), attachments=not self.options.skip_attachments)
 
                         # store original sourcekey or it is lost
                         try:
