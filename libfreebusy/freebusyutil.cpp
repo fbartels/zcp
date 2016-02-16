@@ -635,13 +635,6 @@ HRESULT CreateFBProp(FBStatus fbStatus, ULONG ulMonths, ULONG ulPropMonths, ULON
 
 	// Set the list on the begin
 	lpfbBlockList->Reset();
-
-	if(lpfbBlockList->Size() == 0)
-	{
-		hr = MAPI_E_NOT_FOUND;
-		goto exit;
-	}
-
 	ulMaxItemDataSize = (lpfbBlockList->Size() + 1 ) * sizeof(sfbEvent); // +1 block, for free/busy in two months
 
 	/*
