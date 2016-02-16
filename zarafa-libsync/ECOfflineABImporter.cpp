@@ -139,7 +139,7 @@ HRESULT OfflineABImporter::ImportABChange(ULONG ulObjType, ULONG cbObjId, LPENTR
 		lpsSrcUser->lpszPassword = (LPTSTR)L"Dummy";
 
 		// FIXME admin/nonactive
-		ZLOG_DEBUG(m_lpLogger, "ImportABChange: SetUser username=%S, id=%s", lpsSrcUser->lpszUsername, bin2hex(lpsSrcUser->sUserId.cb, lpsSrcUser->sUserId.lpb).c_str());
+		ZLOG_DEBUG(m_lpLogger, "ImportABChange: SetUser username=%ls, id=%s", lpsSrcUser->lpszUsername, bin2hex(lpsSrcUser->sUserId.cb, lpsSrcUser->sUserId.lpb).c_str());
 		hr = m_lpDstServiceAdmin->SetUser(lpsSrcUser, MAPI_UNICODE);
 		if(hr != hrSuccess) {
 			ZLOG_DEBUG(m_lpLogger, "ImportABChange: hr=%s", stringify(hr, true).c_str());
@@ -159,7 +159,7 @@ HRESULT OfflineABImporter::ImportABChange(ULONG ulObjType, ULONG cbObjId, LPENTR
 			goto exit;
 		}
 
-		ZLOG_DEBUG(m_lpLogger, "ImportABChange: SetGroup groupname=%S, id=%s", (LPWSTR)lpsSrcGroup->lpszGroupname, bin2hex(lpsSrcGroup->sGroupId.cb, lpsSrcGroup->sGroupId.lpb).c_str());
+		ZLOG_DEBUG(m_lpLogger, "ImportABChange: SetGroup groupname=%ls, id=%s", (LPWSTR)lpsSrcGroup->lpszGroupname, bin2hex(lpsSrcGroup->sGroupId.cb, lpsSrcGroup->sGroupId.lpb).c_str());
 		hr = m_lpDstServiceAdmin->SetGroup(lpsSrcGroup, MAPI_UNICODE);
 		if(hr != hrSuccess) {
 			ZLOG_DEBUG(m_lpLogger, "ImportABChange: hr=%s", stringify(hr, true).c_str());
@@ -364,7 +364,7 @@ HRESULT OfflineABImporter::ImportABChange(ULONG ulObjType, ULONG cbObjId, LPENTR
 		}
 
 		/* Sync company name */
-		ZLOG_DEBUG(m_lpLogger, "ImportABChange: SetCompany comapnyname=%S, id=%s", (LPWSTR)lpsSrcCompany->lpszCompanyname, bin2hex(lpsSrcCompany->sCompanyId.cb, lpsSrcCompany->sCompanyId.lpb).c_str());
+		ZLOG_DEBUG(m_lpLogger, "ImportABChange: SetCompany comapnyname=%ls, id=%s", (LPWSTR)lpsSrcCompany->lpszCompanyname, bin2hex(lpsSrcCompany->sCompanyId.cb, lpsSrcCompany->sCompanyId.lpb).c_str());
 		hr = m_lpDstServiceAdmin->SetCompany(lpsSrcCompany, MAPI_UNICODE);
 		if (hr != hrSuccess) {
 			ZLOG_DEBUG(m_lpLogger, "ImportABChange: hr=%s", stringify(hr, true).c_str());
