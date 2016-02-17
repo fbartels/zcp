@@ -49,7 +49,7 @@
 class ECSecurityOffline : public ECSecurity
 {
 public:
-	ECSecurityOffline(ECSession *lpSession, ECConfig *lpConfig, ECLogger *lpLogger);
+	ECSecurityOffline(ECSession *lpSession, ECConfig *lpConfig);
 	virtual ~ECSecurityOffline(void);
 
 	virtual int GetAdminLevel();

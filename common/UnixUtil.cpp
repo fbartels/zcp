@@ -70,7 +70,7 @@ int unix_runas(ECConfig *lpConfig, ECLogger *lpLogger) {
 			return -1;
 		}
 		if (getgid() != gr->gr_gid && setgid(gr->gr_gid) != 0) {
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "Changing to group \"%s\" failed: %s", gr->gr_name, strerror(errno));
+			lpLogger->Log(EC_LOGLEVEL_CRIT, "Changing to group \"%s\" failed: %s", gr->gr_name, strerror(errno));
 			return -1;
 		}
 	}
@@ -82,7 +82,7 @@ int unix_runas(ECConfig *lpConfig, ECLogger *lpLogger) {
 			return -1;
 		}
 		if (getuid() != pw->pw_uid && setuid(pw->pw_uid) != 0) {
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "Changing to user \"%s\" failed: %s", pw->pw_name, strerror(errno));
+			lpLogger->Log(EC_LOGLEVEL_CRIT, "Changing to user \"%s\" failed: %s", pw->pw_name, strerror(errno));
 			return -1;
 		}
 	}
@@ -278,7 +278,9 @@ int unix_fork_function(void*(func)(void*), void *param, int nCloseFDs, int *pClo
  * 
  * @return new process pid, or -1 on failure.
  */
-pid_t unix_popen_rw(ECLogger *lpLogger, const char *lpszCommand, int *lpulIn, int *lpulOut, popen_rlimit_array *lpLimits, const char **env, bool bNonBlocking, bool bStdErr)
+static pid_t unix_popen_rw(const char *lpszCommand, int *lpulIn, int *lpulOut,
+    popen_rlimit_array *lpLimits, const char **env, bool bNonBlocking,
+    bool bStdErr)
 {
 	int ulIn[2];
 	int ulOut[2];
@@ -316,7 +318,7 @@ pid_t unix_popen_rw(ECLogger *lpLogger, const char *lpszCommand, int *lpulIn, in
 		if (lpLimits) {
 			for (unsigned int i = 0; i < lpLimits->cValues; i++) {
 				if (setrlimit(lpLimits->sLimit[i].resource, &lpLimits->sLimit[i].limit) != 0)
-					lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to set rlimit for popen - resource %d, errno %d",
+					ec_log_err("Unable to set rlimit for popen - resource %d, errno %d",
 								  lpLimits->sLimit[i].resource, errno);
 			}
 		}
@@ -337,56 +339,6 @@ pid_t unix_popen_rw(ECLogger *lpLogger, const char *lpszCommand, int *lpulIn, in
 	return pid;
 }
 
-/** 
- * Closes the filedescriptors opened by unix_popen_rw, and waits for
- * the given pid to exit. If pid did not yet exit, a TERM signal will
- * be sent to the pid, and wait for it to close.
- * 
- * @param rfd The read part of the pipe, will be closed, except when -1 is passed
- * @param wfd The write part of the pipe, will be closed, except when -1 is passed
- * @param pid The pid to handle on
- * 
- * @return The exit code of the pid, or -1 for failure of this function
- */
-int unix_pclose(int rfd, int wfd, pid_t pid)
-{
-	int rc = 0;
-	int retval = 0;
-	int signal = SIGTERM;
-	int kills = 0;
-
-	// close the filedescriptors, makes the child exit if it didn't already.
-	if (wfd >= 0)
-		close(wfd);
-
-	if (rfd >= 0)
-		close(rfd);
-
-	while (true) {
-		// we need to send the pid a signal if waitpid fails, so add WNOHANG
-		rc = waitpid(pid, &retval, WNOHANG | WUNTRACED);
-		if (rc == 0) {
-			if (kills > 1) {
-				// we've tried everything, so let this slide and maybe leave some zombie hanging around
-				retval = -1;
-				break;
-			}
-			// The child pid has not exited yet. Send it the TERM signal to the complete group and try again
-			kill(-pid, signal);
-			kills++;
-			// next time this happens, it really needs to die!
-			signal = SIGKILL;
-			// we need to sleep to give the kernel some time to progress the death of the child
-			sleep(1);
-			continue;
-		} else {
-			break;
-		}
-	}
-
-	return retval;
-}
-
 /**
  * Start an external process
  *
@@ -401,10 +353,10 @@ int unix_pclose(int rfd, int wfd, pid_t pid)
  *
  * @return Returns TRUE on success, FALSE on failure
  */
-bool unix_system(ECLogger *lpLogger, const char *lpszLogName, const char *lpszCommand, const char **env)
+bool unix_system(const char *lpszLogName, const char *lpszCommand, const char **env)
 {
 	int fdin = 0, fdout = 0;
-	int pid = unix_popen_rw(lpLogger, lpszCommand, &fdin, &fdout, NULL, env, false, true);
+	int pid = unix_popen_rw(lpszCommand, &fdin, &fdout, NULL, env, false, true);
 	char buffer[1024];
 	int status = 0;
 	bool rv = true;
@@ -413,8 +365,7 @@ bool unix_system(ECLogger *lpLogger, const char *lpszLogName, const char *lpszCo
 	
 	while (fgets(buffer, sizeof(buffer), fp)) {
 		buffer[strlen(buffer) - 1] = '\0'; // strip enter
-		if(lpLogger)
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "%s[%d]: %s", lpszLogName, pid, buffer);
+		ec_log_err("%s[%d]: %s", lpszLogName, pid, buffer);
 	}
 	
 	fclose(fp);
@@ -425,26 +376,26 @@ bool unix_system(ECLogger *lpLogger, const char *lpszLogName, const char *lpszCo
 #ifdef WEXITSTATUS
 		if(WIFEXITED(status)) { /* Child exited by itself */
 			if(WEXITSTATUS(status)) {
-				lpLogger->Log(EC_LOGLEVEL_ERROR, "Command '%s' exited with non-zero status %d", lpszCommand, WEXITSTATUS(status));
+				ec_log_err("Command `%s` exited with non-zero status %d", lpszCommand, WEXITSTATUS(status));
 				rv = false;
 			}
 			else
-				lpLogger->Log(EC_LOGLEVEL_INFO, "Command '%s' run successful", lpszCommand);
+				ec_log_info("Command `%s` ran successfully", lpszCommand);
 		} else if(WIFSIGNALED(status)) {        /* Child was killed by a signal */
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "Command '%s' was killed by signal %d", lpszCommand, WTERMSIG(status));
+			ec_log_err("Command `%s` was killed by signal %d", lpszCommand, WTERMSIG(status));
 			rv = false;
 		} else {                        /* Something strange happened */
-			lpLogger->Log(EC_LOGLEVEL_ERROR, string("Command ") + lpszCommand + " terminated abnormally");
+			ec_log_err(string("Command `") + lpszCommand + "` terminated abnormally");
 			rv = false;
 		}
 #else
 		if (status)
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "Command '%s' exited with status %d", lpszCommand, status);
+			ec_log_err("Command `%s` exited with status %d", lpszCommand, status);
 		else
-			lpLogger->Log(EC_LOGLEVEL_INFO, "Command '%s' run successful", lpszCommand);
+			ec_log_info("Command `%s` ran successfully", lpszCommand);
 #endif
 	} else {
-		lpLogger->Log(EC_LOGLEVEL_ERROR, string("System call `system' failed: ") + strerror(errno));
+		ec_log_err(string("System call \"system\" failed: ") + strerror(errno));
 		rv = false;
 	}
 	

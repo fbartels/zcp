@@ -57,13 +57,13 @@
 #include "ECSearchFolders.h"
 #include "ECDatabaseFactory.h"
 #include "ECCacheManager.h"
-#include <zarafa/ECLogger.h>
 #include "ECPluginFactory.h"
 #include "ECServerEntrypoint.h"
 #include "ECSessionGroup.h"
 #include "ECNotificationManager.h"
 #include "ECLockManager.h"
 
+class ECLogger;
 class ECTPropsPurge;
 
 using namespace std;
@@ -115,7 +115,7 @@ class SOURCEKEY;
 class ECSessionManager
 {
 public:
-	ECSessionManager(ECConfig *lpConfig, ECLogger *logger, ECLogger *audit, bool bHostedZarafa, bool bDistributedZarafa);
+	ECSessionManager(ECConfig *lpConfig, ECLogger *audit, bool bHostedZarafa, bool bDistributedZarafa);
 	virtual ~ECSessionManager();
 
 	virtual ECRESULT CreateAuthSession(struct soap *soap, unsigned int ulCapabilities, ECSESSIONID *sessionID, ECAuthSession **lppAuthSession, bool bRegisterSession, bool bLockSession);
@@ -202,7 +202,6 @@ public:
 	ECCacheManager*	GetCacheManager();
 	ECSearchFolders* GetSearchFolders();
 	ECConfig*		GetConfig();
-	ECLogger*		GetLogger();
 	ECLogger*		GetAudit();
 	ECPluginFactory* GetPluginFactory();
 	ECLockManager*	GetLockManager();
@@ -226,7 +225,6 @@ protected:
 	ECConfig*			m_lpConfig;
 	bool				bExit;
 	ECCacheManager*		m_lpECCacheManager;
-	ECLogger*			m_lpLogger;
 	ECLogger*			m_lpAudit;
 	ECDatabaseFactory*	m_lpDatabaseFactory;
 	ECPluginFactory*	m_lpPluginFactory;

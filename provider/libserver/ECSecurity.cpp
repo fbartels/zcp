@@ -106,12 +106,10 @@ static const char THIS_FILE[] = __FILE__;
  * @param[in] lpLogger log object for normal logging
  * @param[in] lpAudit optional log object for auditing
  */
-ECSecurity::ECSecurity(ECSession *lpSession, ECConfig *lpConfig, ECLogger *lpLogger, ECLogger *lpAudit)
+ECSecurity::ECSecurity(ECSession *lpSession, ECConfig *lpConfig, ECLogger *lpAudit)
 {
 	m_lpSession = lpSession;
 	m_lpConfig = lpConfig;
-	m_lpLogger = lpLogger;
-	m_lpLogger->AddRef();
 	m_lpAudit = lpAudit;
 	if (m_lpAudit != NULL)
 		m_lpAudit->AddRef();
@@ -129,7 +127,6 @@ ECSecurity::~ECSecurity()
 	delete m_lpGroups;
 	delete m_lpViewCompanies;
 	delete m_lpAdminCompanies;
-	m_lpLogger->Release();
 	if (m_lpAudit != NULL)
 		m_lpAudit->Release();
 }
@@ -343,7 +340,7 @@ ECRESULT ECSecurity::GetObjectPermission(unsigned int ulObjId, unsigned int* lpu
 		ulDepth++;
 		
 		if(ulDepth > MAX_PARENT_LIMIT) {
-			m_lpSession->GetSessionManager()->GetLogger()->Log(EC_LOGLEVEL_FATAL, "Maximum depth reached for object %d, deepest object: %d", ulObjId, ulCurObj);
+			ec_log_err("Maximum depth reached for object %d, deepest object: %d", ulObjId, ulCurObj);
 			er = erSuccess;
 			goto exit;
 		}
@@ -699,7 +696,7 @@ ECRESULT ECSecurity::GetRights(unsigned int objid, int ulType, struct rightsArra
 
 			if(lpDBRow == NULL) {
 				er = ZARAFA_E_DATABASE_ERROR;
-				m_lpLogger->Log(EC_LOGLEVEL_FATAL, "ECSecurity::GetRights(): row is null");
+				ec_log_err("ECSecurity::GetRights(): row is null");
 				goto exit;
 			}
 
@@ -1348,7 +1345,7 @@ ECRESULT ECSecurity::GetStoreSize(unsigned int ulObjId, long long* lpllStoreSize
 	lpDBRow = lpDatabase->FetchRow(lpDBResult);
 	if(lpDBRow == NULL || lpDBRow[0] == NULL) {
 		er = ZARAFA_E_DATABASE_ERROR;
-		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "ECSecurity::GetStoreSize(): row is null");
+		ec_log_err("ECSecurity::GetStoreSize(): row is null");
 		goto exit;
 	}
 
@@ -1404,7 +1401,7 @@ ECRESULT ECSecurity::GetUserSize(unsigned int ulUserId, long long* lpllUserSize)
 	lpDBRow = lpDatabase->FetchRow(lpDBResult);
 	if (lpDBRow == NULL) {
 		er = ZARAFA_E_DATABASE_ERROR;
-		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "ECSecurity::GetUserSize(): row is null");
+		ec_log_err("ECSecurity::GetUserSize(): row is null");
 		goto exit;
 	}
 

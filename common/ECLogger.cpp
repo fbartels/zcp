@@ -84,7 +84,7 @@ using namespace std;
 
 static const char *const ll_names[] = {
 	" notice",
-	"fatal  ",
+	"crit   ",
 	"error  ",
 	"warning",
 	"notice ",
@@ -448,7 +448,7 @@ ECLogger_Syslog::ECLogger_Syslog(unsigned int max_ll, const char *ident, int fac
 		openlog(m_ident, LOG_PID, facility);
 	}
 	levelmap[EC_LOGLEVEL_NONE] = LOG_DEBUG;
-	levelmap[EC_LOGLEVEL_FATAL] = LOG_CRIT;
+	levelmap[EC_LOGLEVEL_CRIT] = LOG_CRIT;
 	levelmap[EC_LOGLEVEL_ERROR] = LOG_ERR;
 	levelmap[EC_LOGLEVEL_WARNING] = LOG_WARNING;
 	levelmap[EC_LOGLEVEL_NOTICE] = LOG_NOTICE;
@@ -505,7 +505,7 @@ ECLogger_Eventlog::ECLogger_Eventlog(unsigned int max_ll, const char *lpszServic
 		m_szServiceName[0] = 0;
 
 	levelmap[EC_LOGLEVEL_NONE] = EVENTLOG_ERROR_TYPE;
-	levelmap[EC_LOGLEVEL_FATAL] = EVENTLOG_ERROR_TYPE;
+	levelmap[EC_LOGLEVEL_CRIT] = EVENTLOG_ERROR_TYPE;
 	levelmap[EC_LOGLEVEL_ERROR] = EVENTLOG_ERROR_TYPE;
 	levelmap[EC_LOGLEVEL_WARNING] = EVENTLOG_WARNING_TYPE;
 	levelmap[EC_LOGLEVEL_NOTICE] = EVENTLOG_INFORMATION_TYPE;
@@ -1141,20 +1141,20 @@ int DeleteLogger(ECLogger *lpLogger) {
 	return 0;
 }
 
-void LogConfigErrors(ECConfig *lpConfig, ECLogger *lpLogger) {
+void LogConfigErrors(ECConfig *lpConfig) {
 	const list<string> *strings;
 	list<string>::const_iterator i;
 
-	if (!lpConfig || !lpLogger)
+	if (lpConfig == NULL)
 		return;
 
 	strings = lpConfig->GetWarnings();
 	for (i = strings->begin() ; i != strings->end(); i++)
-		lpLogger->Log(EC_LOGLEVEL_WARNING, "Config warning: " + *i);
+		ec_log_warn("Config warning: " + *i);
 
 	strings = lpConfig->GetErrors();
 	for (i = strings->begin() ; i != strings->end(); i++)
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "Config error: " + *i);
+		ec_log_crit("Config error: " + *i);
 }
 
 void generic_sigsegv_handler(ECLogger *lpLogger, const char *const app_name, const char *const version_string, const int signr)

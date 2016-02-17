@@ -1198,7 +1198,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 		g_lpLogger = new ECLogger_File(EC_LOGLEVEL_INFO, 0, "-", false); // create info logger without a timestamp to stderr
 #endif
 		ec_log_set(g_lpLogger);
-		LogConfigErrors(g_lpConfig, g_lpLogger);
+		LogConfigErrors(g_lpConfig);
 		er = MAPI_E_UNCONFIGURED;
 		goto exit;
 #endif
@@ -1213,7 +1213,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 	}
 	ec_log_set(g_lpLogger);
 	if (m_bIgnoreUnknownConfigOptions && g_lpConfig->HasErrors())
-		LogConfigErrors(g_lpConfig, g_lpLogger);
+		LogConfigErrors(g_lpConfig);
 
 	if (!TmpPath::getInstance() -> OverridePath(g_lpConfig))
 		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Ignoring invalid path-setting!");
@@ -1234,7 +1234,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 	g_lpLogger->Log(EC_LOGLEVEL_ALWAYS, "Starting zarafa-server version " PROJECT_VERSION_SERVER_STR ", pid %d", getpid());
 
 	if (g_lpConfig->HasWarnings())
-		LogConfigErrors(g_lpConfig, g_lpLogger);
+		LogConfigErrors(g_lpConfig);
 
 	if (strcmp(g_lpConfig->GetSetting("attachment_storage"), "files") == 0) {
 		// directory will be created using startup (probably root) and then chowned to the new 'runas' username
@@ -1330,7 +1330,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 
 #endif //#ifdef HAVE_OFFLINE_SUPPORT
 
-	zarafa_initlibrary(g_lpConfig->GetSetting("mysql_database_path"), g_lpConfig->GetSetting("mysql_config_file"), g_lpLogger);
+	zarafa_initlibrary(g_lpConfig->GetSetting("mysql_database_path"), g_lpConfig->GetSetting("mysql_config_file"));
 
 	if(!strcmp(g_lpConfig->GetSetting("server_pipe_enabled"), "yes"))
 		bPipeEnabled = true;
@@ -1415,7 +1415,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 #endif
 
 	// Test database settings
-	lpDatabaseFactory = new ECDatabaseFactory(g_lpConfig, g_lpLogger);
+	lpDatabaseFactory = new ECDatabaseFactory(g_lpConfig);
 
 	// open database
 	er = lpDatabaseFactory->CreateDatabaseObject(&lpDatabase, dbError);
@@ -1677,7 +1677,7 @@ int running_server(char *szName, const char *szConfig, int argc, char *argv[])
 
 	//Init the main system, now you can use the values like session manager
 	// This also starts several threads, like SessionCleaner, NotificationThread and TPropsPurge.
-	er = zarafa_init(g_lpConfig, g_lpLogger, g_lpAudit, hosted, distributed);
+	er = zarafa_init(g_lpConfig, g_lpAudit, hosted, distributed);
 	if (er != erSuccess) { // create SessionManager
 		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to initialize zarafa session manager");
 		goto exit;
@@ -1770,9 +1770,7 @@ exit:
 	ssl_threading_cleanup();
 
 	SSL_library_cleanup(); //cleanup memory so valgrind is happy
-
-	zarafa_unloadlibrary(g_lpLogger);
-
+	zarafa_unloadlibrary();
 	rand_free();
 
 	delete g_lpConfig;

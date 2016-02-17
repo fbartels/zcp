@@ -63,15 +63,14 @@
 static const char THIS_FILE[] = __FILE__;
 #endif
 
-ECPluginFactory::ECPluginFactory(ECConfig *config, ECLogger *logger, IECStatsCollector *lpStatsCollector, bool bHosted, bool bDistributed) {
+ECPluginFactory::ECPluginFactory(ECConfig *config, IECStatsCollector *lpStatsCollector,
+    bool bHosted, bool bDistributed)
+{
 	m_getUserPluginInstance = NULL;
 	m_deleteUserPluginInstance = NULL;
 	m_config = config;
-	m_logger = logger;
 	pthread_mutex_init(&m_plugin_lock, NULL);
-
-	ECPluginSharedData::GetSingleton(&m_shareddata, m_config, m_logger, lpStatsCollector, bHosted, bDistributed);
-
+	ECPluginSharedData::GetSingleton(&m_shareddata, m_config, lpStatsCollector, bHosted, bDistributed);
 	m_dl = NULL;
 }
 
@@ -101,9 +100,9 @@ ECRESULT ECPluginFactory::CreateUserPlugin(UserPlugin **lppPlugin) {
             pluginpath = "";
         }
         if (!pluginname || !strcmp(pluginname, "")) {
-            m_logger->Log(EC_LOGLEVEL_FATAL, "User plugin is unavailable.");
-            m_logger->Log(EC_LOGLEVEL_FATAL, "Please correct your configuration file and set the 'plugin_path' and 'user_plugin' options.");
-            return ZARAFA_E_NOT_FOUND;
+			ec_log_crit("User plugin is unavailable.");
+			ec_log_crit("Please correct your configuration file and set the \"plugin_path\" and \"user_plugin\" options.");
+			return ZARAFA_E_NOT_FOUND;
         }
 
         snprintf(filename, PATH_MAX + 1, "%s%c%splugin.%s", 
@@ -112,32 +111,32 @@ ECRESULT ECPluginFactory::CreateUserPlugin(UserPlugin **lppPlugin) {
         m_dl = dlopen(filename, RTLD_NOW | RTLD_GLOBAL);
 
         if (!m_dl) {
-            m_logger->Log(EC_LOGLEVEL_FATAL, "Failed to load %s: %s", filename, dlerror());
-            m_logger->Log(EC_LOGLEVEL_FATAL, "Please correct your configuration file and set the 'plugin_path' and 'user_plugin' options.");
-            goto out;
+			ec_log_crit("Failed to load \"%s\": %s", filename, dlerror());
+			ec_log_crit("Please correct your configuration file and set the \"plugin_path\" and \"user_plugin\" options.");
+			goto out;
         }
 
         int (*fngetUserPluginInstance)() = (int (*)()) dlsym(m_dl, "getUserPluginVersion");
         if (fngetUserPluginInstance == NULL) {
-            m_logger->Log(EC_LOGLEVEL_FATAL, "Failed to load getUserPluginVersion from plugin: %s", dlerror());
-            goto out;
+			ec_log_crit("Failed to load getUserPluginVersion from plugin: %s", dlerror());
+			goto out;
         }
         int version = fngetUserPluginInstance(); 
         if (version != PROJECT_VERSION_REVISION) {
-		m_logger->Log(EC_LOGLEVEL_FATAL, "Version of the plugin %s is not the same for the server. Expected %d, plugin %d", filename, PROJECT_VERSION_REVISION, version);
-		goto out;
+			ec_log_crit("Version of the plugin \"%s\" is not the same for the server. Expected %d, plugin %d", filename, PROJECT_VERSION_REVISION, version);
+			goto out;
 	}
     
         m_getUserPluginInstance = (UserPlugin* (*)(pthread_mutex_t *, ECPluginSharedData *)) dlsym(m_dl, "getUserPluginInstance");
         if (m_getUserPluginInstance == NULL) {
-            m_logger->Log(EC_LOGLEVEL_FATAL, "Failed to load getUserPluginInstance from plugin: %s", dlerror());
-            goto out;
+			ec_log_crit("Failed to load getUserPluginInstance from plugin: %s", dlerror());
+			goto out;
         }
 
         m_deleteUserPluginInstance = (void (*)(UserPlugin *)) dlsym(m_dl, "deleteUserPluginInstance");
         if (m_deleteUserPluginInstance == NULL) {
-            m_logger->Log(EC_LOGLEVEL_FATAL, "Failed to load deleteUserPluginInstance from plugin: %s", dlerror());
-            goto out;
+			ec_log_crit("Failed to load deleteUserPluginInstance from plugin: %s", dlerror());
+			goto out;
         }
     }
 #endif
@@ -146,7 +145,7 @@ ECRESULT ECPluginFactory::CreateUserPlugin(UserPlugin **lppPlugin) {
 		lpPlugin->InitPlugin();
 	}
 	catch (exception &e) {
-		m_logger->Log(EC_LOGLEVEL_FATAL, "Cannot instantiate user plugin: %s", e.what());
+		ec_log_crit("Cannot instantiate user plugin: %s", e.what());
 		return ZARAFA_E_NOT_FOUND;
 	}
 	
@@ -168,7 +167,8 @@ void ECPluginFactory::SignalPlugins(int signal)
 
 // Returns a plugin local to this thread. Works the same as GetThreadLocalDatabase
 extern pthread_key_t plugin_key;
-ECRESULT GetThreadLocalPlugin(ECPluginFactory *lpPluginFactory, UserPlugin **lppPlugin, ECLogger *lpLogger)
+ECRESULT GetThreadLocalPlugin(ECPluginFactory *lpPluginFactory,
+    UserPlugin **lppPlugin)
 {
 	ECRESULT er = erSuccess;
 	UserPlugin *lpPlugin = NULL;
@@ -180,7 +180,7 @@ ECRESULT GetThreadLocalPlugin(ECPluginFactory *lpPluginFactory, UserPlugin **lpp
 
 		if (er != erSuccess) {
 			lpPlugin = NULL;
-			lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to instantiate user plugin");
+			ec_log_crit("Unable to instantiate user plugin");
 			goto exit;
 		}
 

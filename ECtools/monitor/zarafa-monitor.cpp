@@ -278,7 +278,8 @@ int main(int argc, char *argv[]) {
 #else
 		m_lpThreadMonitor->lpLogger = new ECLogger_File(EC_LOGLEVEL_INFO, 0, "-", false); // create fatal logger without a timestamp to stderr
 #endif
-		LogConfigErrors(m_lpThreadMonitor->lpConfig, m_lpThreadMonitor->lpLogger);
+		ec_log_set(m_lpThreadMonitor->lpLogger);
+		LogConfigErrors(m_lpThreadMonitor->lpConfig);
 		hr = E_FAIL;
 		goto exit;
 	}
@@ -287,9 +288,9 @@ int main(int argc, char *argv[]) {
 
 	// setup logging
 	m_lpThreadMonitor->lpLogger = CreateLogger(m_lpThreadMonitor->lpConfig, argv[0], "Zarafa-Monitor");
-
+	ec_log_set(m_lpThreadMonitor->lpLogger);
 	if ((bIgnoreUnknownConfigOptions && m_lpThreadMonitor->lpConfig->HasErrors()) || m_lpThreadMonitor->lpConfig->HasWarnings())
-		LogConfigErrors(m_lpThreadMonitor->lpConfig, m_lpThreadMonitor->lpLogger);
+		LogConfigErrors(m_lpThreadMonitor->lpConfig);
 
 
 	// set socket filename

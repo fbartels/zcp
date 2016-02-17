@@ -60,7 +60,7 @@ HRESULT InstanceIdMapper::Create(ECLogger *lpLogger, ECConfig *lpConfig, Instanc
 		lpLocalConfig = ECConfig::Create(Archiver::GetConfigDefaults());
 		if (!lpLocalConfig->LoadSettings(Archiver::GetConfigPath())) {
 			// Just log warnings and errors and continue with default.
-			LogConfigErrors(lpLocalConfig, lpLogger);
+			LogConfigErrors(lpLocalConfig);
 		}
 	}
 

@@ -59,7 +59,8 @@
 #define SOAP_CONNECTION_TYPE(soap)	\
 	(((SOAPINFO*)(soap)->user)->ulConnectionType)
 
-ECRESULT zarafa_init(ECConfig *lpConfig, ECLogger *lpLogger, ECLogger* lpAudit, bool bHostedZarafa, bool bDistributedZarafa);
+
+extern ECRESULT zarafa_init(ECConfig *lpConfig, ECLogger *lpAudit, bool bHostedZarafa, bool bDistributedZarafa);
 ECRESULT zarafa_exit();
 void zarafa_removeallsessions();
 
@@ -67,8 +68,8 @@ void zarafa_removeallsessions();
 void AddDatabaseObject(ECDatabase* lpDatabase);
 
 // server init function
-ECRESULT zarafa_initlibrary(const char *lpDatabaseDir, const char *lpConfigFile, ECLogger *lpLogger); // Init mysql library
-ECRESULT zarafa_unloadlibrary(ECLogger * = NULL); // Unload mysql library
+extern ECRESULT zarafa_initlibrary(const char *lpDatabaseDir, const char *lpConfigFile); // Init mysql library
+extern ECRESULT zarafa_unloadlibrary(void); // Unload mysql library
 
 // Exported functions
 ZARAFA_API ECRESULT GetDatabaseObject(ECDatabase **lppDatabase);

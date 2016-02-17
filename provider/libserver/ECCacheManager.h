@@ -522,7 +522,7 @@ typedef hash_map<ECsIndexProp, ECsIndexObject>::Type ECMapPropToObject;
 class ECCacheManager  
 {
 public:
-	ECCacheManager(ECConfig *lpConfig, ECDatabaseFactory *lpDatabase, ECLogger *lpLogger);
+	ECCacheManager(ECConfig *lpConfig, ECDatabaseFactory *lpDatabase);
 	virtual ~ECCacheManager();
 
 	ECRESULT PurgeCache(unsigned int ulFlags);
@@ -641,8 +641,6 @@ private:
 
 private:
 	ECDatabaseFactory*	m_lpDatabaseFactory;
-	ECLogger*			m_lpLogger;
-
 	pthread_mutex_t		m_hCacheMutex;			// Store, Object, User, ACL, server cache
 	pthread_mutex_t		m_hCacheCellsMutex;		// Cell cache
 	pthread_mutex_t		m_hCacheIndPropMutex;	// Indexed properties cache

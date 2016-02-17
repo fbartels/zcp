@@ -144,7 +144,7 @@ static int create_pipe_socket(const char *unix_socket, ECConfig *lpConfig,
 	return s;
 }
 
-static void dump_fdtable_summary(pid_t pid, ECLogger *log)
+static void dump_fdtable_summary(pid_t pid)
 {
 	char procdir[64];
 	snprintf(procdir, sizeof(procdir), "/proc/%ld/fd", static_cast<long>(pid));
@@ -171,7 +171,7 @@ static void dump_fdtable_summary(pid_t pid, ECLogger *log)
 		msg += de->d_name;
 	}
 	closedir(dh);
-	log->Log(EC_LOGLEVEL_DEBUG, "FD map:%s", msg.c_str());
+	ec_log_debug("FD map:%s", msg.c_str());
 }
 
 /* ALERT! Big hack!
@@ -183,7 +183,7 @@ static void dump_fdtable_summary(pid_t pid, ECLogger *log)
  * this problem, we make sure that most FDs under 1024 are free for use by external libraries, while
  * we use the range 1024 -> \infty.
  */
-int relocate_fd(int fd, ECLogger *lpLogger)
+int relocate_fd(int fd)
 {
 	static const int typical_limit = 1024;
 
@@ -201,17 +201,17 @@ int relocate_fd(int fd, ECLogger *lpLogger)
 		if (warned_once)
 			return fd;
 		warned_once = true;
-		lpLogger->Log(EC_LOGLEVEL_WARNING, "F_DUPFD yielded EINVAL\n");
+		ec_log_warn("F_DUPFD yielded EINVAL\n");
 		return fd;
 	}
 	static time_t warned_last;
 	time_t now = time(NULL);
 	if (warned_last + 60 > now)
 		return fd;
-	lpLogger->Log(EC_LOGLEVEL_NOTICE,
+	ec_log_notice(
 		"Relocation of FD %d into high range (%d+) could not be completed: "
 		"%s. Keeping old number.\n", fd, typical_limit, strerror(errno));
-	dump_fdtable_summary(getpid(), lpLogger);
+	dump_fdtable_summary(getpid());
 	return fd;
 }
 #else
@@ -323,7 +323,7 @@ int gsoap_win_shutdownsocket(struct soap *soap, SOAP_SOCKET fd, int how)
 // TCP/SSL socket functions
 //
 
-int relocate_fd(int fd, ECLogger *lpLogger) {
+int relocate_fd(int fd) {
 	return fd;
 }
 

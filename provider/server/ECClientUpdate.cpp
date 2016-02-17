@@ -541,7 +541,7 @@ int ns__getClientUpdate(struct soap *soap, struct clientUpdateInfoRequest sClien
 				goto exit;
 
 			lpsResponse->lpszServerPath = s_strcpy(soap, strServerPath.c_str());// Server Path must always utf8 (also in 6.40.x)
-			g_lpSessionManager->GetLogger()->Log(EC_LOGLEVEL_INFO, "Client update: trackid: 0x%08X, User '%s' is redirected to '%s'", sClientUpdateInfo.ulTrackId, sClientUpdateInfo.szUsername, lpsResponse->lpszServerPath);
+			ec_log_info("Client update: trackid: 0x%08X, User \"%s\" is redirected to \"%s\"", sClientUpdateInfo.ulTrackId, sClientUpdateInfo.szUsername, lpsResponse->lpszServerPath);
 			g_lpStatsCollector->Increment(SCN_REDIRECT_COUNT, 1);
 			er = ZARAFA_E_UNABLE_TO_COMPLETE;
 			goto exit;

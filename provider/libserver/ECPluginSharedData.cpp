@@ -42,21 +42,21 @@
  */
 
 #include <zarafa/platform.h>
+#include <zarafa/ECLogger.h>
 #include <zarafa/ECPluginSharedData.h>
 
 ECPluginSharedData *ECPluginSharedData::m_lpSingleton = NULL;
 pthread_mutex_t ECPluginSharedData::m_SingletonLock = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t ECPluginSharedData::m_CreateConfigLock = PTHREAD_MUTEX_INITIALIZER;
 
-ECPluginSharedData::ECPluginSharedData(ECConfig *lpParent, ECLogger *lpLogger, IECStatsCollector *lpStatsCollector, bool bHosted, bool bDistributed)
+ECPluginSharedData::ECPluginSharedData(ECConfig *lpParent,
+    IECStatsCollector *lpStatsCollector, bool bHosted, bool bDistributed)
 {
 	m_ulRefCount = 0;
 	m_lpConfig = NULL;
 	m_lpDefaults = NULL;
 	m_lpszDirectives = NULL;
 	m_lpParentConfig = lpParent;
-	m_lpLogger = lpLogger;
-	m_lpLogger->AddRef();
 	m_lpStatsCollector = lpStatsCollector;
 	m_bHosted = bHosted;
 	m_bDistributed = bDistributed;
@@ -77,16 +77,16 @@ ECPluginSharedData::~ECPluginSharedData()
 			free(m_lpszDirectives[n]);
 		delete [] m_lpszDirectives;
 	}
-	m_lpLogger->Release();
 }
 
-void ECPluginSharedData::GetSingleton(ECPluginSharedData **lppSingleton, ECConfig *lpParent, ECLogger *lpLogger,
-									  IECStatsCollector *lpStatsCollector, bool bHosted, bool bDistributed)
+void ECPluginSharedData::GetSingleton(ECPluginSharedData **lppSingleton,
+    ECConfig *lpParent, IECStatsCollector *lpStatsCollector, bool bHosted,
+    bool bDistributed)
 {
 	pthread_mutex_lock(&m_SingletonLock);
 
 	if (!m_lpSingleton)
-		m_lpSingleton = new ECPluginSharedData(lpParent, lpLogger, lpStatsCollector, bHosted, bDistributed); 
+		m_lpSingleton = new ECPluginSharedData(lpParent, lpStatsCollector, bHosted, bDistributed);
 
 	m_lpSingleton->m_ulRefCount++;
 	*lppSingleton = m_lpSingleton;
@@ -146,9 +146,9 @@ ECConfig *ECPluginSharedData::CreateConfig(const configsetting_t *lpDefaults,
 
 		m_lpConfig = ECConfig::Create(m_lpDefaults, m_lpszDirectives);
 		if (!m_lpConfig->LoadSettings(m_lpParentConfig->GetSetting("user_plugin_config")))
-			m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Failed to open plugin configuration file, using defaults.");
+			ec_log_err("Failed to open plugin configuration file, using defaults.");
 		if (m_lpConfig->HasErrors() || m_lpConfig->HasWarnings()) {
-			LogConfigErrors(m_lpConfig, m_lpLogger);
+			LogConfigErrors(m_lpConfig);
 			if(m_lpConfig->HasErrors()) {
 				delete m_lpConfig;
 				m_lpConfig = NULL;
@@ -159,11 +159,6 @@ ECConfig *ECPluginSharedData::CreateConfig(const configsetting_t *lpDefaults,
 	pthread_mutex_unlock(&m_CreateConfigLock);
 
 	return m_lpConfig;
-}
-
-ECLogger* ECPluginSharedData::GetLogger()
-{
-	return m_lpLogger;
 }
 
 IECStatsCollector* ECPluginSharedData::GetStatsCollector()
@@ -190,11 +185,11 @@ void ECPluginSharedData::Signal(int signal)
 	switch (signal) {
 	case SIGHUP:
 		if (!m_lpConfig->ReloadSettings())
-			m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to reload plugin configuration file, continuing with current settings.");
+			ec_log_crit("Unable to reload plugin configuration file, continuing with current settings.");
 			
 		if (m_lpConfig->HasErrors()) {
-			m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to reload plugin configuration file.");
-			LogConfigErrors(m_lpConfig, m_lpLogger);
+			ec_log_err("Unable to reload plugin configuration file.");
+			LogConfigErrors(m_lpConfig);
 		}
 		break;
 	default:

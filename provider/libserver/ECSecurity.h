@@ -63,7 +63,7 @@ class ECSecurity
 {
 
 public:
-	ECSecurity(ECSession *lpSession, ECConfig *lpConfig, ECLogger *lpLogger, ECLogger *lpAudit);
+	ECSecurity(ECSession *lpSession, ECConfig *lpConfig, ECLogger *lpAudit);
 	virtual ~ECSecurity();
 
 	/* must be called once the object is created */
@@ -122,7 +122,6 @@ private:
 
 protected:
 	ECSession			*m_lpSession;
-	ECLogger			*m_lpLogger;
 	ECLogger			*m_lpAudit;
 	ECConfig			*m_lpConfig;
 

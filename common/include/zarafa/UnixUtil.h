@@ -74,10 +74,7 @@ extern void unix_coredump_enable(ECLogger *);
 int unix_create_pidfile(const char *argv0, ECConfig *lpConfig, ECLogger *lpLogger, bool bForce = true);
 int unix_daemonize(ECConfig *lpConfig, ECLogger *lpLogger);
 int unix_fork_function(void*(func)(void*), void *param, int nCloseFDs, int *pCloseFDs);
-pid_t unix_popen_rw(ECLogger *lpLogger, const char *command, int *infp, int *outfp, popen_rlimit_array *lpLimits, const char **env, bool bNonBlocking, bool bStdErr);
-int unix_pclose(int rfd, int wfd, pid_t pid);
-bool unix_system(ECLogger *lpLogger, const char *szLogName, const char *command, const char **env);
-
+extern bool unix_system(const char *szLogName, const char *command, const char **env);
 
 #endif
 

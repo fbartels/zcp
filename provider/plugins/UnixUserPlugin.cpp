@@ -535,7 +535,7 @@ auto_ptr<signatures_t> UnixUserPlugin::getAllObjects(const objectid_t &companyid
 
 	er = m_lpDatabase->DoSelect(strQuery, &lpResult);
 	if (er != erSuccess) {
-		m_logger->Log(EC_LOGLEVEL_ERROR, "Unix plugin: Unable to cleanup old entries");
+		ec_log_err("Unix plugin: Unable to cleanup old entries");
 		goto exit;
 	}
 
@@ -563,10 +563,10 @@ auto_ptr<signatures_t> UnixUserPlugin::getAllObjects(const objectid_t &companyid
 
 	er = m_lpDatabase->DoDelete(strQuery, &ulRows);
 	if (er != erSuccess) {
-		m_logger->Log(EC_LOGLEVEL_ERROR, "Unix plugin: Unable to cleanup old entries in object table");
+		ec_log_err("Unix plugin: Unable to cleanup old entries in object table");
 		goto exit;
 	} else if (ulRows > 0) {
-		m_logger->Log(EC_LOGLEVEL_INFO, "Unix plugin: Cleaned-up %d old entries from object table", ulRows);
+		ec_log_info("Unix plugin: Cleaned up %d old entries from object table", ulRows);
 	}
 
 	// Create subquery to select all ids which will be deleted
@@ -586,10 +586,10 @@ auto_ptr<signatures_t> UnixUserPlugin::getAllObjects(const objectid_t &companyid
 		"WHERE objectid IN (" + strSubQuery + ")";
 	er = m_lpDatabase->DoDelete(strQuery, &ulRows);
 	if (er != erSuccess) {
-		m_logger->Log(EC_LOGLEVEL_ERROR, "Unix plugin: Unable to cleanup old entries in objectproperty table");
+		ec_log_err("Unix plugin: Unable to cleanup old entries in objectproperty table");
 		goto exit;
 	} else if (ulRows > 0) {
-		m_logger->Log(EC_LOGLEVEL_INFO, "Unix plugin: Cleaned-up %d old entries from objectproperty table", ulRows);
+		ec_log_info("Unix plugin: Cleaned up %d old entries from objectproperty table", ulRows);
 	}
 
 	strQuery =
@@ -598,10 +598,10 @@ auto_ptr<signatures_t> UnixUserPlugin::getAllObjects(const objectid_t &companyid
 		"OR parentobjectid IN (" + strSubQuery + ")";
 	er = m_lpDatabase->DoDelete(strQuery, &ulRows);
 	if (er != erSuccess) {
-		m_logger->Log(EC_LOGLEVEL_ERROR, "Unix plugin: Unable to cleanup old entries in objectrelation table");
+		ec_log_err("Unix plugin: Unable to cleanup old entries in objectrelation table");
 		goto exit;
 	} else if (ulRows > 0) {
-		m_logger->Log(EC_LOGLEVEL_INFO, "Unix plugin: Cleaned-up %d old entries from objectrelation table", ulRows);
+		ec_log_info("Unix plugin: Cleaned-up %d old entries from objectrelation table", ulRows);
 	}
 
 exit:
@@ -958,7 +958,7 @@ auto_ptr<objectdetails_t> UnixUserPlugin::objectdetailsFromPwent(struct passwd *
 			// invalid entry, must have a shadow password set in this case
 			// throw objectnotfound(ud->id);
 			// too bad that the password couldn't be found, but it's not that critical
-			m_logger->Log(EC_LOGLEVEL_WARNING, "Warning: unable to find password for user '%s', errno: %s", pw->pw_name, strerror(errno));
+			ec_log_warn("Warning: unable to find password for user \"%s\": %s", pw->pw_name, strerror(errno));
 			ud->SetPropString(OB_PROP_S_PASSWORD, string("x"));	// set invalid password entry, cannot login without a password
 		} else {
 			ud->SetPropString(OB_PROP_S_PASSWORD, string(spw->sp_pwdp));

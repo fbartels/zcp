@@ -51,8 +51,9 @@
 static const char THIS_FILE[] = __FILE__;
 #endif
 
-ECUserManagementOffline::ECUserManagementOffline(ECSession *lpSession, ECPluginFactory *lpPluginFactory, ECConfig *lpConfig, ECLogger *lpLogger) : 
-			ECUserManagement(lpSession, lpPluginFactory, lpConfig, lpLogger)
+ECUserManagementOffline::ECUserManagementOffline(ECSession *lpSession,
+    ECPluginFactory *lpPluginFactory, ECConfig *lpConfig) :
+	ECUserManagement(lpSession, lpPluginFactory, lpConfig)
 {
 }
 

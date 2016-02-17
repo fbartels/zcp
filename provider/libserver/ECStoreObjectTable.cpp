@@ -1089,7 +1089,7 @@ ECRESULT ECStoreObjectTable::GetMVRowCount(unsigned int ulObjId, unsigned int *l
     
     if(lpRow == NULL || lpRow[0] == NULL) {
         er = ZARAFA_E_DATABASE_ERROR;
-	lpDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "ECStoreObjectTable::GetMVRowCount(): row or column null");
+	ec_log_err("ECStoreObjectTable::GetMVRowCount(): row or column null");
         goto exit;
     }
 	
@@ -1277,7 +1277,7 @@ ECRESULT ECStoreObjectTable::AddRowKey(ECObjectTableList* lpRows, unsigned int *
         if(er != erSuccess)
         	goto exit;
 
-    	if(GetIndexerResults(lpDatabase, lpSession->GetSessionManager()->GetConfig(), lpSession->GetSessionManager()->GetLogger(), lpSession->GetSessionManager()->GetCacheManager(), &guidServer, lpODStore->lpGuid, lstFolders, lpsRestrict, &lpNewRestrict, lstIndexerResults) != erSuccess) {
+	if (GetIndexerResults(lpDatabase, lpSession->GetSessionManager()->GetConfig(), lpSession->GetSessionManager()->GetCacheManager(), &guidServer, lpODStore->lpGuid, lstFolders, lpsRestrict, &lpNewRestrict, lstIndexerResults) != erSuccess) {
     	    // Cannot handle this restriction with the indexer, use 'normal' restriction code
     	    // Reasons can be:
     	    //  - restriction too complex

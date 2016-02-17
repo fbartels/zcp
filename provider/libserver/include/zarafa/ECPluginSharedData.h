@@ -44,10 +44,10 @@
 #ifndef ECPLUGINSHAREDDATA_H
 #define ECPLUGINSHAREDDATA_H
 
+#include <zarafa/zcdefs.h>
 #include <pthread.h>
 
 #include <zarafa/ECConfig.h>
-#include <zarafa/ECLogger.h>
 #include <zarafa/IECStatsCollector.h>
 
 /**
@@ -57,11 +57,7 @@
  * Each instance of the UserPlugin share the contents
  * of ECPluginSharedData.
  */
-class ECPluginSharedData
-#if __cplusplus >= 201100L
-	final
-#endif
-{
+class ECPluginSharedData _zcp_final {
 private:
 	/**
 	 * Singleton instance of ECPluginSharedData
@@ -88,8 +84,6 @@ private:
 	 *
 	 * @param[in]	lpParent
 	 *					Pointer to ECConfig to read configuration option from the server
-	 * @param[in]	lpLogger
-	 *					Pointer to ECLogger to print debug information to the log
 	 * @param[in]	lpStatsCollector
 	 *					Pointer to IECStatsCollector to collect statistics about 
 	 *					plugin specific tasks (i.e. the number of SQL or LDAP queries)
@@ -102,7 +96,7 @@ private:
 	 * 					Plugins are allowed to throw an exception when bDistributed is true
 	 *					while the plugin doesn't support multi-server.
 	 */
-	ECPluginSharedData(ECConfig *lpParent, ECLogger *lpLogger, IECStatsCollector *lpStatsCollector, bool bHosted, bool bDistributed);
+	ECPluginSharedData(ECConfig *lpParent, IECStatsCollector *lpStatsCollector, bool bHosted, bool bDistributed);
 
 	/**
 	 * Default destructor
@@ -117,8 +111,6 @@ public:
 	 *					The singleton ECPluginSharedData pointer
 	 * @param[in]	lpParent
 	 *					Server configuration file
-	 * @param[in]	lpLogger
-	 *					Server logger
 	 * @param[in]	lpStatsCollector
 	 *					Statistics collector
 	 * @param[in]   bHosted
@@ -130,7 +122,7 @@ public:
 	 * 					Plugins are allowed to throw an exception when bDistributed is true
 	 *					while the plugin doesn't support multi-server.
 	 */
-	static void GetSingleton(ECPluginSharedData **lppSingleton, ECConfig *lpParent, ECLogger *lpLogger,
+	static void GetSingleton(ECPluginSharedData **lppSingleton, ECConfig *lpParent,
 							 IECStatsCollector *lpStatsCollector, bool bHosted, bool bDistributed);
 
 	/**
@@ -153,13 +145,6 @@ public:
 	 * @return The ECConfig pointer. NULL if configuration file could not be loaded.
 	 */
 	virtual ECConfig *CreateConfig(const configsetting_t *lpDefaults, const char *const *lpszDirectives = lpszDEFAULTDIRECTIVES);
-
-	/**
-	 * Obtain the ECLogger
-	 *
-	 * @return The ECLogger pointer
-	 */
-	virtual ECLogger* GetLogger();
 
 	/**
 	 * Obtain the Stats collector
@@ -200,11 +185,6 @@ private:
 	 * Server configuration file
 	 */
 	ECConfig *m_lpParentConfig;
-
-	/**
-	 * Server logger
-	 */
-	ECLogger *m_lpLogger;
 
 	/**
 	 * Statistics collector

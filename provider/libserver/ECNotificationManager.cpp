@@ -90,14 +90,12 @@ static int soapresponse(struct notifyResponse notifications, struct soap *soap)
     return soap_closesock(soap);
 }
 
-ECNotificationManager::ECNotificationManager(ECLogger *lpLogger) : m_lpLogger(lpLogger)
+ECNotificationManager::ECNotificationManager(void)
 {
     m_bExit = false;
     pthread_mutex_init(&m_mutexSessions, NULL);
     pthread_mutex_init(&m_mutexRequests, NULL);
     pthread_cond_init(&m_condSessions, NULL);
-    m_lpLogger->AddRef();
-    
     pthread_create(&m_thread, NULL, Thread, this);
     set_thread_name(m_thread, "NotificationManager");
 
@@ -111,7 +109,7 @@ ECNotificationManager::~ECNotificationManager()
     pthread_cond_broadcast(&m_condSessions);
     pthread_mutex_unlock(&m_mutexSessions);
 
-	m_lpLogger->Log(EC_LOGLEVEL_INFO, "Shutdown notification manager");
+	ec_log_info("Shutdown notification manager");
     pthread_join(m_thread, NULL);
 
     // Close and free any pending requests (clients will receive EOF)
@@ -123,8 +121,6 @@ ECNotificationManager::~ECNotificationManager()
 		soap_end(iterRequest->second.soap);
 		soap_free(iterRequest->second.soap);
     }
-    
-    m_lpLogger->Release();
     pthread_mutex_destroy(&m_mutexSessions);
     pthread_mutex_destroy(&m_mutexRequests);
     pthread_cond_destroy(&m_condSessions);
@@ -143,7 +139,7 @@ HRESULT ECNotificationManager::AddRequest(ECSESSIONID ecSessionId, struct soap *
         // requested notifications. Since this should only happen if the client thinks it has lost its connection and has
         // restarted the request, we will replace the existing request with this one.
 
-		m_lpLogger->Log(EC_LOGLEVEL_WARNING, "Replacing notification request for ID: %llu",
+		ec_log_warn("Replacing notification request for ID %llu",
 			static_cast<unsigned long long>(ecSessionId));
         
         // Return the previous request as an error

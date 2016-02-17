@@ -99,8 +99,7 @@ static void plugin_destroy(void *lpParam)
 	delete lpPlugin;
 }
 
-ECRESULT zarafa_initlibrary(const char *lpDatabaseDir,
-    const char *lpConfigFile, ECLogger *lpLogger)
+ECRESULT zarafa_initlibrary(const char *lpDatabaseDir, const char *lpConfigFile)
 {
 	ECRESULT er = erSuccess;
 
@@ -117,9 +116,7 @@ ECRESULT zarafa_initlibrary(const char *lpDatabaseDir,
 
 	// Init mutex for database object list
 	pthread_mutex_init(&g_hMutexDBObjectList, NULL);
-
-	er = ECDatabaseMySQL::InitLibrary(lpDatabaseDir, lpConfigFile, lpLogger);
-
+	er = ECDatabaseMySQL::InitLibrary(lpDatabaseDir, lpConfigFile);
 	g_lpStatsCollector = new ECStatsCollector();
 	
 	//TODO: with an error remove all variables and g_bInitLib = false
@@ -129,7 +126,7 @@ exit:
 	return er;
 }
 
-ECRESULT zarafa_unloadlibrary(ECLogger *logger)
+ECRESULT zarafa_unloadlibrary(void)
 {
 	ECRESULT er = erSuccess;
 	std::set<ECDatabase*>::iterator	iterDBObject, iNext;
@@ -166,16 +163,14 @@ ECRESULT zarafa_unloadlibrary(ECLogger *logger)
 
 	// remove mutex for database object list
 	pthread_mutex_destroy(&g_hMutexDBObjectList);
-	
-	ECDatabaseMySQL::UnloadLibrary(logger);
-
+	ECDatabaseMySQL::UnloadLibrary();
 	g_bInitLib = false;
 
 exit:
 	return er;
 }
 
-ECRESULT zarafa_init(ECConfig* lpConfig, ECLogger* lpLogger, ECLogger* lpAudit, bool bHostedZarafa, bool bDistributedZarafa)
+ECRESULT zarafa_init(ECConfig *lpConfig, ECLogger *lpAudit, bool bHostedZarafa, bool bDistributedZarafa)
 {
 	ECRESULT er = erSuccess;
 
@@ -185,9 +180,9 @@ ECRESULT zarafa_init(ECConfig* lpConfig, ECLogger* lpLogger, ECLogger* lpAudit, 
 	}
 
 #ifdef HAVE_OFFLINE_SUPPORT
-    g_lpSessionManager = new ECSessionManagerOffline(lpConfig, lpLogger, bHostedZarafa, bDistributedZarafa);
+    g_lpSessionManager = new ECSessionManagerOffline(lpConfig, bHostedZarafa, bDistributedZarafa);
 #else
-    g_lpSessionManager = new ECSessionManager(lpConfig, lpLogger, lpAudit, bHostedZarafa, bDistributedZarafa);
+    g_lpSessionManager = new ECSessionManager(lpConfig, lpAudit, bHostedZarafa, bDistributedZarafa);
 #endif
 	
 	er = g_lpSessionManager->LoadSettings();
@@ -338,7 +333,6 @@ ECRESULT GetDatabaseObject(ECDatabase **lppDatabase)
 		return ZARAFA_E_INVALID_PARAMETER;
 	}
 
-	ECDatabaseFactory db(g_lpSessionManager->GetConfig(), g_lpSessionManager->GetLogger());
-
+	ECDatabaseFactory db(g_lpSessionManager->GetConfig());
 	return GetThreadLocalDatabase(&db, lppDatabase);
 }

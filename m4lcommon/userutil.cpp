@@ -259,7 +259,7 @@ HRESULT ValidateArchivedUserCount(ECLogger *lpLogger, IMAPISession *lpMapiSessio
 	//@todo use PR_EC_OBJECT property
 	hr = HrOpenDefaultStore(lpMapiSession, &ptrStore);
 	if(hr != hrSuccess) {
-		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to open default store: 0x%08X", hr);
+		lpLogger->Log(EC_LOGLEVEL_CRIT, "Unable to open default store: 0x%08X", hr);
 		goto exit;
 	}
 

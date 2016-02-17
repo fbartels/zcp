@@ -69,7 +69,12 @@
 
 using namespace std;
 
-#define LOG_PLUGIN_DEBUG(_msg, ...) if (m_logger->Log(EC_LOGLEVEL_DEBUG|EC_LOGLEVEL_PLUGIN)) { m_logger->Log(EC_LOGLEVEL_DEBUG|EC_LOGLEVEL_PLUGIN, "plugin: " _msg, ##__VA_ARGS__); }
+#include <zarafa/ECLogger.h>
+#define LOG_PLUGIN_DEBUG(_msg, ...) \
+	do { \
+		if (ec_log_get()->Log(EC_LOGLEVEL_DEBUG | EC_LOGLEVEL_PLUGIN)) \
+			ec_log(EC_LOGLEVEL_DEBUG | EC_LOGLEVEL_PLUGIN, "plugin: " _msg, ##__VA_ARGS__); \
+	} while (false)
 
 /**
  * The objectsignature combines the object id with the
@@ -135,7 +140,6 @@ typedef list<objectsignature_t> signatures_t;
 typedef list<unsigned int> abprops_t;
 
 class ECConfig;
-class ECLogger;
 
 /**
  * Main user plugin interface
@@ -157,21 +161,15 @@ public:
 	 */
 	UserPlugin(pthread_mutex_t *pluginlock, ECPluginSharedData *shareddata) :
 		m_plugin_lock(pluginlock), m_config(NULL),
-		m_logger(shareddata->GetLogger()),
 		m_lpStatsCollector(shareddata->GetStatsCollector()),
 		m_bHosted(shareddata->IsHosted()),
 		m_bDistributed(shareddata->IsDistributed())
-	{
-		m_logger->AddRef();
-	}
+	{}
 
 	/**
 	 * Destructor
 	 */
-	virtual ~UserPlugin(void)
-	{
-		m_logger->Release();
-	}
+	virtual ~UserPlugin(void) {}
 
 	/**
 	 * Initialize plugin
@@ -462,11 +460,6 @@ protected:
 	 * Pointer to local configuration manager.
 	 */
 	ECConfig *m_config;
-
-	/**
-	 * Pointer to logger
-	 */
-	ECLogger *m_logger;
 
 	/**
 	 * Pointer to statscollector

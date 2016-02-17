@@ -2607,7 +2607,7 @@ static HRESULT ProcessMessage(IMAPISession *lpAdminSession,
 		hr = MAPI_E_WAIT;
 		goto exit;
 	} else if (ulResult == MP_FAILED) {
-		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Plugin error, hook gives a failed error: %s (%x).",
+		g_lpLogger->Log(EC_LOGLEVEL_CRIT, "Plugin error, hook gives a failed error: %s (%x).",
 			GetMAPIErrorMessage(ulResult), ulResult);
 		hr = MAPI_E_CANCEL;
 		goto exit;

@@ -272,7 +272,6 @@ private:
 	ECRESULT ValidateSSOData_NTLM(struct soap* soap, const char* lpszName, const char* szClientVersion, const char* szClientApp, const char *szClientAppVersion, const char *szClientAppMisc, const struct xsd__base64Binary* lpInput, struct xsd__base64Binary** lppOutput);
 	ECRESULT ValidateSSOData_KRB5(struct soap* soap, const char* lpszName, const char* szClientVersion, const char* szClientApp, const char *szClientAppVersion, const char *szClientAppMisc, const struct xsd__base64Binary* lpInput, struct xsd__base64Binary** lppOutput);
 #ifdef HAVE_GSSAPI
-	ECRESULT LogKRB5Error(ECLogger *lpLogger, const char *msg, OM_uint32 major, OM_uint32 minor); /* added logger to distinguish from the other function */
 	ECRESULT LogKRB5Error(const char *msg, OM_uint32 major, OM_uint32 minor);
 #endif
 

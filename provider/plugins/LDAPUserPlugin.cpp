@@ -510,27 +510,27 @@ LDAP *LDAPUserPlugin::ConnectLDAP(const char *bind_dn, const char *bind_pw) {
 		if (rc != LDAP_SUCCESS) {
 			m_lpStatsCollector->Increment(SCN_LDAP_CONNECT_FAILED);
 
-			m_logger->Log(EC_LOGLEVEL_FATAL, "Failed to initialize LDAP for %s: %s", currentServer.c_str(), ldap_err2string(rc));
+			ec_log_crit("Failed to initialize LDAP for \"%s\": %s", currentServer.c_str(), ldap_err2string(rc));
 			goto fail;
 		}
 
-		m_logger->Log(EC_LOGLEVEL_DEBUG, "Trying to connect to %s", currentServer.c_str());
+		ec_log_debug("Trying to connect to %s", currentServer.c_str());
 
 		if ((rc = ldap_set_option(ld, LDAP_OPT_PROTOCOL_VERSION, &version)) != LDAP_OPT_SUCCESS) {
-			m_logger->Log(EC_LOGLEVEL_ERROR, "LDAP_OPT_PROTOCOL_VERSION failed: %s", ldap_err2string(rc));
+			ec_log_err("LDAP_OPT_PROTOCOL_VERSION failed: %s", ldap_err2string(rc));
 			goto fail;
 		}
 
 		// Disable response message size restrictions (but the server's
 		// restrictions still apply)
 		if ((rc = ldap_set_option(ld, LDAP_OPT_SIZELIMIT, &limit)) != LDAP_OPT_SUCCESS) {
-			m_logger->Log(EC_LOGLEVEL_ERROR, "LDAP_OPT_SIZELIMIT failed: %s", ldap_err2string(rc));
+			ec_log_err("LDAP_OPT_SIZELIMIT failed: %s", ldap_err2string(rc));
 			goto fail;
 		}
 
 		// Search referrals are never accepted  - FIXME maybe needs config option
 		if ((rc = ldap_set_option(ld, LDAP_OPT_REFERRALS, LDAP_OPT_OFF)) != LDAP_OPT_SUCCESS) {
-			m_logger->Log(EC_LOGLEVEL_ERROR, "LDAP_OPT_REFERRALS failed: %s", ldap_err2string(rc));
+			ec_log_err("LDAP_OPT_REFERRALS failed: %s", ldap_err2string(rc));
 			goto fail;
 		}
 
@@ -539,7 +539,7 @@ LDAP *LDAPUserPlugin::ConnectLDAP(const char *bind_dn, const char *bind_pw) {
 		m_timeout.tv_usec = 0;
 #ifndef WIN32
 		if ((rc = ldap_set_option(ld, LDAP_OPT_NETWORK_TIMEOUT, &m_timeout)) != LDAP_OPT_SUCCESS) {
-			m_logger->Log(EC_LOGLEVEL_ERROR, "LDAP_OPT_NETWORK_TIMEOUT failed: %s", ldap_err2string(rc));
+			ec_log_err("LDAP_OPT_NETWORK_TIMEOUT failed: %s", ldap_err2string(rc));
 			goto fail;
 		}
 #endif
@@ -551,7 +551,7 @@ LDAP *LDAPUserPlugin::ConnectLDAP(const char *bind_dn, const char *bind_pw) {
 		// after ldap_init, so it will be the call that actually connects
 		// to the server.
 		if ((rc = ldap_start_tls_s(ld, NULL, NULL)) != LDAP_SUCCESS) {
-			m_logger->Log(EC_LOGLEVEL_ERROR, "Failed to enable TLS on LDAP session: %s", ldap_err2string(rc));
+			ec_log_err("Failed to enable TLS on LDAP session: %s", ldap_err2string(rc));
 			goto fail;
 		}
 #endif
@@ -564,7 +564,7 @@ LDAP *LDAPUserPlugin::ConnectLDAP(const char *bind_dn, const char *bind_pw) {
 		if ((rc = ldap_simple_bind_s(ld, (char *)bind_dn, (char *)bind_pw)) == LDAP_SUCCESS)
 			break;
 
-		m_logger->Log(EC_LOGLEVEL_WARNING, "LDAP (simple-) bind failed: %s", ldap_err2string(rc));
+		ec_log_warn("LDAP (simple) bind failed: %s", ldap_err2string(rc));
 
 	fail:
 		// see if another (if any) server does work
@@ -573,7 +573,7 @@ LDAP *LDAPUserPlugin::ConnectLDAP(const char *bind_dn, const char *bind_pw) {
 			ldapServerIndex = 0;
 
 		if (ldap_unbind_s(ld) == -1)
-			m_logger->Log(EC_LOGLEVEL_ERROR, "LDAP unbind failed");
+			ec_log_err("LDAP unbind failed");
 
 		m_lpStatsCollector->Increment(SCN_LDAP_CONNECT_FAILED);
 
@@ -602,7 +602,7 @@ LDAPUserPlugin::~LDAPUserPlugin() {
 		LOG_PLUGIN_DEBUG("%s", "Disconnect from LDAP while unloading plugin");
 
 		if (ldap_unbind_s(m_ldap) == -1)
-			m_logger->Log(EC_LOGLEVEL_ERROR, "LDAP unbind failed");
+			ec_log_err("LDAP unbind failed");
 	}
 
 	delete m_iconv;
@@ -642,9 +642,9 @@ void LDAPUserPlugin::my_ldap_search_s(char *base, int scope, char *filter, char 
 
 		if (m_ldap != NULL) {
 			if (ldap_unbind_s(m_ldap) == -1)
-				m_logger->Log(EC_LOGLEVEL_ERROR, "LDAP unbind failed");
+				ec_log_err("LDAP unbind failed");
 			m_ldap = NULL;
-			m_logger->Log(EC_LOGLEVEL_ERROR, "Disconnect from LDAP because search error %s", ldap_err2string(result));
+			ec_log_err("Disconnect from LDAP because of search error %s", ldap_err2string(result));
 		}
 
 		/// @todo encode the user and password, now it's depended in which charset the config is saved
@@ -656,18 +656,18 @@ void LDAPUserPlugin::my_ldap_search_s(char *base, int scope, char *filter, char 
 	}
 
 	if(result != LDAP_SUCCESS) {
-   		m_logger->Log(EC_LOGLEVEL_ERROR, "LDAP query failed: %s %s (result=0x%02x, %s)", base, filter, result, ldap_err2string(result));
+		ec_log_err("LDAP query failed: %s %s (result=0x%02x, %s)", base, filter, result, ldap_err2string(result));
 
 		if(LDAP_API_ERROR(result)) {
 		    // Some kind of API error occurred (error is not from the server). Unbind the connection so any next try will re-bind
 		    // which will possibly connect to a different (failed over) server.
-            if (m_ldap != NULL) {
-		if (ldap_unbind_s(m_ldap) == -1)
-			m_logger->Log(EC_LOGLEVEL_ERROR, "LDAP unbind failed");
-                m_ldap = NULL;
-		m_logger->Log(EC_LOGLEVEL_ERROR, "Disconnect from LDAP because reconnect search error %s", ldap_err2string(result));
-            }
-        }
+			if (m_ldap != NULL) {
+				if (ldap_unbind_s(m_ldap) == -1)
+					ec_log_err("LDAP unbind failed");
+				m_ldap = NULL;
+				ec_log_err("Disconnect from LDAP because reconnect search error %s", ldap_err2string(result));
+			}
+		}
 		goto exit;
 	}
 
@@ -992,12 +992,12 @@ auto_ptr<signatures_t> LDAPUserPlugin::getAllObjectsByFilter(const string &based
 			try {
 				objectid = GetObjectIdForEntry(entry);
 			} catch(data_error &e) {
-				m_logger->Log(EC_LOGLEVEL_WARNING, "Unable to get object id: %s", e.what());
+				ec_log_warn("Unable to get object id: %s", e.what());
 				continue;
 			}
 
 			if (objectid.id.empty()) {
-				m_logger->Log(EC_LOGLEVEL_WARNING, "Unique id not found for DN: %s", dn.c_str());
+				ec_log_warn("Unique id not found for DN: %s", dn.c_str());
 				continue;
 			}
 
@@ -1037,7 +1037,7 @@ string LDAPUserPlugin::getSearchBase(const objectid_t &company)
 		search_base = m_lpCache->getDNForObject(lpCompanyCache, company);
 		// CHECK: should not be possible to not already know the company
 		if (search_base.empty()) {
-			m_logger->Log(EC_LOGLEVEL_FATAL, "No search base found for company %s", company.id.c_str());
+			ec_log_crit("No search base found for company \"%s\"", company.id.c_str());
 			search_base = lpszSearchBase;
 		}
 	} else {
@@ -1705,7 +1705,7 @@ objectsignature_t LDAPUserPlugin::authenticateUserBind(const string &username, c
 	}
 
 	if (ldap_unbind_s(ld) == -1)
-		m_logger->Log(EC_LOGLEVEL_ERROR, "LDAP unbind failed");
+		ec_log_err("LDAP unbind failed");
 
 	return signature;
 }
@@ -2027,7 +2027,7 @@ auto_ptr<map<objectid_t, objectdetails_t> > LDAPUserPlugin::getObjectDetails(con
 					ldap_filter += getSearchFilter(iter->id, addresslist_unique_attr, addresslist_unique_attr_type);
 					break;
 				default:
-					m_logger->Log(EC_LOGLEVEL_FATAL, "Incorrect object class %d for item %s", iter->objclass, iter->id.c_str());
+					ec_log_crit("Incorrect object class %d for item \"%s\"", iter->objclass, iter->id.c_str());
 					continue;
 				}
 				iter++;
@@ -2366,7 +2366,7 @@ auto_ptr<map<objectid_t, objectdetails_t> > LDAPUserPlugin::getObjectDetails(con
 		map<objectid_t, objectdetails_t>::iterator o = mapdetails->find(p->objectid);
 		if (o == mapdetails->end()) {
 			// this should never happen, but only some details will be missing, not the end of the world.
-			m_logger->Log(EC_LOGLEVEL_FATAL, "No object %s found for postaction", p->objectid.id.c_str());
+			ec_log_crit("No object \"%s\" found for postaction", p->objectid.id.c_str());
 			continue;
 		}
 
@@ -2382,7 +2382,7 @@ auto_ptr<map<objectid_t, objectdetails_t> > LDAPUserPlugin::getObjectDetails(con
 				lstSignatures = resolveObjectsFromAttributeType(p->objclass, p->ldap_attrs, p->relAttr, p->relAttrType);
 				if (lstSignatures->size() != p->ldap_attrs.size()) {
 					// try to rat out the object causing the failed ldap query
-					m_logger->Log(EC_LOGLEVEL_ERROR, "Not all objects in relation found for object '%s'", o->second.GetPropString(OB_PROP_S_LOGIN).c_str());
+					ec_log_err("Not all objects in relation found for object \"%s\"", o->second.GetPropString(OB_PROP_S_LOGIN).c_str());
 				}
 				for (iSignature = lstSignatures->begin(); iSignature != lstSignatures->end(); iSignature++) {
 					o->second.AddPropObject(p->propname, iSignature->id);
@@ -2391,7 +2391,7 @@ auto_ptr<map<objectid_t, objectdetails_t> > LDAPUserPlugin::getObjectDetails(con
 				if(!LDAP_NAME_ERROR(e.GetLDAPError()))
 					throw;
 			} catch (std::exception &e) {
-				m_logger->Log(EC_LOGLEVEL_ERROR, "Unable to resolve object from relational attribute type '%s'", p->relAttr);
+				ec_log_err("Unable to resolve object from relational attribute type \"%s\"", p->relAttr);
 			}
 		} else {
 			// string, so use SetPropObject
@@ -2406,20 +2406,20 @@ auto_ptr<map<objectid_t, objectdetails_t> > LDAPUserPlugin::getObjectDetails(con
                         if(!LDAP_NAME_ERROR(e.GetLDAPError()))
                             throw;
                     } catch (std::exception &e) {
-                        m_logger->Log(EC_LOGLEVEL_ERROR, "Unable to get attribute %s for relation '%s' for object '%s'", p->result_attr.c_str(), p->ldap_attr.c_str(), o->second.GetPropString(OB_PROP_S_LOGIN).c_str());
+                        ec_log_err("Unable to get attribute \"%s\" for relation \"%s\" for object \"%s\"", p->result_attr.c_str(), p->ldap_attr.c_str(), o->second.GetPropString(OB_PROP_S_LOGIN).c_str());
                     }
 				} else {
 				    // ID type
     				if (!signature.id.id.empty())
 		    			o->second.SetPropObject(p->propname, signature.id);
 	    			else
-			    		m_logger->Log(EC_LOGLEVEL_ERROR, "Unable to find relation %s in attribute %s", p->ldap_attr.c_str(), p->relAttr);
+					ec_log_err("Unable to find relation \"%s\" in attribute \"%s\"", p->ldap_attr.c_str(), p->relAttr);
                 }
 			} catch (ldap_error &e) {
 				if(!LDAP_NAME_ERROR(e.GetLDAPError()))
 					throw;
 			} catch (std::exception &e) {
-				m_logger->Log(EC_LOGLEVEL_ERROR, "Unable to resolve object from relational attribute type '%s'", p->relAttr);
+				ec_log_err("Unable to resolve object from relational attribute type \"%s\"", p->relAttr);
 			}
 		}
 	}

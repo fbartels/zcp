@@ -57,16 +57,9 @@ static const char THIS_FILE[] = __FILE__;
 // The ECDatabaseFactory creates database objects connected to the server database. Which
 // database is returned is chosen by the database_engine configuration setting.
 
-ECDatabaseFactory::ECDatabaseFactory(ECConfig *lpConfig, ECLogger *lpLogger)
+ECDatabaseFactory::ECDatabaseFactory(ECConfig *lpConfig)
 {
 	this->m_lpConfig = lpConfig;
-	this->m_lpLogger = lpLogger;
-	m_lpLogger->AddRef();
-}
-
-ECDatabaseFactory::~ECDatabaseFactory()
-{
-	m_lpLogger->Release();
 }
 
 ECRESULT ECDatabaseFactory::GetDatabaseFactory(ECDatabase **lppDatabase)
@@ -75,9 +68,9 @@ ECRESULT ECDatabaseFactory::GetDatabaseFactory(ECDatabase **lppDatabase)
 	const char *szEngine = m_lpConfig->GetSetting("database_engine");
 
 	if(stricmp(szEngine, "mysql") == 0) {
-		*lppDatabase = new ECDatabaseMySQL(m_lpLogger, m_lpConfig);
+		*lppDatabase = new ECDatabaseMySQL(m_lpConfig);
 	} else {
-		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "ECDatabaseFactory::GetDatabaseFactory(): database not mysql");
+		ec_log_crit("ECDatabaseFactory::GetDatabaseFactory(): database not mysql");
 		er = ZARAFA_E_DATABASE_ERROR;
 		goto exit;
 	}
@@ -147,10 +140,6 @@ exit:
 	return er;
 }
 
-ECLogger * ECDatabaseFactory::GetLogger() {
-    return m_lpLogger;
-}
-
 extern pthread_key_t database_key;
 
 ECRESULT GetThreadLocalDatabase(ECDatabaseFactory *lpFactory, ECDatabase **lppDatabase)
@@ -170,7 +159,7 @@ ECRESULT GetThreadLocalDatabase(ECDatabaseFactory *lpFactory, ECDatabase **lppDa
 		er = lpFactory->CreateDatabaseObject(&lpDatabase, error);
 
 		if(er != erSuccess) {
-		    lpFactory->GetLogger()->Log(EC_LOGLEVEL_FATAL, "Unable to get database connection: %s", error.c_str());
+			ec_log_err("Unable to get database connection: %s", error.c_str());
 			lpDatabase = NULL;
 			goto exit;
 		}

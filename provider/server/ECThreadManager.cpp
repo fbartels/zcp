@@ -117,7 +117,7 @@ static string GetSoapError(int err)
 	return stringify(err);
 }
 
-int relocate_fd(int fd, ECLogger *lpLogger);
+extern int relocate_fd(int fd);
 
 ECWorkerThread::ECWorkerThread(ECLogger *lpLogger, ECThreadManager *lpManager, ECDispatcher *lpDispatcher, bool bDoNotStart)
 {
@@ -907,7 +907,7 @@ ECRESULT ECDispatcherSelect::MainLoop()
 											ulType == CONNECTION_TYPE_SSL ? " SSL ":" ",
 											newsoap->host);
 					}
-                    newsoap->socket = relocate_fd(newsoap->socket, m_lpLogger);
+					newsoap->socket = relocate_fd(newsoap->socket);
 					g_lpStatsCollector->Max(SCN_MAX_SOCKET_NUMBER, (LONGLONG)newsoap->socket);
 
 					g_lpStatsCollector->Increment(SCN_SERVER_CONNECTIONS);
@@ -1084,7 +1084,7 @@ ECRESULT ECDispatcherEPoll::MainLoop()
 											ulType == CONNECTION_TYPE_SSL ? " SSL ":" ",
 											newsoap->host);
 					}
-					newsoap->socket = relocate_fd(newsoap->socket, m_lpLogger);
+					newsoap->socket = relocate_fd(newsoap->socket);
 					g_lpStatsCollector->Max(SCN_MAX_SOCKET_NUMBER, (LONGLONG)newsoap->socket);
 
 					g_lpStatsCollector->Increment(SCN_SERVER_CONNECTIONS);
