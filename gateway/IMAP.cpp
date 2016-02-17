@@ -81,6 +81,7 @@
 #include "ECFeatures.h"
 
 #include <boost/algorithm/string/join.hpp>
+#include <boost/unordered_set.hpp>
 #include <zarafa/mapi_ptr.h>
 
 #include "IMAP.h"
@@ -2380,7 +2381,7 @@ HRESULT IMAP::HrCmdSearch(const string &strTag, vector<string> &lstSearchCriteri
 		if (lstSearchCriteria[1] != "WINDOWS-1252") {
 			iconv = new ECIConv("windows-1252", lstSearchCriteria[1]);
 			if (!iconv->canConvert()) {
-				hr2 = HrResponse(RESP_TAGGED_NO, strTag, "[BADCHARSET WINDOWS-1252] "+strMode+"SEARCH charset not supported");
+				hr2 = HrResponse(RESP_TAGGED_NO, strTag, "[BADCHARSET (WINDOWS-1252)] " + strMode + "SEARCH charset not supported");
 				hr = MAPI_E_CALL_FAILED;
 				goto exit;
 			}
@@ -5180,12 +5181,15 @@ HRESULT IMAP::HrGetMessagePart(string &strMessagePart, string &strMessage, strin
         } else {
             vector<string> lstReqFields;
             vector<string>::iterator iterReqField;
+            boost::unordered_set<std::string> seen;
 
             // Get fields as vector
 			lstReqFields = tokenize(strFields, " ");
             
             // Output headers specified, in order of field set
             for(iterReqField = lstReqFields.begin(); iterReqField != lstReqFields.end(); iterReqField++) {
+                if (!seen.insert(*iterReqField).second)
+                    continue;
                 for(iterField = lstFields.begin(); iterField != lstFields.end(); iterField++) {
                     if(CaseCompare(*iterReqField, iterField->first)) {
                         strMessagePart += iterField->first;

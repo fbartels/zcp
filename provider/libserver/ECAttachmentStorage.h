@@ -120,6 +120,7 @@ protected:
 	bool m_bFileCompression;
 	std::string m_CompressionLevel;
 	ULONG m_ulRef;
+	pthread_mutex_t m_refcnt_lock;
 };
 
 class ECDatabaseAttachment _zcp_final : public ECAttachmentStorage {
