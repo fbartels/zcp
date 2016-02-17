@@ -151,7 +151,7 @@ class IndexWorker(zarafa.Worker):
                 (_, storeguid, folderid, reindex) = self.iqueue.get()
                 store = server.store(storeguid)
                 folder = zarafa.Folder(store, folderid.decode('hex')) # XXX
-                if folder not in (store.junk, store.outbox):
+                if store.public or folder not in (store.junk, store.outbox):
                     self.log.info('syncing folder: %s %s' % (storeguid, folder.name))
                     importer = FolderImporter(server.guid, config, plugin, self.log)
                     state = db_get(state_db, folder.entryid) if not reindex else None
