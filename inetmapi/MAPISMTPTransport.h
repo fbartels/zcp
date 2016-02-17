@@ -116,8 +116,8 @@ public:
 	ref <connectionInfos> getConnectionInfos() const;
 
 	// additional functions
-	const int getRecipientErrorCount() const;
-	const std::vector<sFailedRecip> getRecipientErrorList() const;
+	const std::vector<sFailedRecip> &getPermanentFailedRecipients(void) const;
+	const std::vector<sFailedRecip> &getTemporaryFailedRecipients(void) const;
 	void setLogger(ECLogger *lpLogger);
 	void requestDSN(BOOL bRequest, const std::string &strTrackid);
 
@@ -156,7 +156,9 @@ private:
 	static SMTPServiceInfos sm_infos;
 
 	// additional data
-	std::vector<sFailedRecip> m_lstFailedRecipients;
+	std::vector<sFailedRecip> mTemporaryFailedRecipients;
+	std::vector<sFailedRecip> mPermanentFailedRecipients;
+
 	ECLogger *m_lpLogger;
 	bool m_bDSNRequest;
 	std::string m_strDSNTrackid;

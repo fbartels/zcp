@@ -81,7 +81,8 @@ protected:
 	std::wstring error;
 	int smtpresult;
 
-	std::vector<sFailedRecip> lstFailedRecipients;
+	std::vector<sFailedRecip> mTemporaryFailedRecipients;
+	std::vector<sFailedRecip> mPermanentFailedRecipients;
 
 	ECLogger *lpLogger;
 
@@ -95,11 +96,8 @@ public:
 	virtual void setError(const std::string &newError);
 	virtual bool haveError();
 
-	virtual const unsigned int getRecipientErrorCount() const;
-	virtual const unsigned int getRecipientErrorSMTPCode(unsigned int offset) const;
-	virtual const std::string getRecipientErrorText(unsigned int offset) const;
-	virtual const std::wstring getRecipientErrorDisplayName(unsigned int offset) const;
-	virtual const std::string getRecipientErrorEmailAddress(unsigned int offset) const;
+	virtual const std::vector<sFailedRecip> &getPermanentFailedRecipients(void) const;
+	virtual const std::vector<sFailedRecip> &getTemporaryFailedRecipients(void) const;
 };
 
 bool ValidateCharset(const char *charset);
