@@ -10,7 +10,7 @@ tmpfiles_DATA = zarafa-tmpfiles.conf
 config_files = \
 	server.cfg unix.cfg ldap.propmap.cfg presence.cfg \
 	spooler.cfg gateway.cfg monitor.cfg dagent.cfg ical.cfg search.cfg \
-	autorespond archiver.cfg backup.cfg
+	autorespond archiver.cfg backup-plus.cfg
 
 rhel_initscript_files = \
 	zarafa-server.init.rhel zarafa-spooler.init.rhel \
