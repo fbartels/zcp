@@ -108,9 +108,7 @@ except NameError:
             REV_TAG[V] = K
 
 PS_INTERNET_HEADERS = DEFINE_OLEGUID(0x00020386, 0, 0)
-NAMED_PROPS_INTERNET_HEADERS = [MAPINAMEID(PS_INTERNET_HEADERS, MNID_STRING, u'x-original-to'),]
-
-# XXX from common/mapiguidext.h
+PS_EC_IMAP = DEFINE_GUID(0x00f5f108, 0x8e3f, 0x46c7, 0xaf, 0x72, 0x5e, 0x20, 0x1c, 0x23, 0x49, 0xe7)
 PSETID_Archive = DEFINE_GUID(0x72e98ebc, 0x57d2, 0x4ab5, 0xb0, 0xaa, 0xd5, 0x0a, 0x7b, 0x53, 0x1c, 0xb9)
 PSETID_Appointment = DEFINE_OLEGUID(0x00062002, 0, 0)
 PSETID_Task = DEFINE_OLEGUID(0x00062003, 0, 0)
@@ -120,6 +118,7 @@ PSETID_Log = DEFINE_OLEGUID(0x0006200A, 0, 0)
 PSETID_Note = DEFINE_OLEGUID(0x0006200E, 0, 0)
 PSETID_Meeting = DEFINE_GUID(0x6ED8DA90, 0x450B, 0x101B,0x98, 0xDA, 0x00, 0xAA, 0x00, 0x3F, 0x13, 0x05)
 
+NAMED_PROPS_INTERNET_HEADERS = [MAPINAMEID(PS_INTERNET_HEADERS, MNID_STRING, u'x-original-to'),]
 NAMED_PROPS_ARCHIVER = [MAPINAMEID(PSETID_Archive, MNID_STRING, u'store-entryids'), MAPINAMEID(PSETID_Archive, MNID_STRING, u'item-entryids'), MAPINAMEID(PSETID_Archive, MNID_STRING, u'stubbed'),]
 
 GUID_NAMESPACE = {
@@ -131,6 +130,7 @@ GUID_NAMESPACE = {
     PSETID_Log: 'log',
     PS_INTERNET_HEADERS: 'internet_headers',
     PSETID_Meeting: 'meeting',
+    PS_EC_IMAP: 'imap',
 }
 NAMESPACE_GUID = dict((b,a) for (a,b) in GUID_NAMESPACE.items())
 
