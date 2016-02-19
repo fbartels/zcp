@@ -197,7 +197,7 @@ class Service(zarafa.Service):
         """ restore data from backup """
 
         # determine store to restore to
-        self.data_path = self.args[0]
+        self.data_path = self.args[0].rstrip('/')
         self.log.info('starting restore of %s' % self.data_path)
         username = os.path.split(self.data_path)[1]
         if self.options.users:
