@@ -474,19 +474,21 @@ Wrapper around MAPI properties
 
     def __init__(self, parent_mapiobj, mapiobj): # XXX rethink attributes, names.. add guidname..?
         self._parent_mapiobj = parent_mapiobj
+        self.proptag = mapiobj.ulPropTag
 
         if PROP_TYPE(mapiobj.ulPropTag) == PT_ERROR and mapiobj.Value == MAPI_E_NOT_ENOUGH_MEMORY:
             for proptype in (PT_BINARY, PT_UNICODE): # XXX slow, incomplete?
                 proptag = (mapiobj.ulPropTag & 0xffff0000) | proptype
                 try:
                     HrGetOneProp(parent_mapiobj, proptag) # XXX: Unicode issue?? calls GetProps([proptag], 0)
+                    self.proptag = proptag # XXX isn't it strange we can get here
                 except MAPIErrorNotEnoughMemory:
                     mapiobj = SPropDelayedValue(parent_mapiobj, proptag)
+                    self.proptag = proptag
                     break
                 except MAPIErrorNotFound:
                     pass
 
-        self.proptag = mapiobj.ulPropTag
         self.id_ = self.proptag >> 16
         self.mapiobj = mapiobj
         self._value = None
