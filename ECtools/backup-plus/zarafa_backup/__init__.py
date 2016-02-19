@@ -44,6 +44,12 @@ zarafa-backup --index user1 -f Inbox/subfolder --recursive --period-begin 2014-0
 
 """
 
+def dbopen(path): # XXX unfortunately dbhash.open doesn't seem to accept unicode
+    return dbhash.open(path.encode(sys.stdout.encoding or 'utf8'), 'c')
+
+def _decode(s): # XXX make optparse give us unicode
+    return s.decode(sys.stdout.encoding or 'utf8')
+
 class BackupWorker(zarafa.Worker):
     """ each worker takes stores from a queue, and backs them up to disk (or syncs them),
         according to the given command-line options; it also detects deleted folders """
@@ -141,9 +147,9 @@ class FolderImporter:
 
         with log_exc(self.log, self.stats):
             self.log.debug('folder %s: new/updated document with sourcekey %s' % (self.folder.sourcekey, item.sourcekey))
-            with closing(dbhash.open(self.folder_path+'/items', 'c')) as db:
+            with closing(dbopen(self.folder_path+'/items')) as db:
                 db[item.sourcekey] = zlib.compress(item.dumps(attachments=not self.options.skip_attachments, archiver=False))
-            with closing(dbhash.open(self.folder_path+'/index', 'c')) as db:
+            with closing(dbopen(self.folder_path+'/index')) as db:
                 orig_prop = item.get_prop(PR_EC_BACKUP_SOURCE_KEY)
                 if orig_prop:
                     orig_prop = orig_prop.value.encode('hex').upper()
@@ -159,9 +165,9 @@ class FolderImporter:
 
         with log_exc(self.log, self.stats):
             self.log.debug('folder %s: deleted document with sourcekey %s' % (self.folder.sourcekey, item.sourcekey))
-            with closing(dbhash.open(self.folder_path+'/items', 'c')) as db:
+            with closing(dbopen(self.folder_path+'/items')) as db:
                 del db[item.sourcekey]
-            with closing(dbhash.open(self.folder_path+'/index', 'c')) as db:
+            with closing(dbopen(self.folder_path+'/index')) as db:
                 del db[item.sourcekey]
             self.stats['deletes'] += 1
 
@@ -197,11 +203,11 @@ class Service(zarafa.Service):
         """ restore data from backup """
 
         # determine store to restore to
-        self.data_path = self.args[0].rstrip('/')
+        self.data_path = _decode(self.args[0].rstrip('/'))
         self.log.info('starting restore of %s' % self.data_path)
         username = os.path.split(self.data_path)[1]
         if self.options.users:
-            store = self._store(self.options.users[0])
+            store = self._store(_decode(self.options.users[0]))
         elif self.options.stores:
             store = self.server.store(self.options.stores[0])
         else:
@@ -289,7 +295,7 @@ class Service(zarafa.Service):
 
         # check --sourcekey option (only restore specified item if it exists)
         if self.options.sourcekeys:
-            with closing(dbhash.open(data_path+'/items', 'c')) as db:
+            with closing(dbopen(data_path+'/items')) as db:
                 if not [sk for sk in self.options.sourcekeys if sk in db]:
                     return
         else:
@@ -313,11 +319,11 @@ class Service(zarafa.Service):
                 existing.add(row[0].Value.encode('hex').upper())
 
         # load entry from 'index', so we don't have to unpickle everything
-        with closing(dbhash.open(data_path+'/index', 'c')) as db:
+        with closing(dbopen(data_path+'/index')) as db:
             index = dict((a, pickle.loads(b)) for (a,b) in db.iteritems())
 
         # now dive into 'items', and restore desired items
-        with closing(dbhash.open(data_path+'/items', 'c')) as db:
+        with closing(dbopen(data_path+'/items')) as db:
             # determine sourcekey(s) to restore
             sourcekeys = db.keys()
             if self.options.sourcekeys:
@@ -404,7 +410,7 @@ def show_contents(data_path, options):
 
         # filter items on date using 'index' database
         if os.path.exists(data_path+'/index'):
-            with closing(dbhash.open(data_path+'/index', 'c')) as db:
+            with closing(dbhash.open(data_path+'/index')) as db:
                 for key, value in db.iteritems():
                     d = pickle.loads(value)
                     if ((options.period_begin and d['last_modified'] < options.period_begin) or
