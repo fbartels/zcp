@@ -1,3 +1,20 @@
+Release notes for 7.2.3
+=======================
+
+Enhancements:
+* dagent: better error reporting on duplicate email addresses
+* dagent can log rules processed for a user (at "debug" log_level)
+
+Fixes:
+* record all mail references so that MUAs show threading (ZCP-11358)
+
+Changes:
+* the "fatal" log level is now called "crit" (for critical),
+  since in the fewest case were the reported conditions actually
+  fatal (= program-terminating). This may be relevant if you do
+  automated log analysis.
+
+
 Release notes for 7.2.2
 =======================
 
