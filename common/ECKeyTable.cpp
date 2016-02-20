@@ -42,17 +42,9 @@
  */
 
 #include <zarafa/platform.h>
-
-#include <utility>
-#include <algorithm>
-
-#include <list>
-#include <map>
 #include <cassert>
-
 #include <zarafa/ECKeyTable.h> 
 #include <zarafa/ustringutil.h>
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
