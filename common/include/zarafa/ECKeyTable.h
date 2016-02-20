@@ -117,15 +117,6 @@ bool operator>(const sObjectTableKey& a, const sObjectTableKey& b);
 typedef std::map<sObjectTableKey, unsigned int, ObjectTableKeyCompare>  ECObjectTableMap;
 typedef std::list<sObjectTableKey> ECObjectTableList;
 
-
-struct idcompare
-{
-  bool operator()(unsigned int a, unsigned int b) const
-  {
-    return a < b;
-  }
-};
-
 #define TABLEROW_FLAG_DESC		0x00000001
 #define TABLEROW_FLAG_FLOAT		0x00000002
 #define TABLEROW_FLAG_STRING	0x00000004
