@@ -1616,12 +1616,12 @@ static HRESULT SendOutOfOffice(LPADRBOOK lpAdrBook, LPMDB lpMDB,
 	hr = hrSuccess;
 
 	// Check for autoresponder
-	if (!dagent_oof_enabled(lpStoreProps))
+	if (!dagent_oof_enabled(lpStoreProps)) {
+		g_lpLogger->Log(EC_LOGLEVEL_DEBUG, "Target user has OOF inactive\n");
 		goto exit;
+	}
 
-	if (lpStoreProps[0].ulPropTag != PR_EC_OUTOFOFFICE || lpStoreProps[0].Value.b == false)
-		goto exit;
-
+	g_lpLogger->Log(EC_LOGLEVEL_DEBUG, "Target user has OOF active\n");
 	// Check for presence of PR_EC_OUTOFOFFICE_MSG_W
 	if (lpStoreProps[1].ulPropTag != PR_EC_OUTOFOFFICE_MSG_W) {
 		StreamPtr ptrStream;
@@ -1656,8 +1656,10 @@ static HRESULT SendOutOfOffice(LPADRBOOK lpAdrBook, LPMDB lpMDB,
 
 	// See if we're looping
 	if (lpMessageProps[0].ulPropTag == PR_TRANSPORT_MESSAGE_HEADERS_A) {
-		if (dagent_avoid_autoreply(tokenize(lpMessageProps[0].Value.lpszA, "\n")))
+		if (dagent_avoid_autoreply(tokenize(lpMessageProps[0].Value.lpszA, "\n"))) {
+			g_lpLogger->Log(EC_LOGLEVEL_DEBUG, "Avoiding OOF reply to an automated message.");
 			goto exit;
+		}
 		// save headers to a file so they can also be tested from the script we're runing
 		snprintf(szTemp, PATH_MAX, "%s/autorespond-headers.XXXXXX", TmpPath::getInstance() -> getTempPath().c_str());
 		fd = mkstemp(szTemp);
