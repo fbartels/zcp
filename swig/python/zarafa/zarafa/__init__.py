@@ -2406,12 +2406,12 @@ class Item(object):
         proptags = [item.proptag for item in items if isinstance(item, Property)]
         if proptags:
             self.mapiobj.DeleteProps(proptags)
-            self.mapiobj.SaveChanges(KEEP_OPEN_READWRITE)
         for attach_id in attach_ids:
             self._arch_item.DeleteAttach(attach_id, 0, None, 0)
 
-        # XXX: no attachments should remove PR_HASATTACH??
-        # XXX: renumber PR_ATTACH_NUM, when we remove 0, should 1 become 0, etc.
+        # XXX: refresh the mapiobj since PR_ATTACH_NUM is updated when opening
+        # an message? PR_HASATTACH is also updated by the server.
+        self.mapiobj.SaveChanges(KEEP_OPEN_READWRITE)
 
     def _convert_to_smtp(self, props, tag_data):
         if not hasattr(self.server, '_smtp_cache'): # XXX speed hack, discuss
