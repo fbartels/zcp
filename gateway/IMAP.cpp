@@ -4685,19 +4685,21 @@ std::string IMAP::HrEnvelopeRecipients(LPSRowSet lpRows, ULONG ulType, std::stri
 
 	strResponse = "(";
 	for (ulCount = 0; ulCount < lpRows->cRows; ulCount++) {
-		if (lpRows->aRow[ulCount].lpProps[RECIPIENT_TYPE].Value.ul != ulType)
+		const SPropValue *pr = lpRows->aRow[ulCount].lpProps;
+
+		if (pr[RECIPIENT_TYPE].Value.ul != ulType)
 			continue;
 
 		strResponse += "(";
-		if (lpRows->aRow[ulCount].lpProps[DISPLAY_NAME].ulPropTag == PR_DISPLAY_NAME_W) {
-			strResponse += EscapeString(lpRows->aRow[ulCount].lpProps[DISPLAY_NAME].Value.lpszW, strCharset, bIgnore);
+		if (pr[DISPLAY_NAME].ulPropTag == PR_DISPLAY_NAME_W) {
+			strResponse += EscapeString(pr[DISPLAY_NAME].Value.lpszW, strCharset, bIgnore);
 		} else {
 			strResponse += "NIL";
 		}
 
 		strResponse += " NIL ";
-		if (lpRows->aRow[ulCount].lpProps[EMAIL_ADDRESS].ulPropTag == PR_EMAIL_ADDRESS_A) {
-			strPart = lpRows->aRow[ulCount].lpProps[EMAIL_ADDRESS].Value.lpszA;
+		if (pr[EMAIL_ADDRESS].ulPropTag == PR_EMAIL_ADDRESS_A) {
+			strPart = pr[EMAIL_ADDRESS].Value.lpszA;
 
 			ulPos = strPart.find("@");
 			if (ulPos != string::npos) {
