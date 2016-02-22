@@ -4689,7 +4689,11 @@ std::string IMAP::HrEnvelopeRecipients(LPSRowSet lpRows, ULONG ulType, std::stri
 
 		if (pr[RECIPIENT_TYPE].Value.ul != ulType)
 			continue;
-
+		/*
+		 * """The fields of an address structure are in the following
+		 * order: personal name, SMTP at-domain-list (source route),
+		 * mailbox name, and host name.""" RFC 3501 §2.3.5 p.76.
+		 */
 		strResponse += "(";
 		if (pr[DISPLAY_NAME].ulPropTag == PR_DISPLAY_NAME_W) {
 			strResponse += EscapeString(pr[DISPLAY_NAME].Value.lpszW, strCharset, bIgnore);
@@ -4711,7 +4715,7 @@ std::string IMAP::HrEnvelopeRecipients(LPSRowSet lpRows, ULONG ulType, std::stri
 				strResponse += " NIL";
 			}
 		} else {
-			strResponse += "NIL";
+			strResponse += "NIL NIL";
 		}
 
 		strResponse += ") ";
