@@ -1267,7 +1267,7 @@ void ec_log(unsigned int level, const char *fmt, ...)
 {
 	va_list argp;
 	va_start(argp, fmt);
-	ec_log_target->Log(level, fmt, argp);
+	ec_log_target->LogVA(level, fmt, argp);
 	va_end(argp);
 }
 
