@@ -1372,7 +1372,7 @@ static HRESULT FallbackDelivery(LPMESSAGE lpMessage, const string &msg)
 	lpPropValue[ulPropPos].ulPropTag = PR_BODY_A;
 	lpPropValue[ulPropPos++].Value.lpszA = (char*)newbody.c_str();
 
-	// Add the orinal message into the errorMessage
+	// Add the original message into the errorMessage
 	hr = lpMessage->CreateAttach(NULL, 0, &ulAttachNum, &lpAttach);
 	if (hr != hrSuccess) {
 		g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to create attachment, error code: 0x%08X", hr);

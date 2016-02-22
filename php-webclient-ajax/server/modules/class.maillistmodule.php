@@ -355,7 +355,7 @@
 			$this->searchFolderList = false; // Set to indicate this is not the search result, but a normal folder content
 			// begin column changes
 
-			// When it is a searchfolder we want the orignal folder column
+			// When it is a searchfolder we want the original folder column
 			if ($this->searchActive){
 				$GLOBALS["TableColumns"]->changeColumnPropertyValue($this->tablecolumns, "parent_entryid", "visible", true);
 			}else{

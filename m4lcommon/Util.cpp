@@ -3978,7 +3978,7 @@ next_stream_prop:
 		}
 	}
 
-	// set destination proptags in orignal properties
+	// set destination proptags in original properties
 	for (ULONG i=0; i < cValues; i++) {
 		lpProps[i].ulPropTag = lpsDestTagArray->aulPropTag[i];
 

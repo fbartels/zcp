@@ -940,7 +940,7 @@ HRESULT SendUndeliverable(LPADRBOOK lpAddrBook, ECSender *lpMailer,
 		goto exit;
 	}
 
-	// Get properties from the orinal message
+	// Get properties from the original message
 	hr = lpMessage->GetProps((LPSPropTagArray)&sPropsOriginal, 0, &cValuesOriginal, &lpPropArrayOriginal);
 	if (FAILED(hr)) {
 		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "SendUndeliverable(): GetPRops failed %x", hr);
@@ -1180,7 +1180,7 @@ HRESULT SendUndeliverable(LPADRBOOK lpAddrBook, ECSender *lpMailer,
 	}
 
 
-	// Add the orinal message into the errorMessage
+	// Add the original message into the errorMessage
 	hr = lpErrorMsg->CreateAttach(NULL, 0, &ulAttachNum, &lpAttach);
 	if (hr != hrSuccess) {
 		g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Unable to create attachment, error code: 0x%08X", hr);

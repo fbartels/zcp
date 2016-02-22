@@ -629,7 +629,7 @@ HRESULT GetProxyStoreObject(IMsgStore *lpMsgStore, IMsgStore **lppMsgStore)
 
 		hr = lpECMsgStore->QueryInterface(IID_IMsgStore, (void**)lppMsgStore);
 	} else {
-		// Possible object already wrapped, gives the orignale object back
+		// Possible object already wrapped, gives the original object back
 		(*lppMsgStore) = lpMsgStore;
 		(*lppMsgStore)->AddRef();
 	}
