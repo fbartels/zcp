@@ -4681,11 +4681,11 @@ std::string IMAP::HrEnvelopeRecipients(LPSRowSet lpRows, ULONG ulType, std::stri
 	std::string strResponse;
 	std::string strPart;
 	std::string::size_type ulPos;
-	enum { EMAIL_ADDRESS, DISPLAY_NAME, RECIPIENT_TYPE, NUM_COLS };
+	enum { EMAIL_ADDRESS, DISPLAY_NAME, RECIPIENT_TYPE, ADDRTYPE, ENTRYID, NUM_COLS };
 
 	strResponse = "(";
 	for (ulCount = 0; ulCount < lpRows->cRows; ulCount++) {
-		const SPropValue *pr = lpRows->aRow[ulCount].lpProps;
+		SPropValue *pr = lpRows->aRow[ulCount].lpProps;
 
 		if (pr[RECIPIENT_TYPE].Value.ul != ulType)
 			continue;
@@ -4702,9 +4702,24 @@ std::string IMAP::HrEnvelopeRecipients(LPSRowSet lpRows, ULONG ulType, std::stri
 		}
 
 		strResponse += " NIL ";
-		if (pr[EMAIL_ADDRESS].ulPropTag == PR_EMAIL_ADDRESS_A) {
-			strPart = pr[EMAIL_ADDRESS].Value.lpszA;
+		bool has_email = pr[EMAIL_ADDRESS].ulPropTag == PR_EMAIL_ADDRESS_A;
+		bool za_addr = pr[ADDRTYPE].ulPropTag == PR_ADDRTYPE_W &&
+		               wcscmp(pr[ADDRTYPE].Value.lpszW, L"ZARAFA") == 0;
+		std::string strPart;
 
+		if (has_email && za_addr) {
+			std::wstring name, type, email;
+			HRESULT ret;
+			ret = HrGetAddress(lpAddrBook, pr, NUM_COLS,
+			      PR_ENTRYID, PR_DISPLAY_NAME_W, PR_ADDRTYPE_W,
+			      PR_EMAIL_ADDRESS_A, name, type, email);
+			if (ret == hrSuccess)
+				strPart = convert_to<std::string>(email);
+		} else if (has_email) {
+			/* treat all non-ZARAFA cases as "SMTP" */
+			strPart = pr[EMAIL_ADDRESS].Value.lpszA;
+		}
+		if (strPart.length() > 0) {
 			ulPos = strPart.find("@");
 			if (ulPos != string::npos) {
 				strResponse += EscapeStringQT(strPart.substr(0, ulPos));
@@ -4803,7 +4818,7 @@ HRESULT IMAP::HrGetMessageEnvelope(string &strResponse, LPMESSAGE lpMessage) {
 	bool bIgnoreCharsetErrors = false;
 	LPMAPITABLE lpTable = NULL;
 	LPSRowSet lpRows = NULL;
-	SizedSPropTagArray(3, spt) = { 3, {PR_EMAIL_ADDRESS_A, PR_DISPLAY_NAME_W, PR_RECIPIENT_TYPE} };
+	SizedSPropTagArray(5, spt) = {5, {PR_EMAIL_ADDRESS_A, PR_DISPLAY_NAME_W, PR_RECIPIENT_TYPE, PR_ADDRTYPE_W, PR_ENTRYID}};
 
 	if (!lpMessage) {
 		hr = MAPI_E_CALL_FAILED;
