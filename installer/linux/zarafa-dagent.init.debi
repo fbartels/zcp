@@ -78,7 +78,7 @@ case "$1" in
 	log_end_msg $?
 	;;
 try-restart)
-	"$0" status && "$0" restart
+	"$0" status >/dev/null && "$0" restart
 	;;
   *)
 	N=/etc/init.d/$NAME
