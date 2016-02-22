@@ -75,6 +75,9 @@ case "$1" in
 	start-stop-daemon --stop $QUIETDAEMON --signal HUP --pidfile $PIDFILE --exec $GATEWAY
 	log_end_msg $?
 	;;
+try-restart)
+	"$0" status && "$0" restart
+	;;
   *)
 	N=/etc/init.d/$NAME
 	echo "Usage: $N {start|stop|restart|force|force-reload|status}" >&2
