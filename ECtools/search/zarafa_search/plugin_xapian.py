@@ -47,6 +47,14 @@ class Plugin:
             if log: 
                 log.warn('could not open database: %s' % dbpath)
             
+    def extract_terms(self, text):
+        """ extract terms as if we are indexing """
+        doc = xapian.Document()
+        tg = xapian.TermGenerator()
+        tg.set_document(doc)
+        tg.index_text(text)
+        return [t.term for t in doc.termlist()]
+
     def search(self, server_guid, store_guid, folder_ids, fields_terms, query, log):
         """ handle query; see links in the top for a description of the Xapian API """
 
@@ -82,7 +90,6 @@ class Plugin:
         """ deleted document """
 
         self.deletes.append(doc)
-
 
     def commit(self):
         """ index pending documents; see links in the top for a description of the Xapian API """
