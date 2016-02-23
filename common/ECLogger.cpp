@@ -986,22 +986,16 @@ ECLogger* StartLoggerProcess(ECConfig* lpConfig, ECLogger* lpLogger) {
 		_exit(0);
 	}
 
-	unsigned int refs = lpLogger->AddRef() - 1;
-	if (refs > 1)
-		/*
-		 * The object must have a refcount of 1 (the caller);
-		 * if not, this means that some other class is carrying a
-		 * pointer. If we replace the logger object, trouble ensues
-		 * because of that pointer dangling.
-		 * (To test the count, we call AddRef, so it jumps from 1 to 2
-		 * ideally; hence the test for >2.)
-		 */
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "StartLoggerProcess called with too large refcount %u; UB possible", refs);
-	lpLogger->Release();
-
 	// this is the main fork, which doesn't log anything anymore, except through the pipe version.
 	// we should release the lpFileLogger
-	delete lpFileLogger;
+	unsigned int refs = lpLogger->Release();
+	if (refs > 0)
+		/*
+		 * The object must have had a refcount of 1 (the caller);
+		 * if not, this means that some other class is carrying a
+		 * pointer. This is not critical but is ill-favored.
+		 */
+		lpLogger->Log(EC_LOGLEVEL_WARNING, "StartLoggerProcess called with large refcount %u", refs + 1);
 
 	close(pipefds[0]);
 	lpPipeLogger = new ECLogger_Pipe(pipefds[1], child, atoi(lpConfig->GetSetting("log_level"))); // let destructor wait on child
