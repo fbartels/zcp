@@ -200,7 +200,10 @@ class FolderImporter:
                         self.attachments += 1
                         attach_text.append(plaintext.get(a, mimetype=a.mimetype, log=self.log))
                     attach_text.append(u' '+(a.filename or u''))
-            doc['mapi4096'] = item.body.text + u' ' + u' '.join(attach_text)
+            doc['mapi4096'] = item.body.text + u' ' + u' '.join(attach_text) # PR_BODY
+            doc['mapi3588'] = u' '.join([a.name + u' ' + a.email for a in item.to]) # PR_DISPLAY_TO
+            doc['mapi3587'] = u' '.join([a.name + u' ' + a.email for a in item.cc]) # PR_DISPLAY_CC
+            doc['mapi3586'] = u' '.join([a.name + u' ' + a.email for a in item.bcc]) # PR_DISPLAY_BCC
             doc['data'] = 'subject: %s\n' % item.subject
             db_put(self.mapping_db, item.sourcekey, '%s %s' % (storeid, item.folder.entryid)) # ICS doesn't remember which store a change belongs to..
             self.plugin.update(doc)
