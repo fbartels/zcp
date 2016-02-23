@@ -92,6 +92,7 @@
 #ifdef LINUX
 #include <zarafa/UnixUtil.h>
 #endif
+#include <zarafa/MAPIErrors.h>
 #include <zarafa/my_getopt.h>
 #include <zarafa/ecversion.h>
 #include <zarafa/Util.h>
@@ -1383,12 +1384,6 @@ int main(int argc, char *argv[]) {
 
 	bQuit = bMessagesWaiting = false;
 
-	hr = MAPIInitialize(NULL);
-	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to initialize");
-		goto exit;
-	}
-
 #ifdef LINUX
 	if (parseBool(g_lpConfig->GetSetting("coredump_enabled")))
 		unix_coredump_enable(g_lpLogger);
@@ -1414,6 +1409,13 @@ int main(int argc, char *argv[]) {
 	g_lpLogger = StartLoggerProcess(g_lpConfig, g_lpLogger);
 #endif
 	g_lpLogger->SetLogprefix(LP_PID);
+
+	hr = MAPIInitialize(NULL);
+	if (hr != hrSuccess) {
+		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to initialize MAPI: %s (%x)",
+			GetMAPIErrorMessage(hr), hr);
+		goto exit;
+	}
 
 #ifdef LINUX
 	if (!bForked) {
