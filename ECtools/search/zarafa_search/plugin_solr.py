@@ -14,6 +14,9 @@ class Plugin:
         self.solr = pysolr.Solr(index_path)
         self.data = []
 
+    def extract_terms(self, text):
+        return text.split()
+
     def search(self, server_guid, store_guid, folder_ids, fields_terms, query, log):
         log.info('performing query: %s' % query)
         return [r['docid'] for r in self.solr.search(query, fl=['docid'])], '' # XXX suggestions

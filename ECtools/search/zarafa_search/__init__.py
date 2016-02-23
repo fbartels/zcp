@@ -110,7 +110,7 @@ class SearchWorker(zarafa.Worker):
                     elif cmd == 'FIND':
                         pos = data.find(':')
                         fields = map(int, data[:pos].split()[1:])
-                        terms = data[pos+1:].split()
+                        terms = plugin.extract_terms(data[pos+1:])
                         if fields and terms:
                             fields_terms.append((fields, terms))
                         response(conn, 'OK:')
