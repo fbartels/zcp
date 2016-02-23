@@ -10,15 +10,16 @@ import zarafa
 
 def parser_opt_args():
     parser = zarafa.parser('skpc')
-    parser.add_option('--create-public-store', dest='public_store', action='store_true',  help='Create public store') # XXX: conflicts with socket
-    parser.add_option('--sync', dest='sync', action='store_true', help='Synchronize users and groups with external source.')
-    parser.add_option('-l', dest='list_users', action='store_true', help='List users. Use -I to list users of a specific company, if applicable.')
-    parser.add_option('-L', dest='list_companies', action='store_true', help='List users. Use -I to list users of a specific company, if applicable.')
-    parser.add_option('--details', dest='details', action='store', help='Show object details, use --type to indicate the object type.', metavar='NAME')
-    parser.add_option('--user-count', dest='usercount', action='store_true', help='Output the system users counts.')
+    parser.add_option('--create-public-store', dest='public_store', action='store_true',  help='Create public store')
+    parser.add_option('--sync', dest='sync', action='store_true', help='Synchronize users and groups with external source')
+    parser.add_option('--list-users', dest='list_users', action='store_true', help='List users')
+    parser.add_option('--list-companies', dest='list_companies', action='store_true', help='List companies')
+    parser.add_option('--list-stores', dest='list_stores', action='store_true', help='List stores')
+    parser.add_option('--user-details', dest='user_details', action='store', help='Show user details', metavar='NAME')
+    parser.add_option('--user-count', dest='usercount', action='store_true', help='Output the system users counts')
     # DB Plugin
-    parser.add_option('-g', dest='create_group', action='store', help='Create group, -e options optional.', metavar='NAME')
-    parser.add_option('-G', dest='delete_group', action='store', help='Delete group.', metavar='NAME')
+    parser.add_option('--create-group', dest='create_group', action='store', help='Create group, -e options optional', metavar='NAME')
+    parser.add_option('--delete-group', dest='delete_group', action='store', help='Delete group', metavar='NAME')
     return (parser,) + parser.parse_args()
 
 def main():
@@ -29,18 +30,32 @@ def main():
         server.sync_users()
 
     elif options.public_store:
-        server.create_store(public=True) # Handle already existing public store
+        if not server.public_store:
+            server.create_store(public=True)
+        else:
+            print 'public store already exists'
 
     elif options.list_users:
         for company in server.companies():
-            print 'User list for %s(%s):' % (company.name, len(list(company.users()))) # Missing SYSTEM in list
+            print 'User list for %s(%s):' % (company.name, len(list(company.users()))) # XXX SYSTEM user?
             print '\tUsername\tFullname\tHomeserver'
             print '\t'+'-' * 45
             for user in company.users():
-                print '\t%s\t%s\t%s' % (user.name, user.fullname, user.home_server) # FIXME formatting
+                print '\t%s\t%s\t%s' % (user.name, user.fullname, user.home_server) # XXX formatting
 
-    elif options.details:
-        user = server.user(options.details)
+    elif options.list_companies:
+        for company in server.companies():
+            print company.name
+
+    elif options.list_stores:
+        for company in server.companies():
+            print company.name
+            for user in company.users(): # XXX company.stores
+                print user.store.guid, user.name if user else ''
+            print company.public_store.guid + ' public'
+
+    elif options.user_details:
+        user = server.user(options.user_details)
         print 'Username:\t' + user.name
         print 'Fullname:\t' + user.fullname
         print 'Emailaddress:\t' + user.email
