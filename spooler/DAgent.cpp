@@ -4295,6 +4295,8 @@ int main(int argc, char *argv[]) {
 #endif
 
 		hr = running_service(argv[0], bDaemonize, &sDeliveryArgs);
+		if (hr != hrSuccess)
+			goto exit;
 	}
 	else {
 		// log process id prefix to distinguinsh events, file logger only affected
