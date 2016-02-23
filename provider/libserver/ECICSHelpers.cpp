@@ -913,6 +913,11 @@ ECRESULT ECGetContentChangesHelper::Finalize(unsigned int *lpulMaxChange, icsCha
 	
 	ASSERT(m_lpMsgProcessor != NULL);
 	ulMaxChange = m_lpMsgProcessor->GetMaxChangeId();
+
+	if(m_ulFlags & 0x80000) {
+		*lpulMaxChange = ulMaxChange;
+		goto exit;
+	}
 	
 	// If there were no changes and this was not the initial sync, we only need to purge all too-new-syncedmessages.
 	// If this is the initial sync, we might need to write the empty restricted set marker, so we can't
