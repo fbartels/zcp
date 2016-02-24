@@ -133,6 +133,7 @@
 #include <zarafa/CommonUtil.h>
 #include <zarafa/Util.h>
 #include <zarafa/ECLogger.h>
+#include <zarafa/MAPIErrors.h>
 #include <zarafa/my_getopt.h>
 #include <zarafa/restrictionutil.h>
 #include "rules.h"
@@ -4293,13 +4294,6 @@ int main(int argc, char *argv[]) {
 
 	sDeliveryArgs.sDeliveryOpts.default_charset = g_lpConfig->GetSetting("default_charset");
 
-	hr = MAPIInitialize(NULL);
-	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to initialize MAPI: %s (%x)",
-			GetMAPIErrorMessage(hr), hr);
-		goto exit;
-	}
-
 	if (bListenLMTP) {
 #ifdef _WIN32
 #if 0
@@ -4317,10 +4311,25 @@ int main(int argc, char *argv[]) {
 #endif
 
 		hr = running_service(argv[0], bDaemonize, &sDeliveryArgs);
+		if (hr != hrSuccess)
+			goto exit;
+		hr = MAPIInitialize(NULL);
+		if (hr != hrSuccess) {
+			g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to initialize MAPI: %s (%x)",
+				GetMAPIErrorMessage(hr), hr);
+			goto exit;
+		}
 	}
 	else {
 		// log process id prefix to distinguinsh events, file logger only affected
 		g_lpLogger->SetLogprefix(LP_PID);
+
+		hr = MAPIInitialize(NULL);
+		if (hr != hrSuccess) {
+			g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to initialize MAPI: %s (%x)",
+				GetMAPIErrorMessage(hr), hr);
+			goto exit;
+		}
 
 		sc = new StatsClient(g_lpConfig->GetSetting("z_statsd_stats"), g_lpLogger);
 

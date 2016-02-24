@@ -304,12 +304,6 @@ int main(int argc, char **argv) {
 	// initialize SSL threading
     ssl_threading_setup();
 
-	hr = MAPIInitialize(NULL);
-	if (hr != hrSuccess) {
-		fprintf(stderr, "Messaging API could not be initialized.");
-		goto exit;
-	}
-
 	hr = HrSetupListeners(&ulListenCalDAV, &ulListenCalDAVs);
 	if (hr != hrSuccess)
 		goto exit;
@@ -353,6 +347,12 @@ int main(int argc, char **argv) {
 		g_lpLogger->SetLogprefix(LP_TID);
 	ec_log_set(g_lpLogger);
 #endif
+	hr = MAPIInitialize(NULL);
+	if (hr != hrSuccess) {
+		fprintf(stderr, "Messaging API could not be initialized: %s (%x)",
+		        GetMAPIErrorMessage(hr), hr);
+		goto exit;
+	}
 
 	if (g_bThreads)
 		mainthread = pthread_self();

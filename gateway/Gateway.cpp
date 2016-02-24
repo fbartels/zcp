@@ -73,6 +73,7 @@
 
 #include <zarafa/ECLogger.h>
 #include <zarafa/ECConfig.h>
+#include <zarafa/MAPIErrors.h>
 #include <zarafa/my_getopt.h>
 
 #include <zarafa/ECChannel.h>
@@ -621,12 +622,6 @@ static HRESULT running_service(const char *szPath, const char *servicename)
     sigaction(SIGABRT, &act, NULL);
 #endif
 
-	// Setup MAPI
-	hr = MAPIInitialize(NULL);
-	if (hr != hrSuccess) {
-		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to initialize MAPI");
-		goto exit;
-	}
 #ifdef LINUX
     // Set max open file descriptors to FD_SETSIZE .. higher than this number
     // is a bad idea, as it will start breaking select() calls.
@@ -654,6 +649,12 @@ static HRESULT running_service(const char *szPath, const char *servicename)
 		g_lpLogger = StartLoggerProcess(g_lpConfig, g_lpLogger); // maybe replace logger
 	ec_log_set(g_lpLogger);
 #endif
+	hr = MAPIInitialize(NULL);
+	if (hr != hrSuccess) {
+		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to initialize MAPI: %s (%x)",
+			GetMAPIErrorMessage(hr), hr);
+		goto exit;
+	}
 
 	g_lpLogger->Log(EC_LOGLEVEL_ALWAYS, "Starting zarafa-gateway version " PROJECT_VERSION_GATEWAY_STR " (" PROJECT_SVN_REV_STR "), pid %d", getpid());
 
