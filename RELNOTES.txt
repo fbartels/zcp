@@ -23,7 +23,9 @@ Enhancements:
 * backup-plus: technology preview for a new implementation of a
   backup utility
 
+* Elliptic Curve Diffie Hellman Exchange support for TLS
 * dagent: new "mr_autoprocess" parameter available for dagent.cfg
+* dagent/spooler: add anti-loop headers for Exchange and Vacation
 * python: support UTF-8 in .vcf files
 
 Fixes:
@@ -31,6 +33,7 @@ Fixes:
 * inetmapi: The MAPI to Internet Email translator avoids emitting
   mails for invalid addresses (e.g. no '@' in it). This way, spooler
   won't spam the SMTP server with unhandlable mails.
+* gateway: improved IMAP RFC conformance
 
 Changes:
 
