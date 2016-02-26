@@ -298,8 +298,12 @@ const char *ECConfigImpl::GetMapEntry(const settingmap_t *lpMap,
     const char *szName)
 {
 	const char *retval = NULL;
-	if (szName) { // feeding NULL pointers, either as source or destinateion, to strcpy() segfaults
+	if (szName) {
 		settingkey_t key = { { 0 }, 0, 0 };
+
+		if (strlen(szName) >= sizeof(key.s))
+			return NULL;
+
 		strcpy(key.s, szName);
 
 		pthread_rwlock_rdlock(&m_settingsRWLock);
