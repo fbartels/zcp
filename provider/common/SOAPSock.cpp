@@ -117,6 +117,11 @@ static int gsoap_connect_pipe(struct soap *soap, const char *endpoint,
 	fd = socket(PF_UNIX, SOCK_STREAM, 0);
 
 	saddr.sun_family = AF_UNIX;
+
+	// >= because there also needs to be room for the 0x00
+	if (strlen(socket_name) >= sizeof(saddr.sun_path))
+		return SOAP_EOF;
+
 	strncpy(saddr.sun_path, socket_name, sizeof(saddr.sun_path));
 
 	connect(fd, (struct sockaddr *)&saddr, sizeof(struct sockaddr_un));
