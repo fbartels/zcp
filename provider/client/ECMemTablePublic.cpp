@@ -171,12 +171,11 @@ static LONG __stdcall AdviseShortCutCallback(void *lpContext, ULONG cNotif,
 						break;
 
 					lpMemTablePublic->ModifyRow(&lpRows->aRow[0].lpProps[SC_INSTANCE_KEY].Value.bin, &lpRows->aRow[0]);
-
-					if (lpRows){ FreeProws(lpRows); lpRows = NULL; }
-
-				} //while(true)
-				
+					FreeProws(lpRows);
+					lpRows = NULL;
+				}
 				break;
+
 			default:
 				break;
 		}
@@ -311,10 +310,9 @@ HRESULT ECMemTablePublic::Init(ULONG ulFlags)
 				break;
 
 			ModifyRow(&lpRows->aRow[0].lpProps[SC_INSTANCE_KEY].Value.bin, &lpRows->aRow[0]);
-
-			if (lpRows){ FreeProws(lpRows); lpRows = NULL; }
-
-		} //while(true)
+			FreeProws(lpRows);
+			lpRows = NULL;
+		}
 
 		hr = lpShortcutTable->QueryInterface(IID_IMAPITable, (void **)&m_lpShortcutTable);
 		if (hr != hrSuccess)

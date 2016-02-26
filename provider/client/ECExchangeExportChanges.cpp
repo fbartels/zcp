@@ -1098,10 +1098,8 @@ HRESULT ECExchangeExportChanges::ExportMessageChangesSlow() {
 				lpSourceAttach = NULL;
 			}
 
-			if(lpDestAttach){
-				lpDestAttach->Release();
-				lpDestAttach = NULL;
-			}
+			lpDestAttach->Release();
+			lpDestAttach = NULL;
 		}
 
 		if(lpRows){

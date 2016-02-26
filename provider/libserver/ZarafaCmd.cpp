@@ -9854,10 +9854,7 @@ exit:
 	if(er == ZARAFA_E_NO_ACCESS)
 		ec_log_err("Failed to remove store access denied");
 	else if(er != erSuccess) {
-
-		if(lpDatabase)
-			lpDatabase->Rollback();
-
+		lpDatabase->Rollback();
 		ec_log_err("Failed to remove store, errorcode=0x%08X", er);
 	}
 }
