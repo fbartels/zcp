@@ -388,9 +388,9 @@ HRESULT ICalToMapiImpl::GetFreeBusyInfo(time_t *lptstart, time_t *lptend, std::s
 	if (!m_bHaveFreeBusy)
 		return MAPI_E_NOT_FOUND;
 
-	if (lptstart)
-		*lptend = m_tFbEnd;
 	if (lptend)
+		*lptend = m_tFbEnd;
+	if (lptstart != NULL)
 		*lptstart = m_tFbStart;
 	if (lpstrUID)
 		*lpstrUID = m_strUID;
