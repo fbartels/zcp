@@ -2840,29 +2840,17 @@ exit:
 
 HRESULT ECMsgStore::HookStore(ULONG ulStoreType, ULONG cbUserId, LPENTRYID lpUserId, LPGUID lpGuid)
 {
-	HRESULT			hr = hrSuccess;
-
-	hr = lpTransport->HrHookStore(ulStoreType, cbUserId, lpUserId, lpGuid, 0);
-
-	return hr;
+	return lpTransport->HrHookStore(ulStoreType, cbUserId, lpUserId, lpGuid, 0);
 }
 
 HRESULT ECMsgStore::UnhookStore(ULONG ulStoreType, ULONG cbUserId, LPENTRYID lpUserId)
 {
-	HRESULT	hr = hrSuccess;
-
-	hr = lpTransport->HrUnhookStore(ulStoreType, cbUserId, lpUserId, 0);
-
-	return hr;
+	return lpTransport->HrUnhookStore(ulStoreType, cbUserId, lpUserId, 0);
 }
 
 HRESULT ECMsgStore::RemoveStore(LPGUID lpGuid)
 {
-	HRESULT			hr = hrSuccess;
-
-	hr = lpTransport->HrRemoveStore(lpGuid, 0);
-
-	return hr;
+	return lpTransport->HrRemoveStore(lpGuid, 0);
 }
 
 HRESULT ECMsgStore::ResolveStore(LPGUID lpGuid, ULONG *lpulUserID, ULONG* lpcbStoreID, LPENTRYID* lppStoreID)
