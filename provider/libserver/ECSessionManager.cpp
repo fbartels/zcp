@@ -717,12 +717,11 @@ ECRESULT ECSessionManager::RegisterSession(ECAuthSession *lpAuthSession, ECSESSI
 {
 	ECRESULT	er = erSuccess;
 	ECSession	*lpSession = NULL;
-	ECSessionGroup *lpSessionGroup = NULL;
 	ECSESSIONID	newSID = 0;
 
 	er = lpAuthSession->CreateECSession(sessionGroupID, szClientVersion ? szClientVersion : "", szClientApp ? szClientApp : "", szClientApplicationVersion ? szClientApplicationVersion : "", szClientApplicationMisc ? szClientApplicationMisc : "", &newSID, &lpSession);
 	if (er != erSuccess)
-		goto exit;
+		return er;
 
 	if (fLockSession)
 		lpSession->Lock();
@@ -735,11 +734,6 @@ ECRESULT ECSessionManager::RegisterSession(ECAuthSession *lpAuthSession, ECSESSI
 	*lppSession = lpSession;
 
 	g_lpStatsCollector->Increment(SCN_SESSIONS_CREATED);
-	
-exit:
-	/* SessionGroup could have been created for this session, if creation failed, just kill it immediately */
-	if (er != erSuccess && lpSessionGroup)
-		DeleteIfOrphaned(lpSessionGroup);
 
 	return er;
 }
