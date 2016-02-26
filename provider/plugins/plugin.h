@@ -71,10 +71,7 @@ using namespace std;
 
 #include <zarafa/ECLogger.h>
 #define LOG_PLUGIN_DEBUG(_msg, ...) \
-	do { \
-		if (ec_log_get()->Log(EC_LOGLEVEL_DEBUG | EC_LOGLEVEL_PLUGIN)) \
-			ec_log(EC_LOGLEVEL_DEBUG | EC_LOGLEVEL_PLUGIN, "plugin: " _msg, ##__VA_ARGS__); \
-	} while (false)
+	ec_log(EC_LOGLEVEL_DEBUG | EC_LOGLEVEL_PLUGIN, "plugin: " _msg, ##__VA_ARGS__)
 
 /**
  * The objectsignature combines the object id with the

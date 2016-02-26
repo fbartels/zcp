@@ -68,20 +68,11 @@ static const char THIS_FILE[] = __FILE__;
 #include <algorithm>
 
 #define LOG_CACHE_DEBUG(_msg, ...) \
-	do { \
-		if (ec_log_get()->Log(EC_LOGLEVEL_DEBUG | EC_LOGLEVEL_CACHE)) \
-			ec_log(EC_LOGLEVEL_DEBUG | EC_LOGLEVEL_CACHE, "cache: " _msg, ##__VA_ARGS__); \
-	} while (false)
+	ec_log(EC_LOGLEVEL_DEBUG | EC_LOGLEVEL_CACHE, "cache: " _msg, ##__VA_ARGS__)
 #define LOG_USERCACHE_DEBUG(_msg, ...) \
-	do { \
-		if (ec_log_get()->Log(EC_LOGLEVEL_DEBUG | EC_LOGLEVEL_USERCACHE)) \
-			ec_log(EC_LOGLEVEL_DEBUG | EC_LOGLEVEL_USERCACHE, "usercache: " _msg, ##__VA_ARGS__); \
-	} while (false)
+	ec_log(EC_LOGLEVEL_DEBUG | EC_LOGLEVEL_USERCACHE, "usercache: " _msg, ##__VA_ARGS__)
 #define LOG_CELLCACHE_DEBUG(_msg, ...) \
-	do { \
-		if (ec_log_get()->Log(EC_LOGLEVEL_DEBUG | EC_LOGLEVEL_CACHE)) \
-			ec_log(EC_LOGLEVEL_DEBUG | EC_LOGLEVEL_CACHE, "cellcache: " _msg, ##__VA_ARGS__); \
-	} while (false)
+	ec_log(EC_LOGLEVEL_DEBUG | EC_LOGLEVEL_CACHE, "cellcache: " _msg, ##__VA_ARGS__)
 
 // Specialization for ECsACL
 template<>

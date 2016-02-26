@@ -85,10 +85,7 @@ static const char THIS_FILE[] = __FILE__;
 #endif
 
 #define LOG_SQL_DEBUG(_msg, ...) \
-	do { \
-		if (ec_log_get()->Log(EC_LOGLEVEL_DEBUG | EC_LOGLEVEL_SQL)) \
-			ec_log(EC_LOGLEVEL_DEBUG | EC_LOGLEVEL_SQL, _msg, ##__VA_ARGS__); \
-	} while (false)
+	ec_log(EC_LOGLEVEL_DEBUG | EC_LOGLEVEL_SQL, _msg, ##__VA_ARGS__)
 
 // The maximum packet size. This is automatically also the maximum
 // size of a single entry in the database. This means that PR_BODY, PR_COMPRESSED_RTF

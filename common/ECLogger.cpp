@@ -1272,6 +1272,8 @@ bool ec_log_has_target(void)
 
 void ec_log(unsigned int level, const char *fmt, ...)
 {
+	if (!ec_log_target->Log(level))
+		return;
 	va_list argp;
 	va_start(argp, fmt);
 	ec_log_target->LogVA(level, fmt, argp);

@@ -126,10 +126,7 @@
 #define STROUT_FIX_CPY(s) (bSupportUnicode ? s_strcpy(soap, (s)) : ECStringCompat::UTF8_to_WTF1252(soap, (s)))
 
 #define LOG_SOAP_DEBUG(_msg, ...) \
-	do { \
-		if (ec_log_get()->Log(EC_LOGLEVEL_DEBUG | EC_LOGLEVEL_SOAP)) \
-			ec_log(EC_LOGLEVEL_DEBUG | EC_LOGLEVEL_SOAP, "soap: " _msg, ##__VA_ARGS__); \
-	} while (false)
+	ec_log(EC_LOGLEVEL_DEBUG | EC_LOGLEVEL_SOAP, "soap: " _msg, ##__VA_ARGS__)
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
