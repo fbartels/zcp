@@ -63,6 +63,9 @@ static const char THIS_FILE[] = __FILE__;
 // Convert search criteria of zarafa version 5.2x to 6
 ECRESULT ConvertSearchCriteria52XTo6XX(ECDatabase *lpDatabase, char* lpData, struct searchCriteria **lppNewSearchCriteria)
 {
+	if (lpDatabase == NULL || lpData == NULL || lppNewSearchCriteria == NULL)
+		return ZARAFA_E_INVALID_PARAMETER;
+
 	ECRESULT er = erSuccess;
 	
 	DB_ROW lpDBRow = NULL;
@@ -77,11 +80,6 @@ ECRESULT ConvertSearchCriteria52XTo6XX(ECDatabase *lpDatabase, char* lpData, str
 
 	std::string xmldata(lpData);
 	std::istringstream xml(xmldata);
-
-	if (lpDatabase == NULL || lpData == NULL || lppNewSearchCriteria == NULL) {
-		er = ZARAFA_E_INVALID_PARAMETER;
-		goto exit;
-	}
 
 	// We use the soap serializer / deserializer to store the data
 	soap_set_mode(&xmlsoap, SOAP_XML_TREE | SOAP_C_UTFSTRING);
