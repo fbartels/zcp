@@ -923,6 +923,14 @@ Looks at command-line to see if another server address or other related options 
         self.sa.GetCompanyList(MAPI_UNICODE) # XXX exception for single-tenant....
         return MAPI.Util.AddressBook.GetCompanyList(self.mapisession, MAPI_UNICODE)
 
+    @property
+    def multitenant(self):
+        try:
+            self._companylist()
+            return True
+        except MAPIErrorNoSupport:
+            return False
+
     def companies(self, remote=False, parse=True): # XXX remote?
         """ Return all :class:`companies <Company>` on server
 
@@ -1079,6 +1087,9 @@ def store(guid):
 def stores(*args, **kwargs):
     return Server().stores(*args, **kwargs)
 
+def companies(*args, **kwargs):
+    return Server().companies(*args, **kwargs)
+
 class Group(object):
     def __init__(self, name, server=None):
         self.server = server or Server()
@@ -1203,6 +1214,18 @@ class Company(object):
             return self.public_store
         else:
             return self.server.store(guid)
+
+    def stores(self):
+        if self.server.multitenant:
+            table = self.server.sa.OpenUserStoresTable(MAPI_UNICODE)
+            table.Restrict(SPropertyRestriction(RELOP_EQ, PR_EC_COMPANY_NAME_W, SPropValue(PR_EC_COMPANY_NAME_W, self.name)), TBL_BATCH)
+            for row in table.QueryRows(-1,0):
+                prop = PpropFindProp(row, PR_EC_STOREGUID)
+                if prop:
+                    yield Store(prop.Value.encode('hex'), self.server)
+        else:
+            for store in self.server.stores():
+                yield store
 
     @property
     def public_store(self):
