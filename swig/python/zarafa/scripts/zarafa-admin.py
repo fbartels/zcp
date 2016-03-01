@@ -36,23 +36,25 @@ def main():
             print 'public store already exists'
 
     elif options.list_users:
-        for company in server.companies():
-            print 'User list for %s(%s):' % (company.name, len(list(company.users()))) # XXX SYSTEM user?
-            print '\tUsername\tFullname\tHomeserver'
-            print '\t'+'-' * 45
-            for user in company.users():
-                print '\t%s\t%s\t%s' % (user.name, user.fullname, user.home_server) # XXX formatting
+        fmt = '{:>16}{:>20}{:>40}'
+        print fmt.format('User', 'Full Name', 'Store')
+        print 76*'-'
+        for user in server.users():
+            print fmt.format(user.name, user.fullname, user.store.guid)
 
     elif options.list_companies:
+        fmt = '{:>16}'
+        print fmt.format('Company')
+        print 16*'-'
         for company in server.companies():
-            print company.name
+            print fmt.format(company.name)
 
     elif options.list_stores:
-        for company in server.companies():
-            print company.name
-            for user in company.users(): # XXX company.stores
-                print user.store.guid, user.name if user else ''
-            print company.public_store.guid + ' public'
+        fmt = '{:>40}'+'{:>16}'*3
+        print fmt.format('Store', 'User', 'Public', 'Orphan')
+        print 64*'-'
+        for store in server.stores():
+            print fmt.format(store.guid, store.user.name if store.user else '', store.public, store.orphan)
 
     elif options.user_details:
         user = server.user(options.user_details)
@@ -61,6 +63,7 @@ def main():
         print 'Emailaddress:\t' + user.email
         print 'Active:\t\t' + ('yes' if user.active else 'no')
         print 'Features:\t' + '; '.join(user.features)
+        print 'Store:\t\t' + user.store.guid
 
     elif options.usercount:
         stats = server.table(PR_EC_STATSTABLE_SYSTEM).dict_(PR_DISPLAY_NAME, PR_EC_STATS_SYSTEM_VALUE)
