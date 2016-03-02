@@ -64,25 +64,19 @@ static const char THIS_FILE[]=__FILE__;
  */
 HRESULT WSMessageStreamSink::Create(ECFifoBuffer *lpFifoBuffer, ULONG ulTimeout, WSMessageStreamImporter *lpImporter, WSMessageStreamSink **lppSink)
 {
-	HRESULT hr = hrSuccess;
 	WSMessageStreamSinkPtr ptrSink;
 
-	if (lpFifoBuffer == NULL || lppSink == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (lpFifoBuffer == NULL || lppSink == NULL)
+		return MAPI_E_INVALID_PARAMETER;
 
 	try {
 		ptrSink.reset(new WSMessageStreamSink(lpFifoBuffer, ulTimeout, lpImporter));
 	} catch (const std::bad_alloc &) {
-		hr = MAPI_E_NOT_ENOUGH_MEMORY;
-		goto exit;
+		return MAPI_E_NOT_ENOUGH_MEMORY;
 	}
 
 	*lppSink = ptrSink.release();
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 /**
@@ -196,46 +190,31 @@ exit:
 
 HRESULT WSMessageStreamImporter::StartTransfer(WSMessageStreamSink **lppSink)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	WSMessageStreamSinkPtr ptrSink;
 	
-	if (m_threadPool.dispatch(this) == false) {
-		hr = MAPI_E_CALL_FAILED;
-		goto exit;
-	}
+	if (!m_threadPool.dispatch(this))
+		return MAPI_E_CALL_FAILED;
 
 	hr = WSMessageStreamSink::Create(&m_fifoBuffer, m_ulTimeout, this, &ptrSink);
 	if (hr != hrSuccess) {
 		m_fifoBuffer.Close(ECFifoBuffer::cfWrite);
-		goto exit;
+		return hr;
 	}
 
 	AddChild(ptrSink);
-
 	*lppSink = ptrSink.release();
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT WSMessageStreamImporter::GetAsyncResult(HRESULT *lphrResult)
 {
-	HRESULT hr = hrSuccess;
-
-	if (lphrResult == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
-
-	if (wait(m_ulTimeout) == false) {
-		hr = MAPI_E_TIMEOUT;
-		goto exit;
-	}
-
+	if (lphrResult == NULL)
+		return MAPI_E_INVALID_PARAMETER;
+	if (!wait(m_ulTimeout))
+		return MAPI_E_TIMEOUT;
 	*lphrResult = m_hr;
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 WSMessageStreamImporter::WSMessageStreamImporter(ULONG ulFlags, ULONG ulSyncId, const entryId &sEntryId, const entryId &sFolderEntryId, bool bNewMessage, const propVal &sConflictItems, WSTransport *lpTransport, ULONG ulBufferSize, ULONG ulTimeout)

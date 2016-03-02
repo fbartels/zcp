@@ -1038,26 +1038,21 @@ Zarafa entryid functions
 
 HRESULT HrCreateEntryId(GUID guidStore, unsigned int ulObjType, ULONG* lpcbEntryId, LPENTRYID* lppEntryId)
 {
-	HRESULT		hr = hrSuccess;
+	HRESULT		hr;
 	EID			eid;
 	ULONG		cbEntryId = 0;
 	LPENTRYID	lpEntryId = NULL;
 
-	if(lpcbEntryId == NULL || lppEntryId == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
-
-	if(CoCreateGuid(&eid.uniqueId) != hrSuccess) {
-		hr = MAPI_E_CALL_FAILED;
-		goto exit;
-	}
+	if (lpcbEntryId == NULL || lppEntryId == NULL)
+		return MAPI_E_INVALID_PARAMETER;
+	if (CoCreateGuid(&eid.uniqueId) != hrSuccess)
+		return MAPI_E_CALL_FAILED;
 
 	cbEntryId = CbNewEID("");
 
 	hr = ECAllocateBuffer(cbEntryId, (void**)&lpEntryId); 
 	if(hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	eid.guid = guidStore;
 	eid.usType = ulObjType;
@@ -1066,10 +1061,7 @@ HRESULT HrCreateEntryId(GUID guidStore, unsigned int ulObjType, ULONG* lpcbEntry
 
 	*lpcbEntryId = cbEntryId;
 	*lppEntryId = lpEntryId;
-
-exit:
-
-	return hr;
+	return hrSuccess;
 }
 
 /**
@@ -1089,7 +1081,6 @@ exit:
  */
 HRESULT HrGetServerURLFromStoreEntryId(ULONG cbEntryId, LPENTRYID lpEntryId, std::string& rServerPath, bool *lpbIsPseudoUrl)
 {
-	HRESULT	hr = hrSuccess;
 	PEID	peid = (PEID)lpEntryId;
 	EID_V0*	peid_V0 = NULL;
 
@@ -1098,10 +1089,8 @@ HRESULT HrGetServerURLFromStoreEntryId(ULONG cbEntryId, LPENTRYID lpEntryId, std
 	char*	lpTmpServerName = NULL;
 	bool	bIsPseudoUrl = false;
 
-	if (lpEntryId == NULL || lpbIsPseudoUrl == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (lpEntryId == NULL || lpbIsPseudoUrl == NULL)
+		return MAPI_E_INVALID_PARAMETER;
 
 	if (peid->ulVersion == 0) 
 	{
@@ -1116,26 +1105,18 @@ HRESULT HrGetServerURLFromStoreEntryId(ULONG cbEntryId, LPENTRYID lpEntryId, std
 		lpTmpServerName = (char*)peid->szServer;
 	}
 
-	if (ulSize >= ulMaxSize) {
-		hr = MAPI_E_NOT_FOUND;
-		goto exit;
-	}
-
+	if (ulSize >= ulMaxSize)
+		return MAPI_E_NOT_FOUND;
 	if (strnicmp(lpTmpServerName, "pseudo://", 9) == 0)
 		bIsPseudoUrl = true;
 	else if (strnicmp(lpTmpServerName, "http://", 7) && 
 			 strnicmp(lpTmpServerName, "https://", 8) && 
 			 strnicmp(lpTmpServerName, "file://", 7))
-	{
-		hr = MAPI_E_NOT_FOUND;
-		goto exit;
-	}
+		return MAPI_E_NOT_FOUND;
 
 	rServerPath = lpTmpServerName;
 	*lpbIsPseudoUrl = bIsPseudoUrl;
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 /**

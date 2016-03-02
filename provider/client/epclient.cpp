@@ -197,11 +197,11 @@ BOOL CZarafaApp::InitInstance()
 
 	// Get HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\CommonFilesDir
 	if(RegOpenKeyEx(HKEY_LOCAL_MACHINE, _T("SOFTWARE\\Microsoft\\Windows\\CurrentVersion"), 0, KEY_READ, &hKey) != ERROR_SUCCESS)
-		goto exit;
+		return false;
 
 	cbDir = MAX_PATH;
 	if(RegQueryValueEx(hKey, _T("CommonFilesDir"), NULL, NULL, szDir, &cbDir) != ERROR_SUCCESS)
-		goto exit;
+		return false;
 
 	RegCloseKey(hKey);
 
@@ -241,11 +241,7 @@ BOOL CZarafaApp::InitInstance()
 	}*/
 
 	ssl_threading_setup();
-
-	bResult = CWinApp::InitInstance();
-
-exit:
-	return bResult;
+	return CWinApp::InitInstance();
 }
 
 int CZarafaApp::ExitInstance()
@@ -695,7 +691,7 @@ exit:
 static HRESULT UpdateProviders(LPPROVIDERADMIN lpAdminProviders,
     const sGlobalProfileProps &sProfileProps)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 
 	ProfSectPtr		ptrProfSect;
 	MAPITablePtr	ptrTable;
@@ -705,18 +701,16 @@ static HRESULT UpdateProviders(LPPROVIDERADMIN lpAdminProviders,
 	// Get the provider table
 	hr = lpAdminProviders->GetProviderTable(0, &ptrTable);
 	if(hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	// Get the rows
 	hr = ptrTable->QueryRows(0xFF, 0, &ptrRows);
 	if(hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	//Check if exist one or more rows
-	if(ptrRows.size() == 0) {
-		hr = MAPI_E_NOT_FOUND;
-		goto exit;
-	}
+	if (ptrRows.size() == 0)
+		return MAPI_E_NOT_FOUND;
 
 	// Scan the rows for message stores
 	for(ULONG curRow = 0; curRow < ptrRows.size(); curRow++)
@@ -731,18 +725,16 @@ static HRESULT UpdateProviders(LPPROVIDERADMIN lpAdminProviders,
 
 		hr = lpAdminProviders->OpenProfileSection((MAPIUID *)lpsProviderUID->Value.bin.lpb, NULL, MAPI_MODIFY, &ptrProfSect);
 		if(hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		// Set already PR_PROVIDER_UID, ignore error
 		HrSetOneProp(ptrProfSect, lpsProviderUID);
 
 		hr = InitializeProvider(lpAdminProviders, ptrProfSect, sProfileProps, NULL, NULL);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 	}
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 // Called by MAPI to configure, or create a service
