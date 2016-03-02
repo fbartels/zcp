@@ -298,22 +298,20 @@ const char *ECConfigImpl::GetMapEntry(const settingmap_t *lpMap,
     const char *szName)
 {
 	const char *retval = NULL;
-	if (szName) {
-		settingkey_t key = { { 0 }, 0, 0 };
+	if (szName == NULL)
+		return NULL;
 
-		if (strlen(szName) >= sizeof(key.s))
-			return NULL;
+	settingkey_t key = {""};
+	if (strlen(szName) >= sizeof(key.s))
+		return NULL;
 
-		strcpy(key.s, szName);
+	strcpy(key.s, szName);
+	pthread_rwlock_rdlock(&m_settingsRWLock);
 
-		pthread_rwlock_rdlock(&m_settingsRWLock);
-
-		settingmap_t::const_iterator itor = lpMap->find(key);
-		if (itor != lpMap->end())
-			retval = itor->second;
-		
-		pthread_rwlock_unlock(&m_settingsRWLock);
-	}
+	settingmap_t::const_iterator itor = lpMap->find(key);
+	if (itor != lpMap->end())
+		retval = itor->second;
+	pthread_rwlock_unlock(&m_settingsRWLock);
 	return retval;
 }
 
