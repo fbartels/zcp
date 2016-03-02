@@ -57,6 +57,7 @@ import fnmatch
 import lockfile
 import daemon.pidlockfile
 import datetime
+from functools import wraps
 import grp
 try:
     import libcommon # XXX distribute with python-mapi? or rewrite functionality here?
@@ -120,6 +121,7 @@ PSETID_Meeting = DEFINE_GUID(0x6ED8DA90, 0x450B, 0x101B,0x98, 0xDA, 0x00, 0xAA, 
 
 NAMED_PROPS_INTERNET_HEADERS = [MAPINAMEID(PS_INTERNET_HEADERS, MNID_STRING, u'x-original-to'),]
 NAMED_PROPS_ARCHIVER = [MAPINAMEID(PSETID_Archive, MNID_STRING, u'store-entryids'), MAPINAMEID(PSETID_Archive, MNID_STRING, u'item-entryids'), MAPINAMEID(PSETID_Archive, MNID_STRING, u'stubbed'),]
+NAMED_PROP_CATEGORY = MAPINAMEID(PS_PUBLIC_STRINGS, MNID_STRING, u'Keywords')
 
 GUID_NAMESPACE = {
     PSETID_Archive: 'archive',
@@ -449,6 +451,21 @@ class ZarafaLogonException(ZarafaException):
 class ZarafaNotSupported(ZarafaException):
     pass
 
+class PersistentList(list):
+    def __init__(self, mapiobj, proptag, *args, **kwargs):
+        self.mapiobj = mapiobj
+        self.proptag = proptag
+        for attr in ('append', 'extend', 'insert', 'pop', 'remove', 'reverse', 'sort'):
+            setattr(self, attr, self._autosave(getattr(self, attr)))
+        list.__init__(self, *args, **kwargs)
+    def _autosave(self, func):
+        @wraps(func)
+        def _func(*args, **kwargs):
+            ret = func(*args, **kwargs)
+            self.mapiobj.SetProps([SPropValue(self.proptag, self)])
+            self.mapiobj.SaveChanges(KEEP_OPEN_READWRITE)
+            return ret
+        return _func
 
 class SPropDelayedValue(SPropValue):
     def __init__(self, mapiobj, proptag):
@@ -2171,6 +2188,23 @@ class Item(object):
             self.mapiobj.SetReadFlag(0)
         else:
             self.mapiobj.SetReadFlag(CLEAR_READ_FLAG)
+
+    @property
+    def categories(self):
+        proptag = self.mapiobj.GetIDsFromNames([NAMED_PROP_CATEGORY], MAPI_CREATE)[0]
+        proptag = CHANGE_PROP_TYPE(proptag, PT_MV_STRING8)
+        try:
+            value = self.prop(proptag).value
+        except MAPIErrorNotFound:
+            value = []
+        return PersistentList(self.mapiobj, proptag, value)
+
+    @categories.setter
+    def categories(self, value):
+        proptag = self.mapiobj.GetIDsFromNames([NAMED_PROP_CATEGORY], MAPI_CREATE)[0]
+        proptag = CHANGE_PROP_TYPE(proptag, PT_MV_STRING8)
+        self.mapiobj.SetProps([SPropValue(proptag, list(value))])
+        self.mapiobj.SaveChanges(KEEP_OPEN_READWRITE)
 
     @property
     def folder(self):
