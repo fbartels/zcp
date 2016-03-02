@@ -291,7 +291,7 @@ exit:
  */
 HRESULT ECChangeAdvisor::PurgeStates()
 {
-	HRESULT				hr = hrSuccess;
+	HRESULT hr;
 	ECLISTSYNCID		lstSyncId;
 	ECLISTSYNCSTATE		lstSyncState;
 	SyncStateMap		mapChangeId;
@@ -303,7 +303,7 @@ HRESULT ECChangeAdvisor::PurgeStates()
 	std::transform(m_mapConnections.begin(), m_mapConnections.end(), std::back_inserter(lstSyncId), &GetSyncId);
 	hr = m_lpMsgStore->m_lpNotifyClient->UpdateSyncStates(lstSyncId, &lstSyncState);
 	if (hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	// Create a map based on the returned sync states
 	std::transform(lstSyncState.begin(), lstSyncState.end(), std::inserter(mapChangeId, mapChangeId.begin()), &ConvertSyncState);
@@ -317,9 +317,7 @@ HRESULT ECChangeAdvisor::PurgeStates()
 		m_mapConnections.erase(iterObsolete->first);
 		m_mapSyncStates.erase(iterObsolete->first);
 	}
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECChangeAdvisor::UpdateState(LPSTREAM lpStream)
@@ -385,15 +383,10 @@ HRESULT ECChangeAdvisor::AddKeys(LPENTRYLIST lpEntryList)
 	ECLISTCONNECTION::iterator	iterConnection;
 	ECLISTSYNCSTATE				listSyncStates;
 
-	if (m_lpChangeAdviseSink == NULL && !(m_ulFlags & SYNC_CATCHUP)) {
-		hr = MAPI_E_UNCONFIGURED;
-		goto exit;
-	}
-
-	if (lpEntryList == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (m_lpChangeAdviseSink == NULL && !(m_ulFlags & SYNC_CATCHUP))
+		return MAPI_E_UNCONFIGURED;
+	if (lpEntryList == NULL)
+		return MAPI_E_INVALID_PARAMETER;
 
 	pthread_mutex_lock(&m_hConnectionLock);
 
@@ -430,8 +423,6 @@ HRESULT ECChangeAdvisor::AddKeys(LPENTRYLIST lpEntryList)
 	}
 
 	pthread_mutex_unlock(&m_hConnectionLock);
-
-exit:
 	return hr;
 }
 

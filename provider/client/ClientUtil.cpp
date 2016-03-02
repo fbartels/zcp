@@ -1166,26 +1166,13 @@ exit:
 
 HRESULT HrCompareEntryIdWithStoreGuid(ULONG cbEntryID, LPENTRYID lpEntryID, LPCGUID guidStore)
 {
-	HRESULT hr = hrSuccess;
-
-	if (lpEntryID == NULL || guidStore == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
-
-	if (cbEntryID < 20) {
-		hr = MAPI_E_INVALID_ENTRYID;
-		goto exit;
-	}
-
-	if (memcmp(lpEntryID->ab, guidStore, sizeof(GUID)) != 0) {
-		hr = MAPI_E_INVALID_ENTRYID;
-		goto exit;
-	}
-
-exit:
-
-	return hr;
+	if (lpEntryID == NULL || guidStore == NULL)
+		return MAPI_E_INVALID_PARAMETER;
+	if (cbEntryID < 20)
+		return MAPI_E_INVALID_ENTRYID;
+	if (memcmp(lpEntryID->ab, guidStore, sizeof(GUID)) != 0)
+		return MAPI_E_INVALID_ENTRYID;
+	return hrSuccess;
 }
 
 HRESULT GetPublicEntryId(enumPublicEntryID ePublicEntryID, GUID guidStore, void *lpBase, ULONG *lpcbEntryID, LPENTRYID *lppEntryID)
@@ -1208,16 +1195,12 @@ HRESULT GetPublicEntryId(enumPublicEntryID ePublicEntryID, GUID guidStore, void 
 			eid.uniqueId.Data4[7] = 3;
 			break;
 		default:
-			hr = MAPI_E_INVALID_PARAMETER;
-			goto exit;
-			break;
+			return MAPI_E_INVALID_PARAMETER;
 	}
 
 
-	if (lpcbEntryID == NULL || lppEntryID == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (lpcbEntryID == NULL || lppEntryID == NULL)
+		return MAPI_E_INVALID_PARAMETER;
 
 	cbEntryID = CbEID(&eid);
 
@@ -1226,15 +1209,13 @@ HRESULT GetPublicEntryId(enumPublicEntryID ePublicEntryID, GUID guidStore, void 
 	else
 		hr = MAPIAllocateBuffer(cbEntryID, (void**)&lpEntryID);
 	if (hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	memcpy(lpEntryID, &eid, cbEntryID);
 
 	*lpcbEntryID = cbEntryID;
 	*lppEntryID = lpEntryID;
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 BOOL CompareMDBProvider(LPBYTE lpguid, const GUID *lpguidZarafa) {

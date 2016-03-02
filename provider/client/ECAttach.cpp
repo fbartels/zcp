@@ -113,12 +113,10 @@ HRESULT ECAttach::QueryInterface(REFIID refiid, void **lppInterface)
 
 HRESULT ECAttach::SaveChanges(ULONG ulFlags)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 
-	if (!fModify) {
-		hr = MAPI_E_NO_ACCESS;
-		goto exit;
-	}
+	if (!fModify)
+		return MAPI_E_NO_ACCESS;
 
 	if (!lstProps || lstProps->find(PROP_ID(PR_RECORD_KEY)) == lstProps->end()) {
 		GUID guid;
@@ -132,13 +130,9 @@ HRESULT ECAttach::SaveChanges(ULONG ulFlags)
 
 		hr = HrSetRealProp(&sPropVal);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 	}
-
-	hr = ECMAPIProp::SaveChanges(ulFlags);
-
-exit:
-	return hr;
+	return ECMAPIProp::SaveChanges(ulFlags);
 }
 
 HRESULT ECAttach::OpenProperty(ULONG ulPropTag, LPCIID lpiid, ULONG ulInterfaceOptions, ULONG ulFlags, LPUNKNOWN FAR * lppUnk)

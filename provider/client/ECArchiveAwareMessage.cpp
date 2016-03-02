@@ -87,20 +87,14 @@ private:
 
 HRESULT ECArchiveAwareMessageFactory::Create(ECMsgStore *lpMsgStore, BOOL fNew, BOOL fModify, ULONG ulFlags, BOOL bEmbedded, ECMAPIProp* lpRoot, ECMessage **lppMessage) const
 {
-	HRESULT hr = hrSuccess;
 	ECArchiveAwareMsgStore *lpArchiveAwareStore = dynamic_cast<ECArchiveAwareMsgStore*>(lpMsgStore);
 
 	// New and embedded messages don't need to be archive aware. Also if the calling store
 	// is not archive aware, the message won't.
-	if (fNew || bEmbedded || lpArchiveAwareStore == NULL) {
-		hr = ECMessage::Create(lpMsgStore, fNew, fModify, ulFlags, bEmbedded, lpRoot, lppMessage);
-		goto exit;
-	}
+	if (fNew || bEmbedded || lpArchiveAwareStore == NULL)
+		return ECMessage::Create(lpMsgStore, fNew, fModify, ulFlags, bEmbedded, lpRoot, lppMessage);
 
-	hr = ECArchiveAwareMessage::Create(lpArchiveAwareStore, FALSE, fModify, ulFlags, lppMessage);
-
-exit:
-	return hr;
+	return ECArchiveAwareMessage::Create(lpArchiveAwareStore, FALSE, fModify, ulFlags, lppMessage);
 }
 
 
@@ -214,7 +208,7 @@ exit:
 
 HRESULT	ECArchiveAwareMessage::HrSetRealProp(SPropValue *lpsPropValue)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 
 	if (m_bLoading) {
 		/*
@@ -232,7 +226,7 @@ HRESULT	ECArchiveAwareMessage::HrSetRealProp(SPropValue *lpsPropValue)
 			if (!m_bNamedPropsMapped) {
 				hr = MapNamedProps();
 				if (hr != hrSuccess)
-					goto exit;
+					return hr;
 			}
 
 			// Check the various props.
@@ -245,7 +239,7 @@ HRESULT	ECArchiveAwareMessage::HrSetRealProp(SPropValue *lpsPropValue)
 				if (hr == hrSuccess)
 					hr = Util::HrCopyProperty(m_ptrStoreEntryIDs, lpsPropValue, m_ptrStoreEntryIDs);
 				if (hr != hrSuccess)
-					goto exit;
+					return hr;
 			}
 
 			else if (lpsPropValue->ulPropTag == PROP_ARCHIVE_ITEM_ENTRYIDS) {
@@ -257,7 +251,7 @@ HRESULT	ECArchiveAwareMessage::HrSetRealProp(SPropValue *lpsPropValue)
 				if (hr == hrSuccess)
 					hr = Util::HrCopyProperty(m_ptrItemEntryIDs, lpsPropValue, m_ptrItemEntryIDs);
 				if (hr != hrSuccess)
-					goto exit;
+					return hr;
 			}
 
 			else if (lpsPropValue->ulPropTag == PROP_STUBBED) {
@@ -284,8 +278,6 @@ HRESULT	ECArchiveAwareMessage::HrSetRealProp(SPropValue *lpsPropValue)
 		 */
 		m_bChanged = true;
 	}
-
-exit:
 	return hr;
 }
 
@@ -381,24 +373,22 @@ HRESULT ECArchiveAwareMessage::ModifyRecipients(ULONG ulFlags, LPADRLIST lpMods)
 
 HRESULT ECArchiveAwareMessage::SaveChanges(ULONG ulFlags)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	SizedSPropTagArray(1, sptaStubbedProp) = {1, {PROP_STUBBED}};
 
-	if (!fModify) {
-		hr = MAPI_E_NO_ACCESS;
-		goto exit;
-	}
+	if (!fModify)
+		return MAPI_E_NO_ACCESS;
 
 	// We can't use this->lstProps here since that would suggest things have changed because we might have
 	// destubbed ourselves, which is a change from the object model point of view.
 	if (!m_bChanged)
-		goto exit;
+		return hrSuccess;
 
 	// From here on we're no longer stubbed.
 	if (m_bNamedPropsMapped) {
 		hr = DeleteProps((LPSPropTagArray)&sptaStubbedProp, NULL);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 	}
 
 	if (m_mode == MODE_STUBBED || m_mode == MODE_ARCHIVED) {
@@ -409,17 +399,11 @@ HRESULT ECArchiveAwareMessage::SaveChanges(ULONG ulFlags)
 
 		hr = SetProps(1, &propDirty, NULL);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		m_mode = MODE_DIRTY;	// We have an archived version that's now out of sync.
 	}
-
-	hr = ECMessage::SaveChanges(ulFlags);
-	if (hr != hrSuccess)
-		goto exit;
-
-exit:
-	return hr;
+	return ECMessage::SaveChanges(ulFlags);
 }
 
 HRESULT ECArchiveAwareMessage::SetPropHandler(ULONG ulPropTag, void* /*lpProvider*/, LPSPropValue lpsPropValue, void *lpParam)

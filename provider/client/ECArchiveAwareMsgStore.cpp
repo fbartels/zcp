@@ -96,7 +96,7 @@ HRESULT ECArchiveAwareMsgStore::OpenEntry(ULONG cbEntryID, LPENTRYID lpEntryID, 
 
 HRESULT ECArchiveAwareMsgStore::OpenItemFromArchive(LPSPropValue lpPropStoreEIDs, LPSPropValue lpPropItemEIDs, ECMessage **lppMessage)
 {
-	HRESULT				hr = hrSuccess;
+	HRESULT hr;
 	BinaryList			lstStoreEIDs;
 	BinaryList			lstItemEIDs;
 	BinaryListIterator	iterStoreEID;
@@ -109,15 +109,12 @@ HRESULT ECArchiveAwareMsgStore::OpenItemFromArchive(LPSPropValue lpPropStoreEIDs
 		PROP_TYPE(lpPropStoreEIDs->ulPropTag) != PT_MV_BINARY ||
 		PROP_TYPE(lpPropItemEIDs->ulPropTag) != PT_MV_BINARY ||
 		lpPropStoreEIDs->Value.MVbin.cValues != lpPropItemEIDs->Value.MVbin.cValues)
-	{
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+		return MAPI_E_INVALID_PARAMETER;
 
 	// First get a list of items that could be retrieved from cached archive stores.
 	hr = CreateCacheBasedReorderedList(lpPropStoreEIDs->Value.MVbin, lpPropItemEIDs->Value.MVbin, &lstStoreEIDs, &lstItemEIDs);
 	if (hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	iterStoreEID = lstStoreEIDs.begin();
 	iterIterEID = lstItemEIDs.begin();
@@ -127,7 +124,7 @@ HRESULT ECArchiveAwareMsgStore::OpenItemFromArchive(LPSPropValue lpPropStoreEIDs
 
 		hr = GetArchiveStore(*iterStoreEID, &ptrArchiveStore);
 		if (hr == MAPI_E_NO_SUPPORT)
-			goto exit;	// No need to try any other archives.
+			return hr;	// No need to try any other archives.
 		if (hr != hrSuccess) {
 			continue;
 		}
@@ -140,15 +137,10 @@ HRESULT ECArchiveAwareMsgStore::OpenItemFromArchive(LPSPropValue lpPropStoreEIDs
 		break;
 	}
 
-	if (iterStoreEID == lstStoreEIDs.end()) {
-		hr = MAPI_E_NOT_FOUND;
-		goto exit;
-	}
-
+	if (iterStoreEID == lstStoreEIDs.end())
+		return MAPI_E_NOT_FOUND;
 	if (ptrArchiveMessage)
 		hr = ptrArchiveMessage->QueryInterface(IID_ECMessage, (LPVOID*)lppMessage);
-
-exit:
 	return hr;
 }
 
@@ -182,14 +174,14 @@ HRESULT ECArchiveAwareMsgStore::CreateCacheBasedReorderedList(SBinaryArray sbaSt
 
 HRESULT ECArchiveAwareMsgStore::GetArchiveStore(LPSBinary lpStoreEID, ECMsgStore **lppArchiveStore)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 
 	const std::vector<BYTE> eid(lpStoreEID->lpb, lpStoreEID->lpb + lpStoreEID->cb);
 	MsgStoreMap::iterator iterStore = m_mapStores.find(eid);
 	if (iterStore != m_mapStores.end()) {
 		hr = iterStore->second->QueryInterface(IID_ECMsgStore, (LPVOID*)lppArchiveStore);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 	} 
 	
 	else {
@@ -208,11 +200,11 @@ HRESULT ECArchiveAwareMsgStore::GetArchiveStore(LPSBinary lpStoreEID, ECMsgStore
 
 		hr = QueryInterface(IID_ECMsgStoreOnline, &ptrUnknown);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		hr = ptrUnknown->QueryInterface(IID_ECMsgStore, &ptrOnlineStore);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 
 #if defined WIN32 && !defined _DEBUG
 		// This is the place where the client eventually gets the first time
@@ -222,24 +214,22 @@ HRESULT ECArchiveAwareMsgStore::GetArchiveStore(LPSBinary lpStoreEID, ECMsgStore
 		// to perform destubbing. If allowed we get here only once per archive store.
 		// If destubbing is not allowed we'll get here more often, but one shouldn't
 		// have any stubs to begin with if destubbing isn't allowed.
-		if (HrCheckLicense(&ptrOnlineStore->m_xMsgStore, SERVICE_TYPE_ARCHIVE, ZARAFA_ARCHIVE_DEFAULT) != hrSuccess) {
-			hr = MAPI_E_NO_SUPPORT;
-			goto exit;
-		}
+		if (HrCheckLicense(&ptrOnlineStore->m_xMsgStore, SERVICE_TYPE_ARCHIVE, ZARAFA_ARCHIVE_DEFAULT) != hrSuccess)
+			return MAPI_E_NO_SUPPORT;
 #endif
 	
 		hr = UnWrapStoreEntryID(lpStoreEID->cb, (LPENTRYID)lpStoreEID->lpb, &cbEntryID, &ptrEntryID);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		hr = HrGetServerURLFromStoreEntryId(cbEntryID, ptrEntryID, ServerURL, &bIsPseudoUrl);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		if (bIsPseudoUrl) {
 			hr = HrResolvePseudoUrl(ptrOnlineStore->lpTransport, ServerURL.c_str(), strServer, &bIsPeer);
 			if (hr != hrSuccess)
-				goto exit;
+				return hr;
 			
 			if (!bIsPeer)
 				ServerURL = strServer;
@@ -249,7 +239,7 @@ HRESULT ECArchiveAwareMsgStore::GetArchiveStore(LPSBinary lpStoreEID, ECMsgStore
 				// logged off when ptrOnlineStore gets destroyed (at the end of this finction).
 				hr = ptrOnlineStore->lpTransport->CloneAndRelogon(&ptrTransport);
 				if (hr != hrSuccess)
-					goto exit;
+					return hr;
 			}
 		}
 
@@ -258,39 +248,37 @@ HRESULT ECArchiveAwareMsgStore::GetArchiveStore(LPSBinary lpStoreEID, ECMsgStore
 			// to another server than the one we're connected with.
 			hr = ptrOnlineStore->lpTransport->CreateAndLogonAlternate(ServerURL.c_str(), &ptrTransport);
 			if (hr != hrSuccess)
-				goto exit;
+				return hr;
 		}
 
 		hr = ECMsgStore::Create((char*)GetProfileName(), this->lpSupport, ptrTransport, FALSE, 0, FALSE, FALSE, FALSE, &ptrArchiveStore);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		// Get a propstorage for the message store
 		hr = ptrTransport->HrOpenPropStorage(0, NULL, cbEntryID, ptrEntryID, 0, &ptrPropStorage);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		// Set up the message store to use this storage
 		hr = ptrArchiveStore->HrSetPropStorage(ptrPropStorage, FALSE);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		// Setup callback for session change
 		hr = ptrTransport->AddSessionReloadCallback(ptrArchiveStore, ECMsgStore::Reload, NULL);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		hr = ptrArchiveStore->SetEntryId(cbEntryID, ptrEntryID);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		hr = ptrArchiveStore->QueryInterface(IID_ECMsgStore, (LPVOID*)lppArchiveStore);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		m_mapStores.insert(MsgStoreMap::value_type(eid, ptrArchiveStore));
 	}
-
-exit:
-	return hr;
+	return hrSuccess;
 }

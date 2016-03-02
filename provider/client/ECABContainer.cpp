@@ -119,93 +119,74 @@ HRESULT	ECABContainer::OpenProperty(ULONG ulPropTag, LPCIID lpiid, ULONG ulInter
 {
 	HRESULT			hr = hrSuccess;
 
-	if (lpiid == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (lpiid == NULL)
+		return MAPI_E_INVALID_PARAMETER;
 
 	switch (ulPropTag) {
 #if defined(_WIN32) && !defined(WINCE)
 	case PR_DETAILS_TABLE:
-		if (*lpiid != IID_IMAPITable) {
-			hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
-			goto exit;
-		}
+		if (*lpiid != IID_IMAPITable)
+			return MAPI_E_INTERFACE_NOT_SUPPORTED;
 
 		hr = ECDisplayTable::CreateDisplayTable(arraySize(rgdtIDistListPage), rgdtIDistListPage, (LPMAPITABLE *) lppUnk);
 		if (hr != hrSuccess)
-			goto exit;
-
+			return hr;
 		break;
 	case PR_EMS_AB_MEMBER_O:
-		if (*lpiid != IID_IMAPITable) {
-			hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
-			goto exit;
-		}
+		if (*lpiid != IID_IMAPITable)
+			return MAPI_E_INTERFACE_NOT_SUPPORTED;
 
 		hr = GetContentsTable(ulInterfaceOptions, (LPMAPITABLE*)lppUnk);
 		if (hr != hrSuccess)
-			goto exit;
-
+			return hr;
 		break;
 	case PR_EMS_AB_PROXY_ADDRESSES_O:
-		if (*lpiid != IID_IMAPITable) {
-			hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
-			goto exit;
-		}
+		if (*lpiid != IID_IMAPITable)
+			return MAPI_E_INTERFACE_NOT_SUPPORTED;
 
 		hr = ECDisplayTable::CreateTableFromProperty(this, lpiid, ulInterfaceOptions, PR_SMTP_ADDRESS, PR_EMS_AB_PROXY_ADDRESSES, lppUnk);
 		if (hr != hrSuccess)
-			goto exit;
-
+			return hr;
 		break;
 	case PR_EMS_AB_IS_MEMBER_OF_DL_O:
-		if (*lpiid != IID_IMAPITable) {
-			hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
-			goto exit;
-		}
+		if (*lpiid != IID_IMAPITable)
+			return MAPI_E_INTERFACE_NOT_SUPPORTED;
 
 		hr = ECDisplayTable::CreateTableFromResolved(this, lpiid, ulInterfaceOptions, PR_EMS_AB_IS_MEMBER_OF_DL_T, lppUnk);
 		if (hr != hrSuccess)
-			goto exit;
-
+			return hr;
 		break;
 	case PR_EMS_AB_OWNER_O:
-		if (*lpiid != IID_IMAPITable) {
-			hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
-			goto exit;
-		}
+		if (*lpiid != IID_IMAPITable)
+			return MAPI_E_INTERFACE_NOT_SUPPORTED;
 
 		hr = ECDisplayTable::CreateTableFromResolved(this, lpiid, ulInterfaceOptions, PR_EMS_AB_OWNER, lppUnk);
 		if (hr != hrSuccess)
-			goto exit;
-
+			return hr;
 		break;
 #endif
 	case PR_CONTAINER_CONTENTS:
 		if(*lpiid == IID_IMAPITable)
 			hr = GetContentsTable(ulInterfaceOptions, (LPMAPITABLE*)lppUnk);
-        else
-            hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
+		else
+			hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 		break;
 	case PR_CONTAINER_HIERARCHY:
 		if (*lpiid == IID_IMAPITable)
 			hr = GetHierarchyTable(ulInterfaceOptions, (LPMAPITABLE*)lppUnk);
-        else
-            hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
+		else
+			hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 		break;
 	default:
 		hr = ECABProp::OpenProperty(ulPropTag, lpiid, ulInterfaceOptions, ulFlags, lppUnk);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 		break;
 	}
-
-exit:
 	return hr;
 }
 
@@ -325,20 +306,18 @@ HRESULT ECABContainer::TableRowGetProp(void* lpProvider, struct propVal *lpsProp
 		case PR_TRANSMITABLE_DISPLAY_NAME_W:
 			{
 				LPWSTR lpszW = NULL;
-				if(strcmp(lpsPropValSrc->Value.lpszA, "Global Address Book" ) == 0) {
+				if (strcmp(lpsPropValSrc->Value.lpszA, "Global Address Book" ) == 0)
 					lpszW = _W("Global Address Book");
-				} else if(strcmp(lpsPropValSrc->Value.lpszA, "Global Address Lists" ) == 0) {
+				else if (strcmp(lpsPropValSrc->Value.lpszA, "Global Address Lists" ) == 0)
 					lpszW = _W("Global Address Lists");
-				} else if (strcmp(lpsPropValSrc->Value.lpszA, "All Address Lists" ) == 0) {
+				else if (strcmp(lpsPropValSrc->Value.lpszA, "All Address Lists" ) == 0)
 					lpszW = _W("All Address Lists");
-				} else {
-					hr = MAPI_E_NOT_FOUND;
-					goto exit;
-				}
+				else
+					return MAPI_E_NOT_FOUND;
 				size = (wcslen(lpszW) + 1) * sizeof(WCHAR);
 				hr = MAPIAllocateMore(size, lpBase, (void **)&lpsPropValDst->Value.lpszW);
 				if (hr != hrSuccess)
-					goto exit;
+					return hr;
 
 				memcpy(lpsPropValDst->Value.lpszW, lpszW, size);
 				lpsPropValDst->ulPropTag = lpsPropValSrc->ulPropTag;
@@ -350,21 +329,19 @@ HRESULT ECABContainer::TableRowGetProp(void* lpProvider, struct propVal *lpsProp
 		case PR_TRANSMITABLE_DISPLAY_NAME_A:
 			{
 				LPSTR lpszA = NULL;
-				if(strcmp(lpsPropValSrc->Value.lpszA, "Global Address Book" ) == 0) {
+				if (strcmp(lpsPropValSrc->Value.lpszA, "Global Address Book" ) == 0)
 					lpszA = _A("Global Address Book");
-				} else if(strcmp(lpsPropValSrc->Value.lpszA, "Global Address Lists" ) == 0) {
+				else if (strcmp(lpsPropValSrc->Value.lpszA, "Global Address Lists" ) == 0)
 					lpszA = _A("Global Address Lists");
-				} else if (strcmp(lpsPropValSrc->Value.lpszA, "All Address Lists" ) == 0) {
+				else if (strcmp(lpsPropValSrc->Value.lpszA, "All Address Lists" ) == 0)
 					lpszA = _A("All Address Lists");
-				} else {
-					hr = MAPI_E_NOT_FOUND;
-					goto exit;
-				}
+				else
+					return MAPI_E_NOT_FOUND;
 				
 				size = (strlen(lpszA) + 1) * sizeof(CHAR);
 				hr = MAPIAllocateMore(size, lpBase, (void **)&lpsPropValDst->Value.lpszA);
 				if (hr != hrSuccess)
-					goto exit;
+					return hr;
 
 				memcpy(lpsPropValDst->Value.lpszA, lpszA, size);
 				lpsPropValDst->ulPropTag = lpsPropValSrc->ulPropTag;
@@ -374,8 +351,6 @@ HRESULT ECABContainer::TableRowGetProp(void* lpProvider, struct propVal *lpsProp
 			hr = MAPI_E_NOT_FOUND;
 			break;
 	}
-
-exit:
 	return hr;
 }
 /////////////////////////////////////////////////

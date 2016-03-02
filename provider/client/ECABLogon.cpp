@@ -362,23 +362,16 @@ HRESULT ECABLogon::Advise(ULONG cbEntryID, LPENTRYID lpEntryID, ULONG ulEventMas
 {
 	HRESULT hr = hrSuccess;
 
-	if(lpAdviseSink == NULL || lpulConnection == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
-
-	if(lpEntryID == NULL) {
+	if (lpAdviseSink == NULL || lpulConnection == NULL)
+		return MAPI_E_INVALID_PARAMETER;
+	if (lpEntryID == NULL)
 		//NOTE: Normal you must give the entryid of the addressbook toplevel
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+		return MAPI_E_INVALID_PARAMETER;
 
 	ASSERT(m_lpNotifyClient != NULL && (lpEntryID != NULL || TRUE));
 
 	if(m_lpNotifyClient->Advise(cbEntryID, (LPBYTE)lpEntryID, ulEventMask, lpAdviseSink, lpulConnection) != S_OK)
 		hr = MAPI_E_NO_SUPPORT;
-
-exit:
 	return hr;
 }
 
