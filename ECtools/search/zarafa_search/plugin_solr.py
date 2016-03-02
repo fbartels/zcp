@@ -9,10 +9,13 @@ note how simple this is compared to the xapian plugin.
 """
 
 class Plugin:
-    def __init__(self, index_path, log):
+    def __init__(self, index_path, suggestions, log):
         self.log = log
         self.solr = pysolr.Solr(index_path)
         self.data = []
+
+    def extract_terms(self, text):
+        return text.split()
 
     def search(self, server_guid, store_guid, folder_ids, fields_terms, query, log):
         log.info('performing query: %s' % query)

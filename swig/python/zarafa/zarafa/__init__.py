@@ -1498,6 +1498,12 @@ class Store(object):
     def props(self):
         return _props(self.mapiobj)
 
+    def create_searchfolder(self, text=None): # XXX store.findroot.create_folder()?
+        import uuid # XXX username+counter? permission problems to determine number?
+        finder_root = self.root.folder('FINDER_ROOT') # XXX store.findroot?
+        mapiobj = finder_root.mapiobj.CreateFolder(FOLDER_SEARCH, str(uuid.uuid4()), 'comment', None, 0)
+        return Folder(self, mapiobj=mapiobj)
+
     def __eq__(self, s): # XXX check same server?
         if isinstance(s, Store):
             return self.guid == s.guid
@@ -1923,6 +1929,30 @@ class Folder(object):
     @property
     def deleted(self):
         return Folder(self.store, self._entryid, deleted=True)
+
+    def search(self, text): # XXX recursion
+        searchfolder = self.store.create_searchfolder()
+        searchfolder.search_start(self, text)
+        searchfolder.search_wait()
+        for item in searchfolder:
+            yield item
+        self.store.root.folder('FINDER_ROOT').mapiobj.DeleteFolder(searchfolder.entryid.decode('hex'), 0, None, 0) # XXX store.findroot
+
+    def search_start(self, folder, text): # XXX RECURSIVE_SEARCH
+        # specific restriction format, needed to reach indexer
+        restriction = SOrRestriction([
+                        SContentRestriction(FL_SUBSTRING | FL_IGNORECASE, PR_SUBJECT_W, SPropValue(PR_SUBJECT_W, unicode(text))),
+                        SContentRestriction(FL_SUBSTRING | FL_IGNORECASE, PR_BODY_W, SPropValue(PR_BODY_W, unicode(text))),
+                        SContentRestriction(FL_SUBSTRING | FL_IGNORECASE, PR_DISPLAY_TO_W, SPropValue(PR_DISPLAY_TO_W, unicode(text))),
+                        # XXX add all default fields.. BUT perform full-text search by default!
+        ])
+        self.mapiobj.SetSearchCriteria(restriction, [folder.entryid.decode('hex')], 0)
+
+    def search_wait(self):
+        while True:
+            (restrict, list, state) = self.mapiobj.GetSearchCriteria(0)
+            if not state & SEARCH_REBUILD:
+                break
 
     def __eq__(self, f): # XXX check same store?
         if isinstance(f, Folder):
@@ -2377,7 +2407,7 @@ class Item(object):
         if isinstance(addrs, (str, unicode)):
             addrs = unicode(addrs).split(';')
         elif isinstance(addrs, User):
-            adders = [addrs]
+            addrs = [addrs]
         names = []
         for addr in addrs:
             pr_addrtype, pr_dispname, pr_email, pr_entryid = self._addr_props(addr)

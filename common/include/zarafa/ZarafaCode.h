@@ -144,6 +144,7 @@ typedef uint64_t ECSESSIONGROUPID;
 
 // Property under which to store the search criteria for search folders
 #define PR_EC_SEARCHCRIT	PROP_TAG(PT_STRING8, 0x6706)
+#define PR_EC_SUGGESTION	PROP_TAG(PT_UNICODE, 0x6707)
 
 // create 200 directories for non-database attachments
 #define ATTACH_PATHDEPTH_LEVEL1 10

@@ -22,8 +22,9 @@ but in the old situation we have one database per store which is nice.
 """
 
 class Plugin:
-    def __init__(self, index_path, log):
+    def __init__(self, index_path, suggestions, log):
         self.index_path = index_path
+        self.suggestions = suggestions
         self.log = log
         self.data = []
         self.deletes = []
@@ -47,6 +48,14 @@ class Plugin:
             if log: 
                 log.warn('could not open database: %s' % dbpath)
             
+    def extract_terms(self, text):
+        """ extract terms as if we are indexing """
+        doc = xapian.Document()
+        tg = xapian.TermGenerator()
+        tg.set_document(doc)
+        tg.index_text(text)
+        return [t.term.decode('utf8') for t in doc.termlist()]
+
     def search(self, server_guid, store_guid, folder_ids, fields_terms, query, log):
         """ handle query; see links in the top for a description of the Xapian API """
 
@@ -56,12 +65,9 @@ class Plugin:
         qp = xapian.QueryParser()
         qp.add_prefix("sourcekey", "XK:")
         qp.add_prefix("folderid", "XF:")
-        suggest = []
         for fields, terms in fields_terms:
             for field in fields:
                 qp.add_prefix('mapi%d' % field, "XM%d:" % field)
-            for term in terms:
-                suggest.append(db.get_spelling_suggestion(term) or term)
         log.info('performing query: %s' % query)
         qp.set_database(db)
         query = qp.parse_query(query, xapian.QueryParser.FLAG_BOOLEAN|xapian.QueryParser.FLAG_PHRASE|xapian.QueryParser.FLAG_WILDCARD)
@@ -71,7 +77,17 @@ class Plugin:
         for match in enquire.get_mset(0, db.get_doccount()): # XXX catch exception if database is being updated?
             matches.append(match.document.get_value(0))
         db.close()
-        return matches, None # XXX get_spelling_suggestion, decode utf-*? ' '.join(suggest)
+        return matches
+
+    def suggest(self, server_guid, store_guid, terms, orig, log):
+        """ update original search text with suggested terms """
+
+        with closing(self.open_db(server_guid, store_guid)) as db:
+            # XXX revisit later. looks like xapian cannot do this for us? :S
+            for term in sorted(terms, key=lambda s: len(s), reverse=True):
+                suggestion = db.get_spelling_suggestion(term).decode('utf8') or term
+                orig = orig.replace(term, suggestion, 1)
+            return orig
 
     def update(self, doc):
         """ new/changed document """
@@ -82,7 +98,6 @@ class Plugin:
         """ deleted document """
 
         self.deletes.append(doc)
-
 
     def commit(self):
         """ index pending documents; see links in the top for a description of the Xapian API """
@@ -97,7 +112,10 @@ class Plugin:
             with closing(self.open_db(doc['serverid'], doc['storeid'], writable=True)) as db:
                 termgenerator = xapian.TermGenerator()
                 termgenerator.set_database(db)
-                termgenerator.set_flags(termgenerator.FLAG_SPELLING)
+                flags = 0
+                if self.suggestions:
+                    flags |= termgenerator.FLAG_SPELLING
+                termgenerator.set_flags(flags)
                 for doc in self.data:
                     xdoc = xapian.Document()
                     termgenerator.set_document(xdoc)
