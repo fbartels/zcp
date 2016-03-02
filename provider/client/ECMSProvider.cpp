@@ -693,7 +693,7 @@ HRESULT ECMSProvider::CompareStoreIDs(ULONG cbEntryID1, LPENTRYID lpEntryID1, UL
  */
 HRESULT ECMSProvider::LogonByEntryID(WSTransport **lppTransport, sGlobalProfileProps *lpsProfileProps, ULONG cbEntryID, LPENTRYID lpEntryID)
 {
-	HRESULT		hr = hrSuccess;
+	HRESULT hr;
 	string		extractedServerPath;		// The extracted server path
 	bool		bIsPseudoUrl = false;
 	WSTransport	*lpTransport = NULL;
@@ -702,10 +702,8 @@ HRESULT ECMSProvider::LogonByEntryID(WSTransport **lppTransport, sGlobalProfileP
 	lpTransport = *lppTransport;
 
 	hr = HrGetServerURLFromStoreEntryId(cbEntryID, lpEntryID, extractedServerPath, &bIsPseudoUrl);
-	if (hr != hrSuccess) {
-		hr = MAPI_E_FAILONEPROVIDER;
-		goto exit;
-	}
+	if (hr != hrSuccess)
+		return MAPI_E_FAILONEPROVIDER;
 
 	// Log on the transport to the server
 	if (!bIsPseudoUrl) {
@@ -726,25 +724,23 @@ HRESULT ECMSProvider::LogonByEntryID(WSTransport **lppTransport, sGlobalProfileP
 
 		hr = lpTransport->HrLogon(*lpsProfileProps);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		hr = HrResolvePseudoUrl(lpTransport, extractedServerPath.c_str(), strServerPath, &bIsPeer);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		if (!bIsPeer) {
 			hr = lpTransport->CreateAndLogonAlternate(strServerPath.c_str(), &lpAltTransport);
 			if (hr != hrSuccess)
-				goto exit;
+				return hr;
 
 			lpTransport->HrLogOff();
 			lpTransport->Release();
 			*lppTransport = lpAltTransport;
 		}
 	}
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 ULONG ECMSProvider::xMSProvider::AddRef() 

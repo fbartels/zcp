@@ -249,13 +249,11 @@ HRESULT __stdcall ECExchangeModifyTable::GetTable(ULONG ulFlags, LPMAPITABLE *lp
 
 	hr = m_ecTable->HrGetView(createLocaleFromName(""), m_ulFlags, &lpView);
 	if(hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	hr = lpView->QueryInterface(IID_IMAPITable, (void **)lppTable);
 
 	lpView->Release();
-
-exit:
 	return hr;
 }
 

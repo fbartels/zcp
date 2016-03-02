@@ -144,7 +144,7 @@ ECExchangeImportContentsChanges::~ECExchangeImportContentsChanges(){
 }
 
 HRESULT ECExchangeImportContentsChanges::Create(ECMAPIFolder *lpFolder, LPEXCHANGEIMPORTCONTENTSCHANGES* lppExchangeImportContentsChanges){
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	ECExchangeImportContentsChanges *lpEICC = NULL;
 
 	if(!lpFolder)
@@ -154,15 +154,9 @@ HRESULT ECExchangeImportContentsChanges::Create(ECMAPIFolder *lpFolder, LPEXCHAN
 
 	hr = HrGetOneProp(&lpFolder->m_xMAPIProp, PR_SOURCE_KEY, &lpEICC->m_lpSourceKey);
 	if(hr != hrSuccess)
-		goto exit;
+		return hr;
 
-	hr = lpEICC->QueryInterface(IID_IExchangeImportContentsChanges, (void **)lppExchangeImportContentsChanges);
-	if(hr != hrSuccess)
-		goto exit;
-
-exit:
-	return hr;
-
+	return lpEICC->QueryInterface(IID_IExchangeImportContentsChanges, reinterpret_cast<void **>(lppExchangeImportContentsChanges));
 }
 
 HRESULT	ECExchangeImportContentsChanges::QueryInterface(REFIID refiid, void **lppInterface)
@@ -248,31 +242,25 @@ HRESULT ECExchangeImportContentsChanges::Config(LPSTREAM lpStream, ULONG ulFlags
 	} else {
 		hr = lpStream->Seek(zero, STREAM_SEEK_SET, NULL);
 		if(hr != hrSuccess)
-			goto exit;
+			return hr;
 		
 		hr = lpStream->Read(&m_ulSyncId, 4, &ulLen);
 		if(hr != hrSuccess)
-			goto exit;
-			
-		if(ulLen != 4) {
-			hr = MAPI_E_INVALID_PARAMETER;
-			goto exit;
-		}
+			return hr;
+		if (ulLen != 4)
+			return MAPI_E_INVALID_PARAMETER;
 		
 		hr = lpStream->Read(&m_ulChangeId, 4, &ulLen);
 		if(hr != hrSuccess)
-			goto exit;
-			
-		if(ulLen != 4) {
-			hr = MAPI_E_INVALID_PARAMETER;
-			goto exit;
-		}
+			return hr;
+		if (ulLen != 4)
+			return MAPI_E_INVALID_PARAMETER;
 		
 		// The user specified the special sync key '0000000000000000', get a sync key from the server.
 		if(m_ulSyncId == 0) {
 			hr = m_lpFolder->GetMsgStore()->lpTransport->HrSetSyncStatus(std::string((char *)m_lpSourceKey->Value.bin.lpb, m_lpSourceKey->Value.bin.cb), m_ulSyncId, m_ulChangeId, ICS_SYNC_CONTENTS, 0, &m_ulSyncId);
 			if(hr != hrSuccess)
-				goto exit;
+				return hr;
 		}
 		
 		// The sync key we got from the server can be used to retrieve all items in the database now when given to IEEC->Config(). At the same time, any
@@ -281,39 +269,36 @@ HRESULT ECExchangeImportContentsChanges::Config(LPSTREAM lpStream, ULONG ulFlags
 	}		
 		
 	m_ulFlags = ulFlags;
-exit:	
 	return hrSuccess;
 }
 
 HRESULT ECExchangeImportContentsChanges::UpdateState(LPSTREAM lpStream){
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	LARGE_INTEGER zero = {{0,0}};
 	ULONG ulLen = 0;
 
 	if(lpStream == NULL) {
-		if(m_lpStream == NULL){
-			goto exit;
-		}
+		if (m_lpStream == NULL)
+			return hrSuccess;
 		lpStream = m_lpStream;
 	}
 
 	if(m_ulSyncId == 0)
-		goto exit; // config() called with NULL stream, so we'll ignore the UpdateState()
+		return hrSuccess; // config() called with NULL stream, so we'll ignore the UpdateState()
 	
 	hr = lpStream->Seek(zero, STREAM_SEEK_SET, NULL);
 	if(hr != hrSuccess)
-		goto exit;
-		
+		return hr;
+
 	hr = lpStream->Write(&m_ulSyncId, 4, &ulLen);
 	if(hr != hrSuccess)
-		goto exit;
-		
+		return hr;
+
 	hr = lpStream->Write(&m_ulChangeId, 4, &ulLen);
 	if(hr != hrSuccess)
-		goto exit;
-	 
-exit: 
-	return hr;
+		return hr;
+
+	return hrSuccess;
 }
 
 
@@ -913,7 +898,7 @@ exit:
 
 HRESULT ECExchangeImportContentsChanges::ConfigForConversionStream(LPSTREAM lpStream, ULONG ulFlags, ULONG /*cValuesConversion*/, LPSPropValue /*lpPropArrayConversion*/)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	BOOL	bCanStream = FALSE;
 
 	// Since we don't use the cValuesConversion and lpPropArrayConversion arguments, we'll just check
@@ -921,22 +906,15 @@ HRESULT ECExchangeImportContentsChanges::ConfigForConversionStream(LPSTREAM lpSt
 
 	hr = m_lpFolder->GetMsgStore()->lpTransport->HrCheckCapabilityFlags(ZARAFA_CAP_ENHANCED_ICS, &bCanStream);
 	if (hr != hrSuccess)
-		goto exit;
-
-	if (bCanStream == FALSE) {
-		hr = MAPI_E_NO_SUPPORT;
-		goto exit;
-	}
-
-	hr = Config(lpStream, ulFlags);
-
-exit:
-	return hr;
+		return hr;
+	if (bCanStream == FALSE)
+		return MAPI_E_NO_SUPPORT;
+	return Config(lpStream, ulFlags);
 }
 
 HRESULT ECExchangeImportContentsChanges::ImportMessageChangeAsAStream(ULONG cValue, LPSPropValue lpPropArray, ULONG ulFlags, LPSTREAM *lppStream)
 {
-	HRESULT hr = hrSuccess; 
+	HRESULT hr;
 	ULONG cbEntryId = 0;
 	EntryIdPtr ptrEntryId;
 	WSMessageStreamImporterPtr ptrMessageImporter;
@@ -948,7 +926,7 @@ HRESULT ECExchangeImportContentsChanges::ImportMessageChangeAsAStream(ULONG cVal
 		hr = m_lpFolder->GetMsgStore()->lpTransport->HrEntryIDFromSourceKey(m_lpFolder->GetMsgStore()->m_cbEntryId, m_lpFolder->GetMsgStore()->m_lpEntryId, m_lpSourceKey->Value.bin.cb, m_lpSourceKey->Value.bin.lpb, lpMessageSourceKey->Value.bin.cb, lpMessageSourceKey->Value.bin.lpb, &cbEntryId, &ptrEntryId);
 		if (hr != MAPI_E_NOT_FOUND && hr != hrSuccess) {
 			ZLOG_DEBUG(m_lpLogger, "ImportFast: Failed to get entryid from sourcekey, hr = 0x%08x", hr);
-			goto exit;
+			return hr;
 		}
 	} else {
 	    // Source key not specified, therefore the message must be new since this is the only thing
@@ -962,8 +940,7 @@ HRESULT ECExchangeImportContentsChanges::ImportMessageChangeAsAStream(ULONG cVal
 		// This is a change, but we don't already have the item. This can only mean
 		// that the item has been deleted on our side. 
 		ZLOG_DEBUG(m_lpLogger, "ImportFast: %s", "Destination message deleted");
-		hr = SYNC_E_OBJECT_DELETED;
-		goto exit;
+		return SYNC_E_OBJECT_DELETED;
 	}
 
 	if (hr == MAPI_E_NOT_FOUND)
@@ -973,25 +950,23 @@ HRESULT ECExchangeImportContentsChanges::ImportMessageChangeAsAStream(ULONG cVal
 	if (hr != hrSuccess) {
 		if (hr != SYNC_E_IGNORE && hr != SYNC_E_OBJECT_DELETED)
 			ZLOG_DEBUG(m_lpLogger, "ImportFast: Failed to get MessageImporter, hr = 0x%08x", hr);
-		goto exit;
+		return hr;
 	}
 
 	ZLOG_DEBUG(m_lpLogger, "ImportFast: %s", "Wrapping MessageImporter in IStreamAdapter");
 	hr = ECMessageStreamImporterIStreamAdapter::Create(ptrMessageImporter, &ptrStream);
 	if (hr != hrSuccess) {
 		ZLOG_DEBUG(m_lpLogger, "ImportFast: Failed to wrap message importer, hr = 0x%08x" ,hr);
-		goto exit;
+		return hr;
 	}
 
 	*lppStream = ptrStream.release();
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECExchangeImportContentsChanges::ImportMessageCreateAsStream(ULONG cValue, LPSPropValue lpPropArray, WSMessageStreamImporter **lppMessageImporter)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	LPSPropValue lpMessageFlags = NULL;
 	LPSPropValue lpMessageAssociated = NULL;
 	LPSPropValue lpPropEntryId = NULL;
@@ -1000,10 +975,8 @@ HRESULT ECExchangeImportContentsChanges::ImportMessageCreateAsStream(ULONG cValu
 	LPENTRYID lpEntryId = NULL;
 	WSMessageStreamImporterPtr ptrMessageImporter;
 
-	if (lpPropArray == NULL || lppMessageImporter == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (lpPropArray == NULL || lppMessageImporter == NULL)
+		return MAPI_E_INVALID_PARAMETER;
 
 	lpMessageFlags = PpropFindProp(lpPropArray, cValue, PR_MESSAGE_FLAGS);
 	lpMessageAssociated = PpropFindProp(lpPropArray, cValue, PR_ASSOCIATED);
@@ -1020,25 +993,23 @@ HRESULT ECExchangeImportContentsChanges::ImportMessageCreateAsStream(ULONG cValu
 		hr = HrCreateEntryId(m_lpFolder->GetMsgStore()->GetStoreGuid(), MAPI_MESSAGE, &cbEntryId, &lpEntryId);
 		if (hr != hrSuccess) {
 			ZLOG_DEBUG(m_lpLogger, "CreateFast: Failed to create entryid, hr = 0x%08x", hr);
-			goto exit;
+			return hr;
 		}
 	}
 
 	hr = m_lpFolder->CreateMessageFromStream(ulNewFlags, m_ulSyncId, cbEntryId, lpEntryId, &ptrMessageImporter);
 	if(hr != hrSuccess) {
 		ZLOG_DEBUG(m_lpLogger, "CreateFast: Failed to create message from stream, hr = 0x%08x", hr);
-		goto exit;
+		return hr;
 	}
 
 	*lppMessageImporter = ptrMessageImporter.release();
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECExchangeImportContentsChanges::ImportMessageUpdateAsStream(ULONG cbEntryId, LPENTRYID lpEntryId, ULONG cValue, LPSPropValue lpPropArray, WSMessageStreamImporter **lppMessageImporter)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	SPropValuePtr ptrPropPCL;
 	SPropValuePtr ptrPropCK;
 	LPSPropValue lpRemoteCK = NULL;
@@ -1049,10 +1020,8 @@ HRESULT ECExchangeImportContentsChanges::ImportMessageUpdateAsStream(ULONG cbEnt
 	SPropValuePtr ptrConflictItems;
 	WSMessageStreamImporterPtr ptrMessageImporter;
 
-	if (lpEntryId == NULL || lpPropArray == NULL || lppMessageImporter == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (lpEntryId == NULL || lpPropArray == NULL || lppMessageImporter == NULL)
+		return MAPI_E_INVALID_PARAMETER;
 
 	hr = m_lpFolder->GetChangeInfo(cbEntryId, lpEntryId, &ptrPropPCL, &ptrPropCK);
 	if (hr != hrSuccess) {
@@ -1062,15 +1031,14 @@ HRESULT ECExchangeImportContentsChanges::ImportMessageUpdateAsStream(ULONG cbEnt
 			hr = SYNC_E_OBJECT_DELETED;
 		} else
 			ZLOG_DEBUG(m_lpLogger, "UpdateFast: Failed to get change info, hr = 0x%08x", hr);
-		goto exit;
+		return hr;
 	}
 
 	lpRemoteCK = PpropFindProp(lpPropArray, cValue, PR_CHANGE_KEY);
 	if (IsProcessed(lpRemoteCK, ptrPropPCL)) {
 		//we already have this change
 		ZLOG_DEBUG(m_lpLogger, "UpdateFast: %s", "The item was previously synchronized");
-		hr = SYNC_E_IGNORE;
-		goto exit;
+		return SYNC_E_IGNORE;
 	}
 
 	lpMessageFlags = PpropFindProp(lpPropArray, cValue, PR_MESSAGE_FLAGS);
@@ -1089,11 +1057,10 @@ HRESULT ECExchangeImportContentsChanges::ImportMessageUpdateAsStream(ULONG cbEnt
 		if (hr == MAPI_E_NOT_FOUND) {
 			// This shouldn't happen as we just got a conflict.
 			ZLOG_DEBUG(m_lpLogger, "UpdateFast: %s", "The destination item seems to have disappeared");
-			hr = SYNC_E_OBJECT_DELETED;
-			goto exit;
+			return SYNC_E_OBJECT_DELETED;
 		} else if (hr != hrSuccess) {
 			ZLOG_DEBUG(m_lpLogger, "UpdateFast: Failed to open conflicting message, hr = 0x%08x", hr);
-			goto exit;
+			return hr;
 		}
 
 		if (CreateConflictMessageOnly(ptrMessage, &ptrConflictItems) == MAPI_E_NOT_FOUND) {
@@ -1105,13 +1072,11 @@ HRESULT ECExchangeImportContentsChanges::ImportMessageUpdateAsStream(ULONG cbEnt
 	hr = m_lpFolder->UpdateMessageFromStream(m_ulSyncId, cbEntryId, lpEntryId, ptrConflictItems, &ptrMessageImporter);
 	if (hr != hrSuccess) {
 		ZLOG_DEBUG(m_lpLogger, "UpdateFast: Failed to update message from stream, hr = 0x%08x", hr);
-		goto exit;
+		return hr;
 	}
 
 	*lppMessageImporter = ptrMessageImporter.release();
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECExchangeImportContentsChanges::SetMessageInterface(REFIID refiid)
@@ -1208,7 +1173,7 @@ HrVerifyRemindersRestriction(const SRestriction *lpRestriction,
 
 HRESULT ECExchangeImportContentsChanges::HrUpdateSearchReminders(LPMAPIFOLDER lpRootFolder, LPSPropValue lpAdditionalREN)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	ULONG cREMProps;
 	SPropArrayPtr ptrREMProps;
 	LPSPropValue lpREMEntryID = NULL;
@@ -1227,35 +1192,30 @@ HRESULT ECExchangeImportContentsChanges::HrUpdateSearchReminders(LPMAPIFOLDER lp
 
 	hr = lpRootFolder->GetProps((LPSPropTagArray)&sptaREMProps, 0, &cREMProps, &ptrREMProps);
 	if (FAILED(hr))
-		goto exit;
+		return hr;
 
 	// Find the correct reminders folder.
 	if (PROP_TYPE(ptrREMProps[1].ulPropTag) != PT_ERROR)
 		lpREMEntryID = &ptrREMProps[1];
 	else if (PROP_TYPE(ptrREMProps[0].ulPropTag) != PT_ERROR)
 		lpREMEntryID = &ptrREMProps[0];
-	else {
-		hr = MAPI_E_NOT_FOUND;
-		goto exit;
-	}
+	else
+		return MAPI_E_NOT_FOUND;
 
 	hr = lpRootFolder->OpenEntry(lpREMEntryID->Value.bin.cb, (LPENTRYID)lpREMEntryID->Value.bin.lpb, &ptrRemindersFolder.iid, MAPI_BEST_ACCESS, &ulType, &ptrRemindersFolder);
 	if (hr != hrSuccess)
-		goto exit;
-
+		return hr;
 
 	hr = ptrRemindersFolder->GetSearchCriteria(0, &ptrOrigRestriction, &ptrOrigContainerList, &ulOrigSearchState);
 	if (hr != hrSuccess)
-		goto exit;
-
+		return hr;
 
 	// First check if the SearchCriteria needs updating by seeing if we can find the restrictions that
 	// contain the entryids of the folders to exclude. We assume that when they're found they're used
 	// as expected: as excludes.
 	hr = HrVerifyRemindersRestriction(ptrOrigRestriction, lpAdditionalREN);
 	if (hr == hrSuccess)
-		goto exit;
-
+		return hr;
 
 	sPropValConflicts.Value.bin = lpAdditionalREN->Value.MVbin.lpbin[0];
 	sPropValLocalFailures.Value.bin = lpAdditionalREN->Value.MVbin.lpbin[2];
@@ -1270,14 +1230,9 @@ HRESULT ECExchangeImportContentsChanges::HrUpdateSearchReminders(LPMAPIFOLDER lp
 
 	hr = resPre.CreateMAPIRestriction(&ptrPreRestriction, ECRestriction::Cheap);
 	if (hr != hrSuccess)
-		goto exit;
+		return hr;
 
-	hr = ptrRemindersFolder->SetSearchCriteria(ptrPreRestriction, ptrOrigContainerList, RESTART_SEARCH | (ulOrigSearchState & (SEARCH_FOREGROUND | SEARCH_RECURSIVE)));
-	if (hr != hrSuccess)
-		goto exit;
-
-exit:
-	return hr;
+	return ptrRemindersFolder->SetSearchCriteria(ptrPreRestriction, ptrOrigContainerList, RESTART_SEARCH | (ulOrigSearchState & (SEARCH_FOREGROUND | SEARCH_RECURSIVE)));
 }
 
 ULONG ECExchangeImportContentsChanges::xECImportContentsChanges::AddRef(){

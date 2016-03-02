@@ -177,17 +177,7 @@ ECMsgStore* ECMAPIProp::GetMsgStore()
 // Loads the properties of the saved message for use
 HRESULT ECMAPIProp::HrLoadProps()
 {
-	HRESULT hr = hrSuccess;
-
-	hr = ECGenericProp::HrLoadProps();
-	if(hr != hrSuccess)
-		goto exit;
-
-exit:
-
-	dwLastError = hr;
-
-	return hr;
+	return dwLastError = ECGenericProp::HrLoadProps();
 }
 
 HRESULT ECMAPIProp::SetICSObject(BOOL bICSObject)
@@ -216,7 +206,7 @@ HRESULT	ECMAPIProp::DefaultMAPIGetProp(ULONG ulPropTag, void* lpProvider, ULONG 
 	case PROP_ID(PR_SOURCE_KEY):
 		hr = lpProp->HrGetRealProp(PR_SOURCE_KEY, ulFlags, lpBase, lpsPropValue);
 		if(hr != hrSuccess)
-			goto exit;
+			return hr;
 #ifdef WIN32
 		if(lpMsgStore->m_ulProfileFlags & EC_PROFILE_FLAGS_TRUNCATE_SOURCEKEY && lpsPropValue->Value.bin.cb > 22) {
 			/*
@@ -336,7 +326,7 @@ HRESULT	ECMAPIProp::DefaultMAPIGetProp(ULONG ulPropTag, void* lpProvider, ULONG 
 		if (lpProp->m_sMapiObject == NULL) {
 			hr = lpProp->HrLoadProps();
 			if (hr != hrSuccess)
-				goto exit;
+				return hr;
 		}
 		if (lpProp->m_sMapiObject->ulObjId > 0) {
 			lpsPropValue->ulPropTag = ulPropTag;
@@ -349,8 +339,6 @@ HRESULT	ECMAPIProp::DefaultMAPIGetProp(ULONG ulPropTag, void* lpProvider, ULONG 
 		hr = lpProp->HrGetRealProp(ulPropTag, ulFlags, lpBase, lpsPropValue);
 		break;
 	}
-	
-exit:
 	return hr;
 }
 
@@ -738,7 +726,7 @@ exit:
 
 HRESULT	ECMAPIProp::UpdateACLs(ULONG cNewPerms, ECPERMISSION *lpNewPerms)
 {
-	HRESULT					hr = hrSuccess;
+	HRESULT hr;
 	ECSecurityPtr			ptrSecurity;
 	ULONG					cPerms = 0;
 	ECPermissionArrayPtr	ptrPerms;
@@ -748,11 +736,11 @@ HRESULT	ECMAPIProp::UpdateACLs(ULONG cNewPerms, ECPERMISSION *lpNewPerms)
 
 	hr = QueryInterface(IID_IECSecurity, &ptrSecurity);
 	if (hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	hr = ptrSecurity->GetPermissionRules(ACCESS_TYPE_GRANT, &cPerms, &ptrPerms);
 	if (hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	// Since we want to replace the current ACL with a new one, we need to mark
 	// each existing item as deleted, and add all new ones as new.
@@ -798,7 +786,7 @@ HRESULT	ECMAPIProp::UpdateACLs(ULONG cNewPerms, ECPERMISSION *lpNewPerms)
 		} else {
 			hr = MAPIAllocateBuffer((cPerms + cNewPerms) * sizeof(ECPERMISSION), &ptrTmpPerms);
 			if (hr != hrSuccess)
-				goto exit;
+				return hr;
 
 			memcpy(ptrTmpPerms, ptrPerms, cPerms * sizeof(ECPERMISSION));
 			memcpy(ptrTmpPerms + cPerms, lpNewPerms, cNewPerms * sizeof(ECPERMISSION));
@@ -810,8 +798,7 @@ HRESULT	ECMAPIProp::UpdateACLs(ULONG cNewPerms, ECPERMISSION *lpNewPerms)
 	if (cPerms + cNewPerms > 0)
 		hr = ptrSecurity->SetPermissionRules(cPerms + cNewPerms, lpPermissions);
 
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 
@@ -950,59 +937,28 @@ exit:
 HRESULT ECMAPIProp::GetPermissionRules(int ulType, ULONG *lpcPermissions,
     ECPERMISSION **lppECPermissions)
 {
-	HRESULT hr = hrSuccess;
+	if (m_lpEntryId == NULL)
+		return MAPI_E_NO_ACCESS;
 
-	if(m_lpEntryId == NULL) {
-		hr = MAPI_E_NO_ACCESS;
-		goto exit;
-	}
-
-	hr = this->GetMsgStore()->lpTransport->HrGetPermissionRules(ulType, m_cbEntryId, m_lpEntryId, lpcPermissions, lppECPermissions);
-
-	if(hr != hrSuccess)
-		goto exit;
-
-exit:
-	return hr;
+	return this->GetMsgStore()->lpTransport->HrGetPermissionRules(ulType, m_cbEntryId, m_lpEntryId, lpcPermissions, lppECPermissions);
 }
 
 HRESULT ECMAPIProp::SetPermissionRules(ULONG cPermissions,
     ECPERMISSION *lpECPermissions)
 {
-	HRESULT hr = hrSuccess;
+	if (m_lpEntryId == NULL)
+		return MAPI_E_NO_ACCESS;
 
-	if(m_lpEntryId == NULL) {
-		hr = MAPI_E_NO_ACCESS;
-		goto exit;
-	}
-
-	hr = this->GetMsgStore()->lpTransport->HrSetPermissionRules(m_cbEntryId, m_lpEntryId, cPermissions, lpECPermissions);
-	if(hr != hrSuccess)
-		goto exit;
-
-exit:
-	return hr;
+	return this->GetMsgStore()->lpTransport->HrSetPermissionRules(m_cbEntryId, m_lpEntryId, cPermissions, lpECPermissions);
 }
 
 HRESULT ECMAPIProp::GetOwner(ULONG *lpcbOwner, LPENTRYID *lppOwner)
 {
-	HRESULT hr = hrSuccess;
-
 	if (lpcbOwner == NULL || lppOwner == NULL)
-	{
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
-
-	if(m_lpEntryId == NULL) {
-		hr = MAPI_E_NO_ACCESS;
-		goto exit;
-	}
-
-	hr = GetMsgStore()->lpTransport->HrGetOwner(m_cbEntryId, m_lpEntryId, lpcbOwner, lppOwner);
-
-exit:
-	return hr;
+		return MAPI_E_INVALID_PARAMETER;
+	if (m_lpEntryId == NULL)
+		return MAPI_E_NO_ACCESS;
+	return GetMsgStore()->lpTransport->HrGetOwner(m_cbEntryId, m_lpEntryId, lpcbOwner, lppOwner);
 }
 
 HRESULT ECMAPIProp::GetUserList(ULONG cbCompanyId, LPENTRYID lpCompanyId,
@@ -1025,23 +981,19 @@ HRESULT ECMAPIProp::GetCompanyList(ULONG ulFlags, ULONG *lpcCompanies,
 
 HRESULT ECMAPIProp::SetParentID(ULONG cbParentID, LPENTRYID lpParentID)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 
 	ASSERT(m_lpParentID == NULL);
-	if (lpParentID == NULL || cbParentID == 0) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (lpParentID == NULL || cbParentID == 0)
+		return MAPI_E_INVALID_PARAMETER;
 
 	hr = MAPIAllocateBuffer(cbParentID, (void**)&m_lpParentID);
 	if (hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	m_cbParentID = cbParentID;
 	memcpy(m_lpParentID, lpParentID, cbParentID);
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 ////////////////////////////////////////////

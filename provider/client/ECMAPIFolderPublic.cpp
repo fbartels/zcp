@@ -216,7 +216,7 @@ HRESULT ECMAPIFolderPublic::GetPropHandler(ULONG ulPropTag, void* lpProvider, UL
 
 				hr = MAPIAllocateMore((strTmp.size() + 1) * sizeof(WCHAR), lpBase, (void**)&lpsPropValue->Value.lpszW);
 				if (hr != hrSuccess) 
-					goto exit;
+					return hr;
 
 				wcscpy(lpsPropValue->Value.lpszW, strTmp.c_str());
 				lpsPropValue->ulPropTag = PR_DISPLAY_NAME_W;
@@ -225,7 +225,7 @@ HRESULT ECMAPIFolderPublic::GetPropHandler(ULONG ulPropTag, void* lpProvider, UL
 
 				hr = MAPIAllocateMore(strTmp.size() + 1, lpBase, (void**)&lpsPropValue->Value.lpszA);
 				if (hr != hrSuccess) 
-					goto exit;
+					return hr;
 
 				strcpy(lpsPropValue->Value.lpszA, strTmp.c_str());
 				lpsPropValue->ulPropTag = PR_DISPLAY_NAME_A;
@@ -285,7 +285,7 @@ HRESULT ECMAPIFolderPublic::GetPropHandler(ULONG ulPropTag, void* lpProvider, UL
 		// entryid on the server (only used for "Public Folders" folder)
 		if (lpFolder->m_lpEntryId) {
 			if ((hr = MAPIAllocateMore(lpFolder->m_cbEntryId, lpBase, (LPVOID*)&lpsPropValue->Value.bin.lpb)) != hrSuccess)
-				goto exit;
+				return hr;
 			memcpy(lpsPropValue->Value.bin.lpb, lpFolder->m_lpEntryId, lpFolder->m_cbEntryId);
 
 			lpsPropValue->Value.bin.cb = lpFolder->m_cbEntryId;
@@ -299,8 +299,6 @@ HRESULT ECMAPIFolderPublic::GetPropHandler(ULONG ulPropTag, void* lpProvider, UL
 		hr = MAPI_E_NOT_FOUND;
 		break;
 	}
-
-exit:
 	return hr;
 }
 
@@ -459,64 +457,53 @@ HRESULT ECMAPIFolderPublic::SaveChanges(ULONG ulFlags)
 
 HRESULT ECMAPIFolderPublic::SetProps(ULONG cValues, LPSPropValue lpPropArray, LPSPropProblemArray *lppProblems)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 
 	hr = ECMAPIContainer::SetProps(cValues, lpPropArray, lppProblems);
 	if (hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	if (lpStorage)
 	{
 		hr = ECMAPIContainer::SaveChanges(KEEP_OPEN_READWRITE);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 	}
-
-exit:
-
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECMAPIFolderPublic::DeleteProps(LPSPropTagArray lpPropTagArray, LPSPropProblemArray FAR * lppProblems)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 
 	hr = ECMAPIContainer::DeleteProps(lpPropTagArray, lppProblems);
 	if (hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	if (lpStorage)
 	{
 		hr = ECMAPIContainer::SaveChanges(KEEP_OPEN_READWRITE);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 	}
-
-exit:
-
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECMAPIFolderPublic::OpenEntry(ULONG cbEntryID, LPENTRYID lpEntryID, LPCIID lpInterface, ULONG ulFlags, ULONG *lpulObjType, LPUNKNOWN *lppUnk)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	unsigned int ulObjType = 0;
 
 	if (cbEntryID > 0)
 	{
 		hr = HrGetObjTypeFromEntryId(cbEntryID, (LPBYTE)lpEntryID, &ulObjType);
 		if(hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		if (ulObjType == MAPI_FOLDER && m_ePublicEntryID == ePE_FavoriteSubFolder)
 			lpEntryID->abFlags[3] = ZARAFA_FAVORITE;
 	}
-
-	hr = ECMAPIFolder::OpenEntry(cbEntryID, lpEntryID, lpInterface, ulFlags, lpulObjType, lppUnk);
-	
-exit:
-
-	return hr;
+	return ECMAPIFolder::OpenEntry(cbEntryID, lpEntryID, lpInterface, ulFlags, lpulObjType, lppUnk);
 }
 
 HRESULT ECMAPIFolderPublic::SetEntryId(ULONG cbEntryId, LPENTRYID lpEntryId)

@@ -137,16 +137,8 @@ HRESULT ECGenericProp::SetProvider(void* lpProvider)
 
 HRESULT ECGenericProp::SetEntryId(ULONG cbEntryId, LPENTRYID lpEntryId)
 {
-	HRESULT hr;
-
 	ASSERT(m_lpEntryId == NULL);
-	
-	hr = Util::HrCopyEntryId(cbEntryId, lpEntryId, &m_cbEntryId, &m_lpEntryId);
-	if(hr != hrSuccess)
-		goto exit;
-
-exit:
-	return hr;
+	return Util::HrCopyEntryId(cbEntryId, lpEntryId, &m_cbEntryId, &m_lpEntryId);
 }
 
 // Add a property handler. Usually called by a subclass
@@ -687,19 +679,14 @@ exit:
 // Check if property is dirty (delete properties gives MAPI_E_NOT_FOUND)
 HRESULT ECGenericProp::IsPropDirty(ULONG ulPropTag, BOOL *lpbDirty)
 {
-	HRESULT					hr = hrSuccess;
 	ECPropertyEntryIterator iterProps;
 
 	iterProps = lstProps->find(PROP_ID(ulPropTag));
-	if(iterProps == lstProps->end() || (PROP_TYPE(ulPropTag) != PT_UNSPECIFIED && ulPropTag != iterProps->second.GetPropTag()) ) {
-		hr = MAPI_E_NOT_FOUND;
-		goto exit;
-	}
+	if (iterProps == lstProps->end() || (PROP_TYPE(ulPropTag) != PT_UNSPECIFIED && ulPropTag != iterProps->second.GetPropTag()))
+		return MAPI_E_NOT_FOUND;
 	
 	*lpbDirty = iterProps->second.FIsDirty();
-
-exit: 
-	return hr;
+	return hrSuccess;
 }
 
 /**
@@ -713,19 +700,14 @@ exit:
  */
 HRESULT ECGenericProp::HrSetCleanProperty(ULONG ulPropTag)
 {
-	HRESULT					hr = hrSuccess;
 	ECPropertyEntryIterator iterProps;
 
 	iterProps = lstProps->find(PROP_ID(ulPropTag));
-	if(iterProps == lstProps->end() || (PROP_TYPE(ulPropTag) != PT_UNSPECIFIED && ulPropTag != iterProps->second.GetPropTag()) ) {
-		hr = MAPI_E_NOT_FOUND;
-		goto exit;
-	}
+	if (iterProps == lstProps->end() || (PROP_TYPE(ulPropTag) != PT_UNSPECIFIED && ulPropTag != iterProps->second.GetPropTag()))
+		return MAPI_E_NOT_FOUND;
 	
 	iterProps->second.HrSetClean();
-
-exit: 
-	return hr;
+	return hrSuccess;
 }
 
 // Get the handler(s) for a given property tag
@@ -759,7 +741,7 @@ exit:
 
 HRESULT ECGenericProp::HrSetPropStorage(IECPropStorage *lpStorage, BOOL fLoadProps)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	SPropValue sPropValue;
 
 	if(this->lpStorage)
@@ -773,21 +755,17 @@ HRESULT ECGenericProp::HrSetPropStorage(IECPropStorage *lpStorage, BOOL fLoadPro
 	if(fLoadProps) {
 		hr = HrLoadProps();
 		if(hr != hrSuccess)
-			goto exit;
+			return hr;
 			
 		if(HrGetRealProp(PR_OBJECT_TYPE, 0, NULL, &sPropValue, m_ulMaxPropSize) == hrSuccess) {
 			// The server sent a PR_OBJECT_TYPE, check if it is correct
-			if(this->ulObjType != sPropValue.Value.ul) {
+			if (this->ulObjType != sPropValue.Value.ul)
 				// Return NOT FOUND because the entryid given was the incorrect type. This means
 				// that the object was basically not found.
-				hr = MAPI_E_NOT_FOUND;
-				goto exit;
-			}
+				return MAPI_E_NOT_FOUND;
 		}
 	}
-exit:
-		
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECGenericProp::HrLoadEmptyProps()
@@ -999,7 +977,7 @@ exit:
 
 HRESULT ECGenericProp::GetPropList(ULONG ulFlags, LPSPropTagArray FAR * lppPropTagArray)
 {
-	HRESULT				hr = hrSuccess;
+	HRESULT hr;
 	LPSPropTagArray		lpPropTagArray = NULL;
 	int					n = 0;
 
@@ -1009,7 +987,7 @@ HRESULT ECGenericProp::GetPropList(ULONG ulFlags, LPSPropTagArray FAR * lppPropT
 	if(lstProps == NULL) {
 		hr = HrLoadProps();
 		if(hr != hrSuccess)
-			goto exit;
+			return hr;
 	}			
 
 	// The size of the property tag array is never larger than (static properties + generated properties)
@@ -1069,10 +1047,7 @@ HRESULT ECGenericProp::GetPropList(ULONG ulFlags, LPSPropTagArray FAR * lppPropT
 	lpPropTagArray->cValues = n;
 
 	*lppPropTagArray = lpPropTagArray;
-
-exit:
-
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECGenericProp::OpenProperty(ULONG ulPropTag, LPCIID lpiid, ULONG ulInterfaceOptions, ULONG ulFlags, LPUNKNOWN FAR * lppUnk)
@@ -1157,17 +1132,13 @@ HRESULT ECGenericProp::DeleteProps(LPSPropTagArray lpPropTagArray, LPSPropProble
 	LPSPropProblemArray		lpProblems = NULL;
 	int						nProblem = 0;
 
-	if (!lpPropTagArray) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (lpPropTagArray == NULL)
+		return MAPI_E_INVALID_PARAMETER;
 
 	// over-allocate the problem array
 	er = ECAllocateBuffer(CbNewSPropProblemArray(lpPropTagArray->cValues), (LPVOID *)&lpProblems);
-	if (er != erSuccess) {
-		hr = MAPI_E_NOT_ENOUGH_MEMORY;
-		goto exit;
-	}
+	if (er != erSuccess)
+		return MAPI_E_NOT_ENOUGH_MEMORY;
 
 	for(unsigned int i=0;i<lpPropTagArray->cValues;i++) {
 
@@ -1205,8 +1176,6 @@ HRESULT ECGenericProp::DeleteProps(LPSPropTagArray lpPropTagArray, LPSPropProble
 	} else {
 		ECFreeBuffer(lpProblems);
 	}
-	
-exit:
 	return hr;
 }
 
