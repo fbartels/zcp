@@ -111,7 +111,7 @@ static int gsoap_connect_pipe(struct soap *soap, const char *endpoint,
 		return SOAP_EOF;
 	const char *socket_name = strchr(endpoint + 7, '/');
 	if (socket_name == NULL ||
-	    strlen(socket_name) > sizeof(saddr.sun_path))
+	    strlen(socket_name) >= sizeof(saddr.sun_path))
 		return SOAP_EOF;
 
 	fd = socket(PF_UNIX, SOCK_STREAM, 0);
