@@ -47,25 +47,18 @@
 
 HRESULT ECMessageStreamImporterIStreamAdapter::Create(WSMessageStreamImporter *lpStreamImporter, IStream **lppStream)
 {
-	HRESULT hr = hrSuccess;
 	ECMessageStreamImporterIStreamAdapterPtr ptrAdapter;
 
-	if (lpStreamImporter == NULL || lppStream == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (lpStreamImporter == NULL || lppStream == NULL)
+		return MAPI_E_INVALID_PARAMETER;
 
 	try {
 		ptrAdapter.reset(new ECMessageStreamImporterIStreamAdapter(lpStreamImporter));
 	} catch (const std::bad_alloc &) {
-		hr = MAPI_E_NOT_ENOUGH_MEMORY;
-		goto exit;
+		return MAPI_E_NOT_ENOUGH_MEMORY;
 	}
 
-	hr = ptrAdapter->QueryInterface(IID_IStream, (LPVOID*)lppStream);
-
-exit:
-	return hr;
+	return ptrAdapter->QueryInterface(IID_IStream, reinterpret_cast<LPVOID *>(lppStream));
 }
 
 HRESULT ECMessageStreamImporterIStreamAdapter::QueryInterface(REFIID refiid, void **lppInterface)
@@ -86,23 +79,22 @@ HRESULT ECMessageStreamImporterIStreamAdapter::Read(void* /*pv*/, ULONG /*cb*/, 
 
 HRESULT ECMessageStreamImporterIStreamAdapter::Write(const void *pv, ULONG cb, ULONG *pcbWritten)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 
 	if (!m_ptrSink) {
 		hr = m_ptrStreamImporter->StartTransfer(&m_ptrSink);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 	}
 
 	hr = m_ptrSink->Write((LPVOID)pv, cb);
 	if (hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	if (pcbWritten)
 		*pcbWritten = cb;
 
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 // IStream
@@ -123,21 +115,17 @@ HRESULT ECMessageStreamImporterIStreamAdapter::CopyTo(IStream* /*pstm*/, ULARGE_
 
 HRESULT ECMessageStreamImporterIStreamAdapter::Commit(DWORD /*grfCommitFlags*/)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	HRESULT hrAsync = hrSuccess;
 
-	if (!m_ptrSink) {
-		hr = MAPI_E_UNCONFIGURED;
-		goto exit;
-	}
+	if (m_ptrSink == NULL)
+		return MAPI_E_UNCONFIGURED;
 
 	m_ptrSink.reset();
 
 	hr = m_ptrStreamImporter->GetAsyncResult(&hrAsync);
 	if (hr == hrSuccess)
 		hr = hrAsync;
-
-exit:
 	return hr;
 }
 

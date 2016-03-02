@@ -80,21 +80,19 @@ static const char THIS_FILE[]=__FILE__;
 
 static HRESULT HrGetECMsgStore(IMAPIProp *lpProp, ECMsgStore **lppECMsgStore)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	LPSPropValue lpPropVal = NULL;
 	ECMAPIProp *lpECMAPIProp = NULL;
 
 	hr = HrGetOneProp(lpProp, PR_EC_OBJECT, &lpPropVal);
 	if(hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	lpECMAPIProp = (ECMAPIProp *)lpPropVal->Value.lpszA;
 
 	*lppECMsgStore = lpECMAPIProp->GetMsgStore();
 	(*lppECMsgStore)->AddRef();
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -154,29 +152,29 @@ HRESULT ECXPLogon::QueryInterface(REFIID refiid, void **lppInterface)
 
 HRESULT ECXPLogon::AddressTypes(ULONG * lpulFlags, ULONG * lpcAdrType, LPTSTR ** lpppszAdrTypeArray, ULONG * lpcMAPIUID, LPMAPIUID ** lpppUIDArray)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 
 	if(m_lppszAdrTypeArray == NULL) {
 
 		hr = ECAllocateBuffer(sizeof(TCHAR *) * 3, (LPVOID *)&m_lppszAdrTypeArray);
 		if(hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		hr = ECAllocateMore((_tcslen(TRANSPORT_ADDRESS_TYPE_SMTP)+1) * sizeof(TCHAR), m_lppszAdrTypeArray, (LPVOID *)&m_lppszAdrTypeArray[0]);
 		if(hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		_tcscpy(m_lppszAdrTypeArray[0], TRANSPORT_ADDRESS_TYPE_SMTP);
 
 		hr = ECAllocateMore((_tcslen(TRANSPORT_ADDRESS_TYPE_ZARAFA)+1) * sizeof(TCHAR), m_lppszAdrTypeArray, (LPVOID *)&m_lppszAdrTypeArray[1]);
 		if(hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		_tcscpy(m_lppszAdrTypeArray[1], TRANSPORT_ADDRESS_TYPE_ZARAFA);
 
 		hr = ECAllocateMore((_tcslen(TRANSPORT_ADDRESS_TYPE_FAX)+1) * sizeof(TCHAR), m_lppszAdrTypeArray, (LPVOID *)&m_lppszAdrTypeArray[2]);
 		if(hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		_tcscpy(m_lppszAdrTypeArray[2], TRANSPORT_ADDRESS_TYPE_FAX);
 	}
@@ -186,9 +184,7 @@ HRESULT ECXPLogon::AddressTypes(ULONG * lpulFlags, ULONG * lpcAdrType, LPTSTR **
 	*lpppUIDArray = NULL; // We could specify the Zarafa addressbook's UID here to stop the MAPI spooler doing expansions on them (IE EntryID -> Email address)
 	*lpcAdrType = 3;
 	*lpppszAdrTypeArray = m_lppszAdrTypeArray;
-
-exit:
-	return hr;	
+	return hrSuccess;
 }
 
 HRESULT ECXPLogon::RegisterOptions(ULONG * lpulFlags, ULONG * lpcOptions, LPOPTIONDATA * lppOptions)

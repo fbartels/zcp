@@ -605,23 +605,20 @@ exit:
 
 HRESULT ECMemTablePublic::DelRow(SBinary* lpInstanceKey)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	std::string strInstanceKey;
 	SPropValue sKeyProp;
 	ECMAPFolderRelation::iterator	iterRel;
 
-	if (lpInstanceKey == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (lpInstanceKey == NULL)
+		return MAPI_E_INVALID_PARAMETER;
 
 	strInstanceKey.assign((char*)lpInstanceKey->lpb, lpInstanceKey->cb);
 
 	iterRel = m_mapRelation.find(strInstanceKey);
 
 	if (iterRel == m_mapRelation.end() )
-		goto exit;
-
+		return hrSuccess;
 
 	sKeyProp.ulPropTag = PR_ROWID;
 	sKeyProp.Value.ul = iterRel->second.ulRowID;
@@ -634,9 +631,7 @@ HRESULT ECMemTablePublic::DelRow(SBinary* lpInstanceKey)
 	FreeRelation(&iterRel->second);
 
 	m_mapRelation.erase(iterRel);
-	
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 void ECMemTablePublic::FreeRelation(t_sRelation* lpRelation)

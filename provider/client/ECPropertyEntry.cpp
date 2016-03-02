@@ -192,10 +192,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 	ULONG ulNewSize = 0;
 	unsigned int i;
 
-	if (lpsProp == NULL) {
-		dwLastError = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (lpsProp == NULL)
+		return dwLastError = MAPI_E_INVALID_PARAMETER;
 
 	this->dwLastError = 0;
 	this->ulPropTag = lpsProp->ulPropTag;
@@ -237,25 +235,19 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 	case PT_STRING8: {
 		std::wstring wstrTmp;
 
-		if(lpsProp->Value.lpszA == NULL) {
-			dwLastError = MAPI_E_INVALID_PARAMETER;
-			goto exit;
-		}
+		if (lpsProp->Value.lpszA == NULL)
+			return dwLastError = MAPI_E_INVALID_PARAMETER;
 
-		if (TryConvert(lpsProp->Value.lpszA, wstrTmp) != hrSuccess) {
-			dwLastError = MAPI_E_INVALID_PARAMETER;
-			goto exit;
-		}
+		if (TryConvert(lpsProp->Value.lpszA, wstrTmp) != hrSuccess)
+			return dwLastError = MAPI_E_INVALID_PARAMETER;
 
 		ulNewSize = wstrTmp.length() + 1;
 		if(ulSize < ulNewSize) {
 			delete[] this->Value.lpszW;
 			this->Value.lpszW = new WCHAR[ulNewSize];
 
-			if(this->Value.lpszW == NULL) {
-				dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
-				goto exit;
-			}
+			if (this->Value.lpszW == NULL)
+				return dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
 		}
 
 		ulSize = ulNewSize;
@@ -266,10 +258,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		break;
 	}
 	case PT_BINARY: {
-		if(lpsProp->Value.bin.lpb == NULL && lpsProp->Value.bin.cb) {
-			dwLastError = MAPI_E_INVALID_PARAMETER;
-			goto exit;
-		}
+		if (lpsProp->Value.bin.lpb == NULL && lpsProp->Value.bin.cb)
+			return dwLastError = MAPI_E_INVALID_PARAMETER;
 
 		ulNewSize = lpsProp->Value.bin.cb;
 
@@ -285,10 +275,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 			delete[] this->Value.bin.lpb;
 			this->Value.bin.lpb = new BYTE[ulNewSize];
 
-			if(this->Value.bin.lpb == NULL) {
-				dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
-				goto exit;
-			}
+			if (this->Value.bin.lpb == NULL)
+				return dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
 		}
 		ulSize = ulNewSize;
 
@@ -298,20 +286,16 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		break;
 	}
 	case PT_UNICODE: {
-		if(lpsProp->Value.lpszW == NULL) {
-			dwLastError = MAPI_E_INVALID_PARAMETER;
-			goto exit;
-		}
+		if (lpsProp->Value.lpszW == NULL)
+			return dwLastError = MAPI_E_INVALID_PARAMETER;
 
 		ulNewSize = wcslen(lpsProp->Value.lpszW)+1;
 		if(ulSize < ulNewSize) {
 			delete[] this->Value.lpszW;
 			this->Value.lpszW = new WCHAR[ulNewSize];
 
-			if(this->Value.lpszW == NULL) {
-				dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
-				goto exit;
-			}
+			if (this->Value.lpszW == NULL)
+				return dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
 		}
 
 		ulSize = ulNewSize;
@@ -321,19 +305,15 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		break;
 	}
 	case PT_CLSID: {
-		if(lpsProp->Value.lpguid == NULL) {
-			dwLastError = MAPI_E_INVALID_PARAMETER;
-			goto exit;
-		}
+		if (lpsProp->Value.lpguid == NULL)
+			return dwLastError = MAPI_E_INVALID_PARAMETER;
 
 		if(ulSize != sizeof(GUID)) {
 			ulSize = sizeof(GUID);
 			this->Value.lpguid = new GUID;			
 
-			if(this->Value.lpguid == NULL) {
-				dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
-				goto exit;
-			}
+			if (this->Value.lpguid == NULL)
+				return dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
 		}
 
 		memcpy(this->Value.lpguid, lpsProp->Value.lpguid, sizeof(GUID));
@@ -345,10 +325,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		this->Value.li = lpsProp->Value.li;
 		break;
 	case PT_MV_I2: {
-		if(lpsProp->Value.MVi.lpi == NULL) {
-			dwLastError = MAPI_E_INVALID_PARAMETER;
-			goto exit;
-		}
+		if (lpsProp->Value.MVi.lpi == NULL)
+			return dwLastError = MAPI_E_INVALID_PARAMETER;
 
 		ulNewSize = sizeof(short int)*lpsProp->Value.MVi.cValues;
 
@@ -356,10 +334,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 			delete[] this->Value.MVi.lpi;
 			this->Value.MVi.lpi = new short int[lpsProp->Value.MVi.cValues];
 		
-			if(this->Value.MVi.lpi == NULL) {
-				dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
-				goto exit;
-			}
+			if (this->Value.MVi.lpi == NULL)
+				return dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
 		}
 
 		ulSize = ulNewSize;
@@ -370,10 +346,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		break;
 	}
 	case PT_MV_LONG: {
-		if(lpsProp->Value.MVl.lpl == NULL) {
-			dwLastError = MAPI_E_INVALID_PARAMETER;
-			goto exit;
-		}
+		if (lpsProp->Value.MVl.lpl == NULL)
+			return dwLastError = MAPI_E_INVALID_PARAMETER;
 
 		ulNewSize = sizeof(LONG) * lpsProp->Value.MVl.cValues;
 
@@ -381,10 +355,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 			delete[] this->Value.MVl.lpl;
 			this->Value.MVl.lpl = new LONG[lpsProp->Value.MVl.cValues];
 
-			if(this->Value.MVl.lpl == NULL) {
-				dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
-				goto exit;
-			}
+			if (this->Value.MVl.lpl == NULL)
+				return dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
 		}
 		
 		ulSize = ulNewSize;
@@ -395,10 +367,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		break;
 	}
 	case PT_MV_R4: {
-		if(lpsProp->Value.MVflt.lpflt == NULL) {
-			dwLastError = MAPI_E_INVALID_PARAMETER;
-			goto exit;
-		}
+		if (lpsProp->Value.MVflt.lpflt == NULL)
+			return dwLastError = MAPI_E_INVALID_PARAMETER;
 
 		ulNewSize = sizeof(float) * lpsProp->Value.MVflt.cValues;
 
@@ -406,10 +376,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 			delete[] this->Value.MVflt.lpflt;
 			this->Value.MVflt.lpflt = new float[lpsProp->Value.MVflt.cValues];
 
-			if(this->Value.MVflt.lpflt == NULL) {
-				dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
-				goto exit;
-			}
+			if (this->Value.MVflt.lpflt == NULL)
+				return dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
 		}
 		
 		ulSize = ulNewSize;
@@ -420,10 +388,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		break;
 	}
 	case PT_MV_DOUBLE: {
-		if(lpsProp->Value.MVdbl.lpdbl == NULL) {
-			dwLastError = MAPI_E_INVALID_PARAMETER;
-			goto exit;
-		}
+		if (lpsProp->Value.MVdbl.lpdbl == NULL)
+			return dwLastError = MAPI_E_INVALID_PARAMETER;
 
 		ulNewSize = sizeof(double) * lpsProp->Value.MVdbl.cValues;
 
@@ -431,10 +397,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 			delete[] this->Value.MVdbl.lpdbl;
 			this->Value.MVdbl.lpdbl = new double[lpsProp->Value.MVdbl.cValues];
 
-			if(this->Value.MVdbl.lpdbl == NULL) {
-				dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
-				goto exit;
-			}
+			if (this->Value.MVdbl.lpdbl == NULL)
+				return dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
 		}
 
 		ulSize = ulNewSize;
@@ -445,10 +409,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		break;
 	}
 	case PT_MV_CURRENCY: {
-		if(lpsProp->Value.MVcur.lpcur == NULL) {
-			dwLastError = MAPI_E_INVALID_PARAMETER;
-			goto exit;
-		}
+		if (lpsProp->Value.MVcur.lpcur == NULL)
+			return dwLastError = MAPI_E_INVALID_PARAMETER;
 
 		ulNewSize = sizeof(CURRENCY) * lpsProp->Value.MVcur.cValues;
 
@@ -456,10 +418,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 			delete[] this->Value.MVcur.lpcur;
 			this->Value.MVcur.lpcur = new CURRENCY[lpsProp->Value.MVcur.cValues];
 			
-			if(this->Value.MVcur.lpcur == NULL) {
-				dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
-				goto exit;
-			}
+			if (this->Value.MVcur.lpcur == NULL)
+				return dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
 		}
 		
 		ulSize = ulNewSize;
@@ -470,10 +430,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		break;
 	}
 	case PT_MV_APPTIME: {
-		if(lpsProp->Value.MVat.lpat == NULL) {
-			dwLastError = MAPI_E_INVALID_PARAMETER;
-			goto exit;
-		}
+		if (lpsProp->Value.MVat.lpat == NULL)
+			return dwLastError = MAPI_E_INVALID_PARAMETER;
 
 		ulNewSize = sizeof(double) * lpsProp->Value.MVat.cValues;
 
@@ -483,10 +441,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 
 			this->Value.MVat.lpat = new double[lpsProp->Value.MVat.cValues];
 			
-			if(this->Value.MVat.lpat == NULL) {
-				dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
-				goto exit;
-			}
+			if (this->Value.MVat.lpat == NULL)
+				return dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
 		}
 
 		ulSize = ulNewSize;
@@ -497,10 +453,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		break;
 	}
 	case PT_MV_SYSTIME: {
-		if(lpsProp->Value.MVft.lpft == NULL) {
-			dwLastError = MAPI_E_INVALID_PARAMETER;
-			goto exit;
-		}
+		if (lpsProp->Value.MVft.lpft == NULL)
+			return dwLastError = MAPI_E_INVALID_PARAMETER;
 
 		ulNewSize = sizeof(FILETIME) * lpsProp->Value.MVft.cValues;
 
@@ -508,10 +462,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 			delete[] this->Value.MVft.lpft;
 			this->Value.MVft.lpft = new FILETIME[lpsProp->Value.MVft.cValues];
 
-			if(this->Value.MVft.lpft == NULL) {
-				dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
-				goto exit;
-			}
+			if (this->Value.MVft.lpft == NULL)
+				return dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
 		}
 		
 		ulSize = ulNewSize;
@@ -522,10 +474,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		break;
 	}
 	case PT_MV_BINARY: {
-		if(lpsProp->Value.MVbin.lpbin == NULL) {
-			dwLastError = MAPI_E_INVALID_PARAMETER;
-			goto exit;
-		}
+		if (lpsProp->Value.MVbin.lpbin == NULL)
+			return dwLastError = MAPI_E_INVALID_PARAMETER;
 
 		ulNewSize = sizeof(void *) * lpsProp->Value.MVbin.cValues;
 
@@ -539,10 +489,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 
 			this->Value.MVbin.lpbin = new SBinary[lpsProp->Value.MVbin.cValues];
 
-			if(this->Value.MVbin.lpbin == NULL) {
-				dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
-				goto exit;
-			}
+			if (this->Value.MVbin.lpbin == NULL)
+				return dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
 
 			memset(this->Value.MVbin.lpbin, 0, sizeof(SBinary) * lpsProp->Value.MVbin.cValues);
 		}
@@ -554,11 +502,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		for(unsigned int i=0;i<lpsProp->Value.MVbin.cValues;i++) {
 			if(lpsProp->Value.MVbin.lpbin[i].cb > 0)
 			{
-				if(lpsProp->Value.MVbin.lpbin[i].lpb == NULL) {
-					dwLastError = MAPI_E_INVALID_PARAMETER;
-					goto exit;
-				}
-
+				if (lpsProp->Value.MVbin.lpbin[i].lpb == NULL)
+					return dwLastError = MAPI_E_INVALID_PARAMETER;
 				if(this->Value.MVbin.lpbin[i].lpb == NULL || this->Value.MVbin.lpbin[i].cb < lpsProp->Value.MVbin.lpbin[i].cb) {
 					delete[] this->Value.MVbin.lpbin[i].lpb;
 					this->Value.MVbin.lpbin[i].lpb = new BYTE [lpsProp->Value.MVbin.lpbin[i].cb];
@@ -577,10 +522,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 	case PT_MV_STRING8: {
 		convert_context converter;
 
-		if(lpsProp->Value.MVszA.lppszA == NULL) {
-			dwLastError = MAPI_E_INVALID_PARAMETER;
-			goto exit;
-		}
+		if (lpsProp->Value.MVszA.lppszA == NULL)
+			return dwLastError = MAPI_E_INVALID_PARAMETER;
 
 		ulNewSize = sizeof(void *) * lpsProp->Value.MVszA.cValues;
 
@@ -595,10 +538,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 
 			this->Value.MVszW.lppszW = new WCHAR *[lpsProp->Value.MVszA.cValues];
 
-			if(this->Value.MVszW.lppszW == NULL) {
-				dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
-				goto exit;
-			}
+			if (this->Value.MVszW.lppszW == NULL)
+				return dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
 
 			memset(this->Value.MVszW.lppszW, 0, sizeof(wchar_t *) * lpsProp->Value.MVszA.cValues);
 		}
@@ -611,16 +552,10 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		{
 			std::wstring wstrTmp;
 
-			if(lpsProp->Value.MVszA.lppszA[i] == NULL) {
-				dwLastError = MAPI_E_INVALID_PARAMETER;
-				goto exit;
-			}
-
-			if (TryConvert(lpsProp->Value.MVszA.lppszA[i], wstrTmp) != hrSuccess) {
-				dwLastError = MAPI_E_INVALID_PARAMETER;
-				goto exit;
-			}
-
+			if (lpsProp->Value.MVszA.lppszA[i] == NULL)
+				return dwLastError = MAPI_E_INVALID_PARAMETER;
+			if (TryConvert(lpsProp->Value.MVszA.lppszA[i], wstrTmp) != hrSuccess)
+				return dwLastError = MAPI_E_INVALID_PARAMETER;
 			if(this->Value.MVszW.lppszW[i] == NULL || wcslen(this->Value.MVszW.lppszW[i]) < wstrTmp.length())
 			{
 				delete[] this->Value.MVszW.lppszW[i];
@@ -633,10 +568,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		break;
 	}
 	case PT_MV_UNICODE: {
-		if(lpsProp->Value.MVszW.lppszW == NULL) {
-			dwLastError = MAPI_E_INVALID_PARAMETER;
-			goto exit;
-		}
+		if (lpsProp->Value.MVszW.lppszW == NULL)
+			return dwLastError = MAPI_E_INVALID_PARAMETER;
 
 		ulNewSize = sizeof(void *) * lpsProp->Value.MVszW.cValues;
 
@@ -650,10 +583,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 
 			this->Value.MVszW.lppszW = new WCHAR *[lpsProp->Value.MVszW.cValues];
 
-			if(this->Value.MVszW.lppszW == NULL) {
-				dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
-				goto exit;
-			}
+			if (this->Value.MVszW.lppszW == NULL)
+				return dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
 
 			memset(this->Value.MVszW.lppszW, 0, sizeof(WCHAR *) * lpsProp->Value.MVszW.cValues);
 		}
@@ -663,11 +594,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		this->Value.MVszW.cValues = lpsProp->Value.MVszW.cValues;
 
 		for(unsigned int i=0;i<lpsProp->Value.MVszW.cValues;i++) {
-			if(lpsProp->Value.MVszW.lppszW[i] == NULL) {
-				dwLastError = MAPI_E_INVALID_PARAMETER;
-				goto exit;
-			}
-
+			if (lpsProp->Value.MVszW.lppszW[i] == NULL)
+				return dwLastError = MAPI_E_INVALID_PARAMETER;
 			if(this->Value.MVszW.lppszW[i] == NULL || wcslen(this->Value.MVszW.lppszW[i]) < wcslen(lpsProp->Value.MVszW.lppszW[i])) {
 				delete[] this->Value.MVszW.lppszW[i];
 				this->Value.MVszW.lppszW[i] = new WCHAR [wcslen(lpsProp->Value.MVszW.lppszW[i])+sizeof(WCHAR)];
@@ -678,10 +606,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		break;
 	}
 	case PT_MV_CLSID: {
-		if(lpsProp->Value.MVguid.lpguid == NULL) {
-			dwLastError = MAPI_E_INVALID_PARAMETER;
-			goto exit;
-		}
+		if (lpsProp->Value.MVguid.lpguid == NULL)
+			return dwLastError = MAPI_E_INVALID_PARAMETER;
 
 		ulNewSize = sizeof(GUID) * lpsProp->Value.MVguid.cValues;
 
@@ -689,10 +615,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 			delete[] this->Value.MVguid.lpguid;
 			this->Value.MVguid.lpguid = new GUID[lpsProp->Value.MVguid.cValues];
 
-			if(this->Value.MVguid.lpguid == NULL) {
-				dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
-				goto exit;
-			}
+			if (this->Value.MVguid.lpguid == NULL)
+				return dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
 		}
 
 		ulSize = ulNewSize;
@@ -703,10 +627,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		break;
 	}
 	case PT_MV_I8: {
-		if(lpsProp->Value.MVli.lpli == NULL) {
-			dwLastError = MAPI_E_INVALID_PARAMETER;
-			goto exit;
-		}
+		if (lpsProp->Value.MVli.lpli == NULL)
+			return dwLastError = MAPI_E_INVALID_PARAMETER;
 
 		ulNewSize = sizeof(LARGE_INTEGER) * lpsProp->Value.MVli.cValues;
 
@@ -714,10 +636,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 			delete[] this->Value.MVli.lpli;
 			this->Value.MVli.lpli = new LARGE_INTEGER[lpsProp->Value.MVli.cValues];
 
-			if(this->Value.MVli.lpli == NULL) {
-				dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
-				goto exit;
-			}
+			if (this->Value.MVli.lpli == NULL)
+				return dwLastError = MAPI_E_NOT_ENOUGH_MEMORY;
 		}
 
 		ulSize = ulNewSize;
@@ -736,8 +656,6 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		dwLastError = MAPI_E_INVALID_PARAMETER;
 		break;
 	}
-
-exit:
 	return dwLastError;
 }
 
@@ -905,7 +823,7 @@ HRESULT ECProperty::CopyTo(LPSPropValue lpsProp, void *lpBase, ULONG ulRequestPr
 			std::string dst;
 			if (TryConvert(this->Value.lpszW, dst) != hrSuccess) {
 				dwLastError = MAPI_E_INVALID_PARAMETER;
-				goto exit;
+				return hr;
 			}
 
 			hr = ECAllocateMore(dst.length() + 1, lpBase, (LPVOID*)&lpsProp->Value.lpszA);
@@ -1061,7 +979,7 @@ HRESULT ECProperty::CopyTo(LPSPropValue lpsProp, void *lpBase, ULONG ulRequestPr
 					std::string strDst;
 					if (TryConvert(this->Value.MVszW.lppszW[i], strDst) != hrSuccess) {
 						dwLastError = MAPI_E_INVALID_PARAMETER;
-						goto exit;
+						return hr;
 					}
 
 					hr = ECAllocateMore(strDst.size() + 1, lpBase, (LPVOID*)&lpsProp->Value.MVszA.lppszA[i]);
@@ -1123,8 +1041,6 @@ HRESULT ECProperty::CopyTo(LPSPropValue lpsProp, void *lpBase, ULONG ulRequestPr
 		lpsProp->Value = this->Value;
 		break;
 	}
-
-exit:
 	return hr;
 }
 

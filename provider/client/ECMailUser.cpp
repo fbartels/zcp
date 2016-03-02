@@ -117,95 +117,76 @@ HRESULT ECMailUser::OpenProperty(ULONG ulPropTag, LPCIID lpiid, ULONG ulInterfac
 {
 	HRESULT			hr = MAPI_E_NOT_FOUND;
 
-	if (lpiid == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (lpiid == NULL)
+		return MAPI_E_INVALID_PARAMETER;
 
 	if (ulFlags & MAPI_CREATE)
-    {
 		// Don't support creating any sub-objects
-		hr = MAPI_E_NO_ACCESS;
-        goto exit;
-    }
+		return MAPI_E_NO_ACCESS;
 
 	switch(ulPropTag) {
 #if defined(_WIN32) && !defined(WINCE)
 	case PR_DETAILS_TABLE:
-		if (*lpiid != IID_IMAPITable) {
-			hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
-			goto exit;
-		}
+		if (*lpiid != IID_IMAPITable)
+			return MAPI_E_INTERFACE_NOT_SUPPORTED;
 
 		hr = ECDisplayTable::CreateDisplayTable(arraySize(rgdtIMailUserPage), rgdtIMailUserPage, (LPMAPITABLE *) lppUnk);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		break;
 	case PR_BUSINESS2_TELEPHONE_NUMBER_O:
-		if (*lpiid != IID_IMAPITable) {
-			hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
-			goto exit;
-		}
+		if (*lpiid != IID_IMAPITable)
+			return MAPI_E_INTERFACE_NOT_SUPPORTED;
 
 		hr = ECDisplayTable::CreateTableFromProperty(this, lpiid, ulInterfaceOptions, PR_BUSINESS2_TELEPHONE_NUMBER, PR_BUSINESS2_TELEPHONE_NUMBER, lppUnk);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		break;
 	case PR_HOME2_TELEPHONE_NUMBER_O:
-		if (*lpiid != IID_IMAPITable) {
-			hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
-			goto exit;
-		}
+		if (*lpiid != IID_IMAPITable)
+			return MAPI_E_INTERFACE_NOT_SUPPORTED;
 
 		hr = ECDisplayTable::CreateTableFromProperty(this, lpiid, ulInterfaceOptions, PR_HOME2_TELEPHONE_NUMBER, PR_HOME2_TELEPHONE_NUMBER, lppUnk);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		break;
 	case PR_EMS_AB_MANAGER_O:
-		if (*lpiid != IID_IMAPITable) {
-			hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
-			goto exit;
-		}
+		if (*lpiid != IID_IMAPITable)
+			return MAPI_E_INTERFACE_NOT_SUPPORTED;
 
 		hr = ECDisplayTable::CreateTableFromResolved(this, lpiid, ulInterfaceOptions, CHANGE_PROP_TYPE(PR_EMS_AB_MANAGER, PT_BINARY), lppUnk);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		break;
 	case PR_EMS_AB_PROXY_ADDRESSES_O:
-		if (*lpiid != IID_IMAPITable) {
-			hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
-			goto exit;
-		}
+		if (*lpiid != IID_IMAPITable)
+			return MAPI_E_INTERFACE_NOT_SUPPORTED;
 
 		hr = ECDisplayTable::CreateTableFromProperty(this, lpiid, ulInterfaceOptions, PR_SMTP_ADDRESS, PR_EMS_AB_PROXY_ADDRESSES, lppUnk);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		break;
 	case PR_EMS_AB_IS_MEMBER_OF_DL_O:
-		if (*lpiid != IID_IMAPITable) {
-			hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
-			goto exit;
-		}
+		if (*lpiid != IID_IMAPITable)
+			return MAPI_E_INTERFACE_NOT_SUPPORTED;
 
 		hr = ECDisplayTable::CreateTableFromResolved(this, lpiid, ulInterfaceOptions, PR_EMS_AB_IS_MEMBER_OF_DL_T, lppUnk);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		break;
 	case PR_EMS_AB_REPORTS_O:
-		if (*lpiid != IID_IMAPITable) {
-			hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
-			goto exit;
-		}
+		if (*lpiid != IID_IMAPITable)
+			return MAPI_E_INTERFACE_NOT_SUPPORTED;
 
 		hr = ECDisplayTable::CreateTableFromResolved(this, lpiid, ulInterfaceOptions, PR_EMS_AB_REPORTS_T, lppUnk);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		break;
 #endif
@@ -213,8 +194,6 @@ HRESULT ECMailUser::OpenProperty(ULONG ulPropTag, LPCIID lpiid, ULONG ulInterfac
 		hr = ECABProp::OpenProperty(ulPropTag, lpiid, ulInterfaceOptions, ulFlags, lppUnk);
 		break;
 	}
-
-exit:
 	return hr;
 }
 

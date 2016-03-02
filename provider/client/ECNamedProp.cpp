@@ -348,28 +348,21 @@ exit:
 
 HRESULT ECNamedProp::ResolveLocal(MAPINAMEID *lpName, ULONG *ulPropTag)
 {
-	HRESULT	hr = hrSuccess;
-
 	// We can only locally resolve MNID_ID types of named properties
-	if(lpName->ulKind != MNID_ID) {
-		hr = MAPI_E_NOT_FOUND;
-		goto exit;
-	}
+	if (lpName->ulKind != MNID_ID)
+		return MAPI_E_NOT_FOUND;
 
 	// Loop through our local names to see if the named property is in there
 	for (size_t i = 0; i < ARRAY_SIZE(sLocalNames); ++i) {
 		if(memcmp(&sLocalNames[i].guid,lpName->lpguid,sizeof(GUID))==0 && sLocalNames[i].ulMin <= lpName->Kind.lID && sLocalNames[i].ulMax >= lpName->Kind.lID) {
 			// Found it, calculate the ID and return it.
 			*ulPropTag = PROP_TAG(PT_UNSPECIFIED, sLocalNames[i].ulMappedId + lpName->Kind.lID - sLocalNames[i].ulMin);
-			goto exit;
+			return hrSuccess;
 		}
 	}
 
 	// Couldn't find it ...
-	hr = MAPI_E_NOT_FOUND;
-
-exit:
-	return hr;
+	return MAPI_E_NOT_FOUND;
 }
 
 HRESULT ECNamedProp::ResolveReverseCache(ULONG ulId, LPGUID lpGuid, ULONG ulFlags, void *lpBase, MAPINAMEID **lppName)
@@ -457,21 +450,14 @@ exit:
 
 HRESULT ECNamedProp::ResolveCache(MAPINAMEID *lpName, ULONG *lpulPropTag)
 {
-	HRESULT	hr = hrSuccess;
-
 	std::map<MAPINAMEID *,ULONG,ltmap>::iterator iterMap;
 
 	iterMap = mapNames.find(lpName);
 
-	if(iterMap == mapNames.end()) {
-		hr = MAPI_E_NOT_FOUND;
-		goto exit;
-	}
-
+	if (iterMap == mapNames.end())
+		return MAPI_E_NOT_FOUND;
 	*lpulPropTag = PROP_TAG(PT_UNSPECIFIED, iterMap->second);
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 /* This copies a MAPINAMEID struct using ECAllocate* functions. Therefore, the
