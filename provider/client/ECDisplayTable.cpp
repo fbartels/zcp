@@ -130,7 +130,7 @@ static UNUSED_VAR void dummy(void)
 #if defined(WIN32) && !defined(WINCE)
 void TranslateDisplayTable(ITableData *lpTableData)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	LPSRow lpsRow = NULL;
 	LPSPropValue lpPropType = NULL; // non-free
 	LPSPropValue lpPropControl = NULL; // non-free
@@ -139,7 +139,7 @@ void TranslateDisplayTable(ITableData *lpTableData)
 
 	hr = GetClientVersion(&ulClientVersion);
 	if (hr != hrSuccess)
-		goto exit;
+		return;
 
 	while(TRUE) {
 
@@ -283,7 +283,6 @@ void TranslateDisplayTable(ITableData *lpTableData)
 		lpsRow = NULL;
 	}
 	MAPIFreeBuffer(lpsRow);
-exit:
 }
 
 HRESULT ECDisplayTable::CreateDisplayTable(ULONG ulPages, DTPAGE *lpPages, IMAPITable **lppTable)

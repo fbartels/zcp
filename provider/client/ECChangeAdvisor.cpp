@@ -442,15 +442,10 @@ HRESULT ECChangeAdvisor::RemoveKeys(LPENTRYLIST lpEntryList)
 	ConnectionMap::iterator	iterConnection;
 	ECLISTCONNECTION		listConnections;
 
-	if (m_lpChangeAdviseSink == NULL && !(m_ulFlags & SYNC_CATCHUP)) {
-		hr = MAPI_E_UNCONFIGURED;
-		goto exit;
-	}
-
-	if (lpEntryList == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (m_lpChangeAdviseSink == NULL && !(m_ulFlags & SYNC_CATCHUP))
+		return MAPI_E_UNCONFIGURED;
+	if (lpEntryList == NULL)
+		return MAPI_E_INVALID_PARAMETER;
 
 	pthread_mutex_lock(&m_hConnectionLock);
 	
@@ -477,8 +472,6 @@ HRESULT ECChangeAdvisor::RemoveKeys(LPENTRYLIST lpEntryList)
 
 	hr = m_lpMsgStore->m_lpNotifyClient->Unadvise(listConnections);
 	pthread_mutex_unlock(&m_hConnectionLock);
-
-exit:
 	return hr;
 }
 
