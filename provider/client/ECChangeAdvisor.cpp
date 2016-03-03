@@ -484,12 +484,9 @@ exit:
 
 HRESULT ECChangeAdvisor::IsMonitoringSyncId(syncid_t ulSyncId)
 {
-	HRESULT	hr = hrSuccess;
-
 	if (m_mapConnections.find(ulSyncId) == m_mapConnections.end())
-		hr = MAPI_E_NOT_FOUND;
-
-	return hr;
+		return MAPI_E_NOT_FOUND;
+	return hrSuccess;
 }
 
 HRESULT ECChangeAdvisor::UpdateSyncState(syncid_t ulSyncId, changeid_t ulChangeId)

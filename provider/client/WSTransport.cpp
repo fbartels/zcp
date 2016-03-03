@@ -461,14 +461,11 @@ exit:
 
 HRESULT WSTransport::HrSetRecvTimeout(unsigned int ulSeconds)
 {
-	HRESULT		hr = hrSuccess;
+	if (this->m_lpCmd != NULL)
+		return MAPI_E_NOT_INITIALIZED;
 
-	if(this->m_lpCmd)
-		this->m_lpCmd->soap->recv_timeout = ulSeconds;
-	else
-		hr = MAPI_E_NOT_INITIALIZED;
-
-	return hr;
+	this->m_lpCmd->soap->recv_timeout = ulSeconds;
+	return hrSuccess;
 }
 
 

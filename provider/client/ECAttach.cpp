@@ -311,23 +311,15 @@ HRESULT	ECAttach::GetPropHandler(ULONG ulPropTag, void *lpProvider, ULONG ulFlag
 HRESULT	ECAttach::SetPropHandler(ULONG ulPropTag, void* lpProvider, LPSPropValue lpsPropValue, void *lpParam)
 {
 	ECAttach *lpAttach = (ECAttach *)lpParam;
-	HRESULT hr = hrSuccess;
-
 	switch (ulPropTag) {
 		case PR_ATTACH_DATA_BIN:
-			hr = lpAttach->HrSetRealProp(lpsPropValue);
-			break;
-
+			return lpAttach->HrSetRealProp(lpsPropValue);
 		case PR_ATTACH_DATA_OBJ:
-			hr = MAPI_E_COMPUTED;
-			break;
-
+			return MAPI_E_COMPUTED;
 		default:
-			hr = MAPI_E_NOT_FOUND;
-			break;
+			return MAPI_E_NOT_FOUND;
 	}
-
-	return hr;
+	return MAPI_E_NOT_FOUND;
 }
 
 // Use the support object to do the copying
