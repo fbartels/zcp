@@ -911,7 +911,7 @@ HRESULT POP3::HrLogin(const std::string &strUsername, const std::string &strPass
 		goto exit;
 	}
 
-	lpLogger->Log(EC_LOGLEVEL_ERROR, "POP3 Login from %s for user %s", lpChannel->peer_addr(), strUsername.c_str());
+	lpLogger->Log(EC_LOGLEVEL_NOTICE, "POP3 Login from %s for user %s", lpChannel->peer_addr(), strUsername.c_str());
 
 exit:
 	MAPIFreeBuffer(lpEntryID);
