@@ -118,9 +118,7 @@ HRESULT ECMSProvider::QueryInterface(REFIID refiid, void **lppInterface)
 
 HRESULT ECMSProvider::Shutdown(ULONG * lpulFlags) 
 {
-	HRESULT hr = hrSuccess;
-
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECMSProvider::Logon(LPMAPISUP lpMAPISup, ULONG ulUIParam, LPTSTR lpszProfileName, ULONG cbEntryID, LPENTRYID lpEntryID, ULONG ulFlags, LPCIID lpInterface, ULONG *lpcbSpoolSecurity, LPBYTE *lppbSpoolSecurity, LPMAPIERROR *lppMAPIError, LPMSLOGON *lppMSLogon, LPMDB *lppMDB)

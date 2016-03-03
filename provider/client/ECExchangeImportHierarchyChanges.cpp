@@ -81,18 +81,12 @@ ECExchangeImportHierarchyChanges::~ECExchangeImportHierarchyChanges(){
 }
 
 HRESULT ECExchangeImportHierarchyChanges::Create(ECMAPIFolder *lpFolder, LPEXCHANGEIMPORTHIERARCHYCHANGES* lppExchangeImportHierarchyChanges){
-	HRESULT hr = hrSuccess;
-	ECExchangeImportHierarchyChanges *lpEIHC = NULL;
 
 	if(!lpFolder)
 		return MAPI_E_INVALID_PARAMETER;
 
-	lpEIHC = new ECExchangeImportHierarchyChanges(lpFolder);
-
-	hr = lpEIHC->QueryInterface(IID_IExchangeImportHierarchyChanges, (void **)lppExchangeImportHierarchyChanges);
-
-	return hr;
-
+	ECExchangeImportHierarchyChanges *lpEIHC = new ECExchangeImportHierarchyChanges(lpFolder);
+	return lpEIHC->QueryInterface(IID_IExchangeImportHierarchyChanges, reinterpret_cast<void **>(lppExchangeImportHierarchyChanges));
 }
 
 HRESULT	ECExchangeImportHierarchyChanges::QueryInterface(REFIID refiid, void **lppInterface)

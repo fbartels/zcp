@@ -193,19 +193,14 @@ exit:
 
 HRESULT ECXPLogon::RegisterOptions(ULONG * lpulFlags, ULONG * lpcOptions, LPOPTIONDATA * lppOptions)
 {
-	HRESULT hr = hrSuccess;
-
 	*lpulFlags = 0;//fMapiUnicode ?
 	*lpcOptions = 0;
 	*lppOptions = NULL;
-	
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECXPLogon::TransportNotify(ULONG * lpulFlags, LPVOID * lppvData)
 {
-	HRESULT hr = hrSuccess;
-
 	if(*lpulFlags & NOTIFY_ABORT_DEFERRED) {
 		//FIXME: m_ulTransportStatus 
 		// doe iets met lppvData
@@ -241,30 +236,19 @@ HRESULT ECXPLogon::TransportNotify(ULONG * lpulFlags, LPVOID * lppvData)
 	if(*lpulFlags & NOTIFY_END_OUTBOUND_FLUSH) {
 		m_ulTransportStatus &= ~STATUS_OUTBOUND_FLUSH;
 	}
-
-	hr = HrUpdateTransportStatus();
-
-	return hr;
+	return HrUpdateTransportStatus();
 }
 
 HRESULT ECXPLogon::Idle(ULONG ulFlags)
 {
-	HRESULT hr = hrSuccess;
-
 	// The MAPI spooler periodically calls the IXPLogon::Idle method during times when the system is idle
-
 	// We do nothing ..
-
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECXPLogon::TransportLogoff(ULONG ulFlags)
 {
-	HRESULT hr = hrSuccess;
-
-//	hr = MAPI_E_CALL_FAILED;
-
-	return hr;
+	return hrSuccess;
 }
 
 /**
@@ -681,53 +665,35 @@ HRESULT ECXPLogon::SetOutgoingProps (LPMESSAGE lpMessage)
 
 HRESULT ECXPLogon::EndMessage(ULONG ulMsgRef, ULONG * lpulFlags)
 {
-	HRESULT hr = hrSuccess;
-
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECXPLogon::Poll(ULONG * lpulIncoming)
 {
-	HRESULT hr = hrSuccess;
-
 	*lpulIncoming = 0;
 	//lpulIncoming [out] Value indicating the existence of inbound messages. 
 	//A nonzero value indicates that there are inbound messages.
-
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECXPLogon::StartMessage(ULONG ulFlags, LPMESSAGE lpMessage, ULONG * lpulMsgRef)
 {
-	HRESULT hr = hrSuccess;
-	
 	*lpulMsgRef = 0;
-
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECXPLogon::OpenStatusEntry(LPCIID lpInterface, ULONG ulFlags, ULONG * lpulObjType, LPMAPISTATUS * lppEntry)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = MAPI_E_CALL_FAILED;
-
-	return hr;
+	return MAPI_E_CALL_FAILED;
 }
 
 HRESULT ECXPLogon::ValidateState(ULONG ulUIParam, ULONG ulFlags)
 {
-	HRESULT hr = hrSuccess;
-
-//	hr = MAPI_E_CALL_FAILED;
-
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECXPLogon::FlushQueues(ULONG ulUIParam, ULONG cbTargetTransport, LPENTRYID lpTargetTransport, ULONG ulFlags)
 {
-	HRESULT hr = hrSuccess;
-
 	//The outbound message queue or queues should be flushed. 
 	if (ulFlags & FLUSH_UPLOAD){
 		m_ulTransportStatus |= STATUS_OUTBOUND_FLUSH;
@@ -739,11 +705,7 @@ HRESULT ECXPLogon::FlushQueues(ULONG ulUIParam, ULONG cbTargetTransport, LPENTRY
 		m_ulTransportStatus |= STATUS_INBOUND_FLUSH;
 	}
 
-	hr = HrUpdateTransportStatus();
-
-//	hr = MAPI_E_CALL_FAILED;
-
-	return hr;
+	return HrUpdateTransportStatus();
 }
 
 ULONG ECXPLogon::OnNotify(ULONG cNotif, LPNOTIFICATION lpNotifs){

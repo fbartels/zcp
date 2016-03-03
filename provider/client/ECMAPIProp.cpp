@@ -817,39 +817,23 @@ exit:
 
 HRESULT ECMAPIProp::CopyTo(ULONG ciidExclude, LPCIID rgiidExclude, LPSPropTagArray lpExcludeProps, ULONG ulUIParam, LPMAPIPROGRESS lpProgress, LPCIID lpInterface, LPVOID lpDestObj, ULONG ulFlags, LPSPropProblemArray FAR * lppProblems)
 {
-	HRESULT hr = hrSuccess;
-	
-	hr = Util::DoCopyTo(&IID_IMAPIProp, &this->m_xMAPIProp, ciidExclude, rgiidExclude, lpExcludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
-
-	return hr;
+	return Util::DoCopyTo(&IID_IMAPIProp, &this->m_xMAPIProp, ciidExclude, rgiidExclude, lpExcludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
 }
 
 HRESULT ECMAPIProp::CopyProps(LPSPropTagArray lpIncludeProps, ULONG ulUIParam, LPMAPIPROGRESS lpProgress, LPCIID lpInterface, LPVOID lpDestObj, ULONG ulFlags, LPSPropProblemArray FAR * lppProblems)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = Util::DoCopyProps(&IID_IMAPIProp, &this->m_xMAPIProp, lpIncludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
-
-	return hr;
+	return Util::DoCopyProps(&IID_IMAPIProp, &this->m_xMAPIProp, lpIncludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
 }
 
 // Pass call off to lpMsgStore
 HRESULT ECMAPIProp::GetNamesFromIDs(LPSPropTagArray FAR * lppPropTags, LPGUID lpPropSetGuid, ULONG ulFlags, ULONG FAR * lpcPropNames, LPMAPINAMEID FAR * FAR * lpppPropNames)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = this->GetMsgStore()->lpNamedProp->GetNamesFromIDs(lppPropTags, lpPropSetGuid, ulFlags, lpcPropNames, lpppPropNames);
-
-	return hr;
+	return this->GetMsgStore()->lpNamedProp->GetNamesFromIDs(lppPropTags, lpPropSetGuid, ulFlags, lpcPropNames, lpppPropNames);
 }
 
 HRESULT ECMAPIProp::GetIDsFromNames(ULONG cPropNames, LPMAPINAMEID FAR * lppPropNames, ULONG ulFlags, LPSPropTagArray FAR * lppPropTags)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = this->GetMsgStore()->lpNamedProp->GetIDsFromNames(cPropNames, lppPropNames, ulFlags, lppPropTags);
-
-	return hr;
+	return this->GetMsgStore()->lpNamedProp->GetIDsFromNames(cPropNames, lppPropNames, ulFlags, lppPropTags);
 }
 
 /////////////////////////////////////////////
@@ -1024,31 +1008,19 @@ exit:
 HRESULT ECMAPIProp::GetUserList(ULONG cbCompanyId, LPENTRYID lpCompanyId,
     ULONG ulFlags, ULONG *lpcUsers, ECUSER **lppsUsers)
 {
-	HRESULT	hr = hrSuccess;
-	
-	hr = GetMsgStore()->lpTransport->HrGetUserList(cbCompanyId, lpCompanyId, ulFlags, lpcUsers, lppsUsers);
-	
-	return hr;
+	return GetMsgStore()->lpTransport->HrGetUserList(cbCompanyId, lpCompanyId, ulFlags, lpcUsers, lppsUsers);
 }
 
 HRESULT ECMAPIProp::GetGroupList(ULONG cbCompanyId, LPENTRYID lpCompanyId,
     ULONG ulFlags, ULONG *lpcGroups, ECGROUP **lppsGroups)
 {
-	HRESULT	hr = hrSuccess;
-	
-	hr = GetMsgStore()->lpTransport->HrGetGroupList(cbCompanyId, lpCompanyId, ulFlags, lpcGroups, lppsGroups);
-	
-	return hr;
+	return GetMsgStore()->lpTransport->HrGetGroupList(cbCompanyId, lpCompanyId, ulFlags, lpcGroups, lppsGroups);
 }
 
 HRESULT ECMAPIProp::GetCompanyList(ULONG ulFlags, ULONG *lpcCompanies,
     ECCOMPANY **lppsCompanies)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = GetMsgStore()->lpTransport->HrGetCompanyList(ulFlags, lpcCompanies, lppsCompanies);
-
-	return hr;
+	return GetMsgStore()->lpTransport->HrGetCompanyList(ulFlags, lpcCompanies, lppsCompanies);
 }
 
 HRESULT ECMAPIProp::SetParentID(ULONG cbParentID, LPENTRYID lpParentID)

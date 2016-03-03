@@ -165,14 +165,8 @@ ECMessage::~ECMessage()
 
 HRESULT	ECMessage::Create(ECMsgStore *lpMsgStore, BOOL fNew, BOOL fModify, ULONG ulFlags, BOOL bEmbedded, ECMAPIProp *lpRoot, ECMessage **lppMessage)
 {
-	HRESULT hr = hrSuccess;
-	ECMessage *lpMessage = NULL;
-
-	lpMessage = new ECMessage(lpMsgStore, fNew, fModify, ulFlags, bEmbedded, lpRoot);
-
-	hr = lpMessage->QueryInterface(IID_ECMessage, (void **)lppMessage);
-
-	return hr;
+	ECMessage *lpMessage = new ECMessage(lpMsgStore, fNew, fModify, ulFlags, bEmbedded, lpRoot);
+	return lpMessage->QueryInterface(IID_ECMessage, reinterpret_cast<void **>(lppMessage));
 }
 
 HRESULT	ECMessage::QueryInterface(REFIID refiid, void **lppInterface)
@@ -3142,11 +3136,7 @@ exit:
 // Use the support object to do the copying
 HRESULT ECMessage::CopyProps(LPSPropTagArray lpIncludeProps, ULONG ulUIParam, LPMAPIPROGRESS lpProgress, LPCIID lpInterface, LPVOID lpDestObj, ULONG ulFlags, LPSPropProblemArray FAR * lppProblems)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = Util::DoCopyProps(&IID_IMessage, &this->m_xMessage, lpIncludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
-
-	return hr;
+	return Util::DoCopyProps(&IID_IMessage, &this->m_xMessage, lpIncludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
 }
 
 HRESULT ECMessage::xMessage::QueryInterface(REFIID refiid , void** lppInterface)

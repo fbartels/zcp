@@ -110,11 +110,7 @@ HRESULT	ECMailUser::QueryInterface(REFIID refiid, void **lppInterface)
 
 HRESULT ECMailUser::TableRowGetProp(void* lpProvider, struct propVal *lpsPropValSrc, LPSPropValue lpsPropValDst, void **lpBase, ULONG ulType)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = MAPI_E_NOT_FOUND;
-
-	return hr;
+	return MAPI_E_NOT_FOUND;
 }
 
 HRESULT ECMailUser::OpenProperty(ULONG ulPropTag, LPCIID lpiid, ULONG ulInterfaceOptions, ULONG ulFlags, LPUNKNOWN FAR * lppUnk)
@@ -224,20 +220,12 @@ exit:
 
 HRESULT ECMailUser::CopyTo(ULONG ciidExclude, LPCIID rgiidExclude, LPSPropTagArray lpExcludeProps, ULONG ulUIParam, LPMAPIPROGRESS lpProgress, LPCIID lpInterface, LPVOID lpDestObj, ULONG ulFlags, LPSPropProblemArray FAR * lppProblems)
 {
-	HRESULT hr = hrSuccess;
-	
-	hr = this->GetABStore()->m_lpMAPISup->DoCopyTo(&IID_IMailUser, &this->m_xMailUser, ciidExclude, rgiidExclude, lpExcludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
-
-	return hr;
+	return this->GetABStore()->m_lpMAPISup->DoCopyTo(&IID_IMailUser, &this->m_xMailUser, ciidExclude, rgiidExclude, lpExcludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
 }
 
 HRESULT ECMailUser::CopyProps(LPSPropTagArray lpIncludeProps, ULONG ulUIParam, LPMAPIPROGRESS lpProgress, LPCIID lpInterface, LPVOID lpDestObj, ULONG ulFlags, LPSPropProblemArray FAR * lppProblems)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = this->GetABStore()->m_lpMAPISup->DoCopyProps(&IID_IMailUser, &this->m_xMailUser, lpIncludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
-
-	return hr;
+	return this->GetABStore()->m_lpMAPISup->DoCopyProps(&IID_IMailUser, &this->m_xMailUser, lpIncludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
 }
 
 //////////////////////////////////////////////

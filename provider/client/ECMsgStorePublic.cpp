@@ -122,11 +122,7 @@ HRESULT	ECMsgStorePublic::Create(char *lpszProfname, LPMAPISUP lpSupport, WSTran
 
 HRESULT ECMsgStorePublic::QueryInterface(REFIID refiid, void **lppInterface)
 {
-	HRESULT hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
-
-	hr = ECMsgStore::QueryInterface(refiid, lppInterface);
-
-	return hr;
+	return ECMsgStore::QueryInterface(refiid, lppInterface);
 }
 
 HRESULT ECMsgStorePublic::GetPropHandler(ULONG ulPropTag, void* lpProvider, ULONG ulFlags, LPSPropValue lpsPropValue, void *lpParam, void *lpBase)

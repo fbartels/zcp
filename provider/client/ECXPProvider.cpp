@@ -107,9 +107,7 @@ HRESULT ECXPProvider::QueryInterface(REFIID refiid, void **lppInterface)
 
 HRESULT ECXPProvider::Shutdown(ULONG * lpulFlags)
 {
-	HRESULT hr = hrSuccess;
-
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECXPProvider::TransportLogon(LPMAPISUP lpMAPISup, ULONG ulUIParam, LPTSTR lpszProfileName, ULONG * lpulFlags, LPMAPIERROR * lppMAPIError, LPXPLOGON * lppXPLogon)

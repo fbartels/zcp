@@ -333,11 +333,7 @@ HRESULT	ECAttach::SetPropHandler(ULONG ulPropTag, void* lpProvider, LPSPropValue
 // Use the support object to do the copying
 HRESULT ECAttach::CopyTo(ULONG ciidExclude, LPCIID rgiidExclude, LPSPropTagArray lpExcludeProps, ULONG ulUIParam, LPMAPIPROGRESS lpProgress, LPCIID lpInterface, LPVOID lpDestObj, ULONG ulFlags, LPSPropProblemArray FAR * lppProblems)
 {
-	HRESULT hr = hrSuccess;
-	
-	hr = Util::DoCopyTo(&IID_IAttachment, &this->m_xAttach, ciidExclude, rgiidExclude, lpExcludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
-
-	return hr;
+	return Util::DoCopyTo(&IID_IAttachment, &this->m_xAttach, ciidExclude, rgiidExclude, lpExcludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
 }
 
 /**

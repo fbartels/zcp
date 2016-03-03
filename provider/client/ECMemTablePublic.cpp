@@ -103,16 +103,9 @@ ECMemTablePublic::~ECMemTablePublic(void)
 
 HRESULT ECMemTablePublic::Create(ECMAPIFolderPublic *lpECParentFolder, ECMemTablePublic **lppECMemTable)
 {
-	HRESULT hr = hrSuccess;
-	ECMemTablePublic *lpMemTable = NULL;
-	
 	SizedSPropTagArray(12, sPropsHierarchyColumns) = {12, { PR_ENTRYID, PR_DISPLAY_NAME, PR_CONTENT_COUNT, PR_CONTENT_UNREAD, PR_STORE_ENTRYID, PR_STORE_RECORD_KEY, PR_STORE_SUPPORT_MASK, PR_INSTANCE_KEY, PR_RECORD_KEY, PR_ACCESS, PR_ACCESS_LEVEL, PR_CONTAINER_CLASS} };
-
-	lpMemTable = new ECMemTablePublic(lpECParentFolder, (LPSPropTagArray)&sPropsHierarchyColumns, PR_ROWID);
-
-	hr = lpMemTable->QueryInterface(IID_ECMemTablePublic, (void **)lppECMemTable);
-
-	return hr;
+	ECMemTablePublic *lpMemTable = new ECMemTablePublic(lpECParentFolder, (LPSPropTagArray)&sPropsHierarchyColumns, PR_ROWID);
+	return lpMemTable->QueryInterface(IID_ECMemTablePublic, reinterpret_cast<void **>(lppECMemTable));
 }
 
 HRESULT ECMemTablePublic::QueryInterface(REFIID refiid, void **lppInterface)

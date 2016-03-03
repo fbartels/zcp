@@ -111,14 +111,8 @@ HRESULT	ECABContainer::QueryInterface(REFIID refiid, void **lppInterface)
 
 HRESULT	ECABContainer::Create(void* lpProvider, ULONG ulObjType, BOOL fModify, ECABContainer **lppABContainer)
 {
-	HRESULT			hr = hrSuccess;
-	ECABContainer*	lpABContainer = NULL;
-
-	lpABContainer = new ECABContainer(lpProvider, ulObjType, fModify, "IABContainer");
-
-	hr = lpABContainer->QueryInterface(IID_ECABContainer, (void **)lppABContainer);
-
-	return hr;
+	ECABContainer *lpABContainer = new ECABContainer(lpProvider, ulObjType, fModify, "IABContainer");
+	return lpABContainer->QueryInterface(IID_ECABContainer, reinterpret_cast<void **>(lppABContainer));
 }
 
 HRESULT	ECABContainer::OpenProperty(ULONG ulPropTag, LPCIID lpiid, ULONG ulInterfaceOptions, ULONG ulFlags, LPUNKNOWN FAR * lppUnk)
@@ -217,20 +211,12 @@ exit:
 
 HRESULT ECABContainer::CopyTo(ULONG ciidExclude, LPCIID rgiidExclude, LPSPropTagArray lpExcludeProps, ULONG ulUIParam, LPMAPIPROGRESS lpProgress, LPCIID lpInterface, LPVOID lpDestObj, ULONG ulFlags, LPSPropProblemArray FAR * lppProblems)
 {
-	HRESULT hr = hrSuccess;
-	
-	hr = Util::DoCopyTo(&IID_IABContainer, &this->m_xABContainer, ciidExclude, rgiidExclude, lpExcludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
-
-	return hr;
+	return Util::DoCopyTo(&IID_IABContainer, &this->m_xABContainer, ciidExclude, rgiidExclude, lpExcludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
 }
 
 HRESULT ECABContainer::CopyProps(LPSPropTagArray lpIncludeProps, ULONG ulUIParam, LPMAPIPROGRESS lpProgress, LPCIID lpInterface, LPVOID lpDestObj, ULONG ulFlags, LPSPropProblemArray FAR * lppProblems)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = Util::DoCopyProps(&IID_IABContainer, &this->m_xABContainer, lpIncludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
-
-	return hr;
+	return Util::DoCopyProps(&IID_IABContainer, &this->m_xABContainer, lpIncludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
 }
 
 HRESULT	ECABContainer::DefaultABContainerGetProp(ULONG ulPropTag, void* lpProvider, ULONG ulFlags, LPSPropValue lpsPropValue, void *lpParam, void *lpBase)
@@ -476,29 +462,17 @@ exit:
 
 HRESULT ECABContainer::OpenEntry(ULONG cbEntryID, LPENTRYID lpEntryID, LPCIID lpInterface, ULONG ulFlags, ULONG *lpulObjType, LPUNKNOWN *lppUnk)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = GetABStore()->OpenEntry(cbEntryID, lpEntryID, lpInterface, ulFlags, lpulObjType, lppUnk);
-
-	return hr;
+	return GetABStore()->OpenEntry(cbEntryID, lpEntryID, lpInterface, ulFlags, lpulObjType, lppUnk);
 }
 
 HRESULT ECABContainer::SetSearchCriteria(LPSRestriction lpRestriction, LPENTRYLIST lpContainerList, ULONG ulSearchFlags)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = MAPI_E_NO_SUPPORT;
-
-	return hr;
+	return MAPI_E_NO_SUPPORT;
 }
 
 HRESULT ECABContainer::GetSearchCriteria(ULONG ulFlags, LPSRestriction *lppRestriction, LPENTRYLIST *lppContainerList, ULONG *lpulSearchState)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = MAPI_E_NO_SUPPORT;
-
-	return hr;
+	return MAPI_E_NO_SUPPORT;
 }
 
 /////////////////////////////////////////////////
@@ -507,34 +481,21 @@ HRESULT ECABContainer::GetSearchCriteria(ULONG ulFlags, LPSRestriction *lppRestr
 
 HRESULT ECABContainer::CreateEntry(ULONG cbEntryID, LPENTRYID lpEntryID, ULONG ulCreateFlags, LPMAPIPROP* lppMAPIPropEntry)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = MAPI_E_NO_SUPPORT;
-
-	return hr;
+	return MAPI_E_NO_SUPPORT;
 }
 
 HRESULT ECABContainer::CopyEntries(LPENTRYLIST lpEntries, ULONG ulUIParam, LPMAPIPROGRESS lpProgress, ULONG ulFlags)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = MAPI_E_NO_SUPPORT;
-
-	return hr;
+	return MAPI_E_NO_SUPPORT;
 }
 
 HRESULT ECABContainer::DeleteEntries(LPENTRYLIST lpEntries, ULONG ulFlags)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = MAPI_E_NO_SUPPORT;
-
-	return hr;
+	return MAPI_E_NO_SUPPORT;
 }
 
 HRESULT ECABContainer::ResolveNames(LPSPropTagArray lpPropTagArray, ULONG ulFlags, LPADRLIST lpAdrList, LPFlagList lpFlagList)
 {
-	HRESULT hr = hrSuccess;
 	SizedSPropTagArray(11, sptaDefault) = {11, {PR_ADDRTYPE_A, PR_DISPLAY_NAME_A, PR_DISPLAY_TYPE, PR_EMAIL_ADDRESS_A, PR_SMTP_ADDRESS_A, PR_ENTRYID,
 												PR_INSTANCE_KEY, PR_OBJECT_TYPE, PR_RECORD_KEY, PR_SEARCH_KEY, PR_EC_SENDAS_USER_ENTRYIDS}};
 
@@ -547,10 +508,7 @@ HRESULT ECABContainer::ResolveNames(LPSPropTagArray lpPropTagArray, ULONG ulFlag
 		else
 			lpPropTagArray = (LPSPropTagArray)&sptaDefault;
 	}
-
-	hr = ((ECABLogon*)lpProvider)->m_lpTransport->HrResolveNames(lpPropTagArray, ulFlags, lpAdrList, lpFlagList);
-
-	return hr;
+	return ((ECABLogon*)lpProvider)->m_lpTransport->HrResolveNames(lpPropTagArray, ulFlags, lpAdrList, lpFlagList);
 }
 
 //////////////////////////////////

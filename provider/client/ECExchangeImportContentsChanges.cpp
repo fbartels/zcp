@@ -1359,9 +1359,7 @@ HRESULT ECExchangeImportContentsChanges::xECImportContentsChanges::ImportMessage
 
 HRESULT ECExchangeImportContentsChanges::xECImportContentsChanges::SetMessageInterface(REFIID refiid)
 {
-	HRESULT hr;
 	TRACE_MAPI(TRACE_ENTRY, "IExchangeImportContentsChanges::SetMessageInterface", "%s", DBGGUIDToString(refiid).c_str());
 	METHOD_PROLOGUE_(ECExchangeImportContentsChanges, ECImportContentsChanges);
-	hr = pThis->SetMessageInterface(refiid);
-	return hr;
+	return pThis->SetMessageInterface(refiid);
 }

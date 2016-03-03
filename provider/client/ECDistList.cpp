@@ -106,11 +106,7 @@ HRESULT ECDistList::Create(void* lpProvider, BOOL fModify, ECDistList** lppDistL
 
 HRESULT ECDistList::TableRowGetProp(void* lpProvider, struct propVal *lpsPropValSrc, LPSPropValue lpsPropValDst, void **lpBase, ULONG ulType)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = MAPI_E_NOT_FOUND;
-
-	return hr;
+	return MAPI_E_NOT_FOUND;
 }
 
 HRESULT ECDistList::OpenProperty(ULONG ulPropTag, LPCIID lpiid, ULONG ulInterfaceOptions, ULONG ulFlags, LPUNKNOWN FAR * lppUnk)
@@ -193,20 +189,12 @@ exit:
 
 HRESULT ECDistList::CopyTo(ULONG ciidExclude, LPCIID rgiidExclude, LPSPropTagArray lpExcludeProps, ULONG ulUIParam, LPMAPIPROGRESS lpProgress, LPCIID lpInterface, LPVOID lpDestObj, ULONG ulFlags, LPSPropProblemArray FAR * lppProblems)
 {
-	HRESULT hr = hrSuccess;
-	
-	hr = this->GetABStore()->m_lpMAPISup->DoCopyTo(&IID_IDistList, &this->m_xDistList, ciidExclude, rgiidExclude, lpExcludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
-
-	return hr;
+	return this->GetABStore()->m_lpMAPISup->DoCopyTo(&IID_IDistList, &this->m_xDistList, ciidExclude, rgiidExclude, lpExcludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
 }
 
 HRESULT ECDistList::CopyProps(LPSPropTagArray lpIncludeProps, ULONG ulUIParam, LPMAPIPROGRESS lpProgress, LPCIID lpInterface, LPVOID lpDestObj, ULONG ulFlags, LPSPropProblemArray FAR * lppProblems)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = this->GetABStore()->m_lpMAPISup->DoCopyProps(&IID_IDistList, &this->m_xDistList, lpIncludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
-
-	return hr;
+	return this->GetABStore()->m_lpMAPISup->DoCopyProps(&IID_IDistList, &this->m_xDistList, lpIncludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
 }
 
 ////////////////////////////////////////////

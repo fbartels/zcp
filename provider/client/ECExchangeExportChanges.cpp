@@ -868,11 +868,9 @@ HRESULT ECExchangeExportChanges::xECExportChanges::GetChangeCount(ULONG *lpcChan
 
 HRESULT ECExchangeExportChanges::xECExportChanges::SetMessageInterface(REFIID refiid)
 {
-	HRESULT hr;
 	TRACE_MAPI(TRACE_ENTRY, "IECExportChanges::SetMessageInterface", "%s", DBGGUIDToString(refiid).c_str());
 	METHOD_PROLOGUE_(ECExchangeExportChanges, ECExportChanges);
-	hr = pThis->SetMessageInterface(refiid);
-	return hr;
+	return pThis->SetMessageInterface(refiid);
 }
 
 HRESULT ECExchangeExportChanges::xECExportChanges::SetLogger(ECLogger *lpLogger)

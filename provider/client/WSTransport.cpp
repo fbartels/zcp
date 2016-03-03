@@ -1102,16 +1102,10 @@ exit:
 
 HRESULT WSTransport::HrOpenABTableOps(ULONG ulType, ULONG ulFlags, ULONG cbEntryID, LPENTRYID lpEntryID, ECABLogon* lpABLogon, WSTableView **lppTableOps)
 {
-	HRESULT hr = hrSuccess;
-	
-	/*if(peid->ulType != MAPI_FOLDER && peid->ulType != MAPI_MESSAGE) {
-		hr = MAPI_E_INVALID_ENTRYID;
-		goto exit;
-	}*/
-
-	hr = WSABTableView::Create(ulType, ulFlags, m_lpCmd, &m_hDataLock, m_ecSessionId, cbEntryID, lpEntryID, lpABLogon, this, lppTableOps);
-
-	return hr;
+	/*if (peid->ulType != MAPI_FOLDER && peid->ulType != MAPI_MESSAGE)
+		return MAPI_E_INVALID_ENTRYID;
+	*/
+	return WSABTableView::Create(ulType, ulFlags, m_lpCmd, &m_hDataLock, m_ecSessionId, cbEntryID, lpEntryID, lpABLogon, this, lppTableOps);
 }
 
 HRESULT WSTransport::HrOpenMailBoxTableOps(ULONG ulFlags, ECMsgStore *lpMsgStore, WSTableView **lppTableView)

@@ -161,14 +161,8 @@ ECMAPITable::~ECMAPITable()
 
 HRESULT ECMAPITable::Create(std::string strName, ECNotifyClient *lpNotifyClient, ULONG ulFlags, ECMAPITable **lppECMAPITable)
 {
-	HRESULT hr = hrSuccess;
-	ECMAPITable *lpMAPITable = NULL;
-	
-	lpMAPITable = new ECMAPITable(strName, lpNotifyClient, ulFlags);
-
-	hr = lpMAPITable->QueryInterface(IID_ECMAPITable, (void **)lppECMAPITable);
-
-	return hr;
+	ECMAPITable *lpMAPITable = new ECMAPITable(strName, lpNotifyClient, ulFlags);
+	return lpMAPITable->QueryInterface(IID_ECMAPITable, reinterpret_cast<void **>(lppECMAPITable));
 }
 
 HRESULT ECMAPITable::QueryInterface(REFIID refiid, void **lppInterface)

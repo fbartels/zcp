@@ -153,11 +153,7 @@ HRESULT ECABLogon::QueryInterface(REFIID refiid, void **lppInterface)
 
 HRESULT ECABLogon::GetLastError(HRESULT hResult, ULONG ulFlags, LPMAPIERROR *lppMAPIError)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = MAPI_E_CALL_FAILED;
-
-	return hr;
+	return MAPI_E_CALL_FAILED;
 }
 
 HRESULT ECABLogon::Logoff(ULONG ulFlags)
@@ -388,41 +384,25 @@ exit:
 
 HRESULT ECABLogon::Unadvise(ULONG ulConnection)
 {
-	HRESULT hr = hrSuccess;
-
 	ASSERT(m_lpNotifyClient != NULL);
-
 	m_lpNotifyClient->Unadvise(ulConnection);
-
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECABLogon::OpenStatusEntry(LPCIID lpInterface, ULONG ulFlags, ULONG *lpulObjType, LPMAPISTATUS * lppMAPIStatus)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = MAPI_E_NO_SUPPORT;
-
-	return hr;
+	return MAPI_E_NO_SUPPORT;
 }
 
 HRESULT ECABLogon::OpenTemplateID(ULONG cbTemplateID, LPENTRYID lpTemplateID, ULONG ulTemplateFlags, LPMAPIPROP lpMAPIPropData, LPCIID lpInterface, LPMAPIPROP * lppMAPIPropNew, LPMAPIPROP lpMAPIPropSibling)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = MAPI_E_NO_SUPPORT;
-
-	return hr;
+	return MAPI_E_NO_SUPPORT;
 }
 
 HRESULT ECABLogon::GetOneOffTable(ULONG ulFlags, LPMAPITABLE * lppTable)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = MAPI_E_NO_SUPPORT;
-	//hr = m_lpMAPISup->GetOneOffTable(ulFlags, lppTable);
-
-	return hr;
+	//return m_lpMAPISup->GetOneOffTable(ulFlags, lppTable);
+	return MAPI_E_NO_SUPPORT;
 }
 
 HRESULT ECABLogon::PrepareRecips(ULONG ulFlags, LPSPropTagArray lpPropTagArray, LPADRLIST lpRecipList)

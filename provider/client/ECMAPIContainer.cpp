@@ -96,38 +96,22 @@ HRESULT	ECMAPIContainer::QueryInterface(REFIID refiid, void **lppInterface)
 
 HRESULT ECMAPIContainer::CopyTo(ULONG ciidExclude, LPCIID rgiidExclude, LPSPropTagArray lpExcludeProps, ULONG ulUIParam, LPMAPIPROGRESS lpProgress, LPCIID lpInterface, LPVOID lpDestObj, ULONG ulFlags, LPSPropProblemArray FAR * lppProblems)
 {
-	HRESULT hr = hrSuccess;
-	
-	hr = Util::DoCopyTo(&IID_IMAPIContainer, &this->m_xMAPIContainer, ciidExclude, rgiidExclude, lpExcludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
-
-	return hr;
+	return Util::DoCopyTo(&IID_IMAPIContainer, &this->m_xMAPIContainer, ciidExclude, rgiidExclude, lpExcludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
 }
 
 HRESULT ECMAPIContainer::CopyProps(LPSPropTagArray lpIncludeProps, ULONG ulUIParam, LPMAPIPROGRESS lpProgress, LPCIID lpInterface, LPVOID lpDestObj, ULONG ulFlags, LPSPropProblemArray FAR * lppProblems)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = Util::DoCopyProps(&IID_IMAPIContainer, &this->m_xMAPIContainer, lpIncludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
-
-	return hr;
+	return Util::DoCopyProps(&IID_IMAPIContainer, &this->m_xMAPIContainer, lpIncludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
 }
 
 HRESULT ECMAPIContainer::SetSearchCriteria(LPSRestriction lpRestriction, LPENTRYLIST lpContainerList, ULONG ulSearchFlags)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = MAPI_E_NO_SUPPORT;
-
-	return hr;
+	return MAPI_E_NO_SUPPORT;
 }
 
 HRESULT ECMAPIContainer::GetSearchCriteria(ULONG ulFlags, LPSRestriction *lppRestriction, LPENTRYLIST *lppContainerList, ULONG *lpulSearchState)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = MAPI_E_NO_SUPPORT;
-
-	return hr;
+	return MAPI_E_NO_SUPPORT;
 }
 
 HRESULT ECMAPIContainer::GetContentsTable(ULONG ulFlags, LPMAPITABLE *lppTable)
@@ -248,11 +232,7 @@ exit:
 
 HRESULT ECMAPIContainer::OpenEntry(ULONG cbEntryID, LPENTRYID lpEntryID, LPCIID lpInterface, ULONG ulFlags, ULONG *lpulObjType, LPUNKNOWN *lppUnk)
 {
-	HRESULT hr = hrSuccess;
-	
-	hr = this->GetMsgStore()->OpenEntry(cbEntryID, lpEntryID, lpInterface, ulFlags, lpulObjType, lppUnk);
-
-	return hr;
+	return this->GetMsgStore()->OpenEntry(cbEntryID, lpEntryID, lpInterface, ulFlags, lpulObjType, lppUnk);
 }
 
 

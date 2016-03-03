@@ -121,14 +121,8 @@ ECArchiveAwareMessage::~ECArchiveAwareMessage()
 
 HRESULT	ECArchiveAwareMessage::Create(ECArchiveAwareMsgStore *lpMsgStore, BOOL fNew, BOOL fModify, ULONG ulFlags, ECMessage **lppMessage)
 {
-	HRESULT hr = hrSuccess;
-	ECArchiveAwareMessage *lpMessage = NULL;
-
-	lpMessage = new ECArchiveAwareMessage(lpMsgStore, fNew, fModify, ulFlags);
-
-	hr = lpMessage->QueryInterface(IID_ECMessage, (void **)lppMessage);
-
-	return hr;
+	ECArchiveAwareMessage *lpMessage = new ECArchiveAwareMessage(lpMsgStore, fNew, fModify, ulFlags);
+	return lpMessage->QueryInterface(IID_ECMessage, reinterpret_cast<void **>(lppMessage));
 }
 
 HRESULT ECArchiveAwareMessage::HrLoadProps()

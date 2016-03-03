@@ -388,20 +388,12 @@ exit:
 
 HRESULT ECMAPIFolder::CopyTo(ULONG ciidExclude, LPCIID rgiidExclude, LPSPropTagArray lpExcludeProps, ULONG ulUIParam, LPMAPIPROGRESS lpProgress, LPCIID lpInterface, LPVOID lpDestObj, ULONG ulFlags, LPSPropProblemArray FAR * lppProblems)
 {
-	HRESULT hr = hrSuccess;
-	
-	hr = Util::DoCopyTo(&IID_IMAPIFolder, &this->m_xMAPIFolder, ciidExclude, rgiidExclude, lpExcludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
-
-	return hr;
+	return Util::DoCopyTo(&IID_IMAPIFolder, &this->m_xMAPIFolder, ciidExclude, rgiidExclude, lpExcludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
 }
 
 HRESULT ECMAPIFolder::CopyProps(LPSPropTagArray lpIncludeProps, ULONG ulUIParam, LPMAPIPROGRESS lpProgress, LPCIID lpInterface, LPVOID lpDestObj, ULONG ulFlags, LPSPropProblemArray FAR * lppProblems)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = Util::DoCopyProps(&IID_IMAPIFolder, &this->m_xMAPIFolder, lpIncludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
-
-	return hr;
+	return Util::DoCopyProps(&IID_IMAPIFolder, &this->m_xMAPIFolder, lpIncludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
 }
 
 HRESULT ECMAPIFolder::SetProps(ULONG cValues, LPSPropValue lpPropArray, LPSPropProblemArray *lppProblems)
@@ -980,11 +972,7 @@ exit:
 
 HRESULT ECMAPIFolder::SaveContentsSort(LPSSortOrderSet lpSortCriteria, ULONG ulFlags)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = MAPI_E_NO_ACCESS;
-
-	return hr;
+	return MAPI_E_NO_ACCESS;
 }
 
 HRESULT ECMAPIFolder::EmptyFolder(ULONG ulUIParam, LPMAPIPROGRESS lpProgress, ULONG ulFlags)
