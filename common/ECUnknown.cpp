@@ -234,8 +234,7 @@ HRESULT ECUnknown::Suicide() {
 HRESULT __stdcall ECUnknown::xUnknown::QueryInterface(REFIID refiid, void ** lppInterface)
 {
 	METHOD_PROLOGUE_(ECUnknown , Unknown);
-	HRESULT hr = pThis->QueryInterface(refiid, lppInterface);
-	return hr;
+	return pThis->QueryInterface(refiid, lppInterface);
 }
 
 ULONG __stdcall ECUnknown::xUnknown::AddRef()

@@ -292,7 +292,6 @@ ULONG ECMemStream::Release()
 HRESULT	ECMemStream::Create(char *buffer, ULONG ulDataLen, ULONG ulFlags, CommitFunc lpCommitFunc, DeleteFunc lpDeleteFunc,
 							void *lpParam, ECMemStream **lppStream)
 {
-	HRESULT hr = hrSuccess;
 	ECMemStream *lpStream = NULL;
 
 	try {
@@ -300,16 +299,12 @@ HRESULT	ECMemStream::Create(char *buffer, ULONG ulDataLen, ULONG ulFlags, Commit
 	} catch (std::exception &) {
 		return MAPI_E_NOT_ENOUGH_MEMORY;
 	}
-
-	hr = lpStream->QueryInterface(IID_ECMemStream, (void **)lppStream);
-
-	return hr;
+	return lpStream->QueryInterface(IID_ECMemStream, (void **)lppStream);
 }
 
 HRESULT	ECMemStream::Create(ECMemBlock *lpMemBlock, ULONG ulFlags, CommitFunc lpCommitFunc, DeleteFunc lpDeleteFunc,
 							void *lpParam, ECMemStream **lppStream)
 {
-	HRESULT hr = hrSuccess;
 	ECMemStream *lpStream = NULL;
 
 	try {
@@ -317,10 +312,7 @@ HRESULT	ECMemStream::Create(ECMemBlock *lpMemBlock, ULONG ulFlags, CommitFunc lp
 	} catch (std::exception &) {
 		return MAPI_E_NOT_ENOUGH_MEMORY;
 	}
-
-	hr = lpStream->QueryInterface(IID_ECMemStream, (void **)lppStream);
-
-	return hr;
+	return lpStream->QueryInterface(IID_ECMemStream, (void **)lppStream);
 }
 
 HRESULT ECMemStream::Read(void *pv, ULONG cb, ULONG *pcbRead)
@@ -513,11 +505,8 @@ HRESULT ECMemStream::LockRegion(ULARGE_INTEGER libOffset, ULARGE_INTEGER cb, DWO
 
 HRESULT ECMemStream::UnlockRegion(ULARGE_INTEGER libOffset, ULARGE_INTEGER cb, DWORD dwLockType)
 {
-	HRESULT hr = STG_E_INVALIDFUNCTION;
-
-	hr=hrSuccess; //hack for loadsim
-
-	return hr;
+	return hrSuccess; //hack for loadsim
+	//return STG_E_INVALIDFUNCTION;
 }
 
 HRESULT ECMemStream::Stat(STATSTG *pstatstg, DWORD grfStatFlag)

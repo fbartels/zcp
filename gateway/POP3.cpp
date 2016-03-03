@@ -471,7 +471,6 @@ exit:
  * @return MAPI Error code
  */
 HRESULT POP3::HrCmdStat() {
-	HRESULT hr = hrSuccess;
 	ULONG ulSize = 0;
 	char szResponse[POP3_MAX_RESPONSE_LENGTH];
 
@@ -480,9 +479,7 @@ HRESULT POP3::HrCmdStat() {
 	}
 
 	snprintf(szResponse, POP3_MAX_RESPONSE_LENGTH, "%u %u", (ULONG)lstMails.size(), ulSize);
-	hr = HrResponse(POP3_RESP_OK, szResponse);
-
-	return hr;
+	return HrResponse(POP3_RESP_OK, szResponse);
 }
 
 /** 

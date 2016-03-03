@@ -124,18 +124,13 @@ static const struct CPMAP {
  */
 HRESULT HrGetCharsetByCP(ULONG codepage, const char **lppszCharset)
 {
-    HRESULT hr = hrSuccess;
-    
     for (size_t i = 0; i < ARRAY_SIZE(CPMAP); ++i) {
         if(CPMAP[i].codepage == codepage) {
             *lppszCharset = CPMAP[i].charset;
             return hrSuccess;
         }
     }
-    
-    hr = MAPI_E_NOT_FOUND;
-    
-    return hr;
+	return MAPI_E_NOT_FOUND;
 }
 
 /**
@@ -147,16 +142,11 @@ HRESULT HrGetCharsetByCP(ULONG codepage, const char **lppszCharset)
  */
 HRESULT HrGetCPByCharset(const char *lpszCharset,ULONG *codepage)
 {
-    HRESULT hr = hrSuccess;
-    
     for (size_t i = 0; i < ARRAY_SIZE(CPMAP); ++i) {
         if(stricmp(CPMAP[i].charset, lpszCharset) == 0) {
             *codepage = CPMAP[i].codepage;
             return hrSuccess;
         }
     }
-    
-    hr = MAPI_E_NOT_FOUND;
-    
-    return hr;
+	return MAPI_E_NOT_FOUND;
 }
