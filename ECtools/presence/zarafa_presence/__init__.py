@@ -60,7 +60,7 @@ class Service(zarafa.Service):
 
         for plugin in self.plugins.values():
             plugin.disconnect()
-        sys.exit(1)
+        sys.exit(0)
 
     def check_auth(self):
         """ check shared-secret based authentication token """ 
