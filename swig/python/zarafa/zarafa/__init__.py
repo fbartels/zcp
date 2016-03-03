@@ -79,6 +79,7 @@ import traceback
 import mailbox
 import email.parser
 import email.utils
+import re
 import signal
 import ssl
 import time
@@ -189,6 +190,8 @@ ENGLISH_FOLDER_MAP = { # XXX should we make the names pretty much identical, exc
     'Tasks': 'tasks',
     'Notes': 'notes',
 }
+
+UNESCAPED_SLASH_RE = re.compile(r'(?<!\\)/')
 
 def _stream(mapiobj, proptag):
     stream = mapiobj.OpenProperty(proptag, IID_IStream, 0, 0)
@@ -1889,12 +1892,11 @@ class Folder(object):
 
         if '/' in key.replace('\\/', ''): # XXX MAPI folders may contain '/' (and '\') in their names..
             subfolder = self
-            for name in key.replace('\\/', '\\SLASH\\').split('/'): # XXX SLASH, unicode?
-                name = name.replace('\\SLASH\\', '\\/')
+            for name in UNESCAPED_SLASH_RE.split(key):
                 subfolder = subfolder.folder(name, create=create, recurse=False)
             return subfolder
 
-        elif len(key) == 96:
+        elif len(key) == 96: # XXX entryid=.. arg
             try:
                 return Folder(self, key.decode('hex'))
             except (MAPIErrorInvalidEntryid, MAPIErrorNotFound, TypeError):
