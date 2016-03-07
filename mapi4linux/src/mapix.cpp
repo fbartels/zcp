@@ -3340,6 +3340,9 @@ void __stdcall MAPIUninitialize(void) {
 
 	pthread_mutex_lock(&g_MAPILock);
 
+	if (_MAPIInitializeCount == 0)
+		abort();
+
 	/* MAPIInitialize always AddRefs localProfileAdmin */
 	if (localProfileAdmin)
 		localProfileAdmin->Release();

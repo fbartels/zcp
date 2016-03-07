@@ -408,8 +408,12 @@ void ECLogger_File::Log(unsigned int loglevel, const string &message) {
 
 		if (log) {
 			fnPrintf(log, "%s%s%s\n", DoPrefix().c_str(), EmitLevel(loglevel).c_str(), message.c_str());
-
-			if (loglevel <= EC_LOGLEVEL_WARNING || loglevel == EC_LOGLEVEL_ALWAYS)
+			/*
+			 * If IOLBF was set (buffer_size==0), the previous
+			 * print call already flushed it. Do not flush again
+			 * in that case.
+			 */
+			if (buffer_size > 0 && (loglevel <= EC_LOGLEVEL_WARNING || loglevel == EC_LOGLEVEL_ALWAYS))
 				fflush((FILE *)log);
 		}
 

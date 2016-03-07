@@ -549,6 +549,8 @@ iconv_t i; i = iconv_open("", "");
 AC_SUBST(ICONV_LIBS)
 LIBS=$LIBS_system
 
+AC_SEARCH_LIBS([crypt_r], [crypt], [CRYPT_LIBS="-lcrypt"; LIBS="$LIBS_system"])
+AC_SUBST([CRYPT_LIBS])
 PKG_CHECK_EXISTS([libssl],
 	[
 		PKG_CHECK_MODULES([SSL], [libssl], [], [ssl_LIBS=-lssl])

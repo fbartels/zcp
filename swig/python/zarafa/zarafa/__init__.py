@@ -2378,16 +2378,25 @@ class Item(object):
         yield self.table(PR_MESSAGE_RECIPIENTS)
         yield self.table(PR_MESSAGE_ATTACHMENTS)
 
-    def recipients(self):
+    def recipients(self, _type=None):
         """ Return recipient :class:`addresses <Address>` """
 
         for row in self.table(PR_MESSAGE_RECIPIENTS):
             row = dict([(x.proptag, x) for x in row])
-            yield Address(self.server, *(row[p].value for p in (PR_ADDRTYPE_W, PR_DISPLAY_NAME_W, PR_EMAIL_ADDRESS_W, PR_ENTRYID)))
+            if not _type or row[PR_RECIPIENT_TYPE].value == _type:
+                yield Address(self.server, *(row[p].value for p in (PR_ADDRTYPE_W, PR_DISPLAY_NAME_W, PR_EMAIL_ADDRESS_W, PR_ENTRYID)))
 
     @property
     def to(self):
-        return self.recipients() # XXX filter
+        return self.recipients(_type=MAPI_TO)
+
+    @property
+    def cc(self):
+        return self.recipients(_type=MAPI_CC)
+
+    @property
+    def bcc(self):
+        return self.recipients(_type=MAPI_BCC)
 
     @property 
     def start(self): # XXX optimize, guid
