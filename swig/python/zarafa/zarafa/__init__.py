@@ -38,6 +38,8 @@ Main classes:
 
 :class:`Quota`
 
+:class:`Permission`
+
 :class:`Config`
 
 :class:`Service`
@@ -192,6 +194,21 @@ ENGLISH_FOLDER_MAP = { # XXX should we make the names pretty much identical, exc
 }
 
 UNESCAPED_SLASH_RE = re.compile(r'(?<!\\)/')
+
+RIGHT_NAME = {
+    0x1: 'read_items',
+    0x2: 'create_items',
+    0x80: 'create_subfolders',
+    0x8: 'edit_own',
+    0x20: 'edit_all',
+    0x10: 'delete_own',
+    0x40: 'delete_all',
+    0x100: 'folder_owner',
+    0x200: 'folder_contact',
+    0x400: 'folder_visible',
+}
+
+NAME_RIGHT = dict((b,a) for (a,b) in RIGHT_NAME.items())
 
 def _stream(mapiobj, proptag):
     stream = mapiobj.OpenProperty(proptag, IID_IStream, 0, 0)
@@ -1102,6 +1119,10 @@ class Group(object):
         except (MAPIErrorNotFound, MAPIErrorInvalidParameter):
             raise ZarafaNotFoundException("no such group '%s'" % name)
 
+    @property
+    def groupid(self):
+        return bin2hex(self._ecgroup.GroupID)
+
     def users(self):
         '''Users in group'''
 
@@ -1185,6 +1206,17 @@ class Group(object):
         self.server.sa.SetGroup(group, MAPI_UNICODE)
         self._ecgroup = self.server.sa.GetGroup(self.server.sa.ResolveGroupName(self._name, MAPI_UNICODE), MAPI_UNICODE)
 
+    def __eq__(self, u): # XXX check same server?
+        if isinstance(u, Group):
+            return self.groupid == u.groupid
+        return False
+
+    def __ne__(self, g):
+        return not self == g
+
+    def __contains__(self, u): # XXX subgroups
+        return u in self.users()
+
     def __unicode__(self):
         return u"Group('%s')" % self.name
 
@@ -1203,6 +1235,10 @@ class Company(object):
                 self._eccompany = self.server.sa.GetCompany(self.server.sa.ResolveCompanyName(self._name, MAPI_UNICODE), MAPI_UNICODE)
             except MAPIErrorNotFound:
                 raise ZarafaNotFoundException("no such company: '%s'" % name)
+
+    @property
+    def companyid(self): # XXX single-tenant case
+        return bin2hex(self._eccompany.CompanyID)
 
     @property
     def name(self):
@@ -1307,6 +1343,17 @@ class Company(object):
             return Quota(self.server, None)
         else:
             return Quota(self.server, self._eccompany.CompanyID)
+
+    def __eq__(self, c):
+        if isinstance(c, Company):
+            return self.companyid == c.companyid
+        return False
+
+    def __ne__(self, c):
+        return not self == c
+
+    def __contains__(self, u):
+        return u in self.users()
 
     def __unicode__(self):
         return u"Company('%s')" % self._name
@@ -1859,23 +1906,27 @@ class Folder(object):
             return 0
 
     def _get_entryids(self, items):
-        if isinstance(items, (Item, Folder)):
+        if isinstance(items, (Item, Folder, Permission)):
             items = [items]
         else:
             items = list(items)
         item_entryids = [item.entryid.decode('hex') for item in items if isinstance(item, Item)]
         folder_entryids = [item.entryid.decode('hex') for item in items if isinstance(item, Folder)]
-        return item_entryids, folder_entryids
+        perms = [item for item in items if isinstance(item, Permission)]
+        return item_entryids, folder_entryids, perms
 
     def delete(self, items): # XXX associated
-        item_entryids, folder_entryids = self._get_entryids(items)
+        item_entryids, folder_entryids, perms = self._get_entryids(items)
         if item_entryids:
             self.mapiobj.DeleteMessages(item_entryids, 0, None, DELETE_HARD_DELETE)
         for entryid in folder_entryids:
             self.mapiobj.DeleteFolder(entryid, 0, None, DEL_FOLDERS|DEL_MESSAGES)
+        for perm in perms:
+            acl_table = self.mapiobj.OpenProperty(PR_ACL_TABLE, IID_IExchangeModifyTable, 0, 0)
+            acl_table.ModifyTable(0, [ROWENTRY(ROW_REMOVE, [SPropValue(PR_MEMBER_ID, perm.mapirow[PR_MEMBER_ID])])])
 
     def copy(self, items, folder, _delete=False):
-        item_entryids, folder_entryids = self._get_entryids(items)
+        item_entryids, folder_entryids, perms = self._get_entryids(items) # XXX copy/move perms??
         if item_entryids:
             self.mapiobj.CopyMessages(item_entryids, IID_IMAPIFolder, folder.mapiobj, 0, None, (MESSAGE_MOVE if _delete else 0))
         for entryid in folder_entryids:
@@ -1960,12 +2011,6 @@ class Folder(object):
         for row in table.dict_rows():
             yield Rule(row)
 
-    def acls(self):
-        rule_table = self.mapiobj.OpenProperty(PR_ACL_TABLE, IID_IExchangeModifyTable, 0, 0)
-        table = Table(self.server, rule_table.GetTable(0), PR_ACL_TABLE)
-        for row in table.dict_rows():
-            yield ACL(row, self.server)
-
     def prop(self, proptag):
         return _prop(self, self.mapiobj, proptag)
 
@@ -2033,6 +2078,52 @@ class Folder(object):
     @property
     def deleted(self):
         return Folder(self.store, self._entryid, deleted=True)
+
+    def permissions(self):
+        try:
+            acl_table = self.mapiobj.OpenProperty(PR_ACL_TABLE, IID_IExchangeModifyTable, 0, 0)
+        except MAPIErrorNotFound:
+            return
+        table = Table(self.server, acl_table.GetTable(0), PR_ACL_TABLE)
+        for row in table.dict_rows():
+            yield Permission(acl_table, row, self.server)
+
+    def permission(self, member, create=False):
+        for permission in self.permissions():
+            if permission.member == member:
+                return permission
+        if create:
+            acl_table = self.mapiobj.OpenProperty(PR_ACL_TABLE, IID_IExchangeModifyTable, 0, 0)
+            if isinstance(member, User): # XXX *.id_ or something..?
+                memberid = member.userid
+            elif isinstance(member, Group):
+                memberid = member.groupid
+            else:
+                memberid = member.companyid
+            acl_table.ModifyTable(0, [ROWENTRY(ROW_ADD, [SPropValue(PR_MEMBER_ENTRYID, memberid.decode('hex')), SPropValue(PR_MEMBER_RIGHTS, 0)])])
+            return self.permission(member)
+        else:
+            raise ZarafaNotFoundException("no permission entry for '%s'" % member.name)
+
+    def rights(self, member):
+        if member == self.store.user: # XXX admin-over-user
+            return NAME_RIGHT.keys()
+        parent = self
+        feids = set() # avoid loops
+        while parent.entryid not in feids:
+            try:
+                return parent.permission(member).rights
+            except ZarafaNotFoundException:
+                if isinstance(member, User):
+                    for group in member.groups():
+                        try:
+                            return parent.permission(group).rights
+                        except ZarafaNotFoundException:
+                            pass
+                    # XXX company
+            feids.add(parent.entryid)
+            parent = parent.parent
+        return []
 
     def search(self, text): # XXX recursion
         searchfolder = self.store.create_searchfolder()
@@ -3536,7 +3627,7 @@ class Quota(object):
     def __repr__(self):
         return _encode(unicode(self))
 
-class Rule:
+class Rule(object):
     def __init__(self, mapirow):
         self.mapirow = mapirow
         name, state = mapirow[PR_RULE_NAME], mapirow[PR_RULE_STATE]
@@ -3549,21 +3640,37 @@ class Rule:
     def __repr__(self):
         return _encode(unicode(self))
 
-class ACL:
-    def __init__(self, mapirow, server): # XXX fix args
+class Permission(object):
+    def __init__(self, mapitable, mapirow, server): # XXX fix args
+        self.mapitable = mapitable
         self.mapirow = mapirow
         self.server = server
 
     @property
-    def name(self):
-        return self.mapirow[PR_MEMBER_NAME]
+    def member(self): # XXX company, use entryid
+        name = self.mapirow[PR_MEMBER_NAME]
+        try:
+            return self.server.user(name)
+        except ZarafaNotFoundException:
+            return self.server.group(name)
 
     @property
-    def member(self): # XXX non-user
-        return self.server.user(self.name)
+    def rights(self):
+        r = []
+        for right, name in RIGHT_NAME.items():
+            if self.mapirow[PR_MEMBER_RIGHTS] & right:
+                r.append(name)
+        return r
+
+    @rights.setter
+    def rights(self, value):
+        r = 0
+        for name in value:
+            r |= NAME_RIGHT[name]
+        self.mapitable.ModifyTable(0, [ROWENTRY(ROW_MODIFY, [SPropValue(PR_MEMBER_ENTRYID, self.mapirow[PR_MEMBER_ENTRYID]), SPropValue(PR_MEMBER_RIGHTS, r)])])
 
     def __unicode__(self):
-        return u"ACL('%s')" % self.name
+        return u"Permission('%s')" % self.member.name
 
     def __repr__(self):
         return _encode(unicode(self))
