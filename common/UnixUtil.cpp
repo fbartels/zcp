@@ -365,7 +365,7 @@ bool unix_system(const char *lpszLogName, const char *lpszCommand, const char **
 	
 	while (fgets(buffer, sizeof(buffer), fp)) {
 		buffer[strlen(buffer) - 1] = '\0'; // strip enter
-		ec_log_err("%s[%d]: %s", lpszLogName, pid, buffer);
+		ec_log_debug("%s[%d]: %s", lpszLogName, pid, buffer);
 	}
 	
 	fclose(fp);
