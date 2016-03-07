@@ -3700,6 +3700,12 @@ static HRESULT running_service(const char *servicename, bool bDaemonize,
 	unix_create_pidfile(servicename, g_lpConfig, g_lpLogger);
 	g_lpLogger = StartLoggerProcess(g_lpConfig, g_lpLogger); // maybe replace logger
 #endif
+	hr = MAPIInitialize(NULL);
+	if (hr != hrSuccess) {
+		g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to initialize MAPI: %s (%x)",
+			GetMAPIErrorMessage(hr), hr);
+		goto exit;
+	}
 	sc = new StatsClient(g_lpConfig->GetSetting("z_statsd_stats"), g_lpLogger);
 
 	g_lpLogger->Log(EC_LOGLEVEL_ALWAYS, "Starting zarafa-dagent LMTP mode version " PROJECT_VERSION_DAGENT_STR " (" PROJECT_SVN_REV_STR "), pid %d", getpid());
@@ -4288,16 +4294,10 @@ int main(int argc, char *argv[]) {
 			goto exit;
 #endif
 #endif
-
+		/* MAPIInitialize done inside running_service */
 		hr = running_service(argv[0], bDaemonize, &sDeliveryArgs);
 		if (hr != hrSuccess)
 			goto exit;
-		hr = MAPIInitialize(NULL);
-		if (hr != hrSuccess) {
-			g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to initialize MAPI: %s (%x)",
-				GetMAPIErrorMessage(hr), hr);
-			goto exit;
-		}
 	}
 	else {
 		// log process id prefix to distinguinsh events, file logger only affected
