@@ -482,6 +482,25 @@ exit:
 	return hr == hrSuccess ? 0 : 1;
 }
 
+static int gw_listen_on(const char *service, const char *interface,
+    const char *port_str, int *fd, int *fdlist, size_t *lsize)
+{
+	if (port_str == NULL) {
+		ec_log_crit("No port selected for %s", service);
+		return E_FAIL;
+	}
+	uint16_t port = strtoul(port_str, NULL, 0);
+	HRESULT hr = HrListen(ec_log_get(), interface, port, fd);
+	if (hr != hrSuccess) {
+		ec_log_crit("Unable to listen on port %u", port);
+		return E_FAIL;
+	}
+	ec_log_info("Listening on port %u for %s", port, service);
+	fdlist[*lsize] = *fd;
+	++*lsize;
+	return hrSuccess;
+}
+
 /**
  * Runs the gateway service, starting a new thread or fork child for
  * incoming connections on any configured service.
@@ -496,10 +515,12 @@ static HRESULT running_service(const char *szPath, const char *servicename)
 	int ulListenIMAP = 0, ulListenIMAPs = 0;
 	bool bListenPOP3, bListenPOP3s;
 	bool bListenIMAP, bListenIMAPs;
-	int nCloseFDs = 0, pCloseFDs[4] = {0};
+	int pCloseFDs[4] = {0};
+	size_t nCloseFDs = 0;
 	fd_set readfds;
 	int err = 0;
 	pthread_attr_t ThreadAttr;
+	const char *const interface = g_lpConfig->GetSetting("server_bind");
 
 #ifdef LINUX
 	// SIGSEGV backtrace support
@@ -558,47 +579,28 @@ static HRESULT running_service(const char *szPath, const char *servicename)
 
 	// Setup sockets
 	if (bListenPOP3) {
-		hr = HrListen(g_lpLogger, g_lpConfig->GetSetting("server_bind"), atoi(g_lpConfig->GetSetting("pop3_port")), &ulListenPOP3);
-		if (hr != hrSuccess) {
-			g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to listen on port %s", g_lpConfig->GetSetting("pop3_port"));
-			hr = E_FAIL;
+		hr = gw_listen_on("pop3", interface, g_lpConfig->GetSetting("pop3_port"),
+		     &ulListenPOP3, pCloseFDs, &nCloseFDs);
+		if (hr != hrSuccess)
 			goto exit;
-		}
-		g_lpLogger->Log(EC_LOGLEVEL_INFO, "Listening on port %s for POP3", g_lpConfig->GetSetting("pop3_port"));
-		pCloseFDs[nCloseFDs++] = ulListenPOP3;
 	}
-
 	if (bListenPOP3s) {
-		hr = HrListen(g_lpLogger, g_lpConfig->GetSetting("server_bind"), atoi(g_lpConfig->GetSetting("pop3s_port")), &ulListenPOP3s);
-		if (hr != hrSuccess) {
-			g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to listen on port %s", g_lpConfig->GetSetting("pop3s_port"));
-			hr = E_FAIL;
+		hr = gw_listen_on("pop3s", interface, g_lpConfig->GetSetting("pop3s_port"),
+		     &ulListenPOP3s, pCloseFDs, &nCloseFDs);
+		if (hr != hrSuccess)
 			goto exit;
-		}
-		g_lpLogger->Log(EC_LOGLEVEL_INFO, "Listening on port %s for POP3s", g_lpConfig->GetSetting("pop3s_port"));
-		pCloseFDs[nCloseFDs++] = ulListenPOP3s;
 	}
-
 	if (bListenIMAP) {
-		hr = HrListen(g_lpLogger, g_lpConfig->GetSetting("server_bind"), atoi(g_lpConfig->GetSetting("imap_port")), &ulListenIMAP);
-		if (hr != hrSuccess) {
-			g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to listen on port %s", g_lpConfig->GetSetting("imap_port"));
-			hr = E_FAIL;
+		hr = gw_listen_on("imap", interface, g_lpConfig->GetSetting("imap_port"),
+		     &ulListenIMAP, pCloseFDs, &nCloseFDs);
+		if (hr != hrSuccess)
 			goto exit;
-		}
-		g_lpLogger->Log(EC_LOGLEVEL_INFO, "Listening on port %s for IMAP", g_lpConfig->GetSetting("imap_port"));
-		pCloseFDs[nCloseFDs++] = ulListenIMAP;
 	}
-
 	if (bListenIMAPs) {
-		hr = HrListen(g_lpLogger, g_lpConfig->GetSetting("server_bind"), atoi(g_lpConfig->GetSetting("imaps_port")), &ulListenIMAPs);
-		if (hr != hrSuccess) {
-			g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to listen on port %s", g_lpConfig->GetSetting("imaps_port"));
-			hr = E_FAIL;
+		hr = gw_listen_on("imaps", interface, g_lpConfig->GetSetting("imaps_port"),
+		     &ulListenIMAPs, pCloseFDs, &nCloseFDs);
+		if (hr != hrSuccess)
 			goto exit;
-		}
-		g_lpLogger->Log(EC_LOGLEVEL_INFO, "Listening on port %s for IMAPs", g_lpConfig->GetSetting("imaps_port"));
-		pCloseFDs[nCloseFDs++] = ulListenIMAPs;
 	}
 
 	// Setup signals
