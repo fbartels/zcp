@@ -489,7 +489,12 @@ static int gw_listen_on(const char *service, const char *interface,
 		ec_log_crit("No port selected for %s", service);
 		return E_FAIL;
 	}
-	uint16_t port = strtoul(port_str, NULL, 0);
+	char *end = NULL;
+	uint16_t port = strtoul(port_str, &end, 0);
+	if (port == 0 || (end != NULL && *end != '\0')) {
+		ec_log_crit("\"%s\" is not an acceptable port number", port_str);
+		return E_FAIL;
+	}
 	HRESULT hr = HrListen(ec_log_get(), interface, port, fd);
 	if (hr != hrSuccess) {
 		ec_log_crit("Unable to listen on port %u", port);

@@ -909,9 +909,9 @@ HRESULT HrListen(ECLogger *lpLogger, const char *szBind, uint16_t ulPort,
 	}
 	if (fd < 0 && sock_last != NULL) {
 		lpLogger->Log(EC_LOGLEVEL_CRIT,
-			"Unable to create socket(%u,%u,%u): %s",
+			"Unable to create socket(%u,%u,%u) port %s: %s",
 			sock_last->ai_family, sock_last->ai_socktype,
-			sock_last->ai_protocol, strerror(errno));
+			sock_last->ai_protocol, port_string, strerror(errno));
 		hr = MAPI_E_NETWORK_ERROR;
 		goto exit;
 	} else if (fd < 0) {
