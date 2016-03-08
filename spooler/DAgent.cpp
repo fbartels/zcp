@@ -1624,22 +1624,18 @@ static HRESULT SendOutOfOffice(LPADRBOOK lpAdrBook, LPMDB lpMDB,
 
 	g_lpLogger->Log(EC_LOGLEVEL_DEBUG, "Target user has OOF active\n");
 	// Check for presence of PR_EC_OUTOFOFFICE_MSG_W
-	if (lpStoreProps[1].ulPropTag != PR_EC_OUTOFOFFICE_MSG_W) {
+	if (lpStoreProps[1].ulPropTag == PR_EC_OUTOFOFFICE_MSG_W) {
+		strBody = lpStoreProps[1].Value.lpszW;
+	} else {
 		StreamPtr ptrStream;
-		if (lpMDB->OpenProperty(PR_EC_OUTOFOFFICE_MSG_W, &IID_IStream, 0, 0, &ptrStream) != hrSuccess ||
-			Util::HrStreamToString(ptrStream, strBody) != hrSuccess)
-		{
-			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to download out of office message.");
-            hr = MAPI_E_FAILURE;
+		hr = lpMDB->OpenProperty(PR_EC_OUTOFOFFICE_MSG_W, &IID_IStream, 0, 0, &ptrStream);
+		if (hr == MAPI_E_NOT_FOUND) {
+			/* no message is ok */
+		} else if (hr != hrSuccess || (hr = Util::HrStreamToString(ptrStream, strBody)) != hrSuccess) {
+			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to download out of office message: %s", GetMAPIErrorMessage(hr));
+			hr = MAPI_E_FAILURE;
 			goto exit;
 		}
-	} else {
-		strBody = lpStoreProps[1].Value.lpszW;
-	}
-
-	if (strBody.empty()) {
-		g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Out of office mail was enabled, but no message was set. Not sending empty message.");
-		goto exit;
 	}
 
 	// Possibly override default subject
