@@ -4300,6 +4300,9 @@ int main(int argc, char *argv[]) {
 			goto exit;
 	}
 	else {
+		PyMapiPluginFactory pyMapiPluginFactory;
+		PyMapiPluginAPtr ptrPyMapiPlugin;
+
 		// log process id prefix to distinguinsh events, file logger only affected
 		g_lpLogger->SetLogprefix(LP_PID);
 
@@ -4311,19 +4314,16 @@ int main(int argc, char *argv[]) {
 		}
 
 		sc = new StatsClient(g_lpConfig->GetSetting("z_statsd_stats"), g_lpLogger);
-
-		PyMapiPluginFactory pyMapiPluginFactory;
 		hr = pyMapiPluginFactory.Init(g_lpConfig, g_lpLogger);
 		if (hr != hrSuccess) {
 			g_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to instantiate plugin factory, hr=0x%08x", hr);
-			goto exit;
+			goto nonlmtpexit;
 		}
 		
-		PyMapiPluginAPtr ptrPyMapiPlugin;
 		hr = GetPluginObject(g_lpLogger, &pyMapiPluginFactory, &ptrPyMapiPlugin);
 		if (hr != hrSuccess) {
 			g_lpLogger->Log(EC_LOGLEVEL_FATAL, "main(): GetPluginObject failed %x", hr);
-			goto exit; // Error is logged in GetPluginObject
+			goto nonlmtpexit; // Error is logged in GetPluginObject
 		}
 
 		hr = deliver_recipient(ptrPyMapiPlugin, argv[my_optind], strip_email, fp, &sDeliveryArgs);
@@ -4331,13 +4331,11 @@ int main(int argc, char *argv[]) {
 			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "main(): deliver_recipient failed %x", hr);
 
 		fclose(fp);
+ nonlmtpexit:
+		MAPIUninitialize();
 	}
-
-	delete sc;
-
-	MAPIUninitialize();
-
 exit:
+	delete sc;
 	DeleteLogger(g_lpLogger);
 
 	delete g_lpConfig;
