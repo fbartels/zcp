@@ -678,6 +678,8 @@ void ECChannel::SetIPAddress(const struct sockaddr *sa, size_t slen)
 		snprintf(peer_atxt, sizeof(peer_atxt), "unix:%s:%s", host, serv);
 	else
 		snprintf(peer_atxt, sizeof(peer_atxt), "%s:%s", host, serv);
+	memcpy(&peer_sockaddr, sa, slen);
+	peer_salen = slen;
 }
 
 const char *ECChannel::peer_addr(void) const
@@ -787,6 +789,11 @@ int zcp_peerfd_is_local(int fd)
 	if (ret < 0)
 		return -errno;
 	return zcp_peeraddr_is_local(sa, peer_socklen);
+}
+
+int ECChannel::peer_is_local(void) const
+{
+	return zcp_peeraddr_is_local(reinterpret_cast<const struct sockaddr *>(&peer_sockaddr), peer_salen);
 }
 
 /**

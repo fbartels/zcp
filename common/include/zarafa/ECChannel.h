@@ -86,6 +86,7 @@ public:
 
 	void SetIPAddress(const struct sockaddr *, size_t);
 	const char *peer_addr(void) const;
+	int peer_is_local(void) const;
 		
 	bool UsingSsl();
 	bool sslctx();
@@ -98,6 +99,8 @@ private:
 	SSL *lpSSL;
 	static SSL_CTX *lpCTX;
 	char peer_atxt[256+16];
+	struct sockaddr_storage peer_sockaddr;
+	socklen_t peer_salen;
 
 	char *fd_gets(char *buf, int *lpulLen);
 	char *SSL_gets(char *buf, int *lpulLen);
