@@ -86,6 +86,9 @@ libzcp_common_service_la_LDFLAGS = ${AM_LDFLAGS} -no-undefined \
 	-Wl,--version-script=${top_builddir}/default.sym
 EXTRA_libzcp_common_service_la_DEPENDENCIES = ${top_builddir}/default.sym
 
+check_PROGRAMS = cov-scope
+cov_scope_SOURCES = cov-scope.cpp
+
 
 # Create historic symlinks (e.g. older snapshots of zstatsd use it) for build
 install-exec-hook:
