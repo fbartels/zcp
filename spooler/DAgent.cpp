@@ -2758,10 +2758,10 @@ static HRESULT ProcessDeliveryToRecipient(PyMapiPlugin *lppyMapiPlugin,
 			if (bIsAdmin)
 				hr = lpSession->QueryInterface(ptrAdminSession.iid, &ptrAdminSession);
 			else {
-				string strServer = g_lpConfig->GetSetting("server_socket");
-				strServer = GetServerUnixSocket((char*)strServer.c_str()); // let environment override if present
+				const char *server = g_lpConfig->GetSetting("server_socket");
+				server = GetServerUnixSocket(server); // let environment override if present
 
-				hr = HrOpenECAdminSession(g_lpLogger, &ptrAdminSession, "spooler/dagent:system", PROJECT_SVN_REV_STR, strServer.c_str(), EC_PROFILE_FLAGS_NO_NOTIFICATIONS, g_lpConfig->GetSetting("sslkey_file","",NULL), g_lpConfig->GetSetting("sslkey_pass","",NULL));
+				hr = HrOpenECAdminSession(g_lpLogger, &ptrAdminSession, "spooler/dagent:system", PROJECT_SVN_REV_STR, server, EC_PROFILE_FLAGS_NO_NOTIFICATIONS, g_lpConfig->GetSetting("sslkey_file", "", NULL), g_lpConfig->GetSetting("sslkey_pass", "", NULL));
 			}
 			if (hr != hrSuccess) {
 				g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to open admin session for archive access: 0x%08X", hr);
@@ -4067,7 +4067,7 @@ int main(int argc, char *argv[]) {
 		{ "log_level", "3", CONFIGSETTING_RELOADABLE },
 		{ "log_timestamp", "0" },
 		{ "log_buffer_size", "0" },
-		{ "server_socket", CLIENT_ADMIN_SOCKET },
+		{ "server_socket", "" },
 		{ "sslkey_file", "" },
 		{ "sslkey_pass", "", CONFIGSETTING_EXACT },
 		{ "spam_header_name", "X-Spam-Status" },

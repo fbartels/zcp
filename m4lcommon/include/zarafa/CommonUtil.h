@@ -89,13 +89,6 @@ enum
 bool operator ==(SBinary a, SBinary b);
 bool operator <(SBinary a, SBinary b);
 
-#ifdef LINUX
-#define CLIENT_ADMIN_SOCKET "file:///var/run/zarafad/server.sock"
-#else
-/* win32 */
-#define CLIENT_ADMIN_SOCKET "file://\\\\.\\pipe\\zarafa"
-#endif
-
 const char *GetServerUnixSocket(const char *szPreferred = NULL);
 std::string GetServerFQDN();
 
