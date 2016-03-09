@@ -112,6 +112,7 @@ HRESULT HrAccept(ECLogger *lpLogger, int ulListenFD, ECChannel **lppChannel);
 extern "C" {
 
 extern int zcp_bindtodevice(ECLogger *log, int fd, const char *iface);
+extern int zcp_peeraddr_is_local(const struct sockaddr *, socklen_t);
 extern int zcp_peerfd_is_local(int);
 
 }

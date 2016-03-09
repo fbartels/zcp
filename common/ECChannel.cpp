@@ -710,19 +710,15 @@ static int peer_is_local2(int rsk, const struct nlmsghdr *nlh)
  *
  * Returns negative errno code if indeterminate, otherwise false/true.
  */
-int zcp_peerfd_is_local(int fd)
+int zcp_peeraddr_is_local(const struct sockaddr *peer_sockaddr,
+    socklen_t peer_socklen)
 {
-	struct sockaddr_storage peer_sockaddr;
-	socklen_t peer_socklen = sizeof(sockaddr);
-	int ret = getsockname(fd, reinterpret_cast<struct sockaddr *>(&peer_sockaddr), &peer_socklen);
-	if (ret < 0)
-		return -errno;
-	if (peer_sockaddr.ss_family == AF_UNIX) {
+	if (peer_sockaddr->sa_family == AF_UNIX) {
 		return true;
-	} else if (peer_sockaddr.ss_family == AF_INET6) {
+	} else if (peer_sockaddr->sa_family == AF_INET6) {
 		if (peer_socklen < sizeof(struct sockaddr_in6))
 			return -EIO;
-	} else if (peer_sockaddr.ss_family == AF_INET) {
+	} else if (peer_sockaddr->sa_family == AF_INET) {
 		if (peer_socklen < sizeof(struct sockaddr_in))
 			return -EIO;
 	} else {
@@ -743,7 +739,7 @@ int zcp_peerfd_is_local(int fd)
 	req.nh.nlmsg_len     = NLMSG_LENGTH(sizeof(req.rth));
 	req.nh.nlmsg_flags   = NLM_F_REQUEST;
 	req.nh.nlmsg_type    = RTM_GETROUTE;
-	req.rth.rtm_family   = peer_sockaddr.ss_family;
+	req.rth.rtm_family   = peer_sockaddr->sa_family;
 	req.rth.rtm_protocol = RTPROT_UNSPEC;
 	req.rth.rtm_type     = RTN_UNSPEC;
 	req.rth.rtm_scope    = RT_SCOPE_UNIVERSE;
@@ -751,9 +747,9 @@ int zcp_peerfd_is_local(int fd)
 	struct rtattr *rta = reinterpret_cast<struct rtattr *>(reinterpret_cast<char *>(&req) + NLMSG_ALIGN(req.nh.nlmsg_len));
 	rta->rta_type        = RTA_DST;
 
-	ret = -ENODATA;
-	if (peer_sockaddr.ss_family == AF_INET6) {
-		const struct in6_addr &ad = reinterpret_cast<const struct sockaddr_in6 &>(peer_sockaddr).sin6_addr;
+	int ret = -ENODATA;
+	if (peer_sockaddr->sa_family == AF_INET6) {
+		const struct in6_addr &ad = reinterpret_cast<const struct sockaddr_in6 *>(peer_sockaddr)->sin6_addr;
 		static const uint8_t mappedv4[] =
 			{0,0,0,0, 0,0,0,0, 0,0,0xff,0xff};
 		req.rth.rtm_dst_len = sizeof(ad);
@@ -768,8 +764,8 @@ int zcp_peerfd_is_local(int fd)
 			req.nh.nlmsg_len = NLMSG_ALIGN(req.nh.nlmsg_len) + RTA_LENGTH(rta->rta_len);
 			memcpy(RTA_DATA(rta), &ad, sizeof(ad));
 		}
-	} else if (peer_sockaddr.ss_family == AF_INET) {
-		const struct in_addr &ad = reinterpret_cast<const struct sockaddr_in &>(peer_sockaddr).sin_addr;
+	} else if (peer_sockaddr->sa_family == AF_INET) {
+		const struct in_addr &ad = reinterpret_cast<const struct sockaddr_in *>(peer_sockaddr)->sin_addr;
 		req.rth.rtm_dst_len = sizeof(ad);
 		rta->rta_len = RTA_LENGTH(sizeof(ad));
 		req.nh.nlmsg_len = NLMSG_ALIGN(req.nh.nlmsg_len) + RTA_LENGTH(rta->rta_len);
@@ -780,6 +776,17 @@ int zcp_peerfd_is_local(int fd)
 	return ret;
 #endif
 	return -EPROTONOSUPPORT;
+}
+
+int zcp_peerfd_is_local(int fd)
+{
+	struct sockaddr_storage peer_sockaddr;
+	socklen_t peer_socklen = sizeof(sockaddr);
+	struct sockaddr *sa = reinterpret_cast<struct sockaddr *>(&peer_sockaddr);
+	int ret = getsockname(fd, sa, &peer_socklen);
+	if (ret < 0)
+		return -errno;
+	return zcp_peeraddr_is_local(sa, peer_socklen);
 }
 
 /**
