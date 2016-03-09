@@ -580,7 +580,7 @@ ECRESULT ECSessionManager::ValidateBTSession(struct soap *soap, ECSESSIONID sess
 		goto exit;
 	}
 
-	// Enable compression if client is capable
+	/* Enable compression if client desired and granted */
 	if (lpSession->GetCapabilities() & ZARAFA_CAP_COMPRESSION) {
 		soap_set_imode(soap, SOAP_ENC_ZLIB);
 		soap_set_omode(soap, SOAP_ENC_ZLIB | SOAP_IO_CHUNK);
