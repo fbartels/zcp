@@ -420,6 +420,9 @@ def _extract_ipm_ol2007_entryids(blob, offset):
 def _encode(s):
     return s.encode(getattr(sys.stdout, 'encoding', 'utf8') or 'utf8') # sys.stdout can be StringIO (nosetests)
 
+def _decode(s):
+    return s.decode(getattr(sys.stdin, 'encoding', 'utf8') or 'utf8')
+
 class ZarafaException(Exception):
     pass
 
@@ -806,7 +809,7 @@ Looks at command-line to see if another server address or other related options 
                         if fnmatch.fnmatch(match, username):
                             yield User(match, self)
                 else:
-                    yield User(username.decode(sys.stdin.encoding), self) # XXX can optparse output unicode?
+                    yield User(_decode(username), self) # XXX can optparse output unicode?
             return
         try:
             for name in self._companylist():
@@ -891,7 +894,7 @@ Looks at command-line to see if another server address or other related options 
         """
         if parse and getattr(self.options, 'companies', None):
             for name in self.options.companies:
-                name = name.decode(sys.stdin.encoding) # can optparse give us unicode?
+                name = _decode(name) # can optparse give us unicode?
                 try:
                     yield Company(name, self)
                 except MAPIErrorNoSupport:
@@ -1383,7 +1386,7 @@ class Store(object):
         filter_names = None
         if parse and getattr(self.server.options, 'folders', None):
             for path in self.server.options.folders:
-                yield self.folder(path.decode(sys.stdin.encoding or 'utf8')) # XXX can optparse output unicode?
+                yield self.folder(_decode(path)) # XXX can optparse output unicode?
             return
 
         for folder in self.subtree.folders(recurse=recurse):
