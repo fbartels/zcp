@@ -1421,7 +1421,7 @@ ECRESULT ECAuthSession::ValidateSSOData_KRB5(struct soap* soap, const char* lpsz
 		goto exit;
 	}
 
-	ec_log_debug("Kerberos username: %s", gssUserBuffer.value);
+	ec_log_debug("Kerberos username: %s", static_cast<const char *>(gssUserBuffer.value));
 	// kerberos returns: username@REALM, username is case-insensitive
 	strUsername.assign((char*)gssUserBuffer.value, gssUserBuffer.length);
 	pos = strUsername.find_first_of('@');
