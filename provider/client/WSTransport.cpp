@@ -268,7 +268,7 @@ HRESULT WSTransport::UnLockSoap()
 	return erSuccess;
 }
 
-HRESULT WSTransport::HrLogon(const sGlobalProfileProps &sProfileProps)
+HRESULT WSTransport::HrLogon2(const struct sGlobalProfileProps &sProfileProps)
 {
 	HRESULT		hr = hrSuccess;
 	ECRESULT	er = erSuccess;
@@ -457,6 +457,24 @@ exit:
 	}
 
 	return hr;
+}
+
+HRESULT WSTransport::HrLogon(const struct sGlobalProfileProps &in_props)
+{
+	if (in_props.strServerPath.compare("default:") != 0)
+		return HrLogon2(in_props);
+	struct sGlobalProfileProps p = in_props;
+#ifdef WIN32
+	p.strServerPath = "file://\\\\.\\pipe\\zarafa";
+	return HrLogon2(p);
+#else
+	p.strServerPath = "file:///var/run/zarafad/server.sock";
+	HRESULT ret = HrLogon2(p);
+	if (ret != MAPI_E_NETWORK_ERROR)
+		return ret;
+	p.strServerPath = "file:///var/run/zarafa";
+	return HrLogon2(p);
+#endif
 }
 
 HRESULT WSTransport::HrSetRecvTimeout(unsigned int ulSeconds)

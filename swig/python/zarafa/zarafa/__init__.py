@@ -682,7 +682,7 @@ Looks at command-line to see if another server address or other related options 
                     self.server_socket = config.get('server_socket')
                     self.sslkey_file = config.get('sslkey_file')
                     self.sslkey_pass = config.get('sslkey_pass')
-            self.server_socket = self.server_socket or 'file:///var/run/zarafad/server.sock'
+            self.server_socket = self.server_socket or "default:"
 
             # override with explicit or command-line args
             self.server_socket = server_socket or getattr(self.options, 'server_socket', None) or self.server_socket
