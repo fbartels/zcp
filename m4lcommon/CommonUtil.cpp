@@ -237,7 +237,7 @@ HRESULT CreateProfileTemp(ECLogger *const lpLogger, const WCHAR *username, const
 	
 	hr = lpServiceAdmin->CreateMsgService((LPTSTR)"ZARAFA6", (LPTSTR)"", 0, 0);
 	if (hr != hrSuccess) {
-		lpLogger->Log(EC_LOGLEVEL_FATAL, "CreateProfileTemp(): CreateMsgService failed %x: %s", hr, GetMAPIErrorMessage(hr));
+		lpLogger->Log(EC_LOGLEVEL_FATAL, "CreateProfileTemp(): CreateMsgService ZARAFA6 failed: %s (%x)", GetMAPIErrorMessage(hr), hr);
 		goto exit;
 	}
 

@@ -711,8 +711,14 @@ HRESULT M4LMsgServiceAdmin::CreateMsgService(LPTSTR lpszService, LPTSTR lpszDisp
 	// @todo, this should be able to find MSEMS as Zarafa
 #endif
 	hr = m4l_lpMAPISVC->GetService(lpszService, ulFlags, &service);
-	if (hr != hrSuccess) {
-		ec_log_err("M4LMsgServiceAdmin::CreateMsgService(): get service failed %x: %s", hr, GetMAPIErrorMessage(hr));
+	if (hr == MAPI_E_NOT_FOUND) {
+		ec_log_err("M4LMsgServiceAdmin::CreateMsgService(): get service \"%s\" failed: %s (%x). "
+			"Does /etc/mapi exist and have a config file for the service?",
+			reinterpret_cast<const char *>(lpszService), GetMAPIErrorMessage(hr), hr);
+		goto exit;
+	} else if (hr != hrSuccess) {
+		ec_log_err("M4LMsgServiceAdmin::CreateMsgService(): get service \"%s\" failed: %s (%x)",
+			reinterpret_cast<const char *>(lpszService), GetMAPIErrorMessage(hr), hr);
 		goto exit;
 	}
 

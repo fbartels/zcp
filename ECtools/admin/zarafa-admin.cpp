@@ -4492,6 +4492,8 @@ exit:
 	lpLogger = NULL;
 	delete lpsConfig;
 	SSL_library_cleanup();
+	if (hr != hrSuccess)
+		cerr << "Using the -v option (possibly multiple times) may give more hints." << endl;
 
 	return hr == hrSuccess ? 0 : 1;
 }
