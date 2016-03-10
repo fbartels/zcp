@@ -328,7 +328,10 @@ HRESULT WSTransport::HrLogon(const sGlobalProfileProps &sProfileProps)
 		ulCapabilities |= ZARAFA_CAP_LARGE_SESSIONID;
 
 	if (bPipeConnection == false) {
-		// all connections except pipes use compression
+		/*
+		 * All connections except pipes request compression. The server
+		 * can still reject the request.
+		 */
 		if(! (sProfileProps.ulProfileFlags & EC_PROFILE_FLAGS_NO_COMPRESSION))
 			ulCapabilities |= ZARAFA_CAP_COMPRESSION; // only to remote server .. windows?
 
@@ -433,7 +436,11 @@ auth: // User have a logon
 	}
 
 	if (ulServerCapabilities & ZARAFA_CAP_COMPRESSION) {
-		soap_set_imode(lpCmd->soap, SOAP_ENC_ZLIB);	// also autodetected
+		/*
+		 * GSOAP autodetects incoming compression, so even if not
+		 * explicitly enabled, it will be accepted.
+		 */
+		soap_set_imode(lpCmd->soap, SOAP_ENC_ZLIB);
 		soap_set_omode(lpCmd->soap, SOAP_ENC_ZLIB | SOAP_IO_CHUNK);
 	}
 

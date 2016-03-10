@@ -42,6 +42,7 @@
  */
 
 #include <zarafa/platform.h>
+#include <zarafa/ECChannel.h>
 #include <zarafa/MAPIErrors.h>
 
 #include "ECDatabaseUtils.h"
@@ -650,6 +651,23 @@ int ns__logon(struct soap *soap, char *user, char *pass, char *impersonate, char
 		szClientApp = ECStringCompat::WTF1252_to_UTF8(soap, szClientApp);
 	}
 
+	lpsResponse->lpszVersion = const_cast<char *>("0," PROJECT_VERSION_SERVER_STR);
+	lpsResponse->ulCapabilities = ZARAFA_LATEST_CAPABILITIES;
+	/*
+	 * Client desires compression, so turn it on, but only if remote.
+	 * Otherwise, clear the flag from clientCaps, because
+	 * Create(Auth)Session remembers them, re-evaluates CAP_COMPRESSION,
+	 * and would otherwise turn on compression again.
+	 */
+	if (zcp_peerfd_is_local(soap->socket) <= 0 && (clientCaps & ZARAFA_CAP_COMPRESSION)) {
+		lpsResponse->ulCapabilities |= ZARAFA_CAP_COMPRESSION;
+		// (ECSessionManager::ValidateSession() will do this for all other functions)
+		soap_set_imode(soap, SOAP_ENC_ZLIB);	// also autodetected
+		soap_set_omode(soap, SOAP_ENC_ZLIB | SOAP_IO_CHUNK);
+	} else {
+		clientCaps &= ~ZARAFA_CAP_COMPRESSION;
+	}
+
 	// check username and password
 	er = g_lpSessionManager->CreateSession(soap, user, pass, impersonate, clientVersion, szClientApp, szClientAppVersion, szClientAppMisc, clientCaps, ullSessionGroup, &sessionID, &lpecSession, true, (logonFlags & ZARAFA_LOGON_NO_UID_AUTH) == 0);
 	if(er != erSuccess){
@@ -677,17 +695,6 @@ int ns__logon(struct soap *soap, char *user, char *pass, char *impersonate, char
 #endif
 
 	lpsResponse->ulSessionId = sessionID;
-	lpsResponse->lpszVersion = const_cast<char *>("0," PROJECT_VERSION_SERVER_STR);
-	lpsResponse->ulCapabilities = ZARAFA_LATEST_CAPABILITIES;
-
-	if (clientCaps & ZARAFA_CAP_COMPRESSION) {
-		// client knows compression, then turn it on
-		lpsResponse->ulCapabilities |= ZARAFA_CAP_COMPRESSION;
-		// (ECSessionManager::ValidateSession() will do this for all other functions)
-		soap_set_imode(soap, SOAP_ENC_ZLIB);	// also autodetected
-		soap_set_omode(soap, SOAP_ENC_ZLIB | SOAP_IO_CHUNK);
-	}
-
 	if (clientCaps & ZARAFA_CAP_MULTI_SERVER)
 		lpsResponse->ulCapabilities |= ZARAFA_CAP_MULTI_SERVER;
 		
@@ -783,6 +790,19 @@ int ns__ssoLogon(struct soap *soap, ULONG64 ulSessionId, char *szUsername, char 
 	if (!(lpszEnabled && stricmp(lpszEnabled, "yes") == 0))
 		goto nosso;
 
+	lpsResponse->lpszVersion = const_cast<char *>("0," PROJECT_VERSION_SERVER_STR);
+	lpsResponse->ulCapabilities = ZARAFA_LATEST_CAPABILITIES;
+
+	/* See ns__logon for comments. */
+	if (zcp_peerfd_is_local(soap->socket) <= 0 && (clientCaps & ZARAFA_CAP_COMPRESSION)) {
+		lpsResponse->ulCapabilities |= ZARAFA_CAP_COMPRESSION;
+		// (ECSessionManager::ValidateSession() will do this for all other functions)
+		soap_set_imode(soap, SOAP_ENC_ZLIB);	// also autodetected
+		soap_set_omode(soap, SOAP_ENC_ZLIB | SOAP_IO_CHUNK);
+	} else {
+		clientCaps &= ~ZARAFA_CAP_COMPRESSION;
+	}
+
 	if (ulSessionId == 0) {
 		// new auth session
 		er = g_lpSessionManager->CreateAuthSession(soap, clientCaps, &newSessionID, &lpecAuthSession, true, true);
@@ -876,17 +896,6 @@ int ns__ssoLogon(struct soap *soap, ULONG64 ulSessionId, char *szUsername, char 
 	}
 
 	lpsResponse->ulSessionId = newSessionID;
-	lpsResponse->lpszVersion = const_cast<char *>("0," PROJECT_VERSION_SERVER_STR);
-	lpsResponse->ulCapabilities = ZARAFA_LATEST_CAPABILITIES;
-
-	if (clientCaps & ZARAFA_CAP_COMPRESSION) {
-		// client knows compression, then turn it on
-		lpsResponse->ulCapabilities |= ZARAFA_CAP_COMPRESSION;
-		// (ECSessionManager::ValidateSession() will do this for all other functions)
-		soap_set_imode(soap, SOAP_ENC_ZLIB);	// also autodetected
-		soap_set_omode(soap, SOAP_ENC_ZLIB | SOAP_IO_CHUNK);
-	}
-
 	if (clientCaps & ZARAFA_CAP_MULTI_SERVER)
 		lpsResponse->ulCapabilities |= ZARAFA_CAP_MULTI_SERVER;
 

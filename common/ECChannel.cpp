@@ -56,6 +56,7 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
+#include <linux/rtnetlink.h>
 #endif
 
 #include <cerrno>
@@ -690,11 +691,122 @@ void ECChannel::SetIPAddress(const struct sockaddr *sa, size_t slen)
 		snprintf(peer_atxt, sizeof(peer_atxt), "unix:%s:%s", host, serv);
 	else
 		snprintf(peer_atxt, sizeof(peer_atxt), "%s:%s", host, serv);
+	memcpy(&peer_sockaddr, sa, slen);
+	peer_salen = slen;
 }
 
 const char *ECChannel::peer_addr(void) const
 {
 	return peer_atxt;
+}
+
+#ifdef LINUX
+static int peer_is_local2(int rsk, const struct nlmsghdr *nlh)
+{
+	if (send(rsk, nlh, nlh->nlmsg_len, 0) < 0)
+		return -errno;
+	char rspbuf[512];
+	ssize_t ret = recv(rsk, rspbuf, sizeof(rspbuf), 0);
+	if (ret < 0)
+		return -errno;
+	if (static_cast<size_t>(ret) < sizeof(struct nlmsghdr))
+		return -ENODATA;
+	nlh = reinterpret_cast<const struct nlmsghdr *>(rspbuf);
+	if (!NLMSG_OK(nlh, nlh->nlmsg_len))
+		return -EIO;
+	const struct rtmsg *rtm = reinterpret_cast<const struct rtmsg *>(NLMSG_DATA(nlh));
+	return rtm->rtm_type == RTN_LOCAL;
+}
+#endif
+
+/**
+ * Determine if a file descriptor refers to some kind of local connection,
+ * so as to decide on flags like compression.
+ *
+ * Returns negative errno code if indeterminate, otherwise false/true.
+ */
+int zcp_peeraddr_is_local(const struct sockaddr *peer_sockaddr,
+    socklen_t peer_socklen)
+{
+	if (peer_sockaddr->sa_family == AF_UNIX) {
+		return true;
+	} else if (peer_sockaddr->sa_family == AF_INET6) {
+		if (peer_socklen < sizeof(struct sockaddr_in6))
+			return -EIO;
+	} else if (peer_sockaddr->sa_family == AF_INET) {
+		if (peer_socklen < sizeof(struct sockaddr_in))
+			return -EIO;
+	} else {
+		return -EPROTONOSUPPORT;
+	}
+#ifdef LINUX
+	int rsk = socket(AF_NETLINK, SOCK_DGRAM, NETLINK_ROUTE);
+	if (rsk < 0) {
+		fprintf(stderr, "socket AF_NETLINK: %s\n", strerror(errno));
+		return -errno;
+	}
+	struct {
+		struct nlmsghdr nh;
+		struct rtmsg rth;
+		char attrbuf[512];
+	} req;
+	memset(&req, 0, sizeof(req));
+	req.nh.nlmsg_len     = NLMSG_LENGTH(sizeof(req.rth));
+	req.nh.nlmsg_flags   = NLM_F_REQUEST;
+	req.nh.nlmsg_type    = RTM_GETROUTE;
+	req.rth.rtm_family   = peer_sockaddr->sa_family;
+	req.rth.rtm_protocol = RTPROT_UNSPEC;
+	req.rth.rtm_type     = RTN_UNSPEC;
+	req.rth.rtm_scope    = RT_SCOPE_UNIVERSE;
+	req.rth.rtm_table    = RT_TABLE_UNSPEC;
+	struct rtattr *rta = reinterpret_cast<struct rtattr *>(reinterpret_cast<char *>(&req) + NLMSG_ALIGN(req.nh.nlmsg_len));
+	rta->rta_type        = RTA_DST;
+
+	int ret = -ENODATA;
+	if (peer_sockaddr->sa_family == AF_INET6) {
+		const struct in6_addr &ad = reinterpret_cast<const struct sockaddr_in6 *>(peer_sockaddr)->sin6_addr;
+		static const uint8_t mappedv4[] =
+			{0,0,0,0, 0,0,0,0, 0,0,0xff,0xff};
+		req.rth.rtm_dst_len = sizeof(ad);
+		if (memcmp(&ad, mappedv4, 12) == 0) {
+			/* RTM_GETROUTE won't report RTN_LOCAL for ::ffff:127.0.0.1 */
+			req.rth.rtm_family = AF_INET;
+			rta->rta_len = RTA_LENGTH(sizeof(struct in_addr));
+			req.nh.nlmsg_len = NLMSG_ALIGN(req.nh.nlmsg_len) + RTA_LENGTH(rta->rta_len);
+			memcpy(RTA_DATA(rta), &ad.s6_addr[12], 4);
+		} else {
+			rta->rta_len = RTA_LENGTH(sizeof(ad));
+			req.nh.nlmsg_len = NLMSG_ALIGN(req.nh.nlmsg_len) + RTA_LENGTH(rta->rta_len);
+			memcpy(RTA_DATA(rta), &ad, sizeof(ad));
+		}
+	} else if (peer_sockaddr->sa_family == AF_INET) {
+		const struct in_addr &ad = reinterpret_cast<const struct sockaddr_in *>(peer_sockaddr)->sin_addr;
+		req.rth.rtm_dst_len = sizeof(ad);
+		rta->rta_len = RTA_LENGTH(sizeof(ad));
+		req.nh.nlmsg_len = NLMSG_ALIGN(req.nh.nlmsg_len) + RTA_LENGTH(rta->rta_len);
+		memcpy(RTA_DATA(rta), &ad, sizeof(ad));
+	}
+	ret = peer_is_local2(rsk, &req.nh);
+	close(rsk);
+	return ret;
+#endif
+	return -EPROTONOSUPPORT;
+}
+
+int zcp_peerfd_is_local(int fd)
+{
+	struct sockaddr_storage peer_sockaddr;
+	socklen_t peer_socklen = sizeof(sockaddr);
+	struct sockaddr *sa = reinterpret_cast<struct sockaddr *>(&peer_sockaddr);
+	int ret = getsockname(fd, sa, &peer_socklen);
+	if (ret < 0)
+		return -errno;
+	return zcp_peeraddr_is_local(sa, peer_socklen);
+}
+
+int ECChannel::peer_is_local(void) const
+{
+	return zcp_peeraddr_is_local(reinterpret_cast<const struct sockaddr *>(&peer_sockaddr), peer_salen);
 }
 
 /**

@@ -7977,7 +7977,9 @@
 			<term><option>disable_plaintext_auth</option></term>
 			<listitem>
 			  <para>Disable all plaintext POP3 and IMAP authentications unless
-			  SSL/TLS is used. Obviously this requires at least
+			  SSL/TLS is used (except for connections originating
+			  from localhost, to allow saslauthd with rimap).
+			  Obviously, this requires at least
 			  <replaceable>ssl_private_key_file</replaceable> and
 			  <replaceable>ssl_certificate_file</replaceable> to take effect.</para>
 			  <para>Default: <replaceable>no</replaceable></para>
