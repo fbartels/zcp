@@ -511,7 +511,7 @@ LDAP *LDAPUserPlugin::ConnectLDAP(const char *bind_dn, const char *bind_pw) {
 			m_lpStatsCollector->Increment(SCN_LDAP_CONNECT_FAILED);
 
 			ec_log_crit("Failed to initialize LDAP for \"%s\": %s", currentServer.c_str(), ldap_err2string(rc));
-			goto fail;
+			goto fail2;
 		}
 
 		ec_log_debug("Trying to connect to %s", currentServer.c_str());
@@ -567,14 +567,13 @@ LDAP *LDAPUserPlugin::ConnectLDAP(const char *bind_dn, const char *bind_pw) {
 		ec_log_warn("LDAP (simple) bind failed: %s", ldap_err2string(rc));
 
 	fail:
+		if (ldap_unbind_s(ld) == -1)
+			ec_log_err("LDAP unbind failed");
+	fail2:
 		// see if another (if any) server does work
 		ldapServerIndex++;
 		if (ldapServerIndex >= ldap_servers.size())
 			ldapServerIndex = 0;
-
-		if (ldap_unbind_s(ld) == -1)
-			ec_log_err("LDAP unbind failed");
-
 		m_lpStatsCollector->Increment(SCN_LDAP_CONNECT_FAILED);
 
 		ld = NULL;

@@ -6,6 +6,7 @@ import sys
 import getopt
 import datetime
 import time
+import json
 
 try:
     import MAPI
@@ -46,6 +47,7 @@ def print_help():
     print "   -h, --host          Host to connect with. Default: file:///var/run/zarafad/server.sock"
     print "   -s, --sslkey-file   SSL key file to authenticate as admin."
     print "   -p, --sslkey-pass   Password for the SSL key file."
+    print "   --dump-json         Dumps the current status as JSON."
     print "   --help              Show this help message and exit."
     print ""
     print ""
@@ -70,7 +72,7 @@ def main(argv = None):
         argv = sys.argv
 
     try:
-        opts, args = getopt.gnu_getopt(argv, "h:s:p:u:m:t:n:he", ['from=', 'until=', 'host=', 'sslkey-file=', 'sslkey-pass=', 'user=', 'mode=', 'subject=', 'message=', 'help', ])
+        opts, args = getopt.gnu_getopt(argv, "h:s:p:u:m:t:n:he", ['from=', 'until=', 'host=', 'sslkey-file=', 'sslkey-pass=', 'user=', 'mode=', 'subject=', 'message=', 'dump-json', 'help', ])
     except getopt.GetoptError, err:
         # print help information and exit:
         print str(err)
@@ -88,6 +90,8 @@ def main(argv = None):
     username = None 
     subject = None
     message = None
+
+    dump_json = False
     
     for o, a in opts:
         if o in ('-h', '--host'):
@@ -107,14 +111,16 @@ def main(argv = None):
             else:
                 enabled = False
                 mode = MODE_DISABLE
-	elif o in ("--from"):
-	    date_from = datetime.datetime.strptime(a, "%Y-%m-%d %H:%M")
-	elif o in ("--until"):
-	    date_until = datetime.datetime.strptime(a, "%Y-%m-%d %H:%M")
+        elif o == "--from":
+            date_from = datetime.datetime.strptime(a, "%Y-%m-%d %H:%M")
+        elif o == "--until":
+            date_until = datetime.datetime.strptime(a, "%Y-%m-%d %H:%M")
         elif o in ('-t', '--subject'):
             subject = a
         elif o in ('-n', '--message'):
             message = a
+        elif o == '--dump-json':
+            dump_json = True
         elif o == '--help':
             print_help()
             return 0
@@ -143,9 +149,35 @@ def main(argv = None):
     except:
         print "Unable to open store for user '%s'" % username
 
+    try:
+        oldstatus = st.GetProps([PR_EC_OUTOFOFFICE], 0)[0].Value
+        if oldstatus == MAPI_E_NOT_FOUND:
+            oldstatus = False
+    except Exception:
+        print "Unable to read out of office status of user '%s'" % username
+
+    try:
+        oldsubject = st.GetProps([PR_EC_OUTOFOFFICE_SUBJECT], 0)[0].Value
+        if oldsubject == MAPI_E_NOT_FOUND:
+            oldsubject = None
+
+    except Exception:
+        print "Unable to read out of office subject of user '%s'" % username
+
+    try:
+        oldmsg = st.GetProps([PR_EC_OUTOFOFFICE_MSG], 0)[0].Value
+        if oldmsg == MAPI_E_NOT_FOUND:
+            oldmsg = None
+    except Exception:
+        print "Unable to read out of office message of user '%s'" % username
+
+    if dump_json:
+        result = json.dumps({'set': bool(oldstatus), 'subject': oldsubject, 'message': oldmsg})
+        print(result)
+        sys.exit(0)
+
     if mode != MODE_UPDATE_ONLY:
         try:
-            oldstatus = st.GetProps([PR_EC_OUTOFOFFICE], 0)[0].Value
             if oldstatus == enabled and not enabled:
                 print "Out of office for user '%s' already disabled, skipping." % username
             elif enabled:
@@ -184,7 +216,6 @@ def main(argv = None):
 
         if subject:
             try:
-                oldsubject = st.GetProps([PR_EC_OUTOFOFFICE_SUBJECT], 0)[0].Value
                 if oldsubject == subject:
                     print "Not changing subject for user '%s' as it was not updated" % username
                 else:
@@ -197,7 +228,6 @@ def main(argv = None):
             PrintSubject(newsubject[0])
 
         if message:
-            oldmsg = st.GetProps([PR_EC_OUTOFOFFICE_MSG], 0)[0].Value
             try:
                 f = open(message, 'rt')
             except IOError:

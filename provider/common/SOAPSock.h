@@ -62,18 +62,18 @@ int ssl_verify_callback_zarafa_control(int ok, X509_STORE_CTX *store, BOOL bShow
 HRESULT LoadCertificatesFromRegistry();
 
 HRESULT CreateSoapTransport(ULONG ulUIFlags,
-							const std::string &strServerPath,
-							const std::string &strSSLKeyFile,
-							const std::string &strSSLKeyPass,
-							ULONG ulConnectionTimeOut,
-							const std::string &strProxyHost,
-							const WORD		&wProxyPort,
-							const std::string &strProxyUserName,
-							const std::string &strProxyPassword,
-							const ULONG		&ulProxyFlags,
-							int				iSoapiMode,
-							int				iSoapoMode,
-							ZarafaCmd **lppCmd);
+	const char *strServerPath,
+	const char *strSSLKeyFile,
+	const char *strSSLKeyPass,
+	ULONG ulConnectionTimeOut,
+	const char *strProxyHost,
+	WORD wProxyPort,
+	const char *strProxyUserName,
+	const char *strProxyPassword,
+	ULONG ulProxyFlags,
+	int				iSoapiMode,
+	int				iSoapoMode,
+	ZarafaCmd **lppCmd);
 
 
 VOID DestroySoapTransport(ZarafaCmd *lpCmd);

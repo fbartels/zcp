@@ -68,7 +68,8 @@
 using namespace std;
 
 
-LMTP::LMTP(ECChannel *lpChan, char *szServerPath, ECLogger *lpLog, ECConfig *lpConf) {
+LMTP::LMTP(ECChannel *lpChan, const char *szServerPath, ECLogger *lpLog, ECConfig *lpConf)
+{
     m_lpChannel = lpChan;
     m_lpLogger = lpLog;
     m_lpConfig = lpConf;

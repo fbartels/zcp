@@ -361,7 +361,7 @@ int main(int argc, char **argv) {
 
 	hr = HrProcessConnections(ulListenCalDAV, ulListenCalDAVs);
 	if (hr != hrSuccess)
-		goto exit;
+		goto exit2;
 
 
 	g_lpLogger->Log(EC_LOGLEVEL_ALWAYS, "CalDAV Gateway will now exit");
@@ -388,6 +388,8 @@ int main(int argc, char **argv) {
 	}
 #endif
 
+exit2:
+	MAPIUninitialize();
 exit:
 
 #ifdef LINUX
@@ -398,7 +400,6 @@ exit:
 	delete g_lpConfig;
 	DeleteLogger(g_lpLogger);
 
-	MAPIUninitialize();
 
 	SSL_library_cleanup(); // Remove ssl data for the main application and other related libraries
 

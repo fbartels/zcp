@@ -1175,7 +1175,7 @@ int main(int argc, char *argv[]) {
 	static const configsetting_t lpDefaults[] = {
 		{ "smtp_server","localhost", CONFIGSETTING_RELOADABLE },
 		{ "smtp_port","25", CONFIGSETTING_RELOADABLE },
-		{ "server_socket", CLIENT_ADMIN_SOCKET },
+		{ "server_socket", "" },
 #ifdef LINUX
 		{ "run_as_user", "zarafa" },
 		{ "run_as_group", "zarafa" },

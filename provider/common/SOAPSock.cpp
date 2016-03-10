@@ -317,23 +317,23 @@ SOAP_SOCKET MyConnect(struct soap *soap, const char* endpoint, const char* host,
 #endif
 
 HRESULT CreateSoapTransport(ULONG ulUIFlags,
-							const std::string &strServerPath,
-							const std::string &strSSLKeyFile,
-							const std::string &strSSLKeyPass,
-							ULONG ulConnectionTimeOut,
-							const std::string &strProxyHost,
-							const WORD		&wProxyPort,
-							const std::string &strProxyUserName,
-							const std::string &strProxyPassword,
-							const ULONG		&ulProxyFlags,
-							int				iSoapiMode,
-							int				iSoapoMode,
-							ZarafaCmd **lppCmd)
+	const char *strServerPath,
+	const char *strSSLKeyFile,
+	const char *strSSLKeyPass,
+	ULONG ulConnectionTimeOut,
+	const char *strProxyHost,
+	WORD wProxyPort,
+	const char *strProxyUserName,
+	const char *strProxyPassword,
+	ULONG ulProxyFlags,
+	int				iSoapiMode,
+	int				iSoapoMode,
+	ZarafaCmd **lppCmd)
 {
 	HRESULT		hr = hrSuccess;
 	ZarafaCmd*	lpCmd = NULL;
 
-	if (strServerPath.empty() || lppCmd == NULL) {
+	if (strServerPath == NULL || *strServerPath == '\0' || lppCmd == NULL) {
 		hr = E_INVALIDARG;
 		goto exit;
 	}
@@ -343,7 +343,7 @@ HRESULT CreateSoapTransport(ULONG ulUIFlags,
 	soap_set_imode(lpCmd->soap, iSoapiMode);
 	soap_set_omode(lpCmd->soap, iSoapoMode);
 
-	lpCmd->endpoint = strdup(strServerPath.c_str());
+	lpCmd->endpoint = strdup(strServerPath);
 
 	// default allow SSLv3, TLSv1, TLSv1.1 and TLSv1.2
 	lpCmd->soap->ctx = SSL_CTX_new(SSLv23_method());
@@ -353,8 +353,8 @@ HRESULT CreateSoapTransport(ULONG ulUIFlags,
 		// no need to add certificates to call, since soap also calls SSL_CTX_set_default_verify_paths()
 		if(soap_ssl_client_context(lpCmd->soap,
 								SOAP_SSL_DEFAULT | SOAP_SSL_SKIP_HOST_CHECK,
-								strSSLKeyFile.empty()? NULL : strSSLKeyFile.c_str(), 
-								strSSLKeyPass.empty()? NULL : strSSLKeyPass.c_str(),
+								strSSLKeyFile != NULL && *strSSLKeyFile != '\0' ? strSSLKeyFile : NULL,
+								strSSLKeyPass != NULL && *strSSLKeyPass != '\0' ? strSSLKeyPass : NULL,
 								NULL, NULL,
 								NULL)) {
 			hr = E_INVALIDARG;
@@ -389,15 +389,13 @@ HRESULT CreateSoapTransport(ULONG ulUIFlags,
 		lpCmd->soap->fpost = http_post;
 	} else {
 
-		if ((ulProxyFlags&0x0000001/*EC_PROFILE_PROXY_FLAGS_USE_PROXY*/) && !strProxyHost.empty()) {
-			lpCmd->soap->proxy_host = strdup(strProxyHost.c_str());
+		if ((ulProxyFlags&0x0000001/*EC_PROFILE_PROXY_FLAGS_USE_PROXY*/) && strProxyHost != NULL && *strProxyHost != '\0') {
+			lpCmd->soap->proxy_host = strdup(strProxyHost);
 			lpCmd->soap->proxy_port = wProxyPort;
-
-			if (!strProxyUserName.empty())
-				lpCmd->soap->proxy_userid = strdup(strProxyUserName.c_str());
-
-			if (!strProxyPassword.empty())
-				lpCmd->soap->proxy_passwd = strdup(strProxyPassword.c_str());
+			if (strProxyUserName != NULL && *strProxyUserName != '\0')
+				lpCmd->soap->proxy_userid = strdup(strProxyUserName);
+			if (strProxyPassword != NULL && *strProxyPassword != '\0')
+				lpCmd->soap->proxy_passwd = strdup(strProxyPassword);
 		}
 
 		lpCmd->soap->connect_timeout = ulConnectionTimeOut;

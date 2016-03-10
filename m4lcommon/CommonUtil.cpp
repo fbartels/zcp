@@ -137,7 +137,7 @@ const char *GetServerUnixSocket(const char *szPreferred)
 	else if (szPreferred && szPreferred[0] != '\0')
 		return szPreferred;
 	else
-		return CLIENT_ADMIN_SOCKET;
+		return "";
 }
 
 /** 
@@ -399,35 +399,35 @@ HRESULT HrOpenECSession(ECLogger *const lpLogger, IMAPISession **lppSession, con
 		strcpy(szProfName, profname);
 	}
 
-	if(szPath != NULL) {
-		if (sslkey_file != NULL) {
-			FILE *ssltest = fopen(sslkey_file, "r");
-			if (!ssltest) {
-				lpLogger->Log(EC_LOGLEVEL_FATAL, "Cannot access %s: %s", sslkey_file, strerror(errno));
-
-				// do not pass sslkey if the file does not exist
-				// otherwise normal connections do not work either
-				sslkey_file = NULL;
-				sslkey_password = NULL;
-			}
-			else {
-				// TODO: test password of certificate
-				fclose(ssltest);
-			}
-		}
-
-		hr = CreateProfileTemp(lpLogger, szUsername, szPassword, szPath, (const char*)szProfName, ulProfileFlags, sslkey_file, sslkey_password, app_version, app_misc); 
-		if (hr != hrSuccess)
-			lpLogger->Log(EC_LOGLEVEL_WARNING, "CreateProfileTemp(SSL) failed: %x: %s", hr, GetMAPIErrorMessage(hr));
-	} else {
-		// these connections cannot be ssl, so no keys needed
-		hr = CreateProfileTemp(lpLogger, szUsername, szPassword, GetServerUnixSocket(), (const char*)szProfName, ulProfileFlags, NULL, NULL, app_version, app_misc);
-		if (hr != hrSuccess)
-			lpLogger->Log(EC_LOGLEVEL_WARNING, "CreateProfileTemp(PLAIN) failed: %x: %s", hr, GetMAPIErrorMessage(hr));
+	if (szPath == NULL || *szPath == '\0') {
+#ifdef LINUX
+		szPath = "file:///var/run/zarafad/server.sock";
+#else
+		szPath = "file://\\\\.\\pipe\\zarafa";
+#endif
 	}
 
-	if (hr != hrSuccess)
+	if (sslkey_file != NULL) {
+		FILE *ssltest = fopen(sslkey_file, "r");
+		if (!ssltest) {
+			lpLogger->Log(EC_LOGLEVEL_FATAL, "Cannot access %s: %s", sslkey_file, strerror(errno));
+
+			// do not pass sslkey if the file does not exist
+			// otherwise normal connections do not work either
+			sslkey_file = NULL;
+			sslkey_password = NULL;
+		}
+		else {
+			// TODO: test password of certificate
+			fclose(ssltest);
+		}
+	}
+
+	hr = CreateProfileTemp(lpLogger, szUsername, szPassword, szPath, (const char*)szProfName, ulProfileFlags, sslkey_file, sslkey_password, app_version, app_misc);
+	if (hr != hrSuccess) {
+		lpLogger->Log(EC_LOGLEVEL_WARNING, "CreateProfileTemp failed: %x: %s", hr, GetMAPIErrorMessage(hr));
 		goto exit;
+	}
 
 	// Log on the the profile
 	hr = MAPILogonEx(0, (LPTSTR)szProfName, (LPTSTR)"", MAPI_EXTENDED | MAPI_NEW_SESSION | MAPI_NO_MAIL, &lpMAPISession);
