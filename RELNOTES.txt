@@ -2,13 +2,18 @@ Release notes for 7.2.3
 =======================
 
 Enhancements:
+* Avoid compression on all kinds of localhost connections
 * dagent: better error reporting on duplicate email addresses
 * dagent can log rules processed for a user (at "debug" log_level)
+* pyza: add basic search API
 
 Fixes:
 * record all mail references so that MUAs show threading (ZCP-11358)
+* backup-plus: deal with special characters in user names
 
 Changes:
+* gateway: non-SSL plaintext authentication is offered if connection
+  originates from localhost
 * the "fatal" log level is now called "crit" (for critical),
   since in the fewest case were the reported conditions actually
   fatal (= program-terminating). This may be relevant if you do
