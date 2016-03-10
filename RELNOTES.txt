@@ -49,10 +49,10 @@ Changes:
   "zarafa". If using our prebuilt DEB/RPM packages, this user and group
   will be created on installation (if not already present).
 
-* Permissions on directories may need to be adjusted. If using our
-  prebuild DEB/RPM packages, the owner of /var/lib/zarafa and
-  /var/log/zarafa will be changed on package installation. Any custom
-  locations in use need to be manually adjusted.
+* Permissions on directories like /var/lib/zarafa/* may need to be
+  adjusted, especially if you use custom locations. We chose not to
+  automatically recurisvely chown all of them, because it can
+  potentially take a long time and be incorrect.
 
 * To facilitate use of IPv6 on a single socket, zarafa-dagent no longer
   binds to the IPv4-only 127.0.0.1 by default. It is advised to review
