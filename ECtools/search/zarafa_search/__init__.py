@@ -110,7 +110,9 @@ class SearchWorker(zarafa.Worker):
                     elif cmd == 'FIND':
                         pos = data.find(':')
                         fields = map(int, data[:pos].split()[1:])
-                        terms = plugin.extract_terms(data[pos+1:])[:8] # max 8 terms
+                        # Limit number of terms (32) so people do not
+                        # inadvertently DoS it if they paste prose.
+                        terms = plugin.extract_terms(data[pos+1:])[:32]
                         if fields and terms:
                             fields_terms.append((fields, terms))
                         response(conn, 'OK:')
