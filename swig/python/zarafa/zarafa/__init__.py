@@ -1258,73 +1258,6 @@ class Store(object):
         return Folder(self, HrGetOneProp(self._root, PR_ENTRYID).Value)
 
     @property
-    def inbox(self):
-        """ :class:`Folder` designated as inbox """
-
-        return Folder(self, self.mapiobj.GetReceiveFolder('IPM', 0)[0])
-
-    @property
-    def junk(self):
-        """ :class:`Folder` designated as junk """
-
-        # PR_ADDITIONAL_REN_ENTRYIDS is a multi-value property, 4th entry is the junk folder
-        return Folder(self, HrGetOneProp(self._root, PR_ADDITIONAL_REN_ENTRYIDS).Value[4])
-
-    @property
-    def calendar(self):
-        """ :class:`Folder` designated as calendar """
-
-        return Folder(self, HrGetOneProp(self._root, PR_IPM_APPOINTMENT_ENTRYID).Value)
-
-    @property
-    def outbox(self):
-        """ :class:`Folder` designated as outbox """
-
-        return Folder(self, HrGetOneProp(self.mapiobj, PR_IPM_OUTBOX_ENTRYID).Value)
-
-    @property
-    def contacts(self):
-        """ :class:`Folder` designated as contacts """
-
-        return Folder(self, HrGetOneProp(self._root, PR_IPM_CONTACT_ENTRYID).Value)
-
-    @property
-    def drafts(self):
-        """ :class:`Folder` designated as drafts """
-
-        return Folder(self, HrGetOneProp(self._root, PR_IPM_DRAFTS_ENTRYID).Value)
-
-    @property
-    def wastebasket(self):
-        """ :class:`Folder` designated as wastebasket """
-
-        return Folder(self, HrGetOneProp(self.mapiobj, PR_IPM_WASTEBASKET_ENTRYID).Value)
-
-    @property
-    def journal(self):
-        """ :class:`Folder` designated as journal """
-
-        return Folder(self, HrGetOneProp(self._root, PR_IPM_JOURNAL_ENTRYID).Value)
-
-    @property
-    def notes(self):
-        """ :class:`Folder` designated as notes """
-
-        return Folder(self, HrGetOneProp(self._root, PR_IPM_NOTE_ENTRYID).Value)
-
-    @property
-    def sentmail(self):
-        """ :class:`Folder` designated as sentmail """
-
-        return Folder(self, HrGetOneProp(self.mapiobj, PR_IPM_SENTMAIL_ENTRYID).Value)
-
-    @property
-    def tasks(self):
-        """ :class:`Folder` designated as tasks """
-
-        return Folder(self, HrGetOneProp(self._root, PR_IPM_TASK_ENTRYID).Value)
-
-    @property
     def subtree(self):
         """ :class:`Folder` designated as IPM.Subtree """
 
@@ -1336,20 +1269,124 @@ class Store(object):
         return Folder(self, ipmsubtreeid)
 
     @property
+    def inbox(self):
+        """ :class:`Folder` designated as inbox """
+
+        try:
+            return Folder(self, self.mapiobj.GetReceiveFolder('IPM', 0)[0])
+        except MAPIErrorNotFound:
+            pass
+
+    @property
+    def junk(self):
+        """ :class:`Folder` designated as junk """
+
+        # PR_ADDITIONAL_REN_ENTRYIDS is a multi-value property, 4th entry is the junk folder
+        try:
+            return Folder(self, HrGetOneProp(self._root, PR_ADDITIONAL_REN_ENTRYIDS).Value[4])
+        except MAPIErrorNotFound:
+            pass
+
+    @property
+    def calendar(self):
+        """ :class:`Folder` designated as calendar """
+
+        try:
+            return Folder(self, HrGetOneProp(self._root, PR_IPM_APPOINTMENT_ENTRYID).Value)
+        except MAPIErrorNotFound:
+            pass
+
+    @property
+    def outbox(self):
+        """ :class:`Folder` designated as outbox """
+
+        try:
+            return Folder(self, HrGetOneProp(self.mapiobj, PR_IPM_OUTBOX_ENTRYID).Value)
+        except MAPIErrorNotFound:
+            pass
+
+    @property
+    def contacts(self):
+        """ :class:`Folder` designated as contacts """
+
+        try:
+            return Folder(self, HrGetOneProp(self._root, PR_IPM_CONTACT_ENTRYID).Value)
+        except MAPIErrorNotFound:
+            pass
+
+    @property
+    def drafts(self):
+        """ :class:`Folder` designated as drafts """
+
+        try:
+            return Folder(self, HrGetOneProp(self._root, PR_IPM_DRAFTS_ENTRYID).Value)
+        except MAPIErrorNotFound:
+            pass
+
+    @property
+    def wastebasket(self):
+        """ :class:`Folder` designated as wastebasket """
+
+        try:
+            return Folder(self, HrGetOneProp(self.mapiobj, PR_IPM_WASTEBASKET_ENTRYID).Value)
+        except MAPIErrorNotFound:
+            pass
+
+    @property
+    def journal(self):
+        """ :class:`Folder` designated as journal """
+
+        try:
+            return Folder(self, HrGetOneProp(self._root, PR_IPM_JOURNAL_ENTRYID).Value)
+        except MAPIErrorNotFound:
+            pass
+
+    @property
+    def notes(self):
+        """ :class:`Folder` designated as notes """
+
+        try:
+            return Folder(self, HrGetOneProp(self._root, PR_IPM_NOTE_ENTRYID).Value)
+        except MAPIErrorNotFound:
+            pass
+
+    @property
+    def sentmail(self):
+        """ :class:`Folder` designated as sentmail """
+
+        try:
+            return Folder(self, HrGetOneProp(self.mapiobj, PR_IPM_SENTMAIL_ENTRYID).Value)
+        except MAPIErrorNotFound:
+            pass
+
+    @property
+    def tasks(self):
+        """ :class:`Folder` designated as tasks """
+
+        try:
+            return Folder(self, HrGetOneProp(self._root, PR_IPM_TASK_ENTRYID).Value)
+        except MAPIErrorNotFound:
+            pass
+
+    @property
     def suggested_contacts(self):
         """ :class`Folder` designated as Suggested contacts"""
 
-        entryid = _extract_ipm_ol2007_entryids(self.inbox.prop(PR_IPM_OL2007_ENTRYIDS).value, RSF_PID_SUGGESTED_CONTACTS)
-
-        return Folder(self, entryid.decode('hex'))
+        try:
+            entryid = _extract_ipm_ol2007_entryids(self.inbox.prop(PR_IPM_OL2007_ENTRYIDS).value, RSF_PID_SUGGESTED_CONTACTS)
+            return Folder(self, entryid.decode('hex'))
+        except MAPIErrorNotFound:
+            pass
 
     @property
     def rss(self):
         """ :class`Folder` designated as RSS items"""
 
-        entryid = _extract_ipm_ol2007_entryids(self.inbox.prop(PR_IPM_OL2007_ENTRYIDS).value, RSF_PID_RSS_SUBSCRIPTION)
-
-        return Folder(self, entryid.decode('hex'))
+        try:
+            entryid = _extract_ipm_ol2007_entryids(self.inbox.prop(PR_IPM_OL2007_ENTRYIDS).value, RSF_PID_RSS_SUBSCRIPTION)
+            return Folder(self, entryid.decode('hex'))
+        except MAPIErrorNotFound:
+            pass
 
     def folder(self, key, recurse=False, create=False): # XXX sloowowowww
         """ Return :class:`Folder` with given name or entryid; raise exception if not found
