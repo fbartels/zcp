@@ -2924,9 +2924,9 @@ class Address:
                 mailuser = self.server.mapisession.OpenEntry(self.entryid, None, 0)
                 return self.server.user(HrGetOneProp(mailuser, PR_ACCOUNT).Value).email # XXX PR_SMTP_ADDRESS_W from mailuser?
             except (ZarafaException, MAPIErrorNotFound): # XXX deleted user
-                return None # XXX 'Support Delft'??
+                return '' # XXX groups?
         else:
-            return self._email
+            return self._email or ''
 
     def __unicode__(self):
         return u'Address(%s)' % (self._name or self.email)
