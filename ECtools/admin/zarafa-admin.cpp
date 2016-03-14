@@ -2370,23 +2370,6 @@ exit:
 	return hr;
 }
 
-static HRESULT adm_open_session(ECLogger *log, IMAPISession **ses_p,
-    const char *app_ver, const char *app_misc, const char *path,
-    unsigned int flags, const char *ssl_kf, const char *ssl_kp)
-{
-	HRESULT ret = HrOpenECAdminSession(log, ses_p, app_ver, app_misc, path,
-	              flags, ssl_kf, ssl_kp);
-	if (ret == MAPI_E_NETWORK_ERROR && (path == NULL || *path == '\0'))
-		/*
-		 * Only retry with alternative path if no -h option was given
-		 * at all, and only if the _connection_ failed (i.e. no retry
-		 * desired on authentication failures).
-		 */
-		return HrOpenECAdminSession(log, ses_p, app_ver, app_misc,
-			"file:///var/run/zarafa", flags, ssl_kf, ssl_kp);
-	return ret;
-}
-
 int main(int argc, char* argv[])
 {
 	HRESULT hr = hrSuccess;
@@ -3128,7 +3111,7 @@ int main(int argc, char* argv[])
 		path = GetServerUnixSocket(path);
 	}
 
-	hr = adm_open_session(lpLogger, &lpSession, "zarafa-admin", PROJECT_SVN_REV_STR, path, EC_PROFILE_FLAGS_NO_NOTIFICATIONS, lpsConfig->GetSetting("sslkey_file", "", NULL), lpsConfig->GetSetting("sslkey_pass", "", NULL));
+	hr = HrOpenECAdminSession(lpLogger, &lpSession, "zarafa-admin", PROJECT_SVN_REV_STR, path, EC_PROFILE_FLAGS_NO_NOTIFICATIONS, lpsConfig->GetSetting("sslkey_file", "", NULL), lpsConfig->GetSetting("sslkey_pass", "", NULL));
 	if(hr != hrSuccess) {
 		cerr << "Unable to open Admin session: " <<
 			GetMAPIErrorMessage(hr) << " (" <<
