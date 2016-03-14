@@ -487,7 +487,7 @@ def dump_rules(folder, user, server, log):
                 else:
                     s.text = store.user.name if store != user.store else ''
                 f = movecopy.findall('folder')[0]
-                path = store.folder(f.text.decode('base64').encode('hex')).path
+                path = store.folder(entryid=f.text.decode('base64').encode('hex')).path
                 f.text = path
         ruledata = ElementTree.tostring(etxml)
     return pickle.dumps(ruledata)

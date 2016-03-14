@@ -1533,26 +1533,25 @@ class Store(object):
         except MAPIErrorNotFound:
             pass
 
-    def folder(self, key, recurse=False, create=False): # XXX sloowowowww
-        """ Return :class:`Folder` with given name or entryid; raise exception if not found
+    def folder(self, path=None, entryid=None, recurse=False, create=False): # XXX sloowowowww
+        """ Return :class:`Folder` with given path or entryid; raise exception if not found
 
-            :param key: name or entryid
         """
 
-        if len(key) == 96: # PR_ENTRYID is always 96
+        if entryid is not None:
             try:
-                return Folder(self, key.decode('hex'))
-            except (MAPIErrorInvalidEntryid, MAPIErrorNotFound, TypeError):
-                pass
+                return Folder(self, entryid.decode('hex'))
+            except (MAPIErrorInvalidEntryid, MAPIErrorNotFound):
+                raise ZarafaNotFoundException("no folder with entryid: '%s'" % entryid)
 
-        return self.subtree.folder(key, recurse=recurse, create=create)
+        return self.subtree.folder(path, recurse=recurse, create=create)
 
-    def get_folder(self, key):
+    def get_folder(self, path=None, entryid=None):
         """ Return :class:`folder <Folder>` with given name/entryid or *None* if not found """
 
         try:
-            return self.folder(key)
-        except ZarafaException:
+            return self.folder(path, entryid=entryid)
+        except ZarafaNotFoundException:
             pass
 
     def folders(self, recurse=True, parse=True):
@@ -1935,42 +1934,43 @@ class Folder(object):
     def move(self, items, folder):
         self.copy(items, folder, _delete=True)
 
-    def folder(self, key, recurse=False, create=False): # XXX sloowowowww, see also Store.folder
-        """ Return :class:`Folder` with given name or entryid; raise exception if not found
+    def folder(self, path=None, entryid=None, recurse=False, create=False): # XXX kill (slow) recursive search
+        """ Return :class:`Folder` with given path or entryid; raise exception if not found
 
             :param key: name, path or entryid
         """
 
-        if '/' in key.replace('\\/', ''): # XXX MAPI folders may contain '/' (and '\') in their names..
+        if entryid is not None:
+            try:
+                return Folder(self, entryid.decode('hex'))
+            except (MAPIErrorInvalidEntryid, MAPIErrorNotFound, TypeError):
+                raise ZarafaNotFoundException
+
+        if '/' in path.replace('\\/', ''): # XXX MAPI folders may contain '/' (and '\') in their names..
             subfolder = self
-            for name in UNESCAPED_SLASH_RE.split(key):
+            for name in UNESCAPED_SLASH_RE.split(path):
+                name = name.replace('\\SLASH\\', '\\/')
                 subfolder = subfolder.folder(name, create=create, recurse=False)
             return subfolder
 
-        elif len(key) == 96: # XXX entryid=.. arg
-            try:
-                return Folder(self, key.decode('hex'))
-            except (MAPIErrorInvalidEntryid, MAPIErrorNotFound, TypeError):
-                pass
-
-        if self == self.store.subtree and key in ENGLISH_FOLDER_MAP: # XXX depth==0?
-            key = getattr(self.store, ENGLISH_FOLDER_MAP[key]).name
-        matches = [f for f in self.folders(recurse=recurse) if f.name == key]
+        if self == self.store.subtree and path in ENGLISH_FOLDER_MAP: # XXX depth==0?
+            path = getattr(self.store, ENGLISH_FOLDER_MAP[path]).name
+        matches = [f for f in self.folders(recurse=recurse) if f.name == path]
         if len(matches) == 0:
             if create:
-                return self.create_folder(key)
+                return self.create_folder(path)
             else:
-                raise ZarafaNotFoundException("no such folder: '%s'" % key)
+                raise ZarafaNotFoundException("no such folder: '%s'" % path)
         elif len(matches) > 1:
-            raise ZarafaNotFoundException("multiple folders with name '%s'" % key)
+            raise ZarafaNotFoundException("multiple folders with name '%s'" % path)
         else:
             return matches[0]
 
-    def get_folder(self, key):
+    def get_folder(self, path=None, entryid=None):
         """ Return :class:`folder <Folder>` with given name/entryid or *None* if not found """
 
         try:
-            return self.folder(key)
+            return self.folder(path, entryid=entryid)
         except ZarafaException:
             pass
 

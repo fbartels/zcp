@@ -175,7 +175,7 @@ def folder(foldername):
 @crossdomain(origin='*')
 def item(folderid, itemid):
     try:
-        folder = user.store.folder(folderid)
+        folder = user.store.folder(entryid=folderid)
     except zarafa.ZarafaException:
         return jsonify({'error': 'Folder does not exist'})
     try:
