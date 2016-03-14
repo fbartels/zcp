@@ -391,7 +391,7 @@ exit:
  * After converting recipients and headers using their functions, it
  * will handle special message disposition notification bodies (read
  * reciept messages), or loop on all body parts
- * (text/html/attachments) using disectBody() function, which in turn
+ * (text/html/attachments) using dissect_body() function, which in turn
  * may call this function to iterate on message-in-message mails.
  *
  * @param[in]	vmMessage	The message object from vmime.
@@ -465,7 +465,7 @@ HRESULT VMIMEToMAPI::fillMAPIMail(vmime::ref<vmime::message> vmMessage, IMessage
 				||  (ctf->getValue().dynamicCast <vmime::mediaType>()->getType() == vmime::mediaTypes::MULTIPART &&
 				     ctf->getValue().dynamicCast <vmime::mediaType>()->getSubType() == vmime::mediaTypes::MULTIPART_ALTERNATIVE) )
 				{
-					hr = disectBody(bPart->getHeader(), bPart->getBody(), lpMessage, true);
+					hr = dissect_body(bPart->getHeader(), bPart->getBody(), lpMessage);
 					if (hr != hrSuccess) {
 						lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse MDN mail body");
 						goto exit;
@@ -495,7 +495,7 @@ HRESULT VMIMEToMAPI::fillMAPIMail(vmime::ref<vmime::message> vmMessage, IMessage
 			}
 		} else {
 			// multiparts are handled in disectBody, if any
-			hr = disectBody(vmHeader, vmBody, lpMessage, mt->getType().compare("multipart") != 0);
+			hr = dissect_body(vmHeader, vmBody, lpMessage);
 			if (hr != hrSuccess) {
 				lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse mail body");
 				goto exit;
@@ -1632,7 +1632,7 @@ static std::list<unsigned int> vtm_order_alternatives(vmime::ref<vmime::body> vm
 }
 
 HRESULT VMIMEToMAPI::dissect_multipart(vmime::ref<vmime::header> vmHeader,
-    vmime::ref<vmime::body> vmBody, IMessage *lpMessage, bool onlyBody,
+    vmime::ref<vmime::body> vmBody, IMessage *lpMessage,
     bool bFilterDouble, bool bAppendBody)
 {
 	bool bAlternative = false;
@@ -1669,7 +1669,7 @@ HRESULT VMIMEToMAPI::dissect_multipart(vmime::ref<vmime::header> vmHeader,
 		for (int i = 0; i < vmBody->getPartCount(); ++i) {
 			vmime::ref<vmime::bodyPart> vmBodyPart = vmBody->getPartAt(i);
 
-			hr = disectBody(vmBodyPart->getHeader(), vmBodyPart->getBody(), lpMessage, onlyBody, bFilterDouble, bAppendBody);
+			hr = dissect_body(vmBodyPart->getHeader(), vmBodyPart->getBody(), lpMessage, bFilterDouble, bAppendBody);
 			if (hr != hrSuccess) {
 				lpLogger->Log(EC_LOGLEVEL_ERROR, "dissect_multipart: Unable to parse sub multipart %d of mail body", i);
 				return hr;
@@ -1686,7 +1686,7 @@ HRESULT VMIMEToMAPI::dissect_multipart(vmime::ref<vmime::header> vmHeader,
 
 		lpLogger->Log(EC_LOGLEVEL_DEBUG, "Trying to parse alternative multipart %d of mail body", *i);
 
-		hr = disectBody(vmBodyPart->getHeader(), vmBodyPart->getBody(), lpMessage, onlyBody, bFilterDouble, bAppendBody);
+		hr = dissect_body(vmBodyPart->getHeader(), vmBodyPart->getBody(), lpMessage, bFilterDouble, bAppendBody);
 		if (hr == hrSuccess)
 			return hrSuccess;
 		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to parse alternative multipart %d of mail body, trying other alternatives", *i);
@@ -1897,13 +1897,15 @@ HRESULT VMIMEToMAPI::dissect_ical(vmime::ref<vmime::header> vmHeader,
  * @param[in]	vmHeader		vmime header part which describes the contents of the body in vmBody.
  * @param[in]	vmBody			a body part of the mail.
  * @param[out]	lpMessage		MAPI message to write header properties in.
- * @param[in]	onlyBody		set to true if this is not part of a multipart message.
  * @param[in]	filterDouble	skips some attachments when true, only happens then an appledouble attachment marker is found.
  * @param[in]	bAppendBody		Concatenate with existing body if true, makes an attachment when false and a body was previously saved.
  * @return		MAPI error code.
  * @retval		MAPI_E_CALL_FAILED	Caught an exception, which breaks the conversion.
  */
-HRESULT VMIMEToMAPI::disectBody(vmime::ref<vmime::header> vmHeader, vmime::ref<vmime::body> vmBody, IMessage* lpMessage, bool onlyBody, bool filterDouble, bool appendBody) {
+HRESULT VMIMEToMAPI::dissect_body(vmime::ref<vmime::header> vmHeader,
+    vmime::ref<vmime::body> vmBody, IMessage *lpMessage, bool filterDouble,
+    bool appendBody)
+{
 	HRESULT	hr = hrSuccess;
 	IStream *lpStream = NULL;
 	SPropValue sPropSMIMEClass;
@@ -1939,14 +1941,13 @@ HRESULT VMIMEToMAPI::disectBody(vmime::ref<vmime::header> vmHeader, vmime::ref<v
 			if (hr != hrSuccess)
 				goto exit;
 		} else if (mt->getType() == "multipart") {
-			hr = dissect_multipart(vmHeader, vmBody, lpMessage, onlyBody, bFilterDouble, bAppendBody);
+			hr = dissect_multipart(vmHeader, vmBody, lpMessage, bFilterDouble, bAppendBody);
 			if (hr != hrSuccess)
 				goto exit;
 		// Only handle as inline text if no filename is specified and not specified as 'attachment'
-		// or if the text part is the only body part in the mail
 		} else if (	mt->getType() == vmime::mediaTypes::TEXT &&
 					(mt->getSubType() == vmime::mediaTypes::TEXT_PLAIN || mt->getSubType() == vmime::mediaTypes::TEXT_HTML) &&
-					(!bIsAttachment || onlyBody) ) {
+					!bIsAttachment) {
 			if (mt->getSubType() == vmime::mediaTypes::TEXT_HTML || (m_mailState.bodyLevel == BODY_HTML && bAppendBody)) {
 				// handle real html part, or append a plain text bodypart to the html main body
 				// subtype guaranteed html or plain.
