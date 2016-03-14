@@ -287,7 +287,7 @@ HRESULT CreateProfileTemp(ECLogger *const lpLogger, const WCHAR *username, const
 
 	i = 0;
 	sProps[i].ulPropTag = PR_EC_PATH;
-	sProps[i].Value.lpszA = (char*)path;
+	sProps[i].Value.lpszA = const_cast<char *>(path != NULL && *path != '\0' ? path : "default:");
 	i++;
 
 	sProps[i].ulPropTag = PR_EC_USERNAME_W;
@@ -397,14 +397,6 @@ HRESULT HrOpenECSession(ECLogger *const lpLogger, IMAPISession **lppSession, con
 	}
 	else {
 		strcpy(szProfName, profname);
-	}
-
-	if (szPath == NULL || *szPath == '\0') {
-#ifdef LINUX
-		szPath = "file:///var/run/zarafad/server.sock";
-#else
-		szPath = "file://\\\\.\\pipe\\zarafa";
-#endif
 	}
 
 	if (sslkey_file != NULL) {

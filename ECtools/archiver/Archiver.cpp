@@ -66,7 +66,7 @@ const configsetting_t* Archiver::GetConfigDefaults()
 {
 	static const configsetting_t s_lpDefaults[] = {
 		// Connect settings
-		{ "server_socket",	"" },
+		{ "server_socket", "default:" },
 		{ "sslkey_file",	"" },
 		{ "sslkey_pass",	"", CONFIGSETTING_EXACT },
 

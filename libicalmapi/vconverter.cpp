@@ -1824,15 +1824,19 @@ HRESULT VConverter::HrSetTimeProperty(time_t tStamp, bool bDateOnly, icaltimezon
 		// would be say 23:00 in central europe, and 03:00 in brasil). This means that if we 'just' take the date part
 		// of the timestamp, you will get the wrong day if you're east of GMT. Unfortunately, we don't know the
 		// timezone either, so we have to do some guesswork. What we do now is a 'round to closest date'. This will
-		// basically work for any timezone that has an offset between GMT+12 and GMT-11. So the 4th at 23:00 will become
+		// basically work for any timezone that has an offset between GMT+13 and GMT-10. So the 4th at 23:00 will become
 		// the 5h, and the 5th at 03:00 will become the 5th.
-		
-		// So this is a known problem for users in kiribati (GMT+13, GMT+14) and Samoa (GMT+13) which will be
-		// interpreted as GMT-11 and GMT-10, causing a day offset in allday meetings. Sorry.
-		
+
+		/* So this is a known problem for users in GMT+14, GMT-12 and
+		 * GMT-11 (Kiribati, Samoa, ..). Sorry. Fortunately, there are
+		 * not many people in these timezones. For this to work
+		 * correctly, clients should store the correct timezone in the
+		 * appointment (WebApp does not do this currently), and we need
+		 * to consider timezones here again.
+		 */
 		gmtime_r(&tStamp, &date);
 		
-		if(date.tm_hour >= 12) {
+		if (date.tm_hour >= 11) {
 			// Move timestamp up one day so that later conversion to date-only will be correct
 			tStamp += 86400;
 		}

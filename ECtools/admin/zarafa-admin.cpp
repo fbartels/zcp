@@ -2493,7 +2493,7 @@ int main(int argc, char* argv[])
 	InputValidator validateInput;
 
 	const configsetting_t lpDefaults[] = {
-		{ "server_socket", "" },
+		{ "server_socket", "default:" },
 		{ "sslkey_file", "" },
 		{ "sslkey_pass", "", CONFIGSETTING_EXACT },
 		{ NULL, NULL },
@@ -3192,7 +3192,10 @@ int main(int argc, char* argv[])
 			stringify(hr, true) << ")" << endl;
 		switch (hr) {
 			case MAPI_E_NETWORK_ERROR:
-				cerr << "The server is not running, or not accessible through " << path << "." << endl;
+				cerr << "The server is not running, or not accessible";
+				if (path != NULL && *path != '\0')
+					cerr << " through \"" << path << "\"";
+				cerr << "." << endl;
 				break;
 			case MAPI_E_LOGON_FAILED:
 			case MAPI_E_NO_ACCESS:

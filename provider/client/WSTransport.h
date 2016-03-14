@@ -103,7 +103,8 @@ public:
 
 	static	HRESULT	HrOpenTransport(LPMAPISUP lpMAPISup, WSTransport **lppTransport, BOOL bOffline = FALSE);
 
-	virtual HRESULT HrLogon(const sGlobalProfileProps &sProfileProps);
+	virtual HRESULT HrLogon2(const struct sGlobalProfileProps &);
+	virtual HRESULT HrLogon(const struct sGlobalProfileProps &);
 	virtual HRESULT HrReLogon();
 	virtual HRESULT HrClone(WSTransport **lppTransport);
 

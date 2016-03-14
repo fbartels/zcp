@@ -485,7 +485,7 @@ if(isset($argv[3]))
 $settings = parseConfig($config);
 
 if(!$settings || !isset($settings["server_socket"])) {
-    $settings["server_socket"] = "file:///var/run/zarafad/server.sock";
+    $settings["server_socket"] = "default:";
 }
 
 if(isset($settings["sslkey_file"]) && isset($settings["sslkey_pass"]))

@@ -884,7 +884,7 @@ def main(argv = None):
 
     global verbose
     # defaults
-    host = os.getenv('ZARAFA_SOCKET','file:///var/run/zarafad/server.sock')
+    host = os.getenv("ZARAFA_SOCKET", "default:")
     sslkey_file = None
     sslkey_pass = None
     users = [] 

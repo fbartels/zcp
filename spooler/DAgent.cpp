@@ -4084,7 +4084,7 @@ int main(int argc, char *argv[]) {
 		{ "log_level", "3", CONFIGSETTING_RELOADABLE },
 		{ "log_timestamp", "0" },
 		{ "log_buffer_size", "0" },
-		{ "server_socket", "" },
+		{ "server_socket", "default:" },
 		{ "sslkey_file", "" },
 		{ "sslkey_pass", "", CONFIGSETTING_EXACT },
 		{ "spam_header_name", "X-Spam-Status" },

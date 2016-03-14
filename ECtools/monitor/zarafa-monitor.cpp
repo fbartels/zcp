@@ -184,7 +184,7 @@ int main(int argc, char *argv[]) {
 	// Default settings
 	static const configsetting_t lpDefaults[] = {
 		{ "smtp_server","localhost" },
-		{ "server_socket", "" },
+		{ "server_socket", "default:" },
 #ifdef LINUX
 		{ "run_as_user", "zarafa" },
 		{ "run_as_group", "zarafa" },
