@@ -506,17 +506,12 @@ BOOL ValidateCertificateChain(PCCERT_CONTEXT pCertificate)
 				0/*CERT_CHAIN_REVOCATION_CHECK_CHAIN| */,
 				NULL,					// currently reserved
 				&pTrusted))				// return a pointer to the chain created
-	{
-		result = FALSE;
-		goto exit;
-	}
+		return FALSE;
 
 	if(pTrusted->TrustStatus.dwErrorStatus != 0)
 		result = FALSE;
 
 	CertFreeCertificateChain(pTrusted);
-	
-exit:
 	return result;
 }
 

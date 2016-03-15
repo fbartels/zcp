@@ -67,27 +67,25 @@ ECSearchClient::~ECSearchClient()
 
 ECRESULT ECSearchClient::GetProperties(setindexprops_t &setProps)
 {
-	ECRESULT er = erSuccess;
+	ECRESULT er;
 	std::vector<std::string> lstResponse;
 	std::vector<std::string> lstProps;
 	std::vector<std::string>::iterator iter;
 
 	er = DoCmd("PROPS", lstResponse);
 	if (er != erSuccess)
-		goto exit;
+		return er;
 
 	setProps.clear();
 	if (lstResponse.empty())
-		goto exit; // No properties
+		return erSuccess; // No properties
 
 	lstProps = tokenize(lstResponse[0], " ");
 
 	for (iter = lstProps.begin(); iter != lstProps.end(); iter++) {
 		setProps.insert(atoui(iter->c_str()));
 	}
-
-exit:
-	return er;
+	return erSuccess;
 }
 
 /**
@@ -103,13 +101,13 @@ exit:
 ECRESULT ECSearchClient::Scope(const std::string &strServer,
     const std::string &strStore, const std::list<unsigned int> &lstFolders)
 {
-	ECRESULT er = erSuccess;
+	ECRESULT er;
 	std::vector<std::string> lstResponse;
 	std::string strScope;
 
 	er = Connect();
 	if (er != erSuccess)
-		goto exit;
+		return er;
 
 	strScope = "SCOPE " + strServer + " " + strStore;
 	for (std::list<unsigned int>::const_iterator i = lstFolders.begin(); i != lstFolders.end(); i++)
@@ -117,15 +115,10 @@ ECRESULT ECSearchClient::Scope(const std::string &strServer,
 
 	er = DoCmd(strScope, lstResponse);
 	if (er != erSuccess)
-		goto exit;
-
-	if (!lstResponse.empty()) {
-		er = ZARAFA_E_BAD_VALUE;
-		goto exit;
-	}
-
-exit:
-	return er;
+		return er;
+	if (!lstResponse.empty())
+		return ZARAFA_E_BAD_VALUE;
+	return erSuccess;
 }
 
 /**
@@ -141,7 +134,7 @@ exit:
 ECRESULT ECSearchClient::Find(const std::set<unsigned int> &setFields,
     const std::string &strTerm)
 {
-	ECRESULT er = erSuccess;
+	ECRESULT er;
 	std::vector<std::string> lstResponse;
 	std::string strFind;
 
@@ -156,15 +149,10 @@ ECRESULT ECSearchClient::Find(const std::set<unsigned int> &setFields,
 
 	er = DoCmd(strFind, lstResponse);
 	if (er != erSuccess)
-		goto exit;
-
-	if (!lstResponse.empty()) {
-		er = ZARAFA_E_BAD_VALUE;
-		goto exit;
-	}
-
-exit:
-	return er;
+		return er;
+	if (!lstResponse.empty())
+		return ZARAFA_E_BAD_VALUE;
+	return erSuccess;
 }
 
 /**
@@ -175,7 +163,7 @@ exit:
  */
 ECRESULT ECSearchClient::Query(std::list<unsigned int> &lstMatches)
 {
-	ECRESULT er = erSuccess;
+	ECRESULT er;
 	std::vector<std::string> lstResponse;
 	std::vector<std::string> lstResponseIds;
 	
@@ -183,20 +171,17 @@ ECRESULT ECSearchClient::Query(std::list<unsigned int> &lstMatches)
 
 	er = DoCmd("QUERY", lstResponse);
 	if (er != erSuccess)
-		goto exit;
+		return er;
 		
 	if (lstResponse.empty())
-		goto exit; // No matches
+		return erSuccess; /* no matches */
 
 	lstResponseIds = tokenize(lstResponse[0], " ");
 
 	for (unsigned int i = 0; i < lstResponseIds.size(); i++) {
 		lstMatches.push_back(atoui(lstResponseIds[i].c_str()));
 	}
-
-exit:
-
-	return er;
+	return erSuccess;
 }
 
 /**
@@ -218,13 +203,13 @@ exit:
  
 ECRESULT ECSearchClient::Query(GUID *lpServerGuid, GUID *lpStoreGuid, std::list<unsigned int>& lstFolders, std::list<SIndexedTerm> &lstSearches, std::list<unsigned int> &lstMatches, std::string &suggestion)
 {
-	ECRESULT er = erSuccess;
+	ECRESULT er;
 	std::string strServer = bin2hex(sizeof(GUID), (unsigned char *)lpServerGuid);
 	std::string strStore = bin2hex(sizeof(GUID), (unsigned char *)lpStoreGuid);
 
 	er = Scope(strServer, strStore, lstFolders);
 	if (er != erSuccess)
-		goto exit;
+		return er;
 
 	for(std::list<SIndexedTerm>::iterator i = lstSearches.begin(); i != lstSearches.end(); i++) {
 		Find(i->setFields, i->strTerm);
@@ -232,32 +217,25 @@ ECRESULT ECSearchClient::Query(GUID *lpServerGuid, GUID *lpStoreGuid, std::list<
 
 	er = Suggest(suggestion);
 	if (er != erSuccess)
-		goto exit;
+		return er;
 
-	er = Query(lstMatches);
-	if (er != erSuccess)
-		goto exit;
-
-exit:
-	return er;
+	return Query(lstMatches);
 }
 
 ECRESULT ECSearchClient::Suggest(std::string &suggestion)
 {
-	ECRESULT er = erSuccess;
+	ECRESULT er;
 	std::vector<std::string> lstResponse;
 	std::vector<std::string> lstResponseWords;
 
 	er = DoCmd("SUGGEST", lstResponse);
 	if (er != erSuccess)
-		goto exit;
+		return er;
 
 	suggestion = lstResponse[0];
 	if(suggestion[0] == ' ')
 		suggestion.erase(0,1);
-
-exit:
-	return er;
+	return erSuccess;
 }
 
 ECRESULT ECSearchClient::SyncRun()

@@ -90,147 +90,126 @@ ECRESULT ECLicenseClient::ServiceTypeToServiceTypeString(unsigned int ulServiceT
     
 ECRESULT ECLicenseClient::GetCapabilities(unsigned int ulServiceType, std::vector<std::string > &lstCapabilities)
 {
-    ECRESULT er = erSuccess;
+	ECRESULT er;
 	std::string strServiceType;
 
 	er = ServiceTypeToServiceTypeString(ulServiceType, strServiceType);
 	if (er != erSuccess)
-		goto exit;
-
-    er = DoCmd("CAPA " + strServiceType, lstCapabilities);
-
-exit:
-    return er;
+		return er;
+	return DoCmd("CAPA " + strServiceType, lstCapabilities);
 }
 
 ECRESULT ECLicenseClient::QueryCapability(unsigned int ulServiceType, const std::string &strCapability, bool *lpbResult)
 {
-    ECRESULT er = erSuccess;
+	ECRESULT er;
 	std::string strServiceType;
 	std::vector<std::string> vResult;
 
 	er = ServiceTypeToServiceTypeString(ulServiceType, strServiceType);
 	if (er != erSuccess)
-		goto exit;
+		return er;
 
-    er = DoCmd("QUERY " + strServiceType + " " + strCapability, vResult);
-    if (er != erSuccess)
-		goto exit;
+	er = DoCmd("QUERY " + strServiceType + " " + strCapability, vResult);
+	if (er != erSuccess)
+		return er;
 
 	*lpbResult = (vResult.front().compare("ENABLED") == 0);
-
-exit:
-    return er;
+	return erSuccess;
 }
 
 ECRESULT ECLicenseClient::GetSerial(unsigned int ulServiceType, std::string &strSerial, std::vector<std::string> &lstCALs)
 {
-    ECRESULT er = erSuccess;
-    std::vector<std::string> lstSerials;
+	ECRESULT er;
+	std::vector<std::string> lstSerials;
 	std::string strServiceType;
 
 	er = ServiceTypeToServiceTypeString(ulServiceType, strServiceType);
 	if (er != erSuccess)
-		goto exit;
+		return er;
 
-    er = DoCmd("SERIAL " + strServiceType, lstSerials);
-    if(er != erSuccess)
-        goto exit;
+	er = DoCmd("SERIAL " + strServiceType, lstSerials);
+	if (er != erSuccess)
+		return er;
 
     if(lstSerials.empty()) {
         strSerial = "";
-        goto exit;
+		return erSuccess;
     } else {
     	strSerial=lstSerials.front();
     	lstSerials.erase(lstSerials.begin());
     }
     
 	lstCALs=lstSerials;
-
-exit:
-    return er;
+	return erSuccess;
 }
 
 ECRESULT ECLicenseClient::GetInfo(unsigned int ulServiceType, unsigned int *lpulUserCount)
 {
-    ECRESULT er = erSuccess;
+	ECRESULT er;
     std::vector<std::string> lstInfo;
     unsigned int ulUserCount = 0;
 	std::string strServiceType;
 
 	er = ServiceTypeToServiceTypeString(ulServiceType, strServiceType);
 	if (er != erSuccess)
-		goto exit;
+		return er;
 
+	er = DoCmd("INFO " + strServiceType, lstInfo);
+	if (er != erSuccess)
+		return er;
 
-    er = DoCmd("INFO " + strServiceType, lstInfo);
-    if(er != erSuccess)
-        goto exit;
-
-    if(lstInfo.empty()) {
-        er = ZARAFA_E_INVALID_PARAMETER;
-        goto exit;
-    }
+	if (lstInfo.empty())
+		return ZARAFA_E_INVALID_PARAMETER;
         
     ulUserCount = atoi(lstInfo.front().c_str());
     lstInfo.erase(lstInfo.begin());
     
-    if(lpulUserCount)
-        *lpulUserCount = ulUserCount;
-
-exit:    
-    return er;
+	if (lpulUserCount != NULL)
+		*lpulUserCount = ulUserCount;
+	return erSuccess;
 }
 
 ECRESULT ECLicenseClient::Auth(const unsigned char *lpData,
     unsigned int ulSize, unsigned char **lppResponse,
     unsigned int *lpulResponseSize)
 {
-    ECRESULT er = erSuccess;
+	ECRESULT er;
     std::vector<std::string> lstAuth;
     std::string strDecoded;
     unsigned char *lpResponse = NULL;
     
-    er = DoCmd((std::string)"AUTH " + base64_encode(lpData, ulSize), lstAuth);
-    if(er != erSuccess)
-        goto exit;
-        
-    if(lstAuth.empty()) {
-        er = ZARAFA_E_INVALID_PARAMETER;
-        goto exit;
-    }
+	er = DoCmd((std::string)"AUTH " + base64_encode(lpData, ulSize), lstAuth);
+	if (er != erSuccess)
+		return er;
+	if (lstAuth.empty())
+		return ZARAFA_E_INVALID_PARAMETER;
     
     strDecoded = base64_decode(lstAuth.front());
 
     lpResponse = new unsigned char [strDecoded.size()];
     memcpy(lpResponse, strDecoded.c_str(), strDecoded.size());
     
-    if(lppResponse)
-        *lppResponse = lpResponse;
-    if(lpulResponseSize)
-        *lpulResponseSize = strDecoded.size();
-
-exit:
-    return er;
+	if (lppResponse != NULL)
+		*lppResponse = lpResponse;
+	if (lpulResponseSize != NULL)
+		*lpulResponseSize = strDecoded.size();
+	return erSuccess;
 }
 
 ECRESULT ECLicenseClient::SetSerial(unsigned int ulServiceType, const std::string &strSerial, const std::vector<std::string> &lstCALs)
 {
-	ECRESULT er = erSuccess;
+	ECRESULT er;
 	std::string strServiceType;
 	std::string strCommand;
 	std::vector<std::string> lstRes;
 
 	er = ServiceTypeToServiceTypeString(ulServiceType, strServiceType);
 	if (er != erSuccess)
-		goto exit;
+		return er;
 
 	strCommand = "SETSERIAL " + strServiceType + " " + strSerial;
 	for (std::vector<std::string>::const_iterator iCAL = lstCALs.begin(); iCAL != lstCALs.end(); ++iCAL)
 		strCommand.append(" " + *iCAL);
 
-	er = DoCmd(strCommand, lstRes);
-
-exit:
-	return er;
+	return DoCmd(strCommand, lstRes);
 }
