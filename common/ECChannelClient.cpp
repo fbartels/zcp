@@ -88,37 +88,33 @@ ECChannelClient::~ECChannelClient()
 
 ECRESULT ECChannelClient::DoCmd(const std::string &strCommand, std::vector<std::string> &lstResponse)
 {
-	ECRESULT er = erSuccess;
+	ECRESULT er;
 	std::string strResponse;
 
 	er = Connect();
 	if (er != erSuccess)
-		goto exit;
+		return er;
 
 	er = m_lpChannel->HrWriteLine(strCommand);
 	if (er != erSuccess)
-		goto exit;
+		return er;
 
 	er = m_lpChannel->HrSelect(m_ulTimeout);
 	if (er != erSuccess)
-		goto exit;
+		return er;
 
 	// @todo, should be able to read more than 4MB of results
 	er = m_lpChannel->HrReadLine(&strResponse, 4*1024*1024);
 	if (er != erSuccess)
-		goto exit;
+		return er;
 
 	lstResponse = tokenize(strResponse, m_strTokenizer);
 
-	if (!lstResponse.empty() && lstResponse.front() == "OK") {
+	if (!lstResponse.empty() && lstResponse.front() == "OK")
 		lstResponse.erase(lstResponse.begin());
-	} else {
-		er = ZARAFA_E_CALL_FAILED;
-		goto exit;
-	}
-
-exit:
-	return er;
+	else
+		return ZARAFA_E_CALL_FAILED;
+	return erSuccess;
 }
 
 ECRESULT ECChannelClient::Connect()

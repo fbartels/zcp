@@ -83,46 +83,37 @@ static const char THIS_FILE[] = __FILE__;
  */
 HRESULT HrFileLFtoCRLF(FILE *fin, FILE** fout)
 {
-	HRESULT hr = hrSuccess;
 	char	bufferin[BLOCKSIZE / 2];
 	char	bufferout[BLOCKSIZE+1];
 	size_t	sizebufferout, readsize;
 	FILE*	fTmp = NULL;
 
 	if(fin == NULL || fout == NULL)
-	{
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+		return MAPI_E_INVALID_PARAMETER;
 
 	fTmp = tmpfile();
 	if(fTmp == NULL) {
 		perror("Unable to create tmp file");
-		hr = MAPI_E_CALL_FAILED;
-		goto exit;
+		return MAPI_E_CALL_FAILED;
 	}
 
 	while (!feof(fin)) {
 		readsize = fread(bufferin, 1, BLOCKSIZE / 2, fin);
 		if (ferror(fin)) {
 			perror("Read error");//FIXME: What an error?, what now?
-			hr = MAPI_E_CORRUPT_DATA;
-			break;
+			return MAPI_E_CORRUPT_DATA;
 		}
 
 		BufferLFtoCRLF(readsize, bufferin, bufferout, &sizebufferout);
 
 		if (fwrite(bufferout, 1, sizebufferout, fTmp) != sizebufferout) {
 			perror("Write error");//FIXME: What an error?, what now?
-			hr = MAPI_E_CORRUPT_DATA;
-			break;
+			return MAPI_E_CORRUPT_DATA;
 		}
 	}
 
 	*fout = fTmp;
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 /** 
@@ -150,7 +141,6 @@ static inline int mmapsize(unsigned int size)
  */
 HRESULT HrMapFileToBuffer(FILE *f, char **lppBuffer, int *lpSize, bool *lpImmap)
 {
-	HRESULT hr = hrSuccess;
 	char *lpBuffer = NULL;
 	int offset = 0;
 	long ulBufferSize = BLOCKSIZE;
@@ -164,8 +154,7 @@ HRESULT HrMapFileToBuffer(FILE *f, char **lppBuffer, int *lpSize, bool *lpImmap)
 	/* Try mmap first */
 	if (fstat(fd, &stat) != 0) {
 		perror("Stat failed");
-		hr = MAPI_E_CALL_FAILED;
-		goto exit;
+		return MAPI_E_CALL_FAILED;
 	}
 
 	/* auto-zero-terminate because mmap zeroes bytes after the file */
@@ -174,7 +163,7 @@ HRESULT HrMapFileToBuffer(FILE *f, char **lppBuffer, int *lpSize, bool *lpImmap)
 		*lpImmap = true;
 		*lppBuffer = lpBuffer;
 		*lpSize = stat.st_size;
-		goto exit;
+		return hrSuccess;
 	}
 #endif /* LINUX */
 
@@ -192,8 +181,7 @@ HRESULT HrMapFileToBuffer(FILE *f, char **lppBuffer, int *lpSize, bool *lpImmap)
 			char *lpRealloc = (char*)realloc(lpBuffer, offset + BLOCKSIZE);
 			if (lpRealloc == NULL) {
 				free(lpBuffer);
-				hr = MAPI_E_NOT_ENOUGH_MEMORY;
-				goto exit;
+				return MAPI_E_NOT_ENOUGH_MEMORY;
 			}
 			lpBuffer = lpRealloc;
 			ulBufferSize += BLOCKSIZE;
@@ -212,9 +200,7 @@ HRESULT HrMapFileToBuffer(FILE *f, char **lppBuffer, int *lpSize, bool *lpImmap)
 		*lppBuffer = lpBuffer;
 		*lpSize = offset;
 	}
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 /** 

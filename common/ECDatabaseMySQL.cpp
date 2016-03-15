@@ -94,13 +94,10 @@ ECDatabaseMySQL::~ECDatabaseMySQL()
 
 ECRESULT ECDatabaseMySQL::InitEngine()
 {
-	ECRESULT er = erSuccess;
-
 	//Init mysql and make a connection
 	if (!m_bMysqlInitialize && mysql_init(&m_lpMySQL) == NULL) {
 		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "ECDatabaseMySQL::InitEngine() mysql_init failed");
-		er = ZARAFA_E_DATABASE_ERROR;
-		goto exit;
+		return ZARAFA_E_DATABASE_ERROR;
 	}
 
 	m_bMysqlInitialize = true;
@@ -109,9 +106,7 @@ ECRESULT ECDatabaseMySQL::InitEngine()
 	// mysql < 5.0.4 default on, mysql 5.0.4 > reconnection default off
 	// Zarafa always wants to reconnect
 	m_lpMySQL.reconnect = 1;
-
-exit:
-	return er;
+	return erSuccess;
 }
 
 ECLogger* ECDatabaseMySQL::GetLogger()
@@ -327,21 +322,16 @@ ECRESULT ECDatabaseMySQL::DoUpdate(const string &strQuery, unsigned int *lpulAff
 
 ECRESULT ECDatabaseMySQL::_Update(const string &strQuery, unsigned int *lpulAffectedRows)
 {
-	ECRESULT er = erSuccess;
-
 	if (Query(strQuery) != 0) {
 		// FIXME: Add the mysql error system ?
 		// er = nMysqlError;
-		er = ZARAFA_E_DATABASE_ERROR;
 		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "ECDatabaseMySQL::_Update(): Failed invoking '%s'", strQuery.c_str());
-		goto exit;
+		return ZARAFA_E_DATABASE_ERROR;
 	}
 
 	if(lpulAffectedRows)
 		*lpulAffectedRows = GetAffectedRows();
-
-exit:
-	return er;
+	return erSuccess;
 }
 
 ECRESULT ECDatabaseMySQL::DoInsert(const string &strQuery, unsigned int *lpulInsertId, unsigned int *lpulAffectedRows)
@@ -392,14 +382,14 @@ ECRESULT ECDatabaseMySQL::DoDelete(const string &strQuery, unsigned int *lpulAff
  * know what you're doing.
  */
 ECRESULT ECDatabaseMySQL::DoSequence(const std::string &strSeqName, unsigned int ulCount, uint64_t *lpllFirstId) {
-	ECRESULT er = erSuccess;
+	ECRESULT er;
 	unsigned int ulAffected = 0;
 
 	// Attempt to update the sequence in an atomic fashion
 	er = DoUpdate("UPDATE settings SET value=LAST_INSERT_ID(value+1)+" + stringify(ulCount-1) + " WHERE name = '" + strSeqName + "'", &ulAffected);
 	if(er != erSuccess) {
 		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "ECDatabaseMySQL::DoSequence() UPDATE failed %d", er);
-		goto exit;
+		return er;
 	}
 
 	// If the setting was missing, insert it now, starting at sequence 1 (not 0 for safety - maybe there's some if(ulSequenceId) code somewhere)
@@ -407,13 +397,11 @@ ECRESULT ECDatabaseMySQL::DoSequence(const std::string &strSeqName, unsigned int
 		er = Query("INSERT INTO settings (name, value) VALUES('" + strSeqName + "',LAST_INSERT_ID(1)+" + stringify(ulCount-1) + ")");
 		if(er != erSuccess) {
 			m_lpLogger->Log(EC_LOGLEVEL_FATAL, "ECDatabaseMySQL::DoSequence() INSERT INTO failed %d", er);
-			goto exit;
+			return er;
 		}
 	}
 
 	*lpllFirstId = mysql_insert_id(&m_lpMySQL);
-
-exit:
 	return er;
 }
 
@@ -580,7 +568,7 @@ exit:
 
 ECRESULT ECDatabaseMySQL::CreateDatabase(ECConfig *lpConfig)
 {
-	ECRESULT	er = erSuccess;
+	ECRESULT er;
 	string		strQuery;
 	const char *lpDatabase = lpConfig->GetSetting("mysql_database");
 	const char *lpMysqlPort = lpConfig->GetSetting("mysql_port");
@@ -595,7 +583,7 @@ ECRESULT ECDatabaseMySQL::CreateDatabase(ECConfig *lpConfig)
 
 	er = InitEngine();
 	if(er != erSuccess)
-		goto exit;
+		return er;
 
 	// Connect
 	if (mysql_real_connect
@@ -611,33 +599,30 @@ ECRESULT ECDatabaseMySQL::CreateDatabase(ECConfig *lpConfig)
         ) == NULL)
 	{
 		m_lpLogger->Log(EC_LOGLEVEL_FATAL,"Failed to connect to database: Error: %s", mysql_error(&m_lpMySQL));
-		er = ZARAFA_E_DATABASE_ERROR;
-		goto exit;
+		return ZARAFA_E_DATABASE_ERROR;
 	}
 
 	if(lpDatabase == NULL) {
 		m_lpLogger->Log(EC_LOGLEVEL_FATAL,"Unable to create database: Unknown database");
-		er = ZARAFA_E_DATABASE_ERROR;
-		goto exit;
+		return ZARAFA_E_DATABASE_ERROR;
 	}
 
 	m_lpLogger->Log(EC_LOGLEVEL_NOTICE,"Create database %s", lpDatabase);
 
 	er = IsInnoDBSupported();
 	if(er != erSuccess)
-		goto exit;
+		return er;
 
 	strQuery = "CREATE DATABASE IF NOT EXISTS `"+std::string(lpConfig->GetSetting("mysql_database"))+"`";
 	if(Query(strQuery) != erSuccess){
 		m_lpLogger->Log(EC_LOGLEVEL_FATAL,"Unable to create database: %s", GetError().c_str());
-		er = ZARAFA_E_DATABASE_ERROR;
-		goto exit;
+		return ZARAFA_E_DATABASE_ERROR;
 	}
 
 	strQuery = "USE `"+std::string(lpConfig->GetSetting("mysql_database"))+"`";
 	er = DoInsert(strQuery);
 	if(er != erSuccess)
-		goto exit;
+		return er;
 
 	// Database tables
 	for (unsigned int i=0; sDatabaseTables[i].lpSQL != NULL; i++)
@@ -645,11 +630,9 @@ ECRESULT ECDatabaseMySQL::CreateDatabase(ECConfig *lpConfig)
 		m_lpLogger->Log(EC_LOGLEVEL_NOTICE,"Create table: %s", sDatabaseTables[i].lpComment);
 		er = DoInsert(sDatabaseTables[i].lpSQL);
 		if(er != erSuccess)
-			goto exit;
+			return er;
 	}
 
 	m_lpLogger->Log(EC_LOGLEVEL_NOTICE,"Database is created");
-
-exit:
-	return er;
+	return erSuccess;
 }

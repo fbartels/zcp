@@ -2595,7 +2595,7 @@ Notification_ExtendedToString(const EXTENDED_NOTIFICATION *lpExt)
 
 	if(lpExt == NULL) {
 		str += "NULL";
-		goto exit;
+		return str;
 	}
 
 	str += "\tEvent: (0x" + stringify(lpExt->ulEvent, true) + " )\n";
@@ -2603,8 +2603,6 @@ Notification_ExtendedToString(const EXTENDED_NOTIFICATION *lpExt)
 	str += "\tdata: (0x" + bin2hex(lpExt->cb, lpExt->pbEventParameters) + " )\n";
 
 	str += ")\n";
-
-exit:
 	return str;
 }
 

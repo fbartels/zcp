@@ -1373,7 +1373,6 @@ ECLocale createLocaleFromName(const char *lpszLocale)
 
 ECRESULT LocaleIdToLCID(const char *lpszLocaleID, ULONG *lpulLcid)
 {
-	ECRESULT er = erSuccess;
 	const struct localemap *lpMapEntry = NULL;
 
 	ASSERT(lpszLocaleID != NULL);
@@ -1383,20 +1382,14 @@ ECRESULT LocaleIdToLCID(const char *lpszLocaleID, ULONG *lpulLcid)
 		if (stricmp(localeMap[i].lpszLocaleID, lpszLocaleID) == 0)
 			lpMapEntry = &localeMap[i];
 
-	if (!lpMapEntry) {
-		er = ZARAFA_E_NOT_FOUND;
-		goto exit;
-	}
-
+	if (lpMapEntry == NULL)
+		return ZARAFA_E_NOT_FOUND;
 	*lpulLcid = lpMapEntry->ulLCID;
-
-exit:
-	return er;
+	return erSuccess;
 }
 
 ECRESULT LCIDToLocaleId(ULONG ulLcid, const char **lppszLocaleID)
 {
-	ECRESULT er = erSuccess;
 	const struct localemap *lpMapEntry = NULL;
 
 	ASSERT(lppszLocaleID != NULL);
@@ -1405,20 +1398,14 @@ ECRESULT LCIDToLocaleId(ULONG ulLcid, const char **lppszLocaleID)
 		if (localeMap[i].ulLCID == ulLcid)
 			lpMapEntry = &localeMap[i];
 
-	if (!lpMapEntry) {
-		er = ZARAFA_E_NOT_FOUND;
-		goto exit;
-	}
-
+	if (lpMapEntry == NULL)
+		return ZARAFA_E_NOT_FOUND;
 	*lppszLocaleID = lpMapEntry->lpszLocaleID;
-
-exit:
-	return er;
+	return erSuccess;
 }
 
 ECRESULT LocaleIdToLocaleName(const char *lpszLocaleID, const char **lppszLocaleName)
 {
-	ECRESULT er = erSuccess;
 	const struct localemap *lpMapEntry = NULL;
 
 	ASSERT(lpszLocaleID != NULL);
@@ -1428,15 +1415,10 @@ ECRESULT LocaleIdToLocaleName(const char *lpszLocaleID, const char **lppszLocale
 		if (stricmp(localeMap[i].lpszLocaleID, lpszLocaleID) == 0)
 			lpMapEntry = &localeMap[i];
 
-	if (!lpMapEntry) {
-		er = ZARAFA_E_NOT_FOUND;
-		goto exit;
-	}
-
+	if (lpMapEntry == NULL)
+		return ZARAFA_E_NOT_FOUND;
 	*lppszLocaleName = lpMapEntry->lpszLocaleName;
-
-exit:
-	return er;
+	return erSuccess;
 }
 
 #ifdef ZCP_USES_ICU

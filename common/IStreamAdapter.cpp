@@ -148,17 +148,15 @@ HRESULT IStreamAdapter::CopyTo(IStream *pstm, ULARGE_INTEGER cb, ULARGE_INTEGER 
 	while(1) {
 		hr = Read(buf, sizeof(buf), &len);
 		if(hr != hrSuccess)
-			goto exit;
+			return hr;
 			
 		if(len == 0)
 			break;
 			
 		hr = pstm->Write(buf, len, NULL);
 		if(hr != hrSuccess)
-			goto exit;
+			return hr;
 	}
-	
-exit:
 	return hr;
 }
 

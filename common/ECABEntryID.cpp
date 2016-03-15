@@ -87,15 +87,11 @@ const unsigned int	g_cbSystemEid = sizeof(g_sSystemEid);
 static HRESULT CheckEntryId(unsigned int cbEntryId, const ENTRYID *lpEntryId,
     unsigned int ulId, unsigned int ulType, bool *lpbResult)
 {
-	HRESULT	hr = hrSuccess;
 	bool	bResult = true;
 	PABEID	lpEid = NULL;
 
 	if (cbEntryId < sizeof(ABEID) || lpEntryId == NULL || lpbResult == NULL)
-	{
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+		return MAPI_E_INVALID_PARAMETER;
 
 	lpEid = (PABEID)lpEntryId;
 	if (lpEid->ulId != ulId)
@@ -108,9 +104,7 @@ static HRESULT CheckEntryId(unsigned int cbEntryId, const ENTRYID *lpEntryId,
 		bResult = false;
 
 	*lpbResult = bResult;
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT EntryIdIsDefault(unsigned int cbEntryId, const ENTRYID *lpEntryId,
@@ -134,47 +128,28 @@ HRESULT EntryIdIsEveryone(unsigned int cbEntryId, const ENTRYID *lpEntryId,
 HRESULT GetNonPortableObjectId(unsigned int cbEntryId,
     const ENTRYID *lpEntryId, unsigned int *lpulObjectId)
 {
-	HRESULT hr = hrSuccess;
-
 	if (cbEntryId < sizeof(ABEID) || lpEntryId == NULL || lpulObjectId == NULL)
-	{
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
-
+		return MAPI_E_INVALID_PARAMETER;
 	*lpulObjectId = ((PABEID)lpEntryId)->ulId;
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT GetNonPortableObjectType(unsigned int cbEntryId,
     const ENTRYID *lpEntryId, ULONG *lpulObjectType)
 {
-	HRESULT hr = hrSuccess;
-
 	if (cbEntryId < sizeof(ABEID) || lpEntryId == NULL || lpulObjectType == NULL)
-	{
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
-
+		return MAPI_E_INVALID_PARAMETER;
 	*lpulObjectType = ((PABEID)lpEntryId)->ulType;
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT GeneralizeEntryIdInPlace(unsigned int cbEntryId,
     const ENTRYID *lpEntryId)
 {
-	HRESULT	hr = hrSuccess;
 	PABEID	lpAbeid = NULL;
 
-	if (cbEntryId < sizeof(ABEID) || lpEntryId == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (cbEntryId < sizeof(ABEID) || lpEntryId == NULL)
+		return MAPI_E_INVALID_PARAMETER;
 
 	lpAbeid = (PABEID)lpEntryId;
 	switch (lpAbeid->ulVersion) {
@@ -204,7 +179,5 @@ HRESULT GeneralizeEntryIdInPlace(unsigned int cbEntryId,
 			ASSERT(FALSE);
 			break;
 	}
-
-exit:
-	return hr;
+	return hrSuccess;
 }

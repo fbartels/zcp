@@ -136,15 +136,12 @@ HRESULT ECFifoStreamReader::QueryInterface(REFIID refiid, LPVOID *lppInterface)
 
 HRESULT ECFifoStreamReader::Read(void *pv, ULONG cb, ULONG *pcbRead)
 {
-    HRESULT hr = hrSuccess;
-    size_t read;
-    hr = m_lpFifoBuffer->m_lpFifoBuffer->Read(pv, cb, 0, &read);
-    if(hr != hrSuccess)
-        goto exit;
-        
-    *pcbRead = read;
-exit:
-    return hr;
+	size_t read;
+	HRESULT hr = m_lpFifoBuffer->m_lpFifoBuffer->Read(pv, cb, 0, &read);
+	if (hr != hrSuccess)
+		return hr;
+	*pcbRead = read;
+	return hrSuccess;
 }
     
 ECFifoStreamReader::ECFifoStreamReader(ECFifoStream *lpBuffer)
@@ -204,14 +201,12 @@ HRESULT ECFifoStreamWriter::QueryInterface(REFIID refiid, LPVOID *lppInterface)
 
 HRESULT ECFifoStreamWriter::Write(const void *pv, ULONG cb, ULONG *pcbWritten)
 {
-    HRESULT hr = hrSuccess;
-    size_t written;
-    hr = m_lpFifoBuffer->m_lpFifoBuffer->Write(pv, cb, 0, &written);
-    if(hr != hrSuccess)
-        goto exit;
-    *pcbWritten = written;
-exit:
-    return hr;
+	size_t written;
+	HRESULT hr = m_lpFifoBuffer->m_lpFifoBuffer->Write(pv, cb, 0, &written);
+	if (hr != hrSuccess)
+		return hr;
+	*pcbWritten = written;
+	return hrSuccess;
 }
 
 /**
@@ -219,18 +214,10 @@ exit:
  */
 HRESULT ECFifoStreamWriter::Commit(DWORD ulFlags)
 {
-    HRESULT hr = hrSuccess;
-    
-    hr = m_lpFifoBuffer->m_lpFifoBuffer->Close(ECFifoBuffer::cfWrite);
-    if(hr != hrSuccess)
-        goto exit;
-        
-    hr = m_lpFifoBuffer->m_lpFifoBuffer->Flush();
-    if(hr != hrSuccess)
-        goto exit;
-        
-exit:
-    return hr;
+	HRESULT hr = m_lpFifoBuffer->m_lpFifoBuffer->Close(ECFifoBuffer::cfWrite);
+	if (hr != hrSuccess)
+		return hr;
+	return m_lpFifoBuffer->m_lpFifoBuffer->Flush();
 }
     
 ECFifoStreamWriter::ECFifoStreamWriter(ECFifoStream *lpBuffer)

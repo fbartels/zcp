@@ -130,16 +130,13 @@ HRESULT	ECMemBlock::ReadAt(ULONG ulPos, ULONG ulLen, char *buffer, ULONG *ulByte
 
 HRESULT ECMemBlock::WriteAt(ULONG ulPos, ULONG ulLen, char *buffer, ULONG *ulBytesWritten)
 {
-	HRESULT hr = hrSuccess;
 	ULONG dsize = ulPos + ulLen;
 	
 	if(cbTotal < dsize) {
 		ULONG newsize = cbTotal + ((dsize/EC_MEMBLOCK_SIZE)+1)*EC_MEMBLOCK_SIZE;	// + atleast 8k
 		char *lpNew = (char *)realloc(lpCurrent, newsize);
-		if (lpNew == NULL) {
-			hr = MAPI_E_NOT_ENOUGH_MEMORY;
-			goto exit;
-		}
+		if (lpNew == NULL)
+			return MAPI_E_NOT_ENOUGH_MEMORY;
 
 		lpCurrent = lpNew;
 		memset(lpCurrent+cbTotal, 0, newsize-cbTotal);	// clear new alloced mem
@@ -153,9 +150,7 @@ HRESULT ECMemBlock::WriteAt(ULONG ulPos, ULONG ulLen, char *buffer, ULONG *ulByt
 
 	if(ulBytesWritten)
 		*ulBytesWritten = ulLen;
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECMemBlock::Commit()
@@ -338,19 +333,16 @@ HRESULT ECMemStream::Read(void *pv, ULONG cb, ULONG *pcbRead)
 
 HRESULT ECMemStream::Write(const void *pv, ULONG cb, ULONG *pcbWritten)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	ULONG ulWritten = 0;
 
 	if(!(ulFlags&STGM_WRITE))
-	{
-		hr = MAPI_E_NO_ACCESS;
-		goto exit;
-	}
+		return MAPI_E_NO_ACCESS;
 
 	hr = this->lpMemBlock->WriteAt((ULONG)this->liPos.QuadPart, cb, (char *)pv, &ulWritten);
 
 	if(hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	liPos.QuadPart += ulWritten;
 
@@ -364,20 +356,18 @@ HRESULT ECMemStream::Write(const void *pv, ULONG cb, ULONG *pcbWritten)
 	// no point in committing already. We simply defer the commit until the stream is Released
 	if(!(ulFlags & STGM_TRANSACTED) && !(ulFlags & STGM_SHARE_EXCLUSIVE)) 
 		Commit(0);
-exit:
-
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECMemStream::Seek(LARGE_INTEGER dlibmove, DWORD dwOrigin, ULARGE_INTEGER *plibNewPosition)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	ULONG ulSize = 0;
 
 	hr = this->lpMemBlock->GetSize(&ulSize);
 
 	if(hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	switch(dwOrigin) {
 	case SEEK_SET:
@@ -398,38 +388,32 @@ HRESULT ECMemStream::Seek(LARGE_INTEGER dlibmove, DWORD dwOrigin, ULARGE_INTEGER
 
 	if(plibNewPosition)
 		plibNewPosition->QuadPart = liPos.QuadPart;
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECMemStream::SetSize(ULARGE_INTEGER libNewSize)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 
 	if(!(ulFlags&STGM_WRITE))
-	{
-		hr = MAPI_E_NO_ACCESS;
-		goto exit;
-	}
+		return MAPI_E_NO_ACCESS;
 
 	hr = lpMemBlock->SetSize((ULONG)libNewSize.QuadPart);
 
 	this->fDirty = TRUE;
-exit:
 	return hr;
 }
 
 HRESULT ECMemStream::CopyTo(IStream *pstm, ULARGE_INTEGER cb, ULARGE_INTEGER *pcbRead, ULARGE_INTEGER *pcbWritten)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	ULONG ulOffset = 0;
 	ULONG ulWritten = 0;
 	ULONG ulSize = 0;
 	
 	hr = lpMemBlock->GetSize(&ulSize);
 	if(hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	ASSERT(liPos.u.HighPart == 0);
 	ulOffset = liPos.u.LowPart;
@@ -448,9 +432,7 @@ HRESULT ECMemStream::CopyTo(IStream *pstm, ULARGE_INTEGER cb, ULARGE_INTEGER *pc
 		pcbWritten->QuadPart = ulOffset - liPos.u.LowPart;
 
 	liPos.QuadPart = ulOffset;
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECMemStream::Commit(DWORD grfCommitFlags)
@@ -511,27 +493,23 @@ HRESULT ECMemStream::UnlockRegion(ULARGE_INTEGER libOffset, ULARGE_INTEGER cb, D
 
 HRESULT ECMemStream::Stat(STATSTG *pstatstg, DWORD grfStatFlag)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	ULONG ulSize = 0;
 
-	if (pstatstg == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (pstatstg == NULL)
+		return MAPI_E_INVALID_PARAMETER;
 
 	hr = this->lpMemBlock->GetSize(&ulSize);
 
 	if(hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	memset(pstatstg, 0, sizeof(STATSTG));
 	pstatstg->cbSize.QuadPart = ulSize;
 
 	pstatstg->type = STGTY_STREAM;
 	pstatstg->grfMode = ulFlags;
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECMemStream::Clone(IStream **ppstm)

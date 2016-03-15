@@ -144,10 +144,8 @@ static HRESULT HrGetCharsetByRTFID(int id, const char **lpszCharset)
  */
 static bool isRTFIgnoreCommand(const char *lpCommand)
 {
-	bool bIgnore = false;
-
 	if(lpCommand == NULL)
-		goto exit;
+		return false;
 
 	if (strcmp(lpCommand,"stylesheet") == 0 ||
 			strcmp(lpCommand,"revtbl") == 0 || 
@@ -166,12 +164,8 @@ static bool isRTFIgnoreCommand(const char *lpCommand)
 			strcmp(lpCommand,"xmlopen") == 0
 			//strcmp(lpCommand,"fldrslt") == 0
 	   )
-	{
-		bIgnore = true;		
-	}
-
-exit:
-	return bIgnore;
+		return true;
+	return false;
 }
 
 /**
@@ -217,7 +211,7 @@ static std::wstring RTFFlushStateOutput(convert_context &convertContext,
 HRESULT HrExtractHTMLFromRTF(const std::string &lpStrRTFIn,
     std::string &lpStrHTMLOut, ULONG ulCodepage)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	const char *szInput = lpStrRTFIn.c_str();
 	const char *szANSICharset = "us-ascii";
 	const char *szHTMLCharset;
@@ -229,10 +223,8 @@ HRESULT HrExtractHTMLFromRTF(const std::string &lpStrRTFIn,
 	convert_context convertContext;
 
 	// Find \\htmltag, if there is none we can't extract HTML
-	if(strstr(szInput, "{\\*\\htmltag") == NULL) {
-		hr = MAPI_E_NOT_FOUND;
-		goto exit;
-	}
+	if (strstr(szInput, "{\\*\\htmltag") == NULL)
+		return MAPI_E_NOT_FOUND;
 
 	// select output charset
 	hr = HrGetCharsetByCP(ulCodepage, &szHTMLCharset);
@@ -401,10 +393,8 @@ HRESULT HrExtractHTMLFromRTF(const std::string &lpStrRTFIn,
 			strOutput += RTFFlushStateOutput(convertContext, sState, ulState);
 
 			ulState++;
-			if(ulState >= RTF_MAXSTATE) {
-				hr = MAPI_E_NOT_ENOUGH_MEMORY;
-				goto exit;
-			}
+			if (ulState >= RTF_MAXSTATE)
+				return MAPI_E_NOT_ENOUGH_MEMORY;
 			sState[ulState] = sState[ulState-1];
 			sState[ulState].output.clear();
 			szInput++;
@@ -433,8 +423,6 @@ HRESULT HrExtractHTMLFromRTF(const std::string &lpStrRTFIn,
 	} catch (const convert_exception &ce) {
 		hr = details::HrFromException(ce);
 	}
-
-exit:
 	return hr;	
 }
 
@@ -453,7 +441,7 @@ exit:
 HRESULT HrExtractHTMLFromTextRTF(const std::string &lpStrRTFIn,
     std::string &lpStrHTMLOut, ULONG ulCodepage)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	std::wstring wstrUnicodeTmp;
 	const char *szInput = lpStrRTFIn.c_str();
 	const char *szANSICharset = "us-ascii";
@@ -672,10 +660,8 @@ HRESULT HrExtractHTMLFromTextRTF(const std::string &lpStrRTFIn,
 			}
 
 			ulState++;
-			if(ulState >= RTF_MAXSTATE) {
-				hr = MAPI_E_NOT_ENOUGH_MEMORY;
-				goto exit;
-			}
+			if (ulState >= RTF_MAXSTATE)
+				return MAPI_E_NOT_ENOUGH_MEMORY;
 			sState[ulState] = sState[ulState-1];
 
 			szInput++;
@@ -743,8 +729,6 @@ HRESULT HrExtractHTMLFromTextRTF(const std::string &lpStrRTFIn,
 	} catch (const convert_exception &ce) {
 		hr = details::HrFromException(ce);
 	}
-
-exit:
 	return hr;	
 }
 
@@ -764,7 +748,7 @@ exit:
 HRESULT HrExtractHTMLFromRealRTF(const std::string &lpStrRTFIn,
     std::string &lpStrHTMLOut, ULONG ulCodepage)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	std::wstring wstrUnicodeTmp;
 	const char *szInput = lpStrRTFIn.c_str();
 	const char *szANSICharset = "us-ascii";
@@ -1036,10 +1020,8 @@ HRESULT HrExtractHTMLFromRealRTF(const std::string &lpStrRTFIn,
 			strOutput += RTFFlushStateOutput(convertContext, sState, ulState);
 
 			ulState++;
-			if(ulState >= RTF_MAXSTATE) {
-				hr = MAPI_E_NOT_ENOUGH_MEMORY;
-				goto exit;
-			}
+			if (ulState >= RTF_MAXSTATE)
+				return MAPI_E_NOT_ENOUGH_MEMORY;
 			sState[ulState] = sState[ulState-1];
 
 			szInput++;
@@ -1080,10 +1062,7 @@ HRESULT HrExtractHTMLFromRealRTF(const std::string &lpStrRTFIn,
 	} catch (const convert_exception &ce) {
 		hr = details::HrFromException(ce);
 	}
-
-exit:
 	return hr;
-
 }
 
 /**
@@ -1138,7 +1117,6 @@ bool isrtftext(const char *buf, unsigned int len)
 HRESULT HrExtractBODYFromTextRTF(const std::string &lpStrRTFIn,
     std::wstring &strBodyOut)
 {
-	HRESULT hr = hrSuccess;
 	const char *szInput = lpStrRTFIn.c_str();
 	const char *szANSICharset = "us-ascii";
 	int ulState = 0;
@@ -1308,10 +1286,8 @@ HRESULT HrExtractBODYFromTextRTF(const std::string &lpStrRTFIn,
 			strBodyOut += RTFFlushStateOutput(convertContext, sState, ulState);
 
 			ulState++;
-			if(ulState >= RTF_MAXSTATE) {
-				hr = MAPI_E_NOT_ENOUGH_MEMORY;
-				goto exit;
-			}
+			if (ulState >= RTF_MAXSTATE)
+				return MAPI_E_NOT_ENOUGH_MEMORY;
 			sState[ulState] = sState[ulState-1];
 
 			szInput++;
@@ -1334,7 +1310,5 @@ HRESULT HrExtractBODYFromTextRTF(const std::string &lpStrRTFIn,
 	}
 
 	strBodyOut += RTFFlushStateOutput(convertContext, sState, ulState);
-
-exit:
-	return hr;
+	return hrSuccess;
 }

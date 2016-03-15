@@ -850,12 +850,11 @@ exit:
 // Intern function, no locking
 ECRESULT ECKeyTable::InvalidateBookmark(ECTableRow *lpRow)
 {
-	ECRESULT er = erSuccess;
 	ECBookmarkMap::iterator	iPosition, iRemove;
 
 	// Nothing todo
 	if (m_mapBookmarks.empty())
-		goto exit;
+		return erSuccess;
 
 	for(iPosition = m_mapBookmarks.begin(); iPosition != m_mapBookmarks.end(); )
 	{
@@ -866,9 +865,7 @@ ECRESULT ECKeyTable::InvalidateBookmark(ECTableRow *lpRow)
 			iPosition++;
 		}
 	}
-
-exit:
-	return er;
+	return erSuccess;
 }
 
 
@@ -1001,22 +998,19 @@ exit:
 // Intern function, no locking
 ECRESULT ECKeyTable::CurrentRow(ECTableRow *lpRow, unsigned int *lpulCurrentRow)
 {
-	ECRESULT er = erSuccess;
 	unsigned int ulCurrentRow = 0;
 
-	if (lpulCurrentRow == NULL) {
-		er = ZARAFA_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (lpulCurrentRow == NULL)
+		return ZARAFA_E_INVALID_PARAMETER;
 
 	if(lpRow == NULL) {
 		*lpulCurrentRow = lpRoot->ulBranchCount;
-		goto exit;
+		return erSuccess;
 	}
 
 	if(lpRow == lpRoot) {
 		*lpulCurrentRow = 0;
-		goto exit;
+		return erSuccess;
 	}
 
 	if (lpRow->lpLeft)
@@ -1031,9 +1025,7 @@ ECRESULT ECKeyTable::CurrentRow(ECTableRow *lpRow, unsigned int *lpulCurrentRow)
 	}
 
 	*lpulCurrentRow = ulCurrentRow;
-
-exit:
-	return er;
+	return erSuccess;
 }
 
 /*
