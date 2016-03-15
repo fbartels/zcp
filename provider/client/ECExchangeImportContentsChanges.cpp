@@ -153,10 +153,10 @@ HRESULT ECExchangeImportContentsChanges::Create(ECMAPIFolder *lpFolder, LPEXCHAN
 	lpEICC = new ECExchangeImportContentsChanges(lpFolder);
 
 	hr = HrGetOneProp(&lpFolder->m_xMAPIProp, PR_SOURCE_KEY, &lpEICC->m_lpSourceKey);
-	if(hr != hrSuccess)
-		return hr;
-
-	return lpEICC->QueryInterface(IID_IExchangeImportContentsChanges, reinterpret_cast<void **>(lppExchangeImportContentsChanges));
+	if (hr == hrSuccess)
+		hr = lpEICC->QueryInterface(IID_IExchangeImportContentsChanges, reinterpret_cast<void **>(lppExchangeImportContentsChanges));
+	delete lpEICC;
+	return hr;
 }
 
 HRESULT	ECExchangeImportContentsChanges::QueryInterface(REFIID refiid, void **lppInterface)
