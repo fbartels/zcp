@@ -741,14 +741,15 @@ HRESULT HrListen(ECLogger *lpLogger, const char *szPath, int *lpulListenSocket)
 	struct sockaddr_un sun_addr;
 	mode_t prevmask = 0;
 
-	if (szPath == NULL || lpulListenSocket == NULL) {
+	if (szPath == NULL || strlen(szPath) >= sizeof(sun_addr.sun_path) ||
+	    lpulListenSocket == NULL) {
 		hr = MAPI_E_INVALID_PARAMETER;
 		goto exit;
 	}
 
 	memset(&sun_addr, 0, sizeof(sun_addr));
 	sun_addr.sun_family = AF_UNIX;
-	strcpy(sun_addr.sun_path, szPath);
+	strncpy(sun_addr.sun_path, szPath, sizeof(sun_addr.sun_path));
 
 #ifdef WIN32
 	WSAData wsaData;
