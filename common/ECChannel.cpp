@@ -1054,18 +1054,16 @@ HRESULT HrAccept(ECLogger *lpLogger, int ulListenFD, ECChannel **lppChannel)
 	ECChannel *lpChannel = NULL;
 	socklen_t len = sizeof(client);
 
-#ifdef TCP_FASTOPEN
-	int qlen = SOMAXCONN;
-	setsockopt(ulListenFD, SOL_TCP, TCP_FASTOPEN, &qlen, sizeof(qlen));
-#endif
-
 	if (ulListenFD < 0 || lppChannel == NULL) {
 		hr = MAPI_E_INVALID_PARAMETER;
 		if (lpLogger)
 			lpLogger->Log(EC_LOGLEVEL_ERROR, "HrAccept: invalid parameters");
 		goto exit;
 	}
-
+#ifdef TCP_FASTOPEN
+	static const int qlen = SOMAXCONN;
+	setsockopt(ulListenFD, SOL_TCP, TCP_FASTOPEN, &qlen, sizeof(qlen));
+#endif
 	memset(&client, 0, sizeof(client));
 
 	socket = accept(ulListenFD, (struct sockaddr *)&client, &len);
