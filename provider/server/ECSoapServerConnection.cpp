@@ -105,7 +105,7 @@ static int create_pipe_socket(const char *unix_socket, ECConfig *lpConfig,
 	
 	memset(&saddr,0,sizeof(saddr));
 	saddr.sun_family = AF_UNIX;
-	if (strlen(unix_socket) > sizeof(saddr.sun_path)) {
+	if (strlen(unix_socket) >= sizeof(saddr.sun_path)) {
 		lpLogger->Log(EC_LOGLEVEL_ERROR, "UNIX domain socket path \"%s\" is too long", unix_socket);
 		return -1;
 	}

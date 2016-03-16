@@ -97,7 +97,7 @@ HRESULT ECExportAddressbookChanges::QueryInterface(REFIID refiid, void **lppInte
 
 HRESULT	ECExportAddressbookChanges::Config(LPSTREAM lpStream, ULONG ulFlags, IECImportAddressbookChanges *lpCollector)
 {
-    HRESULT hr = hrSuccess;
+	HRESULT hr;
 	LARGE_INTEGER lint = {{ 0, 0 }};
     ABEID abeid;
 	STATSTG sStatStg;
@@ -110,11 +110,11 @@ HRESULT	ECExportAddressbookChanges::Config(LPSTREAM lpStream, ULONG ulFlags, IEC
 	// Read state from stream
 	hr = lpStream->Stat(&sStatStg, 0);
 	if(hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	hr = lpStream->Seek(lint, STREAM_SEEK_SET, NULL);
 	if (hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	if(sStatStg.cbSize.QuadPart < 8) {
 	    m_ulChangeId = 0;
@@ -124,16 +124,16 @@ HRESULT	ECExportAddressbookChanges::Config(LPSTREAM lpStream, ULONG ulFlags, IEC
 
 		hr = lpStream->Read(&m_ulChangeId, sizeof(ULONG), &ulRead);
 		if(hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		hr = lpStream->Read(&ulCount, sizeof(ULONG), &ulRead);
 		if(hr != hrSuccess)
-			goto exit;
+			return hr;
 
 		while(ulCount) {
 			hr = lpStream->Read(&ulProcessed, sizeof(ULONG), &ulRead);
 			if(hr != hrSuccess)
-				goto exit;
+				return hr;
 
 			m_setProcessed.insert(ulProcessed);
 
@@ -159,7 +159,7 @@ HRESULT	ECExportAddressbookChanges::Config(LPSTREAM lpStream, ULONG ulFlags, IEC
 
     hr = m_lpMsgStore->lpTransport->HrGetChanges(std::string((char *)&abeid, sizeof(ABEID)), 0, m_ulChangeId, ICS_SYNC_AB, 0, NULL, &m_ulMaxChangeId, &m_ulChanges, &m_lpRawChanges);
     if(hr != hrSuccess)
-        goto exit;
+		return hr;
 
 	ZLOG_DEBUG(m_lpLogger, "Got %u address book changes from server.", m_ulChanges);
 
@@ -186,7 +186,7 @@ HRESULT	ECExportAddressbookChanges::Config(LPSTREAM lpStream, ULONG ulFlags, IEC
 
 		// Now go through the changes to remove multiple changes for the same object.
 		if ((hr = MAPIAllocateBuffer(sizeof(ICSCHANGE) * m_ulChanges, (void **)&m_lpChanges)) != hrSuccess)
-			goto exit;
+			return hr;
 
 		for (ULONG i = 0; i < m_ulChanges; ++i) {
 			// First check if this change hasn't been processed yet
@@ -257,8 +257,6 @@ HRESULT	ECExportAddressbookChanges::Config(LPSTREAM lpStream, ULONG ulFlags, IEC
 
     // Next change is first one
     m_ulThisChange = 0;
-
-exit:
     return hr;
 }
 
@@ -268,13 +266,11 @@ HRESULT ECExportAddressbookChanges::Synchronize(ULONG *lpulSteps, ULONG *lpulPro
 	PABEID eid = NULL;
     
     // Check if we're already done
-    if(m_ulThisChange >= m_ulChanges)
-        return hrSuccess;
+	if (m_ulThisChange >= m_ulChanges)
+		return hrSuccess;
     
-    if(m_lpChanges[m_ulThisChange].sSourceKey.cb < sizeof(ABEID)) {
-        hr = MAPI_E_INVALID_PARAMETER;
-        goto exit;
-    }
+	if (m_lpChanges[m_ulThisChange].sSourceKey.cb < sizeof(ABEID))
+		return MAPI_E_INVALID_PARAMETER;
 
 	eid = (PABEID)m_lpChanges[m_ulThisChange].sSourceKey.lpb;
 	ZLOG_DEBUG(m_lpLogger, "abchange type=%04x, sourcekey=%s", m_lpChanges[m_ulThisChange].ulChangeType, bin2hex(m_lpChanges[m_ulThisChange].sSourceKey.cb, m_lpChanges[m_ulThisChange].sSourceKey.lpb).c_str());
@@ -290,8 +286,7 @@ HRESULT ECExportAddressbookChanges::Synchronize(ULONG *lpulSteps, ULONG *lpulPro
         break;
     }
     default:
-        hr = MAPI_E_INVALID_PARAMETER;
-        goto exit;
+        return MAPI_E_INVALID_PARAMETER;
     }
     
 	if (hr == SYNC_E_IGNORE)
@@ -304,7 +299,7 @@ HRESULT ECExportAddressbookChanges::Synchronize(ULONG *lpulSteps, ULONG *lpulPro
 
 	else if (hr != hrSuccess) {
 		ZLOG_DEBUG(m_lpLogger, "failed type=%04x, hr=%s, sourcekey=%s", m_lpChanges[m_ulThisChange].ulChangeType, stringify(hr, true).c_str(), bin2hex(m_lpChanges[m_ulThisChange].sSourceKey.cb, m_lpChanges[m_ulThisChange].sSourceKey.lpb).c_str());
-        goto exit;
+		return hr;
 	}
 
 	// Mark the change as processed
@@ -323,13 +318,12 @@ HRESULT ECExportAddressbookChanges::Synchronize(ULONG *lpulSteps, ULONG *lpulPro
     else
         hr = SYNC_W_PROGRESS;
          
-exit:
     return hr;
 }
 
 HRESULT ECExportAddressbookChanges::UpdateState(LPSTREAM lpStream)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	LARGE_INTEGER zero = {{0,0}};
 	ULARGE_INTEGER uzero = {{0,0}};
 	ULONG ulCount = 0;
@@ -348,23 +342,23 @@ HRESULT ECExportAddressbookChanges::UpdateState(LPSTREAM lpStream)
 
 	hr = lpStream->Seek(zero, STREAM_SEEK_SET, NULL);
 	if(hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	hr = lpStream->SetSize(uzero);
 	if(hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	// Write the change ID
 	hr = lpStream->Write(&m_ulChangeId, sizeof(ULONG), &ulWritten);
 	if(hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	ulCount = m_setProcessed.size();
 
 	// Write the number of processed IDs to follow
 	hr = lpStream->Write(&ulCount, sizeof(ULONG), &ulWritten);
 	if(hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	// Write the processed IDs
 	for(iterProcessed = m_setProcessed.begin(); iterProcessed != m_setProcessed.end(); iterProcessed++) {
@@ -372,14 +366,13 @@ HRESULT ECExportAddressbookChanges::UpdateState(LPSTREAM lpStream)
 
 		hr = lpStream->Write(&ulProcessed, sizeof(ULONG), &ulWritten);
 		if(hr != hrSuccess)
-			goto exit;
+			return hr;
 	}
 
 	lpStream->Seek(zero, STREAM_SEEK_SET, NULL);
 
 	// All done
-exit:
-    return hr;
+	return hrSuccess;
 }
 
 

@@ -1588,7 +1588,7 @@ HRESULT recurrence::HrGetItems(time_t tsStart, time_t tsEnd, ECLogger *lpLogger,
 	HRESULT hr = 0;
 	ECLogger *lpNullLogger = new ECLogger_Null();
 	time_t tsNow = 0;
-	time_t tsDayNow;	
+	time_t tsDayNow = 0;
 	time_t tsOccStart = 0;
 	time_t tsOccEnd = 0;
 	time_t tsDayEnd = 0;

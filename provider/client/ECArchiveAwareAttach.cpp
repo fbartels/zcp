@@ -65,14 +65,8 @@ ECArchiveAwareAttach::ECArchiveAwareAttach(ECMsgStore *lpMsgStore, ULONG ulObjTy
 
 HRESULT	ECArchiveAwareAttach::Create(ECMsgStore *lpMsgStore, ULONG ulObjType, BOOL fModify, ULONG ulAttachNum, ECMAPIProp *lpRoot, ECAttach **lppAttach)
 {
-	HRESULT hr = hrSuccess;
-	ECArchiveAwareAttach *lpAttach = NULL;
-
-	lpAttach = new ECArchiveAwareAttach(lpMsgStore, ulObjType, fModify, ulAttachNum, lpRoot);
-
-	hr = lpAttach->QueryInterface(IID_ECAttach, (void **)lppAttach);
-
-	return hr;
+	ECArchiveAwareAttach *lpAttach = new ECArchiveAwareAttach(lpMsgStore, ulObjType, fModify, ulAttachNum, lpRoot);
+	return lpAttach->QueryInterface(IID_ECAttach, reinterpret_cast<void **>(lppAttach));
 }
 
 HRESULT	ECArchiveAwareAttach::SetPropHandler(ULONG ulPropTag, void* /*lpProvider*/, LPSPropValue lpsPropValue, void *lpParam)
@@ -86,6 +80,7 @@ HRESULT	ECArchiveAwareAttach::SetPropHandler(ULONG ulPropTag, void* /*lpProvider
 			hr = lpAttach->HrSetRealProp(lpsPropValue);
 		else
 			hr = MAPI_E_COMPUTED;
+		break;
 	default:
 		hr = MAPI_E_NOT_FOUND;
 		break;

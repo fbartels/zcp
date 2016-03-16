@@ -561,16 +561,12 @@ exit:
 
 HRESULT MAPIPropHelper::ReferencePrevious(const SObjectEntry &sEntry)
 {
-	HRESULT hr = hrSuccess;
 	SPropValue sPropValue = {0};
 
 	sPropValue.ulPropTag = PROP_REF_PREV_ENTRYID;
 	sPropValue.Value.bin.cb = sEntry.sItemEntryId.size();
 	sPropValue.Value.bin.lpb = sEntry.sItemEntryId;
-
-	hr = HrSetOneProp(m_ptrMapiProp, &sPropValue);
-
-	return hr;
+	return HrSetOneProp(m_ptrMapiProp, &sPropValue);
 }
 
 HRESULT MAPIPropHelper::OpenPrevious(ArchiverSessionPtr ptrSession, LPMESSAGE *lppMessage)
@@ -623,22 +619,14 @@ exit:
  */
 HRESULT MAPIPropHelper::RemoveStub()
 {
-	HRESULT hr = hrSuccess;
 	SizedSPropTagArray(1, sptaArchiveProps) = {1, {PROP_STUBBED}};
-
-	hr = m_ptrMapiProp->DeleteProps((LPSPropTagArray)&sptaArchiveProps, NULL);
-	
-	return hr;
+	return m_ptrMapiProp->DeleteProps((LPSPropTagArray)&sptaArchiveProps, NULL);
 }
 
 HRESULT MAPIPropHelper::SetClean()
 {
-	HRESULT hr = hrSuccess;
 	SizedSPropTagArray(1, sptaDirtyProps) = {1, {PROP_DIRTY}};
-
-	hr = m_ptrMapiProp->DeleteProps((LPSPropTagArray)&sptaDirtyProps, NULL);
-	
-	return hr;
+	return m_ptrMapiProp->DeleteProps((LPSPropTagArray)&sptaDirtyProps, NULL);
 }
 
 
@@ -650,12 +638,8 @@ HRESULT MAPIPropHelper::SetClean()
  */
 HRESULT MAPIPropHelper::DetachFromArchives()
 {
-	HRESULT hr = hrSuccess;
 	SizedSPropTagArray(5, sptaArchiveProps) = {5, {PROP_ARCHIVE_STORE_ENTRYIDS, PROP_ARCHIVE_ITEM_ENTRYIDS, PROP_STUBBED, PROP_DIRTY, PROP_ORIGINAL_SOURCEKEY}};
-
-	hr = m_ptrMapiProp->DeleteProps((LPSPropTagArray)&sptaArchiveProps, NULL);
-	
-	return hr;
+	return m_ptrMapiProp->DeleteProps((LPSPropTagArray)&sptaArchiveProps, NULL);
 }
 
 /**

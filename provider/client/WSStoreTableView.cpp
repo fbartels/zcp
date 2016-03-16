@@ -174,17 +174,9 @@ exit:
 
 HRESULT WSTableMultiStore::HrSetEntryIDs(LPENTRYLIST lpMsgList)
 {
-	HRESULT hr = hrSuccess;
-	
 	// Not really a transport function, but this is the best place for it for now
 
-	hr = CopyMAPIEntryListToSOAPEntryList(lpMsgList, &m_sEntryList);
-	if(hr != hrSuccess)
-		goto exit;
-
-exit:
-
-	return hr;
+	return CopyMAPIEntryListToSOAPEntryList(lpMsgList, &m_sEntryList);
 }
 
 

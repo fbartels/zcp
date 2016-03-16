@@ -98,18 +98,10 @@ HRESULT ECParentStorage::QueryInterface(REFIID refiid, void **lppInterface)
 
 HRESULT ECParentStorage::Create(ECGenericProp *lpParentObject, ULONG ulUniqueId, ULONG ulObjId, IECPropStorage *lpServerStorage, ECParentStorage **lppParentStorage)
 {
-	HRESULT hr = hrSuccess;
 	ECParentStorage *lpParentStorage = NULL;
 
 	lpParentStorage = new ECParentStorage(lpParentObject, ulUniqueId, ulObjId, lpServerStorage);
-
-	hr = lpParentStorage->QueryInterface(IID_ECParentStorage, (void **)lppParentStorage); //FIXME: Use other interface
-
-	if(hr != hrSuccess)
-		goto exit;
-	
-exit:
-	return hr;
+	return lpParentStorage->QueryInterface(IID_ECParentStorage, reinterpret_cast<void **>(lppParentStorage)); //FIXME: Use other interface
 }
 
 HRESULT ECParentStorage::HrReadProps(LPSPropTagArray *lppPropTags, ULONG *lpcValues, LPSPropValue *lppValues)
@@ -120,19 +112,9 @@ HRESULT ECParentStorage::HrReadProps(LPSPropTagArray *lppPropTags, ULONG *lpcVal
 
 HRESULT ECParentStorage::HrLoadProp(ULONG ulObjId, ULONG ulPropTag, LPSPropValue *lppsPropValue)
 {
-	HRESULT hr = hrSuccess;
-
-	if (m_lpServerStorage == NULL) {
-		hr = MAPI_E_NOT_FOUND;
-		goto exit;
-	}
-
-	hr = m_lpServerStorage->HrLoadProp(ulObjId, ulPropTag, lppsPropValue);
-	if (hr != hrSuccess)
-		goto exit;
-
-exit:
-	return hr;
+	if (m_lpServerStorage == NULL)
+		return MAPI_E_NOT_FOUND;
+	return m_lpServerStorage->HrLoadProp(ulObjId, ulPropTag, lppsPropValue);
 }
 
 HRESULT	ECParentStorage::HrWriteProps(ULONG cValues, LPSPropValue pValues, ULONG ulFlags)
@@ -149,23 +131,14 @@ HRESULT ECParentStorage::HrDeleteProps(LPSPropTagArray lpsPropTagArray)
 
 HRESULT ECParentStorage::HrSaveObject(ULONG ulFlags, MAPIOBJECT *lpsMapiObject)
 {
-	HRESULT hr = hrSuccess;
 	ECMapiObjects::iterator iterSObj;
 
-	if (!m_lpParentObject) {
-		hr = MAPI_E_INVALID_OBJECT;
-		goto exit;
-	}
+	if (m_lpParentObject == NULL)
+		return MAPI_E_INVALID_OBJECT;
 
 	lpsMapiObject->ulUniqueId = m_ulUniqueId;
 	lpsMapiObject->ulObjId = m_ulObjId;
-
-	hr = m_lpParentObject->HrSaveChild(ulFlags, lpsMapiObject);
-	if (hr != hrSuccess)
-		goto exit;
-	
-exit:
-	return hr;
+	return m_lpParentObject->HrSaveChild(ulFlags, lpsMapiObject);
 }
 
 HRESULT ECParentStorage::HrLoadObject(MAPIOBJECT **lppsMapiObject)

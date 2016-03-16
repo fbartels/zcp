@@ -74,17 +74,10 @@ WSSerializedMessage::WSSerializedMessage(soap *lpSoap, const std::string strStre
  */
 HRESULT WSSerializedMessage::GetProps(ULONG *lpcbProps, LPSPropValue *lppProps)
 {
-	HRESULT hr = hrSuccess;
+	if (lpcbProps == NULL || lppProps == NULL)
+		return MAPI_E_INVALID_PARAMETER;
 
-	if (lpcbProps == NULL || lppProps == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
-
-	hr = Util::HrCopyPropertyArray(m_lpProps, m_cbProps, lppProps, lpcbProps);
-
-exit:
-	return hr;
+	return Util::HrCopyPropertyArray(m_lpProps, m_cbProps, lppProps, lpcbProps);
 }
 
 /**
@@ -94,21 +87,16 @@ exit:
  */
 HRESULT WSSerializedMessage::CopyData(LPSTREAM lpDestStream)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 
-	if (lpDestStream == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (lpDestStream == NULL)
+		return MAPI_E_INVALID_PARAMETER;
 
 	hr = DoCopyData(lpDestStream);
 	if (hr != hrSuccess)
-		goto exit;
+		return hr;
 
-	hr = lpDestStream->Commit(0);
-
-exit:
-	return hr;
+	return lpDestStream->Commit(0);
 }
 
 /**
@@ -127,12 +115,8 @@ HRESULT WSSerializedMessage::DiscardData()
  */
 HRESULT WSSerializedMessage::DoCopyData(LPSTREAM lpDestStream)
 {
-	HRESULT hr = hrSuccess;
-
-	if (m_bUsed) {
-		hr = MAPI_E_UNCONFIGURED;
-		goto exit;
-	}
+	if (m_bUsed)
+		return MAPI_E_UNCONFIGURED;
 
 	m_bUsed = true;
 	m_hr = hrSuccess;
@@ -143,14 +127,9 @@ HRESULT WSSerializedMessage::DoCopyData(LPSTREAM lpDestStream)
 	m_lpSoap->fmimewriteclose = StaticMTOMWriteClose;
 
 	soap_get_mime_attachment(m_lpSoap, (void*)this);
-    if (m_lpSoap->error) {
-		hr = MAPI_E_NETWORK_ERROR;
-		goto exit;
-	}
-	hr = m_hr;
-
-exit:
-	return hr;
+	if (m_lpSoap->error != 0)
+		return MAPI_E_NETWORK_ERROR;
+	return m_hr;
 }
 
 

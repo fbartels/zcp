@@ -96,19 +96,19 @@ ECMAPITable::ECMAPITable(std::string strName, ECNotifyClient *lpNotifyClient, UL
 
 HRESULT ECMAPITable::FlushDeferred(LPSRowSet *lppRowSet)
 {
-    HRESULT hr = hrSuccess;
+	HRESULT hr;
     
 	hr = lpTableOps->HrOpenTable();
 	if(hr != hrSuccess)
-		goto exit;
+		return hr;
 
-    // No deferred calls -> nothing to do
-    if(!IsDeferred())
-        goto exit;
+	// No deferred calls -> nothing to do
+	if (!IsDeferred())
+		return hr;
         
-    hr = lpTableOps->HrMulti(m_ulDeferredFlags, m_lpSetColumns, m_lpRestrict, m_lpSortTable, m_ulRowCount, m_ulFlags, lppRowSet);
+	hr = lpTableOps->HrMulti(m_ulDeferredFlags, m_lpSetColumns, m_lpRestrict, m_lpSortTable, m_ulRowCount, m_ulFlags, lppRowSet);
 
-    // Reset deferred items
+	// Reset deferred items
 	MAPIFreeBuffer(m_lpSetColumns);
 	m_lpSetColumns = NULL;
 	MAPIFreeBuffer(m_lpRestrict);
@@ -118,9 +118,7 @@ HRESULT ECMAPITable::FlushDeferred(LPSRowSet *lppRowSet)
 	m_ulRowCount = 0;
 	m_ulFlags = 0;
 	m_ulDeferredFlags = 0;
-
-exit: 
-    return hr;
+	return hr;
 }
 
 BOOL ECMAPITable::IsDeferred()
@@ -161,14 +159,8 @@ ECMAPITable::~ECMAPITable()
 
 HRESULT ECMAPITable::Create(std::string strName, ECNotifyClient *lpNotifyClient, ULONG ulFlags, ECMAPITable **lppECMAPITable)
 {
-	HRESULT hr = hrSuccess;
-	ECMAPITable *lpMAPITable = NULL;
-	
-	lpMAPITable = new ECMAPITable(strName, lpNotifyClient, ulFlags);
-
-	hr = lpMAPITable->QueryInterface(IID_ECMAPITable, (void **)lppECMAPITable);
-
-	return hr;
+	ECMAPITable *lpMAPITable = new ECMAPITable(strName, lpNotifyClient, ulFlags);
+	return lpMAPITable->QueryInterface(IID_ECMAPITable, reinterpret_cast<void **>(lppECMAPITable));
 }
 
 HRESULT ECMAPITable::QueryInterface(REFIID refiid, void **lppInterface)
@@ -691,23 +683,20 @@ exit:
 
 HRESULT ECMAPITable::HrSetTableOps(WSTableView *lpTableOps, bool fLoad)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 
 	this->lpTableOps = lpTableOps;
 	lpTableOps->AddRef();
 
 	// Open the table on the server, ready for reading ..
 	if(fLoad) {
-    	hr = lpTableOps->HrOpenTable();
-
-    	if(hr != hrSuccess)
-		    goto exit;
-    }
+		hr = lpTableOps->HrOpenTable();
+		if (hr != hrSuccess)
+			return hr;
+	}
 
 	lpTableOps->SetReloadCallback(Reload, this);
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECMAPITable::QueryRows(LONG lRowCount, ULONG ulFlags, LPSRowSet *lppRows)

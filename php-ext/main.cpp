@@ -4005,14 +4005,19 @@ ZEND_FUNCTION(mapi_decompressrtf)
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &rtfBuffer, &rtfBufferLen) == FAILURE) return;
 
 	// make and fill the stream
-	CreateStreamOnHGlobal(NULL, true, &pStream);
+	MAPI_G(hr) = CreateStreamOnHGlobal(NULL, true, &pStream);
+	if (MAPI_G(hr) != hrSuccess || pStream == NULL) {
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Unable to CreateStreamOnHGlobal %x", MAPI_G(hr));
+		goto exit;
+	}
+
 	pStream->Write(rtfBuffer, rtfBufferLen, &actualWritten);
 	pStream->Commit(0);
 	pStream->Seek(begin, SEEK_SET, NULL);
 
    	MAPI_G(hr) = WrapCompressedRTFStream(pStream, 0, &deCompressedStream);
 	if (MAPI_G(hr) != hrSuccess) {
-		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Unable to wrap uncompressed stream");
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "Unable to wrap uncompressed stream %x", MAPI_G(hr));
 		goto exit;
 	}
 
@@ -4026,7 +4031,7 @@ ZEND_FUNCTION(mapi_decompressrtf)
 	while(1) {
 		MAPI_G(hr) = deCompressedStream->Read(htmlbuf, bufsize, &cbRead);
 		if (MAPI_G(hr) != hrSuccess) {
-			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Read from uncompressed stream failed");
+			php_error_docref(NULL TSRMLS_CC, E_WARNING, "Read from uncompressed stream failed %x", MAPI_G(hr));
 			goto exit;
 		}
 

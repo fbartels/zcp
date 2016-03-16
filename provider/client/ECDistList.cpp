@@ -106,107 +106,76 @@ HRESULT ECDistList::Create(void* lpProvider, BOOL fModify, ECDistList** lppDistL
 
 HRESULT ECDistList::TableRowGetProp(void* lpProvider, struct propVal *lpsPropValSrc, LPSPropValue lpsPropValDst, void **lpBase, ULONG ulType)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = MAPI_E_NOT_FOUND;
-
-	return hr;
+	return MAPI_E_NOT_FOUND;
 }
 
 HRESULT ECDistList::OpenProperty(ULONG ulPropTag, LPCIID lpiid, ULONG ulInterfaceOptions, ULONG ulFlags, LPUNKNOWN FAR * lppUnk)
 {
 	HRESULT hr = MAPI_E_NOT_FOUND;
 
-	if (lpiid == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (lpiid == NULL)
+		return MAPI_E_INVALID_PARAMETER;
 
 	// FIXME: check variables
 
 	switch(ulPropTag) {
 #if defined(_WIN32) && !defined(WINCE) 
 	case PR_DETAILS_TABLE:
-		if (*lpiid != IID_IMAPITable) {
-			hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
-			goto exit;
-		}
+		if (*lpiid != IID_IMAPITable)
+			return MAPI_E_INTERFACE_NOT_SUPPORTED;
 
 		hr = ECDisplayTable::CreateDisplayTable(arraySize(rgdtIDistListPage), rgdtIDistListPage, (LPMAPITABLE *) lppUnk);
 		if (hr != hrSuccess)
-			goto exit;
-
+			return hr;
 		break;
 	case PR_EMS_AB_MEMBER_O:
-		if (*lpiid != IID_IMAPITable) {
-			hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
-			goto exit;
-		}
+		if (*lpiid != IID_IMAPITable)
+			return MAPI_E_INTERFACE_NOT_SUPPORTED;
 
 		hr = GetContentsTable(ulInterfaceOptions, (LPMAPITABLE*)lppUnk);
 		if (hr != hrSuccess)
-			goto exit;
-
+			return hr;
 		break;
 	case PR_EMS_AB_PROXY_ADDRESSES_O:
-		if (*lpiid != IID_IMAPITable) {
-			hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
-			goto exit;
-		}
+		if (*lpiid != IID_IMAPITable)
+			return MAPI_E_INTERFACE_NOT_SUPPORTED;
 
 		hr = ECDisplayTable::CreateTableFromProperty(this, lpiid, ulInterfaceOptions, PR_SMTP_ADDRESS, PR_EMS_AB_PROXY_ADDRESSES, lppUnk);
 		if (hr != hrSuccess)
-			goto exit;
-
+			return hr;
 		break;
 	case PR_EMS_AB_IS_MEMBER_OF_DL_O:
-		if (*lpiid != IID_IMAPITable) {
-			hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
-			goto exit;
-		}
+		if (*lpiid != IID_IMAPITable)
+			return MAPI_E_INTERFACE_NOT_SUPPORTED;
 
 		hr = ECDisplayTable::CreateTableFromResolved(this, lpiid, ulInterfaceOptions, PR_EMS_AB_IS_MEMBER_OF_DL_T, lppUnk);
 		if (hr != hrSuccess)
-			goto exit;
-
+			return hr;
 		break;
 	case PR_EMS_AB_OWNER_O:
-		if (*lpiid != IID_IMAPITable) {
-			hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
-			goto exit;
-		}
+		if (*lpiid != IID_IMAPITable)
+			return MAPI_E_INTERFACE_NOT_SUPPORTED;
 
 		hr = ECDisplayTable::CreateTableFromResolved(this, lpiid, ulInterfaceOptions, PR_EMS_AB_OWNER, lppUnk);
 		if (hr != hrSuccess)
-			goto exit;
-
+			return hr;
 		break;
 #endif
 		default:
 			hr = ECABProp::OpenProperty(ulPropTag, lpiid, ulInterfaceOptions, ulFlags, lppUnk);
 			break;
 	}//switch(ulPropTag)
-	
-exit:
 	return hr;
 }
 
 HRESULT ECDistList::CopyTo(ULONG ciidExclude, LPCIID rgiidExclude, LPSPropTagArray lpExcludeProps, ULONG ulUIParam, LPMAPIPROGRESS lpProgress, LPCIID lpInterface, LPVOID lpDestObj, ULONG ulFlags, LPSPropProblemArray FAR * lppProblems)
 {
-	HRESULT hr = hrSuccess;
-	
-	hr = this->GetABStore()->m_lpMAPISup->DoCopyTo(&IID_IDistList, &this->m_xDistList, ciidExclude, rgiidExclude, lpExcludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
-
-	return hr;
+	return this->GetABStore()->m_lpMAPISup->DoCopyTo(&IID_IDistList, &this->m_xDistList, ciidExclude, rgiidExclude, lpExcludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
 }
 
 HRESULT ECDistList::CopyProps(LPSPropTagArray lpIncludeProps, ULONG ulUIParam, LPMAPIPROGRESS lpProgress, LPCIID lpInterface, LPVOID lpDestObj, ULONG ulFlags, LPSPropProblemArray FAR * lppProblems)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = this->GetABStore()->m_lpMAPISup->DoCopyProps(&IID_IDistList, &this->m_xDistList, lpIncludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
-
-	return hr;
+	return this->GetABStore()->m_lpMAPISup->DoCopyProps(&IID_IDistList, &this->m_xDistList, lpIncludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
 }
 
 ////////////////////////////////////////////

@@ -1502,7 +1502,6 @@ HRESULT ECTNEF::FinishComponent(ULONG ulFlags, ULONG ulComponentID, LPSPropTagAr
     ULONG cValues = 0;
     AttachRendData sData;
     SizedSPropTagArray(2, sptaTags) = {2, { PR_ATTACH_METHOD, PR_RENDERING_POSITION }};
-    char *lpData = NULL;
     LPSPropValue lpsNewProp = NULL;
     struct tnefattachment sTnefAttach;
     
@@ -1571,16 +1570,12 @@ HRESULT ECTNEF::FinishComponent(ULONG ulFlags, ULONG ulComponentID, LPSPropTagAr
     sTnefAttach.rdata = sData;
     sTnefAttach.data = NULL;
     sTnefAttach.size = 0;
-    
-    lpData = NULL;
-    
     lstAttachments.push_back(new tnefattachment(sTnefAttach));
     
 exit:
     if(lpStream)
         lpStream->Release();
     MAPIFreeBuffer(lpsNewProp);
-    delete[] lpData;
     if(lpAttach)
         lpAttach->Release();
     MAPIFreeBuffer(lpProps);

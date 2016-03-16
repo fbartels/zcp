@@ -150,36 +150,24 @@ void FileTimeToRTime(const FILETIME *pft, LONG *prtime)
 
 HRESULT RTimeToUnixTime(LONG rtime, time_t *unixtime)
 {
-	HRESULT hr = hrSuccess;
 	FILETIME ft;
 
-	if(unixtime == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
-
+	if (unixtime == NULL)
+		return MAPI_E_INVALID_PARAMETER;
 	RTimeToFileTime(rtime, &ft);
 	FileTimeToUnixTime(ft, unixtime);
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT UnixTimeToRTime(time_t unixtime, LONG *rtime)
 {
-	HRESULT hr = hrSuccess;
 	FILETIME ft;
 
-	if(rtime == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
-
+	if (rtime == NULL)
+		return MAPI_E_INVALID_PARAMETER;
 	UnixTimeToFileTime(unixtime, &ft);
 	FileTimeToRTime(&ft, rtime);
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 // time only, not date!

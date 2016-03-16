@@ -188,24 +188,22 @@ HRESULT WSTransport::Create(ULONG ulUIFlags, WSTransport **lppTransport)
 /* Creates a transport working on the same session and session group as this transport */
 HRESULT WSTransport::HrClone(WSTransport **lppTransport)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	WSTransport *lpTransport = NULL;
 
 	hr = WSTransport::Create(m_ulUIFlags, &lpTransport);
 	if(hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	hr = CreateSoapTransport(m_ulUIFlags, m_sProfileProps, &lpTransport->m_lpCmd);
 	if(hr != hrSuccess)
-		goto exit;
+		return hr;
 	
 	lpTransport->m_ecSessionId = this->m_ecSessionId;
 	lpTransport->m_ecSessionGroupId = this->m_ecSessionGroupId;
 
 	*lppTransport = lpTransport;
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT WSTransport::HrOpenTransport(LPMAPISUP lpMAPISup, WSTransport **lppTransport, BOOL bOffline)
@@ -486,14 +484,11 @@ HRESULT WSTransport::HrLogon(const struct sGlobalProfileProps &in_props)
 
 HRESULT WSTransport::HrSetRecvTimeout(unsigned int ulSeconds)
 {
-	HRESULT		hr = hrSuccess;
+	if (this->m_lpCmd != NULL)
+		return MAPI_E_NOT_INITIALIZED;
 
-	if(this->m_lpCmd)
-		this->m_lpCmd->soap->recv_timeout = ulSeconds;
-	else
-		hr = MAPI_E_NOT_INITIALIZED;
-
-	return hr;
+	this->m_lpCmd->soap->recv_timeout = ulSeconds;
+	return hrSuccess;
 }
 
 
@@ -567,12 +562,12 @@ exit:
 
 HRESULT WSTransport::HrReLogon()
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	SESSIONRELOADLIST::iterator iter;
 
 	hr = HrLogon(m_sProfileProps);
 	if(hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	// Notify new session to listeners
 	pthread_mutex_lock(&m_mutexSessionReload);
@@ -580,9 +575,7 @@ HRESULT WSTransport::HrReLogon()
 		iter->second.second(iter->second.first, this->m_ecSessionId);
 	}
 	pthread_mutex_unlock(&m_mutexSessionReload);
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 ECRESULT WSTransport::TrySSOLogon(ZarafaCmd* lpCmd, LPCSTR szServer, utf8string strUsername, utf8string strImpersonateUser, unsigned int ulCapabilities, ECSESSIONGROUPID ecSessionGroupId, char *szAppName, ECSESSIONID* lpSessionId, unsigned int* lpulServerCapabilities, unsigned long long *lpllFlags, LPGUID lpsServerGuid, const std::string appVersion, const std::string appMisc)
@@ -1108,35 +1101,20 @@ exit:
 
 HRESULT WSTransport::HrOpenTableOps(ULONG ulType, ULONG ulFlags, ULONG cbEntryID, LPENTRYID lpEntryID, ECMsgStore *lpMsgStore, WSTableView **lppTableOps)
 {
-	HRESULT hr = hrSuccess;
-	
 	/*
 	FIXME: Do a check ?
-	if(peid->ulType != MAPI_FOLDER && peid->ulType != MAPI_MESSAGE) {
-		hr = MAPI_E_INVALID_ENTRYID;
-		goto exit;
-	}*/
-
-	hr = WSStoreTableView::Create(ulType, ulFlags, m_lpCmd, &m_hDataLock, m_ecSessionId, cbEntryID, lpEntryID, lpMsgStore, this, lppTableOps);
-	if(hr != hrSuccess)
-		goto exit;
-
-exit:
-	return hr;
+	if (peid->ulType != MAPI_FOLDER && peid->ulType != MAPI_MESSAGE)
+		return MAPI_E_INVALID_ENTRYID;
+	*/
+	return WSStoreTableView::Create(ulType, ulFlags, m_lpCmd, &m_hDataLock, m_ecSessionId, cbEntryID, lpEntryID, lpMsgStore, this, lppTableOps);
 }
 
 HRESULT WSTransport::HrOpenABTableOps(ULONG ulType, ULONG ulFlags, ULONG cbEntryID, LPENTRYID lpEntryID, ECABLogon* lpABLogon, WSTableView **lppTableOps)
 {
-	HRESULT hr = hrSuccess;
-	
-	/*if(peid->ulType != MAPI_FOLDER && peid->ulType != MAPI_MESSAGE) {
-		hr = MAPI_E_INVALID_ENTRYID;
-		goto exit;
-	}*/
-
-	hr = WSABTableView::Create(ulType, ulFlags, m_lpCmd, &m_hDataLock, m_ecSessionId, cbEntryID, lpEntryID, lpABLogon, this, lppTableOps);
-
-	return hr;
+	/*if (peid->ulType != MAPI_FOLDER && peid->ulType != MAPI_MESSAGE)
+		return MAPI_E_INVALID_ENTRYID;
+	*/
+	return WSABTableView::Create(ulType, ulFlags, m_lpCmd, &m_hDataLock, m_ecSessionId, cbEntryID, lpEntryID, lpABLogon, this, lppTableOps);
 }
 
 HRESULT WSTransport::HrOpenMailBoxTableOps(ULONG ulFlags, ECMsgStore *lpMsgStore, WSTableView **lppTableView)
@@ -1486,22 +1464,18 @@ exit:
 
 HRESULT WSTransport::HrGetMessageStreamImporter(ULONG ulFlags, ULONG ulSyncId, ULONG cbEntryID, LPENTRYID lpEntryID, ULONG cbFolderEntryID, LPENTRYID lpFolderEntryID, bool bNewMessage, LPSPropValue lpConflictItems, WSMessageStreamImporter **lppStreamImporter)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	WSMessageStreamImporterPtr ptrStreamImporter;
 
-	if ((m_ulServerCapabilities & ZARAFA_CAP_ENHANCED_ICS) == 0) {
-		hr = MAPI_E_NO_SUPPORT;
-		goto exit;
-	}
+	if ((m_ulServerCapabilities & ZARAFA_CAP_ENHANCED_ICS) == 0)
+		return MAPI_E_NO_SUPPORT;
 
 	hr = WSMessageStreamImporter::Create(ulFlags, ulSyncId, cbEntryID, lpEntryID, cbFolderEntryID, lpFolderEntryID, bNewMessage, lpConflictItems, this, &ptrStreamImporter);
 	if (hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	*lppStreamImporter = ptrStreamImporter.release();
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT WSTransport::HrGetIDsFromNames(LPMAPINAMEID *lppPropNames, ULONG cNames, ULONG ulFlags, ULONG **lpServerIDs)

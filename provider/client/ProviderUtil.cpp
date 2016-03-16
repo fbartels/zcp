@@ -355,13 +355,10 @@ exit:
 
 HRESULT RemoveAllProviders(ECMapProvider* lpmapProvider)
 {
-	HRESULT hr = hrSuccess;
 	ECMapProvider::iterator iterProvider;
 	
-	if (lpmapProvider == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (lpmapProvider == NULL)
+		return MAPI_E_INVALID_PARAMETER;
 
 	for (iterProvider = lpmapProvider->begin(); iterProvider != lpmapProvider->end(); iterProvider++)
 	{
@@ -380,9 +377,7 @@ HRESULT RemoveAllProviders(ECMapProvider* lpmapProvider)
 			iterProvider->second.lpABProviderOffline->Release();
 #endif
 	}
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT SetProviderMode(IMAPISupport *lpMAPISup, ECMapProvider* lpmapProvider, LPCSTR lpszProfileName, ULONG ulConnectType)
@@ -646,14 +641,12 @@ exit:
 #ifdef HAVE_OFFLINE_SUPPORT
 HRESULT GetOfflineServerURL(IMAPISupport *lpMAPISup, std::string *lpstrServerURL, tstring *lpstrUniqueId)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	tstring strServerPath;
 	tstring strUniqueId;
 
-	if (lpMAPISup == NULL || lpstrServerURL == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (lpMAPISup == NULL || lpstrServerURL == NULL)
+		return MAPI_E_INVALID_PARAMETER;
 
 	//for windows: file://\\.\pipe\zarafa-ID
 	//for linux: file:///tmp/zarafa-ID
@@ -665,14 +658,13 @@ HRESULT GetOfflineServerURL(IMAPISupport *lpMAPISup, std::string *lpstrServerURL
 
 	hr = GetMAPIUniqueProfileId(lpMAPISup, &strUniqueId);
 	if(hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	*lpstrServerURL = convert_to<std::string>(strServerPath + strUniqueId);
 
 	if (lpstrUniqueId)
 		*lpstrUniqueId = strUniqueId;
-exit:
-	return hr;
+	return hrSuccess;
 }
 #endif
 
@@ -771,28 +763,23 @@ exit:
 
 HRESULT GetTransportToNamedServer(WSTransport *lpTransport, LPCTSTR lpszServerName, ULONG ulFlags, WSTransport **lppTransport)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	utf8string strServerName;
 	utf8string strPseudoUrl = utf8string::from_string("pseudo://");
 	char *lpszServerPath = NULL;
 	bool bIsPeer = false;
 	WSTransport *lpNewTransport = NULL;
 
-	if (lpszServerName == NULL || lpTransport == NULL || lppTransport == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
-
-	if ((ulFlags & ~MAPI_UNICODE) != 0) {
-		hr = MAPI_E_UNKNOWN_FLAGS;
-		goto exit;
-	}
+	if (lpszServerName == NULL || lpTransport == NULL || lppTransport == NULL)
+		return MAPI_E_INVALID_PARAMETER;
+	if ((ulFlags & ~MAPI_UNICODE) != 0)
+		return MAPI_E_UNKNOWN_FLAGS;
 
 	strServerName = convstring(lpszServerName, ulFlags);
 	strPseudoUrl.append(strServerName);
 	hr = lpTransport->HrResolvePseudoUrl(strPseudoUrl.c_str(), &lpszServerPath, &bIsPeer);
 	if (hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	if (bIsPeer) {
 		lpNewTransport = lpTransport;
@@ -800,11 +787,9 @@ HRESULT GetTransportToNamedServer(WSTransport *lpTransport, LPCTSTR lpszServerNa
 	} else {
 		hr = lpTransport->CreateAndLogonAlternate(lpszServerPath, &lpNewTransport);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 	}
 
 	*lppTransport = lpNewTransport;
-
-exit:
-	return hr;
+	return hrSuccess;
 }

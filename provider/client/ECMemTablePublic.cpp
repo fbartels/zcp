@@ -103,16 +103,9 @@ ECMemTablePublic::~ECMemTablePublic(void)
 
 HRESULT ECMemTablePublic::Create(ECMAPIFolderPublic *lpECParentFolder, ECMemTablePublic **lppECMemTable)
 {
-	HRESULT hr = hrSuccess;
-	ECMemTablePublic *lpMemTable = NULL;
-	
 	SizedSPropTagArray(12, sPropsHierarchyColumns) = {12, { PR_ENTRYID, PR_DISPLAY_NAME, PR_CONTENT_COUNT, PR_CONTENT_UNREAD, PR_STORE_ENTRYID, PR_STORE_RECORD_KEY, PR_STORE_SUPPORT_MASK, PR_INSTANCE_KEY, PR_RECORD_KEY, PR_ACCESS, PR_ACCESS_LEVEL, PR_CONTAINER_CLASS} };
-
-	lpMemTable = new ECMemTablePublic(lpECParentFolder, (LPSPropTagArray)&sPropsHierarchyColumns, PR_ROWID);
-
-	hr = lpMemTable->QueryInterface(IID_ECMemTablePublic, (void **)lppECMemTable);
-
-	return hr;
+	ECMemTablePublic *lpMemTable = new ECMemTablePublic(lpECParentFolder, (LPSPropTagArray)&sPropsHierarchyColumns, PR_ROWID);
+	return lpMemTable->QueryInterface(IID_ECMemTablePublic, reinterpret_cast<void **>(lppECMemTable));
 }
 
 HRESULT ECMemTablePublic::QueryInterface(REFIID refiid, void **lppInterface)
@@ -178,12 +171,11 @@ static LONG __stdcall AdviseShortCutCallback(void *lpContext, ULONG cNotif,
 						break;
 
 					lpMemTablePublic->ModifyRow(&lpRows->aRow[0].lpProps[SC_INSTANCE_KEY].Value.bin, &lpRows->aRow[0]);
-
-					if (lpRows){ FreeProws(lpRows); lpRows = NULL; }
-
-				} //while(true)
-				
+					FreeProws(lpRows);
+					lpRows = NULL;
+				}
 				break;
+
 			default:
 				break;
 		}
@@ -318,10 +310,9 @@ HRESULT ECMemTablePublic::Init(ULONG ulFlags)
 				break;
 
 			ModifyRow(&lpRows->aRow[0].lpProps[SC_INSTANCE_KEY].Value.bin, &lpRows->aRow[0]);
-
-			if (lpRows){ FreeProws(lpRows); lpRows = NULL; }
-
-		} //while(true)
+			FreeProws(lpRows);
+			lpRows = NULL;
+		}
 
 		hr = lpShortcutTable->QueryInterface(IID_IMAPITable, (void **)&m_lpShortcutTable);
 		if (hr != hrSuccess)
@@ -612,23 +603,20 @@ exit:
 
 HRESULT ECMemTablePublic::DelRow(SBinary* lpInstanceKey)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	std::string strInstanceKey;
 	SPropValue sKeyProp;
 	ECMAPFolderRelation::iterator	iterRel;
 
-	if (lpInstanceKey == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (lpInstanceKey == NULL)
+		return MAPI_E_INVALID_PARAMETER;
 
 	strInstanceKey.assign((char*)lpInstanceKey->lpb, lpInstanceKey->cb);
 
 	iterRel = m_mapRelation.find(strInstanceKey);
 
 	if (iterRel == m_mapRelation.end() )
-		goto exit;
-
+		return hrSuccess;
 
 	sKeyProp.ulPropTag = PR_ROWID;
 	sKeyProp.Value.ul = iterRel->second.ulRowID;
@@ -641,9 +629,7 @@ HRESULT ECMemTablePublic::DelRow(SBinary* lpInstanceKey)
 	FreeRelation(&iterRel->second);
 
 	m_mapRelation.erase(iterRel);
-	
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 void ECMemTablePublic::FreeRelation(t_sRelation* lpRelation)

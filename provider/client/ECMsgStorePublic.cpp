@@ -122,11 +122,7 @@ HRESULT	ECMsgStorePublic::Create(char *lpszProfname, LPMAPISUP lpSupport, WSTran
 
 HRESULT ECMsgStorePublic::QueryInterface(REFIID refiid, void **lppInterface)
 {
-	HRESULT hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
-
-	hr = ECMsgStore::QueryInterface(refiid, lppInterface);
-
-	return hr;
+	return ECMsgStore::QueryInterface(refiid, lppInterface);
 }
 
 HRESULT ECMsgStorePublic::GetPropHandler(ULONG ulPropTag, void* lpProvider, ULONG ulFlags, LPSPropValue lpsPropValue, void *lpParam, void *lpBase)
@@ -182,18 +178,13 @@ HRESULT ECMsgStorePublic::SetPropHandler(ULONG ulPropTag, void* lpProvider, LPSP
 
 HRESULT ECMsgStorePublic::SetEntryId(ULONG cbEntryId, LPENTRYID lpEntryId)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	
 	hr = ECMsgStore::SetEntryId(cbEntryId, lpEntryId);
 	if(hr != hrSuccess)
-		goto exit;
+		return hr;
 
-	hr = BuildIPMSubTree();
-	if(hr != hrSuccess)
-		goto exit;
-
-exit:
-	return hr;
+	return BuildIPMSubTree();
 }
 
 HRESULT ECMsgStorePublic::OpenEntry(ULONG cbEntryID, LPENTRYID lpEntryID, LPCIID lpInterface, ULONG ulFlags, ULONG *lpulObjType, LPUNKNOWN *lppUnk)
@@ -390,28 +381,27 @@ exit:
 
 HRESULT ECMsgStorePublic::InitEntryIDs()
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 
 	if (m_lpIPMSubTreeID == NULL) {
 		hr = ::GetPublicEntryId(ePE_IPMSubtree, GetStoreGuid(), NULL, &m_cIPMSubTreeID, &m_lpIPMSubTreeID);
 		if(hr != hrSuccess)
-			goto exit;
+			return hr;
 	}
 
 	if (m_lpIPMPublicFoldersID == NULL) {
 		hr = ::GetPublicEntryId(ePE_PublicFolders, GetStoreGuid(), NULL, &m_cIPMPublicFoldersID, &m_lpIPMPublicFoldersID);
 		if(hr != hrSuccess)
-			goto exit;
+			return hr;
 	}
 
 	if (m_lpIPMFavoritesID == NULL) {
 		hr = ::GetPublicEntryId(ePE_Favorites, GetStoreGuid(), NULL, &m_cIPMFavoritesID, &m_lpIPMFavoritesID);
 		if(hr != hrSuccess)
-			goto exit;
+			return hr;
 	}
 
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECMsgStorePublic::GetPublicEntryId(enumPublicEntryID ePublicEntryID, void *lpBase, ULONG *lpcbEntryID, LPENTRYID *lppEntryID)
@@ -467,19 +457,17 @@ exit:
 
 HRESULT ECMsgStorePublic::ComparePublicEntryId(enumPublicEntryID ePublicEntryID, ULONG cbEntryID, LPENTRYID lpEntryID, ULONG *lpulResult)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	ULONG ulResult = 0;
 	ULONG cbPublicID = 0;
 	LPENTRYID lpPublicID = NULL;
 
 	hr = InitEntryIDs();
 	if(hr != hrSuccess)
-		goto exit;
+		return hr;
 
-	if (lpEntryID == NULL || lpulResult == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (lpEntryID == NULL || lpulResult == NULL)
+		return MAPI_E_INVALID_PARAMETER;
 
 	switch(ePublicEntryID)
 	{
@@ -496,17 +484,15 @@ HRESULT ECMsgStorePublic::ComparePublicEntryId(enumPublicEntryID ePublicEntryID,
 			lpPublicID = m_lpIPMFavoritesID;
 			break;
 		default:
-			hr = MAPI_E_INVALID_PARAMETER;
-			goto exit;
+			return MAPI_E_INVALID_PARAMETER;
 	}
 
 	hr = GetMsgStore()->CompareEntryIDs(cbEntryID, lpEntryID, cbPublicID, lpPublicID, 0, &ulResult);
 	if(hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	*lpulResult = ulResult;
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECMsgStorePublic::BuildIPMSubTree()

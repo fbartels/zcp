@@ -120,24 +120,22 @@ HRESULT SessionGroupData::GetOrCreateNotifyMaster(ECNotifyMaster **lppMaster)
 
 HRESULT SessionGroupData::GetTransport(WSTransport **lppTransport)
 {
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	WSTransport *lpTransport = NULL;
 
 	hr = WSTransport::Create(MDB_NO_DIALOG, &lpTransport);
 	if (hr != hrSuccess) 
-		goto exit;
+		return hr;
 
 	hr = lpTransport->HrLogon(m_sProfileProps);
 	if (hr != hrSuccess) 
-		goto exit;
+		return hr;
 
 	// Since we are doing request that take max EC_SESSION_KEEPALIVE_TIME, set timeout to that plus 10 seconds
 	lpTransport->HrSetRecvTimeout(EC_SESSION_KEEPALIVE_TIME + 10);
 
 	*lppTransport = lpTransport;
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 ECSESSIONGROUPID SessionGroupData::GetSessionGroupId()

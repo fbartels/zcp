@@ -154,21 +154,16 @@ public:
 
 	ECRESULT RemoveCacheItem(const key_type &key) 
 	{
-		ECRESULT er = erSuccess;
 		typename _MapType::iterator iter;
 
 		iter = m_map.find(key);
-		if(iter == m_map.end()) {
-			er = ZARAFA_E_NOT_FOUND;
-			goto exit;
- 		}
+		if (iter == m_map.end())
+			return ZARAFA_E_NOT_FOUND;
 
 		m_ulSize -= GetCacheAdditionalSize(iter->second);
 		m_ulSize -= GetCacheAdditionalSize(key);
 		m_map.erase(iter);
-
-	exit:
-		return er;
+		return erSuccess;
 	}
 	
 	ECRESULT GetCacheItem(const key_type &key, mapped_type **lppValue)

@@ -315,13 +315,9 @@ HRESULT Http::HrParseHeaders()
  */
 HRESULT Http::HrGetUser(std::wstring *strUser)
 {
-	HRESULT hr = hrSuccess;
-	if (!m_strUser.empty())
-		hr = X2W(m_strUser, strUser);
-	else
-		hr = MAPI_E_NOT_FOUND;
-
-	return hr;
+	if (m_strUser.empty())
+		return MAPI_E_NOT_FOUND;
+	return X2W(m_strUser, strUser);
 }
 
 /**
@@ -332,14 +328,10 @@ HRESULT Http::HrGetUser(std::wstring *strUser)
  */
 HRESULT Http::HrGetMethod(std::string *strMethod)
 {
-	HRESULT hr = hrSuccess;
-
-	if (!m_strMethod.empty())
-		strMethod->assign(m_strMethod);
-	else
-		hr = MAPI_E_NOT_FOUND;
-
-	return hr;
+	if (m_strMethod.empty())
+		return MAPI_E_NOT_FOUND;
+	strMethod->assign(m_strMethod);
+	return hrSuccess;
 }
 
 /**
@@ -350,13 +342,9 @@ HRESULT Http::HrGetMethod(std::string *strMethod)
  */
 HRESULT Http::HrGetPass(std::wstring *strPass)
 {
-	HRESULT hr = hrSuccess;
-	if (!m_strPass.empty())
-		hr = X2W(m_strPass, strPass);
-	else
-		hr = MAPI_E_NOT_FOUND;
-
-	return hr;
+	if (m_strPass.empty())
+		return MAPI_E_NOT_FOUND;
+	return X2W(m_strPass, strPass);
 }
 
 /** 
@@ -381,14 +369,10 @@ HRESULT Http::HrGetRequestUrl(std::string *strURL)
  */
 HRESULT Http::HrGetUrl(std::string *strUrl)
 {
-	HRESULT hr = hrSuccess;
-
-	if (!m_strPath.empty())
-		strUrl->assign(urlDecode(m_strPath));
-	else
-		hr = MAPI_E_NOT_FOUND;
-
-	return hr;
+	if (m_strPath.empty())
+		return MAPI_E_NOT_FOUND;
+	strUrl->assign(urlDecode(m_strPath));
+	return hrSuccess;
 }
 
 /**
@@ -399,13 +383,10 @@ HRESULT Http::HrGetUrl(std::string *strUrl)
  */
 HRESULT Http::HrGetBody(std::string *strBody)
 {
-	HRESULT hr = hrSuccess;
-	if (!m_strReqBody.empty())
-		strBody->assign(m_strReqBody);
-	else
-		hr = MAPI_E_NOT_FOUND;
-
-	return hr;
+	if (m_strReqBody.empty())
+		return MAPI_E_NOT_FOUND;
+	strBody->assign(m_strReqBody);
+	return hrSuccess;
 }
 
 /**
@@ -504,14 +485,10 @@ bool Http::CheckIfMatch(LPMAPIPROP lpProp)
  */
 HRESULT Http::HrGetCharSet(std::string *strCharset)
 {
-	HRESULT hr = hrSuccess;
-
-	if(!m_strCharSet.empty())
-		strCharset->assign(m_strCharSet);
-	else
-		hr = MAPI_E_NOT_FOUND;
-
-	return hr;
+	if (m_strCharSet.empty())
+		return MAPI_E_NOT_FOUND;
+	strCharset->assign(m_strCharSet);
+	return hrSuccess;
 }
 
 /**
@@ -768,17 +745,12 @@ HRESULT Http::HrToHTTPCode(HRESULT hr)
  */
 HRESULT Http::HrResponseHeader(unsigned int ulCode, std::string strResponse)
 {
-	HRESULT hr = hrSuccess;
-
 	m_ulRetCode = ulCode;
-
 	// do not set headers if once set
-	if (m_strRespHeader.empty()) 
-		m_strRespHeader = "HTTP/1.1 " + stringify(ulCode) + " " + strResponse;
-	else
-		hr = MAPI_E_CALL_FAILED;
-
-	return hr;
+	if (!m_strRespHeader.empty())
+		return MAPI_E_CALL_FAILED;
+	m_strRespHeader = "HTTP/1.1 " + stringify(ulCode) + " " + strResponse;
+	return hrSuccess;
 }
 
 /**
@@ -789,13 +761,8 @@ HRESULT Http::HrResponseHeader(unsigned int ulCode, std::string strResponse)
  */
 HRESULT Http::HrResponseHeader(std::string strHeader, std::string strValue)
 {
-	HRESULT hr = hrSuccess;
-	std::string header;
-
-	header = strHeader + ": " + strValue;
-	m_lstHeaders.push_back(header);
-
-	return hr;
+	m_lstHeaders.push_back(strHeader + ": " + strValue);
+	return hrSuccess;
 }
 
 /**
@@ -805,12 +772,9 @@ HRESULT Http::HrResponseHeader(std::string strHeader, std::string strValue)
  */
 HRESULT Http::HrResponseBody(std::string strResponse)
 {
-	HRESULT hr = hrSuccess;
-
 	m_strRespBody += strResponse;
 	// data send in HrFinalize()
-
-	return hr;
+	return hrSuccess;
 }
 
 /**
@@ -904,24 +868,16 @@ HRESULT Http::HrGetHeaderValue(const std::string &strHeader, std::string *strVal
 
 HRESULT Http::HrGetUserAgent(std::string *strUserAgent)
 {
-	HRESULT hr = hrSuccess;
-
-	if (!m_strUserAgent.empty())
-		strUserAgent -> assign(m_strUserAgent);
-	else
-		hr = MAPI_E_NOT_FOUND;
-
-	return hr;
+	if (m_strUserAgent.empty())
+		return MAPI_E_NOT_FOUND;
+	strUserAgent -> assign(m_strUserAgent);
+	return hrSuccess;
 }
 
 HRESULT Http::HrGetUserAgentVersion(std::string *strUserAgentVersion)
 {
-	HRESULT hr = hrSuccess;
-
-	if (!m_strUserAgentVersion.empty())
-		strUserAgentVersion -> assign(m_strUserAgentVersion);
-	else
-		hr = MAPI_E_NOT_FOUND;
-
-	return hr;
+	if (m_strUserAgentVersion.empty())
+		return MAPI_E_NOT_FOUND;
+	strUserAgentVersion -> assign(m_strUserAgentVersion);
+	return hrSuccess;
 }

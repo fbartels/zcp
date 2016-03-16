@@ -111,126 +111,93 @@ HRESULT	ECABContainer::QueryInterface(REFIID refiid, void **lppInterface)
 
 HRESULT	ECABContainer::Create(void* lpProvider, ULONG ulObjType, BOOL fModify, ECABContainer **lppABContainer)
 {
-	HRESULT			hr = hrSuccess;
-	ECABContainer*	lpABContainer = NULL;
-
-	lpABContainer = new ECABContainer(lpProvider, ulObjType, fModify, "IABContainer");
-
-	hr = lpABContainer->QueryInterface(IID_ECABContainer, (void **)lppABContainer);
-
-	return hr;
+	ECABContainer *lpABContainer = new ECABContainer(lpProvider, ulObjType, fModify, "IABContainer");
+	return lpABContainer->QueryInterface(IID_ECABContainer, reinterpret_cast<void **>(lppABContainer));
 }
 
 HRESULT	ECABContainer::OpenProperty(ULONG ulPropTag, LPCIID lpiid, ULONG ulInterfaceOptions, ULONG ulFlags, LPUNKNOWN FAR * lppUnk)
 {
 	HRESULT			hr = hrSuccess;
 
-	if (lpiid == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (lpiid == NULL)
+		return MAPI_E_INVALID_PARAMETER;
 
 	switch (ulPropTag) {
 #if defined(_WIN32) && !defined(WINCE)
 	case PR_DETAILS_TABLE:
-		if (*lpiid != IID_IMAPITable) {
-			hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
-			goto exit;
-		}
+		if (*lpiid != IID_IMAPITable)
+			return MAPI_E_INTERFACE_NOT_SUPPORTED;
 
 		hr = ECDisplayTable::CreateDisplayTable(arraySize(rgdtIDistListPage), rgdtIDistListPage, (LPMAPITABLE *) lppUnk);
 		if (hr != hrSuccess)
-			goto exit;
-
+			return hr;
 		break;
 	case PR_EMS_AB_MEMBER_O:
-		if (*lpiid != IID_IMAPITable) {
-			hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
-			goto exit;
-		}
+		if (*lpiid != IID_IMAPITable)
+			return MAPI_E_INTERFACE_NOT_SUPPORTED;
 
 		hr = GetContentsTable(ulInterfaceOptions, (LPMAPITABLE*)lppUnk);
 		if (hr != hrSuccess)
-			goto exit;
-
+			return hr;
 		break;
 	case PR_EMS_AB_PROXY_ADDRESSES_O:
-		if (*lpiid != IID_IMAPITable) {
-			hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
-			goto exit;
-		}
+		if (*lpiid != IID_IMAPITable)
+			return MAPI_E_INTERFACE_NOT_SUPPORTED;
 
 		hr = ECDisplayTable::CreateTableFromProperty(this, lpiid, ulInterfaceOptions, PR_SMTP_ADDRESS, PR_EMS_AB_PROXY_ADDRESSES, lppUnk);
 		if (hr != hrSuccess)
-			goto exit;
-
+			return hr;
 		break;
 	case PR_EMS_AB_IS_MEMBER_OF_DL_O:
-		if (*lpiid != IID_IMAPITable) {
-			hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
-			goto exit;
-		}
+		if (*lpiid != IID_IMAPITable)
+			return MAPI_E_INTERFACE_NOT_SUPPORTED;
 
 		hr = ECDisplayTable::CreateTableFromResolved(this, lpiid, ulInterfaceOptions, PR_EMS_AB_IS_MEMBER_OF_DL_T, lppUnk);
 		if (hr != hrSuccess)
-			goto exit;
-
+			return hr;
 		break;
 	case PR_EMS_AB_OWNER_O:
-		if (*lpiid != IID_IMAPITable) {
-			hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
-			goto exit;
-		}
+		if (*lpiid != IID_IMAPITable)
+			return MAPI_E_INTERFACE_NOT_SUPPORTED;
 
 		hr = ECDisplayTable::CreateTableFromResolved(this, lpiid, ulInterfaceOptions, PR_EMS_AB_OWNER, lppUnk);
 		if (hr != hrSuccess)
-			goto exit;
-
+			return hr;
 		break;
 #endif
 	case PR_CONTAINER_CONTENTS:
 		if(*lpiid == IID_IMAPITable)
 			hr = GetContentsTable(ulInterfaceOptions, (LPMAPITABLE*)lppUnk);
-        else
-            hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
+		else
+			hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 		break;
 	case PR_CONTAINER_HIERARCHY:
 		if (*lpiid == IID_IMAPITable)
 			hr = GetHierarchyTable(ulInterfaceOptions, (LPMAPITABLE*)lppUnk);
-        else
-            hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
+		else
+			hr = MAPI_E_INTERFACE_NOT_SUPPORTED;
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 		break;
 	default:
 		hr = ECABProp::OpenProperty(ulPropTag, lpiid, ulInterfaceOptions, ulFlags, lppUnk);
 		if (hr != hrSuccess)
-			goto exit;
+			return hr;
 		break;
 	}
-
-exit:
 	return hr;
 }
 
 HRESULT ECABContainer::CopyTo(ULONG ciidExclude, LPCIID rgiidExclude, LPSPropTagArray lpExcludeProps, ULONG ulUIParam, LPMAPIPROGRESS lpProgress, LPCIID lpInterface, LPVOID lpDestObj, ULONG ulFlags, LPSPropProblemArray FAR * lppProblems)
 {
-	HRESULT hr = hrSuccess;
-	
-	hr = Util::DoCopyTo(&IID_IABContainer, &this->m_xABContainer, ciidExclude, rgiidExclude, lpExcludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
-
-	return hr;
+	return Util::DoCopyTo(&IID_IABContainer, &this->m_xABContainer, ciidExclude, rgiidExclude, lpExcludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
 }
 
 HRESULT ECABContainer::CopyProps(LPSPropTagArray lpIncludeProps, ULONG ulUIParam, LPMAPIPROGRESS lpProgress, LPCIID lpInterface, LPVOID lpDestObj, ULONG ulFlags, LPSPropProblemArray FAR * lppProblems)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = Util::DoCopyProps(&IID_IABContainer, &this->m_xABContainer, lpIncludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
-
-	return hr;
+	return Util::DoCopyProps(&IID_IABContainer, &this->m_xABContainer, lpIncludeProps, ulUIParam, lpProgress, lpInterface, lpDestObj, ulFlags, lppProblems);
 }
 
 HRESULT	ECABContainer::DefaultABContainerGetProp(ULONG ulPropTag, void* lpProvider, ULONG ulFlags, LPSPropValue lpsPropValue, void *lpParam, void *lpBase)
@@ -339,20 +306,18 @@ HRESULT ECABContainer::TableRowGetProp(void* lpProvider, struct propVal *lpsProp
 		case PR_TRANSMITABLE_DISPLAY_NAME_W:
 			{
 				LPWSTR lpszW = NULL;
-				if(strcmp(lpsPropValSrc->Value.lpszA, "Global Address Book" ) == 0) {
+				if (strcmp(lpsPropValSrc->Value.lpszA, "Global Address Book" ) == 0)
 					lpszW = _W("Global Address Book");
-				} else if(strcmp(lpsPropValSrc->Value.lpszA, "Global Address Lists" ) == 0) {
+				else if (strcmp(lpsPropValSrc->Value.lpszA, "Global Address Lists" ) == 0)
 					lpszW = _W("Global Address Lists");
-				} else if (strcmp(lpsPropValSrc->Value.lpszA, "All Address Lists" ) == 0) {
+				else if (strcmp(lpsPropValSrc->Value.lpszA, "All Address Lists" ) == 0)
 					lpszW = _W("All Address Lists");
-				} else {
-					hr = MAPI_E_NOT_FOUND;
-					goto exit;
-				}
+				else
+					return MAPI_E_NOT_FOUND;
 				size = (wcslen(lpszW) + 1) * sizeof(WCHAR);
 				hr = MAPIAllocateMore(size, lpBase, (void **)&lpsPropValDst->Value.lpszW);
 				if (hr != hrSuccess)
-					goto exit;
+					return hr;
 
 				memcpy(lpsPropValDst->Value.lpszW, lpszW, size);
 				lpsPropValDst->ulPropTag = lpsPropValSrc->ulPropTag;
@@ -364,21 +329,19 @@ HRESULT ECABContainer::TableRowGetProp(void* lpProvider, struct propVal *lpsProp
 		case PR_TRANSMITABLE_DISPLAY_NAME_A:
 			{
 				LPSTR lpszA = NULL;
-				if(strcmp(lpsPropValSrc->Value.lpszA, "Global Address Book" ) == 0) {
+				if (strcmp(lpsPropValSrc->Value.lpszA, "Global Address Book" ) == 0)
 					lpszA = _A("Global Address Book");
-				} else if(strcmp(lpsPropValSrc->Value.lpszA, "Global Address Lists" ) == 0) {
+				else if (strcmp(lpsPropValSrc->Value.lpszA, "Global Address Lists" ) == 0)
 					lpszA = _A("Global Address Lists");
-				} else if (strcmp(lpsPropValSrc->Value.lpszA, "All Address Lists" ) == 0) {
+				else if (strcmp(lpsPropValSrc->Value.lpszA, "All Address Lists" ) == 0)
 					lpszA = _A("All Address Lists");
-				} else {
-					hr = MAPI_E_NOT_FOUND;
-					goto exit;
-				}
+				else
+					return MAPI_E_NOT_FOUND;
 				
 				size = (strlen(lpszA) + 1) * sizeof(CHAR);
 				hr = MAPIAllocateMore(size, lpBase, (void **)&lpsPropValDst->Value.lpszA);
 				if (hr != hrSuccess)
-					goto exit;
+					return hr;
 
 				memcpy(lpsPropValDst->Value.lpszA, lpszA, size);
 				lpsPropValDst->ulPropTag = lpsPropValSrc->ulPropTag;
@@ -388,8 +351,6 @@ HRESULT ECABContainer::TableRowGetProp(void* lpProvider, struct propVal *lpsProp
 			hr = MAPI_E_NOT_FOUND;
 			break;
 	}
-
-exit:
 	return hr;
 }
 /////////////////////////////////////////////////
@@ -476,29 +437,17 @@ exit:
 
 HRESULT ECABContainer::OpenEntry(ULONG cbEntryID, LPENTRYID lpEntryID, LPCIID lpInterface, ULONG ulFlags, ULONG *lpulObjType, LPUNKNOWN *lppUnk)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = GetABStore()->OpenEntry(cbEntryID, lpEntryID, lpInterface, ulFlags, lpulObjType, lppUnk);
-
-	return hr;
+	return GetABStore()->OpenEntry(cbEntryID, lpEntryID, lpInterface, ulFlags, lpulObjType, lppUnk);
 }
 
 HRESULT ECABContainer::SetSearchCriteria(LPSRestriction lpRestriction, LPENTRYLIST lpContainerList, ULONG ulSearchFlags)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = MAPI_E_NO_SUPPORT;
-
-	return hr;
+	return MAPI_E_NO_SUPPORT;
 }
 
 HRESULT ECABContainer::GetSearchCriteria(ULONG ulFlags, LPSRestriction *lppRestriction, LPENTRYLIST *lppContainerList, ULONG *lpulSearchState)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = MAPI_E_NO_SUPPORT;
-
-	return hr;
+	return MAPI_E_NO_SUPPORT;
 }
 
 /////////////////////////////////////////////////
@@ -507,34 +456,21 @@ HRESULT ECABContainer::GetSearchCriteria(ULONG ulFlags, LPSRestriction *lppRestr
 
 HRESULT ECABContainer::CreateEntry(ULONG cbEntryID, LPENTRYID lpEntryID, ULONG ulCreateFlags, LPMAPIPROP* lppMAPIPropEntry)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = MAPI_E_NO_SUPPORT;
-
-	return hr;
+	return MAPI_E_NO_SUPPORT;
 }
 
 HRESULT ECABContainer::CopyEntries(LPENTRYLIST lpEntries, ULONG ulUIParam, LPMAPIPROGRESS lpProgress, ULONG ulFlags)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = MAPI_E_NO_SUPPORT;
-
-	return hr;
+	return MAPI_E_NO_SUPPORT;
 }
 
 HRESULT ECABContainer::DeleteEntries(LPENTRYLIST lpEntries, ULONG ulFlags)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = MAPI_E_NO_SUPPORT;
-
-	return hr;
+	return MAPI_E_NO_SUPPORT;
 }
 
 HRESULT ECABContainer::ResolveNames(LPSPropTagArray lpPropTagArray, ULONG ulFlags, LPADRLIST lpAdrList, LPFlagList lpFlagList)
 {
-	HRESULT hr = hrSuccess;
 	SizedSPropTagArray(11, sptaDefault) = {11, {PR_ADDRTYPE_A, PR_DISPLAY_NAME_A, PR_DISPLAY_TYPE, PR_EMAIL_ADDRESS_A, PR_SMTP_ADDRESS_A, PR_ENTRYID,
 												PR_INSTANCE_KEY, PR_OBJECT_TYPE, PR_RECORD_KEY, PR_SEARCH_KEY, PR_EC_SENDAS_USER_ENTRYIDS}};
 
@@ -547,10 +483,7 @@ HRESULT ECABContainer::ResolveNames(LPSPropTagArray lpPropTagArray, ULONG ulFlag
 		else
 			lpPropTagArray = (LPSPropTagArray)&sptaDefault;
 	}
-
-	hr = ((ECABLogon*)lpProvider)->m_lpTransport->HrResolveNames(lpPropTagArray, ulFlags, lpAdrList, lpFlagList);
-
-	return hr;
+	return ((ECABLogon*)lpProvider)->m_lpTransport->HrResolveNames(lpPropTagArray, ulFlags, lpAdrList, lpFlagList);
 }
 
 //////////////////////////////////

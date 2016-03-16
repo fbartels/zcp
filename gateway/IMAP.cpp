@@ -3147,13 +3147,8 @@ exit:
 
 HRESULT IMAP::HrCmdSetQuota(const string &strTag, const string &strQuotaRoot, const string &strQuotaList)
 {
-	HRESULT hr = hrSuccess;
-
-	hr = HrResponse(RESP_TAGGED_NO, strTag, "SetQuota Permission denied");
-
-	return hr;
+	return HrResponse(RESP_TAGGED_NO, strTag, "SetQuota Permission denied");
 }
-
 
 /** 
  * Returns the idle state.
@@ -4020,8 +4015,6 @@ exit:
  * @return hrSuccess
  */
 HRESULT IMAP::HrGetDataItems(string strMsgDataItemNames, vector<string> &lstDataItems) {
-	HRESULT hr = hrSuccess;
-
 	// translate macro's
 	ToUpper(strMsgDataItemNames);
 	if (strMsgDataItemNames.compare("ALL") == 0) {
@@ -4037,10 +4030,7 @@ HRESULT IMAP::HrGetDataItems(string strMsgDataItemNames, vector<string> &lstData
 		strMsgDataItemNames.erase(0,1);
 		strMsgDataItemNames.erase(strMsgDataItemNames.size()-1, 1);
 	}
-
-	hr = HrSplitInput(strMsgDataItemNames, lstDataItems);
-
-	return hr;
+	return HrSplitInput(strMsgDataItemNames, lstDataItems);
 }
 
 /** 

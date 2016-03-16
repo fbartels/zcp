@@ -351,7 +351,7 @@ exit:
 
 HRESULT ECNotifyClient::UnRegisterAdvise(ULONG ulConnection)
 {
-	HRESULT hr	= hrSuccess;
+	HRESULT hr;
 	ECMAPADVISE::iterator iIterAdvise;
 	ECMAPCHANGEADVISE::iterator iIterChangeAdvise;
 
@@ -360,7 +360,7 @@ HRESULT ECNotifyClient::UnRegisterAdvise(ULONG ulConnection)
 	 */
 	hr = m_lpNotifyMaster->DropConnection(ulConnection);
 	if (hr != hrSuccess)
-		goto exit;
+		return hr;
 
 	pthread_mutex_lock(&m_hMutex);
 
@@ -390,8 +390,6 @@ HRESULT ECNotifyClient::UnRegisterAdvise(ULONG ulConnection)
 		
 	// Release ownership of the mutex object.
 	pthread_mutex_unlock(&m_hMutex);
-exit:
-
 	return hr;
 }
 
@@ -793,12 +791,5 @@ exit:
 
 HRESULT ECNotifyClient::UpdateSyncStates(const ECLISTSYNCID &lstSyncId, ECLISTSYNCSTATE *lplstSyncState)
 {
-	HRESULT							hr = hrSuccess;
-
-	hr = m_lpTransport->HrGetSyncStates(lstSyncId, lplstSyncState);
-	if (hr != hrSuccess)
-		goto exit;
-
-exit:
-	return hr;
+	return m_lpTransport->HrGetSyncStates(lstSyncId, lplstSyncState);
 }

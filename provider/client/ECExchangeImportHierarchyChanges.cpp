@@ -81,18 +81,12 @@ ECExchangeImportHierarchyChanges::~ECExchangeImportHierarchyChanges(){
 }
 
 HRESULT ECExchangeImportHierarchyChanges::Create(ECMAPIFolder *lpFolder, LPEXCHANGEIMPORTHIERARCHYCHANGES* lppExchangeImportHierarchyChanges){
-	HRESULT hr = hrSuccess;
-	ECExchangeImportHierarchyChanges *lpEIHC = NULL;
 
 	if(!lpFolder)
 		return MAPI_E_INVALID_PARAMETER;
 
-	lpEIHC = new ECExchangeImportHierarchyChanges(lpFolder);
-
-	hr = lpEIHC->QueryInterface(IID_IExchangeImportHierarchyChanges, (void **)lppExchangeImportHierarchyChanges);
-
-	return hr;
-
+	ECExchangeImportHierarchyChanges *lpEIHC = new ECExchangeImportHierarchyChanges(lpFolder);
+	return lpEIHC->QueryInterface(IID_IExchangeImportHierarchyChanges, reinterpret_cast<void **>(lppExchangeImportHierarchyChanges));
 }
 
 HRESULT	ECExchangeImportHierarchyChanges::QueryInterface(REFIID refiid, void **lppInterface)
@@ -217,38 +211,32 @@ exit:
 
 //write into the stream 4 bytes syncid and 4 bytes changeid
 HRESULT ECExchangeImportHierarchyChanges::UpdateState(LPSTREAM lpStream){
-	HRESULT hr = hrSuccess;
+	HRESULT hr;
 	LARGE_INTEGER zero = {{0,0}};
 	ULONG ulLen = 0;
 	
 	if(lpStream == NULL) {
-		if(m_lpStream == NULL){
-			goto exit;
-		}
+		if (m_lpStream == NULL)
+			return hrSuccess;
 		lpStream = m_lpStream;
 	}
 
 	if(m_ulSyncId == 0)
-		goto exit; // config() called with NULL stream, so we'll ignore the UpdateState()
+		return hrSuccess; // config() called with NULL stream, so we'll ignore the UpdateState()
 	
 	hr = lpStream->Seek(zero, STREAM_SEEK_SET, NULL);
 	if(hr != hrSuccess)
-		goto exit;
+		return hr;
 		
 	hr = lpStream->Write(&m_ulSyncId, 4, &ulLen);
 	if(hr != hrSuccess)
-		goto exit;
+		return hr;
 		
 	if(m_ulSyncId == 0){
 		m_ulChangeId = 0;
 	}
 
-	hr = lpStream->Write(&m_ulChangeId, 4, &ulLen);
-	if(hr != hrSuccess)
-		goto exit;
-	
-exit:
-	return hr;
+	return lpStream->Write(&m_ulChangeId, 4, &ulLen);
 }
 
 

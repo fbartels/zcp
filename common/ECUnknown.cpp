@@ -129,7 +129,6 @@ HRESULT ECUnknown::AddChild(ECUnknown *lpChild) {
 }
 
 HRESULT ECUnknown::RemoveChild(ECUnknown *lpChild) {
-	HRESULT hr = hrSuccess;
 	std::list<ECUnknown *>::iterator iterChild;
 	bool bLastRef;
 	
@@ -143,9 +142,8 @@ HRESULT ECUnknown::RemoveChild(ECUnknown *lpChild) {
 	}
 
 	if(iterChild == lstChildren.end()) {
-		hr = MAPI_E_NOT_FOUND;
 		pthread_mutex_unlock(&mutex);
-		goto exit;
+		return MAPI_E_NOT_FOUND;
 	}
 
 	lstChildren.erase(iterChild);
@@ -158,8 +156,7 @@ HRESULT ECUnknown::RemoveChild(ECUnknown *lpChild) {
 		this->Suicide();
 
 	// The object may be deleted now
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECUnknown::SetParent(ECUnknown *lpParent) {
@@ -234,8 +231,7 @@ HRESULT ECUnknown::Suicide() {
 HRESULT __stdcall ECUnknown::xUnknown::QueryInterface(REFIID refiid, void ** lppInterface)
 {
 	METHOD_PROLOGUE_(ECUnknown , Unknown);
-	HRESULT hr = pThis->QueryInterface(refiid, lppInterface);
-	return hr;
+	return pThis->QueryInterface(refiid, lppInterface);
 }
 
 ULONG __stdcall ECUnknown::xUnknown::AddRef()

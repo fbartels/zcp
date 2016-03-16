@@ -117,24 +117,20 @@ ECRESULT ECStreamSerializer::Write(const void *ptr, size_t size, size_t nmemb)
 
 ECRESULT ECStreamSerializer::Read(void *ptr, size_t size, size_t nmemb)
 {
-	ECRESULT er = erSuccess;
+	ECRESULT er;
 	ULONG cbRead = 0;
 
-	if (ptr == NULL) {
-		er = ZARAFA_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (ptr == NULL)
+		return ZARAFA_E_INVALID_PARAMETER;
 
 	er = m_lpBuffer->Read(ptr, size * nmemb, &cbRead);
 	if (er != erSuccess)
-		goto exit;
+		return er;
 
 	m_ulRead += cbRead;
 
-	if (cbRead != size * nmemb) {
-		er = ZARAFA_E_CALL_FAILED;
-		goto exit;
-	}
+	if (cbRead != size * nmemb)
+		return ZARAFA_E_CALL_FAILED;
 
 	switch (size) {
 	case 1: break;
@@ -154,8 +150,6 @@ ECRESULT ECStreamSerializer::Read(void *ptr, size_t size, size_t nmemb)
 		er = ZARAFA_E_INVALID_PARAMETER;
 		break;
 	}
-
-exit:
 	return er;
 }
 
@@ -169,33 +163,28 @@ ECRESULT ECStreamSerializer::Skip(size_t size, size_t nmemb)
 	while(total < (nmemb*size)) {
 		er = m_lpBuffer->Read(buffer, std::min(sizeof(buffer), (size * nmemb) - total), &read);
 		if(er != erSuccess)
-			goto exit;
-		
+			return er;
 		total += read;
 	}
-	
-exit:
 	return er;
 }
 
 ECRESULT ECStreamSerializer::Flush()
 {
-	ECRESULT er = erSuccess;
+	ECRESULT er;
 	ULONG cbRead = 0;
 	char buf[16384];
 	
 	while(true) {
 		er = m_lpBuffer->Read(buf, sizeof(buf), &cbRead);
 		if (er != erSuccess)
-			goto exit;
+			return er;
 
 		m_ulRead += cbRead;
 
 		if(cbRead < sizeof(buf))
 			break;
 	}
-
-exit:
 	return er;
 }
 
@@ -281,29 +270,22 @@ ECRESULT ECFifoSerializer::Write(const void *ptr, size_t size, size_t nmemb)
 
 ECRESULT ECFifoSerializer::Read(void *ptr, size_t size, size_t nmemb)
 {
-	ECRESULT er = erSuccess;
+	ECRESULT er;
 	ECFifoBuffer::size_type cbRead = 0;
 
-	if (m_mode != deserialize) {
-		er = ZARAFA_E_NO_SUPPORT;
-		goto exit;
-	}
-
-	if (ptr == NULL) {
-		er = ZARAFA_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (m_mode != deserialize)
+		return ZARAFA_E_NO_SUPPORT;
+	if (ptr == NULL)
+		return ZARAFA_E_INVALID_PARAMETER;
 
 	er = m_lpBuffer->Read(ptr, size * nmemb, STR_DEF_TIMEOUT, &cbRead);
 	if (er != erSuccess)
-		goto exit;
+		return er;
 
 	m_ulRead += cbRead;
 
-	if (cbRead !=  size * nmemb) {
-		er = ZARAFA_E_CALL_FAILED;
-		goto exit;
-	}
+	if (cbRead != size * nmemb)
+		return ZARAFA_E_CALL_FAILED;
 	
 
 	switch (size) {
@@ -324,8 +306,6 @@ ECRESULT ECFifoSerializer::Read(void *ptr, size_t size, size_t nmemb)
 		er = ZARAFA_E_INVALID_PARAMETER;
 		break;
 	}
-
-exit:
 	return er;
 }
 
@@ -351,22 +331,20 @@ exit:
 
 ECRESULT ECFifoSerializer::Flush()
 {
-	ECRESULT er = erSuccess;
+	ECRESULT er;
 	size_t cbRead = 0;
 	char buf[16384];
 	
 	while(true) {
 		er = m_lpBuffer->Read(buf, sizeof(buf), STR_DEF_TIMEOUT, &cbRead);
 		if (er != erSuccess)
-			goto exit;
+			return er;
 
 		m_ulRead += cbRead;
 
 		if(cbRead < sizeof(buf))
 			break;
 	}
-
-exit:
 	return er;
 }
 

@@ -115,9 +115,7 @@ HRESULT ECABProviderSwitch::QueryInterface(REFIID refiid, void **lppInterface)
 
 HRESULT ECABProviderSwitch::Shutdown(ULONG * lpulFlags)
 {
-	HRESULT hr = hrSuccess;
-
-	return hr;
+	return hrSuccess;
 }
 
 HRESULT ECABProviderSwitch::Logon(LPMAPISUP lpMAPISup, ULONG ulUIParam, LPTSTR lpszProfileName, ULONG ulFlags, ULONG * lpulcbSecurity, LPBYTE * lppbSecurity, LPMAPIERROR * lppMAPIError, LPABLOGON * lppABLogon)

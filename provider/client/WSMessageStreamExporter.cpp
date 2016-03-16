@@ -132,36 +132,29 @@ bool WSMessageStreamExporter::IsDone() const
  */
 HRESULT WSMessageStreamExporter::GetSerializedMessage(ULONG ulIndex, WSSerializedMessage **lppSerializedMessage)
 {
-	HRESULT hr = hrSuccess;
 	StreamInfoMap::const_iterator iStreamInfo;
 	WSSerializedMessagePtr ptrMessage;
 
-	if (ulIndex != m_ulExpectedIndex || lppSerializedMessage == NULL) {
-		hr = MAPI_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (ulIndex != m_ulExpectedIndex || lppSerializedMessage == NULL)
+		return MAPI_E_INVALID_PARAMETER;
 
 	iStreamInfo = m_mapStreamInfo.find(ulIndex);
 	if (iStreamInfo == m_mapStreamInfo.end()) {
 		++m_ulExpectedIndex;
-		hr = SYNC_E_OBJECT_DELETED;
-		goto exit;
+		return SYNC_E_OBJECT_DELETED;
 	}
 
 	try {
 		ptrMessage.reset(new WSSerializedMessage(m_ptrTransport->m_lpCmd->soap, iStreamInfo->second->id, iStreamInfo->second->cbPropVals, iStreamInfo->second->ptrPropVals.get()));
 	} catch(const std::bad_alloc &) {
-		hr = MAPI_E_NOT_ENOUGH_MEMORY;
-		goto exit;
+		return MAPI_E_NOT_ENOUGH_MEMORY;
 	}
 
 	AddChild(ptrMessage);
 
 	++m_ulExpectedIndex;
 	*lppSerializedMessage = ptrMessage.release();	
-
-exit:
-	return hr;
+	return hrSuccess;
 }
 
 WSMessageStreamExporter::WSMessageStreamExporter()

@@ -1206,10 +1206,10 @@ HRESULT VConverter::HrAddRecipients(icalcomponent *lpicEvent, icalitem *lpIcalIt
 	std::string strType;
 	icalproperty *lpicProp = NULL;
 	icalparameter *lpicParam = NULL;
-	icalrecip icrAttendee;
+	icalrecip icrAttendee = {0};
 	ULONG cbEntryID = 0;
 	LPENTRYID lpEntryID = NULL;
-	ULONG cbEntryIDOneOff;
+	ULONG cbEntryIDOneOff = 0;
 	LPENTRYID lpEntryIDOneOff = NULL;
 	LPSPropValue lpsPropVal = NULL;
 
