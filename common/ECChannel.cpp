@@ -261,6 +261,9 @@ ECChannel::ECChannel(int fd) {
 	lpSSL = NULL;
 	
 	setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<const char *>(&flag), sizeof(flag));
+	*peer_atxt = '\0';
+	memset(&peer_sockaddr, 0, sizeof(peer_sockaddr));
+	peer_salen = 0;
 }
 
 ECChannel::~ECChannel() {
