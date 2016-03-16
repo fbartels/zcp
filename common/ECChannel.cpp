@@ -1062,7 +1062,8 @@ HRESULT HrAccept(ECLogger *lpLogger, int ulListenFD, ECChannel **lppChannel)
 	}
 #ifdef TCP_FASTOPEN
 	static const int qlen = SOMAXCONN;
-	setsockopt(ulListenFD, SOL_TCP, TCP_FASTOPEN, &qlen, sizeof(qlen));
+	if (setsockopt(ulListenFD, SOL_TCP, TCP_FASTOPEN, &qlen, sizeof(qlen)) < 0)
+		/* ignore - no harm in not having fastopen */;
 #endif
 	memset(&client, 0, sizeof(client));
 
