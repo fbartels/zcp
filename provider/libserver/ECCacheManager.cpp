@@ -622,8 +622,6 @@ ECRESULT ECCacheManager::GetObjectsFromProp(unsigned int ulTag,
 		}
 		strQuery.resize(strQuery.size() - 1);
 		strQuery += ")";
-		if (lpDBResult != NULL)
-			lpDatabase->FreeResult(lpDBResult);
 		er = lpDatabase->DoSelect(strQuery, &lpDBResult);
 		if (er != erSuccess)
 			goto exit;
