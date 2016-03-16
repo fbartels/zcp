@@ -1125,7 +1125,8 @@ HRESULT ECParseOneOff(const ENTRYID *lpEntryID, ULONG cbEntryID,
 
 		str.assign((utf16string::pointer)lpBuffer);
 		// can be 0 length
-		name = convert_to<std::wstring>(str);
+		if ((hr = TryConvert(str, name)) != hrSuccess)
+			goto exit;
 		lpBuffer += (str.length() + 1) * sizeof(unsigned short);
 
 		str.assign((utf16string::pointer)lpBuffer);
@@ -1133,7 +1134,8 @@ HRESULT ECParseOneOff(const ENTRYID *lpEntryID, ULONG cbEntryID,
 			hr = MAPI_E_INVALID_PARAMETER;
 			goto exit;
 		}
-		type = convert_to<std::wstring>(str);
+		if ((hr = TryConvert(str, type)) != hrSuccess)
+			goto exit;
 		lpBuffer += (str.length() + 1) * sizeof(unsigned short);
 
 		str.assign((utf16string::pointer)lpBuffer);
@@ -1141,7 +1143,8 @@ HRESULT ECParseOneOff(const ENTRYID *lpEntryID, ULONG cbEntryID,
 			hr = MAPI_E_INVALID_PARAMETER;
 			goto exit;
 		}
-		addr = convert_to<std::wstring>(str);
+		if ((hr = TryConvert(str, addr)) != hrSuccess)
+			goto exit;
 		lpBuffer += (str.length() + 1) * sizeof(unsigned short);
 		
 	} else {
@@ -1163,7 +1166,8 @@ HRESULT ECParseOneOff(const ENTRYID *lpEntryID, ULONG cbEntryID,
 			hr = MAPI_E_INVALID_PARAMETER;
 			goto exit;
 		}
-		type = convert_to<std::wstring>(str);
+		if ((hr = TryConvert(str, type)) != hrSuccess)
+			goto exit;
 		lpBuffer += str.length() + 1;
 
 		str = (char*)lpBuffer;
@@ -1171,7 +1175,8 @@ HRESULT ECParseOneOff(const ENTRYID *lpEntryID, ULONG cbEntryID,
 			hr = MAPI_E_INVALID_PARAMETER;
 			goto exit;
 		}
-		addr = convert_to<std::wstring>(str);
+		if ((hr = TryConvert(str, addr)) != hrSuccess)
+			goto exit;
 		lpBuffer += str.length() + 1;
 	}
 
