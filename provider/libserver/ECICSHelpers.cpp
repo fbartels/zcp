@@ -1138,6 +1138,7 @@ ECRESULT ECGetContentChangesHelper::MatchRestrictions(const std::vector<DB_ROW> 
 	}
 
 	*matches_p = matches;
+	matches = NULL;
 
 exit:
 	delete sODStore.lpGuid;
@@ -1146,6 +1147,8 @@ exit:
 		FreePropTagArray(lpPropTags);
 	if(lpRowSet)
 		FreeRowSet(lpRowSet, true);
+	if (matches != NULL)
+		delete matches;
 	return er;
 }
 

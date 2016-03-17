@@ -211,9 +211,10 @@ public:
 		if(cbData == other.cbData) {
 			if(lpData == NULL && other.lpData)
 				return true;
-			else if(lpData && other.lpData == NULL)
+			else if (lpData != NULL && other.lpData == NULL)
 				return false;
-
+			else if (lpData == NULL && other.lpData == NULL)
+				return false;
 			int c = memcmp(lpData, other.lpData, cbData);
 			if(c < 0)
 				return true;

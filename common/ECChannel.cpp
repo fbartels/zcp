@@ -261,6 +261,9 @@ ECChannel::ECChannel(int fd) {
 	lpSSL = NULL;
 	
 	setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<const char *>(&flag), sizeof(flag));
+	*peer_atxt = '\0';
+	memset(&peer_sockaddr, 0, sizeof(peer_sockaddr));
+	peer_salen = 0;
 }
 
 ECChannel::~ECChannel() {
@@ -1051,18 +1054,17 @@ HRESULT HrAccept(ECLogger *lpLogger, int ulListenFD, ECChannel **lppChannel)
 	ECChannel *lpChannel = NULL;
 	socklen_t len = sizeof(client);
 
-#ifdef TCP_FASTOPEN
-	int qlen = SOMAXCONN;
-	setsockopt(ulListenFD, SOL_TCP, TCP_FASTOPEN, &qlen, sizeof(qlen));
-#endif
-
 	if (ulListenFD < 0 || lppChannel == NULL) {
 		hr = MAPI_E_INVALID_PARAMETER;
 		if (lpLogger)
 			lpLogger->Log(EC_LOGLEVEL_ERROR, "HrAccept: invalid parameters");
 		goto exit;
 	}
-
+#ifdef TCP_FASTOPEN
+	static const int qlen = SOMAXCONN;
+	if (setsockopt(ulListenFD, SOL_TCP, TCP_FASTOPEN, &qlen, sizeof(qlen)) < 0)
+		/* ignore - no harm in not having fastopen */;
+#endif
 	memset(&client, 0, sizeof(client));
 
 	socket = accept(ulListenFD, (struct sockaddr *)&client, &len);

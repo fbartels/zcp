@@ -484,7 +484,7 @@ HRESULT WSTransport::HrLogon(const struct sGlobalProfileProps &in_props)
 
 HRESULT WSTransport::HrSetRecvTimeout(unsigned int ulSeconds)
 {
-	if (this->m_lpCmd != NULL)
+	if (this->m_lpCmd == NULL)
 		return MAPI_E_NOT_INITIALIZED;
 
 	this->m_lpCmd->soap->recv_timeout = ulSeconds;

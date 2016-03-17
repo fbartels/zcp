@@ -101,6 +101,7 @@ HRESULT HrFileLFtoCRLF(FILE *fin, FILE** fout)
 		readsize = fread(bufferin, 1, BLOCKSIZE / 2, fin);
 		if (ferror(fin)) {
 			perror("Read error");//FIXME: What an error?, what now?
+			fclose(fTmp);
 			return MAPI_E_CORRUPT_DATA;
 		}
 
@@ -108,6 +109,7 @@ HRESULT HrFileLFtoCRLF(FILE *fin, FILE** fout)
 
 		if (fwrite(bufferout, 1, sizebufferout, fTmp) != sizebufferout) {
 			perror("Write error");//FIXME: What an error?, what now?
+			fclose(fTmp);
 			return MAPI_E_CORRUPT_DATA;
 		}
 	}
