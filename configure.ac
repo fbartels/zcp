@@ -69,7 +69,9 @@ AC_SUBST([ZPHPCXXFLAGS])
 
 # default to debug mode
 # disable write-strings: too much complains about "" being 'cast' to char* (since const char* is not in the declarations) on g++-4.2 and higher
-ZCPPFLAGS="$BUILDOS -DHAVE_CONFIG_H -I\${top_srcdir}/common/include \
+ZCPPFLAGS="$BUILDOS -DHAVE_CONFIG_H \
+	-I\${top_builddir}/common/include \
+	-I\${top_srcdir}/common/include \
 	-I\${top_srcdir}/m4lcommon/include \
 	-I\${top_srcdir}/provider/common/include \
 	-I\${top_srcdir}/provider/libserver/include \
