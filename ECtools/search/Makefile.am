@@ -15,3 +15,6 @@ install-exec-local:
 
 install-data-local:
 	mkdir -p "${DESTDIR}${localstatedir}/lib/zarafa/search"
+
+clean-local:
+	rm -Rf build

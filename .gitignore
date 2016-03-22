@@ -30,15 +30,16 @@ stamp-h2
 
 /default.sym
 
-/ECtools/presence/build/
 /ECtools/zarafa-admin
 /ECtools/zarafa-archiver
 /ECtools/zarafa-cfgchecker
 /ECtools/zarafa-fsck
 /ECtools/zarafa-monitor
 /ECtools/zarafa-passwd
-/ECtools/search/build/
 /ECtools/zarafa-stats
+/ECtools/backup-plus/build/
+/ECtools/presence/build/
+/ECtools/search/build/
 
 # /autoconf/
 /autoconf/ltsugar.m4
