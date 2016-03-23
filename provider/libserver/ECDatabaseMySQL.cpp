@@ -1709,19 +1709,21 @@ ECRESULT ECDatabaseMySQL::GetDatabaseVersion(zcp_versiontuple *dbv)
 	string			strQuery;
 	DB_RESULT		lpResult = NULL;
 	DB_ROW			lpDBRow = NULL;
-	size_t rows;
+	bool have_micro;
 
+	/* Check if the "micro" column already exists (it does since v64) */
 	er = DoSelect("SELECT databaserevision FROM versions WHERE databaserevision>=64 LIMIT 1", &lpResult);
 	if (er != erSuccess)
 		goto exit;
-	rows = GetNumRows(lpResult);
+	have_micro = GetNumRows(lpResult) > 0;
+	FreeResult(lpResult);
+
 	strQuery = "SELECT major, minor";
-	strQuery += rows == 0 ? ", 0" : ", micro";
+	strQuery += have_micro ? ", micro" : ", 0";
 	strQuery += ", revision, databaserevision FROM versions ORDER BY major DESC, minor DESC";
-	if (rows > 0)
+	if (have_micro)
 		strQuery += ", micro DESC";
 	strQuery += ", revision DESC, databaserevision DESC LIMIT 1";
-	FreeResult(lpResult);
 
 	er = DoSelect(strQuery, &lpResult);
 	if(er != erSuccess && mysql_errno(&m_lpMySQL) != ER_NO_SUCH_TABLE)
@@ -1938,11 +1940,24 @@ ECRESULT ECDatabaseMySQL::UpdateDatabaseVersion(unsigned int ulDatabaseRevision)
 {
 	ECRESULT	er = erSuccess;
 	string		strQuery;
+	DB_RESULT result;
+	bool have_micro;
+
+	/* Check for "micro" column (present in v64+) */
+	er = DoSelect("SELECT databaserevision FROM versions WHERE databaserevision>=64 LIMIT 1", &result);
+	if (er != erSuccess)
+		goto exit;
+	have_micro = GetNumRows(result) > 0;
+	FreeResult(result);
 
 	// Insert version number
-	strQuery = "INSERT INTO versions (major, minor, micro, revision, databaserevision, updatetime) VALUES(";
+	strQuery = "INSERT INTO versions (major, minor, ";
+	if (have_micro)
+		strQuery += "micro, ";
+	strQuery += "revision, databaserevision, updatetime) VALUES(";
 	strQuery += stringify(PROJECT_VERSION_MAJOR) + std::string(", ") + stringify(PROJECT_VERSION_MINOR) + std::string(", ");
-	strQuery += stringify(PROJECT_VERSION_MICRO) + std::string(", ");
+	if (have_micro)
+		strQuery += stringify(PROJECT_VERSION_MICRO) + std::string(", ");
 	strQuery += std::string("'") + std::string(PROJECT_SVN_REV_STR) +  std::string("', ") + stringify(ulDatabaseRevision) + ", FROM_UNIXTIME("+stringify(time(NULL))+") )";
 
 	er = DoInsert(strQuery);
