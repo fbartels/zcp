@@ -1533,6 +1533,18 @@ class Store(object):
         except MAPIErrorNotFound:
             pass
 
+    def delete(self, props):
+        '''Delete properties from an Store
+
+        :param props: The properties to remove
+        '''
+
+        if isinstance(props, Property):
+            props = [props]
+
+        self.mapiobj.DeleteProps([p.proptag for p in props])
+        self.mapiobj.SaveChanges(KEEP_OPEN_READWRITE)
+
     def folder(self, path=None, entryid=None, recurse=False, create=False): # XXX sloowowowww
         """ Return :class:`Folder` with given path or entryid; raise exception if not found
 
