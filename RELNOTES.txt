@@ -25,7 +25,8 @@ Enhancements:
 
 * Elliptic Curve Diffie Hellman Exchange (ECDHE) support for TLS
 * dagent: new "mr_autoprocess" parameter available for dagent.cfg
-* dagent: allow empty Out Of Office bodies
+* dagent: allow empty Out Of Office bodies and improve reporting
+  in case no mail is sent
 * dagent/spooler: add anti-loop headers for Exchange and Vacation
 * python: support UTF-8 in .vcf files
 * zarafa-set-oof gained the --dump-json option
@@ -37,10 +38,13 @@ Fixes:
 * inetmapi: The MAPI to Internet Email translator avoids emitting
   mails for invalid addresses (e.g. no '@' in it). This way, spooler
   won't spam the SMTP server with unhandlable mails.
+* dagent: avoid crash/hang on shutdown
+* dagent: retain attachment status for top-level part
 * gateway: improved IMAP RFC conformance
 * gateway: ZARAFA-type addresses are now resolved to SMTP type before
   being emitted over IMAP
 * ldapplugin: avoid crash when bad server URI is configured
+* presence: do not report failure on proper shutdown
 
 Changes:
 
@@ -74,6 +78,7 @@ Changes:
 
 * calendar: disregard timezones for all-day events so that they
   always start and end at 00:00.
+* gateway: tone down log level for successful logins
 * server: improved reporting in case all file descriptors are used up
 * server: raise default cache size from 16 to 32 megabytes
 * Corrected improper "fatal" severity level for some more messages
