@@ -178,25 +178,25 @@ AC_ARG_ENABLE(coverage,
 # MAPI config files
 AC_ARG_WITH(mapi-configdir,
   AS_HELP_STRING([--with-mapi-configdir=PATH], [path to install the libmapi config (provider) files (default /etc/mapi)]),
-  [MAPICONFIGDIR=${withval}],[MAPICONFIGDIR=/etc/mapi])
+  [MAPICONFIGDIR=${withval}],[MAPICONFIGDIR='${sysconfdir}/mapi'])
 AC_SUBST(MAPICONFIGDIR)
 
 # user create scripts location
 AC_ARG_WITH(userscript-prefix,
-  AS_HELP_STRING([--with-userscript-prefix=PATH], [path to install the userscripts in (default /etc/zarafa/userscripts)]),
-  [USERSCRIPTDIR=${withval}],[USERSCRIPTDIR=/etc/zarafa/userscripts])
+  AS_HELP_STRING([--with-userscript-prefix=PATH], [path to install the userscripts in (default SYSCONFDIR/zarafa/userscripts)]),
+  [USERSCRIPTDIR=${withval}],[USERSCRIPTDIR='${sysconfdir}/zarafa/userscripts'])
 AC_SUBST(USERSCRIPTDIR)
 
 # quota warning templates location
 AC_ARG_WITH(quotatemplate-prefix,
-  AS_HELP_STRING([--with-quotatemplate-prefix=PATH], [path to install the quota warning templates in (default /etc/zarafa/quotamail)]),
-  [QUOTATEMPLATEDIR=${withval}],[QUOTATEMPLATEDIR=/etc/zarafa/quotamail])
+  AS_HELP_STRING([--with-quotatemplate-prefix=PATH], [path to install the quota warning templates in (default SYSCONFDIR/zarafa/quotamail)]),
+  [QUOTATEMPLATEDIR=${withval}],[QUOTATEMPLATEDIR='${sysconfdir}/zarafa/quotamail'])
 AC_SUBST(QUOTATEMPLATEDIR)
 
 # search scripts location
 AC_ARG_WITH(searchscripts-prefix,
-  AS_HELP_STRING([--with-searchscripts-prefix=PATH], [path to install the search scripts in (default /etc/zarafa/searchscripts)]),
-  [SEARCHSCRIPTSDIR=${withval}],[SEARCHSCRIPTSDIR=/etc/zarafa/searchscripts])
+  AS_HELP_STRING([--with-searchscripts-prefix=PATH], [path to install the search scripts in (default SYSCONFDIR/zarafa/searchscripts)]),
+  [SEARCHSCRIPTSDIR=${withval}],[SEARCHSCRIPTSDIR='${sysconfdir}/zarafa/searchscripts'])
 AC_SUBST(SEARCHSCRIPTSDIR)
 
 AC_ARG_WITH([systemunitdir],
