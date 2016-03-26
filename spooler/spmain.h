@@ -44,6 +44,9 @@
 #ifndef SPOOLER_SPMAIN_H
 #define SPOOLER_SPMAIN_H 1
 
+class ECConfig;
+class ECLogger;
+
 /* DAgent.cpp / Spooler.cpp */
 extern ECConfig *g_lpConfig;
 extern ECLogger *g_lpLogger;
