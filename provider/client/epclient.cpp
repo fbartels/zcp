@@ -482,8 +482,9 @@ HRESULT InitializeProvider(LPPROVIDERADMIN lpAdminProvider, IProfSect *lpProfSec
 		} else if(CompareMDBProvider(ptrPropValueMDB->Value.bin.lpb, &ZARAFA_SERVICE_GUID)) {
 			// Get the default store for this user
 			hr = lpTransport->HrGetStore(0, NULL, &cbEntryId, &ptrEntryId, 0, NULL, &strRedirServer);
-			if (hr == MAPI_E_UNABLE_TO_COMPLETE)
-			{
+			if (hr == MAPI_E_NOT_FOUND) {
+				ec_log_err("HrGetStore failed: No store present.");
+			} else if (hr == MAPI_E_UNABLE_TO_COMPLETE) {
 				lpTransport->HrLogOff();
 				sProfileProps.strServerPath = strRedirServer;
 				hr = lpTransport->HrLogon(sProfileProps);
