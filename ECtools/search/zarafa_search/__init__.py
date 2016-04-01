@@ -101,8 +101,8 @@ class SearchWorker(zarafa.Worker):
                     if cmd == 'PROPS':
                         response(conn, 'OK:'+' '.join(map(str, config['index_exclude_properties'])))
                         break
-                    if cmd == 'SYNCRUN': # XXX used from testset to trigger syncing
-                        time.sleep(5)
+                    if cmd == 'SYNCRUN': # wait for syncing to be up-to-date (used from testset)
+                        time.sleep(10) # XXX use multiprocessing signal
                         response(conn, 'OK:')
                         break
                     elif cmd == 'SCOPE':
