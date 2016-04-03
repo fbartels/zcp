@@ -603,7 +603,6 @@ exit:
 
 HRESULT ECMemTablePublic::DelRow(SBinary* lpInstanceKey)
 {
-	HRESULT hr;
 	std::string strInstanceKey;
 	SPropValue sKeyProp;
 	ECMAPFolderRelation::iterator	iterRel;
