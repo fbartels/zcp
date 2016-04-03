@@ -236,7 +236,7 @@ ECRESULT ECUserStoreTable::Load() {
 	ECSecurity *lpSecurity = lpSession->GetSecurity();
 	objectdetails_t sUserDetails;
 	GUID sZeroGuid = {0};
-	objectclass_t objclass;
+	objectclass_t objclass = OBJECTCLASS_UNKNOWN;
 	objectdetails_t sDetails;
 
 	enum cols { USERID = 0, EXTERNID, OBJCLASS, UCOMPANY, STOREGUID, STORETYPE, USERNAME, SCOMPANY, HIERARCHYID, STORESIZE, MODTIME_HI, MODTIME_LO };
