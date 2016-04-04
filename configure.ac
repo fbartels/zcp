@@ -696,21 +696,26 @@ AS_IF([test "$have_icu" = 0], [
 		req_icu_i18n="icu"
 	])
 ])
-AS_IF(
-	[test "$want_icu" = "auto"], [
-		PKG_CHECK_MODULES([icu_uc], [$req_icu_uc], [have_icu=1], [have_icu=0])
-		PKG_CHECK_MODULES([icu_i18n], [$req_icu_i18n], [have_icu=1], [have_icu=0])
-	],
-	[test "$want_icu" = "yes"], [
-		PKG_CHECK_MODULES([icu_uc], [$req_icu_uc])
-		PKG_CHECK_MODULES([icu_i18n], [$req_icu])
-		have_icu=1
-	]
-)
-AS_IF([test "$have_icu" = 1], [
+AS_IF([test "$want_icu" = "auto"], [
+	PKG_CHECK_MODULES([icu_uc], [$req_icu_uc], [have_icu=1], [have_icu=0])
+	PKG_CHECK_MODULES([icu_i18n], [$req_icu_i18n], [have_icu=1], [have_icu=0])
+])
+AS_IF([test "$have_icu" = 0], [
+	AC_CHECK_HEADERS([unicode/coll.h], [have_icu=2])
+	icu_uc_CFLAGS=""
+	icu_i18n_CFLAGS=""
+	icu_uc_LIBS="-licuuc"
+	icu_i18n_LIBS="-licui18n"
+	AC_SUBST([icu_uc_LIBS])
+	AC_SUBST([icu_i18n_LIBS])
+])
+AS_IF([test "$want_icu" = "yes" && test "$have_icu" = 0], [
+	AC_MSG_ERROR([ICU was requested but not found])
+])
+AS_IF([test "$have_icu" != 0], [
 	AC_DEFINE([ZCP_USES_ICU], [1], [Defined if ZCP was built with ICU])
 ])
-AM_CONDITIONAL([HAVE_ICU], [ test "$have_icu" -eq 1 ])
+AM_CONDITIONAL([HAVE_ICU], [test "$have_icu" -ne 0])
 ZCPPFLAGS="$ZCPPFLAGS $icu_uc_CFLAGS $icu_i18n_CFLAGS"
 
 # all libs for programs, because functions are in static common stuff
