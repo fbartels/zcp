@@ -154,8 +154,14 @@ HRESULT ECExchangeImportContentsChanges::Create(ECMAPIFolder *lpFolder, LPEXCHAN
 
 	hr = HrGetOneProp(&lpFolder->m_xMAPIProp, PR_SOURCE_KEY, &lpEICC->m_lpSourceKey);
 	if (hr == hrSuccess)
+		/*
+		 * This essentially returns lpEICC (in the second argument's
+		 * location), so whatever Coverity is saying about it not
+		 * being freed, don't believe it.
+		 */
 		hr = lpEICC->QueryInterface(IID_IExchangeImportContentsChanges, reinterpret_cast<void **>(lppExchangeImportContentsChanges));
-	delete lpEICC;
+	else
+		delete lpEICC;
 	return hr;
 }
 
