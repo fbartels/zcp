@@ -59,9 +59,32 @@
 #include <string>
 using namespace std;
 
+static int unix_runpath(ECConfig *conf)
+{
+	const char *path = conf->GetSetting("running_path");
+	int ret;
+
+	if (path != NULL) {
+		ret = chdir(path);
+		if (ret != 0)
+			ec_log_err("Unable to run in given path \"%s\": %s", path, strerror(errno));
+	}
+	if (path == NULL || ret != 0) {
+		ret = chdir("/");
+		if (ret != 0)
+			ec_log_err("chdir /: %s\n", strerror(errno));
+	}
+	return ret;
+}
+
 int unix_runas(ECConfig *lpConfig, ECLogger *lpLogger) {
 	const char *group = lpConfig->GetSetting("run_as_group");
 	const char *user  = lpConfig->GetSetting("run_as_user");
+	int ret;
+
+	ret = unix_runpath(lpConfig);
+	if (ret != 0)
+		return ret;
 
 	if (group != NULL && *group != '\0') {
 		const struct group *gr = getgrnam(group);
@@ -181,19 +204,11 @@ int unix_create_pidfile(const char *argv0, ECConfig *lpConfig,
 
 int unix_daemonize(ECConfig *lpConfig, ECLogger *lpLogger) {
 	int ret;
-	const char *path = lpConfig->GetSetting("running_path");
 
 	// make sure we daemonize in an always existing directory
-	if (path != NULL) {
-		ret = chdir(path);
-		if (ret != 0)
-			ec_log_err("Unable to run in given path \"%s\": %s", path, strerror(errno));
-	}
-	if (path == NULL || ret != 0) {
-		ret = chdir("/");
-		if (ret != 0)
-			ec_log_err("chdir /: %s\n", strerror(errno));
-	}
+	ret = unix_runpath(lpConfig);
+	if (ret != 0)
+		return ret;
 
 	ret = fork();
 	if (ret == -1) {
