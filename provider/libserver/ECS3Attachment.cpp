@@ -165,42 +165,28 @@ ECS3Attachment::ECS3Attachment(ECDatabase *database, const char *protocol,
     const char *basepath, unsigned int complvl) :
 	ECAttachmentStorage(database, complvl)
 {
-	m_bucket_ctx = {
-		0,
-		bucket_name,
-		strncmp(protocol, "https", 5) == 0 ? S3ProtocolHTTPS : S3ProtocolHTTP,
-		strncmp(uri_style, "path", 4) == 0 ? S3UriStylePath : S3UriStyleVirtualHost,
-		access_key_id,
-		secret_access_key,
-	};
+	m_bucket_ctx.hostName = NULL;
+	m_bucket_ctx.bucketName = bucket_name;
+	m_bucket_ctx.protocol = strncmp(protocol, "https", 5) == 0 ? S3ProtocolHTTPS : S3ProtocolHTTP;
+	m_bucket_ctx.uriStyle = strncmp(uri_style, "path", 4) == 0 ? S3UriStylePath : S3UriStyleVirtualHost;
+	m_bucket_ctx.accessKeyId = access_key_id;
+	m_bucket_ctx.secretAccessKey = secret_access_key;
+	m_bucket_ctx.securityToken = NULL;
+
 	m_basepath = basepath;
 	m_transact = false;
 
 	/* Set the handlers */
-	m_response_handler = {
-		&ECS3Attachment::response_prop_cb,
-		&ECS3Attachment::response_complete_cb,
-	};
-	m_put_obj_handler = {
-		{
-			&ECS3Attachment::response_prop_cb,
-			&ECS3Attachment::response_complete_cb,
-		},
-		&ECS3Attachment::put_obj_cb,
-	};
-	m_get_obj_handler = {
-		{
-			&ECS3Attachment::response_prop_cb,
-			&ECS3Attachment::response_complete_cb,
-		},
-		&ECS3Attachment::get_obj_cb,
-	};
-	m_get_conditions = {
-		/* .ifModifiedSince = */ -1,
-		/* .ifNotModifiedSince = */ -1,
-		/* .ifMatch = */ 0,
-		/* .ifNotMatch = */ 0,
-	};
+	m_response_handler.propertiesCallback = &ECS3Attachment::response_prop_cb;
+	m_response_handler.completeCallback = &ECS3Attachment::response_complete_cb;
+	m_put_obj_handler.responseHandler = m_response_handler;
+	m_put_obj_handler.putObjectDataCallback = &ECS3Attachment::put_obj_cb;
+	m_get_obj_handler.responseHandler = m_response_handler;
+	m_get_obj_handler.getObjectDataCallback = &ECS3Attachment::get_obj_cb;
+	m_get_conditions.ifModifiedSince = -1;
+	m_get_conditions.ifNotModifiedSince = -1;
+	m_get_conditions.ifMatchETag = NULL;
+	m_get_conditions.ifNotMatchETag = NULL;
 }
 
 ECS3Attachment::~ECS3Attachment(void)
