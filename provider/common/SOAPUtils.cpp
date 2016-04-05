@@ -1821,7 +1821,7 @@ ECRESULT MergePropValArray(struct soap *soap,
 ECRESULT CopySearchCriteria(struct soap *soap,
     const struct searchCriteria *lpSrc, struct searchCriteria **lppDst)
 {
-	ECRESULT er;
+	ECRESULT er = erSuccess;
 	struct searchCriteria *lpDst = NULL;
 
 	if (lpSrc == NULL)
@@ -1831,7 +1831,7 @@ ECRESULT CopySearchCriteria(struct soap *soap,
 	if(lpSrc->lpRestrict) {
     	er = CopyRestrictTable(soap, lpSrc->lpRestrict, &lpDst->lpRestrict);
 		if (er != erSuccess)
-			return er;
+			goto exit;
     } else {
         lpDst->lpRestrict = NULL;
     }
@@ -1839,7 +1839,7 @@ ECRESULT CopySearchCriteria(struct soap *soap,
 	if(lpSrc->lpFolders) {
     	er = CopyEntryList(soap, lpSrc->lpFolders, &lpDst->lpFolders);
 		if (er != erSuccess)
-			return er;
+			goto exit;
     } else {
         lpDst->lpFolders = NULL;
     }
@@ -1847,7 +1847,13 @@ ECRESULT CopySearchCriteria(struct soap *soap,
 	lpDst->ulFlags = lpSrc->ulFlags;
 
 	*lppDst = lpDst;
-	return erSuccess;
+exit:
+	if (er != erSuccess && lpDst != NULL) {
+		FreeRestrictTable(lpDst->lpRestrict, true);
+		FreeEntryList(lpDst->lpFolders, true);
+		delete lpDst;
+	}
+	return er;
 }
 
 ECRESULT FreeSearchCriteria(struct searchCriteria *lpSearchCriteria)

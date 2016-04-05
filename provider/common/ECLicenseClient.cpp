@@ -184,13 +184,13 @@ ECRESULT ECLicenseClient::Auth(const unsigned char *lpData,
 	if (lstAuth.empty())
 		return ZARAFA_E_INVALID_PARAMETER;
     
-    strDecoded = base64_decode(lstAuth.front());
+	strDecoded = base64_decode(lstAuth.front());
 
-    lpResponse = new unsigned char [strDecoded.size()];
-    memcpy(lpResponse, strDecoded.c_str(), strDecoded.size());
-    
-	if (lppResponse != NULL)
+	if (lppResponse != NULL) {
+		lpResponse = new unsigned char [strDecoded.size()];
+		memcpy(lpResponse, strDecoded.c_str(), strDecoded.size());
 		*lppResponse = lpResponse;
+	}
 	if (lpulResponseSize != NULL)
 		*lpulResponseSize = strDecoded.size();
 	return erSuccess;
