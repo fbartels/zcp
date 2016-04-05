@@ -183,6 +183,18 @@ int unix_daemonize(ECConfig *lpConfig, ECLogger *lpLogger) {
 	int ret;
 	const char *path = lpConfig->GetSetting("running_path");
 
+	// make sure we daemonize in an always existing directory
+	if (path != NULL) {
+		ret = chdir(path);
+		if (ret != 0)
+			ec_log_err("Unable to run in given path \"%s\": %s", path, strerror(errno));
+	}
+	if (path == NULL || ret != 0) {
+		ret = chdir("/");
+		if (ret != 0)
+			ec_log_err("chdir /: %s\n", strerror(errno));
+	}
+
 	ret = fork();
 	if (ret == -1) {
 		lpLogger->Log(EC_LOGLEVEL_FATAL, "Daemonizing failed on 1st step");
@@ -205,16 +217,6 @@ int unix_daemonize(ECConfig *lpConfig, ECLogger *lpLogger) {
 	fclose(stdin);
 	freopen("/dev/null", "a+", stdout);
 	freopen("/dev/null", "a+", stderr);
-
-	// make sure we daemonize in an always existing directory
-	if (path) {
-		ret = chdir(path);
-		if (ret)
-			lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to run in given path '%s': %s", path, strerror(errno));
-	}
-
-	if (!path || ret)
-		chdir("/");
 
 	return 0;
 }
