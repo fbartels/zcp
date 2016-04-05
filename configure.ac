@@ -184,8 +184,10 @@ AC_SUBST(MAPICONFIGDIR)
 # user create scripts location
 AC_ARG_WITH(userscript-prefix,
   AS_HELP_STRING([--with-userscript-prefix=PATH], [path to install the userscripts in (default SYSCONFDIR/zarafa/userscripts)]),
-  [USERSCRIPTDIR=${withval}],[USERSCRIPTDIR='${sysconfdir}/zarafa/userscripts'])
+  [USERSCRIPTDIR=${withval}],[USERSCRIPTDIR='/etc/zarafa/userscripts'])
 AC_SUBST(USERSCRIPTDIR)
+AS_IF([echo "$USERSCRIPTDIR" | grep -q '\$'],
+	[AC_MSG_ERROR([Variable expansion unfortunately not supported for --with-userscript-prefix])])
 
 # quota warning templates location
 AC_ARG_WITH(quotatemplate-prefix,
