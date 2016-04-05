@@ -183,8 +183,7 @@ typedef auto_free<struct berval*, auto_free_dealloc<struct berval**, void, ldap_
 			if (rc != LDAP_SUCCESS) {										\
 				throw ldap_error(string("ldap_parse_pageresponse_control: ") + ldap_err2string(rc), rc); \
 			}																\
-			/* you can't check on cookie->bv_len. and yes this is the stop value. */ \
-			morePages = sCookie.bv_val && sCookie.bv_val[0]; \
+			morePages = sCookie.bv_len > 0; \
 		} else { \
 			morePages = false; \
 		}
