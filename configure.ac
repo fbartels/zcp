@@ -691,28 +691,44 @@ req_icu_i18n="icu-i18n"
 AC_ARG_ENABLE([icu], AS_HELP_STRING([--enable-icu], [enable icu support]), [want_icu=${enableval}], [want_icu=auto])
 PKG_CHECK_EXISTS([icu-uc], [have_icu=1], [have_icu=0])
 PKG_CHECK_EXISTS([icu-i18n], [have_icu=1], [have_icu=0])
+AS_IF([test "$have_icu" = 1], [AC_MSG_RESULT([Found ICU with modern pkg-config files])])
 AS_IF([test "$have_icu" = 0], [
 	dnl RHEL 6 / icu 4.x
 	PKG_CHECK_EXISTS([icu], [
 		req_icu_uc="icu"
 		req_icu_i18n="icu"
+		AC_MSG_RESULT([Found ICU with old-style pkg-config files])
 	])
 ])
-AS_IF(
-	[test "$want_icu" = "auto"], [
-		PKG_CHECK_MODULES([icu_uc], [$req_icu_uc], [have_icu=1], [have_icu=0])
-		PKG_CHECK_MODULES([icu_i18n], [$req_icu_i18n], [have_icu=1], [have_icu=0])
-	],
-	[test "$want_icu" = "yes"], [
-		PKG_CHECK_MODULES([icu_uc], [$req_icu_uc])
-		PKG_CHECK_MODULES([icu_i18n], [$req_icu])
-		have_icu=1
-	]
-)
+AS_IF([test "$want_icu" = "auto"], [
+	PKG_CHECK_MODULES([icu_uc], [$req_icu_uc], [have_icu=1], [have_icu=0])
+	PKG_CHECK_MODULES([icu_i18n], [$req_icu_i18n], [have_icu=1], [have_icu=0])
+])
+AS_IF([test "$have_icu" = 0], [
+	AC_CHECK_HEADERS([unicode/coll.h], [have_icu=2])
+])
 AS_IF([test "$have_icu" = 1], [
+	dnl PKG_CHECK_EXISTS only tests, and never logs.
+	dnl Now that we know we want PKG_CHECK, do it for real:
+	PKG_CHECK_MODULES([icu_uc], [$req_icu_uc])
+	PKG_CHECK_MODULES([icu_i18n], [$req_icu_i18n])
+])
+AS_IF([test "$have_icu" = 2], [
+	AC_MSG_RESULT([Found ICU by header file])
+	icu_uc_CFLAGS=""
+	icu_i18n_CFLAGS=""
+	icu_uc_LIBS="-licuuc"
+	icu_i18n_LIBS="-licui18n"
+	AC_SUBST([icu_uc_LIBS])
+	AC_SUBST([icu_i18n_LIBS])
+])
+AS_IF([test "$want_icu" = "yes" && test "$have_icu" = 0], [
+	AC_MSG_ERROR([ICU was requested but not found])
+])
+AS_IF([test "$have_icu" != 0], [
 	AC_DEFINE([ZCP_USES_ICU], [1], [Defined if ZCP was built with ICU])
 ])
-AM_CONDITIONAL([HAVE_ICU], [ test "$have_icu" -eq 1 ])
+AM_CONDITIONAL([HAVE_ICU], [test "$have_icu" -ne 0])
 ZCPPFLAGS="$ZCPPFLAGS $icu_uc_CFLAGS $icu_i18n_CFLAGS"
 
 # all libs for programs, because functions are in static common stuff

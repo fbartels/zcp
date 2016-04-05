@@ -1366,6 +1366,8 @@ ECLocale createLocaleFromName(const char *lpszLocale)
 		lpszLocale = "";
 
 #endif
+	if (lpszLocale == NULL)
+		lpszLocale = "";
 	// We only need LC_CTYPE and LC_COLLATE, but createlocale doesn't support that
 	return ECLocale(localemask(LC_ALL), lpszLocale);
 #endif
