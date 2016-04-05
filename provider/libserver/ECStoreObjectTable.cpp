@@ -1253,7 +1253,6 @@ ECRESULT ECStoreObjectTable::AddRowKey(ECObjectTableList* lpRows, unsigned int *
     ECObjectTableList::iterator iterRows;
     ECDatabase *lpDatabase = NULL;
     struct restrictTable *lpNewRestrict = NULL;
-    std::string suggestion;
  
     ASSERT(!bOverride); // Default implementation never has override enabled, so we should never see this
     ASSERT(lpOverride == NULL);
@@ -1278,7 +1277,7 @@ ECRESULT ECStoreObjectTable::AddRowKey(ECObjectTableList* lpRows, unsigned int *
         if(er != erSuccess)
         	goto exit;
 
-	if (GetIndexerResults(lpDatabase, lpSession->GetSessionManager()->GetConfig(), lpSession->GetSessionManager()->GetCacheManager(), &guidServer, lpODStore->lpGuid, lstFolders, lpsRestrict, &lpNewRestrict, lstIndexerResults, suggestion) != erSuccess) {
+	if (GetIndexerResults(lpDatabase, lpSession->GetSessionManager()->GetConfig(), lpSession->GetSessionManager()->GetCacheManager(), &guidServer, lpODStore->lpGuid, lstFolders, lpsRestrict, &lpNewRestrict, lstIndexerResults) != erSuccess) {
     	    // Cannot handle this restriction with the indexer, use 'normal' restriction code
     	    // Reasons can be:
     	    //  - restriction too complex

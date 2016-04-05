@@ -373,8 +373,7 @@ exit:
 ECRESULT GetIndexerResults(ECDatabase *lpDatabase, ECConfig *lpConfig,
     ECCacheManager *lpCacheManager, GUID *guidServer, GUID *guidStore,
     ECListInt &lstFolders, struct restrictTable *lpRestrict,
-    struct restrictTable **lppNewRestrict, std::list<unsigned int> &lstMatches,
-    std::string &suggestion)
+    struct restrictTable **lppNewRestrict, std::list<unsigned int> &lstMatches)
 {
     ECRESULT er = erSuccess;
 	ECSearchClient *lpSearchClient = NULL;
@@ -434,7 +433,7 @@ ECRESULT GetIndexerResults(ECDatabase *lpDatabase, ECConfig *lpConfig,
 		ec_log_debug("Using index, %lu index queries", static_cast<unsigned long>(lstMultiSearches.size()));
 		gettimeofday(&tstart, NULL);
 
-        er = lpSearchClient->Query(guidServer, guidStore, lstFolders, lstMultiSearches, lstMatches, suggestion);
+        er = lpSearchClient->Query(guidServer, guidStore, lstFolders, lstMultiSearches, lstMatches);
 		
 		gettimeofday(&tend, NULL);
 		llelapsedtime = difftimeval(&tstart,&tend);

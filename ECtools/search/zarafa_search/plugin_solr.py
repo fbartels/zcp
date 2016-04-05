@@ -9,7 +9,7 @@ note how simple this is compared to the xapian plugin.
 """
 
 class Plugin:
-    def __init__(self, index_path, suggestions, log):
+    def __init__(self, index_path, log):
         self.log = log
         self.solr = pysolr.Solr(index_path)
         self.data = []
