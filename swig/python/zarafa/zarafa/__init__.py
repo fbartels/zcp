@@ -1083,16 +1083,37 @@ class Group(object):
     def __init__(self, name, server=None):
         self.server = server or Server()
         self._name = unicode(name)
-        self._ecgroup = self.server.sa.GetGroup(self.server.sa.ResolveGroupName(self._name, MAPI_UNICODE), MAPI_UNICODE)
+        try:
+            self._ecgroup = self.server.sa.GetGroup(self.server.sa.ResolveGroupName(self._name, MAPI_UNICODE), MAPI_UNICODE)
+        except (MAPIErrorNotFound, MAPIErrorInvalidParameter):
+            raise ZarafaNotFoundException("no such group '%s'" % name)
 
     def users(self):
+        '''Users in group'''
+
+        return self.members(groups=False)
+
+    def groups(self):
+        ''' Groups in group'''
+
+        return self.members(users=False)
+
+    def members(self, groups=True, users=True):
+        '''All members in group, users or groups'''
+
         for ecuser in self.server.sa.GetUserListOfGroup(self._ecgroup.GroupID, MAPI_UNICODE):
             if ecuser.Username == 'SYSTEM':
                 continue
-            try:
-                yield User(ecuser.Username, self.server)
-            except ZarafaException: # XXX everyone, groups are included as users..
-                pass
+            if users:
+                try:
+                    yield User(ecuser.Username, self.server)
+                except ZarafaNotFoundException: # XXX everyone, groups are included as users..
+                    pass
+            if groups:
+                try:
+                    yield Group(ecuser.Username, self.server)
+                except ZarafaNotFoundException:
+                    pass
 
     @property
     def name(self):
@@ -1130,6 +1151,7 @@ class Group(object):
     def groupid(self):
         return bin2hex(self._ecgroup.GroupID)
 
+    # XXX: also does groups..
     def add_user(self, user):
         if isinstance(user, Group):
             self.server.sa.AddGroupUser(self._ecgroup.GroupID, user._ecgroup.GroupID)
