@@ -1,6 +1,6 @@
 #include "config.h"
 #ifdef HAVE_LIBS3_H
-#include "platform.h"
+#include <zarafa/platform.h>
 #include <algorithm>
 #include <cerrno>
 #include <pthread.h>
