@@ -147,33 +147,9 @@ void ssl_random_init()
 	}
 }
 
-void ssl_random(bool b64bit, uint64_t *lpullId)
+void ssl_random(bool b64bit, uint64_t *id)
 {
-	BIGNUM bn;
-	BN_init(&bn);
-
-	if (b64bit)
-	{
-		unsigned long long ullId = 0;
-
-		if (BN_rand(&bn, sizeof(ullId) * 8, -1, 0) == 0)
-			rand_get((char *)&ullId, sizeof ullId);
-		else
-			BN_bn2bin(&bn, (unsigned char*)&ullId);
-
-		*lpullId = ullId;
-	}
-	else
-	{
-		uint32_t ullId = 0;
-
-		if (BN_rand(&bn, sizeof(ullId) * 8, -1, 0) == 0)
-			rand_get((char *)&ullId, sizeof ullId);
-		else
-			BN_bn2bin(&bn, (unsigned char*)&ullId);
-
-		*lpullId = ullId;
-	}
-
-	BN_free(&bn);
+	RAND_pseudo_bytes(reinterpret_cast<unsigned char *>(id), sizeof(*id));
+	if (!b64bit)
+		*id &= 0xFFFFFFFF;
 }
