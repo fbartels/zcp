@@ -165,13 +165,12 @@ ECS3Attachment::ECS3Attachment(ECDatabase *database, const char *protocol,
     const char *basepath, unsigned int complvl) :
 	ECAttachmentStorage(database, complvl)
 {
-	m_bucket_ctx.hostName = NULL;
+	memset(&m_bucket_ctx, 0, sizeof(m_bucket_ctx));
 	m_bucket_ctx.bucketName = bucket_name;
 	m_bucket_ctx.protocol = strncmp(protocol, "https", 5) == 0 ? S3ProtocolHTTPS : S3ProtocolHTTP;
 	m_bucket_ctx.uriStyle = strncmp(uri_style, "path", 4) == 0 ? S3UriStylePath : S3UriStyleVirtualHost;
 	m_bucket_ctx.accessKeyId = access_key_id;
 	m_bucket_ctx.secretAccessKey = secret_access_key;
-	m_bucket_ctx.securityToken = NULL;
 
 	m_basepath = basepath;
 	m_transact = false;
