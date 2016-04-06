@@ -443,7 +443,11 @@ def dump_acl(folder, user, server, log):
         try:
             row[1].Value = ('user', server.sa.GetUser(row[1].Value, MAPI_UNICODE).Username)
         except MAPIErrorNotFound:
-            row[1].Value = ('group', server.sa.GetGroup(row[1].Value, MAPI_UNICODE).Groupname)
+            try:
+                row[1].Value = ('group', server.sa.GetGroup(row[1].Value, MAPI_UNICODE).Groupname)
+            except MAPIErrorNotFound:
+                log.warning("skipping access control entry for unknown user/group '%s'" % row[1].Value)
+                continue
         rows.append(row)
     return pickle.dumps(rows)
 
@@ -453,17 +457,16 @@ def load_acl(folder, user, server, data, log):
     data = pickle.loads(data)
     rows = []
     for row in data:
-        member_type, value = row[1].Value
         try:
+            member_type, value = row[1].Value
             if member_type == 'user':
                 entryid = server.user(value).userid
             else:
                 entryid = server.group(value).groupid
+            row[1].Value = entryid.decode('hex')
+            rows.append(row)
         except zarafa.ZarafaNotFoundException:
             log.warning("skipping access control entry for unknown user/group '%s'" % row[1].Value)
-            continue
-        row[1].Value = entryid.decode('hex')
-        rows.append(row)
     acltab = folder.mapiobj.OpenProperty(PR_ACL_TABLE, IID_IExchangeModifyTable, 0, MAPI_MODIFY)
     acltab.ModifyTable(0, [ROWENTRY(ROW_ADD, row) for row in rows])
 
@@ -478,17 +481,20 @@ def dump_rules(folder, user, server, log):
         etxml = ElementTree.fromstring(ruledata)
         for actions in etxml.findall('./item/item/actions'):
             for movecopy in actions.findall('.//moveCopy'):
-                s = movecopy.findall('store')[0]
-                store = server.mapisession.OpenMsgStore(0, s.text.decode('base64'), None, 0)
-                guid = HrGetOneProp(store, PR_STORE_RECORD_KEY).Value.encode('hex')
-                store = server.store(guid)
-                if store.public:
-                    s.text = 'public'
-                else:
-                    s.text = store.user.name if store != user.store else ''
-                f = movecopy.findall('folder')[0]
-                path = store.folder(entryid=f.text.decode('base64').encode('hex')).path
-                f.text = path
+                try:
+                    s = movecopy.findall('store')[0]
+                    store = server.mapisession.OpenMsgStore(0, s.text.decode('base64'), None, 0)
+                    guid = HrGetOneProp(store, PR_STORE_RECORD_KEY).Value.encode('hex')
+                    store = server.store(guid)
+                    if store.public:
+                        s.text = 'public'
+                    else:
+                        s.text = store.user.name if store != user.store else ''
+                    f = movecopy.findall('folder')[0]
+                    path = store.folder(entryid=f.text.decode('base64').encode('hex')).path
+                    f.text = path
+                except zarafa.ZarafaNotFoundException:
+                    log.warning("skipping rule for unknown store/folder")
         ruledata = ElementTree.tostring(etxml)
     return pickle.dumps(ruledata)
 
@@ -500,14 +506,17 @@ def load_rules(folder, user, server, data, log):
         etxml = ElementTree.fromstring(data)
         for actions in etxml.findall('./item/item/actions'):
             for movecopy in actions.findall('.//moveCopy'):
-                s = movecopy.findall('store')[0]
-                if s.text == 'public':
-                    store = server.public_store
-                else:
-                    store = server.user(s.text).store if s.text else user.store
-                s.text = store.entryid.decode('hex').encode('base64').strip()
-                f = movecopy.findall('folder')[0]
-                f.text = store.folder(f.text).entryid.decode('hex').encode('base64').strip()
+                try:
+                    s = movecopy.findall('store')[0]
+                    if s.text == 'public':
+                        store = server.public_store
+                    else:
+                        store = server.user(s.text).store if s.text else user.store
+                    s.text = store.entryid.decode('hex').encode('base64').strip()
+                    f = movecopy.findall('folder')[0]
+                    f.text = store.folder(f.text).entryid.decode('hex').encode('base64').strip()
+                except zarafa.ZarafaNotFoundException:
+                    log.warning("skipping rule for unknown store/folder")
         etxml = ElementTree.tostring(etxml)
         folder.create_prop(PR_RULES_DATA, etxml)
 
