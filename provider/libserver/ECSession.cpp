@@ -194,9 +194,10 @@ ECRESULT BTSession::Shutdown(unsigned int ulTimeout) {
 
 ECRESULT BTSession::ValidateOriginator(struct soap *soap)
 {
+	if (!m_bCheckIP)
+		return erSuccess;
 	std::string strSourceAddr = ::GetSourceAddr(soap);
-
-	if (!m_bCheckIP || m_strSourceAddr == strSourceAddr)
+	if (m_strSourceAddr == strSourceAddr)
 		return erSuccess;
 	ec_log_err("Denying access to session from source \"%s\" due to unmatched establishing source \"%s\"", strSourceAddr.c_str(), m_strSourceAddr.c_str());
 	return ZARAFA_E_END_OF_SESSION;
