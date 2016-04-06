@@ -191,7 +191,7 @@ int HandleClientUpdate(struct soap *soap)
 		goto exit;
 	}
 
-	g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Client update: Sending client %s new installer %s", PrettyIP(soap->ip).c_str(), strClientMSIName.c_str());
+	g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Client update: Sending client %s new installer %s", soap->host, strClientMSIName.c_str());
 
 	// application/msi-installer ?
 	soap->http_content = "binary";
@@ -492,7 +492,7 @@ int ns__getClientUpdate(struct soap *soap, struct clientUpdateInfoRequest sClien
 		(sClientUpdateInfo.szClientVersion) ? sClientUpdateInfo.szClientVersion : "-",
 		(sClientUpdateInfo.szWindowsVersion) ? sClientUpdateInfo.szWindowsVersion : "-",
 		(sClientUpdateInfo.szClientIPList) ? sClientUpdateInfo.szClientIPList : "-",
-		PrettyIP(soap->ip).c_str() );
+		soap->host);
 
 	if (!sClientUpdateInfo.szComputerName)
 		sClientUpdateInfo.szComputerName = const_cast<char *>(""); //Client has no name?

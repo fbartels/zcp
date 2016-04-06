@@ -2572,6 +2572,6 @@ std::string GetSourceAddr(struct soap *soap)
 	if( ((SOAPINFO *)soap->user)->bProxy && soap->proxy_from)
 		return soap->proxy_from;
 	else
-		return PrettyIP(soap->ip);
+		return soap->host;
 }
 

@@ -245,20 +245,6 @@ std::string str_storage(uint64_t ulBytes, bool bUnlimited) {
 	return stringify_double((double)ulBytes / MB, 2) + " MB";
 }
 
-std::string PrettyIP(long unsigned int ip) {
-    std::string strPretty;
-    
-    strPretty += stringify((ip >> 24)&0xFF);
-    strPretty += ".";
-    strPretty += stringify((ip >> 16)&0xFF);
-    strPretty += ".";
-    strPretty += stringify((ip >> 8)&0xFF);
-    strPretty += ".";
-    strPretty += stringify(ip&0xFF);
-    
-    return strPretty;
-}
-
 std::string GetServerNameFromPath(const char *szPath) {
 	std::string path = szPath;
 	size_t pos = 0;

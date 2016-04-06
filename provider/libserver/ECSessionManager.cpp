@@ -637,7 +637,7 @@ ECRESULT ECSessionManager::CreateSession(struct soap *soap, char *szName, char *
 		from = string("file://") + m_lpConfig->GetSetting("server_pipe_name");
 	} else {
 		// connected over network
-		from = PrettyIP(soap->ip);
+		from = soap->host;
 	}
 
 	er = this->CreateAuthSession(soap, ulCapabilities, lpSessionID, &lpAuthSession, false, false);

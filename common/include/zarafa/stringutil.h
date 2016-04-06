@@ -113,7 +113,6 @@ std::string striconv(const std::string &strinput, const char *lpszFromCharset, c
 
 std::string str_storage(uint64_t ulBytes, bool bUnlimited = true);
 
-std::string PrettyIP(long unsigned int ip);
 std::string GetServerNameFromPath(const char *szPath);
 std::string GetServerTypeFromPath(const char *szPath);
 std::string GetServerPortFromPath(const char *szPath);
