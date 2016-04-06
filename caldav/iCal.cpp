@@ -236,8 +236,7 @@ HRESULT iCal::HrHandleIcalPost()
 
 	//map of Ical entries.
 	//generate map for each entry's UID and Position.
-	for(ULONG i = 0; i < ulItemCount; i++)
-	{
+	for (ULONG i = 0; i < ulItemCount; ++i) {
 		hr = lpICalToMapi->GetItemInfo(i, &etype, &tLastMod, &sbEid);
 		if (hr != hrSuccess || etype != VEVENT)
 			continue;
@@ -269,8 +268,7 @@ HRESULT iCal::HrHandleIcalPost()
 		if (lpRows->cRows == 0)
 			break;
 
-		for (ULONG i=0; i < lpRows->cRows; i++)
-		{
+		for (ULONG i = 0; i < lpRows->cRows; ++i) {
 			if (lpRows->aRow[i].lpProps[0].ulPropTag == PR_ENTRYID)
 			{
 				if(lpRows->aRow[i].lpProps[2].ulPropTag == ulProptag)
@@ -315,7 +313,7 @@ HRESULT iCal::HrHandleIcalPost()
 				m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to Delete Message : 0x%08X", hr);
 				goto exit;
 			}
-			mpIterJ++;
+			++mpIterJ;
 		}
 		else if(mpIcalEntries.end() != mpIterI && mpSrvEntries.end() == mpIterJ)
 		{
@@ -325,7 +323,7 @@ HRESULT iCal::HrHandleIcalPost()
 				m_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to Add New Message : 0x%08X", hr);
 				goto exit;
 			}
-			mpIterI++;
+			++mpIterI;
 		}
 		else if(mpSrvEntries.end() != mpIterJ && mpIcalEntries.end() != mpIterI )
 		{
@@ -386,7 +384,7 @@ exit:
 	else
 		m_lpRequest->HrResponseHeader(500,"Internal Server Error");
 
-	for( mpIterJ = mpSrvEntries.begin(); mpIterJ != mpSrvEntries.end() ; mpIterJ++ )
+	for (mpIterJ = mpSrvEntries.begin(); mpIterJ != mpSrvEntries.end(); ++mpIterJ)
 		MAPIFreeBuffer(mpIterJ->second.lpb);
 	
 	if(lpContTable)
@@ -657,8 +655,7 @@ HRESULT iCal::HrGetIcal(IMAPITable *lpTable, bool blCensorPrivate, std::string *
 		if (lpRows->cRows == 0)
 			break;
 
-		for (ULONG i=0; i < lpRows->cRows; i++)
-		{
+		for (ULONG i = 0; i < lpRows->cRows; ++i) {
 			blCensor = blCensorPrivate; // reset censor flag for next message
 			ulFlag = 0;
 

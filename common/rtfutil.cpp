@@ -246,25 +246,29 @@ HRESULT HrExtractHTMLFromRTF(const std::string &lpStrRTFIn,
 			int lArg = -1;
 			bool bNeg = false;
 
-			szInput++;
+			++szInput;
 			if(isalpha(*szInput)) {
 				szCmdOutput = szCommand;
 
-				while(isalpha(*szInput) && szCmdOutput < szCommand+RTF_MAXCMD-1) *szCmdOutput++ = *szInput++;
+				while (isalpha(*szInput) && szCmdOutput < szCommand + RTF_MAXCMD - 1)
+					*szCmdOutput++ = *szInput++;
 				*szCmdOutput = 0;
 
 				if(*szInput == '-') {
 					bNeg = true;
-					szInput++;
+					++szInput;
 				}
 
 				if(isdigit(*szInput)) {
 					lArg = 0;
-					while(isdigit(*szInput)) { lArg = lArg*10 + *szInput - '0'; szInput++; }
+					while (isdigit(*szInput)) {
+						lArg = lArg * 10 + *szInput - '0';
+						++szInput;
+					}
 					if(bNeg) lArg = -lArg;
 				}
 				if(*szInput == ' ')
-					szInput++;
+					++szInput;
 
 				// szCommand is the command, lArg is the argument.
 				if(strcmp(szCommand,"fonttbl") == 0) {
@@ -340,17 +344,17 @@ HRESULT HrExtractHTMLFromRTF(const std::string &lpStrRTFIn,
 			}
 			// Non-alnum after '\'
 			else if(*szInput == '\\') {
-				szInput++;
+				++szInput;
 				if(!sState[ulState].bInFontTbl && !sState[ulState].bRTFOnly && !sState[ulState].bInColorTbl && !sState[ulState].bInSkipTbl) 
 					sState[ulState].output.append(1,'\\');
 			}
 			else if(*szInput == '{') {
-				szInput++;
+				++szInput;
 				if(!sState[ulState].bInFontTbl && !sState[ulState].bRTFOnly && !sState[ulState].bInColorTbl && !sState[ulState].bInSkipTbl) 
 					sState[ulState].output.append(1,'{');
 			}
 			else if(*szInput == '}') {
-				szInput++;
+				++szInput;
 				if(!sState[ulState].bInFontTbl && !sState[ulState].bRTFOnly && !sState[ulState].bInColorTbl && !sState[ulState].bInSkipTbl) 
 					sState[ulState].output.append(1,'}');
 			} 
@@ -360,17 +364,17 @@ HRESULT HrExtractHTMLFromRTF(const std::string &lpStrRTFIn,
 				while(*szInput == '\'')
 				{
 					ulChar = 0;
-					szInput++;
+					++szInput;
 
 					if(*szInput) {
 						ulChar = (unsigned int) (strchr(szHex, toupper(*szInput)) == NULL ? 0 : (strchr(szHex, toupper(*szInput)) - szHex));
 						ulChar = ulChar << 4;
-						szInput++;
+						++szInput;
 					}
 
 					if(*szInput) {
 						ulChar += (unsigned int) (strchr(szHex, toupper(*szInput)) == NULL ? 0 : (strchr(szHex, toupper(*szInput)) - szHex));
-						szInput++;
+						++szInput;
 					}
 
 					if(!sState[ulState].bInFontTbl && !sState[ulState].bRTFOnly && !sState[ulState].bInColorTbl && !sState[ulState].bInSkipTbl && !sState[ulState].ulSkipChars) {
@@ -379,40 +383,40 @@ HRESULT HrExtractHTMLFromRTF(const std::string &lpStrRTFIn,
 						sState[ulState].ulSkipChars--;
 
 					if(*szInput == '\\' && *(szInput+1) == '\'')
-						szInput++;
+						++szInput;
 					else
 						break;
 				}				
 
 			} else {
-				szInput++; // skip single character after '\'
+				++szInput; // skip single character after '\'
 			}
 		} // Non-command
 		else if(*szInput == '{') {
 			// Dump output data
 			strOutput += RTFFlushStateOutput(convertContext, sState, ulState);
 
-			ulState++;
+			++ulState;
 			if (ulState >= RTF_MAXSTATE)
 				return MAPI_E_NOT_ENOUGH_MEMORY;
 			sState[ulState] = sState[ulState-1];
 			sState[ulState].output.clear();
-			szInput++;
+			++szInput;
 		} else if(*szInput == '}') {
 			// Dump output data
 			strOutput += RTFFlushStateOutput(convertContext, sState, ulState);
 
 			if(ulState > 0)
-				ulState--;
-			szInput++;
+				--ulState;
+			++szInput;
 		} else if(*szInput == '\r' || *szInput == '\n') {
-			szInput++;
+			++szInput;
 		} else {
 			if(!sState[ulState].bInFontTbl && !sState[ulState].bRTFOnly && !sState[ulState].bInColorTbl && !sState[ulState].bInSkipTbl && !sState[ulState].ulSkipChars) {
 				sState[ulState].output.append(1,*szInput);
 			} else if (sState[ulState].ulSkipChars)
-				sState[ulState].ulSkipChars--;
-			szInput++;
+				--sState[ulState].ulSkipChars;
+			++szInput;
 		}
 	}
 
@@ -494,25 +498,29 @@ HRESULT HrExtractHTMLFromTextRTF(const std::string &lpStrRTFIn,
 			int lArg = -1;
 			bool bNeg = false;
 
-			szInput++;
+			++szInput;
 			if(isalpha(*szInput)) {
 				szCmdOutput = szCommand;
 
-				while(isalpha(*szInput) && szCmdOutput < szCommand+RTF_MAXCMD-1) *szCmdOutput++ = *szInput++;
+				while (isalpha(*szInput) && szCmdOutput < szCommand + RTF_MAXCMD - 1)
+					*szCmdOutput++ = *szInput++;
 				*szCmdOutput = 0;
 
 				if(*szInput == '-') {
 					bNeg = true;
-					szInput++;
+					++szInput;
 				}
 
 				if(isdigit(*szInput)) {
 					lArg = 0;
-					while(isdigit(*szInput)) { lArg = lArg*10 + *szInput - '0'; szInput++; }
+					while (isdigit(*szInput)) {
+						lArg = lArg * 10 + *szInput - '0';
+						++szInput;
+					}
 					if(bNeg) lArg = -lArg;
 				}
 				if(*szInput == ' ')
-					szInput++;
+					++szInput;
 
 				// szCommand is the command, lArg is the argument.
 				if(strcmp(szCommand,"fonttbl") == 0) {
@@ -594,17 +602,17 @@ HRESULT HrExtractHTMLFromTextRTF(const std::string &lpStrRTFIn,
 			}
 			// Non-alnum after '\'
 			else if(*szInput == '\\') {
-				szInput++;
+				++szInput;
 				if(!sState[ulState].bInFontTbl && !sState[ulState].bRTFOnly && !sState[ulState].bInColorTbl && !sState[ulState].bInSkipTbl) 
 					sState[ulState].output.append(1,'\\');
 			}
 			else if(*szInput == '{') {
-				szInput++;
+				++szInput;
 				if(!sState[ulState].bInFontTbl && !sState[ulState].bRTFOnly && !sState[ulState].bInColorTbl && !sState[ulState].bInSkipTbl) 
 					sState[ulState].output.append(1,'{');
 			}
 			else if(*szInput == '}') {
-				szInput++;
+				++szInput;
 				if(!sState[ulState].bInFontTbl && !sState[ulState].bRTFOnly && !sState[ulState].bInColorTbl && !sState[ulState].bInSkipTbl) 
 					sState[ulState].output.append(1,'}');
 			} 
@@ -619,17 +627,17 @@ HRESULT HrExtractHTMLFromTextRTF(const std::string &lpStrRTFIn,
 				while(*szInput == '\'')
 				{
 					ulChar = 0;
-					szInput++;
+					++szInput;
 
 					if(*szInput) {
 						ulChar = (unsigned int) (strchr(szHex, toupper(*szInput)) == NULL ? 0 : (strchr(szHex, toupper(*szInput)) - szHex));
 						ulChar = ulChar << 4;
-						szInput++;
+						++szInput;
 					}
 
 					if(*szInput) {
 						ulChar += (unsigned int) (strchr(szHex, toupper(*szInput)) == NULL ? 0 : (strchr(szHex, toupper(*szInput)) - szHex));
-						szInput++;
+						++szInput;
 					}
 
 					if(!sState[ulState].bInFontTbl && !sState[ulState].bRTFOnly && !sState[ulState].bInColorTbl && !sState[ulState].ulSkipChars) {
@@ -638,7 +646,7 @@ HRESULT HrExtractHTMLFromTextRTF(const std::string &lpStrRTFIn,
 						sState[ulState].ulSkipChars--;
 
 					if(*szInput == '\\' && *(szInput+1) == '\'')
-						szInput++;
+						++szInput;
 					else
 						break;
 				}
@@ -649,7 +657,7 @@ HRESULT HrExtractHTMLFromTextRTF(const std::string &lpStrRTFIn,
 				}
 
 			} else {
-				szInput++; // skip single character after '\'
+				++szInput; // skip single character after '\'
 			}
 		} // Non-command
 		else if(*szInput == '{') {
@@ -659,22 +667,22 @@ HRESULT HrExtractHTMLFromTextRTF(const std::string &lpStrRTFIn,
 				strOutput += RTFFlushStateOutput(convertContext, sState, ulState);
 			}
 
-			ulState++;
+			++ulState;
 			if (ulState >= RTF_MAXSTATE)
 				return MAPI_E_NOT_ENOUGH_MEMORY;
 			sState[ulState] = sState[ulState-1];
 
-			szInput++;
+			++szInput;
 		} else if(*szInput == '}') {
 			// Dump output data
 			strOutput += RTFFlushStateOutput(convertContext, sState, ulState);
 
 			if(ulState > 0)
 				ulState--;
-			szInput++;
+			++szInput;
 		} else if(*szInput == '\r' || *szInput == '\n') {
 			bNewLine = true;
-			szInput++;
+			++szInput;
 		} else {
 			if(!sState[ulState].bInFontTbl && !sState[ulState].bRTFOnly && !sState[ulState].bInColorTbl && !sState[ulState].bInSkipTbl && !sState[ulState].ulSkipChars) {
 				if(bPar == false){
@@ -690,11 +698,11 @@ HRESULT HrExtractHTMLFromTextRTF(const std::string &lpStrRTFIn,
 
 				// Change space to &nbsp; . The last space is a real space like "&nbsp;&nbsp; " or " "
 				if(*szInput == ' ') {
-					szInput++;
+					++szInput;
 
 					while(*szInput == ' ') {
 						sState[ulState].output.append("&nbsp;");
-						szInput++;
+						++szInput;
 					}
 
 					sState[ulState].output.append(1, ' ');
@@ -706,14 +714,14 @@ HRESULT HrExtractHTMLFromTextRTF(const std::string &lpStrRTFIn,
 					else
 						sState[ulState].output.append(entity.begin(), entity.end());
 
-					szInput++;
+					++szInput;
 				}
 
-				nLineChar++;
+				++nLineChar;
 			} else {
 				if (sState[ulState].ulSkipChars)
-					sState[ulState].ulSkipChars--;
-				szInput++;
+					--sState[ulState].ulSkipChars;
+				++szInput;
 			}
 		}
 	}
@@ -797,25 +805,29 @@ HRESULT HrExtractHTMLFromRealRTF(const std::string &lpStrRTFIn,
 			int lArg = -1;
 			bool bNeg = false;
 
-			szInput++;
+			++szInput;
 			if(isalpha(*szInput)) {
 				szCmdOutput = szCommand;
 
-				while(isalpha(*szInput) && szCmdOutput < szCommand+RTF_MAXCMD-1) *szCmdOutput++ = *szInput++;
+				while (isalpha(*szInput) && szCmdOutput < szCommand + RTF_MAXCMD - 1)
+					*szCmdOutput++ = *szInput++;
 				*szCmdOutput = 0;
 
 				if(*szInput == '-') {
 					bNeg = true;
-					szInput++;
+					++szInput;
 				}
 
 				if(isdigit(*szInput)) {
 					lArg = 0;
-					while(isdigit(*szInput)) { lArg = lArg*10 + *szInput - '0'; szInput++; }
+					while (isdigit(*szInput)) {
+						lArg = lArg * 10 + *szInput - '0';
+						++szInput;
+					}
 					if(bNeg) lArg = -lArg;
 				}
 				if(*szInput == ' ')
-					szInput++;
+					++szInput;
 
 				// szCommand is the command, lArg is the argument.
 				if(strcmp(szCommand,"fonttbl") == 0) {
@@ -920,14 +932,16 @@ HRESULT HrExtractHTMLFromRealRTF(const std::string &lpStrRTFIn,
 				  sState[ulState].output.append("</u>", 4);
 				  }*/
 				else if(strcmp(szCommand,"generator") == 0){
-					while(*szInput != ';' && *szInput != '}' && *szInput) szInput++;
+					while (*szInput != ';' && *szInput != '}' && *szInput)
+						++szInput;
 
 					if(*szInput == ';') 
-						szInput++;
+						++szInput;
 				}
 				else if(strcmp(szCommand,"bkmkstart") == 0 || strcmp(szCommand,"bkmkend") == 0){
 					// skip bookmark name
-					while (*szInput && isalnum(*szInput)) szInput++;
+					while (*szInput && isalnum(*szInput))
+						++szInput;
 
 					sState[ulState].bInSkipTbl = true;
 
@@ -966,17 +980,17 @@ HRESULT HrExtractHTMLFromRealRTF(const std::string &lpStrRTFIn,
 			}
 			// Non-alnum after '\'
 			else if(*szInput == '\\') {
-				szInput++;
+				++szInput;
 				if(!sState[ulState].bInFontTbl && !sState[ulState].bRTFOnly && !sState[ulState].bInColorTbl && !sState[ulState].bInSkipTbl) 
 					sState[ulState].output.append(1,'\\');
 			}
 			else if(*szInput == '{') {
-				szInput++;
+				++szInput;
 				if(!sState[ulState].bInFontTbl && !sState[ulState].bRTFOnly && !sState[ulState].bInColorTbl && !sState[ulState].bInSkipTbl) 
 					sState[ulState].output.append(1,'{');
 			}
 			else if(*szInput == '}') {
-				szInput++;
+				++szInput;
 				if(!sState[ulState].bInFontTbl && !sState[ulState].bRTFOnly && !sState[ulState].bInColorTbl && !sState[ulState].bInSkipTbl) 
 					sState[ulState].output.append(1,'}');
 			} 
@@ -987,17 +1001,17 @@ HRESULT HrExtractHTMLFromRealRTF(const std::string &lpStrRTFIn,
 				while(*szInput == '\'')
 				{
 					ulChar = 0;
-					szInput++;
+					++szInput;
 
 					if(*szInput) {
 						ulChar = (unsigned int) (strchr(szHex, toupper(*szInput)) == NULL ? 0 : (strchr(szHex, toupper(*szInput)) - szHex));
 						ulChar = ulChar << 4;
-						szInput++;
+						++szInput;
 					}
 
 					if(*szInput) {
 						ulChar += (unsigned int) (strchr(szHex, toupper(*szInput)) == NULL ? 0 : (strchr(szHex, toupper(*szInput)) - szHex));
-						szInput++;	
+						++szInput;	
 					}
 
 					if(!sState[ulState].bInFontTbl && !sState[ulState].bRTFOnly && !sState[ulState].bInColorTbl && !sState[ulState].bInSkipTbl && !sState[ulState].ulSkipChars) {
@@ -1006,34 +1020,34 @@ HRESULT HrExtractHTMLFromRealRTF(const std::string &lpStrRTFIn,
 						sState[ulState].ulSkipChars--;
 
 					if(*szInput == '\\' && *(szInput+1) == '\'')
-						szInput++;
+						++szInput;
 					else
 						break;
 				}
 
 			} else {
-				szInput++; // skip single character after '\'
+				++szInput; // skip single character after '\'
 			}
 		} // Non-command
 		else if(*szInput == '{') {
 			// Dump output data
 			strOutput += RTFFlushStateOutput(convertContext, sState, ulState);
 
-			ulState++;
+			++ulState;
 			if (ulState >= RTF_MAXSTATE)
 				return MAPI_E_NOT_ENOUGH_MEMORY;
 			sState[ulState] = sState[ulState-1];
 
-			szInput++;
+			++szInput;
 		} else if(*szInput == '}') {
 			// Dump output data
 			strOutput += RTFFlushStateOutput(convertContext, sState, ulState);
 
 			if(ulState > 0)
 				ulState--;
-			szInput++;
+			++szInput;
 		} else if(*szInput == '\r' || *szInput == '\n') {
-			szInput++;
+			++szInput;
 		} else {
 			if(!sState[ulState].bInFontTbl && !sState[ulState].bRTFOnly && !sState[ulState].bInColorTbl && !sState[ulState].bInSkipTbl && !sState[ulState].ulSkipChars) {
 				// basic html escaping only
@@ -1047,7 +1061,7 @@ HRESULT HrExtractHTMLFromRealRTF(const std::string &lpStrRTFIn,
 					sState[ulState].output.append(1,*szInput);
 			} else if (sState[ulState].ulSkipChars)
 				sState[ulState].ulSkipChars--;
-			szInput++;
+			++szInput;
 		}
 	}
 
@@ -1078,11 +1092,9 @@ HRESULT HrExtractHTMLFromRealRTF(const std::string &lpStrRTFIn,
  */
 bool isrtfhtml(const char *buf, unsigned int len)
 {
-	for (const char *c=buf; c<buf+len-9; c++)
-	{
+	for (const char *c = buf; c < buf + len - 9; ++c)
 		if (strncmp(c, "\\from", 5) == 0)
 			return strncmp(c, "\\fromhtml", 9) == 0;
-	}
 	return false;
 }
 
@@ -1099,10 +1111,9 @@ bool isrtfhtml(const char *buf, unsigned int len)
  */
 bool isrtftext(const char *buf, unsigned int len)
 {
-	for (const char *c=buf; c<buf+len-9; c++)	{
+	for (const char *c = buf; c < buf + len - 9; ++c)
 		if (strncmp(c, "\\from", 5) == 0)
 			return strncmp(c, "\\fromtext", 9) == 0;
-	}
 	return false;
 }
 
@@ -1137,25 +1148,29 @@ HRESULT HrExtractBODYFromTextRTF(const std::string &lpStrRTFIn,
 			int lArg = -1;
 			bool bNeg = false;
 
-			szInput++;
+			++szInput;
 			if(isalpha(*szInput)) {
 				szCmdOutput = szCommand;
 
-				while(isalpha(*szInput) && szCmdOutput < szCommand+RTF_MAXCMD-1) *szCmdOutput++ = *szInput++;
+				while (isalpha(*szInput) && szCmdOutput < szCommand + RTF_MAXCMD - 1)
+					*szCmdOutput++ = *szInput++;
 				*szCmdOutput = 0;
 
 				if(*szInput == '-') {
 					bNeg = true;
-					szInput++;
+					++szInput;
 				}
 
 				if(isdigit(*szInput)) {
 					lArg = 0;
-					while(isdigit(*szInput)) { lArg = lArg*10 + *szInput - '0'; szInput++; }
+					while (isdigit(*szInput)) {
+						lArg = lArg * 10 + *szInput - '0';
+						++szInput;
+					}
 					if(bNeg) lArg = -lArg;
 				}
 				if(*szInput == ' ')
-					szInput++;
+					++szInput;
 
 				// szCommand is the command, lArg is the argument.
 				if(strcmp(szCommand,"fonttbl") == 0) {
@@ -1222,14 +1237,16 @@ HRESULT HrExtractBODYFromTextRTF(const std::string &lpStrRTFIn,
 					}
 				}
 				else if(strcmp(szCommand,"generator") == 0){
-					while(*szInput != ';' && *szInput != '}' && *szInput) szInput++;
+					while (*szInput != ';' && *szInput != '}' && *szInput)
+						++szInput;
 
 					if(*szInput == ';') 
-						szInput++;
+						++szInput;
 				}
 				else if(strcmp(szCommand,"bkmkstart") == 0 || strcmp(szCommand,"bkmkend") == 0){
 					// skip bookmark name
-					while (*szInput && isalnum(*szInput)) szInput++;
+					while (*szInput && isalnum(*szInput))
+						++szInput;
 
 					sState[ulState].bInSkipTbl = true;
 				} else if(isRTFIgnoreCommand(szCommand)) {
@@ -1239,34 +1256,34 @@ HRESULT HrExtractBODYFromTextRTF(const std::string &lpStrRTFIn,
 			}
 			// Non-alnum after '\'
 			else if(*szInput == '\\') {
-				szInput++;
+				++szInput;
 				if(!sState[ulState].bInFontTbl && !sState[ulState].bRTFOnly && !sState[ulState].bInColorTbl && !sState[ulState].bInSkipTbl) 
 					sState[ulState].output.append(1,'\\');
 			}
 			else if(*szInput == '{') {
-				szInput++;
+				++szInput;
 				if(!sState[ulState].bInFontTbl && !sState[ulState].bRTFOnly && !sState[ulState].bInColorTbl && !sState[ulState].bInSkipTbl) 
 					sState[ulState].output.append(1,'{');
 			}
 			else if(*szInput == '}') {
-				szInput++;
+				++szInput;
 				if(!sState[ulState].bInFontTbl && !sState[ulState].bRTFOnly && !sState[ulState].bInColorTbl && !sState[ulState].bInSkipTbl) 
 					sState[ulState].output.append(1,'}');
 			} 
 			else if(*szInput == '\'') {
 				unsigned int ulChar = 0;
 
-				szInput++;
+				++szInput;
 
 				if(*szInput) {
 					ulChar = (unsigned int) (strchr(szHex, toupper(*szInput)) == NULL ? 0 : (strchr(szHex, toupper(*szInput)) - szHex));
 					ulChar = ulChar << 4;
-					szInput++;
+					++szInput;
 				}
 
 				if(*szInput) {
 					ulChar += (unsigned int) (strchr(szHex, toupper(*szInput)) == NULL ? 0 : (strchr(szHex, toupper(*szInput)) - szHex));
-					szInput++;
+					++szInput;
 				}
 
 				if(!sState[ulState].bInFontTbl && !sState[ulState].bRTFOnly && !sState[ulState].bInColorTbl && !sState[ulState].bInSkipTbl && !sState[ulState].ulSkipChars) {
@@ -1278,34 +1295,34 @@ HRESULT HrExtractBODYFromTextRTF(const std::string &lpStrRTFIn,
 					sState[ulState].ulSkipChars--;
 
 			} else {
-				szInput++; // skip single character after '\'
+				++szInput; // skip single character after '\'
 			}
 		} // Non-command
 		else if(*szInput == '{') {
 			// Dump output data
 			strBodyOut += RTFFlushStateOutput(convertContext, sState, ulState);
 
-			ulState++;
+			++ulState;
 			if (ulState >= RTF_MAXSTATE)
 				return MAPI_E_NOT_ENOUGH_MEMORY;
 			sState[ulState] = sState[ulState-1];
 
-			szInput++;
+			++szInput;
 		} else if(*szInput == '}') {
 			// Dump output data
 			strBodyOut += RTFFlushStateOutput(convertContext, sState, ulState);
 
 			if(ulState > 0)
-				ulState--;
-			szInput++;
+				--ulState;
+			++szInput;
 		} else if(*szInput == '\r' || *szInput == '\n') {
-			szInput++;
+			++szInput;
 		} else {
 			if(!sState[ulState].bInFontTbl && !sState[ulState].bRTFOnly && !sState[ulState].bInColorTbl && !sState[ulState].bInSkipTbl && !sState[ulState].ulSkipChars) {
 				sState[ulState].output.append(1,*szInput);
 			} else if (sState[ulState].ulSkipChars)
-				sState[ulState].ulSkipChars--;
-			szInput++;
+				--sState[ulState].ulSkipChars;
+			++szInput;
 		}
 	}
 

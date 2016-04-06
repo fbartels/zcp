@@ -156,7 +156,7 @@ static HRESULT DetectFolderEntryDetails(LPMESSAGE lpMessage, string *lpName,
 		goto exit;
 	}
 
-	for (ULONG i = 0; i < ulPropertyCount; i++) {
+	for (ULONG i = 0; i < ulPropertyCount; ++i) {
 		if (PROP_TYPE(lpPropertyArray[i].ulPropTag) == PT_ERROR)
 			continue;
 		else if (lpPropertyArray[i].ulPropTag == PR_SUBJECT_A)
@@ -262,7 +262,7 @@ static HRESULT ProcessFolder(ZarafaFsck *lpFsck, LPMAPIFOLDER lpFolder,
 		if (lpRows->cRows == 0)
 			break;
 
-		for (ULONG i = 0; i < lpRows->cRows; i++) {
+		for (ULONG i = 0; i < lpRows->cRows; ++i) {
 			hr = ProcessFolderEntry(lpFsck, lpFolder, &lpRows->aRow[i]);
 			if (hr != hrSuccess) {
 				cout << "Failed to validate entry." << endl;
@@ -303,7 +303,7 @@ HRESULT ZarafaFsck::ValidateMessage(LPMESSAGE lpMessage,
 
 	cout << "Validating entry: \"" << strName << "\"" << endl;
 
-	this->ulEntries++;
+	++this->ulEntries;
 	hr = this->ValidateItem(lpMessage, strClass);
 
 	cout << "Validating of entry \"" << strName << "\" ended" << endl;
@@ -318,7 +318,7 @@ HRESULT ZarafaFsck::ValidateFolder(LPMAPIFOLDER lpFolder,
 
 	cout << "Validating folder \"" << strName << "\"" << endl;
 
-	this->ulFolders++;
+	++this->ulFolders;
 	hr = ProcessFolder(this, lpFolder, strName);
 
 	cout << "Validating of folder \"" << strName << "\" ended" << endl;
@@ -333,11 +333,11 @@ HRESULT ZarafaFsck::AddMissingProperty(LPMESSAGE lpMessage,
 
 	cout << "Missing property " << strName << endl;
 
-	this->ulProblems++;
+	++this->ulProblems;
 	if (ReadYesNoMessage("Add missing property?", auto_fix)) {
 		hr = FixProperty(lpMessage, strName, ulTag, Value);
 		if (hr == hrSuccess)
-			this->ulFixed++;
+			++this->ulFixed;
 	}
 
 	return hr;
@@ -351,11 +351,11 @@ HRESULT ZarafaFsck::ReplaceProperty(LPMESSAGE lpMessage,
 
 	cout << "Invalid property " << strName << " - " << strError << endl;
 
-	this->ulProblems++;
+	++this->ulProblems;
 	if (ReadYesNoMessage("Fix broken property?", auto_fix)) {
 		hr = FixProperty(lpMessage, strName, ulTag, Value);
 		if (hr == hrSuccess)
-			this->ulFixed++;
+			++this->ulFixed;
 	}
 
 	return hr;
@@ -368,7 +368,7 @@ HRESULT ZarafaFsck::DeleteRecipientList(LPMESSAGE lpMessage, std::list<unsigned 
 	std::list<unsigned int>::iterator iter;
 	SRowSet *lpMods = NULL;
 
-	this->ulProblems++;
+	++this->ulProblems;
 
 	cout << mapiReciptDel.size() << " duplicate or invalid recipients found. " << endl;
 
@@ -379,14 +379,14 @@ HRESULT ZarafaFsck::DeleteRecipientList(LPMESSAGE lpMessage, std::list<unsigned 
 			goto exit;
 
 		lpMods->cRows = 0;
-		for(iter = mapiReciptDel.begin(); iter != mapiReciptDel.end(); iter++) {
+		for (iter = mapiReciptDel.begin(); iter != mapiReciptDel.end(); ++iter) {
 			lpMods->aRow[lpMods->cRows].cValues = 1;
 			if ((hr = MAPIAllocateMore(sizeof(SPropValue), lpMods, (void**)&lpMods->aRow[lpMods->cRows].lpProps)) != hrSuccess)
 				goto exit;
 			lpMods->aRow[lpMods->cRows].lpProps->ulPropTag = PR_ROWID;
 			lpMods->aRow[lpMods->cRows].lpProps->Value.ul = *iter;
 
-			lpMods->cRows++;
+			++lpMods->cRows;
 		}
 
 		hr = lpMessage->ModifyRecipients(MODRECIP_REMOVE, (LPADRLIST)lpMods);
@@ -399,7 +399,7 @@ HRESULT ZarafaFsck::DeleteRecipientList(LPMESSAGE lpMessage, std::list<unsigned 
 
 		bChanged = true;
 
-		this->ulFixed++;
+		++this->ulFixed;
 	}
 exit:
 	MAPIFreeBuffer(lpMods);
@@ -413,7 +413,7 @@ HRESULT ZarafaFsck::DeleteMessage(LPMAPIFOLDER lpFolder, LPSPropValue lpItemProp
 	if (ReadYesNoMessage("Delete message?", auto_del)) {
 		hr = DeleteEntry(lpFolder, lpItemProperty);
 		if (hr == hrSuccess)
-			this->ulDeleted++;
+			++this->ulDeleted;
 	}
 
 	return hr;
@@ -454,7 +454,7 @@ HRESULT ZarafaFsck::ValidateRecursiveDuplicateRecipients(LPMESSAGE lpMessage, bo
 		if (pRows->cRows == 0)
 			break;
 
-		for (unsigned int i = 0; i < pRows->cRows; i++) {
+		for (unsigned int i = 0; i < pRows->cRows; ++i) {
 			if (pRows->aRow[i].lpProps[1].ulPropTag == PR_ATTACH_METHOD && pRows->aRow[i].lpProps[1].Value.ul == ATTACH_EMBEDDED_MSG)
 			{
 				bSubChanged = false;
@@ -560,7 +560,7 @@ HRESULT ZarafaFsck::ValidateDuplicateRecipients(LPMESSAGE lpMessage, bool &bChan
 		if (pRows->cRows == 0)
 			break;
 
-		for (i = 0; i < pRows->cRows; i++) {
+		for (i = 0; i < pRows->cRows; ++i) {
 
 			if (pRows->aRow[i].lpProps[1].ulPropTag != PR_DISPLAY_NAME_A && pRows->aRow[i].lpProps[2].ulPropTag != PR_EMAIL_ADDRESS_A) {
 				mapiReciptDel.push_back(pRows->aRow[i].lpProps[0].Value.ul);

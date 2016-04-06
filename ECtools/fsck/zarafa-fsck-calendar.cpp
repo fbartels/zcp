@@ -95,7 +95,7 @@ HRESULT ZarafaFsckCalendar::ValidateMinimalNamedFields(LPMESSAGE lpMessage)
 	if (FAILED(hr))
 		goto exit;
 
-	for (ULONG i = 0; i < TAG_COUNT; i++) {
+	for (ULONG i = 0; i < TAG_COUNT; ++i) {
 		if (PROP_TYPE(lpPropertyArray[i].ulPropTag) == PT_ERROR) {
 			__UPV Value;
 			Value.b = false;
@@ -509,9 +509,8 @@ HRESULT ZarafaFsckCalendar::ValidateRecurrence(LPMESSAGE lpMessage)
 	            // Add new extendedexceptions if missing
                 iEx = r.lstExceptions.begin();
 	            
-	            for(size_t i = 0; i < r.lstExtendedExceptions.size(); i++) {
-	                iEx++;
-	            }
+	            for (size_t i = 0; i < r.lstExtendedExceptions.size(); ++i)
+			++iEx;
 	            
 	            while(r.lstExtendedExceptions.size() < r.lstExceptions.size()) {
 	                wstring wstr;
@@ -528,17 +527,16 @@ HRESULT ZarafaFsckCalendar::ValidateRecurrence(LPMESSAGE lpMessage)
 	                ex.strWideCharLocation.assign(wstr.c_str(), wstr.size());
 	                
 	                r.lstExtendedExceptions.push_back(ex);
-	                iEx++;
+	                ++iEx;
                 }
                 
                 // Set some defaults right for exceptions
-                for(iEx = r.lstExceptions.begin(); iEx != r.lstExceptions.end(); iEx++) {
+                for (iEx = r.lstExceptions.begin(); iEx != r.lstExceptions.end(); ++iEx)
                     iEx->ulOriginalStartDate = (iEx->ulOriginalStartDate / 1440) * 1440;
-                }
                 
                 // Set some defaults for extended exceptions
                 iEx = r.lstExceptions.begin();
-                for(iEEx = r.lstExtendedExceptions.begin(); iEEx != r.lstExtendedExceptions.end(); iEEx++) {
+                for (iEEx = r.lstExtendedExceptions.begin(); iEEx != r.lstExtendedExceptions.end(); ++iEEx) {
                     wstring wstr;
                     iEEx->strReservedBlock1 = "";
                     iEEx->strReservedBlock2 = "";
@@ -550,7 +548,7 @@ HRESULT ZarafaFsckCalendar::ValidateRecurrence(LPMESSAGE lpMessage)
 
 					TryConvert(convertContext, iEx->strLocation, rawsize(iEx->strLocation), "windows-1252", wstr);
 	                iEEx->strWideCharLocation.assign(wstr.c_str(), wstr.size());
-                    iEx++;
+                    ++iEx;
                 }
                 
                 // Reset reserved data to 0

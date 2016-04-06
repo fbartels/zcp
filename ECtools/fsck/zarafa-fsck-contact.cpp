@@ -88,7 +88,7 @@ HRESULT ZarafaFsckContact::ValidateContactNames(LPMESSAGE lpMessage)
 	if (!lpPropertyArray)
 		goto exit;
 
-	for (ULONG i = 0; i < TAG_COUNT; i++) {
+	for (ULONG i = 0; i < TAG_COUNT; ++i) {
 		if (PROP_TYPE(lpPropertyArray[i].ulPropTag) != PT_ERROR &&
 			lpPropertyArray[i].Value.lpszA &&
 			strlen(lpPropertyArray[i].Value.lpszA))
@@ -102,7 +102,7 @@ HRESULT ZarafaFsckContact::ValidateContactNames(LPMESSAGE lpMessage)
 		/* Just loop through the list and attach all provided information,
 		 * note that the order of the definitions must for this reason be:
 		 * PREFIX FIRSTNAME MIDDLENAME LASTNAME SUFFIX */
-		for (ULONG j = E_PREFIX; j < ((ULONG)E_SUFFIX)+1; j++) {
+		for (ULONG j = E_PREFIX; j < (ULONG)E_SUFFIX + 1; ++j) {
 			if (!result[E_FULLNAME].empty() && !result[j].empty())
 				result[E_FULLNAME] += " ";
 

@@ -182,7 +182,7 @@ static std::string GetString(LPSPropValue lpProps, ULONG cValues,
         case PT_STRING8: return lpProp->Value.lpszA;
         case PT_MV_STRING8: {
             std::string s;
-            for(ULONG i = 0; i < lpProp->Value.MVszA.cValues; i++) {
+            for (ULONG i = 0; i < lpProp->Value.MVszA.cValues; ++i) {
                 s+= lpProp->Value.MVszA.lppszA[i];
                 s+= " ";
             }
@@ -294,7 +294,7 @@ static void showtop(LPMDB lpStore, bool bLocal)
         dblTime = GetTimeOfDay() - dblLast;
         dblLast = GetTimeOfDay();
             
-        for(ULONG i = 0; i< lpsRowSet->cRows;i++) {
+        for (ULONG i = 0; i < lpsRowSet->cRows; ++i) {
             LPSPropValue lpName = PpropFindProp(lpsRowSet->aRow[i].lpProps, lpsRowSet->aRow[i].cValues, PR_DISPLAY_NAME_A);
             LPSPropValue lpValue = PpropFindProp(lpsRowSet->aRow[i].lpProps, lpsRowSet->aRow[i].cValues, PR_EC_STATS_SYSTEM_VALUE);
             
@@ -323,7 +323,7 @@ static void showtop(LPMDB lpStore, bool bLocal)
         dblUser = dblSystem = 0;
         ulSessGrp = 1;
         
-        for(ULONG i = 0; i < lpsRowSet->cRows; i++) {
+        for (ULONG i = 0; i < lpsRowSet->cRows; ++i) {
             SESSION session;
 
             session.strUser = GetString(lpsRowSet->aRow[i].lpProps, lpsRowSet->aRow[i].cValues, PR_EC_USERNAME_A);
@@ -427,7 +427,7 @@ static void showtop(LPMDB lpStore, bool bLocal)
         if (bColumns[10]) { wmove(win, 4, ofs); wprintw(win, "STAT");		ofs += cols[11]; }
         if (bColumns[11]) { wmove(win, 4, ofs); wprintw(win, "TASK"); }
         
-        for(iterSessions = lstSessions.begin(); iterSessions != lstSessions.end(); iterSessions++) {
+        for (iterSessions = lstSessions.begin(); iterSessions != lstSessions.end(); ++iterSessions) {
             if(iterSessions->dtimes.dblUser + iterSessions->dtimes.dblSystem > 0)
                 wattron(win, A_BOLD);
             else
@@ -503,7 +503,7 @@ static void showtop(LPMDB lpStore, bool bLocal)
 				wprintw(win, "%s", iterSessions->strBusy.c_str());
 			}
 
-            line++;
+            ++line;
             
             if(line + 5>= wy)
             	break;

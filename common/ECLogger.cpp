@@ -374,7 +374,7 @@ bool ECLogger_File::DupFilter(const unsigned int loglevel, const std::string &me
 
 	pthread_rwlock_rdlock(&dupfilter_lock);
 	if (prevmsg == message) {
-		prevcount++;
+		++prevcount;
 
 		if (prevcount < 100)
 			exit_with_true = true;
@@ -727,7 +727,7 @@ void ECLogger_Pipe::Log(unsigned int loglevel, const std::string &message) {
 	}
 
 	msgbuffer[off] = '\0';
-	off++;
+	++off;
 
 	/*
 	 * Write as one block to get it to the real logger.
@@ -776,7 +776,7 @@ void ECLogger_Pipe::LogVA(unsigned int loglevel, const char *format, va_list& va
 	off += len;
 
 	msgbuffer[off] = '\0';
-	off++;
+	++off;
 
 	/*
 	 * Write as one block to get it to the real logger.
@@ -930,7 +930,7 @@ namespace PrivatePipe {
 				s = strlen(p);	// find string in read buffer
 				if (s) {
 					lpFileLogger->Log(l, string(p, s));
-					s++;		// add \0
+					++s;		// add \0
 					p += s;		// skip string
 					ret -= s;
 				} else {
@@ -985,7 +985,7 @@ ECLogger* StartLoggerProcess(ECConfig* lpConfig, ECLogger* lpLogger) {
 	if (child == 0) {
 		// close all files except the read pipe and the logfile
 		t = getdtablesize();
-		for (i = 3; i<t; i++) {
+		for (i = 3; i < t; ++i) {
 			if (i == pipefds[0] || i == filefd) continue;
 			close(i);
 		}
@@ -1160,11 +1160,11 @@ void LogConfigErrors(ECConfig *lpConfig) {
 		return;
 
 	strings = lpConfig->GetWarnings();
-	for (i = strings->begin() ; i != strings->end(); i++)
+	for (i = strings->begin(); i != strings->end(); ++i)
 		ec_log_warn("Config warning: " + *i);
 
 	strings = lpConfig->GetErrors();
-	for (i = strings->begin() ; i != strings->end(); i++)
+	for (i = strings->begin(); i != strings->end(); ++i)
 		ec_log_crit("Config error: " + *i);
 }
 
@@ -1232,7 +1232,7 @@ void generic_sigsegv_handler(ECLogger *lpLogger, const char *const app_name, con
 
 	btsymbols = backtrace_symbols(bt, n);
 
-	for(int i = 0; i < n; i++) {
+	for (int i = 0; i < n; ++i) {
 		if (btsymbols)
 			lpLogger->Log(EC_LOGLEVEL_FATAL, "%i %p %s", i, bt[i], btsymbols[i]);
 		else

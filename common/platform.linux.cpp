@@ -284,12 +284,12 @@ int my_pthread_mutex_lock(const char *file, unsigned int line, pthread_mutex_t *
 
        pthread_mutex_lock(&my_mutex);
        my_pthread_map[s].strLocation = s;
-       my_pthread_map[s].locks++;
+       ++my_pthread_map[s].locks;
        pthread_mutex_unlock(&my_mutex);
 
        if(( err = pthread_mutex_trylock(__mutex)) == EBUSY) {
                pthread_mutex_lock(&my_mutex);
-               my_pthread_map[s].busy++;
+               ++my_pthread_map[s].busy;
                pthread_mutex_unlock(&my_mutex);
                dblTime = GetTimeOfDay();
                err = pthread_mutex_lock(__mutex);
@@ -316,12 +316,12 @@ int my_pthread_rwlock_rdlock(const char *file, unsigned int line, pthread_rwlock
 
        pthread_mutex_lock(&my_mutex);
        my_pthread_map[s].strLocation = s;
-       my_pthread_map[s].locks++;
+       ++my_pthread_map[s].locks;
        pthread_mutex_unlock(&my_mutex);
 
        if(( err = pthread_rwlock_tryrdlock(__mutex)) == EBUSY) {
                pthread_mutex_lock(&my_mutex);
-               my_pthread_map[s].busy++;
+               ++my_pthread_map[s].busy;
                pthread_mutex_unlock(&my_mutex);
                dblTime = GetTimeOfDay();
                err = pthread_rwlock_rdlock(__mutex);
@@ -348,12 +348,12 @@ int my_pthread_rwlock_wrlock(const char *file, unsigned int line, pthread_rwlock
 
        pthread_mutex_lock(&my_mutex);
        my_pthread_map[s].strLocation = s;
-       my_pthread_map[s].locks++;
+       ++my_pthread_map[s].locks;
        pthread_mutex_unlock(&my_mutex);
 
        if(( err = pthread_rwlock_trywrlock(__mutex)) == EBUSY) {
                pthread_mutex_lock(&my_mutex);
-               my_pthread_map[s].busy++;
+               ++my_pthread_map[s].busy;
                pthread_mutex_unlock(&my_mutex);
                dblTime = GetTimeOfDay();
                err = pthread_rwlock_wrlock(__mutex);
@@ -371,7 +371,7 @@ std::string dump_pthread_locks()
        std::string strLog;
        char s[2048];
 
-       for(i=my_pthread_map.begin(); i!= my_pthread_map.end(); i++) {
+       for (i = my_pthread_map.begin(); i!= my_pthread_map.end(); ++i) {
                snprintf(s,sizeof(s), "%s\t\t%d\t\t%d\t\t%f\n", i->second.strLocation.c_str(), i->second.locks, i->second.busy, (float)i->second.dblTime);
                strLog += s;
        }

@@ -88,7 +88,7 @@ void ssl_threading_setup() {
 	pthread_mutexattr_init(&mattr);
 	pthread_mutexattr_settype(&mattr, PTHREAD_MUTEX_RECURSIVE);
 	ssl_locks = new pthread_mutex_t[CRYPTO_num_locks()];
-	for (int i=0; i < CRYPTO_num_locks(); i++)
+	for (int i = 0; i < CRYPTO_num_locks(); ++i)
 		pthread_mutex_init(&ssl_locks[i], &mattr);
 	CRYPTO_set_locking_callback(ssl_lock);
 #ifndef WIN32
@@ -100,7 +100,7 @@ void ssl_threading_setup() {
 void ssl_threading_cleanup() {
 	if (!ssl_locks)
 		return;
-	for (int i=0; i < CRYPTO_num_locks(); i++)
+	for (int i = 0; i < CRYPTO_num_locks(); ++i)
 		pthread_mutex_destroy(&ssl_locks[i]);
 	delete [] ssl_locks;
 	ssl_locks = NULL;

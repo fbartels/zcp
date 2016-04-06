@@ -122,14 +122,14 @@ bool CHtmlToTextParser::Parse(const WCHAR *lpwHTML)
 			else
 				fAddSpace = false;
 
-			lpwHTML++;
+			++lpwHTML;
 		} else if(*lpwHTML == '<' && *lpwHTML+1 != ' ') { // The next char can not be a space!
-			lpwHTML++;
+			++lpwHTML;
 			parseTag(lpwHTML);
 		} else if(*lpwHTML == ' ' && !fPreMode) {
 			fTextMode = true;
 			addSpace(false);
-			lpwHTML++;
+			++lpwHTML;
 		} else {
 			if (fTextMode && fAddSpace) {
 				addSpace(false);
@@ -144,7 +144,7 @@ bool CHtmlToTextParser::Parse(const WCHAR *lpwHTML)
 					continue;
 				addChar(*lpwHTML);
 			}
-			lpwHTML++;
+			++lpwHTML;
 		}
 	}
 
@@ -162,7 +162,7 @@ void CHtmlToTextParser::addNewLine(bool forceLine) {
 	if (forceLine || cNewlines == 0)
 		strText += L"\r\n";
 
-	cNewlines++;
+	++cNewlines;
 }
 
 void CHtmlToTextParser::addChar(WCHAR c) {
@@ -190,27 +190,27 @@ bool CHtmlToTextParser::parseEntity(const WCHAR* &lpwHTML)
 	if(*lpwHTML != '&')
 		return false;
 
-	lpwHTML++;
+	++lpwHTML;
 
 	if (*lpwHTML == '#') {
 		int base = 10;
 
-		lpwHTML++;
+		++lpwHTML;
 		if (*lpwHTML == 'x') {
-			lpwHTML++;
+			++lpwHTML;
 			base = 16;
 		}
 
-		for (int i =0; isxdigit(*lpwHTML) && *lpwHTML != ';' && i < 10; i++) {
+		for (int i = 0; isxdigit(*lpwHTML) && *lpwHTML != ';' && i < 10; ++i) {
 			entity += *lpwHTML;
-			lpwHTML++;
+			++lpwHTML;
 		}
 
 		strText.push_back(wcstoul(entity.c_str(), NULL, base));
 	} else {
-		for(int i =0; *lpwHTML != ';' && *lpwHTML != 0 && i < 10; i++) {
+		for (int i = 0; *lpwHTML != ';' && *lpwHTML != 0 && i < 10; ++i) {
 			entity += *lpwHTML;
-			lpwHTML++;
+			++lpwHTML;
 		}
 
 		WCHAR code = CHtmlEntity::toChar(entity.c_str());
@@ -219,7 +219,7 @@ bool CHtmlToTextParser::parseEntity(const WCHAR* &lpwHTML)
 	}
 
 	if(*lpwHTML == ';')
-		lpwHTML++;
+		++lpwHTML;
 
 	return true;
 }
@@ -239,7 +239,7 @@ void CHtmlToTextParser::parseTag(const WCHAR* &lpwHTML)
 			
 			// HTML comment or doctype detect, ignore all the text
 			bool fCommentMode = false;
-			lpwHTML++;
+			++lpwHTML;
 
 			if (*lpwHTML == '-' && *(lpwHTML+1) == '-') {
 				fCommentMode = true;
@@ -250,16 +250,16 @@ void CHtmlToTextParser::parseTag(const WCHAR* &lpwHTML)
 				if (*lpwHTML == '>') {
 					if(fCommentMode) {
 						if (*(lpwHTML-1) == '-' && *(lpwHTML-2) == '-' ) {
-							lpwHTML++; // comment ends with -->
+							++lpwHTML; // comment ends with -->
 							return;
 						}
 					} else {
-						lpwHTML++; // all others end on the first >
+						++lpwHTML; // all others end on the first >
 						return;
 					}
 				}
 
-				lpwHTML++;
+				++lpwHTML;
 			}
 		} else if (*lpwHTML == '>') {
 			if(!bTagEnd){
@@ -285,7 +285,7 @@ void CHtmlToTextParser::parseTag(const WCHAR* &lpwHTML)
 			}
 		}
 
-		lpwHTML++;
+		++lpwHTML;
 	}
 
 	// Parse tag
@@ -311,7 +311,7 @@ void CHtmlToTextParser::parseAttributes(const WCHAR* &lpwHTML)
 				bAttrValue = false;
 				bEndTag = true;
 		} else if(*lpwHTML == '>' && bAttrName) {
-			lpwHTML++;
+			++lpwHTML;
 			break; // No attributes or broken attribute detect
 		} else if(*lpwHTML == '=' && bAttrName) {
 			bAttrName = false;
@@ -351,7 +351,7 @@ void CHtmlToTextParser::parseAttributes(const WCHAR* &lpwHTML)
 			attrName.clear();
 		}
 
-		lpwHTML++;
+		++lpwHTML;
 	}
 
 	stackAttrs.push(mapAttrs);

@@ -86,7 +86,7 @@ HRESULT ZarafaFsckTask::ValidateMinimalNamedFields(LPMESSAGE lpMessage)
 	if (FAILED(hr))
 		goto exit;
 
-	for (ULONG i = 0; i < TAG_COUNT; i++) {
+	for (ULONG i = 0; i < TAG_COUNT; ++i) {
 		if (PROP_TYPE(lpPropertyArray[i].ulPropTag) == PT_ERROR) {
 			__UPV Value;
 			Value.b = false;

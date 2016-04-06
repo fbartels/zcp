@@ -607,7 +607,7 @@ static HRESULT HrStartHandlerClient(ECChannel *lpChannel, bool bUseSSL,
 			hr = E_FAIL;
 			goto exit;
 		}
-		nChildren++;
+		++nChildren;
 	}
 
 exit:

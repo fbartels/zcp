@@ -216,8 +216,8 @@ int memsubstr(const void* haystack, size_t haystackSize, const void* needle, siz
 	while(pos < haystackSize)
 	{
 		if(*databuf == *searchbuf){
-			searchbuf++;
-			match++;
+			++searchbuf;
+			++match;
 
 			if(match == needleSize)
 				return 0;
@@ -229,8 +229,8 @@ int memsubstr(const void* haystack, size_t haystackSize, const void* needle, siz
 			match = 0;
 		}
 
-		databuf++;
-		pos++;
+		++databuf;
+		++pos;
 	}
 
 	return 1;
@@ -342,7 +342,7 @@ std::string shell_escape(std::string str)
 	start = ptr = str.begin();
 	while (ptr != str.end()) {
 		while (ptr != str.end() && *ptr != '\'')
-			ptr++;
+			++ptr;
 
 		escaped += std::string(start, ptr);
 		if (ptr == str.end())
@@ -406,7 +406,7 @@ std::string concatenate(std::vector<std::string> &elements, const std::string &d
 	std::string concat;
 
     if (!elements.empty()) {
-		for (iter = elements.begin(); iter != elements.end(); iter++)
+		for (iter = elements.begin(); iter != elements.end(); ++iter)
 			concat += *iter + delimeters;
 		concat.erase(concat.end() - delimeters.size());
 	}
@@ -487,7 +487,7 @@ std::string bin2hex(unsigned int inLength, const unsigned char *input)
 		return buffer;
 
 	buffer.reserve(inLength * 2);
-	for (unsigned int i = 0; i < inLength; i++) {
+	for (unsigned int i = 0; i < inLength; ++i) {
 		buffer += digits[input[i]>>4];
 		buffer += digits[input[i]&0x0F];
 	}
@@ -509,7 +509,7 @@ std::wstring bin2hexw(unsigned int inLength, const unsigned char *input)
 		return buffer;
 
 	buffer.reserve(inLength * 2);
-	for (unsigned int i = 0; i < inLength; i++) {
+	for (unsigned int i = 0; i < inLength; ++i) {
 		buffer += digits[input[i]>>4];
 		buffer += digits[input[i]&0x0F];
 	}
@@ -532,13 +532,12 @@ std::string StringEscape(const char* input, const char *tokens, const char escap
 		if(input[i] == 0)
 			break;
 		
-		for(t=0; tokens[t] != 0; t++) {
+		for (t = 0; tokens[t] != 0; ++t)
 			if (input[i] == tokens[t])
 				strEscaped += escape;
-		}
 
 		strEscaped += input[i];
-		i++;
+		++i;
 	}
 
 	return strEscaped;
@@ -561,8 +560,7 @@ std::string urlEncode(const std::string &input)
 	static const char digits[] = "0123456789ABCDEF";
 
 	output.reserve(input.length());
-	for (size_t i = 0; i < input.length(); i++) 
-	{
+	for (size_t i = 0; i < input.length(); ++i) {
 		if (input[i] <= 127) {
 			switch (input[i]) {
 			case ':':
@@ -635,8 +633,7 @@ std::string urlDecode(const std::string &input)
 	std::string output;
 
 	output.reserve(input.length());
-	for (size_t i = 0; i < input.length(); i++) 
-	{
+	for (size_t i = 0; i < input.length(); ++i) {
 		if (input[i] == '%' && input.length() > i + 2)
 		{
 			unsigned char c;
@@ -663,12 +660,12 @@ std::string urlDecode(const std::string &input)
  */
 void BufferLFtoCRLF(size_t size, const char *input, char *output, size_t *outsize) {
 	size_t j = 0;
-	for (size_t i = 0; i < size; i++) {
+	for (size_t i = 0; i < size; ++i) {
 		if (input[i] == '\r') {
 			if ((i+1) < size && input[i+1] == '\n') {
 				output[j++] = '\r';
 				output[j++] = '\n';
-				i++;
+				++i;
 			} else {
 				output[j++] = '\r';
 				output[j++] = '\n';
@@ -744,12 +741,11 @@ void StringLFtoCRLF(std::string &strInOut)
 
 	strOutput.reserve(strInOut.size());
 
-	for (i = strInOut.begin(); i != strInOut.end(); i++) {
+	for (i = strInOut.begin(); i != strInOut.end(); ++i)
 		if (*i == '\n' && i != strInOut.begin() && *(i-1) != '\r')
 			strOutput.append("\r\n");
 		else
 			strOutput.append(1, *i);
-	}
 
 	swap(strInOut, strOutput);
 }
@@ -768,14 +764,13 @@ std::string forcealnum(const std::string& str, const char *szAdditional)
 {
     std::string out;
 
-    for(std::string::const_iterator i = str.begin(); i != str.end(); i++) {
+    for (std::string::const_iterator i = str.begin(); i != str.end(); ++i)
         if(isalnum(*i))
             out += *i;
         else if(szAdditional && strchr(szAdditional, *i) != NULL)
             out += *i;
         else
             out += '_';
-    }
 
     return out;
 }

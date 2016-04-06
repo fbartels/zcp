@@ -159,7 +159,7 @@ int main(int argc, char* argv[])
 			   strMulti[0] == 't' || strMulti[0] == 'T' ||
 			   strMulti[0] == '1');
 
-	for (list<ECConfigCheck*>::iterator it = check.begin(); it != check.end(); it++) {
+	for (list<ECConfigCheck*>::iterator it = check.begin(); it != check.end(); ++it) {
 		if ((*it)->isDirty())
 			continue;
 

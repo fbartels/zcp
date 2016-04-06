@@ -616,7 +616,7 @@ static string getMapiPropertyString(ULONG ulPropTag)
 static void print_companies(unsigned int cCompanies,
     const ECCOMPANY *lpECCompanies, bool bList)
 {
-	for (unsigned int i = 0; i< cCompanies; i++) {
+	for (unsigned int i = 0; i< cCompanies; ++i) {
 		if (!bList)
 			cout << ((i > 0) ? ", " : "");
 		else
@@ -639,7 +639,7 @@ static void print_companies(unsigned int cCompanies,
 static void print_groups(unsigned int cGroups, const ECGROUP *lpECGroups,
     bool bList)
 {
-	for (unsigned int i = 0; i < cGroups; i++) {
+	for (unsigned int i = 0; i < cGroups; ++i) {
 		if (!bList)
 			cout << ((i > 0) ? ", " : "");
 		else
@@ -669,7 +669,7 @@ static void print_users(unsigned int cUsers, const ECUSER *lpECUsers,
 	if (bShowHomeServer)
 		ct.SetHeader(2, "Homeserver");
 
-	for (unsigned int i = 0; i < cUsers; i++) {
+	for (unsigned int i = 0; i < cUsers; ++i) {
 		ct.SetColumn(i, 0, (LPSTR)lpECUsers[i].lpszUsername);
 		ct.SetColumn(i, 1, (LPSTR)lpECUsers[i].lpszFullName);
 		if (bShowHomeServer) {
@@ -701,15 +701,15 @@ static void print_extra_settings(const SPROPMAP *lpPropmap,
 	ConsoleTable ct(lpPropmap->cEntries + lpMVPropmap->cEntries, 2);
 
 	cout << "Mapped properties:" << std::endl;
-	for (unsigned int i = 0; i < lpPropmap->cEntries; i++) {
+	for (unsigned int i = 0; i < lpPropmap->cEntries; ++i) {
 		ct.SetColumn(c, 0, getMapiPropertyString(lpPropmap->lpEntries[i].ulPropId));
 		if (PROP_TYPE(lpPropmap->lpEntries[i].ulPropId) == PT_BINARY)
 			ct.SetColumn(c, 1, stringify(strlen((LPSTR)lpPropmap->lpEntries[i].lpszValue)) + " bytes");
 		else
 			ct.SetColumn(c, 1, (LPSTR)lpPropmap->lpEntries[i].lpszValue);
-		c++;
+		++c;
 	}
-	for (unsigned int i = 0; i < lpMVPropmap->cEntries; i++) {
+	for (unsigned int i = 0; i < lpMVPropmap->cEntries; ++i) {
 		string strMVValues;
 
 		ct.SetColumn(c, 0, getMapiPropertyString(lpMVPropmap->lpEntries[i].ulPropId));
@@ -717,7 +717,7 @@ static void print_extra_settings(const SPROPMAP *lpPropmap,
 		if (PROP_TYPE(lpMVPropmap->lpEntries[i].ulPropId) == PT_MV_BINARY) {
 			strMVValues = stringify(lpMVPropmap->lpEntries[i].cValues) + " values";
 		} else {
-			for (int j = 0; j < lpMVPropmap->lpEntries[i].cValues; j++) {
+			for (int j = 0; j < lpMVPropmap->lpEntries[i].cValues; ++j) {
 				if (!strMVValues.empty())
 					strMVValues += "; ";
 
@@ -726,7 +726,7 @@ static void print_extra_settings(const SPROPMAP *lpPropmap,
 		}
 
 		ct.SetColumn(c, 1, strMVValues);
-		c++;
+		++c;
 	}
 
 	ct.PrintTable();
@@ -1342,7 +1342,7 @@ static HRESULT list_orphans(IECServiceAdmin *lpServiceAdmin)
 		if(lpRowSet->cRows == 0)
 			break;
 
-		for (i = 0; i < lpRowSet->cRows; i++) {
+		for (i = 0; i < lpRowSet->cRows; ++i) {
 			lpStoreGuid = PpropFindProp(lpRowSet->aRow[i].lpProps, lpRowSet->aRow[i].cValues, PR_EC_STOREGUID);
 			lpUserName = PpropFindProp(lpRowSet->aRow[i].lpProps, lpRowSet->aRow[i].cValues, PR_EC_USERNAME_A);
 			lpModTime = PpropFindProp(lpRowSet->aRow[i].lpProps, lpRowSet->aRow[i].cValues, PR_LAST_MODIFICATION_TIME);
@@ -1858,7 +1858,7 @@ static HRESULT ForEachCompany(IECServiceAdmin *lpServiceAdmin,
 		goto exit;
 	}
 
-	for (unsigned int i = 0; i < cCompanies; i++) {
+	for (unsigned int i = 0; i < cCompanies; ++i) {
 		hr = lpWork(lpServiceAdmin, &lpECCompanies[i]);
 		if (hr != hrSuccess)
 			goto exit;
@@ -1905,7 +1905,7 @@ static HRESULT ForceResyncFor(LPMAPISESSION lpSession, LPMDB lpAdminStore,
 		sPropResyncID.Value.ul = 1;
 		hr = HrSetOneProp(ptrRoot, &sPropResyncID);
 	} else if (hr == hrSuccess) {
-		ptrPropResyncID->Value.ul++;
+		++ptrPropResyncID->Value.ul;
 		hr = HrSetOneProp(ptrRoot, ptrPropResyncID);
 	}
 
@@ -2133,11 +2133,11 @@ static HRESULT DisplayUserCount(LPMDB lpAdminStore)
 	}
 
 	if (ulNonActiveUsers != (ULONG)-1)
-		ulExtraRows++;
+		++ulExtraRows;
 	if (ulRooms != (ULONG)-1)
-		ulExtraRows++;
+		++ulExtraRows;
 	if (ulEquipment != (ULONG)-1)
-		ulExtraRows++;
+		++ulExtraRows;
 
 	if (ulExtraRows > 0)
 		ct.Resize(3 + ulExtraRows, 4);
@@ -2181,19 +2181,19 @@ static HRESULT DisplayUserCount(LPMDB lpAdminStore)
 	if (ulNonActiveUsers != (ULONG)-1) {
 		ct.SetColumn(2 + ulExtraRow, 0, "  Users");
 		ct.SetColumn(2 + ulExtraRow, COL_USED, stringify(ulNonActiveUsers));
-		ulExtraRow++;
+		++ulExtraRow;
 	}
 
 	if (ulRooms != (ULONG)-1) {
 		ct.SetColumn(2 + ulExtraRow, 0, "  Rooms");
 		ct.SetColumn(2 + ulExtraRow, COL_USED, stringify(ulRooms));
-		ulExtraRow++;
+		++ulExtraRow;
 	}
 
 	if (ulEquipment != (ULONG)-1) {
 		ct.SetColumn(2 + ulExtraRow, 0, "  Equipment");
 		ct.SetColumn(2 + ulExtraRow, COL_USED, stringify(ulEquipment));
-		ulExtraRow++;
+		++ulExtraRow;
 	}
 
 	ct.SetColumn(2 + ulExtraRows, 0, "Total");
@@ -2366,7 +2366,7 @@ static HRESULT fillMVPropmap(ECUSER &sECUser, ULONG ulPropTag, int index,
 		int n;
 		set<string, lstr>::iterator i;
 		// @note we store char* data in a LPTSTR (whcar_t by -DUNICODE) pointer.
-		for (i = sFeatures.begin(), n = 0; i != sFeatures.end(); i++, n++)
+		for (i = sFeatures.begin(), n = 0; i != sFeatures.end(); ++i, ++n)
 			sECUser.sMVPropmap.lpEntries[index].lpszValues[n] = (TCHAR*)i->c_str();
 	}
 
@@ -3472,7 +3472,7 @@ int main(int argc, char* argv[])
 					if (hr == MAPI_E_COLLISION) {
 						if (nFolderId < 1000) { // Max 999 folders
 							strStorenameTMP = strStorename + wstringify(nFolderId);
-							nFolderId++;
+							++nFolderId;
 							cerr << "Folder already exist, retrying with foldername '" << convert_to<string>(strStorenameTMP) << "'" << endl;
 						} else {
 							cerr << "Unable to copy the store to the public, maximum folder collisions exceeded" << endl;
@@ -3684,7 +3684,7 @@ int main(int argc, char* argv[])
 					}
 
 					// lpECUser memory will be kept alive to let the SetUser() call work
-					for (ULONG i = 0; i < lpECUser->sMVPropmap.cEntries; i++) {
+					for (ULONG i = 0; i < lpECUser->sMVPropmap.cEntries; ++i) {
 						if (lpECUser->sMVPropmap.lpEntries[i].ulPropId == PR_EC_ENABLED_FEATURES_A) {
 							sEnabled.insert((char**)lpECUser->sMVPropmap.lpEntries[i].lpszValues,
 									(char**)lpECUser->sMVPropmap.lpEntries[i].lpszValues + lpECUser->sMVPropmap.lpEntries[i].cValues);
@@ -3919,7 +3919,7 @@ int main(int argc, char* argv[])
 					ct.Resize(cCompanies, 2);
 					ct.SetHeader(0, "Companyname");
 					ct.SetHeader(1, "System administrator");
-					for (unsigned int i = 0; i < cCompanies; i++) {
+					for (unsigned int i = 0; i < cCompanies; ++i) {
 						ct.AddColumn(0, (LPSTR)lpECCompanies[i].lpszCompanyname);
 
 						hr = lpServiceAdmin->GetUser(lpECCompanies[i].sAdministrator.cb, (LPENTRYID)lpECCompanies[i].sAdministrator.lpb, 0, &lpECUser);

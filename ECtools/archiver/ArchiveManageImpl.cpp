@@ -498,7 +498,7 @@ eResult ArchiveManageImpl::DetachFrom(const char *lpszArchiveServer, const TCHAR
 	// If no folder name was passed and there are more archives for this user on this archive, we abort.
 	if (lpszFolder == NULL) {
 		ObjectEntryList::iterator iNextArchive(iArchive);
-		iNextArchive++;
+		++iNextArchive;
 
 		if (find_if(iNextArchive, lstArchives.end(), StoreCompare(ptrArchiveStoreEntryId->Value.bin)) != lstArchives.end()) {
 			m_lpLogger->Log(EC_LOGLEVEL_FATAL, "'" TSTRING_PRINTF "' has multiple archives on '" TSTRING_PRINTF "'", m_strUser.c_str(), lpszArchive);

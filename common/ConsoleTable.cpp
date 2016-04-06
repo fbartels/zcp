@@ -56,7 +56,8 @@ ConsoleTable::ConsoleTable(size_t rows, size_t columns) : m_iRows(rows), m_iColu
 {
 	m_nRow = 0;
 	m_vTable.resize(rows);
-	for (size_t i = 0; i < rows; i++) m_vTable[i].resize(columns);
+	for (size_t i = 0; i < rows; ++i)
+		m_vTable[i].resize(columns);
 	m_vMaxLengths.resize(m_iColumns);
 	m_vHeader.resize(m_iColumns);
 	bHaveHeader = false;
@@ -74,7 +75,8 @@ void ConsoleTable::Clear()
 	// remove all data by using resize to 0 and back to original size
 	m_vTable.resize(0);
 	m_vTable.resize(m_iRows);
-	for (size_t i = 0; i < m_iRows; i++) m_vTable[i].resize(m_iColumns);
+	for (size_t i = 0; i < m_iRows; ++i)
+		m_vTable[i].resize(m_iColumns);
 	m_vMaxLengths.clear();
 	m_vHeader.clear();
 	m_nRow = 0;
@@ -96,7 +98,8 @@ void ConsoleTable::Resize(size_t rows, size_t columns)
 	m_iColumns = columns;
 
 	m_vTable.resize(rows);
-	for (size_t i = 0; i < rows; i++) m_vTable[i].resize(columns);
+	for (size_t i = 0; i < rows; ++i)
+		m_vTable[i].resize(columns);
 	m_vMaxLengths.resize(m_iColumns);
 	m_vHeader.resize(m_iColumns);
 }
@@ -171,7 +174,7 @@ bool ConsoleTable::SetColumn(size_t row, size_t col, const string& entry)
 
 	m_nRow = row;
 	if (col+1 == m_iColumns)
-		m_nRow++;
+		++m_nRow;
 
 	return true;
 }
@@ -188,7 +191,7 @@ void ConsoleTable::PrintRow(const vector<wstring>& vRow)
 	size_t longest, ntabs;
 
 	cout << '\t';
-	for (nCol = 0, iCol = vRow.begin(); iCol != vRow.end(); iCol++, nCol++) {
+	for (nCol = 0, iCol = vRow.begin(); iCol != vRow.end(); ++iCol, ++nCol) {
 		// cout can't print wstring, and wcout is not allowed to mix with cout.
 		printf("%ls\t", iCol->c_str());
 		if (nCol+1 < m_iColumns) {
@@ -209,7 +212,7 @@ void ConsoleTable::DumpRow(const vector<wstring>& vRow)
 {
 	vector<wstring>::const_iterator iCol;
 	size_t nCol;
-	for (nCol = 0, iCol = vRow.begin(); iCol != vRow.end(); iCol++, nCol++) {
+	for (nCol = 0, iCol = vRow.begin(); iCol != vRow.end(); ++iCol, ++nCol) {
 		// cout can't print wstring, and wcout is not allowed to mix with cout.
 		printf("%ls", iCol->c_str());
 		if (nCol+1 < m_iColumns) {
@@ -230,15 +233,14 @@ void ConsoleTable::PrintTable()
 	if (bHaveHeader) {
 		PrintRow(m_vHeader);
 		total = 0;
-		for (nCol = 0; nCol < m_iColumns; nCol++)
+		for (nCol = 0; nCol < m_iColumns; ++nCol)
 			total += m_vMaxLengths[nCol];
 		total += (m_iColumns -1) * 8;
 		cout << "\t" << string(total, '-') << endl;
 	}
 
-	for (nRow = 0; nRow < m_nRow; nRow++) {
+	for (nRow = 0; nRow < m_nRow; ++nRow)
 		PrintRow(m_vTable[nRow]);
-	}
 }
 
 /**
@@ -249,8 +251,7 @@ void ConsoleTable::DumpTable()
 	if (bHaveHeader) {
 		DumpRow(m_vHeader);
 	}
-	for (size_t nRow = 0; nRow < m_nRow; nRow++) {
+	for (size_t nRow = 0; nRow < m_nRow; ++nRow)
 		DumpRow(m_vTable[nRow]);
-	}
 }
 

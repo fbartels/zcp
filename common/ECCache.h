@@ -108,8 +108,8 @@ public:
 
 protected:
 	ECCacheBase(const std::string &strCachename, size_type ulMaxSize, long lMaxAge);
-	void IncrementHitCount() { m_ulCacheHit++; }
-	void IncrementValidCount() { m_ulCacheValid++; }
+	void IncrementHitCount(void) { ++m_ulCacheHit; }
+	void IncrementValidCount(void) { ++m_ulCacheValid; }
 	void ClearCounters() { m_ulCacheHit = m_ulCacheValid = 0; }
 
 private:
@@ -269,7 +269,7 @@ private:
 		typename std::list<KeyEntry<key_type> >::iterator iterEntry;
 		typename _MapType::iterator iterMap;
 
-		for(iterMap = m_map.begin(); iterMap != m_map.end(); iterMap++) {
+		for (iterMap = m_map.begin(); iterMap != m_map.end(); ++iterMap) {
 			KeyEntry<key_type> k;
 			k.key = iterMap->first;
 			k.ulLastAccess = iterMap->second.ulLastAccess;

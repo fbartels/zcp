@@ -240,23 +240,23 @@ HRESULT ECQuotaMonitor::CheckQuota()
 		goto exit;
 	}
 
-	for (ULONG i = 0; i < cCompanies; i++) {
+	for (ULONG i = 0; i < cCompanies; ++i) {
 		/* Check company quota for non-default company */
 		if (lpsCompanyList[i].sCompanyId.cb != 0 && lpsCompanyList[i].sCompanyId.lpb != NULL) {
-			m_ulProcessed++;
+			++m_ulProcessed;
 		
 			hr = lpServiceAdmin->GetQuota(lpsCompanyList[i].sCompanyId.cb, (LPENTRYID)lpsCompanyList[i].sCompanyId.lpb, false, &lpsQuota);
 			if (hr != hrSuccess) {
 				m_lpThreadMonitor->lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to get quota information for company %s, error code: 0x%08X", (LPSTR)lpsCompanyList[i].lpszCompanyname, hr);
 				hr = hrSuccess;
-				m_ulFailed++;
+				++m_ulFailed;
 				goto check_stores;
 			}
 
 			hr = OpenUserStore(lpsCompanyList[i].lpszCompanyname, CONTAINER_COMPANY, &lpMsgStore);
 			if (hr != hrSuccess) {
 				hr = hrSuccess;
-				m_ulFailed++;
+				++m_ulFailed;
 				goto check_stores;
 			}
 
@@ -264,7 +264,7 @@ HRESULT ECQuotaMonitor::CheckQuota()
 			if (hr != hrSuccess) {
 				m_lpThreadMonitor->lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to get quotastatus for company %s, error code: 0x%08X", (LPSTR)lpsCompanyList[i].lpszCompanyname, hr);
 				hr = hrSuccess;
-				m_ulFailed++;
+				++m_ulFailed;
 				goto check_stores;
 			}
 
@@ -351,10 +351,9 @@ HRESULT ECQuotaMonitor::CheckCompanyQuota(ECCOMPANY *lpecCompany)
 		goto exit;
 	}
 
-	for (ULONG i = 0; i < cUsers; i++) {
+	for (ULONG i = 0; i < cUsers; ++i)
 		if (lpsUserList[i].lpszServername && lpsUserList[i].lpszServername[0] != '\0')
 			setServers.insert((char*)lpsUserList[i].lpszServername);
-	}
 
 	if (setServers.empty()) {
 		// call server function with current lpMDBAdmin / lpServiceAdmin
@@ -373,7 +372,7 @@ HRESULT ECQuotaMonitor::CheckCompanyQuota(ECCOMPANY *lpecCompany)
 			setServersConfig.erase(string());
 		}
 
-		for (iServers = setServers.begin(); iServers != setServers.end(); iServers++)
+		for (iServers = setServers.begin(); iServers != setServers.end(); ++iServers)
 		{
                         if(!setServersConfig.empty() && setServersConfig.find((*iServers).c_str()) == setServersConfig.end())
                                 continue;
@@ -381,7 +380,7 @@ HRESULT ECQuotaMonitor::CheckCompanyQuota(ECCOMPANY *lpecCompany)
 			hr = lpServiceAdmin->ResolvePseudoUrl((char*)string("pseudo://"+ (*iServers)).c_str(), &lpszConnection, &bIsPeer);
 			if (hr != hrSuccess) {
 				m_lpThreadMonitor->lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to resolve servername %s, error code 0x%08X", iServers->c_str(), hr);
-				m_ulFailed++;
+				++m_ulFailed;
 				goto next;
 			}
 
@@ -393,21 +392,21 @@ HRESULT ECQuotaMonitor::CheckCompanyQuota(ECCOMPANY *lpecCompany)
 				hr = m_lpMDBAdmin->QueryInterface(IID_IMsgStore, (void**)&lpAdminStore);
 				if (hr != hrSuccess) {
 					m_lpThreadMonitor->lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to get service interface again, error code 0x%08X", hr);
-					m_ulFailed++;
+					++m_ulFailed;
 					goto next;
 				}
 			} else {				
 				hr = HrOpenECAdminSession(m_lpThreadMonitor->lpLogger, &lpSession, "zarafa-monitor:check-company", PROJECT_SVN_REV_STR, lpszConnection, 0, m_lpThreadMonitor->lpConfig->GetSetting("sslkey_file","",NULL), m_lpThreadMonitor->lpConfig->GetSetting("sslkey_pass","",NULL));
 				if (hr != hrSuccess) {
 					m_lpThreadMonitor->lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to connect to server %s, error code 0x%08X", lpszConnection, hr);
-					m_ulFailed++;
+					++m_ulFailed;
 					goto next;
 				}
 
 				hr = HrOpenDefaultStore(lpSession, &lpAdminStore);
 				if (hr != hrSuccess) {
 					m_lpThreadMonitor->lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to open admin store on server %s, error code 0x%08X", lpszConnection, hr);
-					m_ulFailed++;
+					++m_ulFailed;
 					goto next;
 				}
 			}
@@ -415,7 +414,7 @@ HRESULT ECQuotaMonitor::CheckCompanyQuota(ECCOMPANY *lpecCompany)
 			hr = CheckServerQuota(cUsers, lpsUserList, lpecCompany, lpAdminStore);
 			if (hr != hrSuccess) {
 				m_lpThreadMonitor->lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to check quota on server %s, error code 0x%08X", lpszConnection, hr);
-				m_ulFailed++;
+				++m_ulFailed;
 			}
 
 next:
@@ -510,7 +509,7 @@ HRESULT ECQuotaMonitor::CheckServerQuota(ULONG cUsers, ECUSER *lpsUserList,
 		if (lpRowSet->cRows == 0)
 			break;
 
-		for (i = 0; i < lpRowSet->cRows; i++) {
+		for (i = 0; i < lpRowSet->cRows; ++i) {
 			LPSPropValue lpUsername = NULL;
 			LPSPropValue lpStoreSize = NULL;
 			LPSPropValue lpQuotaWarn = NULL;
@@ -530,7 +529,7 @@ HRESULT ECQuotaMonitor::CheckServerQuota(ULONG cUsers, ECUSER *lpsUserList,
 			if (lpStoreSize->Value.li.QuadPart == 0)
 				continue;
 
-			m_ulProcessed++;
+			++m_ulProcessed;
 
 			memset(&sQuotaStatus, 0, sizeof(ECQUOTASTATUS));
 
@@ -549,13 +548,13 @@ HRESULT ECQuotaMonitor::CheckServerQuota(ULONG cUsers, ECUSER *lpsUserList,
 			m_lpThreadMonitor->lpLogger->Log(EC_LOGLEVEL_FATAL, "Mailbox of user %s has exceeded its %s limit", lpUsername->Value.lpszA, sQuotaStatus.quotaStatus == QUOTA_WARN ? "warning" : sQuotaStatus.quotaStatus == QUOTA_SOFTLIMIT ? "soft" : "hard");
 
 			// find the user in the full users list
-			for (u = 0; u < cUsers; u++) {
+			for (u = 0; u < cUsers; ++u) {
 				if (strcmp((char*)lpsUserList[u].lpszUsername, lpUsername->Value.lpszA) == 0)
 					break;
 			}
 			if (u == cUsers) {
 				m_lpThreadMonitor->lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to find user %s in userlist", lpUsername->Value.lpszA);
-				m_ulFailed++;
+				++m_ulFailed;
 				continue;
 			}
 			hr = OpenUserStore(lpsUserList[u].lpszUsername, ACTIVE_USER, &ptrStore);
@@ -565,7 +564,7 @@ HRESULT ECQuotaMonitor::CheckServerQuota(ULONG cUsers, ECUSER *lpsUserList,
 			}
 			hr = Notify(&lpsUserList[u], lpecCompany, &sQuotaStatus, ptrStore);
 			if (hr != hrSuccess)
-				m_ulFailed++;
+				++m_ulFailed;
 		}
 
 		if (lpRowSet)
@@ -686,7 +685,7 @@ HRESULT ECQuotaMonitor::CreateMailFromTemplate(TemplateVariables *lpVars, string
 	if (!lpVars->strHardSize.empty())
 		strVariables[ZARAFA_QUOTA_HARD_SIZE][1] = lpVars->strHardSize;
 
-	for (unsigned int i = 0; i < ZARAFA_QUOTA_LAST_ITEM; i++) {
+	for (unsigned int i = 0; i < ZARAFA_QUOTA_LAST_ITEM; ++i) {
 		pos = 0;
 		while ((pos = strSubject.find(strVariables[i][0], pos)) != string::npos) {
 			strSubject.replace(pos, strVariables[i][0].size(), strVariables[i][1]);
@@ -996,7 +995,7 @@ HRESULT ECQuotaMonitor::CreateRecipientList(ULONG cToUsers, ECUSER *lpToUsers,
 		goto exit;
 
 	lpAddrList->cEntries = cToUsers;
-	for (ULONG i = 0; i < cToUsers; i++) {
+	for (ULONG i = 0; i < cToUsers; ++i) {
 		lpAddrList->aEntries[i].cValues = 7;
 
 		hr = MAPIAllocateBuffer(sizeof(SPropValue) * lpAddrList->aEntries[i].cValues,
@@ -1401,7 +1400,7 @@ HRESULT ECQuotaMonitor::Notify(ECUSER *lpecUser, ECCOMPANY *lpecCompany,
 	 * this is done to support better language support later on where each user
 	 * will get a notification mail in his prefered language.
 	 */
-	for (ULONG i = 0; i < cToUsers; i++) {
+	for (ULONG i = 0; i < cToUsers; ++i) {
 		/* Company quota's shouldn't deliver to the first entry since that is the public store. */
 		if (i == 0 && sVars.ulClass == CONTAINER_COMPANY) {
 			if (cToUsers == 1)

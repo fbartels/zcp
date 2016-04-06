@@ -702,7 +702,7 @@ WCHAR CHtmlEntity::HtmlEntityToChar(const std::wstring &strEntity)
 
 		if (strEntity.size() > 2 && strEntity[1] == 'x') {
 			base = 16;
-			pNum++;
+			++pNum;
 		}
 		ulCode = wcstoul(pNum, NULL, base);
 

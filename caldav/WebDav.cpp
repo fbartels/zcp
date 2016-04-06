@@ -267,7 +267,7 @@ HRESULT WebDav::RespStructToXml(WEBDAVMULTISTATUS *sDavMStatus, std::string *str
 		goto xmlfail;
 
 	//write all xmlname spaces in main tag.
-	for(iterMapNS = m_mapNs.begin(); iterMapNS != m_mapNs.end(); iterMapNS++)
+	for (iterMapNS = m_mapNs.begin(); iterMapNS != m_mapNs.end(); ++iterMapNS)
 	{
 		std::string strprefix;
 		strNs = iterMapNS->first;

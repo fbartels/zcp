@@ -124,7 +124,7 @@ HRESULT ECChannel::HrSetCtx(ECConfig *lpConfig, ECLogger *lpLogger) {
 		bool ssl_neg = false;
 
 		if (*ssl_name == '!') {
-			ssl_name++;
+			++ssl_name;
 			ssl_neg = true;
 		}
 

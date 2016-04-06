@@ -255,7 +255,7 @@ unsigned ArchiverImpl::CountSettings(const configsetting_t *lpSettings)
 	unsigned ulSettings = 0;
 
 	while ((lpSettings++)->szName != NULL)
-		ulSettings++;
+		++ulSettings;
 
 	return ulSettings;
 }

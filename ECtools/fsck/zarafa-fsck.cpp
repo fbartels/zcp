@@ -179,7 +179,7 @@ HRESULT allocNamedIdList(ULONG ulSize, LPMAPINAMEID **lpppNameArray)
 		goto exit;
 	}
 
-	for (ULONG i = 0; i < ulSize; i++)
+	for (ULONG i = 0; i < ulSize; ++i)
 		lppArray[i] = &lpBuffer[i];
 
 	*lpppNameArray = lppArray;
@@ -204,7 +204,7 @@ HRESULT ReadProperties(LPMESSAGE lpMessage, ULONG ulCount, ULONG *lpTag, LPSProp
 		goto exit;
 
 	lpPropertyTagArray->cValues = ulCount;
-	for (ULONG i = 0; i < ulCount; i++)
+	for (ULONG i = 0; i < ulCount; ++i)
 		lpPropertyTagArray->aulPropTag[i] = lpTag[i];
 
 	hr = lpMessage->GetProps(lpPropertyTagArray, 0, &ulPropertyCount, lppPropertyArray);
@@ -273,7 +273,7 @@ static HRESULT DetectFolderDetails(LPMAPIFOLDER lpFolder, string *lpName,
 
 	*lpFolderType = 0;
 
-	for (ULONG i = 0; i < ulPropertyCount; i++) {
+	for (ULONG i = 0; i < ulPropertyCount; ++i) {
 		if (PROP_TYPE(lpPropertyArray[i].ulPropTag) == PT_ERROR)
 			hr = MAPI_E_INVALID_OBJECT;
 		else if (lpPropertyArray[i].ulPropTag == PR_DISPLAY_NAME_A)
@@ -500,7 +500,7 @@ static HRESULT RunStoreValidation(const char *strHost, const char *strUser,
 		if (lpRows->cRows == 0)
 			break;
 
-		for (ULONG i = 0; i < lpRows->cRows; i++)
+		for (ULONG i = 0; i < lpRows->cRows; ++i)
 			RunFolderValidation(setFolderIgnore, lpRootFolder, &lpRows->aRow[i], checkmap);
 
 		if (lpRows) {

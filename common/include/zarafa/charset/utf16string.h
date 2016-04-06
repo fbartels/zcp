@@ -81,7 +81,7 @@ template<>
       compare(const char_type* __s1, const char_type* __s2, size_t __n)
       { while(*__s1 != 0 && *__s2 != 0 && __n != 0) { 
 		if(*__s1 != *__s2) return *__s1 - *__s2;
-		__s1++; __s2++; __n--;
+		++__s1; ++__s2; --__n;
 	}
 	if((*__s1 == 0 && *__s2 == 0) || __n == 0) return 0;
 	if(*__s1 != 0) return -1;
@@ -91,7 +91,7 @@ template<>
       static size_t
       length(const char_type* __s)
       { int l = 0;
-	while(*__s != 0) { l++; __s++; }
+	while (*__s != 0) { ++l; ++__s; }
 	return l; 
       }
 
@@ -99,7 +99,7 @@ template<>
       find(const char_type* __s, size_t __n, const char_type& __a)
       { while(*__s != 0 && __n > 0) { 
 	  if(*__s == __a) return __s; 
-	__s++; __n--; 
+	  ++__s; --__n;
 	}
 	return NULL;
       }
@@ -115,7 +115,7 @@ template<>
       static char_type* 
       assign(char_type* __s, size_t __n, char_type __a)
       { char_type *__o = __s;
-	while(__n>0) {*__s = __a; __n--; __s++; }
+	while (__n > 0) { *__s = __a; --__n; ++__s; }
 	return  __o;
       }
 

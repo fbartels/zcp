@@ -165,7 +165,7 @@ void ECConfigCheck::validate()
 
 	cout << "Starting configuration validation of " << m_lpszName << endl;
 
-	for (list<config_check_t>::iterator it = m_lChecks.begin(); it != m_lChecks.end(); it++) {
+	for (list<config_check_t>::iterator it = m_lChecks.begin(); it != m_lChecks.end(); ++it) {
 		it->hosted = m_bHosted;
 		it->multi = m_bMulti;
 		it->value1 = getSetting(it->option1);

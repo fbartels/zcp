@@ -119,9 +119,8 @@ std::string SymmetricCrypt(const std::wstring &strPlain)
 	std::string strXORed;
 
 	// Do the XOR 0xa5
-	for(unsigned int i = 0; i < strUTF8ed.size(); i++) {
+	for (unsigned int i = 0; i < strUTF8ed.size(); ++i)
 		strXORed.append(1, (unsigned char)(((unsigned char)strUTF8ed.at(i)) ^ 0xa5));
-	}
 
 	// Do the base64 encode
 	std::string strBase64 = base64_encode((const unsigned char *)strXORed.c_str(), strXORed.size());
@@ -163,9 +162,8 @@ static std::string SymmetricDecryptBlob(unsigned int ulAlg, const std::string &s
 	
 	assert(ulAlg == 1 || ulAlg == 2);
 
-	for(unsigned int i = 0; i < strXORed.size(); i++) {
+	for (unsigned int i = 0; i < strXORed.size(); ++i)
 		strRaw.append(1, (unsigned char)(((unsigned char)strXORed.at(i)) ^ 0xa5));
-	}
 	
 	// Check the encoding algorithm. If it equals 1, the raw data is windows-1252.
 	// Otherwise, it must be 2, which means it is allready UTF-8.

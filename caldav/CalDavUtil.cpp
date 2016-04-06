@@ -483,7 +483,7 @@ std::string StripGuid(const std::string &strInput)
 	if(ulFoundSlash == string::npos)
 		ulFoundSlash = 0;
 	else
-		ulFoundSlash++;
+		++ulFoundSlash;
 
 	ulFound = strInput.rfind(".ics");
 	if(ulFound != wstring::npos)
@@ -634,8 +634,7 @@ bool HasDelegatePerm(IMsgStore *lpDefStore, IMsgStore *lpSharedStore)
 	if (hr != hrSuccess)
 		goto exit;
 
-	for (ULONG i = 0; i < lpProp->Value.MVbin.cValues ; i++)
-	{
+	for (ULONG i = 0; i < lpProp->Value.MVbin.cValues; ++i) {
 		if (lpProp->Value.MVbin.lpbin[i].cb == lpMailBoxEid->Value.bin.cb &&
 		    memcmp(lpProp->Value.MVbin.lpbin[i].lpb, lpMailBoxEid->Value.bin.lpb, lpMailBoxEid->Value.bin.cb) == 0)
 		{
@@ -897,7 +896,7 @@ HRESULT HrGetFreebusy(MapiToICal *lpMapiToIcal, IFreeBusySupport* lpFBSupport, I
 	ptrFlagList->cFlags = cUsers;
 
 	
-	for (itUsers = lplstUsers->begin(), cUsers = 0; itUsers != lplstUsers->end(); itUsers++, cUsers++) {
+	for (itUsers = lplstUsers->begin(), cUsers = 0; itUsers != lplstUsers->end(); ++itUsers, ++cUsers) {
 		lpAdrList->aEntries[cUsers].cValues = 1;
 
 		hr = MAPIAllocateBuffer(sizeof(SPropValue), (void **)&lpAdrList->aEntries[cUsers].rgPropVals);
@@ -921,7 +920,7 @@ HRESULT HrGetFreebusy(MapiToICal *lpMapiToIcal, IFreeBusySupport* lpFBSupport, I
 		goto exit;
 
 	// Get the user entryids
-	for (cUsers = 0; cUsers < lpAdrList->cEntries; cUsers++) {
+	for (cUsers = 0; cUsers < lpAdrList->cEntries; ++cUsers) {
 
 		if (ptrFlagList->ulFlag[cUsers] == MAPI_RESOLVED) {
 			lpEntryID = PpropFindProp(lpAdrList->aEntries[cUsers].rgPropVals, lpAdrList->aEntries[cUsers].cValues, PR_ENTRYID);
@@ -954,8 +953,7 @@ HRESULT HrGetFreebusy(MapiToICal *lpMapiToIcal, IFreeBusySupport* lpFBSupport, I
 
 	itUsers = lplstUsers->begin();
 	// iterate through all users
-	for(ULONG i = 0; i < cUsers; i++)
-	{
+	for (ULONG i = 0; i < cUsers; ++i) {
 		strIcal.clear();
 
 		if (!lppFBData[i])
@@ -994,7 +992,7 @@ next:
 		sWebFbUserInfo.strIcal = strIcal;
 		lpFbInfo->lstFbUserInfo.push_back(sWebFbUserInfo);
 
-		itUsers++;
+		++itUsers;
 
 		lpMapiToIcal->ResetObject();
 		
@@ -1016,7 +1014,7 @@ exit:
 		FreePadrlist(lpAdrList);
 	
 	if (lppFBData) {
-		for(ULONG i = 0; i < cUsers; i++)
+		for (ULONG i = 0; i < cUsers; ++i)
 			if (lppFBData[i])
 				lppFBData[i]->Release();
 		MAPIFreeBuffer(lppFBData);

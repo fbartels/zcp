@@ -165,7 +165,7 @@ namespace details {
                 } else if(*i == "HTMLENTITIES" && stricmp(fromcode, CHARSET_WCHAR) == 0) {
                 	m_bHTML = true;
                 } else vOptionsFiltered.push_back(*i);
-				i++;
+				++i;
             }
 
 			if(!vOptionsFiltered.empty()) {
@@ -207,8 +207,8 @@ namespace details {
 				if(m_bHTML) {
 					if(cbSrc < sizeof(wchar_t)) {
 						// Do what //IGNORE would have done
-						lpSrc++;
-						cbSrc--;
+						++lpSrc;
+						--cbSrc;
 					} else {
 						// Convert the codepoint to '&#12345;'
 						std::wstring wstrEntity = L"&#";
@@ -237,8 +237,8 @@ namespace details {
 				} else if(m_bForce) {
 					// Force conversion by skipping this character
 					if(cbSrc) {
-						lpSrc++;
-						cbSrc--;
+						++lpSrc;
+						--cbSrc;
 					}
 				} else {
 					throw illegal_sequence_exception(strerror(errno));

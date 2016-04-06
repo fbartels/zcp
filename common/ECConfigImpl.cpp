@@ -94,7 +94,7 @@ ECConfigImpl::ECConfigImpl(const configsetting_t *lpDefaults,
 	m_lpDefaults = lpDefaults;
 
 	// allowed directives in this config object
-	for (int i = 0; lpszDirectives != NULL && lpszDirectives[i] != NULL; i++)
+	for (int i = 0; lpszDirectives != NULL && lpszDirectives[i] != NULL; ++i)
 		m_lDirectives.push_back(lpszDirectives[i]);
 
 	InitDefaults(LOADSETTING_INITIALIZING | LOADSETTING_UNKNOWN | LOADSETTING_OVERWRITE);
@@ -135,7 +135,7 @@ static int tounderscore(int c)
  */
 bool ECConfigImpl::ParseParams(int argc, char *argv[], int *lpargidx)
 {
-	for (int i = 0 ; i < argc ; i++) {
+	for (int i = 0; i < argc; ++i) {
 		char *arg = argv[i];
 		if (arg && arg[0] == '-' && arg[1] == '-') {
 			const char *eq = strchr(arg, '=');
@@ -247,7 +247,8 @@ size_t ECConfigImpl::GetSize(const char *szValue)
 		char *end = NULL;
 		rv = strtoul(szValue, &end, 10);
 		if (rv && end > szValue && *end != '\0') {
-			while (*end != '\0' && (*end == ' ' || *end == '\t')) end++;
+			while (*end != '\0' && (*end == ' ' || *end == '\t'))
+				++end;
 			switch (tolower(*end)) {
 				case 'k': rv *= 1024; break;
 				case 'm': rv *= 1024*1024; break;
@@ -362,7 +363,7 @@ list<configsetting_t> ECConfigImpl::GetSettingGroup(unsigned int ulGroup)
 	list<configsetting_t> lGroup;
 	configsetting_t sSetting;
 
-	for (settingmap_t::iterator iter = m_mapSettings.begin(); iter != m_mapSettings.end(); iter++) {
+	for (settingmap_t::iterator iter = m_mapSettings.begin(); iter != m_mapSettings.end(); ++iter) {
 		if ((iter->first.ulGroup & ulGroup) == ulGroup) {
 			if (CopyConfigSetting(&iter->first, iter->second, &sSetting))
 				lGroup.push_back(sSetting);
@@ -377,7 +378,7 @@ std::list<configsetting_t> ECConfigImpl::GetAllSettings()
 	list<configsetting_t> lSettings;
 	configsetting_t sSetting;
 
-	for (settingmap_t::iterator iter = m_mapSettings.begin(); iter != m_mapSettings.end(); iter++) {
+	for (settingmap_t::iterator iter = m_mapSettings.begin(); iter != m_mapSettings.end(); ++iter) {
 		if (CopyConfigSetting(&iter->first, iter->second, &sSetting))
 			lSettings.push_back(sSetting);
 	}
@@ -400,7 +401,7 @@ bool ECConfigImpl::InitDefaults(unsigned int ulFlags)
 				AddAlias(&m_lpDefaults[i]);
 		} else
 			AddSetting(&m_lpDefaults[i], ulFlags);
-		i++;
+		++i;
 	}
 
 	return true;
@@ -718,7 +719,7 @@ bool ECConfigImpl::HasErrors() {
 	/* First validate the configuration settings */
 	pthread_rwlock_rdlock(&m_settingsRWLock);
 
-	for (iterSettings = m_mapSettings.begin(); iterSettings != m_mapSettings.end(); iterSettings++) {
+	for (iterSettings = m_mapSettings.begin(); iterSettings != m_mapSettings.end(); ++iterSettings) {
 		if (iterSettings->first.ulFlags & CONFIGSETTING_NONEMPTY) {
 			if (!iterSettings->second || strlen(iterSettings->second) == 0)
 				errors.push_back("Option '" + string(iterSettings->first.s) + "' cannot be empty!");
@@ -812,7 +813,7 @@ bool ECConfigImpl::WriteSettingsToFile(const char* szFileName)
 
 	for(iterSettings = m_mapSettings.begin(); 
 		iterSettings != m_mapSettings.end();
-		iterSettings++)
+		++iterSettings)
 	{
 
 		szName = iterSettings->first.s;

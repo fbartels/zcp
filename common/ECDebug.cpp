@@ -446,8 +446,7 @@ std::string PropNameFromPropArray(ULONG cValues, const SPropValue *lpPropArray)
 	else if(cValues == 0)
 		return "EMPTY";
 
-	for(unsigned int i =0; i < cValues; i++)
-	{	
+	for (unsigned int i = 0; i < cValues; ++i) {
 		if(i>0)
 			data+=", ";
 
@@ -470,8 +469,7 @@ std::string PropNameFromPropTagArray(const SPropTagArray *lpPropTagArray)
 	else if(lpPropTagArray->cValues == 0)
 		return "EMPTY";
 
-	for(unsigned int i =0; i < lpPropTagArray->cValues; i++)
-	{	
+	for (unsigned int i = 0; i < lpPropTagArray->cValues; ++i) {
 		if(i>0)
 			data+=", ";
 
@@ -1972,37 +1970,37 @@ std::string FuzzyLevelToString(ULONG ulFuzzyLevel)
 		if(i>0) strResult += ", ";
 		strResult += "FL_FULLSTRING";
 		ulFuzzyLevel&=~FL_FULLSTRING;
-		i++;
+		++i;
 	}
 	if((ulFuzzyLevel&0xFFFF) == FL_PREFIX) {
 		if(i>0) strResult += ", ";
 		strResult += "FL_PREFIX";
 		ulFuzzyLevel&=~FL_PREFIX;
-		i++;
+		++i;
 	}
 	if((ulFuzzyLevel&0xFFFF) == FL_SUBSTRING) {
 		if(i>0) strResult += ", ";
 		strResult += "FL_SUBSTRING";
 		ulFuzzyLevel&=~FL_SUBSTRING;
-		i++;
+		++i;
 	}
 	if((ulFuzzyLevel&0xFFFF0000) == FL_IGNORECASE) {
 		if(i>0) strResult += ", ";
 		strResult += "FL_IGNORECASE";
 		ulFuzzyLevel&=~FL_IGNORECASE;
-		i++;
+		++i;
 	}
 	if((ulFuzzyLevel&0xFFFF0000) == FL_IGNORENONSPACE) {
 		if(i>0) strResult += ", ";
 		strResult += "FL_IGNORENONSPACE";
 		ulFuzzyLevel&=~FL_IGNORENONSPACE;
-		i++;
+		++i;
 	}
 	if((ulFuzzyLevel&0xFFFF0000) == FL_LOOSE) {
 		if(i>0) strResult += ", ";
 		strResult += "FL_LOOSE";
 		ulFuzzyLevel&=~FL_LOOSE;
-		i++;
+		++i;
 	}
 
 	if(ulFuzzyLevel > 0) {
@@ -2023,32 +2021,38 @@ std::string RestrictionToString(const SRestriction *lpRestriction,
 	if(lpRestriction == NULL)
 		return "NULL";
 
-	for (j=0; j<indent; j++) strResult += "  ";
+	for (j = 0; j < indent; ++j)
+		strResult += "  ";
 
 	switch(lpRestriction->rt)
 	{
 		case RES_OR:
 			strResult = "RES_OR: ("+stringify(lpRestriction->res.resOr.cRes)+")\n";
-			for(i=0; i < lpRestriction->res.resOr.cRes; i++) {
-				for (j=0; j<indent+1; j++) strResult += "  ";
+			for (i = 0; i < lpRestriction->res.resOr.cRes; ++i) {
+				for (j = 0; j < indent + 1; ++j)
+					strResult += "  ";
 				strResult += "Restriction: "+ RestrictionToString(&lpRestriction->res.resOr.lpRes[i], indent+1)+"\n";
 			}
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "---or---\n";
 			break;
 		case RES_AND:
 			strResult = "RES_AND: ("+stringify(lpRestriction->res.resAnd.cRes)+")\n";
-			for(i=0; i < lpRestriction->res.resAnd.cRes; i++){
-				for (j=0; j<indent+1; j++) strResult += "  ";
+			for (i = 0; i < lpRestriction->res.resAnd.cRes; ++i) {
+				for (j = 0; j < indent + 1; ++j)
+					strResult += "  ";
 				strResult += "Restriction: " + RestrictionToString(&lpRestriction->res.resAnd.lpRes[i], indent+1);
 			}
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "---and---\n";
 			break;
 
 		case RES_BITMASK:
 			strResult = "RES_BITMASK:\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			switch(lpRestriction->res.resBitMask.relBMR){
 				case BMR_EQZ:
 					strResult+= "BMR: R_EQZ\n";
@@ -2060,67 +2064,86 @@ std::string RestrictionToString(const SRestriction *lpRestriction,
 					strResult+= "BMR: Not specified("+stringify(lpRestriction->res.resBitMask.relBMR)+")\n";
 					break;
 			}
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "proptag: "+PropNameFromPropTag(lpRestriction->res.resBitMask.ulPropTag)+"\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "mask: "+stringify(lpRestriction->res.resBitMask.ulMask)+"\n";
 			break;
 		case RES_COMMENT:
 			strResult = "RES_COMMENT:\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "props: " + PropNameFromPropArray(lpRestriction->res.resComment.cValues, lpRestriction->res.resComment.lpProp)+"\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "restriction: "+ RestrictionToString(lpRestriction->res.resComment.lpRes, indent+1)+"\n";
 			break;
 		case RES_COMPAREPROPS:
 			strResult = "RES_COMPAREPROPS:\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "relop: "+RelationalOperatorToString(lpRestriction->res.resCompareProps.relop)+"\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "proptag1: "+PropNameFromPropTag(lpRestriction->res.resCompareProps.ulPropTag1)+"\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "proptag2: "+PropNameFromPropTag(lpRestriction->res.resCompareProps.ulPropTag2)+"\n";
 			break;
 		case RES_CONTENT:
 			strResult = "RES_CONTENT:\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "FuzzyLevel: "+FuzzyLevelToString(lpRestriction->res.resContent.ulFuzzyLevel)+"\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "proptag: "+PropNameFromPropTag(lpRestriction->res.resContent.ulPropTag)+"\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "props: " + PropNameFromPropArray(1, lpRestriction->res.resContent.lpProp)+"\n";
 			break;
 		case RES_EXIST:
 			strResult = "RES_EXIST:\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "proptag: "+PropNameFromPropTag(lpRestriction->res.resExist.ulPropTag)+"\n";
 			break;
 		case RES_NOT:
 			strResult = "RES_NOT:\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "restriction: "+ RestrictionToString(lpRestriction->res.resNot.lpRes, indent+1)+"\n";
 			break;
 		case RES_PROPERTY:
 			strResult = "RES_PROPERTY:\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "relop: "+RelationalOperatorToString(lpRestriction->res.resProperty.relop)+"\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "proptag: "+PropNameFromPropTag(lpRestriction->res.resProperty.ulPropTag)+((lpRestriction->res.resProperty.ulPropTag&MV_FLAG)?" (MV_PROP)":"")+"\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "props: " + PropNameFromPropArray(1, lpRestriction->res.resProperty.lpProp)+((lpRestriction->res.resProperty.lpProp->ulPropTag&MV_FLAG)?" (MV_PROP)":"")+"\n";
 			break;
 		case RES_SIZE:
 			strResult = "RES_SIZE:\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "relop: "+RelationalOperatorToString(lpRestriction->res.resSize.relop)+"\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "proptag: "+PropNameFromPropTag(lpRestriction->res.resSize.ulPropTag)+"\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "sizeofprop: "+ stringify(lpRestriction->res.resSize.cb) + "\n";
 			break;
 		case RES_SUBRESTRICTION:
 			strResult = "RES_SUBRESTRICTION:\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			switch(lpRestriction->res.resSub.ulSubObject) {
 				case PR_MESSAGE_RECIPIENTS:
 					strResult+= "subobject: PR_MESSAGE_RECIPIENTS\n";
@@ -2132,7 +2155,8 @@ std::string RestrictionToString(const SRestriction *lpRestriction,
 					strResult += "subobject: Not specified("+stringify(lpRestriction->res.resSub.ulSubObject)+")\n";
 					break;
 			}
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "Restriction: "+ RestrictionToString(lpRestriction->res.resSub.lpRes, indent+1)+"\n";
 			break;
 		default:
@@ -2241,15 +2265,13 @@ std::string PropValueToString(const SPropValue *lpPropValue)
 			break;
 		case PT_MV_UNICODE:
 			strResult = "PT_MV_UNICODE[" + stringify(lpPropValue->Value.MVi.cValues) + "]" + "\n";
-			for (unsigned int i = 0; i < lpPropValue->Value.MVi.cValues; i++) {
+			for (unsigned int i = 0; i < lpPropValue->Value.MVi.cValues; ++i)
 				strResult += std::string("\t") + convert_to<std::string>(lpPropValue->Value.MVszW.lppszW[i]) + "\n";
-			}
 			break;
 		case PT_MV_STRING8:
 			strResult = "PT_MV_STRING8[" + stringify(lpPropValue->Value.MVi.cValues) + "]" + "\n";
-			for (unsigned int i = 0; i < lpPropValue->Value.MVi.cValues; i++) {
+			for (unsigned int i = 0; i < lpPropValue->Value.MVi.cValues; ++i)
 				strResult += std::string("\t") + lpPropValue->Value.MVszA.lppszA[i] + "\n";
-			}
 			break;
 		case PT_MV_BINARY:
 			strResult = "PT_MV_BINARY[" + stringify(lpPropValue->Value.MVi.cValues) + "]";
@@ -2272,8 +2294,7 @@ std::string RowToString(const SRow *lpRow)
 	if(lpRow == NULL)
 		return "NULL";
 
-	for(unsigned int i=0; i < lpRow->cValues; i++)
-		
+	for (unsigned int i = 0; i < lpRow->cValues; ++i)
 		strResult += PropNameFromPropTag(lpRow->lpProps[i].ulPropTag)+" : "+PropValueToString(&lpRow->lpProps[i]) + "\n";
 
 	return strResult;
@@ -2308,10 +2329,8 @@ std::string AdrRowSetToString(const ADRLIST *lpAdrList,
 	if(lpAdrList == NULL)
 		return "NULL";
 
-	for(unsigned int i=0; i < lpAdrList->cEntries; i++)
-	{
+	for (unsigned int i = 0; i < lpAdrList->cEntries; ++i)
 		strResult+= "row "+stringify(i) + " : " + RowToString((LPSRow)&lpAdrList->aEntries[i]) + "\n" + ((lpFlagList)?" flag="+ABFlags(lpFlagList->ulFlag[i])+"\n":"");
-	}
 
 	return strResult;
 }
@@ -2325,10 +2344,8 @@ std::string RowSetToString(const SRowSet *lpRows)
 	if(lpRows == NULL)
 		return "NULL";
 
-	for(unsigned int i=0; i < lpRows->cRows; i++)
-	{
+	for (unsigned int i = 0; i < lpRows->cRows; ++i)
 		strResult+= "row "+stringify(i) + " : " + RowToString(&lpRows->aRow[i]) + "\n";
-	}
 
 	return strResult;
 }
@@ -2340,7 +2357,7 @@ std::string RowEntryToString(const ROWENTRY *lpRowEntry)
 		return "NULL";
 
 	strResult = "rowflags: "+ stringify(lpRowEntry->ulRowFlags, true) + "\n";
-	for(unsigned int i=0; i < lpRowEntry->cValues; i++)		
+	for (unsigned int i = 0; i < lpRowEntry->cValues; ++i)
 		strResult += PropNameFromPropTag(lpRowEntry->rgPropVals[i].ulPropTag)+" : "+PropValueToString(&lpRowEntry->rgPropVals[i]) + "\n";
 
 	return strResult;
@@ -2353,10 +2370,8 @@ std::string RowListToString(const ROWLIST *lpRowList)
 	if(lpRowList == NULL)
 		return "NULL";
 
-	for(unsigned int i=0; i < lpRowList->cEntries; i++)
-	{
+	for (unsigned int i = 0; i < lpRowList->cEntries; ++i)
 		strResult+= "row "+stringify(i) + " : " + RowEntryToString(&lpRowList->aEntries[i]) + "\n";
-	}
 
 	return strResult;
 }
@@ -2404,10 +2419,8 @@ std::string SortOrderSetToString(const SSortOrderSet *lpSortCriteria)
 
 	strResult = "cCategories="+stringify(lpSortCriteria->cCategories)+" cExpanded="+stringify(lpSortCriteria->cExpanded)+"\n";
 
-	for(unsigned int i=0; i < lpSortCriteria->cSorts; i++)
-	{
+	for (unsigned int i = 0; i < lpSortCriteria->cSorts; ++i)
 		strResult+= "row "+stringify(i) + " : " + SortOrderToString(&lpSortCriteria->aSort[i]) + "\n";
-	}
 
 	return strResult;
 }
@@ -2422,8 +2435,7 @@ std::string EntryListToString(const ENTRYLIST *lpMsgList)
 	str = "values: "+stringify(lpMsgList->cValues);
 	str+= "\n";
 
-	for(ULONG i=0; i < lpMsgList->cValues; i++)
-	{
+	for (ULONG i = 0; i < lpMsgList->cValues; ++i) {
 		str+= "cb="+stringify(lpMsgList->lpbin[i].cb)+" lpb="+((lpMsgList->lpbin[i].lpb)?bin2hex(lpMsgList->lpbin[i].cb, lpMsgList->lpbin[i].lpb) : std::string("NULL"));
 		str+= "\n";
 	}
@@ -2662,8 +2674,7 @@ std::string NotificationToString(ULONG cNotification,
 	if(lpNotification == NULL)
 		return "NULL";
 	
-	for(ULONG i = 0; i < cNotification; i++)
-	{
+	for (ULONG i = 0; i < cNotification; ++i) {
 		if (cNotification > 1)
 			str += "item " + stringify(i) + " (\n";
 
@@ -2717,8 +2728,7 @@ std::string PermissionRulesToString(ULONG cPermissions,
 		return "NULL";
 
 	str = "( \n";
-	for(ULONG ci=0; ci<cPermissions; ci++)
-	{
+	for (ULONG ci = 0; ci<cPermissions; ++ci) {
 		if (GetNonPortableObjectId(lpECPermissions[ci].sUserId.cb, (LPENTRYID)lpECPermissions[ci].sUserId.lpb, &ulUserId) == hrSuccess)
 			str += "{ Userid=" + stringify(ulUserId) + "\n";
 		else
@@ -2743,7 +2753,7 @@ std::string ProblemArrayToString(const SPropProblemArray *lpProblemArray)
 
 	str = "Problems: ( " + stringify(lpProblemArray->cProblem) + "\n";
 
-	for (i = 0; i < lpProblemArray->cProblem; i++) {
+	for (i = 0; i < lpProblemArray->cProblem; ++i) {
 		const SPropProblem *p = &lpProblemArray->aProblem[i];
 		str += "  ( ulIndex: " + stringify(p->ulIndex, true) + " ulPropTag: " + stringify(p->ulPropTag, true) + " scode: " + stringify(p->scode, true) + "),\n";
 	}
@@ -2765,7 +2775,7 @@ std::string DBGGUIDToString(REFIID iid)
 			guidIDD = sGuidList[i].szguidname;
 			break;
 		}
-		i++;
+		++i;
 	}
 
 	if (guidIDD.empty()) {
@@ -2810,8 +2820,7 @@ std::string MapiNameIdListToString(ULONG cNames,
 
 	str = "NameIds: (" + stringify(cNames) + ")\n";
 
-	for(i=0; i < cNames; i++)
-	{
+	for (i = 0; i < cNames; ++i) {
 		str += MapiNameIdToString(ppNames[i]);
 		if(pptaga && pptaga->cValues == cNames) {
 			str += " -> ";

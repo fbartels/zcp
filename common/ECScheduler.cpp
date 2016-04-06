@@ -224,7 +224,7 @@ void* ECScheduler::ScheduleThread(void* lpTmpScheduler)
 		}
 		pthread_mutex_unlock(&lpScheduler->m_hExitMutex);
 
-		for(iterScheduleList = lpScheduler->m_listScheduler.begin(); iterScheduleList != lpScheduler->m_listScheduler.end(); iterScheduleList++)
+		for (iterScheduleList = lpScheduler->m_listScheduler.begin(); iterScheduleList != lpScheduler->m_listScheduler.end(); ++iterScheduleList)
 		{
 			pthread_mutex_lock(&lpScheduler->m_hSchedulerMutex);
 

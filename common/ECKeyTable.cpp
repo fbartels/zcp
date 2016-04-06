@@ -150,7 +150,7 @@ void ECTableRow::initSortCols(unsigned int ulSortCols, const int *lpSortLen,
 		memcpy(this->lpSortLen, lpSortLen, sizeof(unsigned int) * ulSortCols);
 
 	// Copy sort keys
-	for(i=0;i<ulSortCols;i++) {
+	for (i = 0; i < ulSortCols; ++i) {
 		len = lpSortLen[i];
 		len = len < 0 ? -len : len;
 
@@ -193,7 +193,7 @@ void ECTableRow::freeSortCols()
 	delete[] lpSortLen;
 	if(lppSortKeys)
 	{
-		for(i=0;i<ulSortCols;i++)
+		for (i = 0; i < ulSortCols; ++i)
 			delete [] lppSortKeys[i];
 
 		delete [] lppSortKeys;
@@ -239,7 +239,7 @@ bool ECTableRow::rowcompare(unsigned int ulSortColsA, const int *lpSortLenA,
 	
 	ulSortCols = ulSortColsA < ulSortColsB ? ulSortColsA : ulSortColsB;
 
-	for(i=0;i<ulSortCols;i++) {
+	for (i = 0; i < ulSortCols; ++i) {
 	    int cmp = 0;
 	    
 	    if(lpSortFlagsA && lpSortFlagsA[i] & TABLEROW_FLAG_FLOAT) {
@@ -325,9 +325,8 @@ unsigned int ECTableRow::GetObjectSize()
 	if (ulSortCols > 0)
 	{
 		ulSize+= (sizeof(unsigned char) + sizeof(unsigned char) + sizeof(unsigned int)) * ulSortCols; // flag, SortKey, Sortlen
-		for(unsigned int i=0; i<ulSortCols; i++) {
+		for (unsigned int i = 0; i < ulSortCols; ++i)
 			ulSize += lpSortLen[i];
-		}
 	}
 
 	return ulSize;
@@ -862,7 +861,7 @@ ECRESULT ECKeyTable::InvalidateBookmark(ECTableRow *lpRow)
 			iRemove = iPosition++;
 			m_mapBookmarks.erase(iRemove);
 		} else {
-			iPosition++;
+			++iPosition;
 		}
 	}
 	return erSuccess;
@@ -1542,7 +1541,7 @@ unsigned int ECKeyTable::GetObjectSize()
 	
 	ulSize += MEMORY_USAGE_MAP(mapRow.size(), ECTableRowMap);
 
-	for(iterRow = mapRow.begin(); iterRow != mapRow.end(); iterRow++)
+	for (iterRow = mapRow.begin(); iterRow != mapRow.end(); ++iterRow)
 		ulSize += iterRow->second->GetObjectSize();
 
 	ulSize += MEMORY_USAGE_MAP(m_mapBookmarks.size(), ECBookmarkMap);

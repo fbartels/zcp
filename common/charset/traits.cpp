@@ -69,7 +69,8 @@ void setCharsetBestAttempt(std::string &strCharset)
 template <typename _T>
 static size_t ucslen(const _T* p) {
 	size_t len = 0;
-	while (*p++ != 0) len++;
+	while (*p++ != 0)
+		++len;
 	return len;
 }
 

@@ -146,7 +146,7 @@ void ECThreadPool::setThreadCount(unsigned ulThreadCount, bool bWait)
 	pthread_mutex_lock(&m_hMutex);
 	
 	if (ulThreadCount == threadCount() - 1) {
-		m_ulTermReq++;
+		++m_ulTermReq;
 		pthread_cond_signal(&m_hCondition);
 	}
 	

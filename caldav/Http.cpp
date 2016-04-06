@@ -133,7 +133,7 @@ HRESULT HrParseURL(const std::string &strUrl, ULONG *lpulFlag, std::string *lpst
 		goto exit;
 
 	// @todo subfolder/folder/ is not allowed! only subfolder/item.ics
-	for ( ;iterToken != vcUrlTokens.end(); iterToken++) 
+	for (; iterToken != vcUrlTokens.end(); ++iterToken)
 		strFolder = strFolder + *iterToken + "/";
 
 	strFolder.erase(strFolder.length() - 1);
@@ -204,7 +204,8 @@ HRESULT Http::HrReadHeaders()
 				if (iHeader == mapHeaders.end())
 					continue;
 				// continue header
-				while (strBuffer[start] == ' ' || strBuffer[start] == '\t') start++;
+				while (strBuffer[start] == ' ' || strBuffer[start] == '\t')
+					++start;
 				iHeader->second += strBuffer.substr(start);
 			} else {
 				// new header
@@ -219,7 +220,7 @@ HRESULT Http::HrReadHeaders()
 			else
 				m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "< "+strBuffer);
 		}
-		n++;
+		++n;
 
 	} while(hr == hrSuccess);
 
@@ -461,7 +462,7 @@ bool Http::CheckIfMatch(LPMAPIPROP lpProp)
 
 	// check all etags for a match
 	vMatches = tokenize(strIf, ',', true);
-	for (i = vMatches.begin(); i != vMatches.end(); i++) {
+	for (i = vMatches.begin(); i != vMatches.end(); ++i) {
 		if (i->at(0) == '"' || i->at(0) == '\'')
 			i->assign(i->begin()+1, i->end()-1);
 		if (i->compare(strValue) == 0) {
@@ -591,7 +592,7 @@ HRESULT Http::HrValidateReq()
 		return MAPI_E_NO_ACCESS;
 	}
 
-	for (i = 0; lpszMethods[i] != NULL; i++) {
+	for (i = 0; lpszMethods[i] != NULL; ++i) {
 		if (m_strMethod.compare(lpszMethods[i]) == 0) {
 			bFound = true;
 			break;
@@ -838,7 +839,7 @@ HRESULT Http::HrFlushHeaders()
 	strOutput += m_strRespHeader + "\r\n";
 	m_strRespHeader.clear();
 
-	for (h = m_lstHeaders.begin(); h != m_lstHeaders.end(); h++) {
+	for (h = m_lstHeaders.begin(); h != m_lstHeaders.end(); ++h) {
 		m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "> " + *h);
 		strOutput += *h + "\r\n";
 	}

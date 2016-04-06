@@ -404,7 +404,7 @@ struct timespec GetDeadline(unsigned int ulTimeoutMs)
 	now.tv_sec += ulTimeoutMs / 1000;
 	now.tv_usec += 1000 * (ulTimeoutMs % 1000);
 	if (now.tv_usec >= 1000000) {
-		now.tv_sec++;
+		++now.tv_sec;
 		now.tv_usec -= 1000000;
 	}
 

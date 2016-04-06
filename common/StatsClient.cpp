@@ -63,7 +63,7 @@ static void submitThreadDo(void *p)
 		pthread_mutex_lock(&psc -> mapsLock);
 
 	std::map<std::string, double>::iterator doubleIterator = psc -> countsMapDouble.begin();
-		for(; doubleIterator != psc -> countsMapDouble.end(); doubleIterator++) {
+		for (; doubleIterator != psc->countsMapDouble.end(); ++doubleIterator) {
 		std::string key = doubleIterator -> first;
 			double v = doubleIterator -> second;
 
@@ -73,7 +73,7 @@ static void submitThreadDo(void *p)
 		psc -> countsMapDouble.clear();
 
 	std::map<std::string, int64_t>::iterator int64Iterator = psc -> countsMapInt64.begin();
-		for(; int64Iterator != psc -> countsMapInt64.end(); int64Iterator++) {
+		for (; int64Iterator != psc->countsMapInt64.end(); ++int64Iterator) {
 		std::string key = int64Iterator -> first;
 			int64_t v = int64Iterator -> second;
 

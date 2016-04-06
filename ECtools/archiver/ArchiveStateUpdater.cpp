@@ -366,7 +366,7 @@ HRESULT ArchiveStateUpdater::RemoveImplicit(const entryid_t &storeId, const tstr
 		if (attachType == ImplicitAttach) {
 			m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "Archive was implicitly attached, detaching.");
 			lstCurrentArchives.remove_if(Predicates::SObjectEntry_equals_binary(*i));
-			ulDetachCount++;
+			++ulDetachCount;
 		} else
 			m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "Archive was explicitly attached");
 	}

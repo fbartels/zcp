@@ -134,12 +134,10 @@ HRESULT ECUnknown::RemoveChild(ECUnknown *lpChild) {
 	
 	pthread_mutex_lock(&mutex);
 
-	if(lpChild) {
-		for(iterChild = lstChildren.begin(); iterChild != lstChildren.end(); iterChild++) {
+	if (lpChild != NULL)
+		for (iterChild = lstChildren.begin(); iterChild != lstChildren.end(); ++iterChild)
 			if(*iterChild == lpChild)
 				break;
-		}
-	}
 
 	if(iterChild == lstChildren.end()) {
 		pthread_mutex_unlock(&mutex);
@@ -194,7 +192,7 @@ BOOL ECUnknown::IsParentOf(const ECUnknown *lpObject) {
 BOOL ECUnknown::IsChildOf(const ECUnknown *lpObject) {
 	std::list<ECUnknown *>::const_iterator i;
 	if (lpObject) {
-		for (i = lpObject->lstChildren.begin(); i != lpObject->lstChildren.end(); i++) {
+		for (i = lpObject->lstChildren.begin(); i != lpObject->lstChildren.end(); ++i) {
 			if (this == *i)
 				return TRUE;
 			if (this->IsChildOf(*i))

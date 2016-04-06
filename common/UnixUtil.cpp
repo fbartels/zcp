@@ -269,7 +269,7 @@ int unix_fork_function(void*(func)(void*), void *param, int nCloseFDs, int *pClo
 		// reset the SIGHUP signal to default, not to trigger the config/logfile reload signal too often on 'killall <process>'
 		signal(SIGHUP, SIG_DFL);
 		// close filedescriptors
-		for (int n = 0; n < nCloseFDs && pCloseFDs; n++)
+		for (int n = 0; n < nCloseFDs && pCloseFDs != NULL; ++n)
 			if (pCloseFDs[n] >= 0)
 				close(pCloseFDs[n]);
 		func(param);
@@ -332,13 +332,11 @@ static pid_t unix_popen_rw(const char *lpszCommand, int *lpulIn, int *lpulOut,
 		setsid();
 
 		/* If provided set rlimit settings */
-		if (lpLimits) {
-			for (unsigned int i = 0; i < lpLimits->cValues; i++) {
+		if (lpLimits != NULL)
+			for (unsigned int i = 0; i < lpLimits->cValues; ++i)
 				if (setrlimit(lpLimits->sLimit[i].resource, &lpLimits->sLimit[i].limit) != 0)
 					ec_log_err("Unable to set rlimit for popen - resource %d, errno %d",
 								  lpLimits->sLimit[i].resource, errno);
-			}
-		}
 
 		if (execle("/bin/sh", "sh", "-c", lpszCommand, NULL, env) == 0)
 			_exit(EXIT_SUCCESS);

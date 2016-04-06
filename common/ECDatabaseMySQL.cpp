@@ -625,8 +625,7 @@ ECRESULT ECDatabaseMySQL::CreateDatabase(ECConfig *lpConfig)
 		return er;
 
 	// Database tables
-	for (unsigned int i=0; sDatabaseTables[i].lpSQL != NULL; i++)
-	{
+	for (unsigned int i = 0; sDatabaseTables[i].lpSQL != NULL; ++i) {
 		m_lpLogger->Log(EC_LOGLEVEL_NOTICE,"Create table: %s", sDatabaseTables[i].lpComment);
 		er = DoInsert(sDatabaseTables[i].lpSQL);
 		if(er != erSuccess)

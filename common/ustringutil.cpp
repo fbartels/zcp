@@ -175,7 +175,7 @@ const char* str_ifind(const char *haystack, const char *needle)
 
 	while(*haystack) {
 		if (toupper_l(*haystack, loc) == toupper_l(*needlepos, loc)) {
-			needlepos++;
+			++needlepos;
 
 			if(*needlepos == 0)
 				goto exit;
@@ -184,7 +184,7 @@ const char* str_ifind(const char *haystack, const char *needle)
 			needlepos = needle;
 		}
 
-		haystack++;
+		++haystack;
 	}
 	needlestart = NULL;
 
@@ -432,7 +432,7 @@ bool str_contains(const char *haystack, const char *needle, const ECLocale &loca
 	while (cbHaystack - (lpHay - haystack) >= cbNeedle) {
 		if (strncoll_l(lpHay, needle, cbNeedle, locale) == 0)
 			return true;
-		lpHay++;
+		++lpHay;
 	}
 	return false;
 #else
@@ -473,7 +473,7 @@ bool str_icontains(const char *haystack, const char *needle, const ECLocale &loc
 	while (cbHaystack - (lpHay - haystack) >= cbNeedle) {
 		if (strnicoll_l(lpHay, needle, cbNeedle, locale) == 0)
 			return true;
-		lpHay++;
+		++lpHay;
 	}
 	return false;
 #else
@@ -721,7 +721,7 @@ bool wcs_contains(const wchar_t *haystack, const wchar_t *needle, const ECLocale
 	while (cbHaystack - (lpHay - haystack) >= cbNeedle) {
 		if (wcsncoll_l(lpHay, needle, cbNeedle, locale) == 0)
 			return true;
-		lpHay++;
+		++lpHay;
 	}
 	return false;
 #else
@@ -771,7 +771,7 @@ bool wcs_icontains(const wchar_t *haystack, const wchar_t *needle, const ECLocal
 		if (wcsncasecmp_l(lpHay, needle, cbNeedle, locale) == 0)
 #endif
 			return true;
-		lpHay++;
+		++lpHay;
 	}
 	return false;
 #endif
