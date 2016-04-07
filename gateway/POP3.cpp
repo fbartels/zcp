@@ -85,9 +85,9 @@ POP3::POP3(const char *szServerPath, ECChannel *lpChannel, ECLogger *lpLogger, E
 }
 
 POP3::~POP3() {
-	for (vector<MailListItem>::const_iterator i = lstMails.begin(); i != lstMails.end(); i++) {
+	for (std::vector<MailListItem>::const_iterator i = lstMails.begin();
+	     i != lstMails.end(); ++i)
 		delete [] i->sbEntryID.lpb;
-	}
 
 	if (lpInbox)
 		lpInbox->Release();
@@ -474,9 +474,8 @@ HRESULT POP3::HrCmdStat() {
 	ULONG ulSize = 0;
 	char szResponse[POP3_MAX_RESPONSE_LENGTH];
 
-	for (size_t i = 0; i < lstMails.size(); i++) {
+	for (size_t i = 0; i < lstMails.size(); ++i)
 		ulSize += lstMails[i].ulSize;
-	}
 
 	snprintf(szResponse, POP3_MAX_RESPONSE_LENGTH, "%u %u", (ULONG)lstMails.size(), ulSize);
 	return HrResponse(POP3_RESP_OK, szResponse);
@@ -500,7 +499,7 @@ HRESULT POP3::HrCmdList() {
 	if (hr != hrSuccess)
 		goto exit;
 
-	for (size_t i = 0; i < lstMails.size(); i++) {
+	for (size_t i = 0; i < lstMails.size(); ++i) {
 		snprintf(szResponse, POP3_MAX_RESPONSE_LENGTH, "%u %u", (ULONG)i + 1, lstMails[i].ulSize);
 		hr = lpChannel->HrWriteLine(szResponse);
 		if (hr != hrSuccess)
@@ -648,9 +647,9 @@ HRESULT POP3::HrCmdNoop() {
  * @return MAPI Error code
  */
 HRESULT POP3::HrCmdRset() {
-	for (vector<MailListItem>::iterator i = lstMails.begin(); i != lstMails.end(); i++) {
+	for (std::vector<MailListItem>::iterator i = lstMails.begin();
+	     i != lstMails.end(); ++i)
 		i->bDeleted = false;
-	}
 
 	return HrResponse(POP3_RESP_OK, "Undeleted mails");
 }
@@ -668,21 +667,19 @@ HRESULT POP3::HrCmdQuit() {
 	SBinaryArray ba = {0, NULL};
 	vector<MailListItem>::const_iterator i;
 
-	for (i = lstMails.begin(); i != lstMails.end(); i++) {
-		if (i->bDeleted) {
-			DeleteCount++;
-		}
-	}
+	for (i = lstMails.begin(); i != lstMails.end(); ++i)
+		if (i->bDeleted)
+			++DeleteCount;
 
 	if (DeleteCount) {
 		ba.cValues = DeleteCount;
 		ba.lpbin = new SBinary[DeleteCount];
 		DeleteCount = 0;
 
-		for (i = lstMails.begin(); i != lstMails.end(); i++) {
+		for (i = lstMails.begin(); i != lstMails.end(); ++i) {
 			if (i->bDeleted) {
 				ba.lpbin[DeleteCount] = i->sbEntryID;
-				DeleteCount++;
+				++DeleteCount;
 			}
 		}
 
@@ -712,7 +709,7 @@ HRESULT POP3::HrCmdUidl() {
 	if (hr != hrSuccess)
 		goto exit;
 
-	for (size_t i = 0; i < lstMails.size(); i++) {
+	for (size_t i = 0; i < lstMails.size(); ++i) {
 		snprintf(szResponse, POP3_MAX_RESPONSE_LENGTH, "%u ", (ULONG)i + 1);
 		strResponse = szResponse;
 		strResponse += bin2hex(lstMails[i].sbEntryID.cb, lstMails[i].sbEntryID.lpb);
@@ -812,7 +809,7 @@ HRESULT POP3::HrCmdTop(unsigned int ulMailNr, unsigned int ulLines) {
 
 	ulPos = strMessage.find("\r\n\r\n", 0);
 
-	ulLines++;
+	++ulLines;
 	while (ulPos != string::npos && ulLines--)
 		ulPos = strMessage.find("\r\n", ulPos + 1);
 
@@ -870,7 +867,7 @@ HRESULT POP3::HrLogin(const std::string &strUsername, const std::string &strPass
 	if (hr != hrSuccess) {
 		lpLogger->Log(EC_LOGLEVEL_ERROR, "Failed to login from %s with invalid username \"%s\" or wrong password. Error: 0x%X",
 					  lpChannel->peer_addr(), strUsername.c_str(), hr);
-		m_ulFailedLogins++;
+		++m_ulFailedLogins;
 		if (m_ulFailedLogins >= LOGIN_RETRIES)
 			// disconnect client
 			hr = MAPI_E_END_OF_SESSION;
@@ -967,7 +964,7 @@ HRESULT POP3::HrMakeMailList() {
 		goto exit;
 
 	lstMails.clear();
-	for (ULONG i = 0; i < lpRows->cRows; i++) {
+	for (ULONG i = 0; i < lpRows->cRows; ++i) {
 		if (PROP_TYPE(lpRows->aRow[i].lpProps[EID].ulPropTag) == PT_ERROR) {
 			lpLogger->Log(EC_LOGLEVEL_ERROR, "Missing EntryID in message table for message %d", i);
 			continue;

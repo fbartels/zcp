@@ -284,7 +284,7 @@ HRESULT WebDav::RespStructToXml(WEBDAVMULTISTATUS *sDavMStatus, std::string *str
 	}
 	// <response>
 	iterResp = sDavMStatus->lstResp.begin();
-	for (int i=0; sDavMStatus->lstResp.end() != iterResp; i++,iterResp++)
+	for (int i = 0; sDavMStatus->lstResp.end() != iterResp; ++i, ++iterResp)
 	{
 		WEBDAVRESPONSE sDavResp;
 		sDavResp = *iterResp;
@@ -622,7 +622,7 @@ HRESULT WebDav::HrHandleRptMulGet()
 			lpXmlChildNode = lpXmlChildNode->next;
 			continue;
 		}
-		found++;
+		++found;
 
 		// strip url and .ics from guid, and convert %hex to real data
 		strGuid.erase(0, found);
@@ -806,7 +806,8 @@ HRESULT WebDav::HrPostFreeBusy(WEBDAVFBINFO *lpsWebFbInfo)
 
 	HrSetDavPropName(&sWebMStatus.sPropName,"schedule-response", CALDAVNS);
 
-	for (itFbUserInfo = lpsWebFbInfo->lstFbUserInfo.begin(); itFbUserInfo != lpsWebFbInfo->lstFbUserInfo.end(); itFbUserInfo++)
+	for (itFbUserInfo = lpsWebFbInfo->lstFbUserInfo.begin();
+	     itFbUserInfo != lpsWebFbInfo->lstFbUserInfo.end(); ++itFbUserInfo)
 	{
 		WEBDAVPROPERTY sWebProperty;
 		WEBDAVVALUE sWebVal;
@@ -1021,15 +1022,14 @@ HRESULT WebDav::HrWriteSResponse(xmlTextWriter *xmlWriter,
 			return hr;
 	}
 
-	iterPropStat = sWebResp.lstsPropStat.begin();
-	while(sWebResp.lstsPropStat.end() != iterPropStat)
+	for (iterPropStat = sWebResp.lstsPropStat.begin();
+	     iterPropStat != sWebResp.lstsPropStat.end(); ++iterPropStat)
 	{
 		WEBDAVPROPSTAT sDavPropStat;
 		sDavPropStat = *iterPropStat;
 		hr = HrWriteSPropStat(xmlWriter, lpstrNsPrefix, sDavPropStat);
 		if (hr != hrSuccess)
 			return hr;
-		iterPropStat++;
 	}
 
 	if (!sWebResp.lstProps.empty())
@@ -1062,8 +1062,8 @@ HRESULT WebDav::HrWriteResponseProps(xmlTextWriter *xmlWriter,
 	std::list<WEBDAVPROPERTY>::const_iterator iterProp;
 	ULONG ulRet;
 
-	iterProp = lplstProps->begin();
-	while (lplstProps->end() != iterProp)
+	for (iterProp = lplstProps->begin(); iterProp != lplstProps->end();
+	     ++iterProp)
 	{
 		WEBDAVPROPERTY sWebProperty;
 		sWebProperty = *iterProp;
@@ -1084,8 +1084,7 @@ HRESULT WebDav::HrWriteResponseProps(xmlTextWriter *xmlWriter,
 			return hr;
 
 		//loop for sub properties
-		for (int k = 0; !sWebProperty.lstValues.empty(); k++)
-		{
+		for (int k = 0; !sWebProperty.lstValues.empty(); ++k) {
 			WEBDAVVALUE sWebVal;
 			sWebVal = sWebProperty.lstValues.front();
 			//<collection/>
@@ -1108,7 +1107,6 @@ HRESULT WebDav::HrWriteResponseProps(xmlTextWriter *xmlWriter,
 			if (ulRet < 0)
 				return MAPI_E_CALL_FAILED;
 		}
-		iterProp++;
 	}
 
 	return hrSuccess;
@@ -1143,9 +1141,9 @@ HRESULT WebDav::HrWriteSPropStat(xmlTextWriter *xmlWriter,
 	if (hr != hrSuccess)
 		return hr;
 
-	iterProp = sWebProp.lstProps.begin();
 	//loop	for properties list
-	while (sWebProp.lstProps.end() != iterProp)
+	for (iterProp = sWebProp.lstProps.begin();
+	     iterProp != sWebProp.lstProps.end(); ++iterProp)
 	{			
 		WEBDAVPROPERTY sWebProperty;
 		sWebProperty = *iterProp;
@@ -1172,7 +1170,7 @@ HRESULT WebDav::HrWriteSPropStat(xmlTextWriter *xmlWriter,
 		}
 
         //loop for sub properties
-		for (int k = 0; !sWebProperty.lstValues.empty(); k++)
+		for (int k = 0; !sWebProperty.lstValues.empty(); ++k)
 		{
 			WEBDAVVALUE sWebVal;
 			sWebVal = sWebProperty.lstValues.front();
@@ -1198,8 +1196,6 @@ HRESULT WebDav::HrWriteSPropStat(xmlTextWriter *xmlWriter,
 			if (ulRet < 0)
 				return MAPI_E_CALL_FAILED;
 		}
-
-		iterProp++;
 	}
 	//</prop>
 	ulRet = xmlTextWriterEndElement(xmlWriter);
@@ -1264,7 +1260,7 @@ HRESULT WebDav::HrWriteItems(xmlTextWriter *xmlWriter,
 		}
 		else
 		{
-			for(ULONG i = ulDepthCur ; i <= ulDepthPrev ; i++)
+			for (ULONG i = ulDepthCur; i <= ulDepthPrev; ++i)
 				if (xmlTextWriterEndElement(xmlWriter) < 0)
 					return MAPI_E_CALL_FAILED;
 			
@@ -1285,7 +1281,7 @@ HRESULT WebDav::HrWriteItems(xmlTextWriter *xmlWriter,
 		lpsWebProperty->lstItems.pop_front();
 	}
 
-	for(ULONG i = 0 ; i <= ulDepthPrev ; i++)
+	for (ULONG i = 0; i <= ulDepthPrev; ++i)
 		if (xmlTextWriterEndElement(xmlWriter) < 0)
 			return MAPI_E_CALL_FAILED;
 

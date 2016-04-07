@@ -144,7 +144,8 @@ static void sighup(int)
 static void sigchld(int)
 {
 	int stat;
-	while (waitpid (-1, &stat, WNOHANG) > 0) nChildren--;
+	while (waitpid (-1, &stat, WNOHANG) > 0)
+		--nChildren;
 }
 
 static void sigsegv(int signr)
@@ -378,7 +379,7 @@ int main(int argc, char **argv) {
 			if (i % 5 == 0)
 				g_lpLogger->Log(EC_LOGLEVEL_NOTICE, "Waiting for %d processes to exit", nChildren);
 			sleep(1);
-			i--;
+			--i;
 		}
 
 		if (nChildren)

@@ -143,7 +143,8 @@ static void sighup(int sig)
 static void sigchld(int)
 {
 	int stat;
-	while (waitpid (-1, &stat, WNOHANG) > 0) nChildren--;
+	while (waitpid(-1, &stat, WNOHANG) > 0)
+		--nChildren;
 }
 
 // SIGSEGV catcher
@@ -229,8 +230,7 @@ static void *Handler(void *lpArg)
 			/* signalled - reevaluate bQuit */
 			continue;
 		if (hr == MAPI_E_TIMEOUT) {
-			timeouts++;
-			if (timeouts < client->getTimeoutMinutes()) {
+			if (++timeouts < client->getTimeoutMinutes()) {
 				// ignore select() timeout for 5 (POP3) or 30 (IMAP) minutes
 				continue;
 			}
@@ -302,7 +302,7 @@ exit:
 	ERR_remove_state(0);
 
 	if (bThreads)
-		nChildren--;
+		--nChildren;
 
 	return NULL;
 }
@@ -743,7 +743,7 @@ static HRESULT running_service(const char *szPath, const char *servicename)
 					hr = hrSuccess;
 				}
 				else {
-					nChildren++;
+					++nChildren;
 				}
 
 				set_thread_name(POP3Thread, "ZGateway " + std::string(method));
@@ -754,7 +754,7 @@ static HRESULT running_service(const char *szPath, const char *servicename)
 					// just keep running
 				}
 				else {
-					nChildren++;
+					++nChildren;
 				}
 				// main handler always closes information it doesn't need
 				delete lpHandlerArgs->lpChannel;
@@ -800,7 +800,7 @@ static HRESULT running_service(const char *szPath, const char *servicename)
 					hr = hrSuccess;
 				}
 				else {
-					nChildren++;
+					++nChildren;
 				}
 
 				set_thread_name(IMAPThread, "ZGateway " + std::string(method));
@@ -811,7 +811,7 @@ static HRESULT running_service(const char *szPath, const char *servicename)
 					// just keep running
 				}
 				else {
-					nChildren++;
+					++nChildren;
 				}
 				// main handler always closes information it doesn't need
 				delete lpHandlerArgs->lpChannel;
@@ -836,7 +836,7 @@ static HRESULT running_service(const char *szPath, const char *servicename)
 #endif
 
 	// wait max 10 seconds (init script waits 15 seconds)
-	for(int i = 10; (nChildren && i); i--) {
+	for (int i = 10; nChildren != 0 && i != 0; --i) {
 		if (i % 5 == 0)
 			g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Waiting for %d processes to exit", nChildren);
 		sleep(1);
