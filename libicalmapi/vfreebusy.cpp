@@ -195,8 +195,7 @@ HRESULT HrFbBlock2ICal(FBBlock_1 *lpsFbblk, LONG ulBlocks, time_t tDtStart, time
 	icalcomponent_add_property(lpFbComp, lpicProp);
 
 	// add all freebusy blocks
-	for(int i = 0; i < ulBlocks ; i++) {
-		
+	for (int i = 0; i < ulBlocks; ++i) {
 		// FREEBUSY
 		lpicProp = icalproperty_new(ICAL_FREEBUSY_PROPERTY);
 		if (!lpicProp) {

@@ -97,7 +97,7 @@ HRESULT getMaxMonthMinutes(short year, short month, short* minutes)
 	case 2:
 		days = 28;
 		if(leapyear(year))
-			days++;
+			++days;
 		break;
 	}
 
@@ -340,8 +340,7 @@ HRESULT GetFreeBusyMessage(IMAPISession* lpSession, IMsgStore* lpPublicStore, IM
 
 			// move the old entryids to the new array
 			if(lpPropfbEntryids) {
-				for(i = 0; i < lpPropfbEntryids->Value.MVbin.cValues; i++)
-				{
+				for (i = 0; i < lpPropfbEntryids->Value.MVbin.cValues; ++i) {
 					lpPropfbEntryidsNew->Value.MVbin.lpbin[i].cb = lpPropfbEntryids->Value.MVbin.lpbin[i].cb;
 					lpPropfbEntryidsNew->Value.MVbin.lpbin[i].lpb = lpPropfbEntryids->Value.MVbin.lpbin[i].lpb; //cheap copy
 				}
@@ -449,17 +448,14 @@ HRESULT ParseFBEvents(FBStatus fbSts, LPSPropValue lpMonth, LPSPropValue lpEvent
 
 	memset(&fbBlock, 0, sizeof(fbBlock));
 
-	for(ULONG i = 0; i < lpEvent->Value.MVbin.cValues; i++)
-	{
-		
+	for (ULONG i = 0; i < lpEvent->Value.MVbin.cValues; ++i) {
 		if(lpEvent->Value.MVbin.lpbin[i].cb == 0) // notting to do
 			continue;
 
 		cEvents = lpEvent->Value.MVbin.lpbin[i].cb / sizeof(sfbEvent);
 		lpfbEvents = (sfbEvent*)lpEvent->Value.MVbin.lpbin[i].lpb;
 
-		for(ULONG j=0; j < cEvents; j++)
-		{
+		for (ULONG j = 0; j < cEvents; ++j) {
 			memset(&tmTmp, 0, sizeof(struct tm));
 			tmTmp.tm_year = FB_YEAR(lpMonth->Value.MVl.lpl[i]) - 1900;
 			tmTmp.tm_mon = FB_MONTH(lpMonth->Value.MVl.lpl[i])-1;
@@ -682,12 +678,10 @@ HRESULT CreateFBProp(FBStatus fbStatus, ULONG ulMonths, ULONG ulPropMonths, ULON
 			
 			if(tmStart.tm_year > ulLastYear || tmStart.tm_mon > ulLastMonth)
 			{
-				iMonth++;
-
+				++iMonth;
 				lpPropFBDataArray[0].Value.MVl.lpl[iMonth] =  FB_YEARMONTH((tmStart.tm_year+1900), (tmStart.tm_mon+1));
-				lpPropFBDataArray[0].Value.MVl.cValues++;
-				lpPropFBDataArray[1].Value.MVbin.cValues++;
-
+				++lpPropFBDataArray[0].Value.MVl.cValues;
+				++lpPropFBDataArray[1].Value.MVbin.cValues;
 				if ((hr = MAPIAllocateMore(ulMaxItemDataSize, lpPropFBDataArray, (void**)&lpPropFBDataArray[1].Value.MVbin.lpbin[iMonth].lpb)) != hrSuccess)
 					goto exit;
 				lpPropFBDataArray[1].Value.MVbin.lpbin[iMonth].cb = 0;
@@ -712,18 +706,16 @@ HRESULT CreateFBProp(FBStatus fbStatus, ULONG ulMonths, ULONG ulPropMonths, ULON
 				// Set the day on the begin of the month because: if mday is 31 and the next month is 30 then you get the wrong month
 				tmTmp.tm_mday = 1;
 				
-				for(i=1; i < ulDiffMonths && lpPropFBDataArray[0].Value.MVl.cValues < ulMonths; i++)
-				{
-					iMonth++;
+				for (i = 1; i < ulDiffMonths && lpPropFBDataArray[0].Value.MVl.cValues < ulMonths; ++i) {
+					++iMonth;
 					tmTmp.tm_isdst = -1;
-
-					tmTmp.tm_mon++;
+					++tmTmp.tm_mon;
 					mktime(&tmTmp);
 					
 
 					lpPropFBDataArray[0].Value.MVl.lpl[iMonth] = FB_YEARMONTH((tmTmp.tm_year+1900), (tmTmp.tm_mon+1));
-					lpPropFBDataArray[0].Value.MVl.cValues++;
-					lpPropFBDataArray[1].Value.MVbin.cValues++;
+					++lpPropFBDataArray[0].Value.MVl.cValues;
+					++lpPropFBDataArray[1].Value.MVbin.cValues;
 
 					if ((hr = MAPIAllocateMore(ulMaxItemDataSize, lpPropFBDataArray, (void**)&lpPropFBDataArray[1].Value.MVbin.lpbin[iMonth].lpb)) != hrSuccess)
 						goto exit;
@@ -738,14 +730,14 @@ HRESULT CreateFBProp(FBStatus fbStatus, ULONG ulMonths, ULONG ulPropMonths, ULON
 					ASSERT(lpPropFBDataArray[1].Value.MVbin.lpbin[iMonth].cb <= ulMaxItemDataSize);
 				}
 
-				iMonth++;
-				tmTmp.tm_mon++;	
+				++iMonth;
+				++tmTmp.tm_mon;
 				tmTmp.tm_isdst = -1;
 				mktime(&tmTmp);
 
 				lpPropFBDataArray[0].Value.MVl.lpl[iMonth] = FB_YEARMONTH((tmTmp.tm_year+1900), (tmTmp.tm_mon+1));
-				lpPropFBDataArray[0].Value.MVl.cValues++;
-				lpPropFBDataArray[1].Value.MVbin.cValues++;
+				++lpPropFBDataArray[0].Value.MVl.cValues;
+				++lpPropFBDataArray[1].Value.MVbin.cValues;
 
 				if ((hr = MAPIAllocateMore(ulMaxItemDataSize, lpPropFBDataArray, (void**)&lpPropFBDataArray[1].Value.MVbin.lpbin[iMonth].lpb)) != hrSuccess)
 					goto exit;
@@ -820,8 +812,7 @@ std::string GetDebugFBBlock(LONG celt, FBBlock_1* pblk)
 	str= "celt: "+stringify(celt);
 	str+= "\n";
 
-	for(int i=0; i < celt; i++)
-	{
+	for (int i = 0; i < celt; ++i) {
 		str+= "block: "+stringify(i);
 		str+= "\n\tstart: "+stringify(pblk[i].m_tmStart);
 		str+= "\n\tend: "+stringify(pblk[i].m_tmEnd);
@@ -845,10 +836,8 @@ HRESULT HrCopyFBBlockSet(OccrInfo *lpDest, OccrInfo *lpSrc, ULONG ulcValues)
 	HRESULT hr = hrSuccess;	
 	ULONG i = 0;
 
-	for(i = 0; i < ulcValues ; i++) {
+	for (i = 0; i < ulcValues; ++i)
 		lpDest[i] = lpSrc[i];
-	}
-
 	return hr;
 }
 

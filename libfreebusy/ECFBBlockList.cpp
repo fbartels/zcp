@@ -93,8 +93,7 @@ HRESULT ECFBBlockList::Merge(FBBlock_1* lpFBBlock)
 		goto exit;
 	}
 
-	for(FBIter = m_FBMap.begin(); FBIter != m_FBMap.end(); FBIter++)
-	{
+	for (FBIter = m_FBMap.begin(); FBIter != m_FBMap.end(); ++FBIter) {
 		if(FBIter->second.m_tmEnd == lpFBBlock->m_tmStart)
 		{
 			FBIter->second.m_tmEnd = lpFBBlock->m_tmEnd;
@@ -138,8 +137,7 @@ HRESULT ECFBBlockList::Next(FBBlock_1* pblk)
 	if (pblk->m_tmStart < m_tmRestictStart)
 		pblk->m_tmStart = m_tmRestictStart;
 
-	m_FBIter++;
-
+	++m_FBIter;
 exit:
 	return hr;
 }
@@ -157,13 +155,11 @@ HRESULT ECFBBlockList::Skip(LONG items)
 		Restrict(m_tmRestictStart, m_tmRestictEnd);
 	}
 
-	for(LONG i=0; i < items; i++)
-	{
+	for (LONG i = 0; i < items; ++i) {
 		// Check if you are at the end of the list or the item doesn't matched with the restriction
 		if(m_FBIter == m_FBMap.end() || (m_tmRestictEnd != 0 && (ULONG)m_FBIter->second.m_tmStart > (ULONG)m_tmRestictEnd) )
 			break; //FIXME: gives a error or always oke?
-
-		m_FBIter++;
+		++m_FBIter;
 	}
 
 	return hrSuccess;
@@ -182,8 +178,7 @@ HRESULT ECFBBlockList::Restrict(LONG tmStart, LONG tmEnd)
 		
 		if( (ULONG)m_FBIter->second.m_tmEnd > (ULONG)m_tmRestictStart )
 			break;
-
-		m_FBIter++;
+		++m_FBIter;
 	}
 
 	return S_OK;
@@ -214,15 +209,14 @@ ULONG ECFBBlockList::Size()
 		
 		if( (ULONG)FBIter->second.m_tmEnd > (ULONG)m_tmRestictStart )
 			break;
-
-		FBIter++;
+		++FBIter;
 	}
 
 	// loop while you reached end of list or doesn't mached with the restriction
 	while(FBIter != m_FBMap.end() && (m_tmRestictEnd == 0 || (ULONG)FBIter->second.m_tmStart <= (ULONG)m_tmRestictEnd))
 	{
-		size++;
-		FBIter++;
+		++size;
+		++FBIter;
 	}	
 
 	return size;
@@ -244,7 +238,7 @@ HRESULT ECFBBlockList::GetEndTime(LONG *lprtmEnd)
 	while(FBIter != m_FBMap.end() && (m_tmRestictEnd == 0 || (ULONG)FBIter->second.m_tmStart <= (ULONG)m_tmRestictEnd))
 	{
 		ulEnd = FBIter->second.m_tmEnd;	
-		FBIter++;		
+		++FBIter;
 		bFound = true;
 	}	
 

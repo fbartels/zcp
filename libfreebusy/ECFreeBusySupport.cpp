@@ -209,8 +209,7 @@ HRESULT ECFreeBusySupport::LoadFreeBusyData(ULONG cMax, FBUser *rgfbuser, IFreeB
 		goto exit;
 	}
 
-	for(i = 0; i < cMax; i++)
-	{
+	for (i = 0; i < cMax; ++i) {
 		if(GetFreeBusyMessage(m_lpSession, m_lpPublicStore, NULL, rgfbuser[i].m_cbEid, rgfbuser[i].m_lpEid, false, &lpMessage) == hrSuccess)
 		{
 			ECFreeBusyData::Create(&lpECFreeBusyData);
@@ -229,8 +228,7 @@ HRESULT ECFreeBusySupport::LoadFreeBusyData(ULONG cMax, FBUser *rgfbuser, IFreeB
 			if(hr != hrSuccess)
 				goto exit;
 			
-			ulFindUsers++;
-
+			++ulFindUsers;
 			lpECFreeBusyData->Release();
 			lpECFreeBusyData = NULL;
 			
@@ -272,8 +270,7 @@ HRESULT ECFreeBusySupport::LoadFreeBusyUpdate(ULONG cUsers, FBUser *lpUsers, IFr
 		goto exit;
 	}
 
-	for(unsigned int i=0; i < cUsers; i++)
-	{
+	for (unsigned int i = 0; i < cUsers; ++i) {
 		lpMessage = NULL;
 
 		// Get the FB message, is not exist create them
@@ -297,8 +294,7 @@ HRESULT ECFreeBusySupport::LoadFreeBusyUpdate(ULONG cUsers, FBUser *lpUsers, IFr
 		
 		lpMessage->Release();
 		lpMessage = NULL;
-
-		cFBUpdate++;
+		++cFBUpdate;
 	}
 
 	if(lpcFBUpdate)

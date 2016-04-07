@@ -425,7 +425,8 @@ HRESULT VConverter::HrResolveUser(void *base , std::list<icalrecip> *lplstIcalRe
 
 	lpAdrList->cEntries = ulRecpCnt;
 
-	for (iIcalRecip = lplstIcalRecip->begin(), ulRecpCnt = 0; iIcalRecip != lplstIcalRecip->end(); iIcalRecip++, ulRecpCnt++) {
+	for (iIcalRecip = lplstIcalRecip->begin(), ulRecpCnt = 0;
+	     iIcalRecip != lplstIcalRecip->end(); ++iIcalRecip, ++ulRecpCnt) {
 		lpAdrList->aEntries[ulRecpCnt].cValues = 1;
 
 		hr = MAPIAllocateBuffer(sizeof(SPropValue), (void **) &lpAdrList->aEntries[ulRecpCnt].rgPropVals);
@@ -450,8 +451,8 @@ HRESULT VConverter::HrResolveUser(void *base , std::list<icalrecip> *lplstIcalRe
 		goto exit;
 
 	//reset the recepients with mapped names
-	for(icalRecipient = lplstIcalRecip->front(), ulRecpCnt = 0 ; ulRecpCnt < lplstIcalRecip->size(); ulRecpCnt++)
-	{
+	for (icalRecipient = lplstIcalRecip->front(), ulRecpCnt = 0;
+	     ulRecpCnt < lplstIcalRecip->size(); ++ulRecpCnt) {
 		if (lpFlagList->ulFlag[ulRecpCnt] == MAPI_RESOLVED)
 		{
 			lpMappedProp = PpropFindProp(lpAdrList->aEntries[ulRecpCnt].rgPropVals, lpAdrList->aEntries[ulRecpCnt].cValues, PR_DISPLAY_NAME_W);
@@ -1100,7 +1101,8 @@ HRESULT VConverter::HrAddCategories(icalcomponent *lpicEvent, icalitem *lpIcalIt
 	if (hr != hrSuccess)
 		goto exit;
 
-	for (i = 0, iCats = vCategories.begin(); iCats != vCategories.end(); iCats++, i++) {
+	for (i = 0, iCats = vCategories.begin();
+	     iCats != vCategories.end(); ++iCats, ++i) {
 		int length = iCats->length() + 1;
 		hr = MAPIAllocateMore(length, lpIcalItem->base, (void **) &sPropVal.Value.MVszA.lppszA[i]);
 		if (hr != hrSuccess)
@@ -2216,7 +2218,7 @@ HRESULT VConverter::HrSetICalAttendees(LPMESSAGE lpMessage, const std::wstring &
 		goto exit;
 	
 	// Set all recipients into icalcomponent lpicEvent
-	for (ulCount = 0; ulCount < lpRows->cRows; ulCount++) {
+	for (ulCount = 0; ulCount < lpRows->cRows; ++ulCount) {
 		// ZARAFA types go correct because of addressbook, (slow?, should use PR_SMTP_ADDRESS?)
 		// SMTP types go correct because of PR_EMAIL_ADDRESS 
 		hr = HrGetAddress(m_lpAdrBook, lpRows->aRow[ulCount].lpProps, lpRows->aRow[ulCount].cValues,
@@ -2922,7 +2924,7 @@ HRESULT VConverter::HrSetRecurrence(LPMESSAGE lpMessage, icalcomponent *lpicEven
 	// other: CREATED, LAST-MODIFIED, DTSTAMP, UID (copy from original)
 	// and then exception properties are replaced
 	ulModCount = cRecurrence.getModifiedCount();
-	for (ULONG i = 0; i < ulModCount; i++) {
+	for (ULONG i = 0; i < ulModCount; ++i) {
 		
 		SPropValuePtr  lpMsgProps;
 		ULONG ulMsgProps = 0;
@@ -3559,7 +3561,7 @@ HRESULT VConverter::HrMAPI2ICal(LPMESSAGE lpMessage, icalproperty_method *lpicMe
 	if (lpPropVal && lpPropVal->Value.MVszA.cValues > 0) {
 		// The categories need to be comma-separated
 		wstrBuf.reserve(lpPropVal->Value.MVszW.cValues * 50); // 50 chars per category is a wild guess, but more than enough
-		for (ulCount = 0; ulCount < lpPropVal->Value.MVszW.cValues; ulCount++) {
+		for (ulCount = 0; ulCount < lpPropVal->Value.MVszW.cValues; ++ulCount) {
 			if (ulCount)
 				wstrBuf += L",";
 			wstrBuf += lpPropVal->Value.MVszW.lppszW[ulCount];
@@ -3581,7 +3583,7 @@ HRESULT VConverter::HrMAPI2ICal(LPMESSAGE lpMessage, icalproperty_method *lpicMe
 	// Set contacts
 	lpPropVal = PpropFindProp(lpMsgProps, ulMsgProps, CHANGE_PROP_TYPE(m_lpNamedProps->aulPropTag[PROP_CONTACTS], PT_MV_UNICODE));
 	if (lpPropVal) {
-		for (ulCount = 0; ulCount < lpPropVal->Value.MVszW.cValues; ulCount++) {
+		for (ulCount = 0; ulCount < lpPropVal->Value.MVszW.cValues; ++ulCount) {
 			lpProp = icalproperty_new_contact(m_converter.convert_to<string>(m_strCharset.c_str(), lpPropVal->Value.MVszW.lppszW[ulCount], rawsize(lpPropVal->Value.MVszW.lppszW[ulCount]), CHARSET_WCHAR).c_str());
 			icalcomponent_add_property(lpEvent, lpProp);
 		}

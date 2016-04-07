@@ -510,7 +510,7 @@ HRESULT ICalToMapiImpl::GetItem(ULONG ulPosition, ULONG ulFlags, LPMESSAGE lpMes
 	if (hr != hrSuccess)
 		goto exit;
 
-	for (ULONG i = 0; i < lpRows->cRows; i++) {
+	for (ULONG i = 0; i < lpRows->cRows; ++i) {
 		lpPropVal = PpropFindProp(lpRows->aRow[i].lpProps, lpRows->aRow[i].cValues, PR_ATTACH_NUM);
 		if (lpPropVal == NULL)
 			continue;
@@ -527,15 +527,16 @@ next:
 		// TODO: log error if any?
 		
 		// check if all exceptions are valid
-		for (iEx = lpItem->lstExceptionAttachments.begin(); iEx != lpItem->lstExceptionAttachments.end(); iEx++) {
-			
+		for (iEx = lpItem->lstExceptionAttachments.begin();
+		     iEx != lpItem->lstExceptionAttachments.end(); ++iEx) {
 			if (cRec.HrValidateOccurrence(lpItem, *iEx) == false) {
 				hr = MAPI_E_INVALID_OBJECT;
 				goto exit;
 			}
 		}
 
-		for (iEx = lpItem->lstExceptionAttachments.begin(); iEx != lpItem->lstExceptionAttachments.end(); iEx++) {
+		for (iEx = lpItem->lstExceptionAttachments.begin();
+		     iEx != lpItem->lstExceptionAttachments.end(); ++iEx) {
 			hr = lpMessage->CreateAttach(NULL, 0, &ulANr, &lpAttach);
 			if (hr != hrSuccess)
 				goto exit;
@@ -620,7 +621,8 @@ HRESULT ICalToMapiImpl::SaveProps(const std::list<SPropValue> *lpPropList,
 		goto exit;
 
 	// @todo: add exclude list or something? might set props the caller doesn't want (see vevent::HrAddTimes())
-	for (i = 0, iProps = lpPropList->begin(); iProps != lpPropList->end(); iProps++, i++)
+	for (i = 0, iProps = lpPropList->begin();
+	     iProps != lpPropList->end(); ++iProps, ++i)
 		lpsPropVals[i] = *iProps;
 
 	hr = lpMapiProp->SetProps(i, lpsPropVals, NULL);
@@ -658,7 +660,7 @@ HRESULT ICalToMapiImpl::SaveRecipList(const std::list<icalrecip> *lplstRecip,
 
 	lpRecipients->cEntries = 0;
 
-	for (iRecip = lplstRecip->begin(); iRecip != lplstRecip->end(); iRecip++) {
+	for (iRecip = lplstRecip->begin(); iRecip != lplstRecip->end(); ++iRecip) {
 		// iRecip->ulRecipientType
 		// strEmail
 		// strName
@@ -709,8 +711,8 @@ HRESULT ICalToMapiImpl::SaveRecipList(const std::list<icalrecip> *lplstRecip,
 		lpRecipients->aEntries[i].rgPropVals[9].ulPropTag = PR_RECIPIENT_TRACKSTATUS;
 		lpRecipients->aEntries[i].rgPropVals[9].Value.ul = iRecip->ulTrackStatus;
 
-		lpRecipients->cEntries++;
-		i++;
+		++lpRecipients->cEntries;
+		++i;
 	}
 
 	// flag 0: remove old recipient table, and add the new list
@@ -752,8 +754,7 @@ HRESULT ICalToMapiImpl::SaveAttendeesString(const std::list<icalrecip> *lplstRec
 		goto exit;
 
 	// Create attendees string
-	for (iRecip = lplstRecip->begin(); iRecip != lplstRecip->end(); iRecip++) {
-
+	for (iRecip = lplstRecip->begin(); iRecip != lplstRecip->end(); ++iRecip) {
 		if (iRecip->ulRecipientType == MAPI_ORIG)
 			continue;
 

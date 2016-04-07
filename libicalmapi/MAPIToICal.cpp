@@ -201,8 +201,8 @@ HRESULT MapiToICalImpl::AddMessage(LPMESSAGE lpMessage, const std::string &strSr
 	if (hr != hrSuccess)
 		goto exit;
 
-	for (iEvents = lstEvents.begin(); iEvents != lstEvents.end(); iEvents++) {
-		m_ulEvents++;
+	for (iEvents = lstEvents.begin(); iEvents != lstEvents.end(); ++iEvents) {
+		++m_ulEvents;
 		icalcomponent_add_component(m_lpicCalender, *iEvents);
 	}
 
@@ -282,7 +282,7 @@ HRESULT MapiToICalImpl::Finalize(ULONG ulFlags, std::string *strMethod, std::str
 	// no timezone block in VFREEBUSY data.
 	if ((ulFlags & M2IC_NO_VTIMEZONE) == 0)
 	{
-		for (iTZMap = m_tzMap.begin(); iTZMap != m_tzMap.end(); iTZMap++) {
+		for (iTZMap = m_tzMap.begin(); iTZMap != m_tzMap.end(); ++iTZMap) {
 			hr = HrCreateVTimeZone(iTZMap->first, iTZMap->second, &lpVTZComp);
 			if (hr == hrSuccess)
 				icalcomponent_add_component(m_lpicCalender, lpVTZComp);

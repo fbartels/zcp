@@ -153,7 +153,7 @@ HRESULT HrLookupNames(IMAPIProp *lpPropObj, LPSPropTagArray *lppNamedProps)
 	if (hr != hrSuccess)
 		goto exit;
 
-	for (int i = 0; i < SIZE_NAMEDPROPS; i++) {
+	for (int i = 0; i < SIZE_NAMEDPROPS; ++i) {
 		hr = MAPIAllocateMore(sizeof(MAPINAMEID), lppNameIds, (void**)&lppNameIds[i] );
 		if (hr != hrSuccess)
 			goto exit;

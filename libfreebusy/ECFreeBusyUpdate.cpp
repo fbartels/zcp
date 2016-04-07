@@ -110,11 +110,8 @@ HRESULT ECFreeBusyUpdate::PublishFreeBusy(FBBlock_1 *lpBlocks, ULONG nBlocks)
 		goto exit;
 	}
 
-	for(ULONG i=0; i < nBlocks; i++)
-	{
+	for (ULONG i = 0; i < nBlocks; ++i)
 		m_fbBlockList.Add(&lpBlocks[i]);
-	}
-
 exit:
 	return hr;
 }
@@ -197,7 +194,7 @@ HRESULT ECFreeBusyUpdate::SaveChanges(FILETIME ftStart, FILETIME ftEnd)
 
 	ulMonths = DiffYearMonthToMonth(&tmStart, &tmEnd);
 	if(ulMonths == 0)
-		ulMonths++;
+		++ulMonths;
 
 	cValues = 9;
 	cProps = 0;

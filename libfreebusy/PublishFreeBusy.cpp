@@ -351,8 +351,7 @@ HRESULT PublishFreeBusy::HrProcessTable(IMAPITable *lpTable, FBBlock_1 **lppfbBl
 		if(lpRowSet->cRows == 0)
 			break;
 		
-		for(ULONG i = 0; i < lpRowSet->cRows ; i++)
-		{	
+		for (ULONG i = 0; i < lpRowSet->cRows; ++i) {
 			TIMEZONE_STRUCT ttzInfo = {0};
 			
 			ulFbStatus = 0;
@@ -415,7 +414,7 @@ HRESULT PublishFreeBusy::HrProcessTable(IMAPITable *lpTable, FBBlock_1 **lppfbBl
 		if(hr != hrSuccess)
 			goto exit;
 
-		for (ULONG i = 0 ; i < *lpcValues; i++)
+		for (ULONG i = 0 ; i < *lpcValues; ++i)
 			lpfbBlocks[i]  = lpOccrInfo[i].fbBlock;
 
 		*lppfbBlocks = lpfbBlocks;
@@ -458,8 +457,7 @@ HRESULT PublishFreeBusy::HrMergeBlocks(FBBlock_1 **lppfbBlocks, ULONG *lpcValues
 	m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "Input blocks %ul", cValues);
 
 	lpFbBlocks = *lppfbBlocks;
-	for (ULONG i = 0; i< cValues; i++)
-	{
+	for (ULONG i = 0; i < cValues; ++i) {
 		sTsitem.ulType = START_TIME;
 		sTsitem.ulStatus = lpFbBlocks[i].m_fbstatus;
 		sTsitem.tsTime = lpFbBlocks[i].m_tmStart;
@@ -477,8 +475,7 @@ HRESULT PublishFreeBusy::HrMergeBlocks(FBBlock_1 **lppfbBlocks, ULONG *lpcValues
 		mpTimestamps[sTsitem.tsTime] = sTsitem;
 	}
 	
-	for (iterTs = mpTimestamps.begin(); iterTs != mpTimestamps.end(); iterTs++)
-	{
+	for (iterTs = mpTimestamps.begin(); iterTs != mpTimestamps.end(); ++iterTs) {
 		FBBlock_1 fbBlockTemp;
 
 		sTsitem = iterTs->second;
@@ -494,7 +491,7 @@ HRESULT PublishFreeBusy::HrMergeBlocks(FBBlock_1 **lppfbBlocks, ULONG *lpcValues
 				if(fbBlockTemp.m_fbstatus != 0)
 					vcFBblocks.push_back(fbBlockTemp);
 			}
-			ulLevel++;
+			++ulLevel;
 			vctStatus.push_back(sTsitem.ulStatus);
 			tsLastTime = sTsitem.tsTime;
 			break;
@@ -508,7 +505,7 @@ HRESULT PublishFreeBusy::HrMergeBlocks(FBBlock_1 **lppfbBlocks, ULONG *lpcValues
 				if(fbBlockTemp.m_fbstatus != 0)
 					vcFBblocks.push_back(fbBlockTemp);
 			}
-			ulLevel--;
+			--ulLevel;
 			if(!vctStatus.empty()){
 				iterStatus = std::find(vctStatus.begin(),vctStatus.end(),sTsitem.ulStatus);
 				if(iterStatus != vctStatus.end())
@@ -530,7 +527,7 @@ HRESULT PublishFreeBusy::HrMergeBlocks(FBBlock_1 **lppfbBlocks, ULONG *lpcValues
 		goto exit;
 	iterVcBlocks = vcFBblocks.begin();
 
-	for(ULONG i = 0; iterVcBlocks != vcFBblocks.end(); i++, iterVcBlocks++)
+	for (ULONG i = 0; iterVcBlocks != vcFBblocks.end(); ++i, ++iterVcBlocks)
 		lpFbBlocks[i] = *iterVcBlocks;		
 
 	*lppfbBlocks = lpFbBlocks;

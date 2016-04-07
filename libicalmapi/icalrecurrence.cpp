@@ -202,7 +202,7 @@ HRESULT ICalRecurrence::HrParseICalRecurrenceRule(TIMEZONE_STRUCT sTimeZone, ica
 			i = 0;
 			while (icRRule.by_day[i] != ICAL_RECURRENCE_ARRAY_MAX) {
 				ulWeekDays |= (1 << (icRRule.by_day[i] - 1));
-				i++;
+				++i;
 			}
 			// handle the BYSETPOS value
 			if (icRRule.by_set_pos[0] != ICAL_RECURRENCE_ARRAY_MAX) {
@@ -501,8 +501,9 @@ HRESULT ICalRecurrence::HrMakeMAPIException(icalcomponent *lpEventRoot, icalcomp
 	lpEx->lstMsgProps.push_back(sPropVal);
 
 	// copy properties to exception and test if changed
-	for (iProp = lpIcalItem->lstMsgProps.begin(); iProp != lpIcalItem->lstMsgProps.end(); iProp++) {
-		for (i = 0; i < sptaCopy.cValues; i++) {
+	for (iProp = lpIcalItem->lstMsgProps.begin();
+	     iProp != lpIcalItem->lstMsgProps.end(); ++iProp) {
+		for (i = 0; i < sptaCopy.cValues; ++i) {
 			if (sptaCopy.aulPropTag[i] == (*iProp).ulPropTag) {
 				abOldPresent[i] = true;
 				if (sptaCopy.aulPropTag[i] != PR_BODY) // no need to copy body
@@ -610,7 +611,7 @@ HRESULT ICalRecurrence::HrMakeMAPIException(icalcomponent *lpEventRoot, icalcomp
 	// make sure these are not removed :| (body, label, reminderset, reminder minutes)
 	abNewPresent[2] = abNewPresent[3] = abNewPresent[4] = abNewPresent[5] = true;
 	// test if properties were just removed
-	for (i = 0; i < sptaCopy.cValues; i++) {
+	for (i = 0; i < sptaCopy.cValues; ++i) {
 		if (abOldPresent[i] == true && abNewPresent[i] == false) {
 			iProp = find(lpEx->lstMsgProps.begin(), lpEx->lstMsgProps.end(), sptaCopy.aulPropTag[i]);
 			if (iProp != lpEx->lstMsgProps.end()) {
@@ -756,24 +757,24 @@ HRESULT ICalRecurrence::HrMakeMAPIRecurrence(recurrence *lpRecurrence, LPSPropTa
 
 	lpPropVal[i].ulPropTag = CHANGE_PROP_TYPE(lpNamedProps->aulPropTag[PROP_RECURRING], PT_BOOLEAN);
 	lpPropVal[i].Value.b = TRUE;
-	i++;
+	++i;
 
 	// TODO: combine with icon index in vevent .. the item may be a meeting request (meeting+recurring==1027)
 	lpPropVal[i].ulPropTag = PR_ICON_INDEX;
 	lpPropVal[i].Value.ul = ICON_APPT_RECURRING;
-	i++;
+	++i;
 
 	lpPropVal[i].ulPropTag = CHANGE_PROP_TYPE(lpNamedProps->aulPropTag[PROP_RECURRENCESTATE], PT_BINARY);
 	lpPropVal[i].Value.bin.lpb = (BYTE*)lpRecBlob;
 	lpPropVal[i].Value.bin.cb = ulRecBlob;
-	i++;
+	++i;
 
 	hr = HrGetOneProp(lpMessage, CHANGE_PROP_TYPE(lpNamedProps->aulPropTag[PROP_RECURRENCEPATTERN], PT_STRING8), &lpsPropRecPattern);
 	if(hr != hrSuccess)
 	{
 		lpPropVal[i].ulPropTag = CHANGE_PROP_TYPE(lpNamedProps->aulPropTag[PROP_RECURRENCEPATTERN], PT_STRING8);
 		lpPropVal[i].Value.lpszA = (char*)strHRS.c_str();
-		i++;
+		++i;
 	}
 
 	hr = lpMessage->SetProps(i, lpPropVal, NULL);
@@ -851,7 +852,8 @@ HRESULT ICalRecurrence::HrCreateICalRecurrence(TIMEZONE_STRUCT sTimeZone, bool b
 	lstExceptions = lpRecurrence->getDeletedExceptions();
 	if (!lstExceptions.empty()) {
 		// add EXDATE props
-		for (iException = lstExceptions.begin(); iException != lstExceptions.end(); iException++) {
+		for (iException = lstExceptions.begin();
+		     iException != lstExceptions.end(); ++iException) {
 			if(bIsAllDay)
 			{
 				ittExDate = icaltime_from_timet(LocalToUTC(*iException, sTZgmt), bIsAllDay);
@@ -1009,11 +1011,9 @@ HRESULT ICalRecurrence::WeekDaysToICalArray(ULONG ulWeekDays, struct icalrecurre
 {
 	int i = 0, j = 0;
 
-	for (i = 0; i < 7; i++) {
-		if ((ulWeekDays >> i) & 1) {
+	for (i = 0; i < 7; ++i)
+		if ((ulWeekDays >> i) & 1)
 			lpRec->by_day[j++] = i+1;
-		}
-	}
 	lpRec->by_day[j] = ICAL_RECURRENCE_ARRAY_MAX;
 	return hrSuccess;
 }

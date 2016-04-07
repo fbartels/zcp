@@ -124,12 +124,10 @@ HRESULT ECEnumFBBlock::Next(LONG celt, FBBlock_1 *pblk, LONG *pcfetch)
 
 	LONG cEltFound = 0;
 
-	for(LONG i=0; i < celt; i++)
-	{
+	for (LONG i = 0; i < celt; ++i) {
 		if(m_FBBlock.Next(&pblk[i]) != hrSuccess)
 			break;
-
-		cEltFound++;
+		++cEltFound;
 	}
 
 	if(pcfetch)
