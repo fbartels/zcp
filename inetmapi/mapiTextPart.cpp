@@ -121,11 +121,11 @@ int mapiTextPart::getPartCount() const
 {
 	int count = 0;
 	if (!m_plainText->isEmpty())
-		count++;
+		++count;
 	if (!m_text->isEmpty())
-		count++;
+		++count;
 	if (!m_otherText->isEmpty())
-		count++;
+		++count;
 	return count;
 }
 

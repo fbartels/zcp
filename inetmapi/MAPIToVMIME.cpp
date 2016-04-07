@@ -268,7 +268,7 @@ HRESULT MAPIToVMIME::processRecipients(IMessage *lpMessage, vmime::messageBuilde
 	}
 
 	try {
-		for (ULONG i = 0; i < pRows->cRows; i++) {
+		for (ULONG i = 0; i < pRows->cRows; ++i) {
 			pPropRecipType = PpropFindProp(pRows->aRow[i].lpProps, pRows->aRow[i].cValues, PR_RECIPIENT_TYPE);
 
 			if(pPropRecipType == NULL) {
@@ -727,7 +727,7 @@ HRESULT MAPIToVMIME::handleAttachments(IMessage* lpMessage, vmime::messageBuilde
 		goto exit;
 	}
 	
-	for (ULONG i=0; i < pRows->cRows; i++) {
+	for (ULONG i = 0; i < pRows->cRows; ++i) {
 		// if one attachment fails, we're not sending what the user intended to send so abort. Logging was done in handleSingleAttachment()
 		hr = handleSingleAttachment(lpMessage, &pRows->aRow[i], lpVMMessageBuilder);
 		if (hr != hrSuccess)
@@ -774,7 +774,7 @@ HRESULT MAPIToVMIME::setBoundaries(vmime::ref<vmime::header> vmHeader, vmime::re
 		vmCTF->setBoundary(boundary);
         
 		// Set boundaries on children also
-		for (i=0; i<vmBody->getPartCount(); i++) {
+		for (i = 0; i < vmBody->getPartCount(); ++i) {
 			std::ostringstream os;
 
 			vmime::ref<vmime::bodyPart> vmBodyPart = vmBody->getPartAt(i);
@@ -858,7 +858,7 @@ HRESULT MAPIToVMIME::BuildNoteMessage(IMessage *lpMessage, bool bSkipContent, vm
 				strHeaders += "\r\n\r\n";
 				headers.parse(strHeaders);
 				
-				for(int i=0; i<headers.getFieldCount(); i++) {
+				for (int i = 0; i < headers.getFieldCount(); ++i) {
 					vmime::ref<vmime::headerField> vmField = headers.getFieldAt(i);
 					std::string name = vmField->getName();
 
@@ -1681,10 +1681,9 @@ HRESULT MAPIToVMIME::handleXHeaders(IMessage *lpMessage, vmime::ref<vmime::heade
 
 	// find number of named props, which contain a string
 	cNames = 0;
-	for (i = 0; i < lpsAllTags->cValues; i++) {
+	for (i = 0; i < lpsAllTags->cValues; ++i)
 		if (PROP_ID(lpsAllTags->aulPropTag[i]) >= 0x8000 && PROP_TYPE(lpsAllTags->aulPropTag[i]) == PT_STRING8)
-			cNames++;
-	}
+			++cNames;
 
 	// no string named properties found, we're done.
 	if (cNames == 0)
@@ -1697,10 +1696,9 @@ HRESULT MAPIToVMIME::handleXHeaders(IMessage *lpMessage, vmime::ref<vmime::heade
 
 	// make named prop array
 	cNames = 0;
-	for (i = 0; i < lpsAllTags->cValues; i++) {
+	for (i = 0; i < lpsAllTags->cValues; ++i)
 		if (PROP_ID(lpsAllTags->aulPropTag[i]) >= 0x8000 && PROP_TYPE(lpsAllTags->aulPropTag[i]) == PT_STRING8)
 			lpsNamedTags->aulPropTag[cNames++] = lpsAllTags->aulPropTag[i];
-	}
 	
 	hr = lpMessage->GetNamesFromIDs(&lpsNamedTags, NULL, 0, &cNames, &lppNames);
 	if (FAILED(hr))
@@ -1710,7 +1708,7 @@ HRESULT MAPIToVMIME::handleXHeaders(IMessage *lpMessage, vmime::ref<vmime::heade
 	if (FAILED(hr))
 		goto exit;
 
-	for (i = 0; i < cNames; i++) {
+	for (i = 0; i < cNames; ++i) {
 		if (lppNames[i] && lppNames[i]->ulKind == MNID_STRING && lppNames[i]->Kind.lpwstrName &&
 			PROP_TYPE(lpPropArray[i].ulPropTag) == PT_STRING8)
 		{
@@ -1930,7 +1928,7 @@ HRESULT MAPIToVMIME::handleContactEntryID(ULONG cValues, LPSPropValue lpProps, w
 		goto exit;
 
 	// add offset to get correct named properties
-	for (i = 0; i < ulNames; i++)
+	for (i = 0; i < ulNames; ++i)
 		mnNamedProps[i].Kind.lID += (lpContabEntryID->email_offset * 0x10);
 
 	hr = MAPIAllocateBuffer(sizeof(LPMAPINAMEID) * (ulNames), (void**)&lppNames);
@@ -1939,7 +1937,7 @@ HRESULT MAPIToVMIME::handleContactEntryID(ULONG cValues, LPSPropValue lpProps, w
 		goto exit;
 	}
 
-	for (i = 0; i < ulNames; i++)
+	for (i = 0; i < ulNames; ++i)
 		lppNames[i] = &mnNamedProps[i];
 
 	hr = lpContact->GetIDsFromNames(ulNames, lppNames, MAPI_CREATE, &lpNameTags);
@@ -2167,7 +2165,7 @@ HRESULT MAPIToVMIME::handleReplyTo(IMessage *lpMessage, vmime::ref<vmime::header
 		if (hr != hrSuccess)
 			goto exit;
 
-		for (i = 0; i < cNames; i++) {
+		for (i = 0; i < cNames; ++i) {
 			lpNames[i].lpguid = (GUID*)&PSETID_Address;
 			lpNames[i].ulKind = MNID_ID;
 			lpNames[i].Kind.lID = lpulNamesIDs[i];
@@ -2284,7 +2282,7 @@ HRESULT MAPIToVMIME::handleTNEF(IMessage* lpMessage, vmime::messageBuilder* lpVM
         if(hr != hrSuccess)
             goto exit;
             
-        for(unsigned int i=0; i < lpAttachRows->cRows; i++) {
+        for ( unsigned int i = 0; i < lpAttachRows->cRows; ++i) {
             if(lpAttachRows->aRow[i].lpProps[0].ulPropTag == PR_ATTACH_METHOD && 
                 lpAttachRows->aRow[i].lpProps[1].ulPropTag == PR_ATTACH_NUM &&
                 lpAttachRows->aRow[i].lpProps[0].Value.ul == ATTACH_OLE)
@@ -2417,9 +2415,10 @@ tnef_anyway:
 				}
 				
 				// Add all OLE attachments
-				for(iterAttach = lstOLEAttach.begin(); iterAttach != lstOLEAttach.end(); iterAttach++) {
-				    tnef.FinishComponent(0x00002000, *iterAttach, (LPSPropTagArray)&sptaOLEAttachProps);
-				}
+				for (iterAttach = lstOLEAttach.begin();
+				     iterAttach != lstOLEAttach.end();
+				     ++iterAttach)
+					tnef.FinishComponent(0x00002000, *iterAttach, (LPSPropTagArray)&sptaOLEAttachProps);
 		
 				// Write the stream
 				hr = tnef.Finish();
@@ -2481,7 +2480,7 @@ void MAPIToVMIME::capitalize(char *s) {
 	s[0] = toupper(s[0]);		// x to X
 	p = s;
 	while ((p = strchr(p, '-'))) { // capitalize every char after a -
-		p++;
+		++p;
 		if (*p != '\0')
 			*p = toupper(*p);
 	}
@@ -2496,8 +2495,9 @@ void MAPIToVMIME::removeEnters(WCHAR *s) {
 	WCHAR *p = s;
 
 	while (*p) {
-		if (*p == '\r' || *p == '\n') *p = ' ';
-		p++;
+		if (*p == '\r' || *p == '\n')
+			*p = ' ';
+		++p;
 	}
 }
 

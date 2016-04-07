@@ -124,7 +124,7 @@ HRESULT ECVMIMESender::HrAddRecipsFromTable(LPADRBOOK lpAdrBook, IMAPITable *lpT
 		goto exit;
 
 	// Get all recipients from the group
-	for (ULONG i = 0; i < lpRowSet->cRows; i++) {
+	for (ULONG i = 0; i < lpRowSet->cRows; ++i) {
 		LPSPropValue lpPropObjectType = PpropFindProp( lpRowSet->aRow[i].lpProps, lpRowSet->aRow[i].cValues, PR_OBJECT_TYPE);
 
 		// see if there's an e-mail address associated with the list

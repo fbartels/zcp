@@ -130,11 +130,9 @@ static bool PropTagInPropList(ULONG ulPropTag, const SPropTagArray *lpPropList)
 	if (lpPropList == NULL)
 		return false;
 
-	for (ULONG i = 0; i < lpPropList->cValues; i++) {
+	for (ULONG i = 0; i < lpPropList->cValues; ++i)
 		if (PROP_ID(ulPropTag) == PROP_ID(lpPropList->aulPropTag[i]))
 			return true;
-	}
-
 	return false;
 }
 
@@ -165,12 +163,12 @@ ECTNEF::~ECTNEF()
 	std::list<SPropValue *>::const_iterator iterProps;
 	std::list<tnefattachment *>::const_iterator iterAttach;
 
-	for(iterProps = lstProps.begin(); iterProps != lstProps.end(); iterProps++) {
+	for (iterProps = lstProps.begin();
+	     iterProps != lstProps.end(); ++iterProps)
 		MAPIFreeBuffer(*iterProps);
-	}
-	for (iterAttach = lstAttachments.begin(); iterAttach != lstAttachments.end(); iterAttach++) {
+	for (iterAttach = lstAttachments.begin();
+	     iterAttach != lstAttachments.end(); ++iterAttach)
 		FreeAttachmentData(*iterAttach);
-	}
 }
 
 /** 
@@ -184,9 +182,9 @@ void ECTNEF::FreeAttachmentData(tnefattachment* lpTnefAtt)
 	std::list<SPropValue *>::const_iterator iterProps;
 
 	delete[] lpTnefAtt->data;
-	for (iterProps = lpTnefAtt->lstProps.begin(); iterProps != lpTnefAtt->lstProps.end(); iterProps++) {
+	for (iterProps = lpTnefAtt->lstProps.begin();
+	     iterProps != lpTnefAtt->lstProps.end(); ++iterProps)
 		MAPIFreeBuffer(*iterProps);
-	}
 
 	delete lpTnefAtt;
 }
@@ -302,7 +300,7 @@ HRESULT ECTNEF::AddProps(ULONG ulFlags, LPSPropTagArray lpPropList)
 	if (hr != hrSuccess)
 		goto exit;
 
-	for (i = 0; i < lpPropListMessage->cValues; i++) {
+	for (i = 0; i < lpPropListMessage->cValues; ++i) {
 		/*
 		 * Do not send properties in 0x67XX range, since these seem to
 		 * be blacklisted in recent exchange servers, which causes
@@ -590,7 +588,7 @@ HRESULT ECTNEF::HrWritePropStream(IStream *lpStream, std::list<SPropValue *> &pr
 	if(hr != hrSuccess)
 		return hr;
 
-	for (iterProps = proplist.begin(); iterProps != proplist.end(); iterProps++) {
+	for (iterProps = proplist.begin(); iterProps != proplist.end(); ++iterProps) {
 		hr = HrWriteSingleProp(lpStream, *iterProps);
 		if (hr != hrSuccess)
 			return hr;
@@ -672,7 +670,7 @@ HRESULT ECTNEF::HrWriteSingleProp(IStream *lpStream, LPSPropValue lpProp)
 				hr = HrWriteByte(lpStream, 0);
 				if(hr != hrSuccess)
 					goto exit;
-				ulLen++;
+				++ulLen;
 			}
 		}
 	} else {
@@ -733,7 +731,7 @@ HRESULT ECTNEF::HrWriteSingleProp(IStream *lpStream, LPSPropValue lpProp)
 
 	ulMVProp = 0;
 
-	for(ulMVProp = 0; ulMVProp < ulCount; ulMVProp++) {
+	for (ulMVProp = 0; ulMVProp < ulCount; ++ulMVProp) {
 		switch(PROP_TYPE(lpProp->ulPropTag) &~ MV_FLAG) {
 		case PT_I2:
 			if(lpProp->ulPropTag & MV_FLAG)
@@ -857,7 +855,7 @@ HRESULT ECTNEF::HrWriteSingleProp(IStream *lpStream, LPSPropValue lpProp)
 				hr = HrWriteByte(lpStream, 0);
 				if (hr != hrSuccess)
 					goto exit;
-				ulLen++;
+				++ulLen;
 			}
 			break;
 
@@ -896,7 +894,7 @@ HRESULT ECTNEF::HrWriteSingleProp(IStream *lpStream, LPSPropValue lpProp)
 				hr = HrWriteByte(lpStream, 0);
 				if (hr != hrSuccess)
 					goto exit;
-				ulLen++;
+				++ulLen;
 			}
 			break;
 
@@ -936,7 +934,7 @@ HRESULT ECTNEF::HrWriteSingleProp(IStream *lpStream, LPSPropValue lpProp)
 				hr = HrWriteByte(lpStream, 0);
 				if (hr != hrSuccess)
 					goto exit;
-				ulLen++;
+				++ulLen;
 			}
 			break;
 		
@@ -992,8 +990,7 @@ HRESULT ECTNEF::HrReadPropStream(char *lpBuffer, ULONG ulSize, std::list<SPropVa
 		lpBuffer += ulRead;
 
 		proplist.push_back(lpProp);
-
-		ulProps--;
+		--ulProps;
 
 		if(ulRead & 3) {
 			// Skip padding
@@ -1174,7 +1171,7 @@ HRESULT ECTNEF::HrReadSingleProp(char *lpBuffer, ULONG ulSize, ULONG *lpulRead, 
 
 	lpProp->ulPropTag = ulPropTag;
 
-	for(ulMVProp = 0; ulMVProp < ulCount; ulMVProp++) {
+	for (ulMVProp = 0; ulMVProp < ulCount; ++ulMVProp) {
 		switch(PROP_TYPE(ulPropTag) & ~MV_FLAG) {
 		case PT_I2:
 			if(ulPropTag & MV_FLAG)
@@ -1472,10 +1469,8 @@ HRESULT ECTNEF::SetProps(ULONG cValues, LPSPropValue lpProps)
 {
 	unsigned int i = 0;
 
-	for(i=0; i<cValues; i++) {
+	for (i = 0; i < cValues; ++i)
 		lstProps.push_back(&lpProps[i]);
-	}
-
 	return hrSuccess;
 }
 
@@ -1536,7 +1531,7 @@ HRESULT ECTNEF::FinishComponent(ULONG ulFlags, ULONG ulComponentID, LPSPropTagAr
     if(FAILED(hr))
         goto exit;
     
-    for(unsigned int i=0; i < cValues; i++) {
+    for (unsigned int i = 0; i < cValues; ++i) {
         // Other properties
         if(PROP_TYPE(lpProps[i].ulPropTag) == PT_ERROR)
             continue;
@@ -1611,7 +1606,7 @@ HRESULT ECTNEF::Finish()
 
 	if(ulFlags == TNEF_DECODE) {
 		// Write properties to message
-		for(iterProps = lstProps.begin(); iterProps != lstProps.end(); iterProps++) {
+		for (iterProps = lstProps.begin(); iterProps != lstProps.end(); ++iterProps) {
 
 			if(PROP_ID((*iterProps)->ulPropTag) == PROP_ID(PR_MESSAGE_CLASS) ||
 				!FPropExists(m_lpMessage, (*iterProps)->ulPropTag) ||
@@ -1624,7 +1619,9 @@ HRESULT ECTNEF::Finish()
 
 		}
 		// Add all found attachments to message
-		for (iterAttach = lstAttachments.begin(); iterAttach != lstAttachments.end(); iterAttach++) {
+		for (iterAttach = lstAttachments.begin();
+		     iterAttach != lstAttachments.end(); ++iterAttach)
+		{
 			bool has_obj = false;
 
 			hr = m_lpMessage->CreateAttach(NULL, 0, &ulAttachNum, &lpAttach);
@@ -1639,7 +1636,10 @@ HRESULT ECTNEF::Finish()
             sProp.Value.ul = (*iterAttach)->rdata.ulPosition;
             lpAttach->SetProps(1, &sProp, NULL);
             
-			for (iterProps = (*iterAttach)->lstProps.begin(); iterProps != (*iterAttach)->lstProps.end(); iterProps++) {
+			for (iterProps = (*iterAttach)->lstProps.begin();
+			     iterProps != (*iterAttach)->lstProps.end();
+			     ++iterProps)
+			{
 				// must not set PR_ATTACH_NUM by ourselves
 				if (PROP_ID((*iterProps)->ulPropTag) == PROP_ID(PR_ATTACH_NUM))
 					continue;
@@ -1780,7 +1780,9 @@ HRESULT ECTNEF::Finish()
 			goto exit;
 		
 		// Write attachments	
-        for(iterAttach = lstAttachments.begin(); iterAttach != lstAttachments.end(); iterAttach++) {
+        for (iterAttach = lstAttachments.begin();
+             iterAttach != lstAttachments.end(); ++iterAttach)
+        {
             // Write attachment start block
             hr = HrWriteBlock(m_lpStream, (char *)&(*iterAttach)->rdata, sizeof(AttachRendData), 0x00069002, 2);
             if(hr != hrSuccess)
@@ -2042,9 +2044,8 @@ HRESULT ECTNEF::HrGetChecksum(IStream *lpStream, ULONG *lpulChecksum)
 		if(ulRead == 0)
 			break;
 
-		for(i=0;i<ulRead;i++) {
+		for (i = 0; i < ulRead; ++i)
 			ulChecksum += buffer[i];
-		}
 	}
 
 	*lpulChecksum = ulChecksum;
@@ -2066,10 +2067,8 @@ exit:
 ULONG ECTNEF::GetChecksum(char *lpData, unsigned int ulLen)
 {
     ULONG ulChecksum = 0;
-    for (unsigned int i=0; i < ulLen; i++) {
-        ulChecksum += lpData[i];
-    }
-    
+	for (unsigned int i = 0; i < ulLen; ++i)
+		ulChecksum += lpData[i];
     return ulChecksum;
 }
 

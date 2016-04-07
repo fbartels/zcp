@@ -258,7 +258,7 @@ HRESULT VMIMEToMAPI::convertVMIMEToMAPI(const string &input, IMessage *lpMessage
 			if(hr != hrSuccess)
 				goto exit;
 				
-			for(unsigned int i=0; i < lpAttachRows->cRows; i++) {
+			for (unsigned int i = 0; i < lpAttachRows->cRows; ++i) {
 				hr = lpMessage->DeleteAttach(lpAttachRows->aRow[i].lpProps[0].Value.ul, 0, NULL, 0);
 				if(hr != hrSuccess)
 					goto exit;
@@ -455,8 +455,7 @@ HRESULT VMIMEToMAPI::fillMAPIMail(vmime::ref<vmime::message> vmMessage, IMessage
 			// text/plain, message/disposition-notification, text/rfc822-headers
 			// the third part seems optional. and some clients send multipart/alternative instead of text/plain.
 			// Loop to get text/plain body or multipart/alternative.
-			for (int i=0; i < myBody->getPartCount(); i++)
-			{
+			for (int i = 0; i < myBody->getPartCount(); ++i) {
 				vmime::ref<vmime::bodyPart> bPart = myBody->getPartAt(i);
 				vmime::ref<vmime::headerField> ctf = bPart->getHeader()->findField(vmime::fields::CONTENT_TYPE);
 
@@ -985,7 +984,7 @@ HRESULT VMIMEToMAPI::handleHeaders(vmime::ref<vmime::header> vmHeader, IMessage*
 
 		std::vector<vmime::ref<vmime::headerField> > hf = vmHeader->getFieldList();
 		std::vector<vmime::ref<vmime::headerField> >::const_iterator hfi;
-		for (hfi = hf.begin(); hfi != hf.end(); hfi++) {
+		for (hfi = hf.begin(); hfi != hf.end(); ++hfi) {
 			string value, name = (*hfi)->getName();
 			
 			if (name[0] != 'X')
@@ -1084,7 +1083,7 @@ HRESULT VMIMEToMAPI::handleMessageToMeProps(IMessage *lpMessage, LPADRLIST lpRec
 		return hrSuccess; /* Not an error, but do not do any processing */
 
 	// Loop through all recipients of the message to find ourselves in the recipient list.
-	for (i = 0; i < lpRecipients->cEntries; i++) {
+	for (i = 0; i < lpRecipients->cEntries; ++i) {
 		lpRecipType = PpropFindProp(lpRecipients->aEntries[i].rgPropVals, lpRecipients->aEntries[i].cValues, PR_RECIPIENT_TYPE);
 		lpEntryId = PpropFindProp(lpRecipients->aEntries[i].rgPropVals, lpRecipients->aEntries[i].cValues, PR_ENTRYID);
 
@@ -1237,7 +1236,7 @@ HRESULT VMIMEToMAPI::modifyRecipientList(LPADRLIST lpRecipients, vmime::ref<vmim
 													   PR_SEARCH_KEY, PR_SMTP_ADDRESS_W } };
 
 	// walk through all recipients
-	for (int iRecip=0; iRecip < iAddressCount; iRecip++) {
+	for (int iRecip = 0; iRecip < iAddressCount; ++iRecip) {
 		
 		try {
 			vmime::text vmText;
@@ -1370,8 +1369,7 @@ HRESULT VMIMEToMAPI::modifyRecipientList(LPADRLIST lpRecipients, vmime::ref<vmim
 			MAPIFreeBuffer(lpEntryID);
 			lpEntryID = NULL;
 		}
-
-		lpRecipients->cEntries++;
+		++lpRecipients->cEntries;
 	}
 
 exit:
@@ -1476,7 +1474,7 @@ HRESULT VMIMEToMAPI::modifyFromAddressBook(LPSPropValue *lppPropVals, ULONG *lpu
 		} else {
 			sRecipProps[cValues].Value.lpszW = lpProp->Value.lpszW;
 		}
-		cValues++;
+		++cValues;
 	}
 
 	if (PROP_TYPE(lpPropsList->aulPropTag[1]) != PT_NULL) {
@@ -1492,7 +1490,7 @@ HRESULT VMIMEToMAPI::modifyFromAddressBook(LPSPropValue *lppPropVals, ULONG *lpu
 			sRecipProps[cValues].ulPropTag = CHANGE_PROP_TYPE(lpPropsList->aulPropTag[1], PT_ERROR);
 			sRecipProps[cValues].Value.err = MAPI_E_NOT_FOUND;
 		}
-		cValues++;
+		++cValues;
 	}
 
 	if (PROP_TYPE(lpPropsList->aulPropTag[2]) != PT_NULL) {
@@ -1503,7 +1501,7 @@ HRESULT VMIMEToMAPI::modifyFromAddressBook(LPSPropValue *lppPropVals, ULONG *lpu
 		} else {
 			sRecipProps[cValues].Value.ul = lpProp->Value.ul;
 		}
-		cValues++;
+		++cValues;
 	}
 
 	if (PROP_TYPE(lpPropsList->aulPropTag[3]) != PT_NULL) {
@@ -1516,7 +1514,7 @@ HRESULT VMIMEToMAPI::modifyFromAddressBook(LPSPropValue *lppPropVals, ULONG *lpu
 		} else {
 			sRecipProps[cValues].Value.lpszW = lpProp->Value.lpszW;
 		}
-		cValues++;
+		++cValues;
 	}
 
 	if (PROP_TYPE(lpPropsList->aulPropTag[4]) != PT_NULL) {
@@ -1529,7 +1527,7 @@ HRESULT VMIMEToMAPI::modifyFromAddressBook(LPSPropValue *lppPropVals, ULONG *lpu
 		}
 		sRecipProps[cValues].ulPropTag = lpPropsList->aulPropTag[4]; // PR_xxx_ENTRYID;
 		sRecipProps[cValues].Value.bin = lpProp->Value.bin;
-		cValues++;
+		++cValues;
 	}
 
 	if (PROP_TYPE(lpPropsList->aulPropTag[5]) != PT_NULL) {
@@ -1541,7 +1539,7 @@ HRESULT VMIMEToMAPI::modifyFromAddressBook(LPSPropValue *lppPropVals, ULONG *lpu
 			sRecipProps[cValues].ulPropTag = lpPropsList->aulPropTag[5]; // PR_xxx_SEARCH_KEY;
 			sRecipProps[cValues].Value.bin = lpProp->Value.bin;
 		}
-		cValues++;
+		++cValues;
 	}
 
 
@@ -1554,7 +1552,7 @@ HRESULT VMIMEToMAPI::modifyFromAddressBook(LPSPropValue *lppPropVals, ULONG *lpu
 			sRecipProps[cValues].ulPropTag = lpPropsList->aulPropTag[6]; // PR_xxx_SMTP_ADDRESS;
 			sRecipProps[cValues].Value.lpszW = lpProp->Value.lpszW;
 		}
-		cValues++;
+		++cValues;
 	}
 
 	lpProp = PpropFindProp(lpAdrList->aEntries[0].rgPropVals, lpAdrList->aEntries[0].cValues, PR_OBJECT_TYPE);
@@ -1565,12 +1563,12 @@ HRESULT VMIMEToMAPI::modifyFromAddressBook(LPSPropValue *lppPropVals, ULONG *lpu
 		sRecipProps[cValues].Value.ul = lpProp->Value.ul;
 	}
 	sRecipProps[cValues].ulPropTag = PR_OBJECT_TYPE;
-	cValues++;
+	++cValues;
 
 	if (ulRecipType != MAPI_ORIG) {
 		sRecipProps[cValues].ulPropTag = PR_RECIPIENT_TYPE;
 		sRecipProps[cValues].Value.ul = ulRecipType;
-		cValues++;
+		++cValues;
 	}
 
 	hr = Util::HrCopyPropertyArray(sRecipProps, cValues, lppPropVals, &cValues);
@@ -1603,7 +1601,7 @@ static std::list<unsigned int> vtm_order_alternatives(vmime::ref<vmime::body> vm
 	vmime::ref<vmime::mediaType> mt;
 	std::list<unsigned int> lBodies, pgtext;
 
-	for (int i = 0; i < vmBody->getPartCount(); i++) {
+	for (int i = 0; i < vmBody->getPartCount(); ++i) {
 		vmBodyPart = vmBody->getPartAt(i);
 		vmHeader = vmBodyPart->getHeader();
 		if (!vmHeader->hasField(vmime::fields::CONTENT_TYPE)) {
@@ -1706,7 +1704,7 @@ void VMIMEToMAPI::dissect_message(vmime::ref<vmime::body> vmBody, IMessage *lpMe
 
 	// Skip any leading newlines from the e-mail (attached messaged produced by Microsoft MimeOLE seem to do this)
 	while (*lpszBody != '\0' && (*lpszBody == '\r' || *lpszBody == '\n'))
-		lpszBody++;
+		++lpszBody;
 
 	// and remove from string
 	newMessage.erase(0, lpszBody - lpszBodyOrig);
@@ -1722,7 +1720,7 @@ void VMIMEToMAPI::dissect_message(vmime::ref<vmime::body> vmBody, IMessage *lpMe
 	// handle message-in-message, save current state variables
 	savedState = m_mailState;
 	m_mailState.reset();
-	m_mailState.ulMsgInMsg++;
+	++m_mailState.ulMsgInMsg;
 
 	hr = convertVMIMEToMAPI(newMessage, lpNewMessage);
 
@@ -3010,7 +3008,7 @@ std::wstring VMIMEToMAPI::getWideFromVmimeText(const vmime::text &vmText)
 
 	const std::vector<vmime::ref<const vmime::word> >& words = vmText.getWordList();
 	std::vector<vmime::ref<const vmime::word> >::const_iterator i, j;
-	for (i = words.begin(); i != words.end(); i++) {
+	for (i = words.begin(); i != words.end(); ++i) {
 		/*
 		 * RFC 5322 §2.2 specifies header field bodies consist of
 		 * US-ASCII characters only, and the only way to get other
@@ -3050,10 +3048,8 @@ std::wstring VMIMEToMAPI::getWideFromVmimeText(const vmime::text &vmText)
 		 * here anytime soon.
 		 */
 		myword = (*i)->getBuffer();
-		for(j=i+1; j != words.end() && (*j)->getCharset() == wordCharset; j++) {
+		for (j = i + 1; j != words.end() && (*j)->getCharset() == wordCharset; ++j, ++i)
 			myword += (*j)->getBuffer();
-			i++;
-                }
 
 		std::string tmp = vmime::word(myword, wordCharset).getConvertedText(CHARSET_WCHAR);
 		ret.append(reinterpret_cast<const wchar_t *>(tmp.c_str()), tmp.size() / sizeof(wchar_t));
@@ -3367,7 +3363,7 @@ std::string VMIMEToMAPI::addressListToEnvelope(vmime::ref<vmime::addressList> aL
 	if (aCount == 0)
 		throw vmime::exceptions::no_such_field();
 		
-	for (int i = 0; i < aCount; i++) {
+	for (int i = 0; i < aCount; ++i) {
 		try {
 			buffer += mailboxToEnvelope(aList->getAddressAt(i).dynamicCast<vmime::mailbox>());
 			lAddr.push_back(buffer);
@@ -3498,7 +3494,7 @@ std::string VMIMEToMAPI::createIMAPEnvelope(vmime::ref<vmime::message> vmMessage
 		list<string> lAddr;
 		vmime::ref<vmime::addressList> aList = vmHeader->Cc()->getValue().dynamicCast<vmime::addressList>();
 		int aCount = aList->getAddressCount();
-		for (int i = 0; i < aCount; i++)
+		for (int i = 0; i < aCount; ++i)
 			buffer += mailboxToEnvelope(aList->getAddressAt(i).dynamicCast<vmime::mailbox>());
 		lItems.push_back(buffer.empty() ? "NIL" : "(" + buffer + ")");
 	} catch (vmime::exception &e) {
@@ -3511,7 +3507,7 @@ std::string VMIMEToMAPI::createIMAPEnvelope(vmime::ref<vmime::message> vmMessage
 		list<string> lAddr;
 		vmime::ref<vmime::addressList> aList = vmHeader->Bcc()->getValue().dynamicCast<vmime::addressList>();
 		int aCount = aList->getAddressCount();
-		for (int i = 0; i < aCount; i++)
+		for (int i = 0; i < aCount; ++i)
 			buffer += mailboxToEnvelope(aList->getAddressAt(i).dynamicCast<vmime::mailbox>());
 		lItems.push_back(buffer.empty() ? "NIL" : "(" + buffer + ")");
 	} catch (vmime::exception &e) {
@@ -3612,7 +3608,7 @@ HRESULT VMIMEToMAPI::messagePartToStructure(const string &input, vmime::ref<vmim
 			// function please:
 			string strBody;
 			string strBodyStructure;
-			for (int i = 0; i < vmBodyPart->getBody()->getPartCount(); i++) {
+			for (int i = 0; i < vmBodyPart->getBody()->getPartCount(); ++i) {
 				messagePartToStructure(input, vmBodyPart->getBody()->getPartAt(i), &strBody, &strBodyStructure);
 				lBody.push_back(strBody);
 				lBodyStructure.push_back(strBodyStructure);
@@ -3846,7 +3842,7 @@ std::string VMIMEToMAPI::parameterizedFieldToStructure(vmime::ref<vmime::paramet
 		vector <vmime::ref<vmime::parameter> > vParams = vmParamField->getParameterList();
 		std::vector<vmime::ref<vmime::parameter> >::const_iterator iParam;
 
-		for (iParam = vParams.begin(); iParam != vParams.end(); iParam++) {
+		for (iParam = vParams.begin(); iParam != vParams.end(); ++iParam) {
 			lParams.push_back("\"" + (*iParam)->getName() + "\"");
 			(*iParam)->getValue().generate(os);
 			lParams.push_back("\"" + buffer + "\"");
@@ -3880,8 +3876,8 @@ std::string::size_type VMIMEToMAPI::countBodyLines(const std::string &input, std
 		pos = input.find_first_of('\n', pos);
 		if (pos == string::npos || pos > start+length)
 			break;
-		pos++;
-		lines++;
+		++pos;
+		++lines;
 	} 
 
 	return lines;
