@@ -147,7 +147,7 @@ void ECStatsCollector::AddStat(SCName index, SCType type, const char *name, cons
 }
 
 void ECStatsCollector::Increment(SCName name, float inc) {
-	map<SCName, ECStat>::iterator iSD = m_StatData.find(name);
+	SCMap::iterator iSD = m_StatData.find(name);
 	if (iSD == m_StatData.end())
 		return;
 
@@ -163,7 +163,7 @@ void ECStatsCollector::Increment(SCName name, int inc) {
 }
 
 void ECStatsCollector::Increment(SCName name, LONGLONG inc) {
-	map<SCName, ECStat>::iterator iSD = m_StatData.find(name);
+	SCMap::iterator iSD = m_StatData.find(name);
 	if (iSD == m_StatData.end())
 		return;
 
@@ -175,7 +175,7 @@ void ECStatsCollector::Increment(SCName name, LONGLONG inc) {
 }
 
 void ECStatsCollector::Set(SCName name, float set) {
-	map<SCName, ECStat>::iterator iSD = m_StatData.find(name);
+	SCMap::iterator iSD = m_StatData.find(name);
 	if (iSD == m_StatData.end())
 		return;
 
@@ -187,7 +187,7 @@ void ECStatsCollector::Set(SCName name, float set) {
 }
 
 void ECStatsCollector::Set(SCName name, LONGLONG set) {
-	map<SCName, ECStat>::iterator iSD = m_StatData.find(name);
+	SCMap::iterator iSD = m_StatData.find(name);
 	if (iSD == m_StatData.end())
 		return;
 
@@ -199,7 +199,7 @@ void ECStatsCollector::Set(SCName name, LONGLONG set) {
 }
 
 void ECStatsCollector::SetTime(SCName name, time_t set) {
-	map<SCName, ECStat>::iterator iSD = m_StatData.find(name);
+	SCMap::iterator iSD = m_StatData.find(name);
 	if (iSD == m_StatData.end())
 		return;
 
@@ -212,7 +212,7 @@ void ECStatsCollector::SetTime(SCName name, time_t set) {
 
 void ECStatsCollector::Min(SCName name, float min)
 {
-	map<SCName, ECStat>::iterator iSD = m_StatData.find(name);
+	SCMap::iterator iSD = m_StatData.find(name);
 	if (iSD == m_StatData.end())
 		return;
 
@@ -226,7 +226,7 @@ void ECStatsCollector::Min(SCName name, float min)
 
 void ECStatsCollector::Min(SCName name, LONGLONG min)
 {
-	map<SCName, ECStat>::iterator iSD = m_StatData.find(name);
+	SCMap::iterator iSD = m_StatData.find(name);
 	if (iSD == m_StatData.end())
 		return;
 
@@ -240,7 +240,7 @@ void ECStatsCollector::Min(SCName name, LONGLONG min)
 
 void ECStatsCollector::MinTime(SCName name, time_t min)
 {
-	map<SCName, ECStat>::iterator iSD = m_StatData.find(name);
+	SCMap::iterator iSD = m_StatData.find(name);
 	if (iSD == m_StatData.end())
 		return;
 
@@ -255,7 +255,7 @@ void ECStatsCollector::MinTime(SCName name, time_t min)
 
 void ECStatsCollector::Max(SCName name, float max)
 {
-	map<SCName, ECStat>::iterator iSD = m_StatData.find(name);
+	SCMap::iterator iSD = m_StatData.find(name);
 	if (iSD == m_StatData.end())
 		return;
 
@@ -269,7 +269,7 @@ void ECStatsCollector::Max(SCName name, float max)
 
 void ECStatsCollector::Max(SCName name, LONGLONG max)
 {
-	map<SCName, ECStat>::iterator iSD = m_StatData.find(name);
+	SCMap::iterator iSD = m_StatData.find(name);
 	if (iSD == m_StatData.end())
 		return;
 
@@ -283,7 +283,7 @@ void ECStatsCollector::Max(SCName name, LONGLONG max)
 
 void ECStatsCollector::MaxTime(SCName name, time_t max)
 {
-	map<SCName, ECStat>::iterator iSD = m_StatData.find(name);
+	SCMap::iterator iSD = m_StatData.find(name);
 	if (iSD == m_StatData.end())
 		return;
 
@@ -298,7 +298,7 @@ void ECStatsCollector::MaxTime(SCName name, time_t max)
 
 void ECStatsCollector::Avg(SCName name, float add)
 {
-	map<SCName, ECStat>::iterator iSD = m_StatData.find(name);
+	SCMap::iterator iSD = m_StatData.find(name);
 	if (iSD == m_StatData.end())
 		return;
 
@@ -314,7 +314,7 @@ void ECStatsCollector::Avg(SCName name, float add)
 
 void ECStatsCollector::Avg(SCName name, LONGLONG add)
 {
-	map<SCName, ECStat>::iterator iSD = m_StatData.find(name);
+	SCMap::iterator iSD = m_StatData.find(name);
 	if (iSD == m_StatData.end())
 		return;
 
@@ -330,7 +330,7 @@ void ECStatsCollector::Avg(SCName name, LONGLONG add)
 
 void ECStatsCollector::AvgTime(SCName name, time_t add)
 {
-	map<SCName, ECStat>::iterator iSD = m_StatData.find(name);
+	SCMap::iterator iSD = m_StatData.find(name);
 	if (iSD == m_StatData.end())
 		return;
 
