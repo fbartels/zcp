@@ -216,7 +216,7 @@ unsigned int rtf_decompress(char *lpDest, char *lpSrc, unsigned int ulBufSize)
 					 
 				while(ulSize && lpWrite < lpBuffer + lpHeader->ulUncompressedSize + prebufSize && ulOffset < lpHeader->ulUncompressedSize + prebufSize) {
 					*lpWrite++ = lpBuffer[ulOffset++]; 
-					ulSize--;
+					--ulSize;
 				}
 			} else {
 				*lpWrite++ = *lpSrc++;
@@ -266,12 +266,12 @@ static void strmatch(const char *lpszBuffer, unsigned int cbBuffer,
 			} 
 			else if (*lpszPatCur == *lpszBufCur && *lpszPatCur != '\n' && *lpszPatCur != '\r')
 			{
-				lpszBufCur++;
-				lpszPatCur++;
-				ulCount++;
+				++lpszBufCur;
+				++lpszPatCur;
+				++ulCount;
 			}
 			else
-				lpszBufCur++;
+				++lpszBufCur;
 		}
 	}
 
@@ -318,9 +318,7 @@ unsigned int rtf_compress(char **lppDest, unsigned int *lpulDestSize, char *lpSr
 		if(ulFlagNr == 0) {
 			lpDest[ulOutCursor] = 0;
 			ulFlagCursor = ulOutCursor;
-
-			ulOutCursor++;
-
+			++ulOutCursor;
 			if(ulOutCursor >= ulDestBufSize) {
 				ulDestBufSize += 1024;
 
@@ -431,7 +429,7 @@ unsigned int rtf_compress(char **lppDest, unsigned int *lpulDestSize, char *lpSr
 				lpDest = lpRealloc;
 			}
 		}
-		ulFlagNr--;
+		--ulFlagNr;
 	}
 
 	lpHeader = (RTFHeader *)lpDest;

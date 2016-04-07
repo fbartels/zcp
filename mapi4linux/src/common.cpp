@@ -71,7 +71,7 @@ ULONG M4LUnknown::Release() {
     ULONG nRef;
     
     pthread_mutex_lock(&mutex);
-    this->ref--;
+	--this->ref;
     nRef = ref;
 
     pthread_mutex_unlock(&mutex);

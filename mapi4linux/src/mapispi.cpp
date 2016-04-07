@@ -114,7 +114,7 @@ M4LMAPISupport::~M4LMAPISupport() {
 	M4LSUPPORTADVISES::const_iterator i;
 
 	delete lpsProviderUID;
-	for (i = m_advises.begin(); i != m_advises.end(); i++)
+	for (i = m_advises.begin(); i != m_advises.end(); ++i)
 		MAPIFreeBuffer(i->second.lpKey);
 
 	pthread_mutex_destroy(&m_advises_mutex);
@@ -152,7 +152,7 @@ HRESULT M4LMAPISupport::Subscribe(LPNOTIFKEY lpKey, ULONG ulEventMask, ULONG ulF
 
 	pthread_mutex_lock(&m_advises_mutex);
 
-	m_connections++;
+	++m_connections;
 	m_advises.insert(M4LSUPPORTADVISES::value_type(m_connections, M4LSUPPORTADVISE(lpNewKey, ulEventMask, ulFlags, lpAdviseSink)));
 	*lpulConnection = m_connections;
 
@@ -385,7 +385,7 @@ HRESULT M4LMAPISupport::CopyMessages(LPCIID lpSrcInterface, LPVOID lpSrcFolder, 
 
 	lpDeleteEntries->cValues = 0;
 
-	for (i = 0; i < lpMsgList->cValues; i++) {
+	for (i = 0; i < lpMsgList->cValues; ++i) {
 		hr = lpSource->OpenEntry(lpMsgList->lpbin[i].cb, (LPENTRYID)lpMsgList->lpbin[i].lpb, &IID_IMessage, 0, &ulObjType, (LPUNKNOWN*)&lpSrcMessage);
 		if (hr != hrSuccess) {
 			// partial, or error to calling client?
@@ -413,7 +413,7 @@ HRESULT M4LMAPISupport::CopyMessages(LPCIID lpSrcInterface, LPVOID lpSrcFolder, 
 		} else if (ulFlags & MAPI_MOVE) {
 			lpDeleteEntries->lpbin[lpDeleteEntries->cValues].cb = lpMsgList->lpbin[i].cb;
 			lpDeleteEntries->lpbin[lpDeleteEntries->cValues].lpb = lpMsgList->lpbin[i].lpb;
-			lpDeleteEntries->cValues++;
+			++lpDeleteEntries->cValues;
 		}
 
 next_item:
@@ -670,8 +670,8 @@ HRESULT M4LMAPISupport::ExpandRecips(LPMESSAGE lpMessage, ULONG * lpulFlags) {
 
 		// find all unknown properties in the rows, reference-copy those from the original recipient
 		// ModifyRecipients() will actually copy the data
-		for (ULONG c = 0; c < ptrMembers.size(); c++) {
-			for (ULONG i = 0; i < ptrMembers[c].cValues; i++) {
+		for (ULONG c = 0; c < ptrMembers.size(); ++c) {
+			for (ULONG i = 0; i < ptrMembers[c].cValues; ++i) {
 				LPSPropValue lpRecipProp = NULL;
 
 				if (PROP_TYPE(ptrMembers[c].lpProps[i].ulPropTag) != PT_ERROR)

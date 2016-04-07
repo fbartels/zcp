@@ -89,7 +89,7 @@ LPSPropValue __stdcall PpropFindProp(LPSPropValue lpPropArray, ULONG cValues, UL
 	if (lpPropArray == NULL)
 		goto exit;
 
-	for (ULONG i=0; i<cValues; i++) {
+	for (ULONG i = 0; i<cValues; ++i) {
 		if ((lpPropArray[i].ulPropTag == ulPropTag) ||
 			(PROP_TYPE(ulPropTag) == PT_UNSPECIFIED && PROP_ID(lpPropArray[i].ulPropTag) == PROP_ID(ulPropTag))) {
 			lpValue = &lpPropArray[i];
@@ -111,7 +111,7 @@ LPSPropValue __stdcall LpValFindProp(ULONG ulPropTag, ULONG cValues, LPSPropValu
 	if (lpProps == NULL)
 		goto exit;
 
-	for(ULONG i=0;i<cValues;i++) {
+	for (ULONG i = 0; i < cValues; ++i) {
 		if(PROP_ID(lpProps[i].ulPropTag) == PROP_ID(ulPropTag)) {
 			lpValue = &lpProps[i];
 			break;
@@ -639,7 +639,7 @@ SCODE __stdcall ScCopyProps( int cprop,  LPSPropValue rgprop,  LPVOID pvDst,  UL
 	BYTE *lpHeap = (BYTE *)pvDst + sizeof(SPropValue) * cprop;
 	LPSPropValue lpProp = (LPSPropValue)pvDst;
 
-	for(int i =0 ; i< cprop; i++) {
+	for (int i = 0 ; i < cprop; ++i) {
 		lpProp[i] = rgprop[i];
 
 		switch(PROP_TYPE(rgprop[i].ulPropTag)) {
@@ -657,56 +657,56 @@ SCODE __stdcall ScCopyProps( int cprop,  LPSPropValue rgprop,  LPVOID pvDst,  UL
 			lpProp[i].Value.i = rgprop[i].Value.i;
 			break;
 		case PT_MV_SHORT:
-			for (ULONG j = 0; j < rgprop[i].Value.MVi.cValues; j++)
+			for (ULONG j = 0; j < rgprop[i].Value.MVi.cValues; ++j)
 				lpProp[i].Value.MVi.lpi[j] = rgprop[i].Value.MVi.lpi[j];
 			break;
 		case PT_LONG:
 			lpProp[i].Value.l = rgprop[i].Value.l;
 			break;
 		case PT_MV_LONG:
-			for (ULONG j = 0; j < rgprop[i].Value.MVl.cValues; j++)
+			for (ULONG j = 0; j < rgprop[i].Value.MVl.cValues; ++j)
 				lpProp[i].Value.MVl.lpl[j] = rgprop[i].Value.MVl.lpl[j];
 			break;
 		case PT_LONGLONG:
 			memcpy(&lpProp[i].Value.li, &rgprop[i].Value.li, sizeof(rgprop[i].Value.li));
 			break;
 		case PT_MV_LONGLONG:
-			for (ULONG j = 0; j < rgprop[i].Value.MVli.cValues; j++)
+			for (ULONG j = 0; j < rgprop[i].Value.MVli.cValues; ++j)
 				memcpy(&lpProp[i].Value.MVli.lpli[j], &rgprop[i].Value.MVli.lpli[j], sizeof(rgprop[i].Value.MVli.lpli[j]));
 			break;
 		case PT_FLOAT:
 			lpProp[i].Value.flt = rgprop[i].Value.flt;
 			break;
 		case PT_MV_FLOAT:
-			for (ULONG j = 0; j < rgprop[i].Value.MVflt.cValues; j++)
+			for (ULONG j = 0; j < rgprop[i].Value.MVflt.cValues; ++j)
 				lpProp[i].Value.MVflt.lpflt[j] = rgprop[i].Value.MVflt.lpflt[j];
 			break;
 		case PT_DOUBLE:
 			lpProp[i].Value.dbl = rgprop[i].Value.dbl;
 			break;
 		case PT_MV_DOUBLE:
-			for (ULONG j = 0; j < rgprop[i].Value.MVdbl.cValues; j++)
+			for (ULONG j = 0; j < rgprop[i].Value.MVdbl.cValues; ++j)
 				lpProp[i].Value.MVdbl.lpdbl[j] = rgprop[i].Value.MVdbl.lpdbl[j];
 			break;
 		case PT_CURRENCY:
 			memcpy(&lpProp[i].Value.cur, &rgprop[i].Value.cur, sizeof(rgprop[i].Value.cur));
 			break;
 		case PT_MV_CURRENCY:
-			for (ULONG j = 0; j < rgprop[i].Value.MVcur.cValues; j++)
+			for (ULONG j = 0; j < rgprop[i].Value.MVcur.cValues; ++j)
 				memcpy(&lpProp[i].Value.MVcur.lpcur[j], &rgprop[i].Value.MVcur.lpcur[j], sizeof(rgprop[i].Value.MVcur.lpcur[j]));
 			break;
 		case PT_SYSTIME:
 			memcpy(&lpProp[i].Value.ft, &rgprop[i].Value.ft, sizeof(rgprop[i].Value.ft));
 			break;
 		case PT_MV_SYSTIME:
-			for (ULONG j = 0; j < rgprop[i].Value.MVft.cValues; j++)
+			for (ULONG j = 0; j < rgprop[i].Value.MVft.cValues; ++j)
 				memcpy(&lpProp[i].Value.MVft.lpft[j], &rgprop[i].Value.MVft.lpft[j], sizeof(rgprop[i].Value.MVft.lpft[j]));
 			break;
 		case PT_APPTIME:
 			lpProp[i].Value.at = rgprop[i].Value.at;
 			break;
 		case PT_MV_APPTIME:
-			for (ULONG j = 0; j < rgprop[i].Value.MVat.cValues; j++)
+			for (ULONG j = 0; j < rgprop[i].Value.MVat.cValues; ++j)
 				lpProp[i].Value.MVat.lpat[j] = rgprop[i].Value.MVat.lpat[j];
 			break;
 
@@ -731,7 +731,7 @@ SCODE __stdcall ScCopyProps( int cprop,  LPSPropValue rgprop,  LPVOID pvDst,  UL
 			COPY_STRING8(lpHeap, lpProp[i].Value.lpszA, rgprop[i].Value.lpszA);
 			break;
 		case PT_MV_STRING8:
-			for (ULONG j = 0; j < rgprop[i].Value.MVszA.cValues; j++)
+			for (ULONG j = 0; j < rgprop[i].Value.MVszA.cValues; ++j)
 				COPY_STRING8(lpHeap, lpProp[i].Value.MVszA.lppszA[j], rgprop[i].Value.MVszA.lppszA[j]);
 			break;
 
@@ -746,7 +746,7 @@ SCODE __stdcall ScCopyProps( int cprop,  LPSPropValue rgprop,  LPVOID pvDst,  UL
 			COPY_BINARY(lpHeap, lpProp[i].Value.bin, rgprop[i].Value.bin);
 			break;
 		case PT_MV_BINARY:
-			for (ULONG j = 0; j < rgprop[i].Value.MVbin.cValues; j++)
+			for (ULONG j = 0; j < rgprop[i].Value.MVbin.cValues; ++j)
 				COPY_BINARY(lpHeap, lpProp[i].Value.MVbin.lpbin[j], rgprop[i].Value.MVbin.lpbin[j]);
 			break;
 
@@ -759,7 +759,7 @@ SCODE __stdcall ScCopyProps( int cprop,  LPSPropValue rgprop,  LPVOID pvDst,  UL
 			COPY_UNICODE(lpHeap, lpProp[i].Value.lpszW, rgprop[i].Value.lpszW);
 			break;
 		case PT_MV_UNICODE:
-			for (ULONG j = 0; j < rgprop[i].Value.MVszW.cValues; j++)
+			for (ULONG j = 0; j < rgprop[i].Value.MVszW.cValues; ++j)
 				COPY_UNICODE(lpHeap, lpProp[i].Value.MVszW.lppszW[j], rgprop[i].Value.MVszW.lppszW[j]);
 			break;
 		default:
@@ -779,7 +779,7 @@ SCODE __stdcall ScCountProps(int cValues, LPSPropValue lpPropArray, ULONG *lpcb)
 	SCODE sc = S_OK;
 	ULONG ulSize = 0;
 
-	for(int i = 0; i<cValues;i++) {
+	for (int i = 0; i < cValues; ++i) {
 		ulSize += sizeof(SPropValue);
 
 		switch(PROP_TYPE(lpPropArray[i].ulPropTag)) {
@@ -792,7 +792,7 @@ SCODE __stdcall ScCountProps(int cValues, LPSPropValue lpPropArray, ULONG *lpcb)
 			break;
 		case PT_MV_STRING8:
 			ulSize += sizeof(LPTSTR) * lpPropArray[i].Value.MVszA.cValues;
-			for (unsigned int j = 0; j < lpPropArray[i].Value.MVszA.cValues; j++)
+			for (unsigned int j = 0; j < lpPropArray[i].Value.MVszA.cValues; ++j)
 				ulSize += strlen(lpPropArray[i].Value.MVszA.lppszA[j])+1;
 			break;
 		case PT_BINARY:
@@ -800,7 +800,7 @@ SCODE __stdcall ScCountProps(int cValues, LPSPropValue lpPropArray, ULONG *lpcb)
 			break;
 		case PT_MV_BINARY:
 			ulSize += sizeof(SBinary) * lpPropArray[i].Value.MVbin.cValues;
-			for (unsigned int j = 0; j < lpPropArray[i].Value.MVbin.cValues; j++)
+			for (unsigned int j = 0; j < lpPropArray[i].Value.MVbin.cValues; ++j)
 				ulSize += lpPropArray[i].Value.MVbin.lpbin[j].cb;
 			break;
 		case PT_UNICODE:
@@ -808,7 +808,7 @@ SCODE __stdcall ScCountProps(int cValues, LPSPropValue lpPropArray, ULONG *lpcb)
 			break;
 		case PT_MV_UNICODE:
 			ulSize += sizeof(LPWSTR) * lpPropArray[i].Value.MVszW.cValues;
-			for (unsigned int j = 0; j < lpPropArray[i].Value.MVszW.cValues; j++)
+			for (unsigned int j = 0; j < lpPropArray[i].Value.MVszW.cValues; ++j)
 				ulSize += (lstrlenW(lpPropArray[i].Value.MVszW.lppszW[j]) + 1) * sizeof(WCHAR);
 			break;
 		case PT_CLSID:
@@ -1045,11 +1045,8 @@ LPWSTR __stdcall EncodeID(ULONG cbEID, LPENTRYID rgbID, LPWSTR *lpWString)
 		goto exit;
 
 	for (i = 0, pbSrc = (LPBYTE)rgbID, pwzDst = pwzIDEncoded;
-		 i < cbEID;
-		 i++, pbSrc++, pwzDst++)
-	{
+	     i < cbEID; ++i, ++pbSrc, ++pwzDst)
 		*pwzDst = (WCHAR) (*pbSrc + kwBaseOffset);
-	}
 
 	// Ensure NULL terminated
 	*pwzDst = L'\0';

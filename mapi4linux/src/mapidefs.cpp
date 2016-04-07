@@ -74,9 +74,8 @@ M4LMAPIProp::M4LMAPIProp() {
 
 M4LMAPIProp::~M4LMAPIProp() {
 	std::list<LPSPropValue>::const_iterator i;
-	for(i = properties.begin(); i != properties.end(); i++) {
+	for (i = properties.begin(); i != properties.end(); ++i)
 		MAPIFreeBuffer(*i);
-	}
 	properties.clear();
 }
 
@@ -110,7 +109,7 @@ HRESULT M4LMAPIProp::GetProps(LPSPropTagArray lpPropTagArray, ULONG ulFlags, ULO
 		if (hr != hrSuccess)
 			goto exit;
 
-		for (c = 0, i = properties.begin(); i != properties.end(); i++, c++) {
+		for (c = 0, i = properties.begin(); i != properties.end(); ++i, ++c) {
 			// perform unicode conversion if required
 			if ((ulFlags & MAPI_UNICODE) && PROP_TYPE((*i)->ulPropTag) == PT_STRING8) {
 				sConvert.ulPropTag = CHANGE_PROP_TYPE((*i)->ulPropTag, PT_UNICODE);
@@ -137,8 +136,8 @@ HRESULT M4LMAPIProp::GetProps(LPSPropTagArray lpPropTagArray, ULONG ulFlags, ULO
 		if (hr != hrSuccess)
 			goto exit;
 
-		for (c = 0; c < lpPropTagArray->cValues; c++) {
-			for (i = properties.begin(); i != properties.end(); i++) {
+		for (c = 0; c < lpPropTagArray->cValues; ++c) {
+			for (i = properties.begin(); i != properties.end(); ++i) {
 				if (PROP_ID((*i)->ulPropTag) == PROP_ID(lpPropTagArray->aulPropTag[c])) {
 					// perform unicode conversion if required
 					if (PROP_TYPE((*i)->ulPropTag) == PT_STRING8 && 
@@ -173,7 +172,7 @@ HRESULT M4LMAPIProp::GetProps(LPSPropTagArray lpPropTagArray, ULONG ulFlags, ULO
 						hr = MAPIAllocateMore((*i)->Value.MVszA.cValues * sizeof(WCHAR*), props, (void**)&sConvert.Value.MVszW.lppszW);
 						if (hr != hrSuccess)
 							goto exit;
-						for (ULONG c = 0; c < (*i)->Value.MVszA.cValues; c++) {
+						for (ULONG c = 0; c < (*i)->Value.MVszA.cValues; ++c) {
 							unicode = converter.convert_to<wstring>((*i)->Value.MVszA.lppszA[c]);
 							hr = MAPIAllocateMore(unicode.length() * sizeof(WCHAR) + sizeof(WCHAR), props, (void**)&sConvert.Value.MVszW.lppszW[c]);
 							if (hr != hrSuccess)
@@ -193,7 +192,7 @@ HRESULT M4LMAPIProp::GetProps(LPSPropTagArray lpPropTagArray, ULONG ulFlags, ULO
 						hr = MAPIAllocateMore((*i)->Value.MVszW.cValues * sizeof(char*), props, (void**)&sConvert.Value.MVszA.lppszA);
 						if (hr != hrSuccess)
 							goto exit;
-						for (ULONG c = 0; c < (*i)->Value.MVszW.cValues; c++) {
+						for (ULONG c = 0; c < (*i)->Value.MVszW.cValues; ++c) {
 							ansi = converter.convert_to<string>((*i)->Value.MVszW.lppszW[c]);
 							hr = MAPIAllocateMore(ansi.length() + 1, props, (void**)&sConvert.Value.MVszA.lppszA[c]);
 							if (hr != hrSuccess)
@@ -260,7 +259,7 @@ HRESULT M4LMAPIProp::SetProps(ULONG cValues, LPSPropValue lpPropArray, LPSPropPr
 		goto exit;
 	}
 
-	for (c=0; c<cValues; c++) {
+	for (c = 0; c < cValues; ++c) {
 		// TODO: return MAPI_E_INVALID_PARAMETER, if multivalued property in 
 		//       the array and its cValues member is set to zero.		
 		if (PROP_TYPE(lpPropArray[c].ulPropTag) == PT_OBJECT) {
@@ -270,7 +269,7 @@ HRESULT M4LMAPIProp::SetProps(ULONG cValues, LPSPropValue lpPropArray, LPSPropPr
 	}
 
     // remove possible old properties
-	for (c=0; c<cValues; c++) {
+	for (c = 0; c < cValues; ++c) {
 		for(i = properties.begin(); i != properties.end(); ) {
 			if ( PROP_ID((*i)->ulPropTag) == PROP_ID(lpPropArray[c].ulPropTag) && 
 				(*i)->ulPropTag != PR_NULL && 
@@ -281,13 +280,13 @@ HRESULT M4LMAPIProp::SetProps(ULONG cValues, LPSPropValue lpPropArray, LPSPropPr
 				properties.erase(del);
 				break;
 			} else {
-				i++;
+				++i;
 			}
 		}
 	}
 
     // set new properties
-	for (c=0; c<cValues; c++) {
+	for (c = 0; c < cValues; ++c) {
 		// Ignore PR_NULL property tag and all properties with a type of PT_ERROR
 		if(PROP_TYPE(lpPropArray[c].ulPropTag) == PT_ERROR || 
 			lpPropArray[c].ulPropTag == PR_NULL)
@@ -317,8 +316,8 @@ HRESULT M4LMAPIProp::DeleteProps(LPSPropTagArray lpPropTagArray, LPSPropProblemA
 	HRESULT hr = hrSuccess;
 	list<LPSPropValue>::iterator i;
 
-	for (ULONG c = 0; c < lpPropTagArray->cValues; c++) {
-		for (i = properties.begin(); i != properties.end(); i++) {
+	for (ULONG c = 0; c < lpPropTagArray->cValues; ++c) {
+		for (i = properties.begin(); i != properties.end(); ++i) {
 			// @todo check PT_STRING8 vs PT_UNICODE
 			if ((*i)->ulPropTag == lpPropTagArray->aulPropTag[c] ||
 				(PROP_TYPE((*i)->ulPropTag) == PT_UNSPECIFIED && PROP_ID((*i)->ulPropTag) == PROP_ID(lpPropTagArray->aulPropTag[c])) )
@@ -744,7 +743,7 @@ HRESULT M4LProviderAdmin::GetProviderTable(ULONG ulFlags, LPMAPITABLE* lppTable)
 		goto exit;
 	
 	// Loop through all providers, add each to the table
-	for(i=msa->providers.begin(); i != msa->providers.end(); i++) {
+	for (i = msa->providers.begin(); i != msa->providers.end(); ++i) {
 		if(szService) {
 			if(strcmp(szService, (*i)->servicename.c_str()) != 0)
 				continue;
@@ -871,34 +870,34 @@ HRESULT M4LProviderAdmin::CreateProvider(LPTSTR lpszProvider, ULONG cValues, LPS
 	sProps[nProps].ulPropTag = PR_INSTANCE_KEY;
 	sProps[nProps].Value.bin.lpb = (BYTE *)&entry->uid;
 	sProps[nProps].Value.bin.cb = sizeof(GUID);
-	nProps++;
+	++nProps;
 
 	sProps[nProps].ulPropTag = PR_PROVIDER_UID;
 	sProps[nProps].Value.bin.lpb = (BYTE *)&entry->uid;
 	sProps[nProps].Value.bin.cb = sizeof(GUID);
-	nProps++;
+	++nProps;
 
 	lpResource = PpropFindProp(lpProviderProps, cProviderProps, PR_RESOURCE_TYPE);
 	if (!lpResource || lpResource->Value.ul == MAPI_STORE_PROVIDER) {
 		sProps[nProps].ulPropTag = PR_OBJECT_TYPE;
 		sProps[nProps].Value.ul = MAPI_STORE;
-		nProps++;
+		++nProps;
 
 		lpResource = PpropFindProp(lpProviderProps, cProviderProps, PR_RESOURCE_FLAGS);
 
 		sProps[nProps].ulPropTag = PR_DEFAULT_STORE;
 		sProps[nProps].Value.b = (lpResource && (lpResource->Value.ul & STATUS_DEFAULT_STORE) == STATUS_DEFAULT_STORE);
-		nProps++;
+		++nProps;
 	} else if (lpResource->Value.ul == MAPI_AB_PROVIDER) {
 		sProps[nProps].ulPropTag = PR_OBJECT_TYPE;
 		sProps[nProps].Value.ul = MAPI_ADDRBOOK;
-		nProps++;
+		++nProps;
 	}
 
 	sProps[nProps].ulPropTag = PR_SERVICE_UID;
 	sProps[nProps].Value.bin.lpb = (BYTE *)&lpService->muid;
 	sProps[nProps].Value.bin.cb = sizeof(GUID);
-	nProps++;
+	++nProps;
 
 	hr = entry->profilesection->SetProps(nProps, sProps, NULL);
 	if (hr != hrSuccess)
@@ -936,7 +935,7 @@ HRESULT M4LProviderAdmin::DeleteProvider(LPMAPIUID lpUID) {
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LProviderAdmin::DeleteProvider", "");
 	list<providerEntry*>::iterator i;
 	
-	for(i = msa->providers.begin(); i != msa->providers.end(); i++) {
+	for (i = msa->providers.begin(); i != msa->providers.end(); ++i) {
 		if(memcmp(&(*i)->uid, lpUID, sizeof(MAPIUID)) == 0) {
 			(*i)->profilesection->Release();
 			delete *i;
@@ -1193,7 +1192,7 @@ HRESULT M4LABContainer::GetHierarchyTable(ULONG ulFlags, LPMAPITABLE* lppTable) 
 	std::list<LPMAPITABLE> lHierarchies;
 	std::set<ULONG> stProps;
 	LPSPropTagArray lpColumns = NULL;
-	for (iter = m_lABEntries.begin(); iter != m_lABEntries.end(); iter++) {
+	for (iter = m_lABEntries.begin(); iter != m_lABEntries.end(); ++iter) {
 		ULONG ulObjType;
 		LPABCONT lpABContainer = NULL;
 		LPMAPITABLE lpABHierarchy = NULL;
@@ -1243,7 +1242,7 @@ HRESULT M4LABContainer::GetHierarchyTable(ULONG ulFlags, LPMAPITABLE* lppTable) 
 		goto exit;
 
 	// get enough columns from queryrows to add the PR_ROWID
-	lpColumns->cValues++;
+	++lpColumns->cValues;
 
 	n = 0;
 	for (std::list<LPMAPITABLE>::const_iterator i = lHierarchies.begin();
@@ -1312,7 +1311,7 @@ HRESULT M4LABContainer::OpenEntry(ULONG cbEntryID, LPENTRYID lpEntryID, LPCIID l
 	memcpy(&muidEntry, (LPBYTE)lpEntryID + 4, sizeof(MAPIUID));
 
 	// locate provider
-	for (iter = m_lABEntries.begin(); iter != m_lABEntries.end(); iter++) {
+	for (iter = m_lABEntries.begin(); iter != m_lABEntries.end(); ++iter) {
 		if (memcmp(&muidEntry, &iter->muid, sizeof(MAPIUID)) == 0)
 		{
 			lpABLogon = iter->lpABLogon;

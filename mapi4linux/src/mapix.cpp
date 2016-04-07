@@ -189,10 +189,10 @@ M4LProfAdmin::~M4LProfAdmin() {
     
 	pthread_mutex_lock(&m_mutexProfiles);
 
-    for(i = profiles.begin(); i != profiles.end(); i++) {
+	for (i = profiles.begin(); i != profiles.end(); ++i) {
 		(*i)->serviceadmin->Release();
 		delete *i;
-    }
+	}
     profiles.clear();
     
 	pthread_mutex_unlock(&m_mutexProfiles);
@@ -203,11 +203,10 @@ M4LProfAdmin::~M4LProfAdmin() {
 list<profEntry*>::iterator M4LProfAdmin::findProfile(LPTSTR lpszProfileName) {
     list<profEntry*>::iterator i;
 
-    for(i = profiles.begin(); i != profiles.end(); i++) {
+	for (i = profiles.begin(); i != profiles.end(); ++i)
 		if ((*i)->profname == (char*)lpszProfileName)
 			break;
-    }
-    return i;
+	return i;
 }
 
 HRESULT M4LProfAdmin::GetLastError(HRESULT hResult, ULONG ulFlags, LPMAPIERROR* lppMAPIError) {
@@ -250,8 +249,7 @@ HRESULT M4LProfAdmin::GetProfileTable(ULONG ulFlags, LPMAPITABLE* lppTable) {
 	if(hr != hrSuccess)
 		goto exit;
 
-	for(i = profiles.begin(); i != profiles.end(); i++)
-	{
+	for (i = profiles.begin(); i != profiles.end(); ++i) {
 		sProps[0].ulPropTag = PR_DEFAULT_PROFILE;
 		sProps[0].Value.b = false; //FIXME: support setDefaultProfile
 
@@ -534,14 +532,14 @@ M4LMsgServiceAdmin::~M4LMsgServiceAdmin() {
     
 	pthread_mutex_lock(&m_mutexserviceadmin);
 
-    for (s = services.begin(); s != services.end(); s++) {
+	for (s = services.begin(); s != services.end(); ++s) {
 		(*s)->provideradmin->Release();
 		delete *s;
-    }
-    for (p = providers.begin(); p != providers.end(); p++) {
+	}
+	for (p = providers.begin(); p != providers.end(); ++p) {
 		(*p)->profilesection->Release();
 		delete *p;
-    }
+	}
     
     services.clear();
     providers.clear();
@@ -555,31 +553,27 @@ M4LMsgServiceAdmin::~M4LMsgServiceAdmin() {
 }
     
 serviceEntry* M4LMsgServiceAdmin::findServiceAdmin(LPTSTR lpszServiceName) {
-    list<serviceEntry*>::const_iterator i;
-    for(i = services.begin(); i != services.end(); i++) {
+	list<serviceEntry*>::const_iterator i;
+	for (i = services.begin(); i != services.end(); ++i)
 		if ((*i)->servicename == (char*)lpszServiceName)
 			return *i;
-    }
-    return NULL;
+	return NULL;
 }
 
 serviceEntry* M4LMsgServiceAdmin::findServiceAdmin(LPMAPIUID lpMUID) {
-    list<serviceEntry*>::const_iterator i;
-    for (i = services.begin(); i != services.end(); i++) {
+	list<serviceEntry*>::const_iterator i;
+	for (i = services.begin(); i != services.end(); ++i)
 		if (memcmp(&(*i)->muid, lpMUID, sizeof(MAPIUID)) == 0)
 			return *i;
-    }
-    return NULL;
+	return NULL;
 }
 
 providerEntry* M4LMsgServiceAdmin::findProvider(LPMAPIUID lpUid) {
 	list<providerEntry *>::const_iterator i;
 	
-	for(i=providers.begin();i!=providers.end();i++) {
-		if(memcmp(&(*i)->uid,lpUid,sizeof(MAPIUID)) == 0) {
+	for (i = providers.begin(); i != providers.end(); ++i)
+		if (memcmp(&(*i)->uid,lpUid,sizeof(MAPIUID)) == 0)
 			return *i;
-		}
-	}
 	return NULL;
 }
 
@@ -626,7 +620,7 @@ HRESULT M4LMsgServiceAdmin::GetMsgServiceTable(ULONG ulFlags, LPMAPITABLE* lppTa
 	}
 	
 	// Loop through all providers, add each to the table
-	for (i = services.begin(); i != services.end(); i++) {
+	for (i = services.begin(); i != services.end(); ++i) {
 		sProps[0].ulPropTag = PR_SERVICE_UID;
 		sProps[0].Value.bin.lpb = (BYTE *) &(*i)->muid;
 		sProps[0].Value.bin.cb = sizeof(GUID);
@@ -791,7 +785,7 @@ HRESULT M4LMsgServiceAdmin::DeleteMsgService(LPMAPIUID lpUID) {
     
 	pthread_mutex_lock(&m_mutexserviceadmin);
 
-    for (i = services.begin(); i != services.end(); i++) {
+	for (i = services.begin(); i != services.end(); ++i) {
 		if (memcmp(&(*i)->muid, lpUID, sizeof(MAPIUID)) == 0) {
 			name = (*i)->servicename;
 			(*i)->provideradmin->Release();
@@ -799,7 +793,7 @@ HRESULT M4LMsgServiceAdmin::DeleteMsgService(LPMAPIUID lpUID) {
 			services.erase(i);
 			break;
 		}
-    }
+	}
     
     if(name.empty()) {
 		ec_log_err("M4LMsgServiceAdmin::DeleteMsgService(): GUID not found");
@@ -811,7 +805,7 @@ HRESULT M4LMsgServiceAdmin::DeleteMsgService(LPMAPIUID lpUID) {
     while (p != providers.end()) {
 		if ((*p)->servicename == name) {
 			pNext = p;
-			pNext++;
+			++pNext;
 			(*p)->profilesection->Release();
 			delete *p;
 			providers.erase(p);
@@ -1077,8 +1071,7 @@ HRESULT M4LMsgServiceAdmin::GetProviderTable(ULONG ulFlags, LPMAPITABLE* lppTabl
 
 	pthread_mutex_lock(&m_mutexserviceadmin);
 	
-	for(j=services.begin(); j != services.end(); j++) {
-		
+	for (j = services.begin(); j != services.end(); ++j) {
 		if ((*j)->bInitialize == false) {
 			hr = (*j)->service->MSGServiceEntry()(0, NULL, NULL, 0, 0, MSG_SERVICE_CREATE, 0, NULL, (LPPROVIDERADMIN)(*j)->provideradmin, NULL);
 			if(hr !=hrSuccess) {
@@ -1103,7 +1096,7 @@ HRESULT M4LMsgServiceAdmin::GetProviderTable(ULONG ulFlags, LPMAPITABLE* lppTabl
 	}
 	
 	// Loop through all providers, add each to the table
-	for(i=providers.begin(); i != providers.end(); i++) {
+	for (i = providers.begin(); i != providers.end(); ++i) {
 		hr = (*i)->profilesection->GetProps(lpPropTagArray, 0, &cValues, &lpsProps);
 		if (FAILED(hr)) {
 			ec_log_err("M4LMsgServiceAdmin::GetProviderTable(): GetProps fail %x: %s", hr, GetMAPIErrorMessage(hr));
@@ -1196,11 +1189,10 @@ M4LMAPISession::M4LMAPISession(LPTSTR new_profileName, M4LMsgServiceAdmin *new_s
 }
 
 M4LMAPISession::~M4LMAPISession() {
-    std::map<GUID, IMsgStore *>::const_iterator iterStores;
+	std::map<GUID, IMsgStore *>::const_iterator iterStores;
     
-    for(iterStores = mapStores.begin(); iterStores != mapStores.end(); iterStores++) {
-        iterStores->second->Release();
-    }
+	for (iterStores = mapStores.begin(); iterStores != mapStores.end(); ++iterStores)
+		iterStores->second->Release();
 
 	MAPIFreeBuffer(m_lpPropsStatus);
 	pthread_mutex_destroy(&m_mutexStatusRow);
@@ -1258,7 +1250,7 @@ HRESULT M4LMAPISession::GetMsgStoresTable(ULONG ulFlags, LPMAPITABLE* lppTable) 
 	}
 	
 	// Loop through all providers, add each to the table
-	for (i = serviceAdmin->providers.begin(); i != serviceAdmin->providers.end(); i++) {
+	for (i = serviceAdmin->providers.begin(); i != serviceAdmin->providers.end(); ++i) {
 		hr = (*i)->profilesection->GetProps(lpPropTagArray, 0, &cValues, &lpsProps);
 		if (FAILED(hr)) {
 			ec_log_err("M4LMAPISession::GetMsgStoresTable(): GetProps fail %x: %s", hr, GetMAPIErrorMessage(hr));
@@ -1527,7 +1519,8 @@ HRESULT M4LMAPISession::OpenAddressBook(ULONG ulUIParam, LPCIID lpInterface, ULO
 		goto exit;
 	}
 
-	for (iService = serviceAdmin->services.begin(); iService != serviceAdmin->services.end(); iService++) {
+	for (iService = serviceAdmin->services.begin();
+	     iService != serviceAdmin->services.end(); ++iService) {
 		if ((*iService)->service->ABProviderInit() == NULL)
 			continue;
 
@@ -1536,7 +1529,7 @@ HRESULT M4LMAPISession::OpenAddressBook(ULONG ulUIParam, LPCIID lpInterface, ULO
 			vector<SVCProvider*> vABProviders = (*iService)->service->GetProviders();
 			LPSPropValue lpProps;
 			ULONG cValues;
-			for (vector<SVCProvider*>::const_iterator i = vABProviders.begin(); i != vABProviders.end(); i++) {
+			for (vector<SVCProvider*>::const_iterator i = vABProviders.begin(); i != vABProviders.end(); ++i) {
 				LPSPropValue lpUID;
 				LPSPropValue lpProp;
 				std::string strDisplayName = "<unknown>";
@@ -2223,10 +2216,9 @@ HRESULT M4LAddrBook::OpenEntry(ULONG cbEntryID, LPENTRYID lpEntryID, LPCIID lpIn
 		std::list<abEntry>::const_iterator i;
 
 		hr = MAPI_E_UNKNOWN_ENTRYID;
-		for (i = m_lABProviders.begin(); i != m_lABProviders.end(); i++) {
+		for (i = m_lABProviders.begin(); i != m_lABProviders.end(); ++i)
 			if (memcmp((BYTE*)lpEntryID +4, &i->muid, sizeof(MAPIUID)) == 0)
 				break;
-		}
 		if (i != m_lABProviders.end())
 			hr = i->lpABLogon->OpenEntry(cbEntryID, lpEntryID, lpInterface, ulFlags, lpulObjType, lppUnk);
 	} else {
@@ -2258,7 +2250,7 @@ HRESULT M4LAddrBook::CompareEntryIDs(ULONG cbEntryID1, LPENTRYID lpEntryID1, ULO
 	HRESULT hr = hrSuccess;
 
 	// m_lABProviders[0] probably always is Zarafa
-	for (std::list<abEntry>::const_iterator i = m_lABProviders.begin(); i != m_lABProviders.end(); i++) {
+	for (std::list<abEntry>::const_iterator i = m_lABProviders.begin(); i != m_lABProviders.end(); ++i) {
 		hr = i->lpABLogon->CompareEntryIDs(cbEntryID1, lpEntryID1, cbEntryID2, lpEntryID2, ulFlags, lpulResult);
 		if (hr == hrSuccess || hr != MAPI_E_NO_SUPPORT)
 			break;
@@ -2354,7 +2346,7 @@ HRESULT M4LAddrBook::ResolveName(ULONG ulUIParam, ULONG ulFlags, LPTSTR lpszNewE
 	lpFlagList->cFlags = lpAdrList->cEntries;
 
 	// Resolve local items
-	for(unsigned int i=0; i<lpAdrList->cEntries;i++) {
+	for (unsigned int i = 0; i < lpAdrList->cEntries; ++i) {
 		LPSPropValue lpDisplay = PpropFindProp(lpAdrList->aEntries[i].rgPropVals, lpAdrList->aEntries[i].cValues, PR_DISPLAY_NAME_A);
 		LPSPropValue lpDisplayW = PpropFindProp(lpAdrList->aEntries[i].rgPropVals, lpAdrList->aEntries[i].cValues, PR_DISPLAY_NAME_W);
 		LPSPropValue lpEntryID = PpropFindProp(lpAdrList->aEntries[i].rgPropVals, lpAdrList->aEntries[i].cValues, PR_ENTRYID);
@@ -2467,7 +2459,7 @@ HRESULT M4LAddrBook::ResolveName(ULONG ulUIParam, ULONG ulFlags, LPTSTR lpszNewE
 		goto exit;
 	}
 
-	for (ULONG c = 0; bContinue && c < lpSearchRows->cRows; c++) {
+	for (ULONG c = 0; bContinue && c < lpSearchRows->cRows; ++c) {
 		LPSPropValue lpEntryID = PpropFindProp(lpSearchRows->aRow[c].lpProps, lpSearchRows->aRow[c].cValues, PR_ENTRYID);
 
 		if (!lpEntryID)
@@ -2489,7 +2481,7 @@ HRESULT M4LAddrBook::ResolveName(ULONG ulUIParam, ULONG ulFlags, LPTSTR lpszNewE
 
 		bContinue = false;
 		// may have warnings .. let's find out
-		for (ULONG i = 0; i < lpFlagList->cFlags; i++) {
+		for (ULONG i = 0; i < lpFlagList->cFlags; ++i) {
 			if (lpFlagList->ulFlag[i] == MAPI_AMBIGUOUS) {
 				hr = MAPI_E_AMBIGUOUS_RECIP;
 				goto exit;
@@ -2506,7 +2498,7 @@ HRESULT M4LAddrBook::ResolveName(ULONG ulUIParam, ULONG ulFlags, LPTSTR lpszNewE
 
 	
 	// check for still unresolved addresses
-	for (ULONG i = 0; bContinue && i < lpFlagList->cFlags; i++) {
+	for (ULONG i = 0; bContinue && i < lpFlagList->cFlags; ++i) {
 		if (lpFlagList->ulFlag[i] == MAPI_UNRESOLVED) {
 			hr = MAPI_E_NOT_FOUND;
 			break;
@@ -2601,7 +2593,8 @@ HRESULT M4LAddrBook::GetDefaultDir(ULONG* lpcbEntryID, LPENTRYID* lppEntryID) {
 	}
 
 	// m_lABProviders[0] probably always is Zarafa
-	for (std::list<abEntry>::const_iterator i = m_lABProviders.begin(); i != m_lABProviders.end(); i++) {
+	for (std::list<abEntry>::const_iterator i = m_lABProviders.begin();
+	     i != m_lABProviders.end(); ++i) {
 		// find a working open root container
 		hr = i->lpABLogon->OpenEntry(0, NULL, &IID_IABContainer, 0, &objType, (IUnknown**)&lpABContainer);
 		if (hr == hrSuccess)
@@ -2780,7 +2773,7 @@ HRESULT M4LAddrBook::PrepareRecips(ULONG ulFlags, LPSPropTagArray lpPropTagArray
 		goto exit;
 	}
 
-	for(unsigned int i=0; i<lpRecipList->cEntries; i++) {
+	for (unsigned int i = 0; i < lpRecipList->cEntries; ++i) {
 		LPSPropValue lpEntryId = PpropFindProp(lpRecipList->aEntries[i].rgPropVals, lpRecipList->aEntries[i].cValues, PR_ENTRYID);
 
 		if(lpEntryId == NULL)
@@ -2806,7 +2799,7 @@ HRESULT M4LAddrBook::PrepareRecips(ULONG ulFlags, LPSPropTagArray lpPropTagArray
 		memset(lpRecipList->aEntries[i].rgPropVals, 0, sizeof(SPropValue) * lpPropTagArray->cValues);
 		lpRecipList->aEntries[i].cValues = lpPropTagArray->cValues;
 
-		for(unsigned int j=0; j<lpPropTagArray->cValues;j++) {
+		for (unsigned int j = 0; j < lpPropTagArray->cValues; ++j) {
 			LPSPropValue lpProp = PpropFindProp(lpProps, cValues, lpPropTagArray->aulPropTag[j]);
 
 			if(lpProp == NULL) {
@@ -3055,9 +3048,9 @@ SCODE __stdcall MAPIAllocateMore(ULONG cbSize, LPVOID lpObject, LPVOID* lppBuffe
 	pthread_mutex_lock(&_memlist_lock);
 
 #if _MAPI_MEM_MORE_DEBUG
-	for (mlptr = _memlist.begin(); mlptr != _memlist.end(); mlptr++) {
+	for (mlptr = _memlist.begin(); mlptr != _memlist.end(); ++mlptr) {
 		list<void *>::const_iterator lp;
-		for (lp = mlptr->second->begin(); lp != mlptr->second->end(); lp++) {
+		for (lp = mlptr->second->begin(); lp != mlptr->second->end(); ++lp) {
 			if ((*lp) == lpObject) {
 				fprintf(stderr, "AllocateMore on an AllocateMore buffer!\n");
 				break;
@@ -3118,7 +3111,7 @@ ULONG __stdcall MAPIFreeBuffer(LPVOID lpBuffer) {
 	mlptr = _memlist.find(lpBuffer);
 	if (mlptr != _memlist.end()) {
 
-		for (i = mlptr->second->begin(); i != mlptr->second->end(); i++) {
+		for (i = mlptr->second->begin(); i != mlptr->second->end(); ++i) {
 #if _MAPI_MEM_DEBUG
 			fprintf(stderr, "  Freeing: %p\n", (*i));
 #endif

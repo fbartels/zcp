@@ -122,7 +122,8 @@ HRESULT INFLoader::LoadINFs()
 			continue;
 
 		bfs::directory_iterator inffile_last;
-		for (bfs::directory_iterator inffile(infdir); inffile != inffile_last; inffile++) {
+		for (bfs::directory_iterator inffile(infdir);
+		     inffile != inffile_last; ++inffile) {
 			if (is_directory(inffile->status()))
 				continue;
 
@@ -373,12 +374,11 @@ HRESULT SVCProvider::Init(const INFLoader& cINF, const inf_section* infProvider)
 	if (hr != hrSuccess)
 		goto exit;
 
-	for (m_cValues = 0, iSection = infProvider->begin(); iSection != infProvider->end(); iSection++) {
+	for (m_cValues = 0, iSection = infProvider->begin();
+	     iSection != infProvider->end(); ++iSection)
 		// add properties to list
 		if (cINF.MakeProperty(iSection->first, iSection->second, m_lpProps, &m_lpProps[m_cValues]) == hrSuccess)
-			m_cValues++;
-	}
-
+			++m_cValues;
 exit:
 	return hr;
 }
@@ -403,7 +403,8 @@ SVCService::~SVCService()
 		dlclose(m_dl);
 #endif
 	MAPIFreeBuffer(m_lpProps);
-	for (std::map<std::string, SVCProvider*>::iterator i = m_sProviders.begin(); i != m_sProviders.end(); i++)
+	for (std::map<std::string, SVCProvider *>::iterator i = m_sProviders.begin();
+	     i != m_sProviders.end(); ++i)
 		delete i->second;
 }
 
@@ -431,7 +432,8 @@ HRESULT SVCService::Init(const INFLoader& cINF, const inf_section* infService)
 	if (hr != hrSuccess)
 		goto exit;
 
-	for (m_cValues = 0, iSection = infService->begin(); iSection != infService->end(); iSection++) {
+	for (m_cValues = 0, iSection = infService->begin();
+	     iSection != infService->end(); ++iSection) {
 		// convert section to class
 		if (iSection->first.compare("Providers") == 0) {
 			// make new providers list
@@ -452,7 +454,7 @@ HRESULT SVCService::Init(const INFLoader& cINF, const inf_section* infService)
 		} else {
 			// add properties to list
 			if (cINF.MakeProperty(iSection->first, iSection->second, m_lpProps, &m_lpProps[m_cValues]) == hrSuccess)
-				m_cValues++;
+				++m_cValues;
 		}
 	}
 
@@ -512,8 +514,7 @@ HRESULT SVCService::CreateProviders(IProviderAdmin *lpProviderAdmin)
 	HRESULT hr = hrSuccess;
 	std::map<std::string, SVCProvider *>::const_iterator i;
 
-	for (i = m_sProviders.begin(); i != m_sProviders.end(); i++) 
-	{
+	for (i = m_sProviders.begin(); i != m_sProviders.end(); ++i)  {
 		// CreateProvider will find the provider properties itself. the property parameters can be used for other properties.
 		hr = lpProviderAdmin->CreateProvider((TCHAR*)i->first.c_str(), 0, NULL, 0, 0, NULL);
 		if (hr != hrSuccess)
@@ -588,7 +589,7 @@ HRESULT MAPISVC::Init()
 
 	infServices = inf.GetSection("Services");
 
-	for (iServices = infServices->begin(); iServices != infServices->end(); iServices++) {
+	for (iServices = infServices->begin(); iServices != infServices->end(); ++iServices) {
 		// ZARAFA6, ZCONTACTS
 		infService = inf.GetSection(iServices->first);
 
@@ -645,7 +646,7 @@ HRESULT MAPISVC::GetService(char* lpszDLLName, SVCService **lppService)
 	std::map<std::string, SVCService *>::const_iterator i;
 	LPSPropValue lpDLLName;
 
-	for (i = m_sServices.begin(); i != m_sServices.end(); i++) {
+	for (i = m_sServices.begin(); i != m_sServices.end(); ++i) {
 		lpDLLName = i->second->GetProp(PR_SERVICE_DLL_NAME_A);
 		if (!lpDLLName || !lpDLLName->Value.lpszA)
 			continue;
