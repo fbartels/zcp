@@ -63,7 +63,7 @@ void UnixConfigCheck::loadChecks()
 	addCheck("min_group_gid", "max_group_gid", CONFIG_MANDATORY, &testId);
 }
 
-int UnixConfigCheck::testId(config_check_t *check)
+int UnixConfigCheck::testId(const config_check_t *check)
 {
 	if (atoi(check->value1.c_str()) < atoi(check->value2.c_str()))
 		return CHECK_OK;

@@ -89,7 +89,7 @@ void LDAPConfigCheck::loadChecks()
 	addCheck("ldap_quota_companywarning_recipients_attribute_type", 0, &testLdapType);
 }
 
-int LDAPConfigCheck::testLdapScope(config_check_t *check)
+int LDAPConfigCheck::testLdapScope(const config_check_t *check)
 {
 	if (check->value1.empty() ||
 		check->value1 == "base" ||
@@ -101,7 +101,7 @@ int LDAPConfigCheck::testLdapScope(config_check_t *check)
 	return CHECK_ERROR;
 }
 
-int LDAPConfigCheck::testLdapType(config_check_t *check)
+int LDAPConfigCheck::testLdapType(const config_check_t *check)
 {
 	if (check->value1.empty() ||
 		check->value1 == "text" ||
@@ -114,7 +114,7 @@ int LDAPConfigCheck::testLdapType(config_check_t *check)
 	return CHECK_ERROR;
 }
 
-int LDAPConfigCheck::testLdapQuery(config_check_t *check)
+int LDAPConfigCheck::testLdapQuery(const config_check_t *check)
 {
 	std::string stack;
 	bool contains_data;     /* '(' was followed by attribute comparison */
@@ -150,7 +150,7 @@ int LDAPConfigCheck::testLdapQuery(config_check_t *check)
 	 *      ((a=1)(a=2))    => Requires '|' or '&' to combine the 2 queries
 	 *      (&a=1)          => '|' and '&' should only be present in front of '('
 	 */
-	for (std::string::iterator i = check->value1.begin() + 1; i != check->value1.end(); ++i) {
+	for (std::string::const_iterator i = check->value1.begin() + 1; i != check->value1.end(); ++i) {
 		if (stack.empty())
 			goto error_exit;
 

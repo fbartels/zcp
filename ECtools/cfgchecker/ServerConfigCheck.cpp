@@ -100,7 +100,7 @@ void ServerConfigCheck::loadChecks()
 	addCheck("auth_method", 0, &testAuthMethod);
 }
 
-int ServerConfigCheck::testAttachment(config_check_t *check)
+int ServerConfigCheck::testAttachment(const config_check_t *check)
 {
 	if (check->value1.empty())
 		return CHECK_OK;
@@ -112,7 +112,7 @@ int ServerConfigCheck::testAttachment(config_check_t *check)
 	return CHECK_ERROR;
 }
 
-int ServerConfigCheck::testAttachmentPath(config_check_t *check)
+int ServerConfigCheck::testAttachmentPath(const config_check_t *check)
 {
 	if (check->value1 != "files")
 		return CHECK_OK;
@@ -126,7 +126,7 @@ int ServerConfigCheck::testAttachmentPath(config_check_t *check)
 	return testDirectory(&check2);
 }
 
-int ServerConfigCheck::testPlugin(config_check_t *check)
+int ServerConfigCheck::testPlugin(const config_check_t *check)
 {
 	if (check->value1.empty()) {
 		printWarning(check->option1, "Plugin not set, defaulting to 'db' plugin");
@@ -155,7 +155,7 @@ int ServerConfigCheck::testPlugin(config_check_t *check)
 	return CHECK_ERROR;
 }
 
-int ServerConfigCheck::testPluginConfig(config_check_t *check)
+int ServerConfigCheck::testPluginConfig(const config_check_t *check)
 {
 	if (check->value1 != "ldap" && check->value1 != "unix")
 		return CHECK_OK;
@@ -168,7 +168,7 @@ int ServerConfigCheck::testPluginConfig(config_check_t *check)
 	return testFile(&check2);
 }
 
-int ServerConfigCheck::testPluginPath(config_check_t *check)
+int ServerConfigCheck::testPluginPath(const config_check_t *check)
 {
 	if (check->value1 != "ldap" && check->value1 != "unix")
 		return CHECK_OK;
@@ -181,7 +181,7 @@ int ServerConfigCheck::testPluginPath(config_check_t *check)
 	return testDirectory(&check2);
 }
 
-int ServerConfigCheck::testStorename(config_check_t *check)
+int ServerConfigCheck::testStorename(const config_check_t *check)
 {
 	if (!check->hosted) {
 		if (check->value1.find("%c") != std::string::npos) {
@@ -193,7 +193,7 @@ int ServerConfigCheck::testStorename(config_check_t *check)
 	return CHECK_OK;
 }
 
-int ServerConfigCheck::testLoginname(config_check_t *check)
+int ServerConfigCheck::testLoginname(const config_check_t *check)
 {
 	/* LDAP has no rules for loginname */
 	if (check->value1 == "ldap")
@@ -223,7 +223,7 @@ int ServerConfigCheck::testLoginname(config_check_t *check)
 	return CHECK_OK;
 }
 
-int ServerConfigCheck::testAuthMethod(config_check_t *check)
+int ServerConfigCheck::testAuthMethod(const config_check_t *check)
 {
 	if (check->value1.empty() || check->value1 == "plugin" || check->value1 == "pam" || check->value1 == "kerberos")
 		return CHECK_OK;

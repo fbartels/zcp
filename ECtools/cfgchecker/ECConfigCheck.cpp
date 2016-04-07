@@ -182,7 +182,7 @@ void ECConfigCheck::validate()
 	cout << "Validation of " << m_lpszName << " ended with " << warnings << " warnings and " << errors << " errors" << endl;
 }
 
-int ECConfigCheck::testMandatory(config_check_t *check)
+int ECConfigCheck::testMandatory(const config_check_t *check)
 {
 	if (!check->value1.empty())
 		return CHECK_OK;
@@ -191,7 +191,7 @@ int ECConfigCheck::testMandatory(config_check_t *check)
 	return CHECK_ERROR;
 }
 
-int ECConfigCheck::testDirectory(config_check_t *check)
+int ECConfigCheck::testDirectory(const config_check_t *check)
 {
 	struct stat statfile;
 
@@ -206,7 +206,7 @@ int ECConfigCheck::testDirectory(config_check_t *check)
 	return CHECK_ERROR;
 }
 
-int ECConfigCheck::testFile(config_check_t *check)
+int ECConfigCheck::testFile(const config_check_t *check)
 {
 	struct stat statfile;
 
@@ -221,7 +221,7 @@ int ECConfigCheck::testFile(config_check_t *check)
 	return CHECK_ERROR;
 }
 
-int ECConfigCheck::testUsedWithHosted(config_check_t *check)
+int ECConfigCheck::testUsedWithHosted(const config_check_t *check)
 {
 	if (check->hosted)
 		return CHECK_OK;
@@ -233,7 +233,7 @@ int ECConfigCheck::testUsedWithHosted(config_check_t *check)
 	return CHECK_WARNING;
 }
 
-int ECConfigCheck::testUsedWithoutHosted(config_check_t *check)
+int ECConfigCheck::testUsedWithoutHosted(const config_check_t *check)
 {
 	if (!check->hosted)
 		return CHECK_OK;
@@ -245,7 +245,7 @@ int ECConfigCheck::testUsedWithoutHosted(config_check_t *check)
 	return CHECK_WARNING;
 }
 
-int ECConfigCheck::testUsedWithMultiServer(config_check_t *check)
+int ECConfigCheck::testUsedWithMultiServer(const config_check_t *check)
 {
 	if (check->multi)
 		return CHECK_OK;
@@ -257,7 +257,7 @@ int ECConfigCheck::testUsedWithMultiServer(config_check_t *check)
 	return CHECK_WARNING;
 }
 
-int ECConfigCheck::testUsedWithoutMultiServer(config_check_t *check)
+int ECConfigCheck::testUsedWithoutMultiServer(const config_check_t *check)
 {
 	if (!check->multi)
 		return CHECK_OK;
@@ -269,14 +269,15 @@ int ECConfigCheck::testUsedWithoutMultiServer(config_check_t *check)
 	return CHECK_WARNING;
 }
 
-int ECConfigCheck::testCharset(config_check_t *check)
+int ECConfigCheck::testCharset(const config_check_t *check)
 {
 	FILE *fp = NULL;
 
 	/* When grepping iconv output, all lines have '//' appended,
 	 * additionally all charsets are uppercase */
-	transform(check->value1.begin(), check->value1.end(), check->value1.begin(), ::toupper);
-	fp = popen(("iconv -l | grep -x \"" + check->value1 + "//\"").c_str(), "r");
+	std::string v1 = check->value1;
+	std::transform(v1.begin(), v1.end(), v1.begin(), ::toupper);
+	fp = popen(("iconv -l | grep -x \"" + v1 + "//\"").c_str(), "r");
 
 	if (fp) {
 		char buffer[50];
@@ -289,8 +290,8 @@ int ECConfigCheck::testCharset(config_check_t *check)
 
 		pclose(fp);
 
-		if (output.find(check->value1) == string::npos) {
-			printError(check->option1, "contains unknown chartype \"" + check->value1 + "\"");
+		if (output.find(v1) == string::npos) {
+			printError(check->option1, "contains unknown chartype \"" + v1 + "\"");
 			return CHECK_ERROR;
 		}
 	} else {
@@ -301,22 +302,20 @@ int ECConfigCheck::testCharset(config_check_t *check)
 	return CHECK_OK;
 }
 
-int ECConfigCheck::testBoolean(config_check_t *check)
+int ECConfigCheck::testBoolean(const config_check_t *check)
 {
-	transform(check->value1.begin(), check->value1.end(), check->value1.begin(), ::tolower);
+	std::string v1 = check->value1;
+	std::transform(v1.begin(), v1.end(), v1.begin(), ::tolower);
 
-	if (check->value1.empty() ||
-		check->value1 == "true" ||
-		check->value1 == "false" ||
-		check->value1 == "yes" ||
-		check->value1 == "no")
-			return CHECK_OK;
+	if (v1.empty() || v1 == "true" || v1 == "false" || v1 == "yes" ||
+	    v1 == "no")
+		return CHECK_OK;
 
-	printError(check->option1, "does not contain boolean value: \"" + check->value1 + "\"");
+	printError(check->option1, "does not contain boolean value: \"" + v1 + "\"");
 	return CHECK_ERROR;
 }
 
-int ECConfigCheck::testNonZero(config_check_t *check)
+int ECConfigCheck::testNonZero(const config_check_t *check)
 {
 	if (check->value1.empty() || atoi(check->value1.c_str()))
 		return CHECK_OK;
@@ -324,7 +323,7 @@ int ECConfigCheck::testNonZero(config_check_t *check)
 	return CHECK_ERROR;
 }
 
-void ECConfigCheck::addCheck(config_check_t check, unsigned int flags)
+void ECConfigCheck::addCheck(const config_check_t &check, unsigned int flags)
 {
 	if (flags & CONFIG_MANDATORY) {
 		if (!check.option1.empty())
@@ -362,8 +361,8 @@ void ECConfigCheck::addCheck(config_check_t check, unsigned int flags)
 	m_lChecks.push_back(check);
 }
 
-void ECConfigCheck::addCheck(string option, unsigned int flags,
-							 int (*check)(config_check_t *check))
+void ECConfigCheck::addCheck(const std::string &option, unsigned int flags,
+    int (*check)(const config_check_t *check))
 {
 	config_check_t config_check;
 
@@ -374,8 +373,9 @@ void ECConfigCheck::addCheck(string option, unsigned int flags,
 	addCheck(config_check, flags);
 }
 
-void ECConfigCheck::addCheck(string option1, string option2, unsigned int flags,
-							 int (*check)(config_check_t *check))
+void ECConfigCheck::addCheck(const std::string &option1,
+    const std::string &option2, unsigned int flags,
+    int (*check)(const config_check_t *check))
 {
 	config_check_t config_check;
 
@@ -386,17 +386,19 @@ void ECConfigCheck::addCheck(string option1, string option2, unsigned int flags,
 	addCheck(config_check, flags);
 }
 
-string ECConfigCheck::getSetting(string option)
+string ECConfigCheck::getSetting(const std::string &option)
 {
 	return m_mSettings[option];
 }
 
-void ECConfigCheck::printError(string option, string message)
+void ECConfigCheck::printError(const std::string &option,
+    const std::string &message)
 {
 	cerr << "[ERROR] " << option << ": " << message << endl;
 }
 
-void ECConfigCheck::printWarning(string option, string message)
+void ECConfigCheck::printWarning(const std::string &option,
+    const std::string &message)
 {
 	cerr << "[WARNING] " << option << ": " << message << endl;
 }

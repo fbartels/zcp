@@ -54,7 +54,7 @@ public:
 	void loadChecks();
 
 private:
-	static int testId(config_check_t *check);
+	static int testId(const config_check_t *);
 };
 
 #endif

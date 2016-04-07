@@ -54,14 +54,14 @@ public:
 	void loadChecks();
 
 private:
-	static int testAttachment(config_check_t *check);
-	static int testPluginConfig(config_check_t *check);
-	static int testAttachmentPath(config_check_t *check);
-	static int testPlugin(config_check_t *check);
-	static int testPluginPath(config_check_t *check);
-	static int testStorename(config_check_t *check);
-	static int testLoginname(config_check_t *check);
-	static int testAuthMethod(config_check_t *check);
+	static int testAttachment(const config_check_t *);
+	static int testPluginConfig(const config_check_t *);
+	static int testAttachmentPath(const config_check_t *);
+	static int testPlugin(const config_check_t *);
+	static int testPluginPath(const config_check_t *);
+	static int testStorename(const config_check_t *);
+	static int testLoginname(const config_check_t *);
+	static int testAuthMethod(const config_check_t *);
 };
 
 #endif

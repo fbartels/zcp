@@ -73,7 +73,7 @@ struct config_check_t {
 	std::string value1;
 	std::string value2;
 
-	int (*check)(config_check_t *check);
+	int (*check)(const config_check_t *);
 };
 
 class ECConfigCheck {
@@ -89,37 +89,35 @@ public:
 	void setMulti(bool multi);
 	void validate();
 
-	std::string getSetting(std::string option);
+	std::string getSetting(const std::string &);
 
 protected:
-	static void printError(std::string option, std::string message);
-	static void printWarning(std::string option, std::string message);
+	static void printError(const std::string &, const std::string &);
+	static void printWarning(const std::string &, const std::string &);
 
-	void addCheck(std::string option, unsigned int flags,
-				  int (*check)(config_check_t *check) = NULL);
-	void addCheck(std::string option1, std::string option2, unsigned int flags,
-				  int (*check)(config_check_t *check) = NULL);
+	void addCheck(const std::string &, unsigned int, int (*)(const config_check_t *) = NULL);
+	void addCheck(const std::string &, const std::string &, unsigned int, int (*)(const config_check_t *) = NULL);
 
 private:
 	void readConfigFile(const char *lpszConfigFile);
 
 	/* Generic check functions */
-	static int testMandatory(config_check_t *check);
-	static int testUsedWithHosted(config_check_t *check);
-	static int testUsedWithoutHosted(config_check_t *check);
-	static int testUsedWithMultiServer(config_check_t *check);
-	static int testUsedWithoutMultiServer(config_check_t *check);
+	static int testMandatory(const config_check_t *);
+	static int testUsedWithHosted(const config_check_t *);
+	static int testUsedWithoutHosted(const config_check_t *);
+	static int testUsedWithMultiServer(const config_check_t *);
+	static int testUsedWithoutMultiServer(const config_check_t *);
 
 protected:
-	static int testDirectory(config_check_t *check);
-	static int testFile(config_check_t *check);
-	static int testCharset(config_check_t *check);
-	static int testBoolean(config_check_t *check);
-	static int testNonZero(config_check_t *check);
+	static int testDirectory(const config_check_t *);
+	static int testFile(const config_check_t *);
+	static int testCharset(const config_check_t *);
+	static int testBoolean(const config_check_t *);
+	static int testNonZero(const config_check_t *);
 
 private:
 	/* Generic addCheckFunction */
-	void addCheck(config_check_t config_check, unsigned int flags);
+	void addCheck(const config_check_t &, unsigned int);
 
 	/* private variables */
 	const char *m_lpszName;

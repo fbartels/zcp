@@ -54,9 +54,9 @@ public:
 	void loadChecks();
 
 private:
-	static int testLdapScope(config_check_t *check);
-	static int testLdapType(config_check_t *check);
-	static int testLdapQuery(config_check_t *check);
+	static int testLdapScope(const config_check_t *);
+	static int testLdapType(const config_check_t *);
+	static int testLdapQuery(const config_check_t *);
 };
 
 #endif
