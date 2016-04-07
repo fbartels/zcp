@@ -75,7 +75,8 @@ libzarafa_server_la_SOURCES = \
 	ECLockManager.cpp ECLockManager.h
 libzarafa_server_la_LIBADD = \
 	../../common/libzcp_common_util.la ../common/libzarafacommon.la \
-	-lpthread ${KRB5_LIBS} ${MYSQL_LIBS} ${PAM_LIBS} ${SSL_LIBS} \
+	-lpthread ${icu_i18n_LIBS} ${icu_uc_LIBS} \
+	${KRB5_LIBS} ${MYSQL_LIBS} ${PAM_LIBS} ${SSL_LIBS} \
 	${TCMALLOC_LIBS} ${s3_LIBS}
 libzarafa_server_la_LDFLAGS = ${AM_LDFLAGS} \
 	-Wl,--version-script=${top_builddir}/default.sym
