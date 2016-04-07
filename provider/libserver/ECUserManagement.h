@@ -47,6 +47,7 @@
 #include <zarafa/zcdefs.h>
 #include <list>
 #include <map>
+#include <ctime>
 #include <pthread.h>
 
 #include <zarafa/ZarafaCode.h>
@@ -56,8 +57,6 @@
 #include <zarafa/ECLogger.h>
 #include <zarafa/ECDefs.h>
 #include "plugin.h"
-
-#include <boost/date_time/posix_time/posix_time_types.hpp>
 
 class localobjectdetails_t _zcp_final : public objectdetails_t {
 public:
@@ -316,7 +315,7 @@ protected:
 private:
 	pthread_mutex_t				m_hMutex;
 	usercount_t 				m_userCount;
-	boost::posix_time::ptime	m_ucTimeStamp;
+	time_t m_usercount_ts;
 };
 
 #define ZARAFA_UID_EVERYONE 1

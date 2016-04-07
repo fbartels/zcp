@@ -44,6 +44,7 @@
 #include <zarafa/platform.h>
 #include "ECThreadManager.h"
 
+#include <cmath>
 #include <cstdlib>
 #include <algorithm>
 #include <zarafa/stringutil.h>

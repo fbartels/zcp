@@ -82,7 +82,6 @@
 
 #include <boost/algorithm/string.hpp>
 namespace ba = boost::algorithm;
-namespace bpt = boost::posix_time;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -4830,7 +4829,7 @@ ECRESULT ECUserManagement::GetUserCount(usercount_t *lpUserCount)
 
     pthread_mutex_lock(&m_hMutex);
     m_userCount.assign(ulActive, ulNonActiveUser, ulRoom, ulEquipment, ulContact);
-    m_ucTimeStamp = bpt::second_clock::local_time();
+    m_usercount_ts = time(NULL);
     pthread_mutex_unlock(&m_hMutex);
 
 exit:
@@ -4844,7 +4843,7 @@ ECRESULT ECUserManagement::GetCachedUserCount(usercount_t *lpUserCount)
 {
 	scoped_lock lock(m_hMutex);
 
-	if (!m_userCount.isValid() || bpt::second_clock::local_time() - m_ucTimeStamp > bpt::minutes(5))
+	if (!m_userCount.isValid() || m_usercount_ts - time(NULL) > 5*60)
 		return GetUserCount(lpUserCount);
 
 	if (lpUserCount)
