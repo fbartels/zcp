@@ -329,7 +329,7 @@ public:
     }
     
     // Add a property value for this object
-    void AddPropVal(unsigned int ulPropTag, struct propVal *lpPropVal) {
+    void AddPropVal(unsigned int ulPropTag, const struct propVal *lpPropVal) {
         struct propVal val;
         ulPropTag = NormalizeDBPropTag(ulPropTag); // Only cache PT_STRING8
 		std::pair<std::map<unsigned int, struct propVal>::iterator,bool> res;
@@ -543,7 +543,7 @@ public:
 	ECRESULT GetStore(unsigned int ulObjId, unsigned int *ulStore, GUID *lpGuid, unsigned int maxdepth = 100);
 	ECRESULT GetStoreAndType(unsigned int ulObjId, unsigned int *ulStore, GUID *lpGuid, unsigned int *ulType, unsigned int maxdepth = 100);
 	ECRESULT GetObjectFlags(unsigned int ulObjId, unsigned int *ulFlags);
-	ECRESULT SetStore(unsigned int ulObjId, unsigned int ulStore, GUID *lpGuid, unsigned int ulType);
+	ECRESULT SetStore(unsigned int ulObjId, unsigned int ulStore, const GUID *, unsigned int ulType);
 
 	ECRESULT GetServerDetails(const std::string &strServerId, serverdetails_t *lpsDetails);
 	ECRESULT SetServerDetails(const std::string &strServerId, const serverdetails_t &sDetails);
@@ -556,13 +556,13 @@ public:
 
 	// Cache user information
 	ECRESULT GetUserDetails(unsigned int ulUserId, objectdetails_t *details);
-	ECRESULT SetUserDetails(unsigned int ulUserId, objectdetails_t *details);
+	ECRESULT SetUserDetails(unsigned int, const objectdetails_t *);
 
 	ECRESULT GetACLs(unsigned int ulObjId, struct rightsArray **lppRights);
-	ECRESULT SetACLs(unsigned int ulObjId, struct rightsArray *lpRights);
+	ECRESULT SetACLs(unsigned int ulObjId, const struct rightsArray *);
 
 	ECRESULT GetQuota(unsigned int ulUserId, bool bIsDefaultQuota, quotadetails_t *quota);
-	ECRESULT SetQuota(unsigned int ulUserId, bool bIsDefaultQuota, quotadetails_t quota);
+	ECRESULT SetQuota(unsigned int ulUserId, bool bIsDefaultQuota, const quotadetails_t &);
 
 	ECRESULT Update(unsigned int ulType, unsigned int ulObjId);
 	ECRESULT UpdateUser(unsigned int ulUserId);
@@ -570,13 +570,13 @@ public:
 	ECRESULT GetEntryIdFromObject(unsigned int ulObjId, struct soap *soap, unsigned int ulFlags, entryId* lpEntrId);
 	ECRESULT GetEntryIdFromObject(unsigned int ulObjId, struct soap *soap, unsigned int ulFlags, entryId** lppEntryId);
 	ECRESULT GetObjectFromEntryId(entryId* lpEntrId, unsigned int* lpulObjId);
-	ECRESULT SetObjectEntryId(entryId *lpEntryId, unsigned int ulObjId);
+	ECRESULT SetObjectEntryId(const entryId *, unsigned int ulObjId);
 	ECRESULT GetEntryListToObjectList(struct entryList *lpEntryList, ECListInt* lplObjectList);
 	ECRESULT GetEntryListFromObjectList(ECListInt* lplObjectList, struct soap *soap, struct entryList **lppEntryList);
 
 	// Table data functions (pure cache functions, they will never access the DB themselves. Data must be provided through Set functions)
-	ECRESULT GetCell(sObjectTableKey* lpsRowItem, unsigned int ulPropTag, struct propVal *lpDest, struct soap *soap, bool bComputed);
-	ECRESULT SetCell(sObjectTableKey* lpsRowItem, unsigned int ulPropTag, struct propVal *lpSrc);
+	ECRESULT GetCell(const sObjectTableKey *, unsigned int tag, struct propVal *, struct soap *, bool computed);
+	ECRESULT SetCell(const sObjectTableKey *, unsigned int tag, const struct propVal *);
 	ECRESULT UpdateCell(unsigned int ulObjId, unsigned int ulPropTag, int lDelta);
 	ECRESULT UpdateCell(unsigned int ulObjId, unsigned int ulPropTag, unsigned int ulMask, unsigned int ulValue);
 	ECRESULT SetComplete(unsigned int ulObjId);
@@ -601,7 +601,7 @@ public:
 	
 	// Cache list of properties indexed by zarafa-indexer
 	ECRESULT GetExcludedIndexProperties(std::set<unsigned int>& set);
-	ECRESULT SetExcludedIndexProperties(std::set<unsigned int>& set);
+	ECRESULT SetExcludedIndexProperties(const std::set<unsigned int> &);
 
 	// Test
 	void DisableCellCache();
@@ -618,19 +618,17 @@ private:
 	ECRESULT _GetStore(unsigned int ulObjId, unsigned int *ulStore, GUID *lpGuid, unsigned int *ulType);
 	ECRESULT _DelStore(unsigned int ulObjId);
 
-	ECRESULT _AddUserObject(unsigned int ulUserId, objectclass_t ulClass, unsigned int ulCompanyId,
-							std::string strExternId, std::string strSignature);
+	ECRESULT _AddUserObject(unsigned int ulUserId, const objectclass_t &ulClass, unsigned int ulCompanyId, const std::string &strExternId, const std::string &strSignature);
 	ECRESULT _GetUserObject(unsigned int ulUserId, objectclass_t* lpulClass, unsigned int *lpulCompanyId,
 							std::string* lpstrExternId, std::string* lpstrSignature);
 	ECRESULT _DelUserObject(unsigned int ulUserId);
 
-	ECRESULT _AddUEIdObject(std::string strExternId, objectclass_t ulClass, unsigned int ulCompanyId,
-							unsigned int ulUserId, std::string strSignature);
+	ECRESULT _AddUEIdObject(const std::string &strExternId, const objectclass_t &ulClass, unsigned int ulCompanyId, unsigned int ulUserId, const std::string &strSignature);
 	ECRESULT _GetUEIdObject(std::string strExternId, objectclass_t ulClass, unsigned int *lpulCompanyId,
 							unsigned int* lpulUserId, std::string* lpstrSignature);
 	ECRESULT _DelUEIdObject(std::string strExternId, objectclass_t ulClass);
 
-	ECRESULT _AddUserObjectDetails(unsigned int ulUserId, objectdetails_t *details);
+	ECRESULT _AddUserObjectDetails(unsigned int, const objectdetails_t *);
 	ECRESULT _GetUserObjectDetails(unsigned int ulUserId, objectdetails_t *details);
 	ECRESULT _DelUserObjectDetails(unsigned int ulUserId);
 
@@ -640,7 +638,7 @@ private:
 	ECRESULT _DelQuota(unsigned int ulUserId, bool bIsDefaultQuota);
 
 	// Cache Index properties
-	ECRESULT _AddIndexData(ECsIndexObject* lpObject, ECsIndexProp* lpProp);	
+	ECRESULT _AddIndexData(const ECsIndexObject *lpObject, const ECsIndexProp *lpProp);
 
 private:
 	ECDatabaseFactory*	m_lpDatabaseFactory;

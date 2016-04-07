@@ -639,7 +639,11 @@ exit:
     return er;
 }
 
-ECRESULT ECStoreObjectTable::QueryRowDataByRow(ECGenericObjectTable *lpThis, struct soap *soap, ECSession *lpSession, sObjectTableKey &sKey, unsigned int ulRowNum, std::multimap<unsigned int, unsigned int> &mapColumns, bool bTableLimit, struct rowSet *lpsRowSet)
+ECRESULT ECStoreObjectTable::QueryRowDataByRow(ECGenericObjectTable *lpThis,
+    struct soap *soap, ECSession *lpSession, const sObjectTableKey &sKey,
+    unsigned int ulRowNum,
+    std::multimap<unsigned int, unsigned int> &mapColumns, bool bTableLimit,
+    struct rowSet *lpsRowSet)
 {
 	ECRESULT		er = erSuccess;
 	DB_RESULT		lpDBResult = NULL;
@@ -851,14 +855,19 @@ exit:
  * @param[in] mapObjIds Map of objects to retrieve with key = sObjectTableKey, value = row number
  * @param[out] lpsRowSet Row set where data will be written. Must be pre-allocated to hold all columns and rows requested
  */
-ECRESULT ECStoreObjectTable::QueryRowDataByColumn(ECGenericObjectTable *lpThis, struct soap *soap, ECSession *lpSession, std::multimap<unsigned int, unsigned int> &mapColumns, unsigned int ulFolderId, std::map<sObjectTableKey, unsigned int> &mapObjIds, struct rowSet *lpsRowSet)
+ECRESULT ECStoreObjectTable::QueryRowDataByColumn(ECGenericObjectTable *lpThis,
+    struct soap *soap, ECSession *lpSession,
+    const std::multimap<unsigned int, unsigned int> &mapColumns,
+    unsigned int ulFolderId,
+    const std::map<sObjectTableKey, unsigned int> &mapObjIds,
+    struct rowSet *lpsRowSet)
 {
     ECRESULT er = erSuccess;
     std::string strQuery;
     std::string strHierarchyIds;
     std::string strTags, strMVTags, strMVITags;
-    std::multimap<unsigned int, unsigned int>::iterator iterColumns;
-    std::map<sObjectTableKey, unsigned int>::iterator iterObjIds;
+    std::multimap<unsigned int, unsigned int>::const_iterator iterColumns;
+    std::map<sObjectTableKey, unsigned int>::const_iterator iterObjIds;
     std::set<std::pair<unsigned int, unsigned int> > setDone;
     sObjectTableKey key;
     DB_RESULT lpDBResult = NULL;

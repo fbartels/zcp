@@ -351,7 +351,8 @@ exit:
 	return er;
 }
 
-ECRESULT ECCacheManager::SetStore(unsigned int ulObjId, unsigned int ulStore, GUID *lpGuid, unsigned int ulType)
+ECRESULT ECCacheManager::SetStore(unsigned int ulObjId, unsigned int ulStore,
+    const GUID *lpGuid, unsigned int ulType)
 {
 	ECRESULT		er = erSuccess;
 	ECsStores		sStores;
@@ -828,7 +829,8 @@ ECRESULT ECCacheManager::GetUserDetails(unsigned int ulUserId, objectdetails_t *
 	return er;
 }
 
-ECRESULT ECCacheManager::SetUserDetails(unsigned int ulUserId, objectdetails_t *details)
+ECRESULT ECCacheManager::SetUserDetails(unsigned int ulUserId,
+    const objectdetails_t *details)
 {
 	ECRESULT er = erSuccess;
 
@@ -1007,8 +1009,9 @@ exit:
 	return er;
 }
 
-ECRESULT ECCacheManager::_AddUserObject(unsigned int ulUserId, objectclass_t ulClass, unsigned int ulCompanyId,
-										std::string strExternId, std::string strSignature)
+ECRESULT ECCacheManager::_AddUserObject(unsigned int ulUserId,
+    const objectclass_t &ulClass, unsigned int ulCompanyId,
+    const std::string &strExternId, const std::string &strSignature)
 {
 	ECRESULT	er = erSuccess;
 	ECsUserObject sData;
@@ -1072,7 +1075,8 @@ ECRESULT ECCacheManager::_DelUserObject(unsigned int ulUserId)
 	return er;
 }
 
-ECRESULT ECCacheManager::_AddUserObjectDetails(unsigned int ulUserId, objectdetails_t *details)
+ECRESULT ECCacheManager::_AddUserObjectDetails(unsigned int ulUserId,
+    const objectdetails_t *details)
 {
 	ECRESULT 			er = erSuccess;
 	ECsUserObjectDetails sObjectDetails;
@@ -1129,8 +1133,9 @@ ECRESULT ECCacheManager::_DelUserObjectDetails(unsigned int ulUserId)
 	return er;
 }
 
-ECRESULT ECCacheManager::_AddUEIdObject(std::string strExternId, objectclass_t ulClass, unsigned int ulCompanyId,
-						unsigned int ulUserId, std::string strSignature)
+ECRESULT ECCacheManager::_AddUEIdObject(const std::string &strExternId,
+    const objectclass_t &ulClass, unsigned int ulCompanyId,
+    unsigned int ulUserId, const std::string &strSignature)
 {
 	ECRESULT	er = erSuccess;
 	ECsUEIdKey sKey;
@@ -1307,7 +1312,8 @@ exit:
     return er;
 }
 
-ECRESULT ECCacheManager::SetACLs(unsigned int ulObjId, struct rightsArray *lpRights)
+ECRESULT ECCacheManager::SetACLs(unsigned int ulObjId,
+    const struct rightsArray *lpRights)
 {
     ECsACLs sACLs;
     unsigned int i;
@@ -1356,7 +1362,8 @@ ECRESULT ECCacheManager::GetQuota(unsigned int ulUserId, bool bIsDefaultQuota, q
 	return er;
 }
 
-ECRESULT ECCacheManager::SetQuota(unsigned int ulUserId, bool bIsDefaultQuota, quotadetails_t quota)
+ECRESULT ECCacheManager::SetQuota(unsigned int ulUserId, bool bIsDefaultQuota,
+    const quotadetails_t &quota)
 {
 	ECRESULT er = erSuccess;
 	ECsQuota	sQuota;
@@ -1481,7 +1488,9 @@ ECRESULT ECCacheManager::GetObjectFlags(unsigned int ulObjId, unsigned int *ulFl
 	return GetObject(ulObjId, NULL, NULL, ulFlags);
 }
 
-ECRESULT ECCacheManager::GetCell(sObjectTableKey* lpsRowItem, unsigned int ulPropTag, struct propVal *lpDest, struct soap *soap, bool bComputed)
+ECRESULT ECCacheManager::GetCell(const sObjectTableKey *lpsRowItem,
+    unsigned int ulPropTag, struct propVal *lpDest, struct soap *soap,
+    bool bComputed)
 {
     ECRESULT er = erSuccess;
     ECsCells *sCell;
@@ -1529,7 +1538,8 @@ exit:
     return er;
 }
 
-ECRESULT ECCacheManager::SetCell(sObjectTableKey* lpsRowItem, unsigned int ulPropTag, struct propVal *lpSrc)
+ECRESULT ECCacheManager::SetCell(const sObjectTableKey *lpsRowItem,
+    unsigned int ulPropTag, const struct propVal *lpSrc)
 {
     ECRESULT er = erSuccess;
     ECsCells *sCell;
@@ -1768,7 +1778,8 @@ ECRESULT ECCacheManager::RemoveIndexData(unsigned int ulPropTag, unsigned int ul
 	return er;
 }
 
-ECRESULT ECCacheManager::_AddIndexData(ECsIndexObject* lpObject, ECsIndexProp* lpProp)
+ECRESULT ECCacheManager::_AddIndexData(const ECsIndexObject *lpObject,
+    const ECsIndexProp *lpProp)
 {
 	ECRESULT	er = erSuccess;
 	scoped_lock lock(m_hCacheIndPropMutex);
@@ -2026,7 +2037,8 @@ ECRESULT ECCacheManager::GetObjectFromEntryId(entryId* lpEntryId, unsigned int* 
 	return er;
 }
 
-ECRESULT ECCacheManager::SetObjectEntryId(entryId* lpEntryId, unsigned int ulObjId)
+ECRESULT ECCacheManager::SetObjectEntryId(const entryId *lpEntryId,
+    unsigned int ulObjId)
 {
     ECRESULT 	er = erSuccess;
     
@@ -2135,7 +2147,7 @@ ECRESULT ECCacheManager::GetExcludedIndexProperties(std::set<unsigned int>& set)
  * @param[in] map Map of property ID -> text name
  * @return result
  */
-ECRESULT ECCacheManager::SetExcludedIndexProperties(std::set<unsigned int>& set)
+ECRESULT ECCacheManager::SetExcludedIndexProperties(const std::set<unsigned int> &set)
 {
 	scoped_lock lock(m_hExcludedIndexPropertiesMutex);
 	

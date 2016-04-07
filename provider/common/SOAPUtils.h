@@ -99,7 +99,7 @@ ECRESULT			FreeEntryId(entryId* lpEntryId, bool bFreeBase);
 
 // Notification
 ECRESULT			FreeNotificationStruct(notification *lpNotification, bool bFreeBase=true);
-ECRESULT			CopyNotificationStruct(struct soap *soap, notification *lpNotification, notification &rNotifyTo);
+ECRESULT			CopyNotificationStruct(struct soap *, const notification *from, notification &to);
 
 ECRESULT			FreeNotificationArrayStruct(notificationArray *lpNotifyArray, bool bFreeBase);
 ECRESULT			CopyNotificationArrayStruct(notificationArray *lpNotifyArrayFrom, notificationArray *lpNotifyArrayTo);

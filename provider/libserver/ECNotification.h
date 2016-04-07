@@ -62,9 +62,9 @@ public:
 
 	void SetConnection(unsigned int ulConnection);
 
-	void GetCopy(struct soap *soap, notification &notification);
+	void GetCopy(struct soap *, notification &) const;
 
-	unsigned int GetObjectSize();
+	unsigned int GetObjectSize(void) const;
 
 protected:
 	void Init();

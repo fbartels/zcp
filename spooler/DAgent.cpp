@@ -1034,8 +1034,8 @@ exit:
  * @return MAPI Error code
  */
 static HRESULT ResolveServerToPath(IMAPISession *lpSession,
-    serverrecipients_t *lpServerNameRecips, const std::string &strDefaultPath,
-    serverrecipients_t *lpServerPathRecips)
+    const serverrecipients_t *lpServerNameRecips,
+    const std::string &strDefaultPath, serverrecipients_t *lpServerPathRecips)
 {
 	HRESULT hr = hrSuccess;
 	IMsgStore *lpAdminStore = NULL;
@@ -1043,7 +1043,7 @@ static HRESULT ResolveServerToPath(IMAPISession *lpSession,
 	LPSPropValue	lpsObject = NULL;
 	ECSVRNAMELIST *lpSrvNameList = NULL;
 	ECSERVERLIST *lpSrvList = NULL;
-	serverrecipients_t::iterator iter;
+	serverrecipients_t::const_iterator iter;
 
 	if (!lpServerNameRecips || !lpServerPathRecips) {
 		hr = MAPI_E_INVALID_PARAMETER;
@@ -2845,8 +2845,8 @@ exit:
  * @param[in] start Start of recipient list
  * @param[in] end End of recipient list
  */
-static void RespondMessageExpired(recipients_t::iterator start,
-    recipients_t::iterator end)
+static void RespondMessageExpired(recipients_t::const_iterator start,
+    recipients_t::const_iterator end)
 {
 	convert_context converter;
 	g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Message was expired, not delivering");
@@ -2878,8 +2878,8 @@ static void RespondMessageExpired(recipients_t::iterator start,
 static HRESULT ProcessDeliveryToServer(PyMapiPlugin *lppyMapiPlugin,
     IMAPISession *lpUserSession, IMessage *lpMessage, bool bFallbackDelivery,
     const std::string &strMail, const std::string &strServer,
-    recipients_t &listRecipients, LPADRBOOK lpAdrBook, DeliveryArgs *lpArgs,
-    IMessage **lppMessage, bool *lpbFallbackDelivery)
+    const recipients_t &listRecipients, LPADRBOOK lpAdrBook,
+    DeliveryArgs *lpArgs, IMessage **lppMessage, bool *lpbFallbackDelivery)
 {
 	HRESULT hr = hrSuccess;
 	IMAPISession *lpSession = NULL;
@@ -3052,7 +3052,7 @@ exit:
  */
 static HRESULT ProcessDeliveryToCompany(PyMapiPlugin *lppyMapiPlugin,
     IMAPISession *lpSession, LPADRBOOK lpAdrBook, FILE *fp,
-    serverrecipients_t *lpServerNameRecips, DeliveryArgs *lpArgs)
+    const serverrecipients_t *lpServerNameRecips, DeliveryArgs *lpArgs)
 {
 	HRESULT hr = hrSuccess;
 	IMessage *lpMasterMessage = NULL;
@@ -3139,12 +3139,13 @@ exit:
  * 
  * @return MAPI Error code 
  */
-static HRESULT FindLowestAdminLevelSession(serverrecipients_t *lpServerRecips,
+static HRESULT
+FindLowestAdminLevelSession(const serverrecipients_t *lpServerRecips,
     DeliveryArgs *lpArgs, IMAPISession **lppUserSession)
 {
 	HRESULT hr = hrSuccess;
-	serverrecipients_t::iterator iterSRV;
-	recipients_t::iterator iterRCP;
+	serverrecipients_t::const_iterator iterSRV;
+	recipients_t::const_iterator iterRCP;
 	ECRecipient *lpRecip = NULL;
 	bool bFound = false;
 

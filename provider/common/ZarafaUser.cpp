@@ -291,7 +291,7 @@ unsigned int objectdetails_t::GetObjectSize()
 	return ulSize;
 }
 
-std::string objectdetails_t::ToStr()
+std::string objectdetails_t::ToStr(void) const
 {
 	std::string str;
 	property_map::const_iterator i;

@@ -151,7 +151,7 @@ public:
 
 	virtual unsigned int GetObjectSize();
 
-	std::string		ToStr();
+	std::string ToStr(void) const;
 
 private:
 	objectclass_t m_objclass;

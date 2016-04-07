@@ -113,7 +113,7 @@ void ECNotification::SetConnection(unsigned int ulConnection)
 	m_lpsNotification->ulConnection = ulConnection;
 }
 
-void ECNotification::GetCopy(struct soap *soap, notification &notification)
+void ECNotification::GetCopy(struct soap *soap, notification &notification) const
 {
 	CopyNotificationStruct(soap, this->m_lpsNotification, notification);
 }
@@ -123,7 +123,7 @@ void ECNotification::GetCopy(struct soap *soap, notification &notification)
  *
  * @return Object size in bytes
  */
-unsigned int ECNotification::GetObjectSize() 
+unsigned int ECNotification::GetObjectSize(void) const
 {
 	return NotificationStructSize(m_lpsNotification);
 }

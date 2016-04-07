@@ -3554,7 +3554,7 @@ unsigned int ECCategory::GetCount() {
  *
  * @return Object size in bytes
  */
-unsigned int ECCategory::GetObjectSize()
+unsigned int ECCategory::GetObjectSize(void) const
 {
 	unsigned int ulSize = 0;
 	unsigned int i;

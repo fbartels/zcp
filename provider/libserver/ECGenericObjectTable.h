@@ -96,7 +96,7 @@ public:
     ECRESULT UpdateMinMax(const sObjectTableKey &sKey, unsigned int i, struct propVal *lpPropVal, bool fMax, bool *lpfModified);
     ECRESULT UpdateMinMaxRemove(const sObjectTableKey &sKey, unsigned int i, bool fMax, bool *lpfModified);
 	
-	unsigned int GetObjectSize();
+	unsigned int GetObjectSize(void) const;
 
     struct propVal *m_lpProps;
     unsigned int m_cProps;
@@ -209,7 +209,7 @@ public:
 	virtual	ECRESULT	GetPropCategory(struct soap *soap, unsigned int ulPropTag, sObjectTableKey sKey, struct propVal *lpPropVal);
 	virtual unsigned int GetCategories();
 
-	virtual unsigned int GetObjectSize();
+	virtual unsigned int GetObjectSize(void);
 
 protected:
 	// Add an actual row to the table, and send a notification if required. If you add an existing row, the row is modified and the notification is send as a modification

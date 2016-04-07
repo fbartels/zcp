@@ -1575,7 +1575,8 @@ ECRESULT FreeNotificationStruct(notification *lpNotification, bool bFreeBase)
 }
 
 // Make a copy of the struct notification.
-ECRESULT CopyNotificationStruct(struct soap *soap, notification *lpNotification, notification &rNotifyTo)
+ECRESULT CopyNotificationStruct(struct soap *soap,
+    const notification *lpNotification, notification &rNotifyTo)
 {
 	int nLen;
 

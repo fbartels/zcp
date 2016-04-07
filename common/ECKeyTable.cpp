@@ -318,7 +318,7 @@ bool ECTableRow::operator <(const ECTableRow &other) const
  *
  * @return Object size in bytes
  */
-unsigned int ECTableRow::GetObjectSize()
+unsigned int ECTableRow::GetObjectSize(void) const
 {
 	unsigned int ulSize = sizeof(*this);
 

@@ -127,7 +127,7 @@ public:
 	ECTableRow(const ECTableRow &other);
 	~ECTableRow();
 
-	unsigned int GetObjectSize();
+	unsigned int GetObjectSize(void) const;
 
 	static bool rowcompare(const ECTableRow *a, const ECTableRow *b);
 	static bool rowcompare(unsigned int ulSortColsA, const int *lpSortLenA, unsigned char **lppSortKeysA, const unsigned char *lpSortFlagsA, unsigned int ulSortColsB, const int *lpSortLenB, unsigned char **lppSortKeysB, const unsigned char *lpSortFlagsB, bool fIgnoreOrder = false);

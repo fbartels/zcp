@@ -93,8 +93,8 @@ public:
 protected:
 	virtual ECRESULT AddRowKey(ECObjectTableList* lpRows, unsigned int *lpulLoaded, unsigned int ulFlags, bool bInitialLoad, bool bOverride, struct restrictTable *lpOverride);
 	
-	static ECRESULT QueryRowDataByColumn(ECGenericObjectTable *lpThis, struct soap *soap, ECSession *lpSesion, std::multimap<unsigned int, unsigned int> &mapColumns, unsigned int ulFolderId, std::map<sObjectTableKey, unsigned int> &mapObjIds, struct rowSet *lpRowSet);
-	static ECRESULT QueryRowDataByRow(ECGenericObjectTable *lpThis, struct soap *soap, ECSession *lpSession, sObjectTableKey &sKey, unsigned int ulRowNum, std::multimap<unsigned int, unsigned int> &mapColumns, bool bTableLimit, struct rowSet *lpsRowSet);
+	static ECRESULT QueryRowDataByColumn(ECGenericObjectTable *lpThis, struct soap *soap, ECSession *lpSesion, const std::multimap<unsigned int, unsigned int> &mapColumns, unsigned int ulFolderId, const std::map<sObjectTableKey, unsigned int> &mapObjIds, struct rowSet *lpRowSet);
+	static ECRESULT QueryRowDataByRow(ECGenericObjectTable *lpThis, struct soap *soap, ECSession *lpSession, const sObjectTableKey &sKey, unsigned int ulRowNum, std::multimap<unsigned int, unsigned int> &mapColumns, bool bTableLimit, struct rowSet *lpsRowSet);
 
 private:
 	virtual ECRESULT GetMVRowCount(unsigned int ulObjId, unsigned int *lpulCount);
