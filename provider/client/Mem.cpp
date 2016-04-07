@@ -171,7 +171,7 @@ HRESULT AllocNewMapiObject(ULONG ulUniqueId, ULONG ulObjId, ULONG ulObjType, MAP
 
 HRESULT FreeMapiObject(MAPIOBJECT *lpsObject)
 {
-	ECMapiObjects::iterator iterSObj;
+	ECMapiObjects::const_iterator iterSObj;
 
 	delete lpsObject->lstAvailable;
 	delete lpsObject->lstDeleted;

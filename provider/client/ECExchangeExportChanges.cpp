@@ -507,7 +507,7 @@ HRESULT ECExchangeExportChanges::Config(LPSTREAM lpStream, ULONG ulFlags, LPUNKN
 
 HRESULT ECExchangeExportChanges::Synchronize(ULONG FAR * lpulSteps, ULONG FAR * lpulProgress){
 	HRESULT			hr = hrSuccess;
-	PROCESSEDCHANGESSET::iterator iterProcessedChange;
+	PROCESSEDCHANGESSET::const_iterator iterProcessedChange;
 
 	if(!m_bConfiged){
 		ZLOG_DEBUG(m_lpLogger, "Config() not called before Synchronize()");
@@ -1331,7 +1331,7 @@ HRESULT ECExchangeExportChanges::ExportMessageFlags(){
 	HRESULT			hr = hrSuccess;
 	LPREADSTATE		lpReadState = NULL;
 	ULONG			ulCount;
-	std::list<ICSCHANGE>::iterator lpChange;
+	std::list<ICSCHANGE>::const_iterator lpChange;
 
 	if(m_lstFlag.empty())
 		goto exit;
@@ -1609,7 +1609,7 @@ HRESULT ECExchangeExportChanges::UpdateStream(LPSTREAM lpStream){
 	ULONG ulChangeCount = 0;
 	ULONG ulChangeId = 0;
 	ULONG ulSourceKeySize = 0;
-	PROCESSEDCHANGESSET::iterator iterProcessedChange;
+	PROCESSEDCHANGESSET::const_iterator iterProcessedChange;
 	
 	if(lpStream == NULL)
 		goto exit;
@@ -1674,7 +1674,7 @@ HRESULT ECExchangeExportChanges::ChangesToEntrylist(std::list<ICSCHANGE> * lpLst
 	HRESULT 		hr = hrSuccess;
 	LPENTRYLIST		lpEntryList = NULL;
 	ULONG			ulCount = 0;
-	std::list<ICSCHANGE>::iterator lpChange;
+	std::list<ICSCHANGE>::const_iterator lpChange;
 
 	if ((hr = MAPIAllocateBuffer(sizeof(ENTRYLIST), (LPVOID *)&lpEntryList)) != hrSuccess)
 		goto exit;

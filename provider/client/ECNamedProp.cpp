@@ -127,7 +127,7 @@ ECNamedProp::ECNamedProp(WSTransport *lpTransport)
 
 ECNamedProp::~ECNamedProp()
 {
-	std::map<MAPINAMEID *, ULONG,ltmap>::iterator iterMap;
+	std::map<MAPINAMEID *, ULONG, ltmap>::const_iterator iterMap;
 
 	// Clear all the cached names
 	for(iterMap = mapNames.begin(); iterMap != mapNames.end(); iterMap++) {
@@ -368,7 +368,7 @@ HRESULT ECNamedProp::ResolveLocal(MAPINAMEID *lpName, ULONG *ulPropTag)
 HRESULT ECNamedProp::ResolveReverseCache(ULONG ulId, LPGUID lpGuid, ULONG ulFlags, void *lpBase, MAPINAMEID **lppName)
 {
 	HRESULT hr = MAPI_E_NOT_FOUND;
-	std::map<MAPINAMEID *, ULONG,ltmap>::iterator iterMap;
+	std::map<MAPINAMEID *, ULONG, ltmap>::const_iterator iterMap;
 
 	// Loop through the map to find the reverse-lookup of the named property. This could be speeded up by
 	// used a bimap (bi-directional map)
@@ -450,7 +450,7 @@ exit:
 
 HRESULT ECNamedProp::ResolveCache(MAPINAMEID *lpName, ULONG *lpulPropTag)
 {
-	std::map<MAPINAMEID *,ULONG,ltmap>::iterator iterMap;
+	std::map<MAPINAMEID *, ULONG, ltmap>::const_iterator iterMap;
 
 	iterMap = mapNames.find(lpName);
 

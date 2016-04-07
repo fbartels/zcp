@@ -536,7 +536,7 @@ std::list<time_t> recurrence::getDeletedExceptions() {
 	std::list<time_t> lstDeletes;
 	std::vector<unsigned int> lstDeletedInstanceDates;
 	std::vector<unsigned int>::iterator d;
-	std::vector<RecurrenceState::Exception>::iterator iExceptions;
+	std::vector<RecurrenceState::Exception>::const_iterator iExceptions;
 
 
 	// make copy of struct info
@@ -561,8 +561,8 @@ std::list<time_t> recurrence::getModifiedOccurrences() {
 	time_t tDayModified;
 	std::list<time_t> lstModified;
 	std::vector<unsigned int> lstModifiedInstanceDates;
-	std::vector<unsigned int>::iterator d;
-	std::vector<RecurrenceState::Exception>::iterator iExceptions;
+	std::vector<unsigned int>::const_iterator d;
+	std::vector<RecurrenceState::Exception>::const_iterator iExceptions;
 
 	// make copy of struct info
 	lstModifiedInstanceDates = m_sRecState.lstModifiedInstanceDates;
@@ -858,14 +858,13 @@ std::list<time_t> recurrence::getDeletedOccurrences()
 // ?
 HRESULT recurrence::getChangedOccurrence(time_t t, changed_occurrence_type *c)
 {
-	for (list<changed_occurrence_type>::iterator i = changed_occurrences.begin(); i != changed_occurrences.end(); i++)
-	{
+	for (std::list<changed_occurrence_type>::const_iterator i = changed_occurrences.begin();
+	     i != changed_occurrences.end(); ++i)
 		if (DayStartOf(i->basedate) == DayStartOf(t))
 		{
 			*c = *i;
 			return S_OK;
 		}
-	}
 	return S_FALSE;
 }
 
@@ -881,13 +880,12 @@ HRESULT recurrence::setChangedOccurrence(changed_occurrence_type c){
 HRESULT recurrence::removeChangedOccurrence(time_t t){
 	if(!isChangedOccurrence(t))
 		return MAPI_E_CALL_FAILED;
-	for(list<changed_occurrence_type>::iterator i = changed_occurrences.begin(); i != changed_occurrences.end(); i++){
+	for (std::list<changed_occurrence_type>::const_iterator i = changed_occurrences.begin();
+	     i != changed_occurrences.end(); ++i)
 		if(DayStartOf(i->basedate) == DayStartOf(t)){
 			changed_occurrences.erase(i);
 			return S_OK;
 		}
-
-	}
 	return MAPI_E_NOT_FOUND;
 }
 
@@ -896,10 +894,10 @@ list<recurrence::changed_occurrence_type> recurrence::getChangedOccurrences(){
 }
 
 bool recurrence::isException(time_t t){
-	for(list<time_t>::iterator i = exceptions.begin(); i != exceptions.end(); i++){
+	for (std::list<time_t>::const_iterator i = exceptions.begin();
+	     i != exceptions.end(); ++i)
 		if(DayStartOf(*i) == DayStartOf(t))
 			return true;
-	}
 	return false;
 }
 
@@ -916,10 +914,10 @@ bool recurrence::isOccurrence(time_t time){
 		return false;
 
 	//loop through changed occurrences
-	for(list<changed_occurrence_type>::iterator change = changed_occurrences.begin(); change != changed_occurrences.end(); change++ ){
+	for (std::list<changed_occurrence_type>::const_iterator change = changed_occurrences.begin();
+	     change != changed_occurrences.end(); ++change)
 		if(change->startdate == time)
 			return true;
-	}
 	return isRuleOccurrence(time);
 }
 
@@ -982,18 +980,18 @@ bool recurrence::isRuleOccurrence(time_t time){
 }
 
 bool recurrence::isDeletedOccurrence(time_t t){
-	for(list<time_t>::iterator i = deleted_occurrences.begin(); i != deleted_occurrences.end(); i++){
+	for (std::list<time_t>::const_iterator i = deleted_occurrences.begin();
+	     i != deleted_occurrences.end(); ++i)
 		if(DayStartOf(*i) == DayStartOf(t))
 			return true;
-	}
 	return false;
 }
 
 bool recurrence::isChangedOccurrence(time_t t){
-	for(list<changed_occurrence_type>::iterator i = changed_occurrences.begin(); i != changed_occurrences.end(); i++){
+	for (std::list<changed_occurrence_type>::const_iterator i = changed_occurrences.begin();
+	     i != changed_occurrences.end(); ++i)
 		if(DayStartOf(i->basedate) == DayStartOf(t))
 			return true;
-	}
 	return false;
 }
 
@@ -1080,10 +1078,11 @@ list<time_t> recurrence::getOccurrencesBetween(time_t begin, time_t end){
 		return occurrences;
 
 	//first add all changed_occurrences with startdate between begin and end
-	for(list<changed_occurrence_type>::iterator changed = changed_occurrences.begin(); changed != changed_occurrences.end(); changed++){
+	for (std::list<changed_occurrence_type>::const_iterator changed = changed_occurrences.begin();
+	     changed != changed_occurrences.end(); ++changed)
 		if(changed->startdate > begin && changed->startdate < end)
 			occurrences.push_back(changed->startdate);
-	}
+
 	//check startdate & enddate
 	if(end < this->startdate)
 		return occurrences;
@@ -1927,7 +1926,7 @@ exit:
 bool recurrence::isDeletedOccurrence(time_t tsOccDate)
 {
 	std::list<time_t> lstDeletedOcc;
-	std::list<time_t>::iterator iterLstOcc;
+	std::list<time_t>::const_iterator iterLstOcc;
 	lstDeletedOcc = getDeletedExceptions();
 	
 	for(iterLstOcc = lstDeletedOcc.begin() ; iterLstOcc != lstDeletedOcc.end() ; iterLstOcc++)
@@ -1946,7 +1945,7 @@ bool recurrence::isDeletedOccurrence(time_t tsOccDate)
 bool recurrence::isException(time_t tsOccDate)
 {
 	std::list<time_t> lstModifiedOcc;
-	std::list<time_t>::iterator iterLstOcc;
+	std::list<time_t>::const_iterator iterLstOcc;
 	lstModifiedOcc = getModifiedOccurrences();
 	
 	for(iterLstOcc = lstModifiedOcc.begin() ; iterLstOcc != lstModifiedOcc.end() ; iterLstOcc++)

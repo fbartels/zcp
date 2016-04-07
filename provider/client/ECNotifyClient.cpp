@@ -140,7 +140,8 @@ ECNotifyClient::~ECNotifyClient()
 	 * This is however not always the case, but ECNotifyMaster and Server will remove all
 	 * advises when the session is removed.
 	 */
-	for (ECMAPADVISE::iterator i = m_mapAdvise.begin(); i != m_mapAdvise.end(); i++) {
+	for (ECMAPADVISE::const_iterator i = m_mapAdvise.begin();
+	     i != m_mapAdvise.end(); ++i) {
 		if (i->second->lpAdviseSink)
 			i->second->lpAdviseSink->Release();
 
@@ -148,7 +149,8 @@ ECNotifyClient::~ECNotifyClient()
 	}
 	m_mapAdvise.clear();
 
-	for (ECMAPCHANGEADVISE::iterator i = m_mapChangeAdvise.begin(); i != m_mapChangeAdvise.end(); i++) {
+	for (ECMAPCHANGEADVISE::const_iterator i = m_mapChangeAdvise.begin();
+	     i != m_mapChangeAdvise.end(); ++i) {
 		if (i->second->lpAdviseSink != NULL)
 			i->second->lpAdviseSink->Release();
 
@@ -539,7 +541,7 @@ HRESULT ECNotifyClient::Unadvise(const ECLISTCONNECTION &lstConnections)
 HRESULT ECNotifyClient::Reregister(ULONG ulConnection, ULONG cbKey, LPBYTE lpKey)
 {
 	HRESULT hr = hrSuccess;
-	ECMAPADVISE::iterator iter;
+	ECMAPADVISE::const_iterator iter;
 
 	pthread_mutex_lock(&m_hMutex);
 
@@ -576,7 +578,7 @@ exit:
 HRESULT ECNotifyClient::ReleaseAll()
 {
 	HRESULT hr			= hrSuccess;
-	ECMAPADVISE::iterator iIterAdvise;
+	ECMAPADVISE::const_iterator iIterAdvise;
 
 	pthread_mutex_lock(&m_hMutex);
 
@@ -596,7 +598,7 @@ typedef std::list<LPSBinary> BINARYLIST;
 HRESULT ECNotifyClient::NotifyReload()
 {
 	HRESULT hr = hrSuccess;
-	ECMAPADVISE::iterator		iterAdvise;
+	ECMAPADVISE::const_iterator iterAdvise;
 	struct notification notif;
 	struct notificationTable table;
 	NOTIFYLIST notifications;
@@ -636,9 +638,9 @@ HRESULT ECNotifyClient::Notify(ULONG ulConnection, const NOTIFYLIST &lNotificati
 	HRESULT						hr = hrSuccess;
 	LPNOTIFICATION				lpNotifs = NULL;
 	NOTIFYLIST::const_iterator	iterNotify;
-	ECMAPADVISE::iterator		iterAdvise;
+	ECMAPADVISE::const_iterator iterAdvise;
 	NOTIFICATIONLIST			notifications;
-	NOTIFICATIONLIST::iterator	iterNotification;
+	NOTIFICATIONLIST::const_iterator iterNotification;
 
 	for (iterNotify = lNotifications.begin(); iterNotify != lNotifications.end(); iterNotify++) {
 		LPNOTIFICATION tmp = NULL;
@@ -725,9 +727,9 @@ HRESULT ECNotifyClient::NotifyChange(ULONG ulConnection, const NOTIFYLIST &lNoti
 	HRESULT						hr = hrSuccess;
 	LPENTRYLIST					lpSyncStates = NULL;
 	NOTIFYLIST::const_iterator	iterNotify;
-	ECMAPCHANGEADVISE::iterator	iterAdvise;
+	ECMAPCHANGEADVISE::const_iterator iterAdvise;
 	BINARYLIST					syncStates;
-	BINARYLIST::iterator		iterSyncStates;
+	BINARYLIST::const_iterator iterSyncStates;
 
 	/* Create a straight array of MAX_NOTIFS_PER_CALL sync states */
 	hr = MAPIAllocateBuffer(sizeof *lpSyncStates, (void**)&lpSyncStates);

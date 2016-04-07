@@ -563,7 +563,7 @@ exit:
 HRESULT WSTransport::HrReLogon()
 {
 	HRESULT hr;
-	SESSIONRELOADLIST::iterator iter;
+	SESSIONRELOADLIST::const_iterator iter;
 
 	hr = HrLogon(m_sProfileProps);
 	if(hr != hrSuccess)
@@ -4983,7 +4983,7 @@ HRESULT WSTransport::AddSessionReloadCallback(void *lpParam, SESSIONRELOADCALLBA
 HRESULT WSTransport::RemoveSessionReloadCallback(ULONG ulId)
 {
 	HRESULT hr = hrSuccess;
-	SESSIONRELOADLIST::iterator iter;
+	SESSIONRELOADLIST::const_iterator iter;
 	
 	pthread_mutex_lock(&m_mutexSessionReload);
 

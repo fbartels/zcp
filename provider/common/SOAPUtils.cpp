@@ -1905,7 +1905,9 @@ static ECRESULT CopyAnonymousDetailsToSoap(struct soap *soap,
 		lpsoapPropmap = s_alloc<struct propmapPairArray>(soap, 1);
 		lpsoapPropmap->__size = 0;
 		lpsoapPropmap->__ptr = s_alloc<struct propmapPair>(soap, propmap.size());
-		for (property_map::iterator iter = propmap.begin(); iter != propmap.end(); iter++) {
+		for (property_map::const_iterator iter = propmap.begin();
+		     iter != propmap.end(); ++iter)
+		{
 			if (PROP_TYPE(iter->first) == PT_BINARY && bCopyBinary) {
 				string strData = base64_encode((const unsigned char *)iter->second.data(), iter->second.size());
 				lpsoapPropmap->__ptr[lpsoapPropmap->__size].ulPropId = iter->first;
@@ -1924,13 +1926,17 @@ static ECRESULT CopyAnonymousDetailsToSoap(struct soap *soap,
 		lpsoapMVPropmap = s_alloc<struct propmapMVPairArray>(soap, 1);
 		lpsoapMVPropmap->__size = 0;
 		lpsoapMVPropmap->__ptr = s_alloc<struct propmapMVPair>(soap, propmvmap.size());
-		for (property_mv_map::iterator iter = propmvmap.begin(); iter != propmvmap.end(); iter++) {
+		for (property_mv_map::const_iterator iter = propmvmap.begin();
+		     iter != propmvmap.end(); ++iter)
+		{
 			if (PROP_TYPE(iter->first) == PT_MV_BINARY && bCopyBinary) {
 				j = 0;
 				lpsoapMVPropmap->__ptr[lpsoapMVPropmap->__size].ulPropId = iter->first;
 				lpsoapMVPropmap->__ptr[lpsoapMVPropmap->__size].sValues.__size = iter->second.size();
 				lpsoapMVPropmap->__ptr[lpsoapMVPropmap->__size].sValues.__ptr = s_alloc<char *>(soap, lpsoapMVPropmap->__ptr[lpsoapMVPropmap->__size].sValues.__size);
-				for (list<string>::iterator entry = iter->second.begin(); entry != iter->second.end(); entry++) {
+				for (std::list<std::string>::const_iterator entry = iter->second.begin();
+				     entry != iter->second.end(); ++entry)
+				{
 					string strData = base64_encode((const unsigned char *)entry->data(), entry->size());
 					lpsoapMVPropmap->__ptr[lpsoapMVPropmap->__size].sValues.__ptr[j] = s_strcpy(soap, strData.c_str());
 					j++;
@@ -1947,7 +1953,8 @@ static ECRESULT CopyAnonymousDetailsToSoap(struct soap *soap,
 			lpsoapMVPropmap->__ptr[lpsoapMVPropmap->__size].ulPropId = iter->first;
 			lpsoapMVPropmap->__ptr[lpsoapMVPropmap->__size].sValues.__size = iter->second.size();
 			lpsoapMVPropmap->__ptr[lpsoapMVPropmap->__size].sValues.__ptr = s_alloc<char *>(soap, lpsoapMVPropmap->__ptr[lpsoapMVPropmap->__size].sValues.__size);
-			for (list<string>::iterator entry = iter->second.begin(); entry != iter->second.end(); entry++) {
+			for (std::list<std::string>::const_iterator entry = iter->second.begin();
+			     entry != iter->second.end(); ++entry) {
 				lpsoapMVPropmap->__ptr[lpsoapMVPropmap->__size].sValues.__ptr[j] = s_strcpy(soap, entry->c_str());
 				j++;
 			}
@@ -2265,7 +2272,7 @@ BOOL DynamicPropTagArray::HasPropTag(unsigned int ulPropTag) const {
 }
 
 ECRESULT DynamicPropTagArray::GetPropTagArray(struct propTagArray *lpsPropTagArray) {
-    std::list<unsigned int>::iterator i;
+    std::list<unsigned int>::const_iterator i;
     int n = 0;
     
     lpsPropTagArray->__size = m_lstPropTags.size();

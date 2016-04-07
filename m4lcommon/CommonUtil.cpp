@@ -2072,7 +2072,7 @@ static HRESULT GetRestrictTags(const SRestriction *lpRestriction,
 {
 	HRESULT hr = hrSuccess;
 	std::list<unsigned int> lstTags;
-	std::list<unsigned int>::iterator iterTags;
+	std::list<unsigned int>::const_iterator iterTags;
 	ULONG n = 0;
 
 	LPSPropTagArray lpTags = NULL;
@@ -2716,8 +2716,8 @@ HRESULT ECPropMap::Resolve(IMAPIProp *lpMAPIProp) {
     HRESULT hr = hrSuccess;
     MAPINAMEID **lppNames = NULL;
     std::list<ECPropMapEntry>::iterator i;
-    std::list<ULONG *>::iterator j;
-    std::list<ULONG>::iterator k;
+    std::list<ULONG *>::const_iterator j;
+    std::list<ULONG>::const_iterator k;
     int n = 0;
     LPSPropTagArray lpPropTags = NULL;
 

@@ -58,10 +58,10 @@ public:
 
 	HRESULT CopyFrom(LPSPropValue lpsProp);
 	HRESULT CopyTo(LPSPropValue lpsProp, void *lpBase, ULONG ulPropTag);
-	HRESULT CopyToByRef(LPSPropValue lpsProp);
+	HRESULT CopyToByRef(LPSPropValue lpsProp) const;
 	
 	bool operator==(const ECProperty &property) const;
-	SPropValue GetMAPIPropValRef();
+	SPropValue GetMAPIPropValRef(void) const;
 
 	ULONG GetSize() const { return ulSize; }
 	ULONG GetPropTag() const { return ulPropTag; }

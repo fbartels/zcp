@@ -984,7 +984,7 @@ HRESULT VMIMEToMAPI::handleHeaders(vmime::ref<vmime::header> vmHeader, IMessage*
 		}
 
 		std::vector<vmime::ref<vmime::headerField> > hf = vmHeader->getFieldList();
-		std::vector<vmime::ref<vmime::headerField> >::iterator hfi;
+		std::vector<vmime::ref<vmime::headerField> >::const_iterator hfi;
 		for (hfi = hf.begin(); hfi != hf.end(); hfi++) {
 			string value, name = (*hfi)->getName();
 			
@@ -3844,7 +3844,7 @@ std::string VMIMEToMAPI::parameterizedFieldToStructure(vmime::ref<vmime::paramet
 
 	try {
 		vector <vmime::ref<vmime::parameter> > vParams = vmParamField->getParameterList();
-		vector <vmime::ref<vmime::parameter> >::iterator iParam;
+		std::vector<vmime::ref<vmime::parameter> >::const_iterator iParam;
 
 		for (iParam = vParams.begin(); iParam != vParams.end(); iParam++) {
 			lParams.push_back("\"" + (*iParam)->getName() + "\"");

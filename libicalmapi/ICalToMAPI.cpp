@@ -77,9 +77,9 @@ public:
 private:
 	void Clean();
 
-	HRESULT SaveAttendeesString(std::list<icalrecip> *lplstRecip, LPMESSAGE lpMessage);
-	HRESULT SaveProps(std::list<SPropValue> *lpPropList, LPMAPIPROP lpMapiProp);
-	HRESULT SaveRecipList(std::list<icalrecip> *lplstRecip, ULONG ulFlag, LPMESSAGE lpMessage);
+	HRESULT SaveAttendeesString(const std::list<icalrecip> *lplstRecip, LPMESSAGE lpMessage);
+	HRESULT SaveProps(const std::list<SPropValue> *lpPropList, LPMAPIPROP lpMapiProp);
+	HRESULT SaveRecipList(const std::list<icalrecip> *lplstRecip, ULONG ulFlag, LPMESSAGE lpMessage);
 	LPSPropTagArray m_lpNamedProps;
 	ULONG m_ulErrorCount;
 
@@ -149,7 +149,7 @@ ICalToMapiImpl::~ICalToMapiImpl()
 void ICalToMapiImpl::Clean()
 {
 	m_ulErrorCount = 0;
-	for (std::vector<icalitem*>::iterator i = m_vMessages.begin(); i != m_vMessages.end(); i++) {
+	for (std::vector<icalitem *>::const_iterator i = m_vMessages.begin(); i != m_vMessages.end(); ++i) {
 		if ((*i)->lpRecurrence)
 			delete (*i)->lpRecurrence;
 		MAPIFreeBuffer((*i)->base);
@@ -417,8 +417,8 @@ HRESULT ICalToMapiImpl::GetItem(ULONG ulPosition, ULONG ulFlags, LPMESSAGE lpMes
 	HRESULT hr = hrSuccess;
 	ICalRecurrence cRec;
 	icalitem *lpItem = NULL;
-	std::vector<icalitem*>::iterator iItem;
-	std::list<icalitem::exception>::iterator iEx;
+	std::vector<icalitem *>::const_iterator iItem;
+	std::list<icalitem::exception>::const_iterator iEx;
 	ULONG ulANr = 0;
 	LPATTACH lpAttach = NULL;
 	LPMESSAGE lpExMsg = NULL;
@@ -606,10 +606,11 @@ exit:
  * 
  * @return MAPI error code
  */
-HRESULT ICalToMapiImpl::SaveProps(std::list<SPropValue> *lpPropList, LPMAPIPROP lpMapiProp)
+HRESULT ICalToMapiImpl::SaveProps(const std::list<SPropValue> *lpPropList,
+    LPMAPIPROP lpMapiProp)
 {
 	HRESULT hr = hrSuccess;
-	std::list<SPropValue>::iterator iProps;
+	std::list<SPropValue>::const_iterator iProps;
 	LPSPropValue lpsPropVals = NULL;
 	int i;
 
@@ -641,11 +642,12 @@ exit:
  * 
  * @return MAPI error code
  */
-HRESULT ICalToMapiImpl::SaveRecipList(std::list<icalrecip> *lplstRecip, ULONG ulFlag, LPMESSAGE lpMessage)
+HRESULT ICalToMapiImpl::SaveRecipList(const std::list<icalrecip> *lplstRecip,
+    ULONG ulFlag, LPMESSAGE lpMessage)
 {
 	HRESULT hr = hrSuccess;
 	LPADRLIST lpRecipients = NULL;
-	std::list<icalrecip>::iterator iRecip;
+	std::list<icalrecip>::const_iterator iRecip;
 	std::string strSearch;
 	ULONG i = 0;
 	convert_context converter;
@@ -735,11 +737,11 @@ exit:
  * @note  The properties dispidNonSendableCC, dispidNonSendableBCC are not set
  *
  */
-HRESULT ICalToMapiImpl::SaveAttendeesString(std::list<icalrecip> *lplstRecip, LPMESSAGE lpMessage)
+HRESULT ICalToMapiImpl::SaveAttendeesString(const std::list<icalrecip> *lplstRecip, LPMESSAGE lpMessage)
 {
 	HRESULT hr = hrSuccess;
 
-	std::list<icalrecip>::iterator iRecip;
+	std::list<icalrecip>::const_iterator iRecip;
 	std::wstring strAllAttendees;
 	std::wstring strToAttendees;
 	std::wstring strCCAttendees;

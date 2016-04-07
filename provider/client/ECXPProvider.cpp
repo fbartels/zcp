@@ -115,7 +115,7 @@ HRESULT ECXPProvider::TransportLogon(LPMAPISUP lpMAPISup, ULONG ulUIParam, LPTST
 	HRESULT			hr = hrSuccess;
 	ECXPLogon		*lpXPLogon = NULL;
 	WSTransport		*lpTransport = NULL;
-	ECMapProvider::iterator iterMap;
+	ECMapProvider::const_iterator iterMap;
 	std::string		strServerURL;
 	std::string		strUniqueId;
 	BOOL			bOffline = FALSE;

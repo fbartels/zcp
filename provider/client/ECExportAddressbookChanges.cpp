@@ -329,7 +329,7 @@ HRESULT ECExportAddressbookChanges::UpdateState(LPSTREAM lpStream)
 	ULONG ulCount = 0;
 	ULONG ulWritten = 0;
 	ULONG ulProcessed = 0;
-	std::set<ULONG>::iterator iterProcessed;
+	std::set<ULONG>::const_iterator iterProcessed;
 
 	if(m_ulThisChange == m_ulChanges) {
 		// All changes have been processed, we can discard processed changes and go to the next server change ID

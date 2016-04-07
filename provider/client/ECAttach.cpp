@@ -355,7 +355,7 @@ exit:
 HRESULT ECAttach::HrSaveChild(ULONG ulFlags, MAPIOBJECT *lpsMapiObject)
 {
 	HRESULT hr = hrSuccess;
-	ECMapiObjects::iterator iterSObj;
+	ECMapiObjects::const_iterator iterSObj;
 
 	pthread_mutex_lock(&m_hMutexMAPIObject);
 

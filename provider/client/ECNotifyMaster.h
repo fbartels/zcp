@@ -63,7 +63,7 @@ typedef HRESULT(ECNotifyClient::*NOTIFYCALLBACK)(ULONG,const NOTIFYLIST &);
 class ECNotifySink {
 public:
 	ECNotifySink(ECNotifyClient *lpClient, NOTIFYCALLBACK fnCallback);
-	HRESULT Notify(ULONG ulConnection, NOTIFYLIST lNotifications);
+	HRESULT Notify(ULONG ulConnection, const NOTIFYLIST &lNotifications) const;
 	bool IsClient(const ECNotifyClient *) const;
 
 private:

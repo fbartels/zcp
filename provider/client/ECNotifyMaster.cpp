@@ -72,7 +72,9 @@ inline ECNotifySink::ECNotifySink(ECNotifyClient *lpClient, NOTIFYCALLBACK fnCal
 	, m_fnCallback(fnCallback)
 { }
 
-inline HRESULT ECNotifySink::Notify(ULONG ulConnection, NOTIFYLIST lNotifications) {
+inline HRESULT ECNotifySink::Notify(ULONG ulConnection,
+    const NOTIFYLIST &lNotifications) const
+{
 	return CALL_MEMBER_FN(*m_lpClient, m_fnCallback)(ulConnection, lNotifications);
 }
 
@@ -437,7 +439,7 @@ void* ECNotifyMaster::NotifyWatch(void *pTmpNotifyMaster)
 			if (pNotifyMaster->m_bThreadExit)
 				goto exit;
 			else {
-				NOTIFYCLIENTLIST::iterator iterNotifyClients;
+				NOTIFYCLIENTLIST::const_iterator iterNotifyClients;
 
 				// We have a new session ID, notify reload
 
@@ -478,7 +480,7 @@ void* ECNotifyMaster::NotifyWatch(void *pTmpNotifyMaster)
 		}
 
 		for (iterNotifications = mapNotifications.begin(); iterNotifications != mapNotifications.end(); iterNotifications++) {
-			NOTIFYCONNECTIONCLIENTMAP::iterator iterClient;
+			NOTIFYCONNECTIONCLIENTMAP::const_iterator iterClient;
 
 			/*
 			 * Check if we have a client registered for this connection

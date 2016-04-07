@@ -355,7 +355,7 @@ exit:
 
 HRESULT RemoveAllProviders(ECMapProvider* lpmapProvider)
 {
-	ECMapProvider::iterator iterProvider;
+	ECMapProvider::const_iterator iterProvider;
 	
 	if (lpmapProvider == NULL)
 		return MAPI_E_INVALID_PARAMETER;
@@ -384,7 +384,7 @@ HRESULT SetProviderMode(IMAPISupport *lpMAPISup, ECMapProvider* lpmapProvider, L
 {
 	HRESULT hr = hrSuccess;
 #ifdef HAVE_OFFLINE_SUPPORT
-	ECMapProvider::iterator iterProvider;
+	ECMapProvider::const_iterator iterProvider;
 	SPropValue sProps;
 	LPPROFSECT lpProfSect = NULL;
 
@@ -466,7 +466,7 @@ exit:
 HRESULT GetProviders(ECMapProvider* lpmapProvider, IMAPISupport *lpMAPISup, const char *lpszProfileName, ULONG ulFlags, PROVIDER_INFO* lpsProviderInfo)
 {
 	HRESULT hr = hrSuccess;
-	ECMapProvider::iterator iterProvider;
+	ECMapProvider::const_iterator iterProvider;
 	PROVIDER_INFO sProviderInfo;
 	ECMSProvider *lpECMSProvider = NULL;
 	ECABProvider *lpECABProvider = NULL;

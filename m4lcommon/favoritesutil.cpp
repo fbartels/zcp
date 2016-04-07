@@ -218,7 +218,7 @@ HRESULT DelFavoriteFolder(IMAPIFolder *lpShortcutFolder, LPSPropValue lpPropSour
 	LPENTRYLIST lpsMsgList = NULL;
 	SizedSPropTagArray(2, sPropDelFavo) = {2, { PR_ENTRYID, PR_FAV_PUBLIC_SOURCE_KEY }};
 	std::list<string>	listSourceKey;
-	std::list<string>::iterator ilistSourceKey;
+	std::list<std::string>::const_iterator ilistSourceKey;
 	string strSourceKey;
 	SPropValue sPropSourceKey;
 	ULONG ulMaxRows = 0;

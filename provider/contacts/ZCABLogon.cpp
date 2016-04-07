@@ -176,7 +176,8 @@ exit:
 
 HRESULT ZCABLogon::ClearFolderList()
 {
-	for (std::vector<zcabFolderEntry>::iterator i = m_lFolders.begin(); i != m_lFolders.end(); i++) {
+	for (std::vector<zcabFolderEntry>::const_iterator i = m_lFolders.begin();
+	     i != m_lFolders.end(); ++i) {
 		MAPIFreeBuffer(i->lpStore);
 		MAPIFreeBuffer(i->lpFolder);
 	}

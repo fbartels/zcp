@@ -157,7 +157,7 @@ HRESULT MapiToICalImpl::AddMessage(LPMESSAGE lpMessage, const std::string &strSr
 	HRESULT hr = hrSuccess;
 	VConverter *lpVEC = NULL;
 	std::list<icalcomponent*> lstEvents;
-	std::list<icalcomponent*>::iterator iEvents;
+	std::list<icalcomponent *>::const_iterator iEvents;
 	icalproperty_method icMethod = ICAL_METHOD_NONE;
 	LPSPropValue lpMessageClass = NULL;
 	TIMEZONE_STRUCT ttTZinfo = {0};

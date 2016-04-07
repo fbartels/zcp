@@ -721,7 +721,7 @@ HRESULT ZCABContainer::GetHierarchyTable(ULONG ulFlags, LPMAPITABLE *lppTable)
 #define TCOLS 9
 	SizedSPropTagArray(TCOLS, sptaCols) = {TCOLS, {PR_ENTRYID, PR_STORE_ENTRYID, PR_DISPLAY_NAME_W, PR_OBJECT_TYPE, PR_CONTAINER_FLAGS, PR_DISPLAY_TYPE, PR_AB_PROVIDER_ID, PR_DEPTH, PR_INSTANCE_KEY}};
 	enum {ENTRYID = 0, STORE_ENTRYID, DISPLAY_NAME, OBJECT_TYPE, CONTAINER_FLAGS, DISPLAY_TYPE, AB_PROVIDER_ID, DEPTH, INSTANCE_KEY, ROWID};
-	std::vector<zcabFolderEntry>::iterator iter;
+	std::vector<zcabFolderEntry>::const_iterator iter;
 	ULONG ulInstance = 0;
 	SPropValue sProps[TCOLS + 1];
 	convert_context converter;
@@ -964,7 +964,7 @@ HRESULT ZCABContainer::OpenEntry(ULONG cbEntryID, LPENTRYID lpEntryID, LPCIID lp
 			if (hr != hrSuccess)
 				goto exit;
 
-			std::vector<zcabFolderEntry>::iterator i;
+			std::vector<zcabFolderEntry>::const_iterator i;
 			// find the store of this folder
 			for (i = m_lpFolders->begin(); i != m_lpFolders->end(); i++) {
 				ULONG res;

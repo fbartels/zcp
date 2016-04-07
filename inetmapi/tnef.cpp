@@ -162,8 +162,8 @@ ECTNEF::ECTNEF(ULONG ulFlags, IMessage *lpMessage, IStream *lpStream)
  */
 ECTNEF::~ECTNEF()
 {
-	std::list<SPropValue *>::iterator iterProps;
-	std::list<tnefattachment*>::iterator iterAttach;
+	std::list<SPropValue *>::const_iterator iterProps;
+	std::list<tnefattachment *>::const_iterator iterAttach;
 
 	for(iterProps = lstProps.begin(); iterProps != lstProps.end(); iterProps++) {
 		MAPIFreeBuffer(*iterProps);
@@ -181,7 +181,7 @@ ECTNEF::~ECTNEF()
  */
 void ECTNEF::FreeAttachmentData(tnefattachment* lpTnefAtt)
 {
-	std::list<SPropValue *>::iterator iterProps;
+	std::list<SPropValue *>::const_iterator iterProps;
 
 	delete[] lpTnefAtt->data;
 	for (iterProps = lpTnefAtt->lstProps.begin(); iterProps != lpTnefAtt->lstProps.end(); iterProps++) {
@@ -584,7 +584,7 @@ exit:
 HRESULT ECTNEF::HrWritePropStream(IStream *lpStream, std::list<SPropValue *> &proplist)
 {
 	HRESULT hr;
-	std::list<SPropValue *>::iterator iterProps;
+	std::list<SPropValue *>::const_iterator iterProps;
 
 	hr = HrWriteDWord(lpStream, proplist.size());
 	if(hr != hrSuccess)
@@ -1594,7 +1594,7 @@ exit:
 HRESULT ECTNEF::Finish()
 {
 	HRESULT hr = hrSuccess;
-	std::list<SPropValue *>::iterator iterProps;
+	std::list<SPropValue *>::const_iterator iterProps;
 	IStream *lpPropStream = NULL;
 	STATSTG sStat;
 	ULONG ulChecksum;
@@ -1606,7 +1606,7 @@ HRESULT ECTNEF::Finish()
 	LPSTREAM lpAttStream = NULL;
 	LPMESSAGE lpAttMessage = NULL;
 	IStream *lpSubStream = NULL;
-	std::list<tnefattachment*>::iterator iterAttach;
+	std::list<tnefattachment *>::const_iterator iterAttach;
 	SPropValue sProp;
 
 	if(ulFlags == TNEF_DECODE) {

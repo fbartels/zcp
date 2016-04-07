@@ -836,7 +836,7 @@ HRESULT ICalRecurrence::HrCreateICalRecurrence(TIMEZONE_STRUCT sTimeZone, bool b
 	HRESULT hr = hrSuccess;
 	icalrecurrencetype icRRule;
 	std::list<time_t> lstExceptions;
-	std::list<time_t>::iterator iException;
+	std::list<time_t>::const_iterator iException;
 	icaltimetype ittExDate;
 	TIMEZONE_STRUCT sTZgmt = {0};
 

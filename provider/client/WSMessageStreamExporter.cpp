@@ -171,6 +171,6 @@ WSMessageStreamExporter::~WSMessageStreamExporter()
 		m_ptrTransport->m_lpCmd->soap->fshutdownsocket(m_ptrTransport->m_lpCmd->soap, m_ptrTransport->m_lpCmd->soap->socket, 0);
 	}
 
-	for (StreamInfoMap::iterator i = m_mapStreamInfo.begin(); i != m_mapStreamInfo.end(); ++i)
+	for (StreamInfoMap::const_iterator i = m_mapStreamInfo.begin(); i != m_mapStreamInfo.end(); ++i)
 		delete i->second;
 }

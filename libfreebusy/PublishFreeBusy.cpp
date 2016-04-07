@@ -448,11 +448,11 @@ HRESULT PublishFreeBusy::HrMergeBlocks(FBBlock_1 **lppfbBlocks, ULONG *lpcValues
 	time_t tsLastTime = 0;
 	TSARRAY sTsitem = {0,0,0};
 	std::map<time_t , TSARRAY> mpTimestamps;
-	std::map<time_t , TSARRAY>::iterator iterTs;
+	std::map<time_t, TSARRAY>::const_iterator iterTs;
 	std::vector <ULONG> vctStatus;
 	std::vector <ULONG>::iterator iterStatus;
 	std::vector <FBBlock_1> vcFBblocks;
-	std::vector <FBBlock_1>::iterator iterVcBlocks;
+	std::vector<FBBlock_1>::const_iterator iterVcBlocks;
 	time_t tTemp = 0;
 
 	m_lpLogger->Log(EC_LOGLEVEL_DEBUG, "Input blocks %ul", cValues);

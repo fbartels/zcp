@@ -739,7 +739,8 @@ ECProperty::~ECProperty()
 	}
 }
 
-HRESULT ECProperty::CopyToByRef(LPSPropValue lpsProp) {
+HRESULT ECProperty::CopyToByRef(LPSPropValue lpsProp) const
+{
 	DEBUG_GUARD;
 
     HRESULT hr = hrSuccess;
@@ -1057,7 +1058,8 @@ bool ECProperty::operator==(const ECProperty &property) const {
 			);
 }
 
-SPropValue ECProperty::GetMAPIPropValRef() {
+SPropValue ECProperty::GetMAPIPropValRef(void) const
+{
 	DEBUG_GUARD;
 
 	SPropValue ret;

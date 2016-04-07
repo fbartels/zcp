@@ -185,7 +185,7 @@ M4LProfAdmin::M4LProfAdmin() {
 }
 
 M4LProfAdmin::~M4LProfAdmin() {
-    list<profEntry*>::iterator i;
+	std::list<profEntry *>::const_iterator i;
     
 	pthread_mutex_lock(&m_mutexProfiles);
 
@@ -529,8 +529,8 @@ M4LMsgServiceAdmin::M4LMsgServiceAdmin(M4LProfSect *profilesection) {
 }
 
 M4LMsgServiceAdmin::~M4LMsgServiceAdmin() {
-    list<serviceEntry*>::iterator s;
-    list<providerEntry*>::iterator p;
+	std::list<serviceEntry *>::const_iterator s;
+	std::list<providerEntry *>::const_iterator p;
     
 	pthread_mutex_lock(&m_mutexserviceadmin);
 
@@ -1196,7 +1196,7 @@ M4LMAPISession::M4LMAPISession(LPTSTR new_profileName, M4LMsgServiceAdmin *new_s
 }
 
 M4LMAPISession::~M4LMAPISession() {
-    std::map<GUID, IMsgStore *>::iterator iterStores;
+    std::map<GUID, IMsgStore *>::const_iterator iterStores;
     
     for(iterStores = mapStores.begin(); iterStores != mapStores.end(); iterStores++) {
         iterStores->second->Release();
@@ -1613,7 +1613,7 @@ HRESULT M4LMAPISession::OpenEntry(ULONG cbEntryID, LPENTRYID lpEntryID, LPCIID l
 	GUID guidProvider;
 	bool bStoreEntryID = false;
 	MAPIUID muidOneOff = {MAPI_ONE_OFF_UID};
-	std::map<GUID, IMsgStore *>::iterator iterStores;
+	std::map<GUID, IMsgStore *>::const_iterator iterStores;
 
     if (lpEntryID == NULL) {
 	ec_log_err("M4LMAPISession::OpenEntry() invalid parameters");
@@ -2020,7 +2020,8 @@ M4LAddrBook::M4LAddrBook(M4LMsgServiceAdmin *new_serviceAdmin, LPMAPISUP newlpMA
 }
 
 M4LAddrBook::~M4LAddrBook() {
-	for (list<abEntry>::iterator i = m_lABProviders.begin(); i != m_lABProviders.end(); i++) {
+	for (std::list<abEntry>::const_iterator i = m_lABProviders.begin();
+	     i != m_lABProviders.end(); ++i) {
 		i->lpABLogon->Logoff(0);
 		i->lpABLogon->Release();
 		i->lpABProvider->Release();	// TODO: call shutdown too? useless..
@@ -2037,7 +2038,7 @@ HRESULT M4LAddrBook::addProvider(const std::string &profilename, const std::stri
 	LPBYTE lpSecurity = NULL;
 	LPMAPIERROR lpMAPIError = NULL;
 	LPABLOGON lpABLogon = NULL;
-	pair<map<LPABPROVIDER,LPABLOGON>::iterator, bool> iRes;
+	std::pair<std::map<LPABPROVIDER, LPABLOGON>::const_iterator, bool> iRes;
 	abEntry entry;
 
 	hr = newProvider->Logon(m_lpMAPISup, 0, (TCHAR*)profilename.c_str(), 0, &cbSecurity, &lpSecurity, &lpMAPIError, &lpABLogon);
@@ -3035,7 +3036,7 @@ exit:
  */
 SCODE __stdcall MAPIAllocateMore(ULONG cbSize, LPVOID lpObject, LPVOID* lppBuffer) {
 	HRESULT hr = hrSuccess;
-	map<void*, list<void*>* >::iterator mlptr;
+	std::map<void *, list<void *> *>::const_iterator mlptr;
 
 	if (lppBuffer == NULL) {
 		hr = MAPI_E_INVALID_PARAMETER;
@@ -3121,7 +3122,7 @@ ULONG __stdcall MAPIFreeBuffer(LPVOID lpBuffer) {
 #if _MAPI_MEM_DEBUG
 			fprintf(stderr, "  Freeing: %p\n", (*i));
 #endif
- 			delete [] (char*)(*i);
+			delete[] static_cast<char *>(*i);
 		}
 
 		// delete list

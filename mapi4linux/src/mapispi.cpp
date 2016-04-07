@@ -111,7 +111,7 @@ M4LMAPISupport::M4LMAPISupport(LPMAPISESSION new_session, LPMAPIUID lpUid, SVCSe
 }
 
 M4LMAPISupport::~M4LMAPISupport() {
-	M4LSUPPORTADVISES::iterator i;
+	M4LSUPPORTADVISES::const_iterator i;
 
 	delete lpsProviderUID;
 	for (i = m_advises.begin(); i != m_advises.end(); i++)
@@ -187,7 +187,7 @@ HRESULT M4LMAPISupport::Notify(LPNOTIFKEY lpKey, ULONG cNotification, LPNOTIFICA
 	TRACE_MAPILIB(TRACE_ENTRY, "M4LMAPISupport::Notify", "");
 	HRESULT hr = hrSuccess;
 	LPMAPIADVISESINK lpAdviseSink = NULL;
-	M4LSUPPORTADVISES::iterator iter;
+	M4LSUPPORTADVISES::const_iterator iter;
 
 	pthread_mutex_lock(&m_advises_mutex);
 

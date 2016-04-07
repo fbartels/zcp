@@ -203,9 +203,9 @@ HRESULT WSMAPIPropStorage::HrMapiObjectToSoapObject(MAPIOBJECT *lpsMapiObject, s
 	HRESULT hr = hrSuccess;
 	unsigned int size;
 	unsigned int i;
-	std::list<ULONG>::iterator iterDelProps;
-	std::list<ECProperty>::iterator iterModProps;
-	ECMapiObjects::iterator iterChildren;
+	std::list<ULONG>::const_iterator iterDelProps;
+	std::list<ECProperty>::const_iterator iterModProps;
+	ECMapiObjects::const_iterator iterChildren;
 	ULONG ulPropId = 0;
 	GUID sServerGUID = {0};
 	GUID sSIGUID = {0};
@@ -307,8 +307,8 @@ exit:
 HRESULT WSMAPIPropStorage::HrUpdateSoapObject(MAPIOBJECT *lpsMapiObject, struct saveObject *lpsSaveObj, convert_context *lpConverter)
 {
 	HRESULT hr;
-	ECMapiObjects::iterator iter;
-	std::list<ECProperty>::iterator iterProps;
+	ECMapiObjects::const_iterator iter;
+	std::list<ECProperty>::const_iterator iterProps;
 	SPropValue sData;
 	ULONG ulPropId = 0;
 	int i;
@@ -423,7 +423,7 @@ ECRESULT WSMAPIPropStorage::EcFillPropValues(struct saveObject *lpsSaveObj, MAPI
 // removes current list of del/mod props, and sets server changes in the lists
 HRESULT WSMAPIPropStorage::HrUpdateMapiObject(MAPIOBJECT *lpClientObj, struct saveObject *lpsServerObj)
 {
-	ECMapiObjects::iterator iterObj, iterDel;
+	ECMapiObjects::const_iterator iterObj, iterDel;
 	int i;
 
 	lpClientObj->ulObjId = lpsServerObj->ulServerId;

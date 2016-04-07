@@ -131,8 +131,8 @@ BOOL ECMAPITable::IsDeferred()
 ECMAPITable::~ECMAPITable()
 {
 	TRACE_MAPI(TRACE_ENTRY, "ECMAPITable::~ECMAPITable","");
-	std::set<ULONG>::iterator iterMapInt;
-	std::set<ULONG>::iterator iterMapIntDel;
+	std::set<ULONG>::const_iterator iterMapInt;
+	std::set<ULONG>::const_iterator iterMapIntDel;
 
 	// Remove all advises	
 	iterMapInt = m_ulConnectionList.begin();
@@ -231,7 +231,7 @@ exit:
 HRESULT ECMAPITable::Unadvise(ULONG ulConnection)
 {
 	HRESULT hr = hrSuccess;
-	std::set<ULONG>::iterator iterMapInt;
+	std::set<ULONG>::const_iterator iterMapInt;
 
 	pthread_mutex_lock(&m_hLock);
 
@@ -729,7 +729,7 @@ HRESULT ECMAPITable::Reload(void *lpParam)
 {
 	HRESULT hr = hrSuccess;
 	ECMAPITable *lpThis = (ECMAPITable *)lpParam;
-	std::set<ULONG>::iterator iter;
+	std::set<ULONG>::const_iterator iter;
 
 	// Locking m_hLock is not allowed here since when we are called, the SOAP transport in lpTableOps  
 	// will be locked. Since normally m_hLock is locked before SOAP, locking m_hLock *after* SOAP here  

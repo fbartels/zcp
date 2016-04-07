@@ -177,7 +177,7 @@ HRESULT ECArchiveAwareMsgStore::GetArchiveStore(LPSBinary lpStoreEID, ECMsgStore
 	HRESULT hr;
 
 	const std::vector<BYTE> eid(lpStoreEID->lpb, lpStoreEID->lpb + lpStoreEID->cb);
-	MsgStoreMap::iterator iterStore = m_mapStores.find(eid);
+	MsgStoreMap::const_iterator iterStore = m_mapStores.find(eid);
 	if (iterStore != m_mapStores.end()) {
 		hr = iterStore->second->QueryInterface(IID_ECMsgStore, (LPVOID*)lppArchiveStore);
 		if (hr != hrSuccess)

@@ -257,7 +257,7 @@ MAPINotifSink::~MAPINotifSink() {
     pthread_cond_destroy(&m_hCond);
     pthread_mutex_destroy(&m_hMutex);
 
-	std::list<NOTIFICATION *>::iterator iterNotif;
+	std::list<NOTIFICATION *>::const_iterator iterNotif;
 
     for(iterNotif = m_lstNotifs.begin(); iterNotif != m_lstNotifs.end(); iterNotif++) 
 		MAPIFreeBuffer(*iterNotif);	
@@ -294,7 +294,7 @@ ULONG MAPINotifSink::OnNotify(ULONG cNotifications, LPNOTIFICATION lpNotificatio
 HRESULT MAPINotifSink::GetNotifications(ULONG *lpcNotif, LPNOTIFICATION *lppNotifications, BOOL fNonBlock, ULONG timeout)
 {
     HRESULT hr = hrSuccess;
-    std::list<NOTIFICATION *>::iterator iterNotif;
+    std::list<NOTIFICATION *>::const_iterator iterNotif;
     ULONG cNotifs = 0;
     struct timespec t;
     

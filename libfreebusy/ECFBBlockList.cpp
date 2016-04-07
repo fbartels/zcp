@@ -205,7 +205,7 @@ void ECFBBlockList::Clear()
 ULONG ECFBBlockList::Size()
 {
 	ULONG			size = 0;
-	mapFB::iterator	FBIter;
+	mapFB::const_iterator FBIter;
 
 	FBIter = m_FBMap.begin();
 	
@@ -231,7 +231,7 @@ ULONG ECFBBlockList::Size()
 HRESULT ECFBBlockList::GetEndTime(LONG *lprtmEnd)
 {
 	HRESULT			hr = hrSuccess;
-	mapFB::iterator	FBIter;
+	mapFB::const_iterator FBIter;
 	LONG			ulEnd = 0;
 	bool			bFound = false;
 

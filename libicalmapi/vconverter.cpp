@@ -396,7 +396,7 @@ HRESULT VConverter::HrResolveUser(void *base , std::list<icalrecip> *lplstIcalRe
 	ULONG cbDDEntryID;
 	IABContainer *lpAddrFolder = NULL;
 	FlagList *lpFlagList = NULL;
-	std::list<icalrecip>::iterator iIcalRecip;
+	std::list<icalrecip>::const_iterator iIcalRecip;
 	icalrecip icalRecipient;
 	ULONG ulRecpCnt = 0;
 	ULONG ulRetn = 0;
@@ -865,7 +865,7 @@ HRESULT VConverter::HrAddBusyStatus(icalcomponent *lpicEvent, icalproperty_metho
 	HRESULT hr = hrSuccess;
 	SPropValue sPropVal;
 	icalproperty* lpicProp = NULL;
-	std::list<icalrecip>::iterator iIcalRecip;	
+	std::list<icalrecip>::const_iterator iIcalRecip;
 
 	// default: busy
 	// 0: free
@@ -1081,7 +1081,7 @@ HRESULT VConverter::HrAddCategories(icalcomponent *lpicEvent, icalitem *lpIcalIt
 	icalproperty *lpicProp = NULL;
 	const char* lpszCategories = NULL;
 	std::vector<std::string> vCategories;
-	std::vector<std::string>::iterator iCats;
+	std::vector<std::string>::const_iterator iCats;
 	int i;
 
 	// Set keywords / CATEGORIES

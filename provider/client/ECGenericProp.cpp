@@ -553,9 +553,9 @@ HRESULT ECGenericProp::SaveChanges(ULONG ulFlags)
 {
 	HRESULT			hr = hrSuccess;
 	ECPropertyEntryIterator iterProps;
-	std::list<ULONG>::iterator iterPropTags;
-	std::list<ECProperty>::iterator iterPropVals;
-	std::set<ULONG>::iterator iterDelProps;
+	std::list<ULONG>::const_iterator iterPropTags;
+	std::list<ECProperty>::const_iterator iterPropVals;
+	std::set<ULONG>::const_iterator iterDelProps;
 
 	pthread_mutex_lock(&m_hMutexMAPIObject);
 
@@ -788,8 +788,8 @@ HRESULT ECGenericProp::HrLoadProps()
 {
 	HRESULT			hr = hrSuccess;
 	ECPropertyEntryIterator iterProps;
-	std::list<ULONG>::iterator iterPropTags;
-	std::list<ECProperty>::iterator iterPropVals;
+	std::list<ULONG>::const_iterator iterPropTags;
+	std::list<ECProperty>::const_iterator iterPropVals;
 
 	if(lpStorage == NULL)
 		return MAPI_E_CALL_FAILED;

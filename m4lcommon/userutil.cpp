@@ -453,7 +453,8 @@ HRESULT GetMailboxData(ECLogger *lpLogger, IMAPISession *lpMapiSession, const ch
 		goto exit;
 
 	lpSrvNameList->cServers = 0;
-	for(std::set<servername>::iterator iServer = listServers.begin(); iServer != listServers.end(); iServer++)
+	for (std::set<servername>::const_iterator iServer = listServers.begin();
+	     iServer != listServers.end(); ++iServer)
 		lpSrvNameList->lpszaServer[lpSrvNameList->cServers++] = iServer->c_str();
 
 	hr = ptrServiceAdmin->GetServerDetails(lpSrvNameList, MAPI_UNICODE, &lpSrvList);
@@ -469,7 +470,8 @@ HRESULT GetMailboxData(ECLogger *lpLogger, IMAPISession *lpMapiSession, const ch
 			lpLogger->Log(EC_LOGLEVEL_ERROR, "Details for one or more requested servers was not found.");
 			lpLogger->Log(EC_LOGLEVEL_ERROR, "This usually indicates a misconfigured home server for a user.");
 			lpLogger->Log(EC_LOGLEVEL_ERROR, "Requested servers:");
-			for(std::set<servername>::iterator iServer = listServers.begin(); iServer != listServers.end(); iServer++)
+			for (std::set<servername>::const_iterator iServer = listServers.begin();
+			     iServer != listServers.end(); ++iServer)
 				lpLogger->Log(EC_LOGLEVEL_ERROR, "* %ls", iServer->c_str());
 		}
 		goto exit;

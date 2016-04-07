@@ -911,8 +911,8 @@ HRESULT ECMessage::GetAttachmentTable(ULONG ulFlags, LPMAPITABLE *lppTable)
 		// table received from the server through m_sMapiObject, but the PR_ATTACH_NUM is re-generated locally
 		if (!fNew) {
 			// existing message has "table" in m_sMapiObject data
-			ECMapiObjects::iterator iterObjects;
-			std::list<ECProperty>::iterator iterPropVals;
+			ECMapiObjects::const_iterator iterObjects;
+			std::list<ECProperty>::const_iterator iterPropVals;
 
 			for (iterObjects = m_sMapiObject->lstChildren->begin(); iterObjects != m_sMapiObject->lstChildren->end(); iterObjects++) {
 
@@ -1212,8 +1212,8 @@ HRESULT ECMessage::GetRecipientTable(ULONG ulFlags, LPMAPITABLE *lppTable)
 		// Get the existing table for this message (there is none if the message is unsaved)
 		if (!fNew) {
 			// existing message has "table" in m_sMapiObject data
-			ECMapiObjects::iterator iterObjects;
-			std::list<ECProperty>::iterator iterPropVals;
+			ECMapiObjects::const_iterator iterObjects;
+			std::list<ECProperty>::const_iterator iterPropVals;
 
 			for (iterObjects = m_sMapiObject->lstChildren->begin(); iterObjects != m_sMapiObject->lstChildren->end(); iterObjects++) {
 
@@ -1866,7 +1866,7 @@ HRESULT ECMessage::SaveRecips()
 						j = 0;
 	ULONG				ulRealObjType;
 	LPSPropValue		lpObjType = NULL;
-	ECMapiObjects::iterator iterSObj;
+	ECMapiObjects::const_iterator iterSObj;
 
 	pthread_mutex_lock(&m_hMutexMAPIObject);
 
@@ -1948,7 +1948,7 @@ exit:
 }
 
 void ECMessage::RecursiveMarkDelete(MAPIOBJECT *lpObj) {
-	ECMapiObjects::iterator iterSObj;
+	ECMapiObjects::const_iterator iterSObj;
 
 	lpObj->bDelete = true;
 	lpObj->lstDeleted->clear();
@@ -1965,7 +1965,7 @@ BOOL ECMessage::HasAttachment()
 {
 	HRESULT hr = hrSuccess;
 	BOOL bRet = TRUE;
-	ECMapiObjects::iterator iterObjects;
+	ECMapiObjects::const_iterator iterObjects;
 
 	pthread_mutex_lock(&m_hMutexMAPIObject);
 
@@ -2005,7 +2005,7 @@ HRESULT ECMessage::SyncAttachments()
 	LPULONG				lpulStatus = NULL;
 	unsigned int		i = 0;
 	LPSPropValue		lpObjType = NULL;
-	ECMapiObjects::iterator iterSObj;
+	ECMapiObjects::const_iterator iterSObj;
 
 	pthread_mutex_lock(&m_hMutexMAPIObject);
 
@@ -2059,10 +2059,10 @@ exit:
 
 HRESULT ECMessage::UpdateTable(ECMemTable *lpTable, ULONG ulObjType, ULONG ulObjKeyProp) {
 	HRESULT hr = hrSuccess;
-	ECMapiObjects::iterator iterObjects;
+	ECMapiObjects::const_iterator iterObjects;
 	SPropValue sKeyProp;
 	SPropValue sUniqueProp;
-	std::list<ECProperty>::iterator iterPropVals;
+	std::list<ECProperty>::const_iterator iterPropVals;
 	LPSPropValue lpProps = NULL;
 	LPSPropValue lpNewProps = NULL;
 	LPSPropValue lpAllProps = NULL;
@@ -2150,8 +2150,8 @@ exit:
 HRESULT ECMessage::SaveChanges(ULONG ulFlags)
 {
 	HRESULT				hr = hrSuccess;
-	std::map<ULONG, SBinary>::iterator iterSubMessage;
-	std::map<ULONG, SBinary>::iterator iterSubMessageNext;
+	std::map<ULONG, SBinary>::const_iterator iterSubMessage;
+	std::map<ULONG, SBinary>::const_iterator iterSubMessageNext;
 
 	LPSPropTagArray		lpPropTagArray = NULL;
 	LPSPropValue		lpsPropMessageFlags = NULL;
@@ -2874,8 +2874,8 @@ struct findobject_if {
 static HRESULT HrCopyObjIDs(MAPIOBJECT *lpDest, const MAPIOBJECT *lpSrc)
 {
     HRESULT hr;
-    ECMapiObjects::iterator iterSrc;
-    ECMapiObjects::iterator iterDest;
+    ECMapiObjects::const_iterator iterSrc;
+    ECMapiObjects::const_iterator iterDest;
 
     lpDest->ulObjId = lpSrc->ulObjId;
 
@@ -2893,13 +2893,13 @@ static HRESULT HrCopyObjIDs(MAPIOBJECT *lpDest, const MAPIOBJECT *lpSrc)
 HRESULT ECMessage::HrSaveChild(ULONG ulFlags, MAPIOBJECT *lpsMapiObject) {
 	HRESULT hr = hrSuccess;
 	IMAPITable *lpTable = NULL;
-	ECMapiObjects::iterator iterSObj;
+	ECMapiObjects::const_iterator iterSObj;
 	SPropValue sKeyProp;
 	LPSPropValue lpProps = NULL;
 	ULONG ulProps = 0;
 	LPSPropValue lpPropID = NULL;
 	LPSPropValue lpPropObjType = NULL;
-	std::list<ECProperty>::iterator iterPropVals;
+	std::list<ECProperty>::const_iterator iterPropVals;
 	ULONG i;
 
 	pthread_mutex_lock(&m_hMutexMAPIObject);

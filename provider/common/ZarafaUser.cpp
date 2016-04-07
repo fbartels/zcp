@@ -274,8 +274,8 @@ unsigned int objectdetails_t::GetObjectSize()
 {
 	unsigned int ulSize = sizeof(*this);
 	property_map::const_iterator i;
-	property_mv_map::iterator mvi;
-	std::list<std::string>::iterator istr;
+	property_mv_map::const_iterator mvi;
+	std::list<std::string>::const_iterator istr;
 
 	ulSize += MEMORY_USAGE_MAP(m_mapProps.size(), property_map);
 	for (i = m_mapProps.begin(); i != m_mapProps.end(); i++)
@@ -294,10 +294,9 @@ unsigned int objectdetails_t::GetObjectSize()
 std::string objectdetails_t::ToStr()
 {
 	std::string str;
-    property_map::const_iterator i;
-    property_mv_map::iterator mvi;
-    std::list<std::string>::iterator istr;
-
+	property_map::const_iterator i;
+	property_mv_map::const_iterator mvi;
+	std::list<std::string>::const_iterator istr;
 
 	str = "propmap: ";
 	for (i = m_mapProps.begin(); i != m_mapProps.end(); i++) {

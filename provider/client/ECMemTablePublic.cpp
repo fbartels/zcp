@@ -197,7 +197,7 @@ static LONG __stdcall AdviseFolderCallback(void *lpContext, ULONG cNotif,
 		return S_OK;
 	}
 
-	ECMemTablePublic::ECMAPFolderRelation::iterator	iterFolder;
+	ECMemTablePublic::ECMAPFolderRelation::const_iterator iterFolder;
 	ECMemTablePublic *lpMemTablePublic = (ECMemTablePublic*)lpContext;
 	ULONG ulResult;
 	SBinary sInstanceKey;
@@ -354,7 +354,7 @@ HRESULT ECMemTablePublic::ModifyRow(SBinary* lpInstanceKey, LPSRow lpsRow)
 	LPENTRYID lpFolderID = NULL;
 	LPENTRYID lpRecordKeyID = NULL;
 	std::string strInstanceKey;
-	ECMAPFolderRelation::iterator	iterRel;
+	ECMAPFolderRelation::const_iterator iterRel;
 	ECKeyTable::UpdateType	ulUpdateType; 
 	ULONG ulRowId;
 	ULONG ulConnection = 0;

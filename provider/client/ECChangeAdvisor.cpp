@@ -105,7 +105,7 @@ ECChangeAdvisor::ECChangeAdvisor(ECMsgStore *lpMsgStore)
 
 ECChangeAdvisor::~ECChangeAdvisor()
 {
-	ConnectionMap::iterator	iterConnection;
+	ConnectionMap::const_iterator iterConnection;
 
 	if (m_ulReloadId)
 		m_lpMsgStore->lpTransport->RemoveSessionReloadCallback(m_ulReloadId);
@@ -201,7 +201,7 @@ HRESULT ECChangeAdvisor::Config(LPSTREAM lpStream, LPGUID /*lpGUID*/,
 	ULONG					ulVal = 0;
 	LPENTRYLIST				lpEntryList = NULL;
 	ULONG					ulRead = {0};
-	ConnectionMap::iterator	iterConnection;
+	ConnectionMap::const_iterator iterConnection;
 	LARGE_INTEGER			liSeekStart = {{0}};
 
 	if (lpAdviseSink == NULL && !(ulFlags & SYNC_CATCHUP)) {
@@ -297,7 +297,7 @@ HRESULT ECChangeAdvisor::PurgeStates()
 	SyncStateMap		mapChangeId;
 
 	std::list<ConnectionMap::value_type>			lstObsolete;
-	std::list<ConnectionMap::value_type>::iterator	iterObsolete;
+	std::list<ConnectionMap::value_type>::const_iterator iterObsolete;
 
 	// First get the most up to date change ids for all registered sync ids (we'll ignore the changeid's since we don't know if we actually got that far)
 	std::transform(m_mapConnections.begin(), m_mapConnections.end(), std::back_inserter(lstSyncId), &GetSyncId);
@@ -323,7 +323,7 @@ HRESULT ECChangeAdvisor::PurgeStates()
 HRESULT ECChangeAdvisor::UpdateState(LPSTREAM lpStream)
 {
 	HRESULT					hr = hrSuccess;
-	ConnectionMap::iterator	iterConnection;
+	ConnectionMap::const_iterator iterConnection;
 	LARGE_INTEGER			liPos = {{0}};
 	ULARGE_INTEGER			uliSize = {{0}};
 	ULONG					ulVal = 0;
@@ -380,7 +380,7 @@ HRESULT ECChangeAdvisor::AddKeys(LPENTRYLIST lpEntryList)
 	HRESULT						hr = hrSuccess;
 	SSyncState					*lpsSyncState = NULL;
 	ECLISTCONNECTION			listConnections;
-	ECLISTCONNECTION::iterator	iterConnection;
+	ECLISTCONNECTION::const_iterator iterConnection;
 	ECLISTSYNCSTATE				listSyncStates;
 
 	if (m_lpChangeAdviseSink == NULL && !(m_ulFlags & SYNC_CATCHUP))

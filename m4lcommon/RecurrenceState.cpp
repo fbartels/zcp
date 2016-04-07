@@ -286,7 +286,7 @@ HRESULT RecurrenceState::ParseBlob(char *lpData, unsigned int ulLen, ULONG ulFla
     HRESULT hr = hrSuccess;
     unsigned int ulReservedBlock1Size;
     unsigned int ulReservedBlock2Size;
-    std::vector<Exception>::iterator iterExceptions;
+    std::vector<Exception>::const_iterator iterExceptions;
     bool bReadValid = false; // Read is valid if first set of exceptions was read ok
 	bool bExtended = false;	 // false if we need to sync extended data from "normal" data
 	convert_context converter;
@@ -514,7 +514,7 @@ HRESULT RecurrenceState::GetBlob(char **lppData, unsigned int *lpulLen, void *ba
 {
     HRESULT hr = hrSuccess;
     BinWriter data;
-    std::vector<Exception>::iterator j = lstExceptions.begin();
+    std::vector<Exception>::const_iterator j = lstExceptions.begin();
     
     // There is one hard requirement: there must be as many Exceptions as there are ExtendedExceptions. Other
     // inconstencies are also bad, but we need at least that to even write the stream
@@ -547,15 +547,15 @@ HRESULT RecurrenceState::GetBlob(char **lppData, unsigned int *lpulLen, void *ba
     WRITELONG(ulFirstDOW);
     WRITELONG(ulDeletedInstanceCount);
     
-    for(std::vector<unsigned int>::iterator i = lstDeletedInstanceDates.begin(); i != lstDeletedInstanceDates.end(); i++) {
-        WRITELONG(*i);
-    }
+	for (std::vector<unsigned int>::const_iterator i = lstDeletedInstanceDates.begin();
+	     i != lstDeletedInstanceDates.end(); ++i)
+		WRITELONG(*i);
     
     WRITELONG(ulModifiedInstanceCount);
     
-    for(std::vector<unsigned int>::iterator i = lstModifiedInstanceDates.begin(); i != lstModifiedInstanceDates.end(); i++) {
-        WRITELONG(*i);
-    }
+	for (std::vector<unsigned int>::const_iterator i = lstModifiedInstanceDates.begin();
+	     i != lstModifiedInstanceDates.end(); ++i)
+		WRITELONG(*i);
     
     WRITELONG(ulStartDate);
     WRITELONG(ulEndDate);
@@ -567,7 +567,7 @@ HRESULT RecurrenceState::GetBlob(char **lppData, unsigned int *lpulLen, void *ba
     
     WRITESHORT(ulExceptionCount);
     
-    for(std::vector<Exception>::iterator i = lstExceptions.begin(); i != lstExceptions.end(); i++) {
+    for (std::vector<Exception>::const_iterator i = lstExceptions.begin(); i != lstExceptions.end(); ++i) {
         WRITELONG(i->ulStartDateTime);
         WRITELONG(i->ulEndDateTime);
         WRITELONG(i->ulOriginalStartDate);
@@ -617,7 +617,7 @@ HRESULT RecurrenceState::GetBlob(char **lppData, unsigned int *lpulLen, void *ba
     WRITELONG((ULONG)strReservedBlock1.size());
     WRITESTRING(strReservedBlock1.c_str(), (ULONG)strReservedBlock1.size());
 
-    for(std::vector<ExtendedException>::iterator i = lstExtendedExceptions.begin(); i != lstExtendedExceptions.end(); i++) {
+    for (std::vector<ExtendedException>::const_iterator i = lstExtendedExceptions.begin(); i != lstExtendedExceptions.end(); ++i) {
         if(ulWriterVersion2 >= 0x00003009) {
             WRITELONG((ULONG)i->strReserved.size()+4);
             WRITELONG(i->ulChangeHighlightValue);

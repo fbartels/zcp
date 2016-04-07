@@ -395,7 +395,9 @@ HRESULT ZCMAPIProp::SaveChanges(ULONG ulFlags)
 	return MAPI_E_NO_SUPPORT;
 }
 
-HRESULT ZCMAPIProp::CopyOneProp(convert_context &converter, ULONG ulFlags, std::map<short, SPropValue>::iterator i, LPSPropValue lpProp, LPSPropValue lpBase)
+HRESULT ZCMAPIProp::CopyOneProp(convert_context &converter, ULONG ulFlags,
+    const std::map<short, SPropValue>::const_iterator &i, LPSPropValue lpProp,
+    LPSPropValue lpBase)
 {
 	HRESULT hr = hrSuccess;
 
@@ -432,7 +434,7 @@ exit:
 HRESULT ZCMAPIProp::GetProps(LPSPropTagArray lpPropTagArray, ULONG ulFlags, ULONG * lpcValues, LPSPropValue * lppPropArray)
 {
 	HRESULT hr = hrSuccess;
-	std::map<short, SPropValue>::iterator i;
+	std::map<short, SPropValue>::const_iterator i;
 	ULONG j = 0;
 	LPSPropValue lpProps = NULL;
 	convert_context converter;
@@ -495,7 +497,7 @@ HRESULT ZCMAPIProp::GetPropList(ULONG ulFlags, LPSPropTagArray * lppPropTagArray
 {
 	HRESULT hr = hrSuccess;
 	LPSPropTagArray lpPropTagArray = NULL;
-	std::map<short, SPropValue>::iterator i;
+	std::map<short, SPropValue>::const_iterator i;
 	ULONG j = 0;
 
 	hr = MAPIAllocateBuffer(CbNewSPropTagArray(m_mapProperties.size()), (void**)&lpPropTagArray);

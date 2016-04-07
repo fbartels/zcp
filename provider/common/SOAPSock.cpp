@@ -515,7 +515,7 @@ BOOL ValidateCertificateChain(PCCERT_CONTEXT pCertificate)
 
 int ssl_verify_callback_zarafa_control(int ok, X509_STORE_CTX *store, BOOL bShowDlg)
 {
-	map<std::string, verifyinfo>::iterator iSCD;			// current certificate data
+	std::map<std::string, verifyinfo>::const_iterator iSCD; // current certificate data
 
 	PCCERT_CONTEXT pCertificate = NULL;
 	DWORD dwFlags = CERT_STORE_REVOCATION_FLAG | CERT_STORE_SIGNATURE_FLAG | CERT_STORE_TIME_VALIDITY_FLAG;
@@ -832,7 +832,7 @@ HRESULT LoadCertificatesFromRegistry()
 	char lpValueName[1024];
 	DWORD cbValueName;
 	DWORD dwType;
-	map<string, verifyinfo>::iterator iSCD;
+	std::map<std::string, verifyinfo>::const_iterator iSCD;
 
 	g_SCDMutex.Lock();
 

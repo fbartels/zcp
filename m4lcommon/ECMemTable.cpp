@@ -149,7 +149,7 @@ HRESULT ECMemTable::QueryInterface(REFIID refiid, void **lppInterface)
 HRESULT ECMemTable::HrGetAllWithStatus(LPSRowSet *lppRowSet, LPSPropValue *lppIDs, LPULONG *lppulStatus)
 {
 	HRESULT hr = hrSuccess;
-	map<unsigned int, ECTableEntry>::iterator iterRows;
+	std::map<unsigned int, ECTableEntry>::const_iterator iterRows;
 	LPSRowSet lpRowSet = NULL;
 	LPSPropValue lpIDs = NULL;
 	LPULONG lpulStatus = NULL;
@@ -220,7 +220,7 @@ HRESULT ECMemTable::HrGetRowID(LPSPropValue lpRow, LPSPropValue *lppID)
 	HRESULT hr = hrSuccess;
 	LPSPropValue lpID = NULL;
 
-	map<unsigned int, ECTableEntry>::iterator iterRows;
+	std::map<unsigned int, ECTableEntry>::const_iterator iterRows;
 
 	pthread_mutex_lock(&m_hDataMutex);
 
@@ -260,7 +260,7 @@ HRESULT ECMemTable::HrGetRowData(LPSPropValue lpRow, ULONG *lpcValues, LPSPropVa
 	HRESULT hr = hrSuccess;
 	ULONG cValues = 0;
 	LPSPropValue lpRowData = NULL;
-	map<unsigned int, ECTableEntry>::iterator iterRows;
+	std::map<unsigned int, ECTableEntry>::const_iterator iterRows;
 
 	pthread_mutex_lock(&m_hDataMutex);
 
@@ -327,7 +327,7 @@ HRESULT ECMemTable::HrSetClean()
 HRESULT ECMemTable::HrUpdateRowID(LPSPropValue lpId, LPSPropValue lpProps, ULONG cValues)
 {
     HRESULT hr = hrSuccess;
-    std::map<unsigned int, ECTableEntry>::iterator iterRows;
+	std::map<unsigned int, ECTableEntry>::const_iterator iterRows;
     LPSPropValue lpUniqueProp = NULL;
     
 	pthread_mutex_lock(&m_hDataMutex);
@@ -379,7 +379,7 @@ HRESULT ECMemTable::HrModifyRow(ULONG ulUpdateType, SPropValue *lpsID, SPropValu
 	HRESULT hr = hrSuccess;
 	ECTableEntry entry;
 	LPSPropValue lpsRowID = NULL;
-	std::vector<ECMemTableView *>::iterator iterViews;
+	std::vector<ECMemTableView *>::const_iterator iterViews;
 	std::map<unsigned int, ECTableEntry>::iterator iterRows;
 
 	pthread_mutex_lock(&m_hDataMutex);
@@ -513,7 +513,7 @@ exit:
 HRESULT ECMemTable::HrDeleteAll()
 {
 	map<unsigned int, ECTableEntry>::iterator iterRows;
-	std::vector<ECMemTableView *>::iterator iterViews;
+	std::vector<ECMemTableView *>::const_iterator iterViews;
 
 	pthread_mutex_lock(&m_hDataMutex);
 
@@ -534,8 +534,8 @@ HRESULT ECMemTable::HrDeleteAll()
 
 HRESULT ECMemTable::HrClear()
 {
-	map<unsigned int, ECTableEntry>::iterator iterRows;
-	std::vector<ECMemTableView *>::iterator iterViews;
+	std::map<unsigned int, ECTableEntry>::const_iterator iterRows;
+	std::vector<ECMemTableView *>::const_iterator iterViews;
 
 	pthread_mutex_lock(&m_hDataMutex);
 
@@ -588,7 +588,7 @@ ECMemTableView::ECMemTableView(ECMemTable *lpMemTable, const ECLocale &locale, U
 ECMemTableView::~ECMemTableView()
 {
 	std::vector<ECMemTableView *>::iterator iterViews;
-	ECMapMemAdvise::iterator	iterAdvise, iterAdviseRemove;
+	ECMapMemAdvise::const_iterator iterAdvise, iterAdviseRemove;
 
 	// Remove ourselves from the parent's view list
 	for(iterViews = lpMemTable->lstViews.begin(); iterViews != lpMemTable->lstViews.end(); iterViews++) {
@@ -695,7 +695,7 @@ HRESULT ECMemTableView::Notify(ULONG ulTableEvent, sObjectTableKey* lpsRowItem, 
 	LPNOTIFICATION lpNotification = NULL;
 	LPSRowSet lpRows = NULL;
 	ECObjectTableList sRowList;
-	ECMapMemAdvise::iterator	iterAdvise;
+	ECMapMemAdvise::const_iterator iterAdvise;
 
 	hr = MAPIAllocateBuffer(sizeof(NOTIFICATION), (void**)&lpNotification);
 	if(hr != hrSuccess)
@@ -801,9 +801,9 @@ HRESULT ECMemTableView::QueryColumns(ULONG ulFlags, LPSPropTagArray *lppPropTagA
 	HRESULT hr = hrSuccess;
 	LPSPropTagArray lpsPropTagArray = NULL;
 	std::list<ULONG> lstTags;
-	std::list<ULONG>::iterator iterTags;
+	std::list<ULONG>::const_iterator iterTags;
 	unsigned int i = 0;
-	std::map<unsigned int, ECTableEntry>::iterator iterRows;
+	std::map<unsigned int, ECTableEntry>::const_iterator iterRows;
 
 	if ((ulFlags & ~TBL_ALL_COLUMNS) != 0) {
 		hr = MAPI_E_UNKNOWN_FLAGS;
@@ -1196,7 +1196,7 @@ HRESULT ECMemTableView::SortTable(LPSSortOrderSet lpSortCriteria, ULONG ulFlags)
 
 HRESULT ECMemTableView::UpdateSortOrRestrict() {
 	HRESULT hr = hrSuccess;
-	map<unsigned int, ECTableEntry>::iterator iterRecips;
+	std::map<unsigned int, ECTableEntry>::const_iterator iterRecips;
 	sObjectTableKey sRowItem;
 
 	// Clear the keytable
@@ -1224,7 +1224,7 @@ HRESULT ECMemTableView::ModifyRowKey(sObjectTableKey *lpsRowItem, sObjectTableKe
 	unsigned int	*lpulSortLen = NULL;
 	unsigned char	**lpSortKeys = NULL;
 	unsigned char	*lpFlags = NULL;
-	map<unsigned int, ECTableEntry>::iterator iterData;
+	std::map<unsigned int, ECTableEntry>::const_iterator iterData;
 	LPSPropValue lpsSortID = NULL;
 	ULONG j;
 
@@ -1362,11 +1362,11 @@ HRESULT ECMemTableView::QueryRowData(ECObjectTableList *lpsRowList, LPSRowSet *l
 	HRESULT hr = hrSuccess;
 
 	LPSPropValue lpsProp = NULL;
-	std::map<unsigned int, ECTableEntry>::iterator iterRows;
+	std::map<unsigned int, ECTableEntry>::const_iterator iterRows;
 	unsigned int i=0,j=0;
 
 	LPSRowSet lpRows = NULL;
-	ECObjectTableList::iterator iterRowList;
+	ECObjectTableList::const_iterator iterRowList;
 
 	convert_context converter;
 

@@ -70,7 +70,7 @@ ECRESULT ECSearchClient::GetProperties(setindexprops_t &setProps)
 	ECRESULT er;
 	std::vector<std::string> lstResponse;
 	std::vector<std::string> lstProps;
-	std::vector<std::string>::iterator iter;
+	std::vector<std::string>::const_iterator iter;
 
 	er = DoCmd("PROPS", lstResponse);
 	if (er != erSuccess)
@@ -211,9 +211,9 @@ ECRESULT ECSearchClient::Query(GUID *lpServerGuid, GUID *lpStoreGuid, std::list<
 	if (er != erSuccess)
 		return er;
 
-	for(std::list<SIndexedTerm>::iterator i = lstSearches.begin(); i != lstSearches.end(); i++) {
+	for (std::list<SIndexedTerm>::const_iterator i = lstSearches.begin();
+	     i != lstSearches.end(); ++i)
 		Find(i->setFields, i->strTerm);
-	}
 
 	return Query(lstMatches);
 }

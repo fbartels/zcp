@@ -62,7 +62,7 @@ protected:
 	HRESULT ConvertProps(IMAPIProp *lpContact, ULONG cbEntryID, LPENTRYID lpEntryID, ULONG ulIndex);
 
 	/* getprops helper */
-	HRESULT CopyOneProp(convert_context &converter, ULONG ulFlags, std::map<short, SPropValue>::iterator i, LPSPropValue lpProp, LPSPropValue lpBase);
+	HRESULT CopyOneProp(convert_context &converter, ULONG ulFlags, const std::map<short, SPropValue>::const_iterator &i, LPSPropValue lpProp, LPSPropValue lpBase);
 
 public:
 	static HRESULT Create(IMAPIProp *lpContact, ULONG cbEntryID, LPENTRYID lpEntryID, ZCMAPIProp **lppZCMAPIProp);

@@ -73,7 +73,7 @@ M4LMAPIProp::M4LMAPIProp() {
 }
 
 M4LMAPIProp::~M4LMAPIProp() {
-	list<LPSPropValue>::iterator i;
+	std::list<LPSPropValue>::const_iterator i;
 	for(i = properties.begin(); i != properties.end(); i++) {
 		MAPIFreeBuffer(*i);
 	}
@@ -722,7 +722,7 @@ HRESULT M4LProviderAdmin::GetProviderTable(ULONG ulFlags, LPMAPITABLE* lppTable)
 	HRESULT hr = hrSuccess;
 	ULONG cValues = 0;
 	LPSPropValue lpsProps = NULL;
-	list<providerEntry *>::iterator i;
+	list<providerEntry *>::const_iterator i;
 	ECMemTable *lpTable = NULL;
 	ECMemTableView *lpTableView = NULL;
 	LPSPropValue lpDest = NULL;
@@ -1246,7 +1246,9 @@ HRESULT M4LABContainer::GetHierarchyTable(ULONG ulFlags, LPMAPITABLE* lppTable) 
 	lpColumns->cValues++;
 
 	n = 0;
-	for (std::list<LPMAPITABLE>::iterator i = lHierarchies.begin(); i != lHierarchies.end(); i++) {
+	for (std::list<LPMAPITABLE>::const_iterator i = lHierarchies.begin();
+	     i != lHierarchies.end(); ++i)
+	{
 		LPSRowSet lpsRows = NULL;
 
 		hr = (*i)->SetColumns(lpColumns, 0);
@@ -1282,7 +1284,8 @@ HRESULT M4LABContainer::GetHierarchyTable(ULONG ulFlags, LPMAPITABLE* lppTable) 
 	hr = lpTableView->QueryInterface(IID_IMAPITable, (void **)lppTable);
 
 exit:
-	for (std::list<LPMAPITABLE>::iterator i = lHierarchies.begin(); i != lHierarchies.end(); i++)
+	for (std::list<LPMAPITABLE>::const_iterator i = lHierarchies.begin();
+	     i != lHierarchies.end(); ++i)
 		(*i)->Release();
 	MAPIFreeBuffer(lpColumns);
 	if (lpTableView)
