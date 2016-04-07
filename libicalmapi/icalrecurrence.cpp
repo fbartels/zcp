@@ -54,7 +54,7 @@
 #include <algorithm>
 #include "freebusy.h"
 
-static bool operator ==(SPropValue spv, ULONG ulPropTag)
+static bool operator ==(const SPropValue &spv, ULONG ulPropTag)
 {
 	return spv.ulPropTag == ulPropTag;
 }

@@ -312,7 +312,7 @@ ECConfig *g_lpConfig = NULL;
 
 class sortRecipients {
 public:
-	bool operator()(ECRecipient *left, ECRecipient *right) const
+	bool operator()(const ECRecipient *left, const ECRecipient *right) const
 	{
 		return *left < *right;
 	}

@@ -119,12 +119,12 @@ static const SizedSPropTagArray(4, sPropNewMailColumns) = {
 	}
 };
 
-bool operator ==(SBinary left, SBinary right)
+bool operator ==(const SBinary &left, const SBinary &right)
 {
 	return left.cb == right.cb && memcmp(left.lpb, right.lpb, left.cb) == 0;
 }
 
-bool operator <(SBinary left, SBinary right)
+bool operator <(const SBinary &left, const SBinary &right)
 {
 	return left.cb < right.cb || (left.cb == right.cb && memcmp(left.lpb, right.lpb, left.cb) < 0);
 }

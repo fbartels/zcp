@@ -289,35 +289,36 @@ ULONG SecondsToIntTime(ULONG seconds)
 	return CreateIntTime(seconds, minutes, hours);
 }
 
-bool operator ==(FILETIME a, FILETIME b) {
+bool operator ==(const FILETIME &a, const FILETIME &b)
+{
 	return a.dwLowDateTime == b.dwLowDateTime && a.dwHighDateTime == b.dwHighDateTime;
 }
 
-bool operator >(FILETIME a, FILETIME b)
+bool operator >(const FILETIME &a, const FILETIME &b)
 {
 	return ((a.dwHighDateTime > b.dwHighDateTime) ||
 		((a.dwHighDateTime == b.dwHighDateTime) &&
 		 (a.dwLowDateTime > b.dwLowDateTime)));
 }
 
-bool operator >=(FILETIME a, FILETIME b)
+bool operator >=(const FILETIME &a, const FILETIME &b)
 {
 	return a > b || a == b;
 }
 
-bool operator <(FILETIME a, FILETIME b)
+bool operator <(const FILETIME &a, const FILETIME &b)
 {
 	return ((a.dwHighDateTime < b.dwHighDateTime) ||
 		((a.dwHighDateTime == b.dwHighDateTime) &&
 		 (a.dwLowDateTime < b.dwLowDateTime)));
 }
 
-bool operator <=(FILETIME a, FILETIME b)
+bool operator <=(const FILETIME &a, const FILETIME &b)
 {
 	return a < b || a == b;
 }
 
-time_t operator -(FILETIME a, FILETIME b)
+time_t operator -(const FILETIME &a, const FILETIME &b)
 {
 	time_t aa, bb;
 
@@ -391,7 +392,8 @@ struct tm* gmtime_safe(const time_t* timer, struct tm *result)
 	return tmp;
 }
 
-double timespec2dbl(timespec t) {
+double timespec2dbl(const struct timespec &t)
+{
     return (double)t.tv_sec + t.tv_nsec/1000000000.0;
 }
 

@@ -234,7 +234,7 @@ struct filter_objects {
 	unsigned int m_ulFlags;
 	filter_objects(unsigned int ulFlags) : m_ulFlags(ulFlags) {}
 
-	bool operator()(const localobjectdetails_t &details)
+	bool operator()(const localobjectdetails_t &details) const
 	{
 		return
 			((m_ulFlags & AB_FILTER_SYSTEM) &&

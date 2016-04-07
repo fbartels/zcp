@@ -78,7 +78,7 @@ struct findKey {
 		m_lpKey = lpKey;
 	}
 
-	bool operator ()(M4LSUPPORTADVISES::value_type entry)
+	bool operator()(const M4LSUPPORTADVISES::value_type &entry) const
 	{
 		return (entry.second.lpKey->cb == m_lpKey->cb) &&
 			   (memcmp(entry.second.lpKey->ab, m_lpKey->ab, m_lpKey->cb) == 0);

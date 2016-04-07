@@ -93,7 +93,7 @@ namespace details {
 		ICONV_HACK(const char** ptr) : m_ptr(ptr) { }
 
 		// the compiler will choose the right operator
-		operator const char**() { return m_ptr; }
+		operator const char **(void) const { return m_ptr; }
 		operator char**() { return const_cast <char**>(m_ptr); }
 
 	private:

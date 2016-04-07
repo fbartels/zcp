@@ -67,7 +67,8 @@ public:
 		, m_ulConnection(ulConnection)
 	{ }
 
-	bool operator()(const CHANGESUBSCRIBEMAP::value_type &rhs) {
+	bool operator()(const CHANGESUBSCRIBEMAP::value_type &rhs) const
+	{
 		return rhs.second.ulSession == m_ulSession && rhs.second.ulConnection == m_ulConnection;
 	}
 

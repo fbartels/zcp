@@ -73,7 +73,7 @@ class FindSocket {
 public:
 	FindSocket(SOAP_SOCKET s) { this->s = s; };
 
-	bool operator()(const ACTIVESOCKET &a) { return a.soap->socket == s; };
+	bool operator()(const ACTIVESOCKET &a) const { return a.soap->socket == s; }
 private:
 	SOAP_SOCKET s;
 };
@@ -82,7 +82,7 @@ class FindListenSocket {
 public:
 	FindListenSocket(SOAP_SOCKET s) { this->s = s; };
 
-	bool operator()(struct soap *soap) { return soap->socket == s; };
+	bool operator()(struct soap *soap) const { return soap->socket == s; }
 private:
 	SOAP_SOCKET s;
 };

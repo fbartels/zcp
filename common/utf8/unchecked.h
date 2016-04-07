@@ -244,7 +244,7 @@ namespace utf8
                 std::advance(it, internal::sequence_length(it));
                 return *this;
             }
-            iterator operator ++ (int)
+            iterator operator++(int) const
             {
                 iterator temp = *this;
                 std::advance(it, internal::sequence_length(it));
@@ -255,7 +255,7 @@ namespace utf8
                 prior(it);
                 return *this;
             }
-            iterator operator -- (int)
+            iterator operator--(int) const
             {
                 iterator temp = *this;
                 prior(it);

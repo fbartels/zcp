@@ -57,8 +57,8 @@ typedef struct objectid_t {
 	objectid_t(objectclass_t objclass);
 	objectid_t();
 
-	bool operator==(const objectid_t &x);
-	bool operator!=(const objectid_t &x);
+	bool operator==(const objectid_t &x) const;
+	bool operator!=(const objectid_t &x) const;
 	std::string tostring() const;
 
 	std::string id;

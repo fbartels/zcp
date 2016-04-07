@@ -605,8 +605,8 @@ class IEventSubscription : public IDispatch {
 };
 
 /* functions */
-bool operator!=(GUID, GUID);
-bool operator==(REFIID, GUID);
+bool operator!=(const GUID &, const GUID &);
+bool operator==(REFIID, const GUID &);
 HRESULT CoCreateGuid(LPGUID);
 
 void strupr(char *);

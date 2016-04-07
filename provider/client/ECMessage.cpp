@@ -2863,7 +2863,7 @@ struct findobject_if {
 
     findobject_if(unsigned int ulObjType, unsigned int ulUniqueId) : m_ulUniqueId(ulUniqueId), m_ulObjType(ulObjType) {}
 
-    bool operator()(MAPIOBJECT *entry)
+    bool operator()(const MAPIOBJECT *entry)
     {
         return entry->ulUniqueId == m_ulUniqueId && entry->ulObjType == m_ulObjType;
     }

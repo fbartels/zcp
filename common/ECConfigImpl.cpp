@@ -79,7 +79,7 @@ const directive_t ECConfigImpl::s_sDirectives[] = {
 class PathCompare _zcp_final {
 public:
 	PathCompare(const fs::path &ref): m_ref(ref) {}
-	bool operator()(const fs::path &other) { return fs::equivalent(m_ref, other); }
+	bool operator()(const fs::path &other) const { return fs::equivalent(m_ref, other); }
 private:
 	const fs::path &m_ref;
 };

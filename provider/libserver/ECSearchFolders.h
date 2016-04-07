@@ -88,8 +88,8 @@ typedef struct EVENT {
     unsigned int			ulObjectId;
     ECKeyTable::UpdateType  ulType;
     
-    bool operator< (const struct EVENT &b) { return ulFolderId < b.ulFolderId ? true : (ulType < b.ulType ? true : ( ulObjectId < b.ulObjectId ? true : false ) ); }
-    bool operator== (const struct EVENT &b) { return ulFolderId == b.ulFolderId && ulType == b.ulType && ulObjectId ==  b.ulObjectId; }
+    bool operator<(const struct EVENT &b) const { return ulFolderId < b.ulFolderId ? true : (ulType < b.ulType ? true : ( ulObjectId < b.ulObjectId ? true : false ) ); }
+    bool operator==(const struct EVENT &b) const { return ulFolderId == b.ulFolderId && ulType == b.ulType && ulObjectId ==  b.ulObjectId; }
 } EVENT;
 
 typedef std::map<unsigned int, SEARCHFOLDER *> FOLDERIDSEARCH;

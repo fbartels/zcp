@@ -106,7 +106,7 @@ public:
 	 *					will be ignored.
 	 * @return TRUE if the objects are equal
 	 */
-    bool operator== (const objectsignature_t &sig) { return id == sig.id; };
+    bool operator==(const objectsignature_t &sig) const { return id == sig.id; };
 
 	/**
 	 * Object signature less-then comparison

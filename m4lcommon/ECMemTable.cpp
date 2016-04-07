@@ -79,7 +79,8 @@ SSortOrderSet sSortDefault = {0, 0};
 class FixStringType _zcp_final {
 public:
 	FixStringType(ULONG ulFlags): m_ulFlags(ulFlags) { ASSERT((m_ulFlags & ~MAPI_UNICODE) == 0); }
-	ULONG operator()(ULONG ulPropTag) {
+	ULONG operator()(ULONG ulPropTag) const
+	{
 		if ((PROP_TYPE(ulPropTag) & 0x0ffe) == 0x1e) 	// Any string type
 			return CHANGE_PROP_TYPE(ulPropTag, (((m_ulFlags & MAPI_UNICODE) ? PT_UNICODE : PT_STRING8) | (PROP_TYPE(ulPropTag) & MVI_FLAG)));
 		else

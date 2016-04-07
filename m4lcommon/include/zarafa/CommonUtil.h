@@ -64,8 +64,8 @@ class ECLogger;
 #define CLIENT_VERSION_LATEST			CLIENT_VERSION_OLK2010 /* UPDATE ME */
 
 /* darn, no sane place because of depend include on mapidefs.h */
-bool operator ==(SBinary a, SBinary b);
-bool operator <(SBinary a, SBinary b);
+bool operator ==(const SBinary &a, const SBinary &b);
+bool operator <(const SBinary &a, const SBinary &b);
 
 const char *GetServerUnixSocket(const char *szPreferred = NULL);
 std::string GetServerFQDN();

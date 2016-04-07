@@ -64,7 +64,7 @@ class ECNotifySink {
 public:
 	ECNotifySink(ECNotifyClient *lpClient, NOTIFYCALLBACK fnCallback);
 	HRESULT Notify(ULONG ulConnection, NOTIFYLIST lNotifications);
-	bool IsClient(ECNotifyClient *lpClient);
+	bool IsClient(const ECNotifyClient *) const;
 
 private:
 	ECNotifyClient	*m_lpClient;

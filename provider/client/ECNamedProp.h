@@ -53,7 +53,7 @@ class WSTransport;
 //
 // Doesn't really matter *how* it sorts, as long as it's reproduceable
 struct ltmap {
-	bool operator()(MAPINAMEID *a, MAPINAMEID *b) const
+	bool operator()(const MAPINAMEID *a, const MAPINAMEID *b) const
 	{
 	    int r = memcmp(a->lpguid, b->lpguid, sizeof(GUID));
 	    

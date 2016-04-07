@@ -60,7 +60,7 @@ namespace Predicates {
 	class SObjectEntry_equals_binary {
 	public:
 		SObjectEntry_equals_binary(const SObjectEntry &objEntry): m_objEntry(objEntry) {}
-		bool operator()(const SObjectEntry &objEntry) { return objEntry == m_objEntry; }
+		bool operator()(const SObjectEntry &objEntry) const { return objEntry == m_objEntry; }
 	private:
 		const SObjectEntry &m_objEntry;
 	};
@@ -73,7 +73,7 @@ namespace Predicates {
 	class SObjectEntry_equals_compareEntryId {
 	public:
 		SObjectEntry_equals_compareEntryId(IMAPISession *lpSession, const SObjectEntry &objEntry): m_lpSession(lpSession), m_objEntry(objEntry) {}
-		bool operator()(const SObjectEntry &objEntry) {
+		bool operator()(const SObjectEntry &objEntry) const {
 			HRESULT hr = hrSuccess;
 			ULONG ulResult = 0;
 			
@@ -97,7 +97,8 @@ namespace Predicates {
 	class storeId_equals_compareEntryId {
 	public:
 		storeId_equals_compareEntryId(IMAPISession *lpSession, const entryid_t &storeId): m_lpSession(lpSession), m_storeId(storeId) {}
-		bool operator()(const SObjectEntry &objEntry) {
+		bool operator()(const SObjectEntry &objEntry) const
+		{
 			HRESULT hr = hrSuccess;
 			ULONG ulResult = 0;
 			
@@ -112,7 +113,7 @@ namespace Predicates {
 	class MapInfo_contains_userName {
 	public:
 		MapInfo_contains_userName(const tstring &userName): m_userName(userName) {}
-		bool operator()(const ArchiveStateUpdater::ArchiveInfoMap::value_type &pair) { return m_userName.compare(pair.second.userName) == 0; }
+		bool operator()(const ArchiveStateUpdater::ArchiveInfoMap::value_type &pair) const { return m_userName.compare(pair.second.userName) == 0; }
 	private:
 		const tstring &m_userName;
 	};

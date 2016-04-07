@@ -591,7 +591,7 @@ public:
 	 * @retval	true	The passed entryid equals the stored entryid.
 	 * @retval	false	The passed entryid differs from the stored entryid.
 	 */
-	bool operator()(const SObjectEntry &sEntry) { return m_sEntryId == sEntry.sStoreEntryId; }
+	bool operator()(const SObjectEntry &sEntry) const { return m_sEntryId == sEntry.sStoreEntryId; }
 
 private:
 	entryid_t m_sEntryId;
@@ -615,7 +615,7 @@ public:
 	 * @retval	true	The store entryid from the passed SObjectEntry is wrapped.
 	 * @retval	false	The store entryid from the passed SObjectEntry is not wrapped.
 	 */
-	bool operator()(const SObjectEntry &sEntry) { return !sEntry.sStoreEntryId.isWrapped(); }
+	bool operator()(const SObjectEntry &sEntry) const { return !sEntry.sStoreEntryId.isWrapped(); }
 };
 
 eResult MAPIErrorToArchiveError(HRESULT hr);

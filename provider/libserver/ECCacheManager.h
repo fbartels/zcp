@@ -111,7 +111,8 @@ typedef struct {
 	std::string			strExternId;
 } ECsUEIdKey;
 
-inline bool operator < (ECsUEIdKey a, ECsUEIdKey b) {
+inline bool operator <(const ECsUEIdKey &a, const ECsUEIdKey &b)
+{
 	if (a.ulClass < b.ulClass)
 		return true;
 	if ((a.ulClass == b.ulClass) && a.strExternId < b.strExternId)

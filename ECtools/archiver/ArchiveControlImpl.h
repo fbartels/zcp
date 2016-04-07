@@ -149,7 +149,8 @@ private:
     {
 	public:
 		typedef std::pair<entryid_t, entryid_t> value_type;
-		bool operator()(const value_type &lhs, const value_type &rhs) {
+		bool operator()(const value_type &lhs, const value_type &rhs) const
+		{
 			return lhs.second < rhs.second;
 		}
 	};

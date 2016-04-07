@@ -156,7 +156,8 @@ typedef struct _SESSION {
     std::string strClientApp;
     std::string strClientAppVersion, strClientAppMisc;
     
-    bool operator < (const _SESSION &b) { 
+    bool operator <(const _SESSION &b) const
+    {
         return this->dtimes.dblReal > b.dtimes.dblReal;
     }
 } SESSION;

@@ -66,7 +66,8 @@ typedef struct PROPCALLBACK {
 	BOOL			fRemovable;
 	BOOL			fHidden; // hidden from GetPropList
 
-	bool operator==(const PROPCALLBACK &callback) {
+	bool operator==(const PROPCALLBACK &callback) const
+	{
 		return callback.ulPropTag == this->ulPropTag;
 	}
 } PROPCALLBACK;

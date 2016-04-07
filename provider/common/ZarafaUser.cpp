@@ -58,7 +58,8 @@ template<int(*fnCmp)(const char*, const char*)>
 class StringComparer {
 public:
 	StringComparer(const std::string &str): m_str(str) {}
-	bool operator()(const std::string &other) {
+	bool operator()(const std::string &other) const
+	{
 		return m_str.size() == other.size() && fnCmp(m_str.c_str(), other.c_str()) == 0;
 	}
 
@@ -101,12 +102,12 @@ objectid_t::objectid_t()
 	objclass = OBJECTCLASS_UNKNOWN;
 }
 
-bool objectid_t::operator==(const objectid_t &x)
+bool objectid_t::operator==(const objectid_t &x) const
 {
 	return this->objclass == x.objclass && this->id == x.id;
 }
 
-bool objectid_t::operator!=(const objectid_t &x)
+bool objectid_t::operator!=(const objectid_t &x) const
 {
 	return this->objclass != x.objclass || this->id != x.id;
 }

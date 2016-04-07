@@ -76,7 +76,8 @@ inline HRESULT ECNotifySink::Notify(ULONG ulConnection, NOTIFYLIST lNotification
 	return CALL_MEMBER_FN(*m_lpClient, m_fnCallback)(ulConnection, lNotifications);
 }
 
-inline bool ECNotifySink::IsClient(ECNotifyClient *lpClient) {
+inline bool ECNotifySink::IsClient(const ECNotifyClient *lpClient) const
+{
 	return lpClient == m_lpClient;
 }
 
@@ -201,7 +202,7 @@ struct findConnectionClient
 
 	findConnectionClient(ECNotifyClient* lpClient) : lpClient(lpClient) {}
 
-	bool operator()(NOTIFYCONNECTIONCLIENTMAP::value_type &entry)
+	bool operator()(const NOTIFYCONNECTIONCLIENTMAP::value_type &entry) const
 	{
 		return entry.second.IsClient(lpClient);
 	}

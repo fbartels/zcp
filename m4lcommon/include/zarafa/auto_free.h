@@ -114,7 +114,7 @@ public:
 	operator void*() { return data; }
 	operator const void*() const { return data; }
 
-	bool operator!=(_T* other) {
+	bool operator!=(_T* other) const {
 		return (data != other);
 	}
 

@@ -125,7 +125,7 @@ public:
 			delete[] lpb;
 	}
 
-	bool operator==(const BinaryArray &b)
+	bool operator==(const BinaryArray &b) const
 	{
 		if (b.cb == 0 && this->cb == 0)
 			return true;

@@ -64,8 +64,8 @@ public:
 	localobjectdetails_t(unsigned int id, objectclass_t objclass) : objectdetails_t(objclass), ulId(id) {};
 	localobjectdetails_t(unsigned int id, const objectdetails_t &details) : objectdetails_t(details), ulId(id) {};
 
-	bool operator== (const localobjectdetails_t &obj) { return ulId == obj.ulId; };
-	bool operator< (const localobjectdetails_t &obj) const { return ulId < obj.ulId; } ;
+	bool operator==(const localobjectdetails_t &obj) const { return ulId == obj.ulId; };
+	bool operator<(const localobjectdetails_t &obj) const { return ulId < obj.ulId; } ;
 
 	unsigned int ulId;
 };

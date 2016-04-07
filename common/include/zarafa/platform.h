@@ -136,14 +136,14 @@ struct tm* gmtime_safe(const time_t* timer, struct tm *result);
  */
 struct timespec GetDeadline(unsigned int ulTimeoutMs);
 
-double timespec2dbl(timespec t);
+double timespec2dbl(const struct timespec &t);
 
-bool operator ==(FILETIME a, FILETIME b);
-bool operator >(FILETIME a, FILETIME b);
-bool operator >=(FILETIME a, FILETIME b);
-bool operator <(FILETIME a, FILETIME b);
-bool operator <=(FILETIME a, FILETIME b);
-time_t operator -(FILETIME a, FILETIME b);
+bool operator ==(const FILETIME &, const FILETIME &);
+bool operator >(const FILETIME &, const FILETIME &);
+bool operator >=(const FILETIME &, const FILETIME &);
+bool operator <(const FILETIME &, const FILETIME &);
+bool operator <=(const FILETIME &, const FILETIME &);
+time_t operator -(const FILETIME &, const FILETIME &);
 
 /* convert struct tm to time_t in timezone UTC0 (GM time) */
 #ifndef __linux__

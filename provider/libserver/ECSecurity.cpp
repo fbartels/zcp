@@ -193,7 +193,8 @@ exit:
 // helper class to remember groups we've seen to break endless loops
 class cUniqueGroup {
 public:
-	bool operator()(const localobjectdetails_t &obj) {
+	bool operator()(const localobjectdetails_t &obj) const
+	{
 		return m_seen.find(obj) != m_seen.end();
 	}
 

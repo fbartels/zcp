@@ -335,7 +335,7 @@ namespace utf8
           next(it, range_end);
           return *this;
       }
-      iterator operator ++ (int)
+      iterator operator++(int) const
       {
           iterator temp = *this;
           next(it, range_end);
@@ -346,7 +346,7 @@ namespace utf8
           prior(it, range_start);
           return *this;
       }
-      iterator operator -- (int)
+      iterator operator--(int) const
       {
           iterator temp = *this;
           prior(it, range_start);

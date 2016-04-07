@@ -67,7 +67,7 @@ struct findSessionGroupId
 	{
 	}
 
-	bool operator()(SESSIONGROUPMAP::value_type &entry)
+	bool operator()(const SESSIONGROUPMAP::value_type &entry) const
 	{
 		return entry.second->GetSessionGroupId() == ecSessionGroupId;
 	}
