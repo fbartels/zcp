@@ -631,10 +631,10 @@ char * ECChannel::fd_gets(char *buf, int *lpulLen) {
 
 	//remove the lf or crlf
 	if(newline){
-		bp--;
-		newline--;
+		--bp;
+		--newline;
 		if(newline >= buf && *newline == '\r')
-			bp--;
+			--bp;
 	}
 
 	*bp = '\0';
@@ -671,10 +671,10 @@ char * ECChannel::SSL_gets(char *buf, int *lpulLen) {
 	
 	//remove the lf or crlf
 	if(newline){
-		bp--;
-		newline--;
+		--bp;
+		--newline;
 		if(newline >= buf && *newline == '\r')
-			bp--;
+			--bp;
 	}
 
 	*bp = '\0';

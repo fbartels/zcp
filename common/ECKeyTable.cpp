@@ -1056,7 +1056,7 @@ ECRESULT ECKeyTable::QueryRows(unsigned int ulRows, ECObjectTableList* lpRowList
 		
 		if(!lpCurrent->fHidden || bShowHidden) {
     		lpRowList->push_back(lpCurrent->sKey);
-    		ulRows--;
+		--ulRows;
         }
 		
 		if(bDirBackward == true && lpCurrent == lpRoot->lpRight)

@@ -66,7 +66,7 @@ static inline struct timeval operator-(const struct timeval &lhs, const struct t
 	struct timeval result = {lhs.tv_sec - rhs.tv_sec, 0};
 	
 	if (lhs.tv_usec < rhs.tv_usec) {
-		result.tv_sec--;
+		--result.tv_sec;
 		result.tv_usec = 1000000;
 	}
 	result.tv_usec += lhs.tv_usec - rhs.tv_usec;
@@ -265,7 +265,7 @@ bool ECThreadPool::getNextTask(STaskInfo *lpsTaskInfo)
 		
 		m_setTerminated.insert(*iThread);
 		m_setThreads.erase(iThread);
-		m_ulTermReq--;
+		--m_ulTermReq;
 	
 		pthread_cond_signal(&m_hCondTerminated);
 		return false;

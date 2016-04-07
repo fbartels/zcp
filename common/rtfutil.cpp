@@ -380,7 +380,7 @@ HRESULT HrExtractHTMLFromRTF(const std::string &lpStrRTFIn,
 					if(!sState[ulState].bInFontTbl && !sState[ulState].bRTFOnly && !sState[ulState].bInColorTbl && !sState[ulState].bInSkipTbl && !sState[ulState].ulSkipChars) {
 						sState[ulState].output.append(1,ulChar);
 					} else if (sState[ulState].ulSkipChars)
-						sState[ulState].ulSkipChars--;
+						--sState[ulState].ulSkipChars;
 
 					if(*szInput == '\\' && *(szInput+1) == '\'')
 						++szInput;
@@ -643,7 +643,7 @@ HRESULT HrExtractHTMLFromTextRTF(const std::string &lpStrRTFIn,
 					if(!sState[ulState].bInFontTbl && !sState[ulState].bRTFOnly && !sState[ulState].bInColorTbl && !sState[ulState].ulSkipChars) {
 						sState[ulState].output.append(1,ulChar);
 					} else if (sState[ulState].ulSkipChars)
-						sState[ulState].ulSkipChars--;
+						--sState[ulState].ulSkipChars;
 
 					if(*szInput == '\\' && *(szInput+1) == '\'')
 						++szInput;
@@ -678,7 +678,7 @@ HRESULT HrExtractHTMLFromTextRTF(const std::string &lpStrRTFIn,
 			strOutput += RTFFlushStateOutput(convertContext, sState, ulState);
 
 			if(ulState > 0)
-				ulState--;
+				--ulState;
 			++szInput;
 		} else if(*szInput == '\r' || *szInput == '\n') {
 			bNewLine = true;
@@ -1017,7 +1017,7 @@ HRESULT HrExtractHTMLFromRealRTF(const std::string &lpStrRTFIn,
 					if(!sState[ulState].bInFontTbl && !sState[ulState].bRTFOnly && !sState[ulState].bInColorTbl && !sState[ulState].bInSkipTbl && !sState[ulState].ulSkipChars) {
 						sState[ulState].output.append(1,ulChar);
 					} else if (sState[ulState].ulSkipChars)
-						sState[ulState].ulSkipChars--;
+						--sState[ulState].ulSkipChars;
 
 					if(*szInput == '\\' && *(szInput+1) == '\'')
 						++szInput;
@@ -1044,7 +1044,7 @@ HRESULT HrExtractHTMLFromRealRTF(const std::string &lpStrRTFIn,
 			strOutput += RTFFlushStateOutput(convertContext, sState, ulState);
 
 			if(ulState > 0)
-				ulState--;
+				--ulState;
 			++szInput;
 		} else if(*szInput == '\r' || *szInput == '\n') {
 			++szInput;
@@ -1060,7 +1060,7 @@ HRESULT HrExtractHTMLFromRealRTF(const std::string &lpStrRTFIn,
 				else
 					sState[ulState].output.append(1,*szInput);
 			} else if (sState[ulState].ulSkipChars)
-				sState[ulState].ulSkipChars--;
+				--sState[ulState].ulSkipChars;
 			++szInput;
 		}
 	}
@@ -1292,7 +1292,7 @@ HRESULT HrExtractBODYFromTextRTF(const std::string &lpStrRTFIn,
 					else
 						sState[ulState].output.append(1, ulChar);
 				} else if (sState[ulState].ulSkipChars)
-					sState[ulState].ulSkipChars--;
+					--sState[ulState].ulSkipChars;
 
 			} else {
 				++szInput; // skip single character after '\'

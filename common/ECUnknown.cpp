@@ -88,7 +88,7 @@ ULONG ECUnknown::Release() {
 	bool bLastRef = false;
 	
 	pthread_mutex_lock(&mutex);
-	this->m_cRef--;
+	--this->m_cRef;
 
 	nRef = m_cRef;
 

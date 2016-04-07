@@ -926,7 +926,7 @@ namespace PrivatePipe {
 			while (ret && p) {
 				// first char in buffer is loglevel
 				l = *p++;
-				ret--;
+				--ret;
 				s = strlen(p);	// find string in read buffer
 				if (s) {
 					lpFileLogger->Log(l, string(p, s));

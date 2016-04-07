@@ -97,7 +97,7 @@ public:
 	// Decrement the valid count. Used from ECCacheManger::GetCell.
 	void DecrementValidCount() { 
 		assert(m_ulCacheValid >= 1);
-		m_ulCacheValid--;
+		--m_ulCacheValid;
 	}
 
 	// Call the provided callback with some statistics.
