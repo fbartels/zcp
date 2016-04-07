@@ -79,7 +79,8 @@ void ArchiveResult::AddMessage(MessagePtr ptrMessage) {
 }
 
 void ArchiveResult::Undo(IMAPISession *lpSession) {
-	for (list<MessagePtr>::iterator i = m_lstMessages.begin(); i != m_lstMessages.end(); ++i)
+	for (std::list<MessagePtr>::const_iterator i = m_lstMessages.begin();
+	     i != m_lstMessages.end(); ++i)
 		Util::HrDeleteMessage(lpSession, *i);
 }
 
@@ -126,12 +127,12 @@ HRESULT Archive::HrArchiveMessageForDelivery(IMessage *lpMessage)
 	StoreHelperPtr ptrStoreHelper;
 	SObjectEntry refMsgEntry;
 	ObjectEntryList lstArchives;
-	ObjectEntryList::iterator iArchive;
+	ObjectEntryList::const_iterator iArchive;
 	ArchiverSessionPtr ptrSession;
 	InstanceIdMapperPtr ptrMapper;
 	HelperPtr ptrHelper;
 	list<pair<MessagePtr,PostSaveActionPtr> > lstArchivedMessages;
-	list<pair<MessagePtr,PostSaveActionPtr> >::iterator iArchivedMessage;
+	std::list<std::pair<MessagePtr, PostSaveActionPtr> >::const_iterator iArchivedMessage;
 	ArchiveResult result;
 	ObjectEntryList lstReferences;
 	MAPIPropHelperPtr ptrMsgHelper;
@@ -274,12 +275,12 @@ HRESULT Archive::HrArchiveMessageForSending(IMessage *lpMessage, ArchiveResult *
 	MsgStorePtr ptrStore;
 	StoreHelperPtr ptrStoreHelper;
 	ObjectEntryList lstArchives;
-	ObjectEntryList::iterator iArchive;
+	ObjectEntryList::const_iterator iArchive;
 	ArchiverSessionPtr ptrSession;
 	InstanceIdMapperPtr ptrMapper;
 	HelperPtr ptrHelper;
 	list<pair<MessagePtr,PostSaveActionPtr> > lstArchivedMessages;
-	list<pair<MessagePtr,PostSaveActionPtr> >::iterator iArchivedMessage;
+	std::list<std::pair<MessagePtr, PostSaveActionPtr> >::const_iterator iArchivedMessage;
 	ArchiveResult result;
 
 	SizedSPropTagArray(2, sptaMessageProps) = {1, {PR_STORE_ENTRYID}};

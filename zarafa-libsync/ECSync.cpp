@@ -243,8 +243,8 @@ ECSync::ECSync(const std::string &strOfflineProfile, const std::string &strOnlin
 }
 
 ECSync::~ECSync(){
-	std::map<std::string,LPSTREAM>::iterator iSyncStatus;
-	std::list<LPNOTIFICATION>::iterator iterNotif;
+	std::map<std::string, LPSTREAM>::const_iterator iSyncStatus;
+	std::list<LPNOTIFICATION>::const_iterator iterNotif;
 	LPMDB lpOnlineStore = NULL;
 
 	StopSync();
@@ -1131,7 +1131,7 @@ LPVOID ECSync::SyncThread() {
 	struct timespec	timeout;
 	HRESULT			hr = hrSuccess;
 	ULONG			ulRetry = 0;
-	std::list<LPNOTIFICATION>::iterator iterNewMail;
+	std::list<LPNOTIFICATION>::const_iterator iterNewMail;
 	LPSPropValue lpSyncTimeProp = NULL;
 	LPSPropValue lpSyncOnDemand = NULL;
 	std::list<SBinary> lstChanges;
@@ -1706,7 +1706,7 @@ HRESULT ECSync::MessageSync(std::list<SBinary> &lstChanges){
 	LPMAPIFOLDER lpInboxFolder = NULL;
 	ULONG ulCount = 0;
 	LPSPropValue lpPropValue = NULL;
-	std::list<SBinary>::iterator iChanges;
+	std::list<SBinary>::const_iterator iChanges;
 
 	//order of syncing folders: Calendar, Inbox, Contacts, Tasks, Notes, Drafts
 	SizedSPropTagArray(6, sptInbox) = { 6, {PR_IPM_APPOINTMENT_ENTRYID, PR_ENTRYID, PR_IPM_CONTACT_ENTRYID, PR_IPM_TASK_ENTRYID, PR_IPM_NOTE_ENTRYID, PR_IPM_DRAFTS_ENTRYID} };
@@ -1762,7 +1762,7 @@ exit:
 }
 
 HRESULT ECSync::ReleaseChangeList(std::list<SBinary> &lstChanges) {
-	std::list<SBinary>::iterator i;
+	std::list<SBinary>::const_iterator i;
 	for (i = lstChanges.begin(); i != lstChanges.end(); i++) {
 		delete [] i->lpb;
 	}
@@ -2797,7 +2797,7 @@ HRESULT ECSync::CheckExit(){
 }
 
 HRESULT ECSync::Logoff(){
-	std::list<LPNOTIFICATION>::iterator iterNotif;
+	std::list<LPNOTIFICATION>::const_iterator iterNotif;
 	LPMDB lpStore = NULL;
 
 	for(iterNotif = m_lstNewMailNotifs.begin(); iterNotif != m_lstNewMailNotifs.end(); iterNotif++) {

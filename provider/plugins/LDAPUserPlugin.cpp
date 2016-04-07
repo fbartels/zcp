@@ -714,7 +714,7 @@ std::list<std::string> LDAPUserPlugin::GetClasses(const char *lpszClasses)
 
 bool LDAPUserPlugin::MatchClasses(std::set<std::string> setClasses, std::list<std::string> lstClasses)
 {
-	std::list<std::string>::iterator i;
+	std::list<std::string>::const_iterator i;
 
 	for(i=lstClasses.begin(); i!=lstClasses.end(); i++) {
 		std::string upcase = strToUpper(*i);
@@ -737,7 +737,7 @@ std::string LDAPUserPlugin::GetObjectClassFilter(const char *lpszObjectClassAttr
 		filter = (std::string)"(" + lpszObjectClassAttr + "=" + *lstObjectClasses.begin() + ")";
 	}
 	else {
-		std::list<std::string>::iterator i;
+		std::list<std::string>::const_iterator i;
 		filter = "(&";
 
 		for(i=lstObjectClasses.begin(); i!=lstObjectClasses.end(); i++) {
@@ -935,7 +935,7 @@ auto_ptr<signatures_t> LDAPUserPlugin::getAllObjectsByFilter(const string &based
 	string					signature;
 
 	map<objectclass_t, dn_cache_t*> mapDNCache;
-	map<objectclass_t, dn_cache_t*>::iterator iterDNCache;
+	std::map<objectclass_t, dn_cache_t *>::const_iterator iterDNCache;
 	auto_ptr<dn_list_t>		dnFilter;
 
 	auto_free_ldap_message res;
@@ -1935,7 +1935,8 @@ auto_ptr<map<objectid_t, objectdetails_t> > LDAPUserPlugin::getObjectDetails(con
 	}
 #endif
 
-	for (list<configsetting_t>::iterator iter = lExtraAttrs.begin(); iter != lExtraAttrs.end(); iter++)
+	for (std::list<configsetting_t>::const_iterator iter = lExtraAttrs.begin();
+	     iter != lExtraAttrs.end(); ++iter)
 		request_attrs->add(iter->szValue);
 	unsigned int ulCutoff = atoui(m_config->GetSetting("ldap_filter_cutoff_elements"));
 
@@ -2064,7 +2065,8 @@ auto_ptr<map<objectid_t, objectdetails_t> > LDAPUserPlugin::getObjectDetails(con
 			}
 
 
-			for (list<configsetting_t>::iterator iter = lExtraAttrs.begin(); iter != lExtraAttrs.end(); iter++) {
+			for (std::list<configsetting_t>::const_iterator iter = lExtraAttrs.begin();
+			     iter != lExtraAttrs.end(); ++iter) {
 				unsigned int ulPropTag;
 
 				/*
@@ -2360,7 +2362,9 @@ auto_ptr<map<objectid_t, objectdetails_t> > LDAPUserPlugin::getObjectDetails(con
 	END_FOREACH_LDAP_PAGING
 
 	// paged loop ended, so now we can process the postactions.
-	for (list<postaction>::iterator p = lPostActions.begin(); p != lPostActions.end(); p++) {
+	for (std::list<postaction>::const_iterator p = lPostActions.begin();
+	     p != lPostActions.end(); ++p)
+	{
 		map<objectid_t, objectdetails_t>::iterator o = mapdetails->find(p->objectid);
 		if (o == mapdetails->end()) {
 			// this should never happen, but only some details will be missing, not the end of the world.
@@ -2376,7 +2380,7 @@ auto_ptr<map<objectid_t, objectdetails_t> > LDAPUserPlugin::getObjectDetails(con
 			    ASSERT(p->result_attr.empty());
 			    
 				auto_ptr<signatures_t> lstSignatures;
-				signatures_t::iterator iSignature;
+				signatures_t::const_iterator iSignature;
 				lstSignatures = resolveObjectsFromAttributeType(p->objclass, p->ldap_attrs, p->relAttr, p->relAttrType);
 				if (lstSignatures->size() != p->ldap_attrs.size()) {
 					// try to rat out the object causing the failed ldap query
@@ -2426,8 +2430,8 @@ auto_ptr<map<objectid_t, objectdetails_t> > LDAPUserPlugin::getObjectDetails(con
 }
 
 auto_ptr<objectdetails_t> LDAPUserPlugin::getObjectDetails(const objectid_t &id) {
-    auto_ptr<map<objectid_t, objectdetails_t> > mapDetails;
-	map<objectid_t, objectdetails_t>::iterator iterDetails;
+	auto_ptr<map<objectid_t, objectdetails_t> > mapDetails;
+	std::map<objectid_t, objectdetails_t>::const_iterator iterDetails;
     list<objectid_t> objectids;
 
     objectids.push_back(id);
@@ -3232,7 +3236,7 @@ auto_ptr<abprops_t> LDAPUserPlugin::getExtraAddressbookProperties()
 {
 	auto_ptr<abprops_t> lProps = auto_ptr<abprops_t>(new abprops_t());
 	list<configsetting_t> lExtraAttrs = m_config->GetSettingGroup(CONFIGGROUP_PROPMAP);
-	list<configsetting_t>::iterator i;
+	std::list<configsetting_t>::const_iterator i;
 
 	LOG_PLUGIN_DEBUG("%s", __FUNCTION__);
 

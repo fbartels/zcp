@@ -336,7 +336,7 @@ static HRESULT ExpandRecipients(LPADRBOOK lpAddrBook, IMessage *lpMessage)
 {
 	HRESULT hr = hrSuccess;
 	list<SBinary> lExpandedGroups;
-	list<SBinary>::iterator iterGroups;
+	std::list<SBinary>::const_iterator iterGroups;
 	IMAPITable *lpTable = NULL;
 	LPSRestriction lpRestriction = NULL;
 	LPSRestriction lpEntryRestriction = NULL;

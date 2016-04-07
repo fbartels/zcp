@@ -110,8 +110,8 @@ HRESULT OfflineABImporter::ImportABChange(ULONG ulObjType, ULONG cbObjId, LPENTR
 	ECCOMPANY *lpsCheckDstCompany = NULL;
 	std::list<ECENTRYID> lstSrcMembers;
 	std::list<ECENTRYID> lstDstMembers;
-	std::list<ECENTRYID>::iterator iterSrcMembers;
-	std::list<ECENTRYID>::iterator iterDstMembers;
+	std::list<ECENTRYID>::const_iterator iterSrcMembers;
+	std::list<ECENTRYID>::const_iterator iterDstMembers;
 	ULONG cDstUsers = 0;		
 	ECUSER *lpDstUsers = NULL;
 	ULONG cSrcUsers = 0;

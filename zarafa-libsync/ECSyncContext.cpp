@@ -447,7 +447,7 @@ HRESULT ECSyncContext::HrGetSteps(SBinary *lpEntryID, SBinary *lpSourceKey, ULON
 	ULONG ulType = 0;
 	SSyncState sSyncState = {0};
 	IECChangeAdvisor *lpECA = NULL;
-	NotifiedSyncIdMap::iterator iterNotifiedSyncId;
+	NotifiedSyncIdMap::const_iterator iterNotifiedSyncId;
 	bool bNotified = false;
 
 	ASSERT(lpulSteps != NULL);
@@ -721,7 +721,7 @@ exit:
 HRESULT ECSyncContext::HrSaveSyncStatus(LPSPropValue *lppSyncStatusProp)
 {
 	HRESULT hr = hrSuccess;
-	StatusStreamMap::iterator iSyncStatus;
+	StatusStreamMap::const_iterator iSyncStatus;
 	std::string strSyncStatus;
 	ULONG ulSize = 0;
 	ULONG ulVersion = EC_SYNC_STATUS_VERSION;
@@ -812,7 +812,7 @@ HRESULT ECSyncContext::HrGetSyncStatusStream(SBinary *lpsSourceKey, LPSTREAM *lp
 	HRESULT hr = hrSuccess;
 	LPSTREAM lpStream = NULL;
 	std::string strSourceKey;
-	StatusStreamMap::iterator iStatusStream;
+	StatusStreamMap::const_iterator iStatusStream;
 
 	strSourceKey.assign((char*)lpsSourceKey->lpb, lpsSourceKey->cb);
 	iStatusStream = m_mapSyncStatus.find(strSourceKey);

@@ -471,9 +471,9 @@ auto_ptr<signatures_t> UnixUserPlugin::getAllObjects(const objectid_t &companyid
 	ECRESULT er = erSuccess;
 	auto_ptr<signatures_t> objectlist = auto_ptr<signatures_t>(new signatures_t());
 	auto_ptr<signatures_t> objects;
-	signatures_t::iterator iterObjs;
+	signatures_t::const_iterator iterObjs;
 	map<objectclass_t, string> objectstrings;
-	map<objectclass_t, string>::iterator iterStrings;
+	std::map<objectclass_t, string>::const_iterator iterStrings;
 	DB_RESULT_AUTOFREE lpResult(m_lpDatabase);
 	DB_ROW lpDBRow = NULL;
 	string strQuery;
@@ -859,7 +859,9 @@ auto_ptr<signatures_t> UnixUserPlugin::searchObject(const string &match, unsigne
 		const char *search_props[] = { OP_EMAILADDRESS, NULL };
 		objects = DBPlugin::searchObjects(match, search_props, NULL, ulFlags);
 
-		for (signatures_t::iterator iter = objects->begin(); iter != objects->end(); iter++) {
+		for (signatures_t::const_iterator iter = objects->begin();
+		     iter != objects->end(); ++iter)
+		{
 			// the DBPlugin returned the DB signature, so we need to prepend this with the gecos signature
 			errno = 0;
 			getpwuid_r(atoi(iter->id.id.c_str()), &pws, buffer, PWBUFSIZE, &pw);

@@ -761,7 +761,7 @@ static HRESULT ResolveUsers(const DeliveryArgs *lpArgs,
     IABContainer *lpAddrFolder, recipients_t *lRCPT)
 {
 	HRESULT hr = hrSuccess;
-	recipients_t::iterator iter;
+	recipients_t::const_iterator iter;
 	LPADRLIST lpAdrList	= NULL;   
 	FlagList *lpFlagList = NULL;
 	SizedSPropTagArray(13, sptaAddress) = {	13,
@@ -955,9 +955,9 @@ static HRESULT ResolveUser(DeliveryArgs *lpArgs, IABContainer *lpAddrFolder,
 static HRESULT FreeServerRecipients(companyrecipients_t *lpCompanyRecips)
 {
 	HRESULT hr = hrSuccess;
-	companyrecipients_t::iterator iterCMP;
-	serverrecipients_t::iterator iterSRV;
-	recipients_t::iterator iterRCPT;
+	companyrecipients_t::const_iterator iterCMP;
+	serverrecipients_t::const_iterator iterSRV;
+	recipients_t::const_iterator iterRCPT;
 
 	if (!lpCompanyRecips) {
 		hr = MAPI_E_INVALID_PARAMETER;
@@ -994,7 +994,7 @@ static HRESULT AddServerRecipient(companyrecipients_t *lpCompanyRecips,
 	HRESULT hr = hrSuccess;
 	companyrecipients_t::iterator iterCMP;
 	serverrecipients_t::iterator iterSRV;
-	recipients_t::iterator iterRecip;
+	recipients_t::const_iterator iterRecip;
 	ECRecipient *lpRecipient = *lppRecipient;
 
 	if (!lpCompanyRecips) {
@@ -2850,7 +2850,7 @@ static void RespondMessageExpired(recipients_t::const_iterator start,
 {
 	convert_context converter;
 	g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Message was expired, not delivering");
-	for (recipients_t::iterator iter = start; iter != end; iter++)
+	for (recipients_t::const_iterator iter = start; iter != end; ++iter)
 		(*iter)->wstrDeliveryStatus = L"250 2.4.7 %ls Delivery time expired";
 }
 
@@ -2884,7 +2884,7 @@ static HRESULT ProcessDeliveryToServer(PyMapiPlugin *lppyMapiPlugin,
 	HRESULT hr = hrSuccess;
 	IMAPISession *lpSession = NULL;
 	IMsgStore *lpStore = NULL;
-	recipients_t::iterator iter;
+	recipients_t::const_iterator iter;
 	IMessage *lpOrigMessage = NULL;
 	IMessage *lpMessageTmp = NULL;
 	bool bFallbackDeliveryTmp = false;
@@ -3058,7 +3058,7 @@ static HRESULT ProcessDeliveryToCompany(PyMapiPlugin *lppyMapiPlugin,
 	IMessage *lpMasterMessage = NULL;
 	std::string strMail;
 	serverrecipients_t listServerPathRecips;
-	serverrecipients_t::iterator iter;
+	serverrecipients_t::const_iterator iter;
 	bool bFallbackDelivery = false;
 	bool bExpired = false;
 
@@ -3202,7 +3202,7 @@ static HRESULT ProcessDeliveryToList(PyMapiPlugin *lppyMapiPlugin,
 	HRESULT hr = hrSuccess;
 	IMAPISession *lpUserSession = NULL;
 	LPADRBOOK lpAdrBook = NULL;
-	companyrecipients_t::iterator iter;
+	companyrecipients_t::const_iterator iter;
 
 	sc -> countInc("DAgent", "to_list");
 
@@ -3525,10 +3525,10 @@ static void *HandlerLMTP(void *lpArg)
 				/* Responses need to be sent in the same sequence that we received the recipients in.
 				 * Build all responses and find the sequence through the ordered list
 				 */
-				for(companyrecipients_t::iterator iCompany = mapRCPT.begin(); iCompany != mapRCPT.end(); iCompany++) {
-					for(serverrecipients_t::iterator iServer = iCompany->second.begin(); iServer != iCompany->second.end(); iServer++) {
-						for(recipients_t::iterator iRecipient = iServer->second.begin(); iRecipient != iServer->second.end(); iRecipient++) {
-							std::vector<std::wstring>::iterator i;
+				for (companyrecipients_t::const_iterator iCompany = mapRCPT.begin(); iCompany != mapRCPT.end(); ++iCompany) {
+					for (serverrecipients_t::const_iterator iServer = iCompany->second.begin(); iServer != iCompany->second.end(); ++iServer) {
+						for (recipients_t::const_iterator iRecipient = iServer->second.begin(); iRecipient != iServer->second.end(); ++iRecipient) {
+							std::vector<std::wstring>::const_iterator i;
 							WCHAR wbuffer[4096];
 							for (i = (*iRecipient)->vwstrRecipients.begin(); i != (*iRecipient)->vwstrRecipients.end(); i++) {
 								swprintf(wbuffer, arraySize(wbuffer), (*iRecipient)->wstrDeliveryStatus.c_str(), i->c_str());
@@ -3541,8 +3541,8 @@ static void *HandlerLMTP(void *lpArg)
 				}
 
 				// Reply each recipient in the received order
-				for (list<string>::iterator i = lOrderedRecipients.begin(); hr == hrSuccess && i != lOrderedRecipients.end(); i++) {
-					map<string,string>::iterator r = mapRecipientResults.find(*i);
+				for (std::list<std::string>::const_iterator i = lOrderedRecipients.begin(); hr == hrSuccess && i != lOrderedRecipients.end(); ++i) {
+					std::map<std::string, std::string>::const_iterator r = mapRecipientResults.find(*i);
 					if (r == mapRecipientResults.end()) {
 						// FIXME if a following item from lORderedRecipients does succeed, then this error status
 						// is forgotten. is that ok? (FvH)

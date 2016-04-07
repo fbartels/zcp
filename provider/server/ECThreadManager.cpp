@@ -325,9 +325,8 @@ ECThreadManager::ECThreadManager(ECLogger *lpLogger, ECDispatcher *lpDispatcher,
 
 ECThreadManager::~ECThreadManager()
 {
-    unsigned int ulThreads;
-    
-    std::list<ECWorkerThread *>::iterator iterThreads;
+	unsigned int ulThreads;
+	std::list<ECWorkerThread *>::const_iterator iterThreads;
 
     // Wait for the threads to exit
     while(1) {
@@ -391,8 +390,8 @@ ECRESULT ECThreadManager::SetThreadCount(unsigned int ulThreads)
 // deleted.
 ECRESULT ECThreadManager::NotifyIdle(ECWorkerThread *lpThread, bool *lpfStop)
 {
-    ECRESULT er = erSuccess;
-    std::list<ECWorkerThread *>::iterator iterThreads;
+	ECRESULT er = erSuccess;
+	std::list<ECWorkerThread *>::iterator iterThreads;
     *lpfStop = false;
         
     pthread_mutex_lock(&m_mutexThreads);
@@ -760,11 +759,11 @@ ECDispatcherSelect::~ECDispatcherSelect()
 
 ECRESULT ECDispatcherSelect::MainLoop()
 {
-    ECRESULT er = erSuccess;
-    ECWatchDog *lpWatchDog = NULL;
-    std::map<int, ACTIVESOCKET>::iterator iterSockets;
-    std::map<int, ACTIVESOCKET>::iterator iterErase;
-    std::map<int, struct soap *>::iterator iterListenSockets;
+	ECRESULT er = erSuccess;
+	ECWatchDog *lpWatchDog = NULL;
+	std::map<int, ACTIVESOCKET>::iterator iterSockets;
+	std::map<int, ACTIVESOCKET>::const_iterator iterErase;
+	std::map<int, struct soap *>::const_iterator iterListenSockets;
     int maxfds = 0;
     char s = 0;
     time_t now;
@@ -994,8 +993,8 @@ ECRESULT ECDispatcherEPoll::MainLoop()
 	ECWatchDog *lpWatchDog = NULL;
 	time_t now = 0;
 	time_t last = 0;
-	std::map<int, ACTIVESOCKET>::iterator iterSockets;
-	std::map<int, struct soap *>::iterator iterListenSockets;
+	std::map<int, ACTIVESOCKET>::const_iterator iterSockets;
+	std::map<int, struct soap *>::const_iterator iterListenSockets;
 	CONNECTION_TYPE ulType;
 
 	epoll_event epevent;
@@ -1188,11 +1187,11 @@ ECRESULT ECDispatcherWin32::MainLoop()
 {
     ECRESULT er = erSuccess;
     ECWatchDog *lpWatchDog = NULL;
-    std::map<int, ACTIVESOCKET>::iterator iterSockets;
-    std::map<int, ACTIVESOCKET>::iterator iterErase;
-    std::map<int, struct soap *>::iterator iterListenSockets;
+    std::map<int, ACTIVESOCKET>::const_iterator iterSockets;
+    std::map<int, ACTIVESOCKET>::const_iterator iterErase;
+    std::map<int, struct soap *>::const_iterator iterListenSockets;
 	std::map<HANDLE, ECSOCKETDATA *> mapPending;			// Map of all pending overlapped I/O requests
-	std::map<HANDLE, ECSOCKETDATA *>::iterator iterPending;
+	std::map<HANDLE, ECSOCKETDATA *>::const_iterator iterPending;
 	std::vector<HANDLE> lstWatch;						// Rebuilt for each WFMOE loop in same order as hEvent[]
     time_t now;
 	unsigned int ulEvent;

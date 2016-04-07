@@ -474,7 +474,7 @@ static HRESULT CleanFinishedMessages(IMAPISession *lpAdminSession,
 	return hrSuccess;
 #else
 	HRESULT hr = hrSuccess;
-	map<pid_t, int>::iterator i, iDel;
+	std::map<pid_t, int>::const_iterator i, iDel;
 	SendData sSendData;
 	bool bErrorMail;
 	map<pid_t, int> finished; // exit status of finished processes
@@ -730,7 +730,8 @@ static HRESULT ProcessAllEntries(IMAPISession *lpAdminSession,
 #else
 		// Check if there is already an active process for this message
 		bool bMatch = false;
-		for (map<pid_t, SendData>::iterator i = mapSendData.begin(); i != mapSendData.end(); i++) {
+		for (std::map<pid_t, SendData>::const_iterator i = mapSendData.begin();
+		     i != mapSendData.end(); ++i) {
 			if (i->second.cbMessageEntryId == lpsRowSet->aRow[0].lpProps[2].Value.bin.cb &&
 				memcmp(i->second.lpMessageEntryId, lpsRowSet->aRow[0].lpProps[2].Value.bin.lpb, i->second.cbMessageEntryId) == 0) {
 				bMatch = true;

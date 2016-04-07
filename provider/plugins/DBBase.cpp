@@ -110,7 +110,7 @@ auto_ptr<map<objectid_t, objectdetails_t> > DBPlugin::getObjectDetails(const lis
 	map<objectid_t,objectdetails_t>::iterator iterDetails;
 	ECRESULT er;
 	map<objectclass_t, string> objectstrings;
-	map<objectclass_t, string>::iterator iterStrings;
+	std::map<objectclass_t, std::string>::const_iterator iterStrings;
 	string strQuery;
 	string strSubQuery;
 	DB_RESULT_AUTOFREE lpResult(m_lpDatabase);
@@ -119,8 +119,7 @@ auto_ptr<map<objectid_t, objectdetails_t> > DBPlugin::getObjectDetails(const lis
 	objectdetails_t details;
 	objectid_t lastid;
 	objectid_t curid;
-
-	list<objectid_t>::iterator iterID;
+	std::list<objectid_t>::const_iterator iterID;
 
 	if(objectids.empty())
 		return auto_ptr<map<objectid_t, objectdetails_t> >(mapdetails);
@@ -323,9 +322,9 @@ void DBPlugin::changeObject(const objectid_t &objectid, const objectdetails_t &d
 	string strData;
 	string strMD5Pw;
 	property_map anonymousProps;
-	property_map::iterator iterAnonymous;
+	property_map::const_iterator iterAnonymous;
 	property_mv_map anonymousMVProps;
-	property_mv_map::iterator iterMVAnonymous;
+	property_mv_map::const_iterator iterMVAnonymous;
 	std::list<std::string>::const_iterator iterProps;
 	unsigned int ulOrderId = 0;
 
@@ -943,7 +942,7 @@ ECRESULT DBPlugin::CreateMD5Hash(const std::string &strData, std::string* lpstrR
 void DBPlugin::addSendAsToDetails(const objectid_t &objectid, objectdetails_t *lpDetails)
 {
 	auto_ptr<signatures_t> sendas;
-	signatures_t::iterator iter;
+	signatures_t::const_iterator iter;
 
 	sendas = getSubObjectsForObject(OBJECTRELATION_USER_SENDAS, objectid);
 
