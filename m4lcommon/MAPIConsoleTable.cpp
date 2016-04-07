@@ -73,7 +73,7 @@ static std::string ToString(const SPropValue *lpProp)
         case PT_MV_STRING8:
         {
             std::string s;
-            for(unsigned int i=0; i < lpProp->Value.MVszA.cValues; i++) {
+            for (unsigned int i = 0; i < lpProp->Value.MVszA.cValues; ++i) {
                 if(!s.empty())
                     s += ",";
                 s += lpProp->Value.MVszA.lppszA[i];
@@ -105,15 +105,12 @@ HRESULT MAPITablePrint(IMAPITable *lpTable, bool humanreadable /* = true */)
         
     ct.Resize(ptrRows.size(), ptrColumns->cValues);
     
-    for(i=0;i<ptrColumns->cValues;i++) {
-        ct.SetHeader(i, stringify(ptrColumns->aulPropTag[i], true));
-    }
+	for (i = 0; i < ptrColumns->cValues; ++i)
+		ct.SetHeader(i, stringify(ptrColumns->aulPropTag[i], true));
     
-    for(i=0;i<ptrRows.size();i++) {
-        for(j=0;j<ptrRows[i].cValues;j++) {
-            ct.SetColumn(i, j, ToString(&ptrRows[i].lpProps[j]));
-        }
-    }
+	for (i = 0; i < ptrRows.size(); ++i)
+		for (j = 0; j < ptrRows[i].cValues; ++j)
+			ct.SetColumn(i, j, ToString(&ptrRows[i].lpProps[j]));
     
 	humanreadable ? ct.PrintTable() : ct.DumpTable();
         

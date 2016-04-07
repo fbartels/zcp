@@ -57,7 +57,7 @@ using namespace std;
  */
 bool isFeature(const char* feature)
 {
-	for (size_t i = 0; i < arraySize(zarafa_features); i++)
+	for (size_t i = 0; i < arraySize(zarafa_features); ++i)
 		if (stricmp(feature, zarafa_features[i]) == 0)
 			return true;
 	return false;
@@ -76,11 +76,9 @@ HRESULT hasFeature(const char* feature, LPSPropValue lpProps)
 	if (!feature || !lpProps || PROP_TYPE(lpProps->ulPropTag) != PT_MV_STRING8)
 		return MAPI_E_INVALID_PARAMETER;
 
-	for (ULONG i = 0; i < lpProps->Value.MVszA.cValues; i++) {
+	for (ULONG i = 0; i < lpProps->Value.MVszA.cValues; ++i)
 		if (stricmp(lpProps->Value.MVszA.lppszA[i], feature) == 0)
 			return hrSuccess;
-	}
-
 	return MAPI_E_NOT_FOUND;
 }
 
@@ -97,11 +95,9 @@ HRESULT hasFeature(const WCHAR* feature, LPSPropValue lpProps)
 	if (!feature || !lpProps || PROP_TYPE(lpProps->ulPropTag) != PT_MV_UNICODE)
 		return MAPI_E_INVALID_PARAMETER;
 
-	for (ULONG i = 0; i < lpProps->Value.MVszW.cValues; i++) {
+	for (ULONG i = 0; i < lpProps->Value.MVszW.cValues; ++i)
 		if (wcscasecmp(lpProps->Value.MVszW.lppszW[i], feature) == 0)
 			return hrSuccess;
-	}
-
 	return MAPI_E_NOT_FOUND;
 }
 

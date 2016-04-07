@@ -404,8 +404,7 @@ HRESULT GetMailboxData(ECLogger *lpLogger, IMAPISession *lpMapiSession, const ch
 		if (hr != hrSuccess)
 			goto exit;
 		
-		for (unsigned int i = 0; i < ptrRows.size(); i++) {
-
+		for (unsigned int i = 0; i < ptrRows.size(); ++i) {
 			if (ptrRows[i].lpProps[0].ulPropTag != PR_ENTRYID) {
 				lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to get entryid to open tenancy Address Book");
 				hr = MAPI_E_INVALID_PARAMETER;
@@ -477,7 +476,7 @@ HRESULT GetMailboxData(ECLogger *lpLogger, IMAPISession *lpMapiSession, const ch
 		goto exit;
 	} else {
 
-		for (ULONG i = 0; i < lpSrvList->cServers; i++) {
+		for (ULONG i = 0; i < lpSrvList->cServers; ++i) {
 			wchar_t *wszPath = NULL;
 
 			lpLogger->Log(EC_LOGLEVEL_INFO, "Check server: '%ls' ssl='%ls' flag=%08x", 
@@ -664,7 +663,7 @@ HRESULT UpdateServerList(ECLogger *lpLogger, IABContainer *lpContainer, std::set
 		if (ptrRows.empty())
 			break;
 
-		for (unsigned int i = 0; i < ptrRows.size(); i++) {
+		for (unsigned int i = 0; i < ptrRows.size(); ++i) {
 			if(ptrRows[i].lpProps[0].ulPropTag == PR_EC_HOMESERVER_NAME_W) {
 				listServers.insert(ptrRows[i].lpProps[0].Value.lpszW);
 

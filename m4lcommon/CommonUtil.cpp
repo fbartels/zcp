@@ -288,47 +288,47 @@ HRESULT CreateProfileTemp(ECLogger *const lpLogger, const WCHAR *username, const
 	i = 0;
 	sProps[i].ulPropTag = PR_EC_PATH;
 	sProps[i].Value.lpszA = const_cast<char *>(path != NULL && *path != '\0' ? path : "default:");
-	i++;
+	++i;
 
 	sProps[i].ulPropTag = PR_EC_USERNAME_W;
 	sProps[i].Value.lpszW = (WCHAR*)username;
-	i++;
+	++i;
 
 	sProps[i].ulPropTag = PR_EC_USERPASSWORD_W;
 	sProps[i].Value.lpszW = (WCHAR*)password;
-	i++;
+	++i;
 
 	sProps[i].ulPropTag = PR_EC_FLAGS;
 	sProps[i].Value.ul = ulProfileFlags;
-	i++;
+	++i;
 
 	sProps[i].ulPropTag = PR_PROFILE_NAME_A;
 	sProps[i].Value.lpszA = (char*)szProfName;
-	i++;
+	++i;
 
 	if (sslkey_file) {
 		// always add ssl keys info as we might be redirected to an ssl connection
 		sProps[i].ulPropTag = PR_EC_SSLKEY_FILE;
 		sProps[i].Value.lpszA = (char*)sslkey_file;
-		i++;
+		++i;
 
 		if (sslkey_password) {
 			sProps[i].ulPropTag = PR_EC_SSLKEY_PASS;
 			sProps[i].Value.lpszA = (char*)sslkey_password;
-			i++;
+			++i;
 		}
 	}
 
 	if (app_version) {
 		sProps[i].ulPropTag = PR_EC_STATS_SESSION_CLIENT_APPLICATION_VERSION;
 		sProps[i].Value.lpszA = (char*)app_version;
-		i++;
+		++i;
 	}
 
 	if (app_misc) {
 		sProps[i].ulPropTag = PR_EC_STATS_SESSION_CLIENT_APPLICATION_MISC;
 		sProps[i].Value.lpszA = (char*)app_misc;
-		i++;
+		++i;
 	}
 
 	hr = lpServiceAdmin->ConfigureMsgService((MAPIUID *)lpServiceUID->Value.bin.lpb, 0, 0, i, sProps);
@@ -844,8 +844,7 @@ HRESULT HrRemoveECMailBox(LPPROVIDERADMIN lpProviderAdmin, LPMAPIUID lpsProvider
 		lpNewProp->Value.bin.cb	= 0;
 		lpNewProp->ulPropTag	= PR_STORE_PROVIDERS;
 
-		for(i=0; i < lpGlobalProps->Value.bin.cb / sizeof(MAPIUID); i++)
-		{
+		for (i = 0; i < lpGlobalProps->Value.bin.cb / sizeof(MAPIUID); ++i) {
 			if(memcmp(lpGlobalProps->Value.bin.lpb+(sizeof(MAPIUID) * i), lpsProviderUID, sizeof(MAPIUID)) != 0)
 			{
 				memcpy(lpNewProp->Value.bin.lpb+lpNewProp->Value.bin.cb, lpGlobalProps->Value.bin.lpb+(sizeof(MAPIUID) * i), sizeof(MAPIUID));
@@ -1261,7 +1260,7 @@ std::string ToQuotedPrintable(const std::string &input, std::string charset, boo
 	if (header)
 		tmp = "=?"+charset+"?Q?";
 
-	for (i = 0; i < input.size(); i++) {
+	for (i = 0; i < input.size(); ++i) {
 		if ((unsigned char)input[i] > 127) {
 			tmp.push_back('=');
 			tmp.push_back(digits[((unsigned char)input[i]>>4)]);
@@ -1924,7 +1923,7 @@ public:
 		if ((hr = MAPIAllocateBuffer(sizeof(SPropValue) * lpTags->cValues, (void **) &lpProps)) != hrSuccess)
 			return hr;
 
-		for(i=0; i<lpTags->cValues; i++) {
+		for (i = 0; i<lpTags->cValues; ++i) {
 			bError = FALSE;
 			lpFind = PpropFindProp(m_lpProps, m_cValues, CHANGE_PROP_TYPE(lpTags->aulPropTag[i], PT_UNSPECIFIED));
 			if(lpFind && PROP_TYPE(lpFind->ulPropTag) != PT_ERROR) {
@@ -2018,14 +2017,14 @@ static HRESULT GetRestrictTagsRecursive(const SRestriction *lpRestriction,
 
 	switch(lpRestriction->rt) {
 		case RES_AND:
-			for(i=0;i<lpRestriction->res.resAnd.cRes;i++) {
+			for (i = 0; i < lpRestriction->res.resAnd.cRes; ++i) {
 				hr = GetRestrictTagsRecursive(&lpRestriction->res.resAnd.lpRes[i], lpList, ulLevel+1);
 				if(hr != hrSuccess)
 					goto exit;
 			}
 			break;
 		case RES_OR:
-			for(i=0;i<lpRestriction->res.resOr.cRes;i++) {
+			for (i = 0; i < lpRestriction->res.resOr.cRes; ++i) {
 				hr = GetRestrictTagsRecursive(&lpRestriction->res.resOr.lpRes[i], lpList, ulLevel+1);
 				if(hr != hrSuccess)
 					goto exit;
@@ -2089,10 +2088,9 @@ static HRESULT GetRestrictTags(const SRestriction *lpRestriction,
 	lstTags.sort();
 	lstTags.unique();
 
-	for(iterTags = lstTags.begin(); iterTags != lstTags.end() && n < lpTags->cValues; iterTags++) {
-		lpTags->aulPropTag[n] = *iterTags;
-		n++;
-	}
+	for (iterTags = lstTags.begin();
+	     iterTags != lstTags.end() && n < lpTags->cValues; ++iterTags)
+		lpTags->aulPropTag[n++] = *iterTags;
 	
 	lpTags->cValues = n;
 
@@ -2134,7 +2132,7 @@ HRESULT TestRestriction(LPSRestriction lpCondition, IMAPIProp *lpMessage, const 
 	switch (lpCondition->rt) {
 	// loops
 	case RES_AND:
-		for (c = 0; c < lpCondition->res.resAnd.cRes; c++) {
+		for (c = 0; c < lpCondition->res.resAnd.cRes; ++c) {
 			hr = TestRestriction(&lpCondition->res.resAnd.lpRes[c], lpMessage, locale, ulLevel+1);
 			if (hr != hrSuccess) {
 				fMatch = false;
@@ -2144,7 +2142,7 @@ HRESULT TestRestriction(LPSRestriction lpCondition, IMAPIProp *lpMessage, const 
 		}
 		break;
 	case RES_OR:
-		for (c = 0; c < lpCondition->res.resAnd.cRes; c++) {
+		for (c = 0; c < lpCondition->res.resAnd.cRes; ++c) {
 			hr = TestRestriction(&lpCondition->res.resOr.lpRes[c], lpMessage, locale, ulLevel+1);
 			if (hr == hrSuccess) {
 				fMatch = true;
@@ -2405,8 +2403,7 @@ HRESULT GetClientVersion(unsigned int* ulVersion)
 		hr = MAPI_E_NOT_FOUND;
 		goto exit;
 	}
-	lpFind++;
-
+	++lpFind;
 	*ulVersion = atoui(lpFind);	
 
 exit:
@@ -2729,9 +2726,8 @@ HRESULT ECPropMap::Resolve(IMAPIProp *lpMAPIProp) {
     // Do GetIDsFromNames() and store result in correct places
     lppNames = new MAPINAMEID *[lstNames.size()];
     
-    for(i=lstNames.begin(); i != lstNames.end(); i++) {
+    for (i = lstNames.begin(); i != lstNames.end(); ++i)
         lppNames[n++] = i->GetMAPINameId();
-    }
     
     hr = lpMAPIProp->GetIDsFromNames(n, lppNames, MAPI_CREATE, &lpPropTags);
     if(hr != hrSuccess)
@@ -2739,9 +2735,8 @@ HRESULT ECPropMap::Resolve(IMAPIProp *lpMAPIProp) {
     
     n = 0;
     k = lstTypes.begin();
-    for(j=lstVars.begin(); j != lstVars.end(); j++, k++) {
+    for (j = lstVars.begin(); j != lstVars.end(); ++j, ++k)
         *(*j) = CHANGE_PROP_TYPE(lpPropTags->aulPropTag[n++], *k);
-    }
     
 exit:
 	MAPIFreeBuffer(lpPropTags);
@@ -2840,7 +2835,7 @@ HRESULT HrGetAllProps(IMAPIProp *lpProp, ULONG ulFlags, ULONG *lpcValues, LPSPro
 	if(FAILED(hr))
 		goto exit;
 		
-	for(unsigned int i=0; i < cValues; i++) {
+	for (unsigned int i = 0; i < cValues; ++i) {
 		if(PROP_TYPE(lpProps[i].ulPropTag) == PT_ERROR && lpProps[i].Value.err == MAPI_E_NOT_ENOUGH_MEMORY) {
 			if(PROP_TYPE(lpTags->aulPropTag[i]) != PT_STRING8 && PROP_TYPE(lpTags->aulPropTag[i]) != PT_UNICODE && PROP_TYPE(lpTags->aulPropTag[i]) != PT_BINARY)
 				continue;
@@ -3016,7 +3011,7 @@ HRESULT DoAddress(IAddrBook *lpAdrBook, ULONG* hWnd, LPADRPARM lpAdrParam, LPADR
 		}
 
 		// Same for lpAdrParam
-		for(unsigned int i=0; i < sAdrParam.cDestFields; i++) {
+		for (unsigned int i = 0; i < sAdrParam.cDestFields; ++i) {
 			std::string strField = convert_to<string>((LPWSTR)sAdrParam.lppszDestTitles[i]);
 
 			vDestFields.push_back(strField);
@@ -3037,8 +3032,8 @@ HRESULT DoAddress(IAddrBook *lpAdrBook, ULONG* hWnd, LPADRPARM lpAdrParam, LPADR
 		// MAPI_UNICODE was requested, but the addressbook did not support it. This means we have to convert all the PT_STRING8 data
 		// back to PT_UNICODE.
 
-		for(unsigned int i=0; i < lpResult->cEntries; i++) {
-			for(unsigned int j=0; j < lpResult->aEntries[i].cValues; j++) {
+		for (unsigned int i = 0; i < lpResult->cEntries; ++i) {
+			for (unsigned int j = 0; j < lpResult->aEntries[i].cValues; ++j) {
 				if(PROP_TYPE(lpResult->aEntries[i].rgPropVals[j].ulPropTag) == PT_STRING8) {
 					std::wstring wstrData = convert_to<wstring>(lpResult->aEntries[i].rgPropVals[j].Value.lpszA);
 

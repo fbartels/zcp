@@ -322,7 +322,7 @@ HRESULT RecurrenceState::ParseBlob(char *lpData, unsigned int ulLen, ULONG ulFla
     READLONG(ulFirstDOW);
     READLONG(ulDeletedInstanceCount);
 
-    for(i = 0; i< ulDeletedInstanceCount; i++) {
+    for (i = 0; i < ulDeletedInstanceCount; ++i) {
         unsigned int ulDeletedInstanceDate;
         READLONG(ulDeletedInstanceDate);
         lstDeletedInstanceDates.push_back(ulDeletedInstanceDate);
@@ -330,7 +330,7 @@ HRESULT RecurrenceState::ParseBlob(char *lpData, unsigned int ulLen, ULONG ulFla
     
     READLONG(ulModifiedInstanceCount);
     
-    for(i = 0; i<ulModifiedInstanceCount; i++) {
+    for (i = 0; i < ulModifiedInstanceCount; ++i) {
         unsigned int ulModifiedInstanceDate;
         READLONG(ulModifiedInstanceDate);
         lstModifiedInstanceDates.push_back(ulModifiedInstanceDate);
@@ -349,7 +349,7 @@ HRESULT RecurrenceState::ParseBlob(char *lpData, unsigned int ulLen, ULONG ulFla
 
     READSHORT(ulExceptionCount);
     
-    for(i=0; i<ulExceptionCount; i++) {
+    for (i = 0; i < ulExceptionCount; ++i) {
         unsigned int ulSubjectLength;
         unsigned int ulSubjectLength2;
         unsigned int ulLocationLength;
@@ -410,7 +410,9 @@ HRESULT RecurrenceState::ParseBlob(char *lpData, unsigned int ulLen, ULONG ulFla
     READLONG(ulReservedBlock1Size);
     READSTRING(strReservedBlock1, ulReservedBlock1Size);
 
-    for(iterExceptions = lstExceptions.begin(); iterExceptions != lstExceptions.end(); iterExceptions++) {
+    for (iterExceptions = lstExceptions.begin();
+         iterExceptions != lstExceptions.end(); ++iterExceptions)
+    {
         ExtendedException sExtendedException;
         unsigned int ulReservedBlock1Size;
         unsigned int ulReservedBlock2Size;
@@ -474,7 +476,7 @@ exit:
 		if (!bExtended) {
 			lstExtendedExceptions.clear(); // remove any half exception maybe read
 
-			for (ULONG i = 0; i < ulExceptionCount; i++) {
+			for (ULONG i = 0; i < ulExceptionCount; ++i) {
 				ExtendedException cEx;
 
 				cEx.ulChangeHighlightValue = 0;
@@ -649,8 +651,7 @@ HRESULT RecurrenceState::GetBlob(char **lppData, unsigned int *lpulLen, void *ba
             WRITELONG((ULONG)i->strReservedBlock2.size());
             WRITESTRING(i->strReservedBlock2.c_str(), (ULONG)i->strReservedBlock2.size());
         }
-        
-        j++;
+        ++j;
     }    
 
     WRITELONG((ULONG)strReservedBlock2.size());

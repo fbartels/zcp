@@ -275,7 +275,7 @@ HRESULT DelFavoriteFolder(IMAPIFolder *lpShortcutFolder, LPSPropValue lpPropSour
 		goto exit;
 
 	memcpy(lpsMsgList->lpbin[lpsMsgList->cValues].lpb, lpRows->aRow[0].lpProps[0].Value.bin.lpb, lpsMsgList->lpbin[lpsMsgList->cValues].cb);
-	lpsMsgList->cValues++;
+	++lpsMsgList->cValues;
 
 	strSourceKey.assign((char*)lpRows->aRow[0].lpProps[1].Value.bin.lpb, lpRows->aRow[0].lpProps[1].Value.bin.cb);
 	listSourceKey.push_back(strSourceKey);
@@ -283,7 +283,8 @@ HRESULT DelFavoriteFolder(IMAPIFolder *lpShortcutFolder, LPSPropValue lpPropSour
 	if (lpRows){ FreeProws(lpRows); lpRows = NULL; }
 	FREE_RESTRICTION(lpRestriction);
 
-	for(ilistSourceKey = listSourceKey.begin(); ilistSourceKey != listSourceKey.end(); ilistSourceKey++)
+	for (ilistSourceKey = listSourceKey.begin();
+	     ilistSourceKey != listSourceKey.end(); ++ilistSourceKey)
 	{
 		sPropSourceKey.ulPropTag = PR_FAV_PUBLIC_SOURCE_KEY;
 		sPropSourceKey.Value.bin.cb = ilistSourceKey->size();
@@ -318,7 +319,7 @@ HRESULT DelFavoriteFolder(IMAPIFolder *lpShortcutFolder, LPSPropValue lpPropSour
 			if ((hr = MAPIAllocateMore(lpsMsgList->lpbin[lpsMsgList->cValues].cb, lpsMsgList, (void **) &lpsMsgList->lpbin[lpsMsgList->cValues].lpb)) != hrSuccess)
 				goto exit;
 			memcpy(lpsMsgList->lpbin[lpsMsgList->cValues].lpb, lpRows->aRow[0].lpProps[0].Value.bin.lpb, lpsMsgList->lpbin[lpsMsgList->cValues].cb);
-			lpsMsgList->cValues++;
+			++lpsMsgList->cValues;
 
 			// Add sourcekey into the list
 			strSourceKey.assign((char*)lpRows->aRow[0].lpProps[1].Value.bin.lpb, lpRows->aRow[0].lpProps[1].Value.bin.cb);
