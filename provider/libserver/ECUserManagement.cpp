@@ -278,7 +278,7 @@ ECRESULT ECUserManagement::AuthUserAndSync(const char* szLoginname, const char* 
 		password = szPassword;
 	}
 
-	if (bHosted & !companyname.empty()) {
+	if (bHosted && !companyname.empty()) {
 		er = ResolveObject(CONTAINER_COMPANY, companyname, objectid_t(), &sCompany);
 		if (er != erSuccess || sCompany.objclass != CONTAINER_COMPANY) {
 			ec_log_warn("Company \"%s\" not found for authentication by plugin failed for user \"%s\"", companyname.c_str(), szLoginname);
