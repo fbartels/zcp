@@ -83,7 +83,7 @@ ECRESULT ECConvenientDepthABObjectTable::Create(ECSession *lpSession, unsigned i
 ECRESULT ECConvenientDepthABObjectTable::QueryRowData(ECGenericObjectTable *lpGenTable, struct soap *soap, ECSession *lpSession, ECObjectTableList* lpRowList, struct propTagArray *lpsPropTagArray, void* lpObjectData, struct rowSet **lppRowSet, bool bTableData,bool bTableLimit)
 {
     ECRESULT er = erSuccess;
-    ECObjectTableList::iterator iterRow;
+    ECObjectTableList::const_iterator iterRow;
     unsigned int n = 0;
     struct propVal *lpProp = NULL;
     ECConvenientDepthABObjectTable *lpThis = (ECConvenientDepthABObjectTable *)lpGenTable;
@@ -125,10 +125,10 @@ ECRESULT ECConvenientDepthABObjectTable::Load()
 	ECODAB *lpODAB = (ECODAB*)m_lpObjectData;
 	sObjectTableKey	sRowItem;
 	std::list<localobjectdetails_t> *lpSubObjects = NULL;
-	std::list<localobjectdetails_t>::iterator iterSubObjects;
+	std::list<localobjectdetails_t>::const_iterator iterSubObjects;
 	
 	std::list<CONTAINERINFO> lstObjects;
-	std::list<CONTAINERINFO>::iterator objectIter;
+	std::list<CONTAINERINFO>::const_iterator objectIter;
 	CONTAINERINFO root;
 
 	if (lpODAB->ulABType != MAPI_ABCONT) {

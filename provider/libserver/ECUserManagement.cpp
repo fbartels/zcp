@@ -101,7 +101,7 @@ static bool execute_script(const char *scriptname, ...)
 	char *envname, *envval;
 	const char *env[32];
 	std::list<std::string> lstEnv;
-	std::list<std::string>::iterator i;
+	std::list<std::string>::const_iterator i;
 	std::string strEnv;
 	int n = 0;
 	
@@ -397,7 +397,7 @@ ECRESULT ECUserManagement::GetLocalObjectListFromSignatures(const list<objectsig
 	// Extern details
 	list<objectid_t> lstExternIds;
 	auto_ptr<map<objectid_t, objectdetails_t> > lpExternDetails;
-	map<objectid_t, objectdetails_t>::iterator iterExternDetails;
+	std::map<objectid_t, objectdetails_t>::const_iterator iterExternDetails;
 
 	objectdetails_t details;
 	unsigned int ulObjectId = 0;
@@ -510,11 +510,11 @@ ECRESULT ECUserManagement::GetCompanyObjectListAndSync(objectclass_t objclass, u
 
 	// Local ids
 	std::list<unsigned int> *lpLocalIds = NULL;
-	std::list<unsigned int>::iterator iterLocalIds;
+	std::list<unsigned int>::const_iterator iterLocalIds;
 
 	// Extern ids
 	auto_ptr<signatures_t> lpExternSignatures;
-	signatures_t::iterator iterExternSignatures;
+	signatures_t::const_iterator iterExternSignatures;
 
 	// Extern -> Local
 	std::map<objectid_t, unsigned int> mapExternIdToLocal;
@@ -717,7 +717,7 @@ ECRESULT ECUserManagement::GetSubObjectsOfObjectAndSync(userobject_relation_t re
 
 	// Extern ids
 	auto_ptr<signatures_t> lpSignatures;
-	signatures_t::iterator iterSignatures;
+	signatures_t::const_iterator iterSignatures;
 
 	// Extern -> Local
 	map<objectid_t, unsigned int> mapExternIdToLocal;
@@ -838,7 +838,7 @@ ECRESULT ECUserManagement::GetParentObjectsOfObjectAndSync(userobject_relation_t
 
 	// Extern ids
 	auto_ptr<signatures_t> lpSignatures;
-	signatures_t::iterator iterSignatures;
+	signatures_t::const_iterator iterSignatures;
 
 	// Extern -> Local
 	map<objectid_t, unsigned int> mapExternIdToLocal;
@@ -1865,7 +1865,7 @@ ECRESULT ECUserManagement::SearchObjectAndSync(const char* szSearchString, unsig
 	ECRESULT er = erSuccess;
 	objectsignature_t objectsignature;
 	auto_ptr<signatures_t> lpObjectsignatures;
-	signatures_t::iterator iterSignature;
+	signatures_t::const_iterator iterSignature;
 	unsigned int ulId = 0;
 	string strUsername;
 	string strCompanyname;
@@ -2077,12 +2077,12 @@ ECRESULT ECUserManagement::QueryContentsRowData(struct soap *soap, ECObjectTable
 
 	map<objectid_t, unsigned int> mapExternIdToRowId;
 	map<objectid_t, unsigned int> mapExternIdToObjectId;
-	map<objectid_t, unsigned int>::iterator iterObjectId;
-	map<objectid_t, unsigned int>::iterator iterRowId;
+	std::map<objectid_t, unsigned int>::const_iterator iterObjectId;
+	std::map<objectid_t, unsigned int>::const_iterator iterRowId;
 	
 	objectdetails_t details;
 
-	ECObjectTableList::iterator iterRowList;
+	ECObjectTableList::const_iterator iterRowList;
 	UserPlugin *lpPlugin = NULL;
 	string signature;
 
@@ -2225,7 +2225,7 @@ ECRESULT ECUserManagement::QueryHierarchyRowData(struct soap *soap, ECObjectTabl
 {
 	ECRESULT er = erSuccess;
 	struct rowSet *lpsRowSet = NULL;
-	ECObjectTableList::iterator iterRowList;
+	ECObjectTableList::const_iterator iterRowList;
 	unsigned int i = 0;
 
 	ASSERT(lpRowList != NULL);
@@ -2507,7 +2507,7 @@ ECRESULT ECUserManagement::ConvertExternIDsToLocalIDs(objectdetails_t *lpDetails
 	ECRESULT er = erSuccess;
 	list<objectid_t> lstExternIDs;
 	map<objectid_t, unsigned int> mapLocalIDs;
-	map<objectid_t, unsigned int>::iterator iterLocalIDs;
+	std::map<objectid_t, unsigned int>::const_iterator iterLocalIDs;
 	string strQuery;
 	objectid_t sExternID;
 	unsigned int ulLocalID = 0;
@@ -2620,7 +2620,7 @@ ECRESULT ECUserManagement::ComplementDefaultFeatures(objectdetails_t *lpDetails)
 
 	ba::split(defaultDisabled, config, ba::is_any_of("\t "), ba::token_compress_on);
 
-	for (set<string>::iterator i = defaultDisabled.begin(); i != defaultDisabled.end(); ) {
+	for (std::set<std::string>::const_iterator i = defaultDisabled.begin(); i != defaultDisabled.end(); ) {
 		if (i->empty()) {
 			// nasty side effect of boost split, when input consists only of a split predicate.
 			defaultDisabled.erase(i++);
@@ -2631,13 +2631,15 @@ ECRESULT ECUserManagement::ComplementDefaultFeatures(objectdetails_t *lpDetails)
 	}
 
 	// explicit enable remove from default disable, and add in defaultEnabled
-	for (list<string>::iterator i = userEnabled.begin(); i != userEnabled.end(); i++) {
+	for (std::list<std::string>::const_iterator i = userEnabled.begin();
+	     i != userEnabled.end(); ++i) {
 		defaultDisabled.erase(*i);
 		defaultEnabled.insert(*i);
 	}
 
 	// explicit disable remove from default enable, and add in defaultDisabled
-	for (list<string>::iterator i = userDisabled.begin(); i != userDisabled.end(); i++) {
+	for (std::list<std::string>::const_iterator i = userDisabled.begin();
+	     i != userDisabled.end(); ++i) {
 		defaultEnabled.erase(*i);
 		defaultDisabled.insert(*i);
 	}
@@ -2684,7 +2686,8 @@ ECRESULT ECUserManagement::RemoveDefaultFeatures(objectdetails_t *lpDetails)
 	ba::split(defaultDisabled, config, ba::is_any_of("\t "));
 
 	// remove all default disabled from enabled and user explicit list
-	for (set<string>::iterator i = defaultDisabled.begin(); i != defaultDisabled.end(); i++) {
+	for (std::set<std::string>::const_iterator i = defaultDisabled.begin();
+	     i != defaultDisabled.end(); ++i) {
 		defaultEnabled.erase(*i);
 		userDisabled.remove(*i);
 	}
@@ -3609,9 +3612,9 @@ ECRESULT ECUserManagement::ConvertAnonymousObjectDetailToProp(struct soap *soap,
 	struct propVal sPropVal;
 	std::string strValue;
 	std::list<std::string> lstrValues;
-	std::list<std::string>::iterator iterValues;
+	std::list<std::string>::const_iterator iterValues;
 	std::list<objectid_t> lobjValues;
-	std::list<objectid_t>::iterator iterObjects;
+	std::list<objectid_t>::const_iterator iterObjects;
 	unsigned int i = 0;
 	unsigned int ulGetPropTag;
 
@@ -3985,7 +3988,7 @@ ECRESULT ECUserManagement::ConvertObjectDetailsToProps(struct soap *soap, unsign
 				break;
 			case PR_EMS_AB_X509_CERT: {
 				list<string> strCerts = lpDetails->GetPropListString(OB_PROP_LS_CERTIFICATE);
-				list<string>::iterator iCert;
+				std::list<std::string>::const_iterator iCert;
 
 				if (strCerts.empty()) {
 					/* This is quite annoying. The LDAP plugin loads it in a specific location, while the db plugin
@@ -4016,7 +4019,7 @@ ECRESULT ECUserManagement::ConvertObjectDetailsToProps(struct soap *soap, unsign
 			}
 			case PR_EC_SENDAS_USER_ENTRYIDS: {
 				list<objectid_t> userIds = lpDetails->GetPropListObject(OB_PROP_LO_SENDAS);
-				list<objectid_t>::iterator iterUserIds;
+				std::list<objectid_t>::const_iterator iterUserIds;
 
 				if (!userIds.empty()) {
 					unsigned int i;
@@ -4048,7 +4051,7 @@ ECRESULT ECUserManagement::ConvertObjectDetailsToProps(struct soap *soap, unsign
 				std::string strPrefix("SMTP:");
 				std::string address(lpDetails->GetPropString(OB_PROP_S_EMAIL));
 				std::list<std::string> lstAliases = lpDetails->GetPropListString(OB_PROP_LS_ALIASES);
-				std::list<std::string>::iterator iterAliases;
+				std::list<std::string>::const_iterator iterAliases;
 				ULONG nAliases = lstAliases.size();
 				ULONG i = 0;
 
@@ -4232,7 +4235,7 @@ ECRESULT ECUserManagement::ConvertObjectDetailsToProps(struct soap *soap, unsign
 				break;
 			case PR_EC_SENDAS_USER_ENTRYIDS: {
 				list<objectid_t> userIds = lpDetails->GetPropListObject(OB_PROP_LO_SENDAS);
-				list<objectid_t>::iterator iterUserIds;
+				std::list<objectid_t>::const_iterator iterUserIds;
 
 				if (!userIds.empty()) {
 					unsigned int i;
@@ -4264,7 +4267,7 @@ ECRESULT ECUserManagement::ConvertObjectDetailsToProps(struct soap *soap, unsign
 				std::string strPrefix("SMTP:");
 				std::string address(lpDetails->GetPropString(OB_PROP_S_EMAIL));
 				std::list<std::string> lstAliases = lpDetails->GetPropListString(OB_PROP_LS_ALIASES);
-				std::list<std::string>::iterator iterAliases;
+				std::list<std::string>::const_iterator iterAliases;
 				ULONG nAliases = lstAliases.size();
 				ULONG i = 0;
 
@@ -5179,7 +5182,7 @@ ECRESULT ECUserManagement::SyncAllObjects()
 	ECCacheManager *lpCacheManager = m_lpSession->GetSessionManager()->GetCacheManager();	// Don't delete
 
 	std::list<localobjectdetails_t> *lplstCompanyObjects = NULL;
-	std::list<localobjectdetails_t>::iterator iCompany;
+	std::list<localobjectdetails_t>::const_iterator iCompany;
 	std::list<localobjectdetails_t> *lplstUserObjects = NULL;
 	unsigned int ulFlags = USERMANAGEMENT_IDS_ONLY | USERMANAGEMENT_FORCE_SYNC;
 	

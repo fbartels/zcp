@@ -190,7 +190,7 @@ ECRESULT ECStoreObjectTable::GetColumnsAll(ECListInt* lplstProps)
 	ECDatabase*		lpDatabase = NULL;
 	ECODStore*		lpODStore = (ECODStore*)m_lpObjectData;
 	ULONG			ulPropID = 0;
-	ECObjectTableMap::iterator		iterObjects;
+	ECObjectTableMap::const_iterator iterObjects;
 
 	pthread_mutex_lock(&m_hLock);
 
@@ -267,7 +267,7 @@ ECRESULT ECStoreObjectTable::ReloadTableMVData(ECObjectTableList* lplistRows, EC
 	sObjectTableKey		sRowItem;
 	size_t				cListRows = 0;
 
-	ECObjectTableList::iterator	iterListRows;
+	ECObjectTableList::const_iterator iterListRows;
 
 	er = lpSession->GetDatabase(&lpDatabase);
 	if (er != erSuccess)
@@ -347,25 +347,25 @@ ECRESULT ECStoreObjectTable::QueryRowData(ECGenericObjectTable *lpThis, struct s
 	ECDatabase		*lpDatabase = NULL;
 
 	std::map<unsigned int, std::map<sObjectTableKey, unsigned int> > mapStoreIdObjIds;
-	std::map<unsigned int, std::map<sObjectTableKey, unsigned int> >::iterator iterStoreIdObjIds;
+	std::map<unsigned int, std::map<sObjectTableKey, unsigned int> >::const_iterator iterStoreIdObjIds;
 	std::map<sObjectTableKey, unsigned int> mapIncompleteRows;
-	std::map<sObjectTableKey, unsigned int>::iterator iterIncomplete;
+	std::map<sObjectTableKey, unsigned int>::const_iterator iterIncomplete;
 	std::map<sObjectTableKey, unsigned int> mapRows;
-	std::map<sObjectTableKey, unsigned int>::iterator iterRows;
+	std::map<sObjectTableKey, unsigned int>::const_iterator iterRows;
 	std::multimap<unsigned int, unsigned int> mapColumns;
 	std::list<unsigned int> lstDeferred;
-	std::list<unsigned int>::iterator iterDeferred;
+	std::list<unsigned int>::const_iterator iterDeferred;
 	std::set<unsigned int> setColumnIDs;
-	std::set<unsigned int>::iterator iterColumnIDs;
+	std::set<unsigned int>::const_iterator iterColumnIDs;
 	ECObjectTableList lstRowOrder;
-	ECObjectTableMap::iterator		iterIDs, iterIDsErase;
+	ECObjectTableMap::const_iterator iterIDs, iterIDsErase;
 	ECObjectTableList::iterator		iterRowList;
 	sObjectTableKey					sMapKey;
 	std::map<sObjectTableKey, ECsObjects> mapObjects;
-	std::map<sObjectTableKey, ECsObjects>::iterator iterObjects;
+	std::map<sObjectTableKey, ECsObjects>::const_iterator iterObjects;
 
 	ECListInt			listMVSortCols;//Other mvprops then normal column set
-	ECListInt::iterator	iterListInt;
+	ECListInt::const_iterator iterListInt;
 	ECListInt			listMVIColIds;
 	string				strCol;
     sObjectTableKey sKey;
@@ -664,7 +664,7 @@ ECRESULT ECStoreObjectTable::QueryRowDataByRow(ECGenericObjectTable *lpThis,
 
     std::set<unsigned int> setSubQueries;
 	std::multimap<unsigned int, unsigned int>::iterator iterColumns;
-	std::multimap<unsigned int, unsigned int>::iterator iterDelete;
+	std::multimap<unsigned int, unsigned int>::const_iterator iterDelete;
 
 	// Select correct property column query according to whether we want to truncate or not
 	std::string strPropColOrder = bTableLimit ? PROPCOLORDER_TRUNCATED : PROPCOLORDER;
@@ -878,7 +878,7 @@ ECRESULT ECStoreObjectTable::QueryRowDataByColumn(ECGenericObjectTable *lpThis,
     ULONG ulMin, ulMax;
     ECDatabase      *lpDatabase = NULL;
     std::set<unsigned int> setSubQueries;
-    std::set<unsigned int>::iterator iterSubQueries;
+    std::set<unsigned int>::const_iterator iterSubQueries;
     std::string		strSubquery;
     std::string		strPropColOrder;
 
@@ -1067,11 +1067,11 @@ ECRESULT ECStoreObjectTable::GetMVRowCount(unsigned int ulObjId, unsigned int *l
 	DB_ROW			lpRow = NULL;
 	std::string		strQuery, strColName;
 	int j;
-    ECObjectTableList			listRows;
-	ECObjectTableList::iterator iterListRows;
-	ECObjectTableMap::iterator		iterIDs;
+	ECObjectTableList listRows;
+	ECObjectTableList::const_iterator iterListRows;
+	ECObjectTableMap::const_iterator iterIDs;
 	ECDatabase *lpDatabase = NULL;
-	ECListInt::iterator	iterListMVPropTag;
+	ECListInt::const_iterator iterListMVPropTag;
 
 	pthread_mutex_lock(&m_hLock);
 
@@ -1254,12 +1254,12 @@ ECRESULT ECStoreObjectTable::AddRowKey(ECObjectTableList* lpRows, unsigned int *
     GUID guidServer;
     ECODStore* lpODStore = (ECODStore*)m_lpObjectData;
     std::list<unsigned int> lstIndexerResults;
-    std::list<unsigned int>::iterator iterResults;
+    std::list<unsigned int>::const_iterator iterResults;
     std::list<unsigned int> lstFolders;
     std::set<unsigned int> setMatches;
     ECObjectTableList sMatchedRows;
-    ECObjectTableList::iterator iterQueryRows;
-    ECObjectTableList::iterator iterRows;
+    ECObjectTableList::const_iterator iterQueryRows;
+    ECObjectTableList::const_iterator iterRows;
     ECDatabase *lpDatabase = NULL;
     struct restrictTable *lpNewRestrict = NULL;
  
@@ -1365,7 +1365,7 @@ ECRESULT GetDeferredTableUpdates(ECDatabase *lpDatabase, ECObjectTableList* lpRo
 	ECRESULT er = erSuccess;
 	DB_RESULT lpDBResult = NULL;
 	DB_ROW lpDBRow = NULL;
-	ECObjectTableList::iterator     iterRowList;
+	ECObjectTableList::const_iterator iterRowList;
 	
 	lpDeferred->clear();
 	

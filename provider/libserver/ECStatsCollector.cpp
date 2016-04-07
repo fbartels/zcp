@@ -366,7 +366,7 @@ void ECStatsCollector::Remove(const std::string &name)
 	pthread_mutex_unlock(&m_StringsLock);
 }
 
-std::string ECStatsCollector::GetValue(SCMap::iterator iSD)
+std::string ECStatsCollector::GetValue(SCMap::const_iterator iSD)
 {
 	std::string rv;
 
@@ -392,7 +392,7 @@ std::string ECStatsCollector::GetValue(SCMap::iterator iSD)
 
 std::string ECStatsCollector::GetValue(SCName name) {
 	std::string rv;
-	SCMap::iterator iSD = m_StatData.find(name);
+	SCMap::const_iterator iSD = m_StatData.find(name);
 
 	if (iSD != m_StatData.end())
 		rv = GetValue(iSD);
@@ -413,7 +413,7 @@ void ECStatsCollector::ForEachStat(void(callback)(const std::string &, const std
 
 void ECStatsCollector::ForEachString(void(callback)(const std::string &, const std::string &, const std::string &, void*), void *obj)
 {
-	std::map<std::string, ECStrings>::iterator iSS;
+	std::map<std::string, ECStrings>::const_iterator iSS;
 
 	pthread_mutex_lock(&m_StringsLock);
 	for (iSS = m_StatStrings.begin(); iSS != m_StatStrings.end(); iSS++) {

@@ -184,10 +184,10 @@ ECRESULT RunSubRestriction(ECSession *lpSession, void *lpECODStore, struct restr
     DB_RESULT lpDBResult = NULL;
     DB_ROW lpRow = NULL;
     struct propTagArray *lpPropTags = NULL;
-    ECObjectTableList::iterator iterObject;
+    ECObjectTableList::const_iterator iterObject;
     ECObjectTableList lstSubObjects;
     std::map<unsigned int, unsigned int> mapParent;
-    std::map<unsigned int, unsigned int>::iterator iterParent;
+    std::map<unsigned int, unsigned int>::const_iterator iterParent;
     SUBRESTRICTIONRESULT *lpResult = new SUBRESTRICTIONRESULT;
     struct rowSet *lpRowSet = NULL;
     bool fMatch = false;
@@ -315,7 +315,7 @@ exit:
 ECRESULT FreeSubRestrictionResults(SUBRESTRICTIONRESULTS *lpResults) {
     ECRESULT er = erSuccess;
     
-    SUBRESTRICTIONRESULTS::iterator iterResults;
+    SUBRESTRICTIONRESULTS::const_iterator iterResults;
     
     for(iterResults = lpResults->begin(); iterResults != lpResults->end(); iterResults++) {
         delete *iterResults;

@@ -125,7 +125,7 @@ ECRESULT ECConvenientDepthObjectTable::Load() {
 	unsigned int ulDepth = 0;
 	
 	std::list<FOLDERINFO> lstFolders;	// The list of folders
-	std::list<FOLDERINFO>::iterator iterFolders;
+	std::list<FOLDERINFO>::const_iterator iterFolders;
 
 	std::map<unsigned int, SortKey> mapSortKey;	// map a known folder to its sortkey. This is used to derive a subfolder's sort key
 	std::list<unsigned int> lstObjIds;

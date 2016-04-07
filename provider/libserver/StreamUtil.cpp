@@ -973,7 +973,7 @@ ECRESULT SerializeMessage(ECSession *lpecSession, ECDatabase *lpStreamDatabase, 
 	unsigned int	ulSubObjType = 0;
 	unsigned int	ulCount = 0;
 	ChildPropsMap	mapChildProps;
-	ChildPropsMap::iterator iterChild;
+	ChildPropsMap::const_iterator iterChild;
 	NamedPropDefMap	mapNamedPropDefs;
 
 	DB_ROW 			lpDBRow = NULL;
@@ -1407,7 +1407,7 @@ ECRESULT DeserializeProps(ECSession *lpecSession, ECDatabase *lpDatabase, ECAtta
 	DB_ROW			lpDBRow = NULL;
 
 	std::set<unsigned int>				setInserted;
-	std::set<unsigned int>::iterator	iterInserted;
+	std::set<unsigned int>::const_iterator iterInserted;
 
 	if (!lpDatabase) {
 		er = ZARAFA_E_DATABASE_ERROR;

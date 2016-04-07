@@ -66,7 +66,7 @@
 
 
 typedef std::list<unsigned int>				ECListInt;
-typedef std::list<unsigned int>::iterator	ECListIntIterator;
+typedef std::list<unsigned int>::const_iterator ECListIntIterator;
 
 #define RESTRICT_MAX_DEPTH 16
 

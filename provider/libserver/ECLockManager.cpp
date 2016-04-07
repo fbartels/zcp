@@ -136,7 +136,7 @@ ECLockManager::~ECLockManager() {
 ECRESULT ECLockManager::LockObject(unsigned int ulObjId, ECSESSIONID sessionId, ECObjectLock *lpObjectLock)
 {
 	ECRESULT er = erSuccess;
-	pair<LockMap::iterator, bool> res;
+	pair<LockMap::const_iterator, bool> res;
 	scoped_exclusive_rwlock lock(m_hRwLock);
 
 	res = m_mapLocks.insert(LockMap::value_type(ulObjId, sessionId));

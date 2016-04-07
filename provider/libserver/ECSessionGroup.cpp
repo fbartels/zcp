@@ -107,7 +107,7 @@ ECSessionGroup::ECSessionGroup(ECSESSIONGROUPID sessionGroupId, ECSessionManager
 ECSessionGroup::~ECSessionGroup()
 {
 	/* Unsubscribe any subscribed stores */
-	std::multimap<unsigned int, unsigned int>::iterator i;
+	std::multimap<unsigned int, unsigned int>::const_iterator i;
 	for(i=m_mapSubscribedStores.begin(); i != m_mapSubscribedStores.end(); i++) {
 		m_lpSessionManager->UnsubscribeObjectEvents(i->second, m_sessionGroupId);
 	}
@@ -204,7 +204,8 @@ bool ECSessionGroup::isOrphan()
 void ECSessionGroup::UpdateSessionTime()
 {
 	pthread_mutex_lock(&m_hSessionMapLock);
-	for (SESSIONINFOMAP::iterator i = m_mapSessions.begin(); i != m_mapSessions.end(); i++)
+	for (SESSIONINFOMAP::const_iterator i = m_mapSessions.begin();
+	     i != m_mapSessions.end(); ++i)
 		i->second.lpSession->UpdateSessionTime();
 	pthread_mutex_unlock(&m_hSessionMapLock);
 }
@@ -306,13 +307,15 @@ ECRESULT ECSessionGroup::DelAdvise(ECSESSIONID ulSessionId, unsigned int ulConne
 ECRESULT ECSessionGroup::AddNotification(notification *notifyItem, unsigned int ulKey, unsigned int ulStore, ECSESSIONID ulSessionId)
 {
 	ECRESULT		hr = erSuccess;
-	SESSIONINFOMAP::iterator iterSessions;
+	SESSIONINFOMAP::const_iterator iterSessions;
 	
 	pthread_mutex_lock(&m_hNotificationLock);
 
 	ECNotification notify(*notifyItem);
 
-	for (SUBSCRIBEMAP::iterator i = m_mapSubscribe.begin(); i != m_mapSubscribe.end(); i++) {
+	for (SUBSCRIBEMAP::const_iterator i = m_mapSubscribe.begin();
+	     i != m_mapSubscribe.end(); ++i)
+	{
 		if ((ulSessionId && ulSessionId != i->second.ulSession) ||
 		    (ulKey != i->second.ulKey && i->second.ulKey != ulStore) ||
 			!(notifyItem->ulEventType & i->second.ulEventMask))
@@ -415,13 +418,13 @@ ECRESULT ECSessionGroup::AddChangeNotification(const std::set<unsigned int> &syn
 	notificationICS	ics = {0};
 	entryId			syncStateBin = {0};
 	notifySyncState	syncState = {0, ulChangeId};
-	SESSIONINFOMAP::iterator iterSessions;
+	SESSIONINFOMAP::const_iterator iterSessions;
 
 	std::map<ECSESSIONID,unsigned int> mapInserted;
 	std::map<ECSESSIONID,unsigned int>::const_iterator iterInserted;
 	std::set<unsigned int>::const_iterator iterSyncId;
 	CHANGESUBSCRIBEMAP::const_iterator iterItem;
-	std::pair<CHANGESUBSCRIBEMAP::iterator, CHANGESUBSCRIBEMAP::iterator> iterRange;
+	std::pair<CHANGESUBSCRIBEMAP::const_iterator, CHANGESUBSCRIBEMAP::const_iterator> iterRange;
 
 	notifyItem.ulEventType = fnevZarafaIcsChange;
 	notifyItem.ics = &ics;
@@ -475,7 +478,7 @@ ECRESULT ECSessionGroup::AddChangeNotification(ECSESSIONID ulSessionId, unsigned
 	entryId			syncStateBin = {0};
 
 	notifySyncState	syncState = { ulSyncId, static_cast<unsigned int>(ulChangeId) };
-	SESSIONINFOMAP::iterator iterSessions;
+	SESSIONINFOMAP::const_iterator iterSessions;
 
 	notifyItem.ulEventType = fnevZarafaIcsChange;
 	notifyItem.ics = &ics;
@@ -541,7 +544,8 @@ ECRESULT ECSessionGroup::GetNotifyItems(struct soap *soap, ECSESSIONID ulSession
 		notifications->pNotificationArray->__size = ulSize;
 
 		int nPos = 0;
-		for (NOTIFICATIONLIST::iterator i = m_listNotification.begin(); i != m_listNotification.end(); i++)
+		for (NOTIFICATIONLIST::const_iterator i = m_listNotification.begin();
+		     i != m_listNotification.end(); ++i)
 			i->GetCopy(soap, notifications->pNotificationArray->__ptr[nPos++]);
 
 		m_listNotification.clear();
@@ -578,7 +582,7 @@ ECRESULT ECSessionGroup::releaseListeners()
  */
 unsigned int ECSessionGroup::GetObjectSize()
 {
-	NOTIFICATIONLIST::iterator  iterlNotify;
+	NOTIFICATIONLIST::const_iterator iterlNotify;
 	unsigned int ulSize = 0;
 	unsigned int ulItems;
 

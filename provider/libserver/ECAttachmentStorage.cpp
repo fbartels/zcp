@@ -2336,7 +2336,7 @@ ECRESULT ECFileAttachment::Commit()
 {
 	ECRESULT er = erSuccess;
 	bool bError = false;
-	std::set<ULONG>::iterator iterAtt;
+	std::set<ULONG>::const_iterator iterAtt;
 	
 	if(!m_bTransaction) {
 		ASSERT(FALSE);
@@ -2376,7 +2376,7 @@ ECRESULT ECFileAttachment::Rollback()
 {
 	ECRESULT er = erSuccess;
 	bool bError = false;
-	std::set<ULONG>::iterator iterAtt;
+	std::set<ULONG>::const_iterator iterAtt;
 
 	if(!m_bTransaction) {
 		ASSERT(FALSE);

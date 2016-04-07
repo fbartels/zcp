@@ -628,11 +628,11 @@ ECRESULT GetChanges(struct soap *soap, ECSession *lpSession, SOURCEKEY sFolderSo
 	unsigned int	cbSourceKeyData = 0;
 	
 	list<unsigned int> lstFolderIds;
-	list<unsigned int>::iterator lpFolderId;
+	list<unsigned int>::const_iterator lpFolderId;
 
 	// Contains a list of change IDs
 	list<unsigned int> lstChanges;
-	list<unsigned int>::iterator iterChanges;
+	list<unsigned int>::const_iterator iterChanges;
 
 	ECGetContentChangesHelper *lpHelper = NULL;
 	

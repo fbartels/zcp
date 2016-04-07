@@ -238,7 +238,7 @@ ECRESULT ECSecurity::GetGroupsForUser(unsigned int ulUserId, std::list<localobje
 			cSeenGroups.m_seen.insert(*iterGroups);
 
 			std::list<localobjectdetails_t> *lpGroupInGroups = NULL;
-			std::list<localobjectdetails_t>::iterator li;
+			std::list<localobjectdetails_t>::const_iterator li;
 
 			er = m_lpSession->GetUserManagement()->GetParentObjectsOfObjectAndSync(OBJECTRELATION_GROUP_MEMBER,
 																				   iterGroups->ulId, &lpGroupInGroups, USERMANAGEMENT_IDS_ONLY);
@@ -271,7 +271,7 @@ ECRESULT ECSecurity::GetObjectPermission(unsigned int ulObjId, unsigned int* lpu
 {
 	ECRESULT		er = erSuccess;
 	unsigned int	i = 0;
-	list<localobjectdetails_t>::iterator iterGroups;
+	std::list<localobjectdetails_t>::const_iterator iterGroups;
 	struct rightsArray *lpRights = NULL;
 	unsigned		ulCurObj = ulObjId;
 	bool 			bFoundACL = false;
@@ -905,7 +905,7 @@ ECRESULT ECSecurity::GetUserCompany(unsigned int *lpulCompanyId)
 ECRESULT ECSecurity::GetViewableCompanyIds(unsigned int ulFlags, list<localobjectdetails_t> **lppObjects)
 {
 	ECRESULT er = erSuccess;
-	list<localobjectdetails_t>::iterator iter;
+	std::list<localobjectdetails_t>::const_iterator iter;
 
 	/*
 	 * We have the viewable companies stored in our cache,
@@ -954,7 +954,7 @@ exit:
 ECRESULT ECSecurity::IsUserObjectVisible(unsigned int ulUserObjectId)
 {
 	ECRESULT er = erSuccess;
-	list<localobjectdetails_t>::iterator iterCompany;
+	std::list<localobjectdetails_t>::const_iterator iterCompany;
 	objectid_t sExternId;
 	unsigned int ulCompanyId;
 
@@ -1216,7 +1216,7 @@ exit:
 ECRESULT ECSecurity::IsAdminOverUserObject(unsigned int ulUserObjectId)
 {
 	ECRESULT er = ZARAFA_E_NO_ACCESS;
-	list<localobjectdetails_t>::iterator objectIter;
+	std::list<localobjectdetails_t>::const_iterator objectIter;
 	unsigned int ulCompanyId;
 	objectdetails_t objectdetails;
 	objectid_t sExternId;

@@ -344,7 +344,7 @@ public:
     
     // get a property value for this object
     bool GetPropVal(unsigned int ulPropTag, struct propVal *lpPropVal, struct soap *soap) {
-        std::map<unsigned int, struct propVal>::iterator i;
+        std::map<unsigned int, struct propVal>::const_iterator i;
         i = mapPropVals.find(NormalizeDBPropTag(ulPropTag));
         if(i == mapPropVals.end())
             return false;

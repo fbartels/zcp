@@ -865,7 +865,7 @@ ECRESULT ECGetContentChangesHelper::ProcessResidualMessages()
 {
 	ECRESULT				er = erSuccess;
 	MESSAGESET				setResiduals;
-	MESSAGESET::iterator	iterMessage;
+	MESSAGESET::const_iterator iterMessage;
 
 	ASSERT(m_lpMsgProcessor);
 	er = m_lpMsgProcessor->GetResidualMessages(&setResiduals);
@@ -990,7 +990,7 @@ ECRESULT ECGetContentChangesHelper::Finalize(unsigned int *lpulMaxChange, icsCha
 
 		if (!setChangeIds.empty()) {
 			std::set<unsigned int> setDeleteIds;
-			std::set<unsigned int>::iterator iter;
+			std::set<unsigned int>::const_iterator iter;
 			
 			/* Remove obsolete states
 			 *
@@ -1091,7 +1091,7 @@ ECRESULT ECGetContentChangesHelper::MatchRestrictions(const std::vector<DB_ROW> 
 	if (er != erSuccess)
 		goto exit;
 
-	for (std::map<ECsIndexProp, unsigned int>::iterator i = index_objs.begin();
+	for (std::map<ECsIndexProp, unsigned int>::const_iterator i = index_objs.begin();
 	     i != index_objs.end(); ++i)
 	{
 		sRow.ulObjId = i->second;

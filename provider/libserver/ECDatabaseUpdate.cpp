@@ -1013,13 +1013,13 @@ ECRESULT UpdateDatabaseAddExternIdToObject(ECDatabase *lpDatabase)
 	bool			bFirstResult;
 
 	std::list<SObject> sObjectList;
-	std::list<SObject>::iterator sObjectIter;
+	std::list<SObject>::const_iterator sObjectIter;
 
 	std::map<SObject,unsigned int> sObjectMap;
-	std::map<SObject,unsigned int>::iterator sObjectMapIter;
+	std::map<SObject,unsigned int>::const_iterator sObjectMapIter;
 
 	std::list<SRelation> sRelationList;
-	std::list<SRelation>::iterator sRelationIter;
+	std::list<SRelation>::const_iterator sRelationIter;
 
 #define Z_TABLEDEF_OBJECT_R630	"CREATE TABLE object ( \
 									`id` int(11) unsigned NOT NULL auto_increment, \
@@ -1530,7 +1530,7 @@ ECRESULT UpdateDatabaseConvertObjectTypeToObjectClass(ECDatabase *lpDatabase)
 	std::string strQuery, strUpdate;
 	bool bFirst = true;
 	std::map<unsigned int, unsigned int> mapTypes;
-	std::map<unsigned int, unsigned int>::iterator iTypes;
+	std::map<unsigned int, unsigned int>::const_iterator iTypes;
 	std::list<std::string> lstUpdates;
 
 	// make internal SYSTEM a objectclass_t user
@@ -1595,7 +1595,8 @@ ECRESULT UpdateDatabaseConvertObjectTypeToObjectClass(ECDatabase *lpDatabase)
 	}
 
 	// process all type updates
-	for (std::list<std::string>::iterator iu = lstUpdates.begin(); iu != lstUpdates.end(); iu++) {
+	for (std::list<std::string>::const_iterator iu = lstUpdates.begin();
+	     iu != lstUpdates.end(); ++iu) {
 		er = lpDatabase->DoUpdate(*iu);
 		if (er != erSuccess)
 			goto exit;
@@ -1624,7 +1625,7 @@ ECRESULT UpdateDatabaseCompanyNameToCompanyId(ECDatabase *lpDatabase)
 	ECRESULT	er = erSuccess;
 	string		strQuery;
 	map<string, string> mapIdToName;
-	map<string, string>::iterator iter;
+	std::map<std::string, std::string>::const_iterator iter;
 	DB_RESULT	lpResult = NULL;
 	DB_ROW		lpDBRow = NULL;
 	DB_LENGTHS	lpDBLen = NULL;
@@ -1801,7 +1802,7 @@ ECRESULT UpdateDatabaseFixDBPluginSendAs(ECDatabase *lpDatabase)
 	DB_ROW		lpDBRow = NULL;
 	DB_LENGTHS	lpDBLen = NULL;
 	list<std::pair<string, string> > lstRelations;
-	list<std::pair<string, string> >::iterator iRelations;
+	std::list<std::pair<std::string, std::string> >::const_iterator iRelations;
 
 	// relation 6 == OBJECTRELATION_USER_SENDAS
 	er = lpDatabase->DoSelect("SELECT objectid, parentobjectid FROM objectrelation WHERE relationtype=6", &lpResult);
@@ -1852,7 +1853,7 @@ ECRESULT UpdateDatabaseMoveSubscribedList(ECDatabase *lpDatabase)
 {
 	ECRESULT er = erSuccess;
 	map<string, string> mapStoreInbox;
-	map<string, string>::iterator i;
+	std::map<std::string, std::string>::const_iterator i;
 	DB_RESULT	lpResult = NULL;
 	DB_ROW		lpDBRow = NULL;
 	DB_LENGTHS	lpDBLen = NULL;

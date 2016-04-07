@@ -519,9 +519,9 @@ ECRESULT ECCacheManager::GetObjects(std::list<sObjectTableKey> &lstObjects, std:
 	sObjectTableKey key;
 	ECsObjects  *lpsObject = NULL;
 	ECsObjects	sObject;
-	std::list<sObjectTableKey>::iterator i;
+	std::list<sObjectTableKey>::const_iterator i;
 	std::set<sObjectTableKey> setUncached;
-	std::set<sObjectTableKey>::iterator j;
+	std::set<sObjectTableKey>::const_iterator j;
 
 	er = GetThreadLocalDatabase(this->m_lpDatabaseFactory, &lpDatabase);
 
@@ -1698,11 +1698,11 @@ ECRESULT ECCacheManager::RemoveIndexData(unsigned int ulObjId)
 {
 	ECRESULT				er = erSuccess;
 	ECsIndexObject	sObjectKeyLower, sObjectKeyUpper;
-	ECMapObjectToProp::iterator	iter, iDel;
-	ECMapPropToObject::iterator	iterPropToObj;
+	ECMapObjectToProp::const_iterator iter, iDel;
+	ECMapPropToObject::const_iterator iterPropToObj;
 
 	std::list<ECMapObjectToProp::value_type> lstItems;
-	std::list<ECMapObjectToProp::value_type>::iterator iItem;
+	std::list<ECMapObjectToProp::value_type>::const_iterator iItem;
 
 	// Get all records with specified hierarchyid and all tags (0 -> 0xffffffff)
 	sObjectKeyLower.ulObjId = ulObjId;
@@ -2089,7 +2089,7 @@ ECRESULT ECCacheManager::GetEntryListFromObjectList(ECListInt* lplObjectList, st
 {
 	ECRESULT		er = erSuccess;
 	bool			bPartialCompletion = false;
-	ECListInt::iterator	iterList;
+	ECListInt::const_iterator iterList;
 	entryList*		lpEntryList = s_alloc<entryList>(soap);
 
 	if(lplObjectList == NULL || lppEntryList == NULL) {

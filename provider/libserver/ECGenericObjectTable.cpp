@@ -198,7 +198,7 @@ ECGenericObjectTable::ECGenericObjectTable(ECSession *lpSession, unsigned int ul
  */
 ECGenericObjectTable::~ECGenericObjectTable()
 {
-    ECCategoryMap::iterator iterCategories;
+	ECCategoryMap::const_iterator iterCategories;
         
 	delete lpKeyTable;
 
@@ -508,8 +508,8 @@ ECRESULT ECGenericObjectTable::ReloadTable(enumReloadType eType)
 	bool				bMVSortNew = false;
 
 	ECObjectTableList			listRows;
-	ECObjectTableList::iterator	iterListRows;
-	ECObjectTableMap::iterator	iterIDs;
+	ECObjectTableList::const_iterator iterListRows;
+	ECObjectTableMap::const_iterator iterIDs;
 	ECListInt					listMVPropTag;
 
 	
@@ -662,7 +662,7 @@ ECRESULT ECGenericObjectTable::GetColumns(struct soap *soap, ULONG ulFlags, stru
 	ECListIntIterator	iterProps;
 	struct propTagArray *lpsPropTags;
 
-	ECObjectTableMap::iterator		iterObjects;
+	ECObjectTableMap::const_iterator iterObjects;
 	
 	pthread_mutex_lock(&m_hLock);
 
@@ -721,8 +721,8 @@ ECRESULT ECGenericObjectTable::ReloadKeyTable()
 {
 	ECRESULT		er = erSuccess;
 	ECObjectTableList listRows;
-	ECObjectTableMap::iterator iterMapObject;
-	ECCategoryMap::iterator iterCategories;
+	ECObjectTableMap::const_iterator iterMapObject;
+	ECCategoryMap::const_iterator iterCategories;
 
 	pthread_mutex_lock(&m_hLock);
 
@@ -1021,7 +1021,7 @@ ECRESULT ECGenericObjectTable::AddRowKey(ECObjectTableList* lpRows, unsigned int
 	struct propTagArray	*lpsRestrictPropTagArray = NULL;
 	struct restrictTable *lpsRestrict = NULL;
 
-	ECObjectTableList::iterator		iterRows;
+	ECObjectTableList::const_iterator iterRows;
 	sObjectTableKey					sRowItem;
 	
 	ECCategory		*lpCategory = NULL;
@@ -1342,7 +1342,7 @@ ECRESULT ECGenericObjectTable::ExpandRow(struct soap *soap, xsd__base64Binary sI
     ECRESULT er = erSuccess;
     sObjectTableKey sKey;
     sObjectTableKey sPrevRow;
-    ECCategoryMap::iterator iterCategory;
+    ECCategoryMap::const_iterator iterCategory;
     ECCategory *lpCategory = NULL;
     ECObjectTableList lstUnhidden;
     unsigned int ulRowsLeft = 0;
@@ -1419,10 +1419,10 @@ ECRESULT ECGenericObjectTable::CollapseRow(xsd__base64Binary sInstanceKey, unsig
     ECRESULT er = erSuccess;
     sObjectTableKey sKey;
     sObjectTableKey sPrevRow;
-    ECCategoryMap::iterator iterCategory;
+    ECCategoryMap::const_iterator iterCategory;
     ECCategory *lpCategory = NULL;
     ECObjectTableList lstHidden;
-    ECObjectTableList::iterator iterHidden;
+    ECObjectTableList::const_iterator iterHidden;
 
 	pthread_mutex_lock(&m_hLock);
     
@@ -1476,7 +1476,7 @@ exit:
 ECRESULT ECGenericObjectTable::GetCollapseState(struct soap *soap, struct xsd__base64Binary sBookmark, struct xsd__base64Binary *lpsCollapseState)
 {
     ECRESULT er = erSuccess;
-    ECCategoryMap::iterator iterCategory;
+    ECCategoryMap::const_iterator iterCategory;
     struct collapseState sCollapseState;
     int n = 0;
     std::ostringstream os;
@@ -1561,7 +1561,7 @@ exit:
 ECRESULT ECGenericObjectTable::SetCollapseState(struct xsd__base64Binary sCollapseState, unsigned int *lpulBookmark)
 {
     ECRESULT er = erSuccess;
-    ECCategoryMap::iterator iterCategory;
+    ECCategoryMap::const_iterator iterCategory;
     struct soap xmlsoap;
     struct collapseState *lpCollapseState = NULL;
     std::istringstream is(std::string((const char *)sCollapseState.__ptr, sCollapseState.__size));
@@ -1747,15 +1747,15 @@ ECRESULT ECGenericObjectTable::UpdateRows(unsigned int ulType, std::list<unsigne
 							cMVNew = 1;
 	unsigned int			i;
 	
-	std::list<unsigned int>::iterator iterObjId;
+	std::list<unsigned int>::const_iterator iterObjId;
 	std::list<unsigned int> lstFilteredIds;
 	
 	ECObjectTableList		ecRowsItem;
 	ECObjectTableList		ecRowsDeleted;
 
-	ECObjectTableList::iterator iterRows;
-	ECObjectTableMap::iterator	iterMapObject;
-	ECObjectTableMap::iterator	iterToDelete;
+	ECObjectTableList::const_iterator iterRows;
+	ECObjectTableMap::const_iterator iterMapObject;
+	ECObjectTableMap::const_iterator iterToDelete;
 
 	sObjectTableKey		sRow;
 	
@@ -2039,7 +2039,7 @@ ECRESULT ECGenericObjectTable::MatchRowRestrict(ECCacheManager* lpCacheManager, 
 	ULONG ulFuzzyLevel;
 	unsigned int ulScan, ulPos;
 	unsigned int ulSubRestrict = 0;
-	SUBRESTRICTIONRESULT::iterator iterSubResult;
+	SUBRESTRICTIONRESULT::const_iterator iterSubResult;
 	entryId sEntryId;
 	unsigned int ulResId = 0;
 	unsigned int ulPropTagRestrict;
@@ -2559,7 +2559,7 @@ void ECGenericObjectTable::SetTableId(unsigned int ulTableId)
 
 ECRESULT ECGenericObjectTable::Clear()
 {
-	ECCategoryMap::iterator iterCategories;
+	ECCategoryMap::const_iterator iterCategories;
 
 	pthread_mutex_lock(&m_hLock);
 
@@ -2694,12 +2694,12 @@ ECRESULT ECGenericObjectTable::AddCategoryBeforeAddRow(sObjectTableKey sObjKey, 
     ECCategory *lpParent = NULL;
     ECKeyTable::UpdateType ulAction;
     sObjectTableKey sCatRow;
-    ECLeafMap::iterator iterLeafs;
+    ECLeafMap::const_iterator iterLeafs;
     int fResult = 0;
     bool fCollapsed = false;
     bool fHidden = false;
-	ECCategoryMap::iterator iterCategory;
-	ECSortedCategoryMap::iterator iterCategoriesSorted;
+	ECCategoryMap::const_iterator iterCategory;
+	ECSortedCategoryMap::const_iterator iterCategoriesSorted;
     
     if(m_ulCategories == 0)
         goto exit;
@@ -3236,7 +3236,7 @@ exit:
 ECRESULT ECGenericObjectTable::GetPropCategory(struct soap *soap, unsigned int ulPropTag, sObjectTableKey sKey, struct propVal *lpPropVal)
 {
     ECRESULT er = erSuccess;
-    ECCategoryMap::iterator iterCategories;
+    ECCategoryMap::const_iterator iterCategories;
     unsigned int i = 0;
     
     iterCategories = m_mapCategories.find(sKey);
@@ -3314,7 +3314,7 @@ ECRESULT ECGenericObjectTable::CheckPermissions(unsigned int ulObjId)
 unsigned int ECGenericObjectTable::GetObjectSize()
 {
 	unsigned int ulSize = sizeof(*this);
-	ECCategoryMap::iterator iterCat;
+	ECCategoryMap::const_iterator iterCat;
 
 	pthread_mutex_lock(&m_hLock);
 
@@ -3370,7 +3370,7 @@ ECCategory::~ECCategory()
         FreePropVal(&m_lpProps[i], false);
     }
     
-    std::map<sObjectTableKey, struct propVal *>::iterator iterMinMax;
+    std::map<sObjectTableKey, struct propVal *>::const_iterator iterMinMax;
     
     for(iterMinMax = m_mapMinMax.begin(); iterMinMax != m_mapMinMax.end(); iterMinMax++) {
     	FreePropVal(iterMinMax->second, true);

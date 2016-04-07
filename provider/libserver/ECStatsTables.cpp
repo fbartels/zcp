@@ -189,8 +189,8 @@ ECRESULT ECSystemStatsTable::QueryRowData(ECGenericObjectTable *lpGenericThis, s
 	ECRESULT er = erSuccess;
 	struct rowSet *lpsRowSet = NULL;
 	ECSystemStatsTable *lpThis = (ECSystemStatsTable *)lpGenericThis;
-	ECObjectTableList::iterator iterRowList;
-	map<unsigned int, statstrings>::iterator iterSD;
+	ECObjectTableList::const_iterator iterRowList;
+	std::map<unsigned int, statstrings>::const_iterator iterSD;
 
 	int i, k;
 
@@ -321,7 +321,7 @@ void ECSessionStatsTable::GetSessionData(ECSession *lpSession, void *obj)
 {
 	ECSessionStatsTable *lpThis = (ECSessionStatsTable*)obj;
 	sessiondata sd;
-	std::list<BUSYSTATE>::iterator iterBS;
+	std::list<BUSYSTATE>::const_iterator iterBS;
 
 	if (!lpSession) {
 		// dynamic_cast failed
@@ -372,12 +372,12 @@ ECRESULT ECSessionStatsTable::QueryRowData(ECGenericObjectTable *lpGenericThis, 
 {
 	ECRESULT er = erSuccess;
 	struct rowSet *lpsRowSet = NULL;
-	ECObjectTableList::iterator iterRowList;
+	ECObjectTableList::const_iterator iterRowList;
 	ECSessionStatsTable *lpThis = (ECSessionStatsTable *)lpGenericThis;
 	int i, j, k;
 	std::string strTemp;
-	std::map<unsigned int, sessiondata>::iterator iterSD;
-	std::list<BUSYSTATE>::iterator iterBS;
+	std::map<unsigned int, sessiondata>::const_iterator iterSD;
+	std::list<BUSYSTATE>::const_iterator iterBS;
 
 	lpsRowSet = s_alloc<rowSet>(soap);
 	lpsRowSet->__size = 0;
@@ -585,7 +585,7 @@ ECRESULT ECUserStatsTable::Load()
 {
 	ECRESULT er = erSuccess;
 	std::list<localobjectdetails_t> *lpCompanies = NULL;
-	std::list<localobjectdetails_t>::iterator iCompanies;
+	std::list<localobjectdetails_t>::const_iterator iCompanies;
 
 	// load all active and non-active users
 	// FIXME: group/company quota already possible?
@@ -618,7 +618,7 @@ ECRESULT ECUserStatsTable::LoadCompanyUsers(ULONG ulCompanyId)
 	std::list<localobjectdetails_t> *lpObjects = NULL;
 	sObjectTableKey sRowItem;
 	ECUserManagement *lpUserManagement = lpSession->GetUserManagement();
-	std::list<localobjectdetails_t>::iterator iObjects;
+	std::list<localobjectdetails_t>::const_iterator iObjects;
 	bool bDistrib = lpSession->GetSessionManager()->IsDistributedSupported();
 	const char* server = lpSession->GetSessionManager()->GetConfig()->GetSetting("server_name");
 	std::list<unsigned int> lstObjId;
@@ -649,7 +649,7 @@ ECRESULT ECUserStatsTable::QueryRowData(ECGenericObjectTable *lpThis, struct soa
 	ECRESULT er = erSuccess;
 	int i, k;
 	struct rowSet *lpsRowSet = NULL;
-	ECObjectTableList::iterator iterRowList;
+	ECObjectTableList::const_iterator iterRowList;
 	ECUserManagement *lpUserManagement = lpSession->GetUserManagement();
 	ECDatabase *lpDatabase = NULL;
 	long long llStoreSize = 0;
@@ -877,7 +877,7 @@ ECRESULT ECCompanyStatsTable::Load()
 {
 	ECRESULT er = erSuccess;
 	std::list<localobjectdetails_t> *lpCompanies = NULL;
-	std::list<localobjectdetails_t>::iterator iCompanies;
+	std::list<localobjectdetails_t>::const_iterator iCompanies;
 	sObjectTableKey sRowItem;
 
 	er = lpSession->GetSecurity()->GetViewableCompanyIds(0, &lpCompanies);
@@ -899,7 +899,7 @@ ECRESULT ECCompanyStatsTable::QueryRowData(ECGenericObjectTable *lpThis, struct 
 	ECRESULT er = erSuccess;
 	int i, k;
 	struct rowSet *lpsRowSet = NULL;
-	ECObjectTableList::iterator iterRowList;
+	ECObjectTableList::const_iterator iterRowList;
 	ECUserManagement *lpUserManagement = lpSession->GetUserManagement();
 	ECDatabase *lpDatabase = NULL;
 	long long llStoreSize = 0;
@@ -1064,7 +1064,8 @@ ECRESULT ECServerStatsTable::Load()
 		goto exit;
 		
 	// Assign an ID to each server which is usable from QueryRowData
-	for(serverlist_t::iterator iServer = servers.begin(); iServer != servers.end(); iServer++) {
+	for (serverlist_t::const_iterator iServer = servers.begin();
+	     iServer != servers.end(); ++iServer) {
 		m_mapServers.insert(std::make_pair(i, *iServer));
 		// For each server, add a row in the table
 		UpdateRow(ECKeyTable::TABLE_ROW_ADD, i, 0);
@@ -1083,7 +1084,7 @@ ECRESULT ECServerStatsTable::QueryRowData(ECGenericObjectTable *lpThis, struct s
 	ECRESULT er = erSuccess;
 	int i, k;
 	struct rowSet *lpsRowSet = NULL;
-	ECObjectTableList::iterator iterRowList;
+	ECObjectTableList::const_iterator iterRowList;
 	ECUserManagement *lpUserManagement = lpSession->GetUserManagement();
 	serverdetails_t details;
 	

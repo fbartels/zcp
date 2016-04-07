@@ -125,8 +125,8 @@ ECTableManager::ECTableManager(ECSession *lpSession)
 
 ECTableManager::~ECTableManager()
 {
-	map<unsigned int, TABLE_ENTRY *>::iterator iterTables;
-	map<unsigned int, TABLE_ENTRY *>::iterator iterNext;
+	std::map<unsigned int, TABLE_ENTRY *>::const_iterator iterTables;
+	std::map<unsigned int, TABLE_ENTRY *>::const_iterator iterNext;
 
 	pthread_mutex_lock(&hListMutex);
 
@@ -605,7 +605,7 @@ ECRESULT ECTableManager::GetTable(unsigned int ulTableId, ECGenericObjectTable *
 {
 	ECRESULT		er = erSuccess;
 	ECGenericObjectTable	*lpTable = NULL;
-	map<unsigned int, TABLE_ENTRY *>::iterator iterTables;
+	std::map<unsigned int, TABLE_ENTRY *>::const_iterator iterTables;
 
 	pthread_mutex_lock(&hListMutex);
 
@@ -634,7 +634,7 @@ exit:
 ECRESULT ECTableManager::CloseTable(unsigned int ulTableId)
 {
 	ECRESULT er = erSuccess;
-	map<unsigned int, TABLE_ENTRY *>::iterator iterTables;
+	std::map<unsigned int, TABLE_ENTRY *>::const_iterator iterTables;
 	TABLE_ENTRY *lpEntry = NULL;
 
 	pthread_mutex_lock(&hListMutex);
@@ -680,8 +680,8 @@ ECRESULT ECTableManager::CloseTable(unsigned int ulTableId)
 ECRESULT ECTableManager::UpdateOutgoingTables(ECKeyTable::UpdateType ulType, unsigned ulStoreId, std::list<unsigned int> &lstObjId, unsigned int ulFlags, unsigned int ulObjType)
 {
 	ECRESULT er = erSuccess;
-	map<unsigned int, TABLE_ENTRY *>::iterator iterTables;
-	map<unsigned int, unsigned int>::iterator iterFolders;
+	std::map<unsigned int, TABLE_ENTRY *>::const_iterator iterTables;
+	std::map<unsigned int, unsigned int>::const_iterator iterFolders;
 
 	sObjectTableKey	sRow;
 
@@ -708,7 +708,7 @@ ECRESULT ECTableManager::UpdateOutgoingTables(ECKeyTable::UpdateType ulType, uns
 ECRESULT ECTableManager::UpdateTables(ECKeyTable::UpdateType ulType, unsigned int ulFlags, unsigned int ulObjId, std::list<unsigned int> &lstChildId, unsigned int ulObjType)
 {
 	ECRESULT er = erSuccess;
-	map<unsigned int, TABLE_ENTRY *>::iterator iterTables;
+	std::map<unsigned int, TABLE_ENTRY *>::const_iterator iterTables;
 	sObjectTableKey	sRow;
 
 	pthread_mutex_lock(&hListMutex);
@@ -744,7 +744,7 @@ ECRESULT ECTableManager::UpdateTables(ECKeyTable::UpdateType ulType, unsigned in
  */
 ECRESULT ECTableManager::GetStats(unsigned int *lpulTables, unsigned int *lpulObjectSize)
 {
-	TABLEENTRYMAP::iterator iterEntry;
+	TABLEENTRYMAP::const_iterator iterEntry;
 	unsigned int ulSize = 0;
 	unsigned int ulTables = 0; 
 	

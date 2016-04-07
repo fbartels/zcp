@@ -113,7 +113,7 @@ ECNotificationManager::~ECNotificationManager()
     pthread_join(m_thread, NULL);
 
     // Close and free any pending requests (clients will receive EOF)
-    std::map<ECSESSIONID, NOTIFREQUEST>::iterator iterRequest;
+    std::map<ECSESSIONID, NOTIFREQUEST>::const_iterator iterRequest;
     for(iterRequest = m_mapRequests.begin(); iterRequest != m_mapRequests.end(); iterRequest++) {
 		// we can't call zarafa_notify_done here, race condition on shutdown in ECSessionManager vs ECDispatcher
 		zarafa_end_soap_connection(iterRequest->second.soap);
@@ -129,7 +129,7 @@ ECNotificationManager::~ECNotificationManager()
 // Called by the SOAP handler
 HRESULT ECNotificationManager::AddRequest(ECSESSIONID ecSessionId, struct soap *soap)
 {
-    std::map<ECSESSIONID, NOTIFREQUEST>::iterator iterRequest;
+    std::map<ECSESSIONID, NOTIFREQUEST>::const_iterator iterRequest;
     struct soap *lpItem = NULL;
     
     pthread_mutex_lock(&m_mutexRequests);
@@ -202,7 +202,7 @@ void *ECNotificationManager::Work() {
     ECSession *lpecSession = NULL;
     struct notifyResponse notifications;
 
-    std::set<ECSESSIONID>::iterator iterSessions;
+    std::set<ECSESSIONID>::const_iterator iterSessions;
     std::set<ECSESSIONID> setActiveSessions;
     std::map<ECSESSIONID, NOTIFREQUEST>::iterator iterRequest;
     struct soap *lpItem;

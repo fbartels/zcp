@@ -229,9 +229,9 @@ exit:
 // Gets the search criteria from in-memory
 ECRESULT ECSearchFolders::GetSearchCriteria(unsigned int ulStoreId, unsigned int ulFolderId, struct searchCriteria **lppSearchCriteria, unsigned int *lpulFlags)
 {
-    ECRESULT er = erSuccess;
-    STOREFOLDERIDSEARCH::iterator iterStore;
-    FOLDERIDSEARCH::iterator iterFolder;
+	ECRESULT er = erSuccess;
+	STOREFOLDERIDSEARCH::const_iterator iterStore;
+	FOLDERIDSEARCH::const_iterator iterFolder;
 
     pthread_mutex_lock(&m_mutexMapSearchFolders);
     
@@ -481,7 +481,7 @@ ECRESULT ECSearchFolders::RemoveSearchFolder(unsigned int ulStoreID)
 	FOLDERIDSEARCH::iterator iterFolder;
 	unsigned int ulFolderID;
 	std::list<SEARCHFOLDER*>	listSearchFolders;
-	std::list<SEARCHFOLDER*>::iterator	iterSearchFolder;
+	std::list<SEARCHFOLDER *>::const_iterator iterSearchFolder;
 
 	// Lock the list, preventing other Cancel requests messing with the thread
 	pthread_mutex_lock(&m_mutexMapSearchFolders);
@@ -540,9 +540,9 @@ ECRESULT ECSearchFolders::RemoveSearchFolder(unsigned int ulStoreId, unsigned in
 // WARNING: THIS FUNCTION IS *NOT* THREADSAFE. IT SHOULD ONLY BE CALLED AT STARTUP WHILE SINGLE-THREADED
 ECRESULT ECSearchFolders::RestartSearches()
 {
-    ECRESULT er = erSuccess;
-    STOREFOLDERIDSEARCH::iterator iterStore;
-    FOLDERIDSEARCH::iterator iterFolder;
+	ECRESULT er = erSuccess;
+	STOREFOLDERIDSEARCH::const_iterator iterStore;
+	FOLDERIDSEARCH::const_iterator iterFolder;
 
     ec_log_crit("Starting rebuild of search folders... This may take a while.");
     
@@ -589,12 +589,12 @@ ECRESULT ECSearchFolders::UpdateSearchFolders(unsigned int ulStoreId, unsigned i
 ECRESULT ECSearchFolders::ProcessMessageChange(unsigned int ulStoreId, unsigned int ulFolderId, ECObjectTableList *lstObjectIDs, ECKeyTable::UpdateType ulType)
 {
     ECRESULT er = erSuccess;
-    STOREFOLDERIDSEARCH::iterator iterStore;
-    FOLDERIDSEARCH::iterator iterFolder;
+	STOREFOLDERIDSEARCH::const_iterator iterStore;
+	FOLDERIDSEARCH::const_iterator iterFolder;
     bool bIsInTargetFolder = false;
     std::set<unsigned int> setParents;
-    std::set<unsigned int>::iterator iterParents;
-    ECObjectTableList::iterator iterObjectIDs;
+	std::set<unsigned int>::const_iterator iterParents;
+	ECObjectTableList::const_iterator iterObjectIDs;
     unsigned int ulOwner = 0;
     ECSession *lpSession = NULL;
 	ECODStore ecOBStore;
@@ -983,8 +983,8 @@ ECRESULT ECSearchFolders::ProcessCandidateRows(ECDatabase *lpDatabase,
     ECObjectTableList ecRows, struct propTagArray *lpPropTags,
     const ECLocale &locale, bool bNotify)
 {
-    ECRESULT er = erSuccess;
-	ECObjectTableList::iterator iterRows;
+	ECRESULT er = erSuccess;
+	ECObjectTableList::const_iterator iterRows;
 	struct rowSet *lpRowSet = NULL;
 	SUBRESTRICTIONRESULTS *lpSubResults = NULL;
 	int lCount = 0;
@@ -1110,8 +1110,8 @@ ECRESULT ECSearchFolders::Search(unsigned int ulStoreId, unsigned int ulFolderId
 {
     ECRESULT			er = erSuccess;
 	ECListInt			lstFolders;
-    ECListInt::iterator	iterFolders;
-    ECObjectTableList	ecRows;
+	ECListInt::const_iterator iterFolders;
+	ECObjectTableList ecRows;
 
 	sObjectTableKey sRow;
 	ECODStore ecODStore;
@@ -1125,7 +1125,7 @@ ECRESULT ECSearchFolders::Search(unsigned int ulStoreId, unsigned int ulFolderId
 	unsigned int i=0;
 	struct restrictTable *lpAdditionalRestrict = NULL;
 	unsigned int ulParent = 0;
-	std::list<unsigned int>::iterator iterResults;
+	std::list<unsigned int>::const_iterator iterResults;
 
 	std::list<ULONG> lstPrefix;
 	lstPrefix.push_back(PR_MESSAGE_FLAGS);
@@ -1372,10 +1372,10 @@ exit:
 // Return whether we are stopped (no entry found), active (no thread found), or rebuilding (thread active)
 ECRESULT ECSearchFolders::GetState(unsigned int ulStoreId, unsigned int ulFolderId, unsigned int *lpulState)
 {
-    ECRESULT er = erSuccess;
-    STOREFOLDERIDSEARCH::iterator iterStore;
-    FOLDERIDSEARCH::iterator iterFolder;
-    unsigned int ulState = 0;
+	ECRESULT er = erSuccess;
+	STOREFOLDERIDSEARCH::const_iterator iterStore;
+	FOLDERIDSEARCH::const_iterator iterFolder;
+	unsigned int ulState = 0;
     
     iterStore = m_mapSearchFolders.find(ulStoreId);
     if(iterStore == m_mapSearchFolders.end()) {
@@ -1571,7 +1571,9 @@ ECRESULT ECSearchFolders::AddResults(unsigned int ulStoreId, unsigned int ulFold
 	}
 
     strQuery = "INSERT IGNORE INTO searchresults (folderid, hierarchyid, flags) VALUES";
-    for(std::list<unsigned int>::iterator i = lstObjId.begin(); i != lstObjId.end(); i++) {
+    for (std::list<unsigned int>::const_iterator i = lstObjId.begin();
+         i != lstObjId.end(); ++i)
+    {
         strQuery += "(";
         strQuery += stringify(ulFolderId);
         strQuery += ",";
@@ -1590,7 +1592,9 @@ ECRESULT ECSearchFolders::AddResults(unsigned int ulStoreId, unsigned int ulFold
      * Combining the following queries in one query seems to cause MySQL to do a range- or gaplock, causing deadlocks
      * when folders with adjacent ids are updated at the same time.
      */
-    for(std::list<unsigned int>::iterator i = lstFlags.begin(), j = lstObjId.begin(); i != lstFlags.end(); i++, j++) {
+    for (std::list<unsigned int>::const_iterator i = lstFlags.begin(),
+         j = lstObjId.begin(); i != lstFlags.end(); ++i, ++j)
+    {
         if(*i == 0) {
             unsigned int modified = 0;
             
@@ -1966,7 +1970,7 @@ typedef struct {
 ECRESULT ECSearchFolders::FlushEvents()
 {
     ECRESULT er = erSuccess;
-    std::list<EVENT>::iterator iterEvents;
+    std::list<EVENT>::const_iterator iterEvents;
     std::list<EVENT> lstEvents;
     ECObjectTableList lstObjectIDs;
     sObjectTableKey sRow;
@@ -2046,8 +2050,8 @@ ECRESULT ECSearchFolders::FlushEvents()
  */
 ECRESULT ECSearchFolders::GetStats(sSearchFolderStats &sStats)
 {
-	STOREFOLDERIDSEARCH::iterator iterStoreFolder;
-	FOLDERIDSEARCH::iterator		iterFS;
+	STOREFOLDERIDSEARCH::const_iterator iterStoreFolder;
+	FOLDERIDSEARCH::const_iterator iterFS;
 
 	memset(&sStats, 0, sizeof(sSearchFolderStats));
 

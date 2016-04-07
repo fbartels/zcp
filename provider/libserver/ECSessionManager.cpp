@@ -140,7 +140,7 @@ ECSessionManager::ECSessionManager(ECConfig *lpConfig, ECLogger *lpAudit,
 ECSessionManager::~ECSessionManager()
 {
 	int err = 0;
-	SESSIONMAP::iterator iSession, iSessionNext;
+	SESSIONMAP::const_iterator iSession, iSessionNext;
 
 	pthread_mutex_lock(&m_hExitMutex);
 	bExit = TRUE;
@@ -313,7 +313,7 @@ ECRESULT ECSessionManager::GetSessionGroup(ECSESSIONGROUPID sessionGroupID, ECSe
 		lpSessionGroup = new ECSessionGroup(sessionGroupID, this);
 		g_lpStatsCollector->Increment(SCN_SESSIONGROUPS_CREATED);
 	} else {
-		SESSIONGROUPMAP::iterator iter = m_mapSessionGroups.find(sessionGroupID);
+		SESSIONGROUPMAP::const_iterator iter = m_mapSessionGroups.find(sessionGroupID);
 		/* Check if the SessionGroup already exists on the server */
 		if (iter == m_mapSessionGroups.end()) {
 			// "upgrade" lock to insert new session
@@ -345,7 +345,7 @@ ECRESULT ECSessionManager::DeleteIfOrphaned(ECSessionGroup *lpGroup)
 		pthread_rwlock_wrlock(&m_hGroupLock);
 
     	/* Check if the SessionGroup actually exists, if it doesn't just return without error */
-    	SESSIONGROUPMAP::iterator i = m_mapSessionGroups.find(id);
+	SESSIONGROUPMAP::const_iterator i = m_mapSessionGroups.find(id);
     	if (i == m_mapSessionGroups.end()) {
     	    pthread_rwlock_unlock(&m_hGroupLock);
     	    goto exit;
@@ -372,7 +372,7 @@ exit:
 
 BTSession* ECSessionManager::GetSession(ECSESSIONID sessionID, bool fLockSession) {
 
-	SESSIONMAP::iterator iIterator;
+	SESSIONMAP::const_iterator iIterator;
 	BTSession *lpSession = NULL;
 		
 	//TRACE_INTERNAL(TRACE_ENTRY, "ECSessionManager", "GetSession", "%lu", sessionID);
@@ -398,9 +398,9 @@ ECRESULT ECSessionManager::RemoveAllSessions()
 {
 	ECRESULT		er = erSuccess;
 	BTSession		*lpSession = NULL;
-	SESSIONMAP::iterator iIterSession, iSessionNext;
+	SESSIONMAP::const_iterator iIterSession, iSessionNext;
 	std::list<BTSession *> lstSessions;
-	std::list<BTSession *>::iterator iterSessionList;
+	std::list<BTSession *>::const_iterator iterSessionList;
 	
 	// Lock the session map since we're going to remove all the sessions.
 	pthread_rwlock_wrlock(&m_hCacheRWLock);
@@ -436,9 +436,9 @@ ECRESULT ECSessionManager::CancelAllSessions(ECSESSIONID sessionIDException)
 {
 	ECRESULT		er = erSuccess;
 	BTSession		*lpSession = NULL;
-	SESSIONMAP::iterator iIterSession, iSessionNext;
+	SESSIONMAP::const_iterator iIterSession, iSessionNext;
 	std::list<BTSession *> lstSessions;
-	std::list<BTSession *>::iterator iterSessionList;
+	std::list<BTSession *>::const_iterator iterSessionList;
 	
 	// Lock the session map since we're going to remove all the sessions.
 	pthread_rwlock_wrlock(&m_hCacheRWLock);
@@ -482,7 +482,7 @@ ECRESULT ECSessionManager::CancelAllSessions(ECSESSIONID sessionIDException)
 ECRESULT ECSessionManager::ForEachSession(void(*callback)(ECSession*, void*), void *obj)
 {
 	ECRESULT er = erSuccess;
-	SESSIONMAP::iterator iIterSession;
+	SESSIONMAP::const_iterator iIterSession;
 
 	pthread_rwlock_rdlock(&m_hCacheRWLock);
 
@@ -831,10 +831,10 @@ ECRESULT ECSessionManager::RemoveSession(ECSESSIONID sessionID){
  */
 ECRESULT ECSessionManager::AddNotification(notification *notifyItem, unsigned int ulKey, unsigned int ulStore, unsigned int ulFolderId, unsigned int ulFlags) {
 	
-	SESSIONGROUPMAP::iterator	iIterator;
-	std::multimap<unsigned int, ECSESSIONGROUPID>::iterator iterObjectSubscription;
+	SESSIONGROUPMAP::const_iterator	iIterator;
+	std::multimap<unsigned int, ECSESSIONGROUPID>::const_iterator iterObjectSubscription;
 	std::set<ECSESSIONGROUPID> setGroups;
-	std::set<ECSESSIONGROUPID>::iterator iterGroups;
+	std::set<ECSESSIONGROUPID>::const_iterator iterGroups;
 	
 	ECRESULT				hr = erSuccess;
 	
@@ -904,7 +904,7 @@ exit:
 
 void* ECSessionManager::SessionCleaner(void *lpTmpSessionManager)
 {
-	SESSIONMAP::iterator	iIterator, iRemove;
+	SESSIONMAP::const_iterator iIterator, iRemove;
 	time_t					lCurTime;
 	ECSessionManager*		lpSessionManager = (ECSessionManager *)lpTmpSessionManager;
 	int						lResult;
@@ -944,7 +944,9 @@ void* ECSessionManager::SessionCleaner(void *lpTmpSessionManager)
 		pthread_rwlock_unlock(&lpSessionManager->m_hCacheRWLock);
 
 		// Now, remove all the session. It will wait until all running threads for that session have exited.
-		for (list<BTSession*>::iterator iSessions = lstSessions.begin(); iSessions != lstSessions.end(); iSessions++) {
+		for (std::list<BTSession *>::const_iterator iSessions = lstSessions.begin();
+		     iSessions != lstSessions.end(); ++iSessions)
+		{
 			if((*iSessions)->Shutdown(5 * 60 * 1000) == erSuccess) 
 				delete *iSessions;
 			else {
@@ -1032,11 +1034,11 @@ exit:
 
 ECRESULT ECSessionManager::UpdateSubscribedTables(ECKeyTable::UpdateType ulType, TABLESUBSCRIPTION sSubscription, std::list<unsigned int> &lstChildId)
 {
-	SESSIONMAP::iterator	iterSession;
+	SESSIONMAP::const_iterator iterSession;
 	ECRESULT		er = erSuccess;
 	std::set<ECSESSIONID> setSessions;
-	std::set<ECSESSIONID>::iterator iterSubscribedSession;
-	std::multimap<TABLESUBSCRIPTION, ECSESSIONID>::iterator iterSubscriptions;
+	std::set<ECSESSIONID>::const_iterator iterSubscribedSession;
+	std::multimap<TABLESUBSCRIPTION, ECSESSIONID>::const_iterator iterSubscriptions;
 
 	BTSession	*lpBTSession = NULL;
 		
@@ -1303,7 +1305,7 @@ exit:
 ECRESULT ECSessionManager::NotificationChange(const set<unsigned int> &syncIds, unsigned int ulChangeId, unsigned int ulChangeType)
 {
 	ECRESULT					er = erSuccess;
-	SESSIONGROUPMAP::iterator	iIterator;
+	SESSIONGROUPMAP::const_iterator iIterator;
 	
 	pthread_rwlock_rdlock(&m_hGroupLock);
 
@@ -1371,8 +1373,8 @@ void ECSessionManager::GetStats(void(callback)(const std::string &, const std::s
  */
 void ECSessionManager::GetStats(sSessionManagerStats &sStats)
 {
-	SESSIONMAP::iterator		iIterator;
-	SESSIONGROUPMAP::iterator	itersg;
+	SESSIONMAP::const_iterator iIterator;
+	SESSIONGROUPMAP::const_iterator itersg;
 	list<ECSession*> vSessions;
 
 	memset(&sStats, 0, sizeof(sSessionManagerStats));
@@ -1587,8 +1589,8 @@ ECRESULT ECSessionManager::SetSessionPersistentConnection(ECSESSIONID sessionID,
 ECRESULT ECSessionManager::RemoveSessionPersistentConnection(unsigned int ulPersistentConnectionId)
 {
 	ECRESULT er = erSuccess;
-	PERSISTENTBYCONNECTION::iterator iterConnection;
-	PERSISTENTBYSESSION::iterator iterSession;
+	PERSISTENTBYCONNECTION::const_iterator iterConnection;
+	PERSISTENTBYSESSION::const_iterator iterSession;
 
 	pthread_mutex_lock(&m_mutexPersistent);
 
@@ -1615,7 +1617,7 @@ exit:
 
 BOOL ECSessionManager::IsSessionPersistent(ECSESSIONID sessionID)
 {
-	PERSISTENTBYSESSION::iterator iterSession;
+	PERSISTENTBYSESSION::const_iterator iterSession;
 
 	pthread_mutex_lock(&m_mutexPersistent);
 	iterSession = m_mapPersistentBySession.find(sessionID);

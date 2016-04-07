@@ -868,7 +868,7 @@ ECRESULT ECS3Attachment::Begin(void)
 
 ECRESULT ECS3Attachment::Commit(void)
 {
-	std::set<ULONG>::iterator i;
+	std::set<ULONG>::const_iterator i;
 	bool error = false;
 
 	ec_log_debug("Commit transaction");
@@ -896,7 +896,7 @@ ECRESULT ECS3Attachment::Commit(void)
 
 ECRESULT ECS3Attachment::Rollback(void)
 {
-	std::set<ULONG>::iterator i;
+	std::set<ULONG>::const_iterator i;
 	bool error = false;
 
 	ec_log_debug("Rollback transaction");

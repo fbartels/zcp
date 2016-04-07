@@ -229,7 +229,7 @@ ECRESULT ExpandDeletedItems(ECSession *lpSession, ECDatabase *lpDatabase, ECList
 	std::string strQuery;
 	std::set<unsigned int> setIDs;
 	ECListDeleteItems lstDeleteItems;
-	ECListDeleteItems::iterator iterDeleteItems;
+	ECListDeleteItems::const_iterator iterDeleteItems;
 	ECListDeleteItems lstContainerItems;
 	DELETEITEM sItem;
 	ECSessionManager *lpSessionManager = NULL;
@@ -429,7 +429,7 @@ exit:
 ECRESULT DeleteObjectUpdateICS(ECSession *lpSession, unsigned int ulFlags, ECListDeleteItems &lstDeleted, unsigned int ulSyncId)
 {
 	ECRESULT er = erSuccess;
-	ECListDeleteItems::iterator iterDeleteItems;
+	ECListDeleteItems::const_iterator iterDeleteItems;
 
 	for(iterDeleteItems=lstDeleted.begin(); iterDeleteItems != lstDeleted.end(); iterDeleteItems++)
 	{
@@ -497,8 +497,8 @@ ECRESULT DeleteObjectStoreSize(ECSession *lpSession, ECDatabase *lpDatabase, uns
 	ECRESULT er = erSuccess;
 	std::map<unsigned int, long long> mapStoreSize;
 
-	ECListDeleteItems::iterator iterDeleteItems;
-	std::map<unsigned int, long long>::iterator iterStoreSizeItems;
+	ECListDeleteItems::const_iterator iterDeleteItems;
+	std::map<unsigned int, long long>::const_iterator iterStoreSizeItems;
 
 //TODO: check or foldersize also is used
 
@@ -544,7 +544,7 @@ ECRESULT DeleteObjectStoreSize(ECSession *lpSession, ECDatabase *lpDatabase, uns
 ECRESULT DeleteObjectSoft(ECSession *lpSession, ECDatabase *lpDatabase, unsigned int ulFlags, ECListDeleteItems &lstDeleteItems, ECListDeleteItems &lstDeleted)
 {
 	ECRESULT er = erSuccess;
-	ECListDeleteItems::iterator iterDeleteItems;
+	ECListDeleteItems::const_iterator iterDeleteItems;
 
 	FILETIME ft;
 	std::string strInclauseOQQ;
@@ -554,7 +554,7 @@ ECRESULT DeleteObjectSoft(ECSession *lpSession, ECDatabase *lpDatabase, unsigned
 	PARENTINFO pi;
 	
 	std::map<unsigned int, PARENTINFO> mapFolderCounts;
-	std::map<unsigned int, PARENTINFO>::iterator iterFolderCounts;
+	std::map<unsigned int, PARENTINFO>::const_iterator iterFolderCounts;
 
 	// Build where condition
 	for(iterDeleteItems=lstDeleteItems.begin(); iterDeleteItems != lstDeleteItems.end(); iterDeleteItems++) {
@@ -698,7 +698,7 @@ ECRESULT DeleteObjectHard(ECSession *lpSession, ECDatabase *lpDatabase, ECAttach
 	PARENTINFO pi;
 	
 	std::map<unsigned int, PARENTINFO> mapFolderCounts;
-	std::map<unsigned int, PARENTINFO>::iterator iterFolderCounts;
+	std::map<unsigned int, PARENTINFO>::const_iterator iterFolderCounts;
 
 	int i;
 
@@ -904,7 +904,7 @@ ECRESULT DeleteObjectCacheUpdate(ECSession *lpSession, unsigned int ulFlags, ECL
 	ECRESULT er = erSuccess;
 	ECSessionManager *lpSessionManager = NULL;
 	ECCacheManager *lpCacheManager = NULL;
-	ECListDeleteItems::iterator iterDeleteItems;
+	ECListDeleteItems::const_iterator iterDeleteItems;
 
 	if (lpSession == NULL) {
 		er = ZARAFA_E_INVALID_PARAMETER;
@@ -948,7 +948,7 @@ ECRESULT DeleteObjectNotifications(ECSession *lpSession, unsigned int ulFlags, E
 	ECListDeleteItems::iterator iterDeleteItems;
 
 	std::list<unsigned int> lstParent;
-	std::list<unsigned int>::iterator iterParent;
+	std::list<unsigned int>::const_iterator iterParent;
 	ECMapTableChangeNotifications mapTableChangeNotifications;
 	//std::set<unsigned int>	setFolderParents;
 	size_t cDeleteditems = lstDeleted.size();
@@ -1127,7 +1127,7 @@ ECRESULT DeleteObjects(ECSession *lpSession, ECDatabase *lpDatabase, ECListInt *
 	ECRESULT er = erSuccess;
 	ECListDeleteItems lstDeleteItems;
 	ECListDeleteItems lstDeleted;
-	ECListDeleteItems::iterator iterDeleteItems;
+	ECListDeleteItems::const_iterator iterDeleteItems;
 	ECSearchFolders *lpSearchFolders = NULL;
 	ECSessionManager *lpSessionManager = NULL;
 	
@@ -1325,7 +1325,7 @@ void FreeDeletedItems(ECListDeleteItems *lplstDeleteItems)
 ECRESULT UpdateTProp(ECDatabase *lpDatabase, unsigned int ulPropTag, unsigned int ulFolderId, ECListInt *lpObjectIDs) {
     ECRESULT er = erSuccess;
     std::string strQuery;
-    ECListInt::iterator iObjectid;
+    ECListInt::const_iterator iObjectid;
     
     if(lpObjectIDs->empty())
         goto exit; // Nothing to do
@@ -2161,7 +2161,9 @@ static ECRESULT BeginLockFolders(ECDatabase *lpDatabase, unsigned int ulTag,
     if(!setUncached.empty()) {    
         // For the items that were uncached, go directly to their parent (or the item itself for folders) in the DB
         strQuery = "SELECT hierarchyid, hierarchy.type, hierarchy.parent FROM indexedproperties JOIN hierarchy ON hierarchy.id=indexedproperties.hierarchyid WHERE tag = " + stringify(ulTag) + " AND val_binary IN(";
-        for(std::set<std::string>::iterator i= setUncached.begin(); i != setUncached.end(); i++) {
+        for (std::set<std::string>::const_iterator i = setUncached.begin();
+             i != setUncached.end(); ++i)
+        {
             if(i != setUncached.begin())
                 strQuery += ",";
             strQuery += lpDatabase->EscapeBinary(*i);
@@ -2187,7 +2189,9 @@ static ECRESULT BeginLockFolders(ECDatabase *lpDatabase, unsigned int ulTag,
     }
         
     // For the items that were cached, but messages, find their parents in the cache first
-    for(std::set<unsigned int>::iterator i = setMessages.begin(); i != setMessages.end(); i++) {
+    for (std::set<unsigned int>::const_iterator i = setMessages.begin();
+         i != setMessages.end(); ++i)
+    {
         unsigned int ulParent = 0;
         
         if(g_lpSessionManager->GetCacheManager()->QueryParent(*i, &ulParent) == erSuccess) {
@@ -2200,7 +2204,9 @@ static ECRESULT BeginLockFolders(ECDatabase *lpDatabase, unsigned int ulTag,
     // Query uncached parents from the database
     if(!setUncachedMessages.empty()) {
         strQuery = "SELECT parent FROM hierarchy WHERE id IN(";
-        for(std::set<unsigned int>::iterator i = setUncachedMessages.begin(); i != setUncachedMessages.end(); i++) {
+        for (std::set<unsigned int>::const_iterator i = setUncachedMessages.begin();
+             i != setUncachedMessages.end(); ++i)
+        {
             if(i != setUncachedMessages.begin())
                 strQuery += ",";
             strQuery += stringify(*i);
@@ -2301,7 +2307,7 @@ ECRESULT BeginLockFolders(ECDatabase *lpDatabase, const SOURCEKEY &sourcekey, un
 ECRESULT PrepareReadProps(struct soap *soap, ECDatabase *lpDatabase, bool fDoQuery, bool fUnicode, unsigned int ulObjId, unsigned int ulParentId, unsigned int ulMaxSize, ChildPropsMap *lpChildProps, NamedPropDefMap *lpNamedPropDefs)
 {
     ECRESULT er = erSuccess;
-	ChildPropsMap::iterator iterChild;
+	ChildPropsMap::const_iterator iterChild;
 	unsigned int ulSize;
 	struct propVal sPropVal;
     unsigned int ulChildId;
@@ -2541,7 +2547,7 @@ exit:
 
 ECRESULT FreeChildProps(std::map<unsigned int, CHILDPROPS> *lpChildProps)
 {
-    std::map<unsigned int, CHILDPROPS>::iterator iterChild;
+    std::map<unsigned int, CHILDPROPS>::const_iterator iterChild;
     
     for(iterChild = lpChildProps->begin(); iterChild != lpChildProps->end(); iterChild++)
     {

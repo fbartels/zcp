@@ -104,7 +104,7 @@ public:
 	void Set(const std::string &name, const std::string &description, const std::string &value) _zcp_override;
 	void Remove(const std::string &name) _zcp_override;
 
-	std::string GetValue(SCMap::iterator iSD);
+	std::string GetValue(SCMap::const_iterator iSD);
 	std::string GetValue(SCName name) _zcp_override;
 
 	void ForEachStat(void(callback)(const std::string &, const std::string &, const std::string &, void*), void *obj);

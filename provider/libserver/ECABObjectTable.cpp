@@ -133,7 +133,7 @@ ECRESULT ECABObjectTable::Create(ECSession *lpSession, unsigned int ulABId, unsi
 ECRESULT ECABObjectTable::GetColumnsAll(ECListInt* lplstProps)
 {
 	ECRESULT		er = erSuccess;
-	ECObjectTableMap::iterator		iterObjects;
+	ECObjectTableMap::const_iterator iterObjects;
 	ECODAB *lpODAB = (ECODAB*)m_lpObjectData;
 
 	pthread_mutex_lock(&m_hLock);
@@ -176,7 +176,7 @@ ECRESULT ECABObjectTable::ReloadTableMVData(ECObjectTableList* lplistRows, ECLis
 	ECRESULT			er = erSuccess;
 	ECListIntIterator	iterListMVPropTag;
 
-	ECObjectTableList::iterator	iterListRows;
+	ECObjectTableList::const_iterator iterListRows;
 
 	ASSERT(lplistMVPropTag->size() <2); //FIXME: Limit of one 1 MV column
 
@@ -192,10 +192,10 @@ ECRESULT ECABObjectTable::GetMVRowCount(unsigned int ulObjId, unsigned int *lpul
 {
 	ECRESULT er = erSuccess;
     ECObjectTableList			listRows;
-	ECObjectTableList::iterator iterListRows;
-	ECObjectTableMap::iterator		iterIDs;
+	ECObjectTableList::const_iterator iterListRows;
+	ECObjectTableMap::const_iterator iterIDs;
 
-	ECListInt::iterator	iterListMVPropTag;
+	ECListInt::const_iterator iterListMVPropTag;
 
 	pthread_mutex_lock(&m_hLock);
 
@@ -476,7 +476,7 @@ ECRESULT ECABObjectTable::Load()
 	sObjectTableKey sRowItem;
 
 	std::list<localobjectdetails_t> *lpObjects = NULL;
-	std::list<localobjectdetails_t>::iterator iterObjects;
+	std::list<localobjectdetails_t>::const_iterator iterObjects;
 	std::list<unsigned int> lstObjects;
 	unsigned int ulObjectId = 0;
 	unsigned int ulObjectFilter = 0;

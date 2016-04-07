@@ -2014,7 +2014,7 @@ static ECRESULT WriteProps(struct soap *soap, ECSession *lpecSession,
 	unsigned long long ullIMAP = 0;
 
 	std::set<unsigned int>	setInserted;
-	std::set<unsigned int>::iterator iterInserted;
+	std::set<unsigned int>::const_iterator iterInserted;
 
 	GUID sGuidServer;
 	std::list<ULONG> lstObjIds;
@@ -2152,12 +2152,12 @@ static ECRESULT WriteProps(struct soap *soap, ECSession *lpecSession,
 				goto exit;
 
 			er = ZARAFA_E_UNKNOWN_INSTANCE_ID;
-			for (std::list<ULONG>::iterator i = lstObjIds.begin(); i != lstObjIds.end(); i++) {
+			for (std::list<ULONG>::const_iterator i = lstObjIds.begin();
+			     i != lstObjIds.end(); ++i)
 				if (lpecSession->GetSecurity()->CheckPermission(*i, ecSecurityRead) == erSuccess) {
 						er = erSuccess;
 						break;
 				}
-			}
 
 			if (er != erSuccess)
 				goto exit;
@@ -3307,7 +3307,7 @@ static ECRESULT LoadObject(struct soap *soap, ECSession *lpecSession,
 	int i;
 	GUID			sGuidServer;
 	ChildPropsMap mapChildProps;
-	ChildPropsMap::iterator iterProps;
+	ChildPropsMap::const_iterator iterProps;
 	USE_DATABASE();
 	CHILDPROPS		sEmptyProps;
 	
@@ -5295,9 +5295,9 @@ SOAP_ENTRY_END()
 SOAP_ENTRY_START(setReadFlags, *result, unsigned int ulFlags, entryId* lpsEntryId, struct entryList *lpMessageList, unsigned int ulSyncId, unsigned int *result)
 {
 	std::list<unsigned int> lHierarchyIDs;
-	std::list<unsigned int>::iterator iterHierarchyIDs;
+	std::list<unsigned int>::const_iterator iterHierarchyIDs;
 	std::list<std::pair<unsigned int, unsigned int>	> lObjectIds;
-	std::list<std::pair<unsigned int, unsigned int> >::iterator iObjectid;
+	std::list<std::pair<unsigned int, unsigned int> >::const_iterator iObjectid;
 	std::string		strQueryCache;
 	USE_DATABASE();
 
@@ -5312,9 +5312,9 @@ SOAP_ENTRY_START(setReadFlags, *result, unsigned int ulFlags, entryId* lpsEntryI
 	
 	// List of unique parents
 	std::map<unsigned int, int> mapParents;
-	std::map<unsigned int, int>::iterator iterParents;
+	std::map<unsigned int, int>::const_iterator iterParents;
 	std::set<unsigned int> setParents;
-	std::set<unsigned int>::iterator iParents;
+	std::set<unsigned int>::const_iterator iParents;
 
 	//NOTE: either lpMessageList may be NULL or lpsEntryId may be NULL
 
@@ -5837,7 +5837,7 @@ SOAP_ENTRY_END()
 SOAP_ENTRY_START(getUserList, lpsUserList->er, unsigned int ulCompanyId, entryId sCompanyId, struct userListResponse *lpsUserList)
 {
 	std::list<localobjectdetails_t> *lpUsers = NULL;
-	std::list<localobjectdetails_t>::iterator iterUsers;
+	std::list<localobjectdetails_t>::const_iterator iterUsers;
 	entryId		sUserEid = {0};
 
 	er = GetLocalId(sCompanyId, ulCompanyId, &ulCompanyId, NULL);
@@ -5899,7 +5899,7 @@ SOAP_ENTRY_START(getSendAsList, lpsUserList->er, unsigned int ulUserId, entryId 
 {
 	objectdetails_t userDetails, senderDetails;
 	list<unsigned int> userIds;
-	list<unsigned int>::iterator iterUserIds;
+	std::list<unsigned int>::const_iterator iterUserIds;
 	entryId sSenderEid = {0};
 
 	er = GetLocalId(sUserId, ulUserId, &ulUserId, NULL);
@@ -6483,7 +6483,7 @@ SOAP_ENTRY_END()
 SOAP_ENTRY_START(getGroupList, lpsGroupList->er, unsigned int ulCompanyId, entryId sCompanyId, struct groupListResponse *lpsGroupList)
 {
 	std::list<localobjectdetails_t> *lpGroups = NULL;
-	std::list<localobjectdetails_t>::iterator iterGroups;
+	std::list<localobjectdetails_t>::const_iterator iterGroups;
 
 	entryId	sGroupEid = {0};
 
@@ -6661,8 +6661,8 @@ SOAP_ENTRY_END()
 SOAP_ENTRY_START(getUserListOfGroup, lpsUserList->er, unsigned int ulGroupId, entryId sGroupId, struct userListResponse *lpsUserList)
 {
 	std::list<localobjectdetails_t> *lpUsers = NULL;
-	std::list<localobjectdetails_t>::iterator iterUsers;
-	std::list<std::list<localobjectdetails_t> *>::iterator iterSources;
+	std::list<localobjectdetails_t>::const_iterator iterUsers;
+	std::list<std::list<localobjectdetails_t> *>::const_iterator iterSources;
 	entryId		sUserEid = {0};
 
 	er = GetLocalId(sGroupId, ulGroupId, &ulGroupId, NULL);
@@ -6716,7 +6716,7 @@ SOAP_ENTRY_END()
 SOAP_ENTRY_START(getGroupListOfUser, lpsGroupList->er, unsigned int ulUserId, entryId sUserId, struct groupListResponse *lpsGroupList)
 {
 	std::list<localobjectdetails_t> *lpGroups = NULL;
-	std::list<localobjectdetails_t>::iterator iterGroups;
+	std::list<localobjectdetails_t>::const_iterator iterGroups;
 
 	entryId sGroupEid = {0};
 
@@ -7036,7 +7036,7 @@ SOAP_ENTRY_START(getCompanyList, lpsCompanyList->er, struct companyListResponse 
 	entryId			sCompanyEid = {0};
 	entryId			sAdminEid = {0};
 	std::list<localobjectdetails_t> *lpCompanies = NULL;
-	std::list<localobjectdetails_t>::iterator iterCompanies;
+	std::list<localobjectdetails_t>::const_iterator iterCompanies;
 
 	if (!g_lpSessionManager->IsHostedSupported()) {
 		er = ZARAFA_E_NO_SUPPORT;
@@ -7147,7 +7147,7 @@ SOAP_ENTRY_START(getRemoteViewList, lpsCompanyList->er, unsigned int ulCompanyId
 	entryId			sAdminEid = {0};
 
 	std::list<localobjectdetails_t> *lpCompanies = NULL;
-	std::list<localobjectdetails_t>::iterator iterCompanies;
+	std::list<localobjectdetails_t>::const_iterator iterCompanies;
 
 	if (!g_lpSessionManager->IsHostedSupported()) {
 		er = ZARAFA_E_NO_SUPPORT;
@@ -7274,7 +7274,7 @@ SOAP_ENTRY_END()
 SOAP_ENTRY_START(getRemoteAdminList, lpsUserList->er, unsigned int ulCompanyId, entryId sCompanyId, struct userListResponse *lpsUserList)
 {
 	std::list<localobjectdetails_t> *lpUsers = NULL;
-	std::list<localobjectdetails_t>::iterator iterUsers;
+	std::list<localobjectdetails_t>::const_iterator iterUsers;
 	entryId		sUserEid = {0};
 
 	if (!g_lpSessionManager->IsHostedSupported()) {
@@ -7977,9 +7977,9 @@ static ECRESULT MoveObjects(ECSession *lpSession, ECDatabase *lpDatabase,
 	unsigned long long ullIMAP = 0;
 
 	std::list<unsigned int> lstParent;
-	std::list<unsigned int>::iterator iterParent;
+	std::list<unsigned int>::const_iterator iterParent;
 	std::list<unsigned int> lstGrandParent;
-	std::list<unsigned int>::iterator iterGrandParent;
+	std::list<unsigned int>::const_iterator iterGrandParent;
 	std::list<COPYITEM> lstCopyItems;
 	std::list<COPYITEM>::iterator iterCopyItems;
 
@@ -10016,7 +10016,7 @@ SOAP_ENTRY_START(readABProps, readPropsResponse->er, entryId sEntryId, struct re
 	ECDatabase*			lpDatabase = NULL;
 	objectid_t			sExternId;
 	auto_ptr<abprops_t>	lExtraProps;
-	abprops_t::iterator	iterProps;
+	abprops_t::const_iterator iterProps;
 	unsigned int		*lpProps = NULL;
 	unsigned int		ulProps = 0;
 	int		i = 0;
@@ -10376,7 +10376,7 @@ SOAP_ENTRY_END()
 SOAP_ENTRY_START(GetQuotaRecipients, lpsUserList->er, unsigned int ulUserid, entryId sUserId, struct userListResponse *lpsUserList)
 {
 	std::list<localobjectdetails_t> *lpUsers = NULL;
-	std::list<localobjectdetails_t>::iterator iterUsers;
+	std::list<localobjectdetails_t>::const_iterator iterUsers;
 	objectid_t sExternId;
 	objectdetails_t details;
 	userobject_relation_t relation;

@@ -130,7 +130,7 @@ exit:
 ECRESULT zarafa_unloadlibrary(void)
 {
 	ECRESULT er = erSuccess;
-	std::set<ECDatabase*>::iterator	iterDBObject, iNext;
+	std::set<ECDatabase *>::const_iterator iterDBObject, iNext;
 
 	if(!g_bInitLib) {
 		er = ZARAFA_E_NOT_INITIALIZED;
@@ -211,7 +211,7 @@ void zarafa_removeallsessions()
 ECRESULT zarafa_exit()
 {
 	ECRESULT er = erSuccess;
-	std::set<ECDatabase*>::iterator	iterDBObject;
+	std::set<ECDatabase *>::const_iterator iterDBObject;
 
 	if(!g_bInitLib) {
 		er = ZARAFA_E_NOT_INITIALIZED;

@@ -1960,7 +1960,7 @@ ECRESULT ECDatabaseMySQL::ValidateTables()
 	string		strQuery;
 	list<std::string> listTables;
 	list<std::string> listErrorTables;
-	list<std::string>::iterator iterTables;
+	list<std::string>::const_iterator iterTables;
 	DB_RESULT	lpResult = NULL;
 	DB_ROW		lpDBRow = NULL;
 
