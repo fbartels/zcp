@@ -108,7 +108,7 @@ public:
 			memcpy(lpb, old.lpb, cb);
 		}
 	}
-	BinaryArray(SBinary &bin) {
+	BinaryArray(const SBinary &bin) {
 		bcheap = false;
 		if (bin.cb == 0) {
 			cb = 0;
@@ -392,11 +392,11 @@ private:
 	string PropsToFlags(LPSPropValue lpProps, unsigned int cValues, bool bRecent, bool bRead);
 	string PropsToEmailAddress(LPSPropValue lpProps, unsigned int cValues, ULONG ulEmailPropTag, ULONG ulNamePropTag);
 
-	void HrParseHeaders(string &strHeaders, list<pair<string, string> > &lstHeaders);
-	void HrGetSubString(string &strOutput, string &strInput, string strBegin, string strEnd);
-	void HrTokenize(set<string> &setTokens, string &strInput);
+	void HrParseHeaders(const std::string &, std::list<std::pair<std::string, std::string> > &);
+	void HrGetSubString(string &strOutput, const std::string &strInput, const std::string &strBegin, const std::string &strEnd);
+	void HrTokenize(std::set<std::string> &setTokens, const std::string &strInput);
 
-	HRESULT HrExpungeDeleted(const string &strTag, const string &strCommand, LPSRestriction lpUIDRestriction);
+	HRESULT HrExpungeDeleted(const string &strTag, const string &strCommand, const SRestriction *lpUIDRestriction);
 
 	friend LONG __stdcall IMAPIdleAdviseCallback(void *lpContext, ULONG cNotif, LPNOTIFICATION lpNotif);
 };

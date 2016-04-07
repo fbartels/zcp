@@ -2671,10 +2671,10 @@ exit:
  */
 std::string IMAP::PropsToFlags(LPSPropValue lpProps, unsigned int cValues, bool bRecent, bool bRead) {
 	string strFlags;
-	LPSPropValue lpMessageFlags = PpropFindProp(lpProps, cValues, PR_MESSAGE_FLAGS);
-	LPSPropValue lpFlagStatus = PpropFindProp(lpProps, cValues, PR_FLAG_STATUS);
-	LPSPropValue lpMsgStatus = PpropFindProp(lpProps, cValues, PR_MSG_STATUS);
-	LPSPropValue lpLastVerb = PpropFindProp(lpProps, cValues, PR_LAST_VERB_EXECUTED);
+	const SPropValue *lpMessageFlags = PpropFindProp(lpProps, cValues, PR_MESSAGE_FLAGS);
+	const SPropValue *lpFlagStatus = PpropFindProp(lpProps, cValues, PR_FLAG_STATUS);
+	const SPropValue *lpMsgStatus = PpropFindProp(lpProps, cValues, PR_MSG_STATUS);
+	const SPropValue *lpLastVerb = PpropFindProp(lpProps, cValues, PR_LAST_VERB_EXECUTED);
 
 	if ((lpMessageFlags && lpMessageFlags->Value.ul & MSGFLAG_READ) || bRead) {
 		strFlags += "\\Seen ";
@@ -2733,8 +2733,8 @@ std::string IMAP::PropsToFlags(LPSPropValue lpProps, unsigned int cValues, bool 
  */
 std::string IMAP::PropsToEmailAddress(LPSPropValue lpProps, unsigned int cValues, ULONG ulEmailPropTag, ULONG ulNamePropTag)
 {
-    LPSPropValue lpPropEmail = PpropFindProp(lpProps, cValues, ulEmailPropTag);
-    LPSPropValue lpPropName = PpropFindProp(lpProps, cValues, ulNamePropTag);
+	const SPropValue *lpPropEmail = PpropFindProp(lpProps, cValues, ulEmailPropTag);
+	const SPropValue *lpPropName = PpropFindProp(lpProps, cValues, ulNamePropTag);
     std::string strAddress;
     
     if(lpPropEmail && lpPropName && strcmp(lpPropEmail->Value.lpszA, lpPropName->Value.lpszA) == 0) {
@@ -3232,7 +3232,8 @@ HRESULT IMAP::HrResponse(const string &strResult, const string &strTag, const st
  * 
  * @return MAPI Error code
  */
-HRESULT IMAP::HrExpungeDeleted(const string &strTag, const string &strCommand, LPSRestriction lpUIDRestriction)
+HRESULT IMAP::HrExpungeDeleted(const std::string &strTag,
+    const std::string &strCommand, const SRestriction *lpUIDRestriction)
 {
 	HRESULT hr = hrSuccess;
 	HRESULT hr2 = hrSuccess;
@@ -7374,7 +7375,7 @@ exit:
  * @param[in] strHeaders Email headers to parse (this data will be modified and should not be used after this function)
  * @param[out] lstHeaders list of headers, in header / value pairs
  */
-void IMAP::HrParseHeaders(string &strHeaders, list<pair<string, string> > &lstHeaders)
+void IMAP::HrParseHeaders(const string &strHeaders, list<pair<string, string> > &lstHeaders)
 {
     size_t pos = 0;
     size_t end = 0;
@@ -7439,7 +7440,8 @@ void IMAP::HrParseHeaders(string &strHeaders, list<pair<string, string> > &lstHe
  * @param[in]	strBegin	Substring should start with
  * @param[in]	strEnd	Substring should end with
  */
-void IMAP::HrGetSubString(string &strOutput, string &strInput, string strBegin, string strEnd)
+void IMAP::HrGetSubString(std::string &strOutput, const std::string &strInput,
+    const std::string &strBegin, const std::string &strEnd)
 {
     size_t begin;
     size_t end;
@@ -7463,7 +7465,8 @@ void IMAP::HrGetSubString(string &strOutput, string &strInput, string strBegin, 
  * @param[out] setTokens A set of strings from input
  * @param[in] strInput split by spaces into the set
  */
-void IMAP::HrTokenize(set<string> &setTokens, string &strInput)
+void IMAP::HrTokenize(std::set<std::string> &setTokens,
+    const std::string &strInput)
 {
     vector<string> lstTokens = tokenize(strInput, " ");
 
