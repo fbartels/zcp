@@ -862,7 +862,7 @@ HRESULT HrGetFreebusy(MapiToICal *lpMapiToIcal, IFreeBusySupport* lpFBSupport, I
 	LONG lMaxblks = 100;
 	LONG lblkFetched = 0;
 	WEBDAVFBUSERINFO sWebFbUserInfo;
-	std::list<std::string>::iterator itUsers;
+	std::list<std::string>::const_iterator itUsers;
 	LPADRLIST lpAdrList = NULL;
 	FlagListPtr ptrFlagList;
 	LPSPropValue lpEntryID = NULL;

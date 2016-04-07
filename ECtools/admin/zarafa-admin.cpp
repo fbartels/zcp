@@ -2364,7 +2364,7 @@ static HRESULT fillMVPropmap(ECUSER &sECUser, ULONG ulPropTag, int index,
 			goto exit;
 		}
 		int n;
-		set<string, lstr>::iterator i;
+		set<string, lstr>::const_iterator i;
 		// @note we store char* data in a LPTSTR (whcar_t by -DUNICODE) pointer.
 		for (i = sFeatures.begin(), n = 0; i != sFeatures.end(); ++i, ++n)
 			sECUser.sMVPropmap.lpEntries[index].lpszValues[n] = (TCHAR*)i->c_str();

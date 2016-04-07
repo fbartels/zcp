@@ -503,7 +503,7 @@ int main(int argc, char *argv[])
 
     ECLogger* filelogger = ptrArchiver->GetLogger(Archiver::LogOnly);
     ptrArchiver->GetLogger(Archiver::LogOnly)->Log(EC_LOGLEVEL_FATAL, "Config settings:");
-    for (std::list<configsetting_t>::iterator i = lSettings.begin(); i != lSettings.end(); ++i) {
+    for (std::list<configsetting_t>::const_iterator i = lSettings.begin(); i != lSettings.end(); ++i) {
         if (strcmp(i->szName, "sslkey_pass") == 0 || strcmp(i->szName, "mysql_password") == 0)
             filelogger->Log(EC_LOGLEVEL_FATAL, "*  %s = '********'", i->szName);
         else

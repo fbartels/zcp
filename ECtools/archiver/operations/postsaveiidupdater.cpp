@@ -189,7 +189,7 @@ PostSaveInstanceIdUpdater::PostSaveInstanceIdUpdater(ULONG ulPropTag, const Inst
 
 HRESULT PostSaveInstanceIdUpdater::Execute()
 {
-	typedef TaskList::iterator iterator;
+	typedef TaskList::const_iterator iterator;
 
 	HRESULT hr = hrSuccess;
 	bool bFailure = false;

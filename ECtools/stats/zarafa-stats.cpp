@@ -237,15 +237,15 @@ static void showtop(LPMDB lpStore, bool bLocal)
     LPSRowSet lpsRowSet = NULL;
     WINDOW *win = NULL;
     std::map<unsigned long long, TIMES> mapLastTimes;
-    std::map<unsigned long long, TIMES>::iterator iterTimes;
+    std::map<unsigned long long, TIMES>::const_iterator iterTimes;
     std::map<std::string, std::string> mapStats;
     std::map<std::string, double> mapDiffStats;
     std::list<SESSION> lstSessions;
-    std::list<SESSION>::iterator iterSessions;
+    std::list<SESSION>::const_iterator iterSessions;
     std::set<std::string> setUsers;
     std::set<std::string> setHosts;
     std::map<unsigned long long, unsigned int> mapSessionGroups;
-    std::map<unsigned long long, unsigned int>::iterator iterSessionGroups;
+    std::map<unsigned long long, unsigned int>::const_iterator iterSessionGroups;
 	char date[64];
 	time_t now;
     unsigned int ulSessGrp = 1;

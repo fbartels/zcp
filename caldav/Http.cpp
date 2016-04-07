@@ -78,7 +78,7 @@ HRESULT HrParseURL(const std::string &strUrl, ULONG *lpulFlag, std::string *lpst
 	std::string strFolder;
 	std::string strUrlUser;
 	vector<std::string> vcUrlTokens;
-	vector<std::string>::iterator iterToken;
+	vector<std::string>::const_iterator iterToken;
 	ULONG ulFlag = 0;
 
 	vcUrlTokens = tokenize(strUrl, L'/', true);
@@ -244,7 +244,7 @@ HRESULT Http::HrParseHeaders()
 	std::string strUserAgent;
 
 	std::vector<std::string> items;
-	std::map<std::string, std::string>::iterator iHeader = mapHeaders.end();
+	std::map<std::string, std::string>::const_iterator iHeader = mapHeaders.end();
 
 	std::string user_pass;
 	size_t colon_pos;
@@ -806,7 +806,7 @@ HRESULT Http::HrRequestAuth(std::string strMsg)
 HRESULT Http::HrFlushHeaders()
 {
 	HRESULT hr = hrSuccess;
-	std::list<std::string>::iterator h;
+	std::list<std::string>::const_iterator h;
 	std::string strOutput;
 	char lpszChar[128];
 	time_t tmCurrenttime = time(NULL);
@@ -860,7 +860,7 @@ HRESULT Http::X2W(const std::string &strIn, std::wstring *lpstrOut)
 
 HRESULT Http::HrGetHeaderValue(const std::string &strHeader, std::string *strValue)
 {
-	std::map<std::string, std::string>::iterator iHeader = mapHeaders.find(strHeader);
+	std::map<std::string, std::string>::const_iterator iHeader = mapHeaders.find(strHeader);
 	if (iHeader == mapHeaders.end())
 		return MAPI_E_NOT_FOUND;
 	*strValue = iHeader->second;

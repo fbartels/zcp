@@ -75,6 +75,7 @@ string auto_del;
 typedef pair<string, ZarafaFsck* > CHECKMAP_P;
 typedef map<string, ZarafaFsck* > CHECKMAP;
 typedef map<string, ZarafaFsck* >::iterator CHECKMAP_I;
+typedef map<string, ZarafaFsck* >::const_iterator CHECKMAP_CI;
 
 enum {
 	OPT_HELP = UCHAR_MAX + 1,
@@ -350,12 +351,11 @@ RunFolderValidation(const std::set<std::string> &setFolderIgnore,
 		goto exit;
 	}
 
-	for (CHECKMAP_I i = checkmap.begin(); i != checkmap.end(); ++i) {
+	for (CHECKMAP_CI i = checkmap.begin(); i != checkmap.end(); ++i)
 		if (i->first == strClass) {
 			lpFsck = i->second;
 			break;
 		}
-	}
 
 	if (lpFsck)
 		lpFsck->ValidateFolder(lpFolder, strName);
@@ -673,7 +673,9 @@ int main(int argc, char *argv[])
 	if (hr == hrSuccess)
 		cout << endl << "Statistics:" << endl;
 
-	for (CHECKMAP_I i = checkmap.begin(); i != checkmap.end(); i = checkmap.begin()) {
+	for (CHECKMAP_I i = checkmap.begin(); i != checkmap.end();
+	     i = checkmap.begin())
+	{
 		ZarafaFsck *lpFsck = i->second;
 		
 		if (hr == hrSuccess)

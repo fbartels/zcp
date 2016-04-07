@@ -215,9 +215,9 @@ HRESULT WebDav::RespStructToXml(WEBDAVMULTISTATUS *sDavMStatus, std::string *str
 	std::string strNsPrefix;
 	xmlTextWriter *xmlWriter = NULL;
 	xmlBuffer *xmlBuff = NULL;
-	std::list<WEBDAVRESPONSE>::iterator iterResp;
+	std::list<WEBDAVRESPONSE>::const_iterator iterResp;
 	std::string strNs;	
-	std::map<std::string,std::string>::iterator iterMapNS;
+	std::map<std::string,std::string>::const_iterator iterMapNS;
 
 	strNsPrefix = "C";
 	xmlBuff = xmlBufferCreate();
@@ -799,7 +799,7 @@ HRESULT WebDav::HrPropertySearchSet()
 HRESULT WebDav::HrPostFreeBusy(WEBDAVFBINFO *lpsWebFbInfo)
 {
 	HRESULT hr = hrSuccess;
-	std::list<WEBDAVFBUSERINFO>::iterator itFbUserInfo;
+	std::list<WEBDAVFBUSERINFO>::const_iterator itFbUserInfo;
 	WEBDAVMULTISTATUS sWebMStatus;
 	
 	std::string strXml;
@@ -969,7 +969,7 @@ void WebDav::RegisterNs(std::string strNs, std::string *lpstrNsPrefix)
 HRESULT WebDav::GetNs(std::string * lpstrPrefx, std::string *lpstrNs)
 {
 	HRESULT hr = hrSuccess;
-	map <std::string,std::string>::iterator itMpNs;
+	map <std::string,std::string>::const_iterator itMpNs;
 
 	itMpNs = m_mapNs.find(*lpstrNs);
 	if (itMpNs != m_mapNs.end())
@@ -996,8 +996,8 @@ HRESULT WebDav::HrWriteSResponse(xmlTextWriter *xmlWriter,
 	HRESULT hr;
 	WEBDAVRESPONSE sWebResp;
 	std::string strNsPrefix;
-	std::list<WEBDAVPROPSTAT>::iterator iterPropStat;
-	std::list<WEBDAVPROPERTY>::iterator iterProperty;
+	std::list<WEBDAVPROPSTAT>::const_iterator iterPropStat;
+	std::list<WEBDAVPROPERTY>::const_iterator iterProperty;
 	int ulRet;
 
 	sWebResp = sResponse;
@@ -1059,7 +1059,7 @@ HRESULT WebDav::HrWriteResponseProps(xmlTextWriter *xmlWriter,
     std::string *lpstrNsPrefix, std::list<WEBDAVPROPERTY> *lplstProps)
 {
 	HRESULT hr;
-	std::list<WEBDAVPROPERTY>::iterator iterProp;
+	std::list<WEBDAVPROPERTY>::const_iterator iterProp;
 	ULONG ulRet;
 
 	iterProp = lplstProps->begin();
@@ -1128,7 +1128,7 @@ HRESULT WebDav::HrWriteSPropStat(xmlTextWriter *xmlWriter,
 	WEBDAVPROPSTAT sWebPropStat;
 	WEBDAVPROP sWebProp;
 	int ulRet;
-	std::list<WEBDAVPROPERTY>::iterator iterProp;
+	std::list<WEBDAVPROPERTY>::const_iterator iterProp;
 	
 	sWebPropStat = lpsPropStat;
 	//<propstat>

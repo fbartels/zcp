@@ -85,7 +85,7 @@ POP3::POP3(const char *szServerPath, ECChannel *lpChannel, ECLogger *lpLogger, E
 }
 
 POP3::~POP3() {
-	for (vector<MailListItem>::iterator i = lstMails.begin(); i != lstMails.end(); i++) {
+	for (vector<MailListItem>::const_iterator i = lstMails.begin(); i != lstMails.end(); i++) {
 		delete [] i->sbEntryID.lpb;
 	}
 
@@ -666,7 +666,7 @@ HRESULT POP3::HrCmdQuit() {
 	HRESULT hr = hrSuccess;
 	unsigned int DeleteCount = 0;
 	SBinaryArray ba = {0, NULL};
-	vector<MailListItem>::iterator i;
+	vector<MailListItem>::const_iterator i;
 
 	for (i = lstMails.begin(); i != lstMails.end(); i++) {
 		if (i->bDeleted) {

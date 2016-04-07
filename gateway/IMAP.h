@@ -238,7 +238,7 @@ private:
 		bool bMailFolder;		// E-mail type folder
 		bool bSpecialFolder;	// 'special' folder (eg inbox)
 		bool bHasSubfolders;	// Has child folders
-		list<SFolder>::iterator lpParentFolder;
+		list<SFolder>::const_iterator lpParentFolder;
 	};
 
 	// All data to be mapped per mail in the current folder
@@ -333,8 +333,8 @@ private:
 
 	HRESULT HrRefreshFolderMails(bool bInitialLoad, bool bResetRecent, bool bShowUID, unsigned int *lpulUnseen, ULONG *lpulUIDValidity = NULL);
 
-	HRESULT HrGetSubTree(list<SFolder> &lstFolders, SBinary &sEntryID, wstring strFolderName, list<SFolder>::iterator lpParentFolder, bool bSubfolders = true, bool bIsEmailFolder = true);
-	HRESULT HrGetFolderPath(list<SFolder>::iterator lpFolder, list<SFolder> &lstFolder, wstring &strPath);
+	HRESULT HrGetSubTree(list<SFolder> &lstFolders, SBinary &sEntryID, wstring strFolderName, list<SFolder>::const_iterator lpParentFolder, bool bSubfolders = true, bool bIsEmailFolder = true);
+	HRESULT HrGetFolderPath(list<SFolder>::const_iterator lpFolder, list<SFolder> &lstFolder, wstring &strPath);
 	HRESULT HrGetDataItems(string strMsgDataItemNames, vector<string> &lstDataItems);
 	HRESULT HrSemicolonToComma(string &strData);
 

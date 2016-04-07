@@ -325,7 +325,7 @@ HRESULT ECQuotaMonitor::CheckCompanyQuota(ECCOMPANY *lpecCompany)
 	set<string> setServers;
 	const char *lpszServersConfig;
 	std::set<string, stricmp_comparison> setServersConfig;
-	set<string>::iterator iServers;
+	set<string>::const_iterator iServers;
 	char *lpszConnection = NULL;
 	bool bIsPeer = false;
 

@@ -520,7 +520,7 @@ HRESULT Copier::DoProcessEntry(ULONG cProps, const LPSPropValue &lpProps)
 	MAPIPropHelperPtr ptrMsgHelper;
 	MessageState state;
 	ObjectEntryList lstMsgArchives;
-	ObjectEntryList::iterator iArchive;
+	ObjectEntryList::const_iterator iArchive;
 	HRESULT hrTemp;
 	ObjectEntryList lstNewMsgArchives;
 	TransactionList lstTransactions;
@@ -612,7 +612,7 @@ HRESULT Copier::DoProcessEntry(ULONG cProps, const LPSPropValue &lpProps)
 		
 	for (iArchive = m_lstArchives.begin(); iArchive != m_lstArchives.end(); ++iArchive) {
 		TransactionPtr ptrTransaction;
-		ObjectEntryList::iterator iArchivedMsg = find_if(lstMsgArchives.begin(), lstMsgArchives.end(), StoreCompare(*iArchive));
+		ObjectEntryList::const_iterator iArchivedMsg = find_if(lstMsgArchives.begin(), lstMsgArchives.end(), StoreCompare(*iArchive));
 		// Check if this message is archived to the current archive.
 		if (iArchivedMsg == lstMsgArchives.end()) {
 			// It's possible to have a dirty message that has not been archived to the current archive if at the time of the
@@ -1005,7 +1005,7 @@ exit:
 HRESULT Copier::ExecuteSubOperations(LPMESSAGE lpMessage, LPMAPIFOLDER lpFolder, ULONG cProps, const LPSPropValue lpProps)
 {
 	HRESULT hr = hrSuccess;
-	list<ArchiveOperationPtr>::iterator iOp;
+	list<ArchiveOperationPtr>::const_iterator iOp;
 
 	ASSERT(lpMessage != NULL);
 	ASSERT(lpFolder != NULL);

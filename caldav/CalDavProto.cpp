@@ -239,7 +239,7 @@ HRESULT CalDAV::HrHandlePropfind(WEBDAVREQSTPROPS *lpsDavProp, WEBDAVMULTISTATUS
 HRESULT CalDAV::HrHandlePropfindRoot(WEBDAVREQSTPROPS *sDavReqstProps, WEBDAVMULTISTATUS *lpsDavMulStatus)
 {
 	HRESULT hr = hrSuccess;
-	std::list<WEBDAVPROPERTY>::iterator iter;		
+	std::list<WEBDAVPROPERTY>::const_iterator iter;
 	WEBDAVPROP *lpsDavProp = NULL;
 	WEBDAVRESPONSE sDavResp;
 	IMAPIProp *lpMapiProp = NULL;
@@ -325,7 +325,7 @@ HRESULT CalDAV::HrListCalEntries(WEBDAVREQSTPROPS *lpsWebRCalQry, WEBDAVMULTISTA
 	ULONG ulTagGOID = 0;
 	ULONG ulTagTsRef = 0;
 	ULONG ulTagPrivate = 0;
-	std::list<WEBDAVPROPERTY>::iterator iter;
+	std::list<WEBDAVPROPERTY>::const_iterator iter;
 	WEBDAVPROP sDavProp;
 	WEBDAVPROPERTY sDavProperty;
 	WEBDAVRESPONSE sWebResponse;
@@ -551,7 +551,7 @@ HRESULT CalDAV::HrHandleReport(WEBDAVRPTMGET *sWebRMGet, WEBDAVMULTISTATUS *sWeb
 	LPSPropTagArray lpPropTagArr = NULL;
 	MapiToICal *lpMtIcal = NULL;
 	std::string strReqUrl;
-	std::list<WEBDAVPROPERTY>::iterator iter;
+	std::list<WEBDAVPROPERTY>::const_iterator iter;
 	SRestriction * lpsRoot = NULL;
 	ULONG cbsize = 0;
 	WEBDAVPROP sDavProp;
@@ -768,8 +768,8 @@ HRESULT CalDAV::HrHandlePropertySearch(WEBDAVRPTMGET *sWebRMGet, WEBDAVMULTISTAT
 	ULONG cbsize = 0;
 	ULONG ulPropTag = 0;
 	ULONG ulTagPrivate = 0;
-	std::list<WEBDAVPROPERTY>::iterator iter;
-	std::list<WEBDAVVALUE>::iterator iterWebVal;
+	std::list<WEBDAVPROPERTY>::const_iterator iter;
+	std::list<WEBDAVVALUE>::const_iterator iterWebVal;
 	SBinary sbEid = {0, NULL};
 	WEBDAVPROP sDavProp;
 	WEBDAVPROPERTY sDavProperty;
@@ -1439,7 +1439,7 @@ HRESULT CalDAV::HrHandleMkCal(WEBDAVPROP *lpsDavProp)
 	std::string strContainerClass = "IPF.Appointment";
 
 	// @todo handle other props as in proppatch command
-	for (list<WEBDAVPROPERTY>::iterator i = lpsDavProp->lstProps.begin(); i != lpsDavProp->lstProps.end(); ++i) {
+	for (list<WEBDAVPROPERTY>::const_iterator i = lpsDavProp->lstProps.begin(); i != lpsDavProp->lstProps.end(); ++i) {
 		if (i->sPropName.strPropname.compare("displayname") == 0) {
 			wstrNewFldName = U2W(i->strValue);
 		} else if (i->sPropName.strPropname.compare("supported-calendar-component-set") == 0) {
@@ -1528,7 +1528,7 @@ HRESULT CalDAV::HrListCalendar(WEBDAVREQSTPROPS *sDavProp, WEBDAVMULTISTATUS *lp
 	ULONG ulObjType = 0;
 	ULONG ulCmp = 0;
 	ULONG ulDelEntries = 0;
-	std::list<WEBDAVPROPERTY>::iterator iter;
+	std::list<WEBDAVPROPERTY>::const_iterator iter;
 	WEBDAVRESPONSE sDavResponse;
 	std::string strReqUrl;
 
@@ -1743,7 +1743,7 @@ exit:
 HRESULT CalDAV::HrHandlePropPatch(WEBDAVPROP *lpsDavProp, WEBDAVMULTISTATUS *lpsMultiStatus)
 {
 	HRESULT hr;
-	std::list<WEBDAVPROPERTY>::iterator iter;
+	std::list<WEBDAVPROPERTY>::const_iterator iter;
 	std::wstring wstrConvProp;
 	SPropValue sProp;
 	WEBDAVRESPONSE sDavResponse;
@@ -2138,7 +2138,7 @@ exit:
 HRESULT CalDAV::HrMapValtoStruct(LPMAPIPROP lpObj, LPSPropValue lpProps, ULONG ulPropCount, MapiToICal *lpMtIcal, ULONG ulFlags, bool bPropsFirst, std::list<WEBDAVPROPERTY> *lstDavProps, WEBDAVRESPONSE *lpsResponse)
 {
 	HRESULT hr;
-	std::list<WEBDAVPROPERTY>::iterator iterProperty;
+	std::list<WEBDAVPROPERTY>::const_iterator iterProperty;
 	WEBDAVPROPERTY sWebProperty;
 	std::string strProperty;
 	std::string strIcal;

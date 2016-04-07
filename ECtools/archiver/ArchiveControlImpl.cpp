@@ -736,7 +736,7 @@ HRESULT ArchiveControlImpl::DoCleanup(const tstring &strUser)
 		goto exit;
 	}
 
-	for (ObjectEntryList::iterator iArchive = lstArchives.begin(); iArchive != lstArchives.end(); ++iArchive) {
+	for (ObjectEntryList::const_iterator iArchive = lstArchives.begin(); iArchive != lstArchives.end(); ++iArchive) {
 		HRESULT hrTmp = hrSuccess;
 
 		hrTmp = CleanupArchive(*iArchive, ptrUserStore, ptrRestriction);

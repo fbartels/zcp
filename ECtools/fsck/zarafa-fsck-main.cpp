@@ -365,7 +365,7 @@ HRESULT ZarafaFsck::DeleteRecipientList(LPMESSAGE lpMessage, std::list<unsigned 
 {
 	HRESULT hr = hrSuccess;
 
-	std::list<unsigned int>::iterator iter;
+	std::list<unsigned int>::const_iterator iter;
 	SRowSet *lpMods = NULL;
 
 	++this->ulProblems;
@@ -526,10 +526,10 @@ HRESULT ZarafaFsck::ValidateDuplicateRecipients(LPMESSAGE lpMessage, bool &bChan
 	ULONG cRows = 0;
 	std::set<std::string> mapRecip;
 	std::list<unsigned int> mapiReciptDel;
-	std::list<unsigned int>::iterator iter;
+	std::list<unsigned int>::const_iterator iter;
 	SRowSet *pRows = NULL;
 	std::string strData;
-	std::pair<std::set<std::string>::iterator, bool> res;
+	std::pair<std::set<std::string>::const_iterator, bool> res;
 	unsigned int i = 0;
 
 	SizedSPropTagArray(5, sptaProps) = {5, {PR_ROWID, PR_DISPLAY_NAME_A, PR_EMAIL_ADDRESS_A, PR_RECIPIENT_TYPE, PR_ENTRYID}};

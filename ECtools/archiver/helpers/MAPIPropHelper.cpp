@@ -209,7 +209,7 @@ HRESULT MAPIPropHelper::GetMessageState(ArchiverSessionPtr ptrSession, MessageSt
 	if (result != 0) {
 		// The message is copied. Now check if it was moved.
 		ObjectEntryList lstArchives;
-		ObjectEntryList::iterator iArchive;
+		ObjectEntryList::const_iterator iArchive;
 		ULONG ulType;
 		MessagePtr ptrArchiveMsg;
 		MAPIPropHelperPtr ptrArchiveHelper;

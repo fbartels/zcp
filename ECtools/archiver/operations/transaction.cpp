@@ -55,7 +55,7 @@ Transaction::Transaction(const SObjectEntry &objectEntry): m_objectEntry(objectE
 
 HRESULT Transaction::SaveChanges(ArchiverSessionPtr ptrSession, RollbackPtr *lpptrRollback)
 {
-	typedef MessageList::iterator iterator;
+	typedef MessageList::const_iterator iterator;
 	HRESULT hr = hrSuccess;
 	RollbackPtr ptrRollback(new Rollback());
 	bool bPSAFailure = false;
@@ -185,7 +185,7 @@ exit:
 
 HRESULT Rollback::Execute(ArchiverSessionPtr ptrSession)
 {
-	typedef MessageList::iterator iterator;
+	typedef MessageList::const_iterator iterator;
 	HRESULT hr = hrSuccess;
 	SBinary entryID = {0, NULL};
 	ENTRYLIST entryList = {1, &entryID};
