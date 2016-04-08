@@ -993,7 +993,7 @@ ECRESULT ECDispatcherEPoll::MainLoop()
 	ECWatchDog *lpWatchDog = NULL;
 	time_t now = 0;
 	time_t last = 0;
-	std::map<int, ACTIVESOCKET>::const_iterator iterSockets;
+	std::map<int, ACTIVESOCKET>::iterator iterSockets;
 	std::map<int, struct soap *>::const_iterator iterListenSockets;
 	CONNECTION_TYPE ulType;
 
