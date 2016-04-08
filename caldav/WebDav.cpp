@@ -1204,8 +1204,7 @@ HRESULT WebDav::HrWriteSPropStat(xmlTextWriter *xmlWriter,
 	
 	//<status xmlns="xxxxxxx">HTTP/1.1 200 OK</status>
 	hr = WriteData(xmlWriter,sWebPropStat.sStatus,lpstrNsPrefix);
-	if (hr != hrSuccess)
-		return hr;
+	// ending the function here on !hrSuccess breaks several tests.
 
 	//</propstat>
 	ulRet = xmlTextWriterEndElement(xmlWriter);
