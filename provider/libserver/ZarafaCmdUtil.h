@@ -47,6 +47,7 @@
 #include "ECICS.h"
 #include "SOAPUtils.h"
 
+#include <exception>
 #include <map>
 #include <set>
 #include <list>
@@ -87,21 +88,29 @@ public:
         return *this;
     }
 
+	/* EID_V0 is marked packed, so direct-access w/o memcpy is ok */
+
     unsigned int type() const {
-        EID_V0 *d = (EID_V0 *)m_data.data();
-        
-        return d->usType;
+		if (m_data.size() < sizeof(EID_V0))
+			throw runtime_error("entryid is not of type EID_V0");
+		EID_V0 *d = reinterpret_cast<EID_V0 *>(const_cast<char *>(m_data.data()));
+		return d->usType;
     }
 
+#if 0
     unsigned int flags() const {
-        EID_V0 *d = (EID_V0 *)m_data.data();
-        
-        return d->usFlags;
+		if (m_data.size() < sizeof(EID_V0))
+			throw runtime_error("entryid is not of type EID_V0");
+		EID_V0 *d = reinterpret_cast<EID_V0 *>(const_cast<char *>(m_data.data()));
+		return d->usFlags;
     }
+#endif
     
     void setFlags(unsigned int ulFlags) {
-        EID_V0 *d = (EID_V0 *)m_data.data();
-        d->usFlags = ulFlags;
+		if (m_data.size() < sizeof(EID_V0))
+			throw runtime_error("entryid is not of type EID_V0");
+		EID_V0 *d = reinterpret_cast<EID_V0 *>(const_cast<char *>(m_data.data()));
+		d->usFlags = ulFlags;
     }
 
     bool operator == (const EntryId &s) const {

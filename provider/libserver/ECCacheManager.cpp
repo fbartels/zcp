@@ -44,6 +44,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 #include <zarafa/platform.h>
+#include <exception>
 
 #include <mapidefs.h>
 #include <mapitags.h>
@@ -2032,8 +2033,15 @@ ECRESULT ECCacheManager::GetObjectFromEntryId(const entryId *lpEntryId,
 	
 	// Make sure flags is 0 when getting from db/cache
 	EntryId eid(lpEntryId);
-	eid.setFlags(0);
-
+	try {
+		eid.setFlags(0);
+	} catch (runtime_error &e) {
+		ec_log_err("eid.setFlags: %s\n", e.what());
+		/*
+		 * The subsequent functions will catch the too-small eid.size
+		 * and return INVALID_PARAM appropriately.
+		 */
+	}
 	er = GetObjectFromProp( PROP_ID(PR_ENTRYID), eid.size(), eid, lpulObjId);
 
 	return er;
@@ -2046,8 +2054,12 @@ ECRESULT ECCacheManager::SetObjectEntryId(const entryId *lpEntryId,
     
     // MAke sure flags is 0 when saving in DB
     EntryId eid(lpEntryId);
-    eid.setFlags(0);
-
+	try {
+		eid.setFlags(0);
+	} catch (runtime_error &e) {
+		ec_log_err("eid.setFlags: %s\n", e.what());
+		/* ignore exception - the following functions will catch the too-small eid.size */
+	}
     er = SetObjectProp( PROP_ID(PR_ENTRYID), eid.size(), eid, ulObjId);
 
     return er;

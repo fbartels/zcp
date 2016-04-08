@@ -44,6 +44,7 @@
 #include <zarafa/platform.h>
 
 // STL defines
+#include <exception>
 #include <set>
 #include <string>
 #include <list>
@@ -2142,13 +2143,17 @@ static ECRESULT BeginLockFolders(ECDatabase *lpDatabase, unsigned int ulTag,
             else if(ulTag == PROP_ID(PR_ENTRYID)) {
                 EntryId eid(*i);
                 
-                if(eid.type() == MAPI_FOLDER) {
-                    setFolders.insert(ulId);
-                } else if(eid.type() == MAPI_MESSAGE) {
-                    setMessages.insert(ulId);
-                } else {
-                    ASSERT(false); // You should not attempt to lock things other than messages and folders
-                }
+		try {
+			if (eid.type() == MAPI_FOLDER)
+				setFolders.insert(ulId);
+			else if (eid.type() == MAPI_MESSAGE)
+				setMessages.insert(ulId);
+			else
+				ASSERT(false);
+		} catch (runtime_error &e) {
+			ec_log_err("eid.type(): %s\n", e.what());
+			ASSERT(false);
+		}
             }
             else {
                 ASSERT(false);
@@ -2283,9 +2288,13 @@ ECRESULT BeginLockFolders(ECDatabase *lpDatabase, const EntryId &entryid, unsign
     std::set<EntryId> set;
     
     // No locking needed for stores
-    if(entryid.type() == MAPI_STORE) {
-        return lpDatabase->Begin();
-    }
+	try {
+		if (entryid.type() == MAPI_STORE)
+			return lpDatabase->Begin();
+	} catch (runtime_error &e) {
+		ec_log_err("entryid.type(): %s\n", e.what());
+		return ZARAFA_E_INVALID_PARAMETER;
+	}
     
     set.insert(entryid);
     
