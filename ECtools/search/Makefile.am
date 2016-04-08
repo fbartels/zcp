@@ -12,9 +12,7 @@ install-exec-local:
 	cd ${srcdir} && ${PYTHON} setup.py install -f \
 		$${DESTDIR+--root=${DESTDIR}} \
 		--prefix="${prefix}" --install-purelib ${pythondir}
+	rm -Rf build
 
 install-data-local:
 	mkdir -p "${DESTDIR}${localstatedir}/lib/zarafa/search"
-
-clean-local:
-	rm -Rf build
