@@ -508,7 +508,8 @@ exit:
 
 }
 
-ECRESULT ECCacheManager::GetObjects(std::list<sObjectTableKey> &lstObjects, std::map<sObjectTableKey,ECsObjects> &mapObjects)
+ECRESULT ECCacheManager::GetObjects(const std::list<sObjectTableKey> &lstObjects,
+    std::map<sObjectTableKey, ECsObjects> &mapObjects)
 {
 	ECRESULT	er = erSuccess;
 	DB_RESULT	lpDBResult = NULL;
@@ -2024,7 +2025,8 @@ exit:
 	return er;
 }
 
-ECRESULT ECCacheManager::GetObjectFromEntryId(entryId* lpEntryId, unsigned int* lpulObjId)
+ECRESULT ECCacheManager::GetObjectFromEntryId(const entryId *lpEntryId,
+    unsigned int *lpulObjId)
 {
 	ECRESULT	er = erSuccess;
 	

@@ -537,7 +537,7 @@ public:
 	// Query cache only
 	ECRESULT QueryParent(unsigned int ulObjId, unsigned int *ulParent);
 	
-	ECRESULT GetObjects(std::list<sObjectTableKey> &lstObjects, std::map<sObjectTableKey,ECsObjects> &mapObjects);
+	ECRESULT GetObjects(const std::list<sObjectTableKey> &lstObjects, std::map<sObjectTableKey, ECsObjects> &mapObjects);
 	ECRESULT GetObjectsFromProp(unsigned int ulTag, const std::vector<unsigned int> &cbdata, const std::vector<unsigned char *> &lpdata, std::map<ECsIndexProp, unsigned int> &mapObjects);
 
 	ECRESULT GetStore(unsigned int ulObjId, unsigned int *ulStore, GUID *lpGuid, unsigned int maxdepth = 100);
@@ -569,7 +569,7 @@ public:
 
 	ECRESULT GetEntryIdFromObject(unsigned int ulObjId, struct soap *soap, unsigned int ulFlags, entryId* lpEntrId);
 	ECRESULT GetEntryIdFromObject(unsigned int ulObjId, struct soap *soap, unsigned int ulFlags, entryId** lppEntryId);
-	ECRESULT GetObjectFromEntryId(entryId* lpEntrId, unsigned int* lpulObjId);
+	ECRESULT GetObjectFromEntryId(const entryId *id, unsigned int *obj);
 	ECRESULT SetObjectEntryId(const entryId *, unsigned int ulObjId);
 	ECRESULT GetEntryListToObjectList(struct entryList *lpEntryList, ECListInt* lplObjectList);
 	ECRESULT GetEntryListFromObjectList(ECListInt* lplObjectList, struct soap *soap, struct entryList **lppEntryList);

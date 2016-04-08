@@ -707,7 +707,7 @@ ECRESULT ECSession::GetObjectFromEntryId(const entryId *lpEntryId, unsigned int 
 		goto exit;
 	}
 
-	er = m_lpSessionManager->GetCacheManager()->GetObjectFromEntryId((entryId*)lpEntryId, &ulObjId);
+	er = m_lpSessionManager->GetCacheManager()->GetObjectFromEntryId(lpEntryId, &ulObjId);
 	if (er != erSuccess)
 		goto exit;
 
