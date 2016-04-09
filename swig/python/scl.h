@@ -45,6 +45,19 @@
 #ifndef SCL_H
 #define SCL_H
 
+#if PY_MAJOR_VERSION >= 3
+	#define PyString_AsString(val) \
+		PyBytes_AsString(val)
+	#define PyString_AsStringAndSize(val, lpstr, size) \
+		PyBytes_AsStringAndSize(val, lpstr, size)
+	#define PyString_FromStringAndSize(val, size) \
+		PyBytes_FromStringAndSize(val, size)
+	#define PyString_FromString(val) \
+		PyBytes_FromString(val)
+	#define PyInt_AsLong(id) \
+		PyLong_AsLong(id)
+#endif
+
 #include <zarafa/platform.h>
 
 // Get Py_ssize_t for older versions of python
@@ -85,12 +98,18 @@ namespace priv {
 		if(value == Py_None) {
 			*lppResult = NULL;
 		} else {
+			// FIXME: General helper function as improvement
 			if ((ulFlags & MAPI_UNICODE) == 0)
 				*(LPSTR*)lppResult = PyString_AsString(value);
 			else {
 				int len = PyUnicode_GetSize(value);
 				MAPIAllocateMore((len + 1) * sizeof(WCHAR), lpBase, (LPVOID*)lppResult);
-				len = PyUnicode_AsWideChar((PyUnicodeObject*)value, *(LPWSTR*)lppResult, len);
+				// FIXME: Required for the PyUnicodeObject cast
+				#if PY_MAJOR_VERSION >= 3
+					len = PyUnicode_AsWideChar(value, *(LPWSTR*)lppResult, len);
+				#else
+					len = PyUnicode_AsWideChar((PyUnicodeObject*)value, *(LPWSTR*)lppResult, len);
+				#endif
 				(*(LPWSTR*)lppResult)[len] = L'\0';
 			}
 		}

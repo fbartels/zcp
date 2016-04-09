@@ -14,6 +14,11 @@
 	#include <zarafa/ECLogger.h>
     #include "fileutil.h"
 	#include "IStreamAdapter.h"
+    // FIXME: why cant we get this from typemap_python
+    #if PY_MAJOR_VERSION >= 3
+        #define PyString_AsStringAndSize(value, input, size) \
+                PyBytes_AsStringAndSize(value, input, size)
+    #endif
 %}
 
 %include "wchar.i"

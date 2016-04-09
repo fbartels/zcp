@@ -108,7 +108,11 @@ int List_to_StringVector(PyObject *object, vector<string> &v)
 		char *ptr;
 		Py_ssize_t strlen;
 
-		PyString_AsStringAndSize(elem, &ptr, &strlen);
+		#if PY_MAJOR_VERSION >= 3
+			PyBytes_AsStringAndSize(elem, &ptr, &strlen);
+		#else
+			PyString_AsStringAndSize(elem, &ptr, &strlen);
+		#endif
         if (PyErr_Occurred())
             goto exit;
 

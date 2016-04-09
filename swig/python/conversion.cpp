@@ -216,7 +216,11 @@ wchar_t * CopyPyUnicode(wchar_t **lpWide, PyObject *o, void *lpBase)
     size = PyUnicode_GetSize(unicode);
     
     if (MAPIAllocateMore((size + 1) * sizeof(wchar_t), lpBase, (void **)lpWide) == hrSuccess) {
-	    PyUnicode_AsWideChar((PyUnicodeObject *)unicode, *lpWide, size);
+	    #if PY_MAJOR_VERSION >= 3
+		PyUnicode_AsWideChar(unicode, *lpWide, size);
+	    #else
+		PyUnicode_AsWideChar((PyUnicodeObject *)unicode, *lpWide, size);
+	    #endif
 	    
 	    (*lpWide)[size] = '\0';
 	 
@@ -264,7 +268,11 @@ FILETIME Object_to_FILETIME(PyObject *object)
 		goto exit;
 	}
 
-	periods = PyInt_AsUnsignedLongLongMask(filetime);
+	#if PY_MAJOR_VERSION >= 3
+		periods = PyLong_AsUnsignedLongLongMask(filetime);
+	#else
+		periods = PyInt_AsUnsignedLongLongMask(filetime);
+	#endif
 	ft.dwHighDateTime = periods >> 32;
 	ft.dwLowDateTime = periods & 0xffffffff;
 
@@ -3184,7 +3192,11 @@ void DoException(HRESULT hr)
 	PyObject *hrObj = PyLong_FromUnsignedLong((unsigned int)hr);
 #endif
 
-	PyObject *attr_name = PyString_FromString("_errormap");
+	#if PY_MAJOR_VERSION >= 3
+		PyObject *attr_name = PyUnicode_FromString("_errormap");
+	#else
+		PyObject *attr_name = PyString_FromString("_errormap");
+	#endif
 	PyObject *errormap = PyObject_GetAttr(PyTypeMAPIError, attr_name);
 	PyObject *errortype = NULL;
 	PyObject *ex = NULL;

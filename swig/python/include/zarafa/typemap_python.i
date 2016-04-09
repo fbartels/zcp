@@ -11,6 +11,10 @@
 
 #define DIRECTORARGOUT(_arg) (__tupleIndex == -1 ? (PyObject*)(_arg) : PyTuple_GetItem((_arg), __tupleIndex++))
 
+#if PY_MAJOR_VERSION >= 3
+        #define PyString_AsStringAndSize(value, input, size) \
+                PyBytes_AsStringAndSize(value, input, size)
+#endif
 %}
 
 #if SWIG_VERSION > 0x020004
