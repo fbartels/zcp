@@ -6,10 +6,13 @@ Enhancements:
 * dagent: better error reporting on duplicate email addresses
 * dagent can log rules processed for a user (at "debug" log_level)
 * pyza: add basic search API
+* preview for Amazon S3 storage backend for attachments
 
 Fixes:
 * record all mail references so that MUAs show threading (ZCP-11358)
 * backup-plus: deal with special characters in user names
+* do not stop LDAP entry retrieval after one page (1000 entries)
+* avoid crash when Search Index has truncated ENTRYIDs
 
 Changes:
 * gateway: non-SSL plaintext authentication is offered if connection
