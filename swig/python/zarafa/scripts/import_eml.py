@@ -7,4 +7,4 @@
 import sys
 import zarafa
 
-zarafa.User(sys.argv[1]).store.inbox.create_item(eml=file(sys.argv[2]).read())
+zarafa.User(sys.argv[1]).store.inbox.create_item(eml=open(sys.argv[2]).read())

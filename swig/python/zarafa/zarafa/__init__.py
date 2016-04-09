@@ -727,7 +727,7 @@ Looks at command-line to see if another server address or other related options 
             else:
                 config_file = '/etc/zarafa/admin.cfg'
                 try:
-                    file(config_file) # check if accessible
+                    open(config_file) # check if accessible
                     config = globals()['Config'](None, filename=config_file) # XXX snarf
                 except IOError:
                     pass
@@ -4093,7 +4093,7 @@ Example::
             for key, val in self.config.items():
                 if 'default' in val.kwargs:
                     self.data[key] = val.kwargs.get('default')
-        for line in file(filename):
+        for line in open(filename):
             line = line.strip().decode('utf-8')
             if not line.startswith('#'):
                 pos = line.find('=')
