@@ -256,13 +256,10 @@ HRESULT ZCABLogon::OpenEntry(ULONG cbEntryID, LPENTRYID lpEntryID, LPCIID lpInte
 			lpFolderProps[2].ulPropTag == PR_ZC_CONTACT_FOLDER_NAMES_W &&
 			lpFolderProps[0].Value.MVbin.cValues == lpFolderProps[1].Value.MVbin.cValues &&
 			lpFolderProps[1].Value.MVbin.cValues == lpFolderProps[2].Value.MVszW.cValues)
-		{
-			for (ULONG c = 0; c < lpFolderProps[1].Value.MVbin.cValues; c++) {
+			for (ULONG c = 0; c < lpFolderProps[1].Value.MVbin.cValues; ++c)
 				AddFolder(lpFolderProps[2].Value.MVszW.lppszW[c],
 						  lpFolderProps[0].Value.MVbin.lpbin[c].cb, lpFolderProps[0].Value.MVbin.lpbin[c].lpb,
 						  lpFolderProps[1].Value.MVbin.lpbin[c].cb, lpFolderProps[1].Value.MVbin.lpbin[c].lpb);
-			}
-		}
 
 		hr = ZCABContainer::Create(&m_lFolders, NULL, m_lpMAPISup, this, &lpRootContainer);
 		if (hr != hrSuccess)

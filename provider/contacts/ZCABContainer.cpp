@@ -327,7 +327,7 @@ HRESULT ZCABContainer::GetFolderContentsTable(ULONG ulFlags, LPMAPITABLE *lppTab
 	if (hr != hrSuccess)
 		goto exit;
 
-	for (i = 0; i < ulNames; i++)
+	for (i = 0; i < ulNames; ++i)
 		lppNames[i] = &mnNamedProps[i];
 
 	hr = m_lpContactFolder->GetIDsFromNames(ulNames, lppNames, MAPI_CREATE, &ptrNameTags);
@@ -336,7 +336,7 @@ HRESULT ZCABContainer::GetFolderContentsTable(ULONG ulFlags, LPMAPITABLE *lppTab
 
 	// fix types
 	ptrNameTags->aulPropTag[0] = CHANGE_PROP_TYPE(ptrNameTags->aulPropTag[0], PT_MV_LONG | MV_INSTANCE);
-	for (i = 0; i < (ulNames-2) / 5; i++) {
+	for (i = 0; i < (ulNames - 2) / 5; ++i) {
 		ptrNameTags->aulPropTag[1+ (i*5) + 0] = CHANGE_PROP_TYPE(ptrNameTags->aulPropTag[1+ (i*5) + 0], ulType);
 		ptrNameTags->aulPropTag[1+ (i*5) + 1] = CHANGE_PROP_TYPE(ptrNameTags->aulPropTag[1+ (i*5) + 1], ulType);
 		ptrNameTags->aulPropTag[1+ (i*5) + 2] = CHANGE_PROP_TYPE(ptrNameTags->aulPropTag[1+ (i*5) + 2], ulType);
@@ -350,9 +350,9 @@ HRESULT ZCABContainer::GetFolderContentsTable(ULONG ulFlags, LPMAPITABLE *lppTab
 	if (hr != hrSuccess)
 		goto exit;
 	j = 0;
-	for (i = 0; i < ptrInputCols->cValues; i++)
+	for (i = 0; i < ptrInputCols->cValues; ++i)
 		ptrContactCols->aulPropTag[j++] = ptrInputCols->aulPropTag[i];
-	for (i = 0; i < ptrNameTags->cValues; i++)
+	for (i = 0; i < ptrNameTags->cValues; ++i)
 		ptrContactCols->aulPropTag[j++] = ptrNameTags->aulPropTag[i];
 	ptrContactCols->cValues = j;
 
@@ -393,7 +393,7 @@ HRESULT ZCABContainer::GetFolderContentsTable(ULONG ulFlags, LPMAPITABLE *lppTab
 		if (ptrRows.empty())
 			break;
 
-		for (i = 0; i < ptrRows.size(); i++) {
+		for (i = 0; i < ptrRows.size(); ++i) {
 			ULONG ulOffset = 0;
 			std::string strSearchKey;
 			std::wstring wstrSearchKey;
@@ -582,7 +582,7 @@ HRESULT ZCABContainer::GetDistListContentsTable(ULONG ulFlags, LPMAPITABLE *lppT
 
 	sKey.ulPropTag = PR_ROWID;
 	sKey.Value.ul = 0;
-	for (ULONG i = 0; i < ptrEntries->Value.MVbin.cValues; i++) {
+	for (ULONG i = 0; i < ptrEntries->Value.MVbin.cValues; ++i) {
 		ULONG ulOffset = 0;
 		BYTE cType = 0;
 
@@ -658,8 +658,7 @@ HRESULT ZCABContainer::GetDistListContentsTable(ULONG ulFlags, LPMAPITABLE *lppT
 		hr = lpTable->HrModifyRow(ECKeyTable::TABLE_ROW_ADD, NULL, ptrProps.get(), cValues);
 		if (hr != hrSuccess)
 			goto exit;
-
-		sKey.Value.ul++;
+		++sKey.Value.ul;
 	}
 	hr = hrSuccess;
 
@@ -745,7 +744,7 @@ HRESULT ZCABContainer::GetHierarchyTable(ULONG ulFlags, LPMAPITABLE *lppTable)
 
 	if (m_lpFolders) {
 		// create hierarchy with folders from user stores
-		for (iter = m_lpFolders->begin(); iter != m_lpFolders->end(); iter++, ulInstance++) {
+		for (iter = m_lpFolders->begin(); iter != m_lpFolders->end(); ++iter, ++ulInstance) {
 			std::string strName;
 			cabEntryID *lpEntryID = NULL;
 			ULONG cbEntryID = CbNewCABENTRYID(iter->cbFolder);
@@ -875,7 +874,7 @@ HRESULT ZCABContainer::GetHierarchyTable(ULONG ulFlags, LPMAPITABLE *lppTable)
 			if (hr != hrSuccess)
 				goto exit;
 
-			for (SRowSetPtr::size_type i = 0; i < ptrRows.size(); i++) {
+			for (SRowSetPtr::size_type i = 0; i < ptrRows.size(); ++i) {
 				// use PR_STORE_ENTRYID field to set instance key, since that is always MAPI_E_NOT_FOUND (see above)
 				LPSPropValue lpProp = PpropFindProp(ptrRows[i].lpProps, ptrRows[i].cValues, CHANGE_PROP_TYPE(PR_STORE_ENTRYID, PT_ERROR));
 				lpProp->ulPropTag = PR_ROWID;
@@ -966,7 +965,7 @@ HRESULT ZCABContainer::OpenEntry(ULONG cbEntryID, LPENTRYID lpEntryID, LPCIID lp
 
 			std::vector<zcabFolderEntry>::const_iterator i;
 			// find the store of this folder
-			for (i = m_lpFolders->begin(); i != m_lpFolders->end(); i++) {
+			for (i = m_lpFolders->begin(); i != m_lpFolders->end(); ++i) {
 				ULONG res;
 				if ((m_lpMAPISup->CompareEntryIDs(i->cbFolder, (LPENTRYID)i->lpFolder, cbFolder, lpFolder, 0, &res) == hrSuccess) && res == TRUE)
 					break;
@@ -1118,7 +1117,7 @@ HRESULT ZCABContainer::ResolveNames(LPSPropTagArray lpPropTagArray, ULONG ulFlag
 		if (hr != hrSuccess)
 			goto exit;
 
-		for (i = 0; i < ptrRows.size(); i++) {
+		for (i = 0; i < ptrRows.size(); ++i) {
 			ABContainerPtr ptrContainer;
 			LPSPropValue lpEntryID = PpropFindProp(ptrRows[i].lpProps, ptrRows[i].cValues, PR_ENTRYID);
 			ULONG ulObjType;
@@ -1143,7 +1142,7 @@ HRESULT ZCABContainer::ResolveNames(LPSPropTagArray lpPropTagArray, ULONG ulFlag
 
 		// make joint proptags
 		std::copy(lpPropTagArray->aulPropTag, lpPropTagArray->aulPropTag + lpPropTagArray->cValues, std::inserter(stProps, stProps.begin()));
-		for (i = 0; i < lpAdrList->aEntries[0].cValues; i++)
+		for (i = 0; i < lpAdrList->aEntries[0].cValues; ++i)
 			stProps.insert(lpAdrList->aEntries[0].rgPropVals[i].ulPropTag);
 		hr = MAPIAllocateBuffer(CbNewSPropTagArray(stProps.size()), &ptrColumns);
 		if (hr != hrSuccess)
@@ -1160,7 +1159,7 @@ HRESULT ZCABContainer::ResolveNames(LPSPropTagArray lpPropTagArray, ULONG ulFlag
 		if (hr != hrSuccess)
 			goto exit;
 
-		for (i = 0; i < lpAdrList->cEntries; i++) {
+		for (i = 0; i < lpAdrList->cEntries; ++i) {
 			LPSPropValue lpDisplayNameA = PpropFindProp(lpAdrList->aEntries[i].rgPropVals, lpAdrList->aEntries[i].cValues, PR_DISPLAY_NAME_A);
 			LPSPropValue lpDisplayNameW = PpropFindProp(lpAdrList->aEntries[i].rgPropVals, lpAdrList->aEntries[i].cValues, PR_DISPLAY_NAME_W);
 
@@ -1174,7 +1173,7 @@ HRESULT ZCABContainer::ResolveNames(LPSPropTagArray lpPropTagArray, ULONG ulFlag
 			ECOrRestriction resFind;
 			ULONG ulSearchTags[] = {PR_DISPLAY_NAME, PR_EMAIL_ADDRESS, PR_ORIGINAL_DISPLAY_NAME};
 
-			for (ULONG j = 0; j < arraySize(ulSearchTags); j++) {
+			for (ULONG j = 0; j < arraySize(ulSearchTags); ++j) {
 				sProp.ulPropTag = CHANGE_PROP_TYPE(ulSearchTags[j], ulStringType);
 				resFind.append( ECContentRestriction(ulResFlag, CHANGE_PROP_TYPE(ulSearchTags[j], ulStringType), &sProp, ECRestriction::Cheap) );
 			}
