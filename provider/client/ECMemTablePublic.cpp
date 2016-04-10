@@ -87,8 +87,7 @@ ECMemTablePublic::~ECMemTablePublic(void)
 	if (m_lpShortCutAdviseSink)
 		m_lpShortCutAdviseSink->Release();
 
-	for (iterFolder = m_mapRelation.begin(); iterFolder != m_mapRelation.end(); iterFolder++)
-	{
+	for (iterFolder = m_mapRelation.begin(); iterFolder != m_mapRelation.end(); ++iterFolder) {
 		if (iterFolder->second.ulAdviseConnectionId > 0)
 			m_lpECParentFolder->GetMsgStore()->Unadvise(iterFolder->second.ulAdviseConnectionId);
 
@@ -135,8 +134,7 @@ static LONG __stdcall AdviseShortCutCallback(void *lpContext, ULONG cNotif,
 
 	lpMemTablePublic->AddRef(); // Besure we have the object
 
-	for(ULONG i=0; i < cNotif; i++)
-	{
+	for (ULONG i = 0; i < cNotif; ++i) {
 		if(lpNotif[i].ulEventType != fnevTableModified)
 		{
 			ASSERT(FALSE);
@@ -204,13 +202,14 @@ static LONG __stdcall AdviseFolderCallback(void *lpContext, ULONG cNotif,
 
 	lpMemTablePublic->AddRef(); // Besure we have the object
 
-	for(ULONG i=0; i < cNotif; i++)
-	{
+	for (ULONG i = 0; i < cNotif; ++i) {
 		switch (lpNotif[i].ulEventType)
 		{
 			case fnevObjectModified:
 			case fnevObjectDeleted:
-				for (iterFolder = lpMemTablePublic->m_mapRelation.begin(); iterFolder != lpMemTablePublic->m_mapRelation.end(); iterFolder++)
+				for (iterFolder = lpMemTablePublic->m_mapRelation.begin();
+				     iterFolder != lpMemTablePublic->m_mapRelation.end();
+				     ++iterFolder)
 				{
 					if (lpMemTablePublic->m_lpECParentFolder->GetMsgStore()->CompareEntryIDs(iterFolder->second.cbEntryID, iterFolder->second.lpEntryID,lpNotif[i].info.obj.cbEntryID, lpNotif[i].info.obj.lpEntryID, 0, &ulResult) == hrSuccess && ulResult == TRUE)
 					{
@@ -426,15 +425,14 @@ HRESULT ECMemTablePublic::ModifyRow(SBinary* lpInstanceKey, LPSRow lpsRow)
 	lpProps[cProps].ulPropTag = PR_RECORD_KEY;
 	lpProps[cProps].Value.bin.cb = cbEntryID;
 	lpProps[cProps].Value.bin.lpb = (LPBYTE)lpRecordKeyID;
-
-	cProps++;
+	++cProps;
 
 	// Set this folder as parent
 	if (ECGenericProp::DefaultGetProp(PR_ENTRYID, m_lpECParentFolder->GetMsgStore(), 0, &lpProps[cProps], m_lpECParentFolder, lpProps) == hrSuccess) {
 		lpProps[cProps].ulPropTag = PR_PARENT_ENTRYID;
 
 		((LPENTRYID)lpProps[cProps].Value.bin.lpb)->abFlags[3] =  ZARAFA_FAVORITE;
-		cProps++;
+		++cProps;
 	}
 
 	lpProps[cProps].ulPropTag = PR_DISPLAY_TYPE;
@@ -521,8 +519,7 @@ HRESULT ECMemTablePublic::ModifyRow(SBinary* lpInstanceKey, LPSRow lpsRow)
 	else
 		hr = hrSuccess;
 
-	for (ULONG i=0; i < ulPropsFolder; i++)
-	{
+	for (ULONG i = 0; i < ulPropsFolder; ++i) {
 		if (PROP_TYPE(lpPropsFolder[i].ulPropTag) == PT_ERROR)
 			continue;
 
@@ -576,8 +573,7 @@ HRESULT ECMemTablePublic::ModifyRow(SBinary* lpInstanceKey, LPSRow lpsRow)
 		}
 
 		m_mapRelation.insert(ECMAPFolderRelation::value_type(strInstanceKey, sRelFolder));
-		
-		m_ulRowId++;
+		++m_ulRowId;
 	}
 
 exit:

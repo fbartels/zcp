@@ -714,8 +714,7 @@ static HRESULT UpdateProviders(LPPROVIDERADMIN lpAdminProviders,
 		return MAPI_E_NOT_FOUND;
 
 	// Scan the rows for message stores
-	for(ULONG curRow = 0; curRow < ptrRows.size(); curRow++)
-	{
+	for (ULONG curRow = 0; curRow < ptrRows.size(); ++curRow) {
 		//Get de UID of the provider to open the profile section
 		lpsProviderUID = PpropFindProp(ptrRows[curRow].lpProps, ptrRows[curRow].cValues, PR_PROVIDER_UID);
 		if(lpsProviderUID == NULL || lpsProviderUID->Value.bin.cb == 0) {
@@ -988,8 +987,7 @@ extern "C" HRESULT __stdcall MSGServiceEntry(HINSTANCE hInst, LPMALLOC lpMalloc,
 					{
 						SPropArrayPtr	ptrProfSectProps;
 
-						for(d=0; d < (cDeligateStores / sizeof(MAPIUID)); d++)
-						{
+						for (d = 0; d < cDeligateStores / sizeof(MAPIUID); ++d) {
 							SizedSPropTagArray(2, sptaDelegateProps) = {2, {PR_DISPLAY_NAME, PR_MDB_PROVIDER}};
 
 							hr = lpAdminProviders->OpenProfileSection((LPMAPIUID)(lpDeligateStores+(sizeof(MAPIUID)*d)), NULL, MAPI_MODIFY, &ptrProfSect);
@@ -1059,8 +1057,7 @@ extern "C" HRESULT __stdcall MSGServiceEntry(HINSTANCE hInst, LPMALLOC lpMalloc,
 					if(bShowAllSettingsPages)
 					{
 						// Check for new and removed deligatestores
-						for(d=0; d < pageAdvanced.GetMailBoxCount(); d++)
-						{
+						for (d = 0; d < pageAdvanced.GetMailBoxCount(); ++d) {
 							if(pageAdvanced.GetMailBoxItemPtr(d)!= NULL)
 							{
 								if(pageAdvanced.GetMailBoxItemPtr(d)->ulState == MAILBOXITEM_STATE_NEW) {

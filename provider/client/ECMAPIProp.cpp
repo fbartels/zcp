@@ -759,9 +759,9 @@ HRESULT	ECMAPIProp::UpdateACLs(ULONG cNewPerms, ECPERMISSION *lpNewPerms)
 				// Nothing changes, remove from set.
 				if (i < (cPerms - 1))
 					std::swap(ptrPerms[i], ptrPerms[cPerms - 1]);
-				cPerms--;
-				i--;
-				cSparePerms++;
+				--cPerms;
+				--i;
+				++cSparePerms;
 			} else {
 				ptrPerms[i].ulRights = lpMatch->ulRights;
 				ptrPerms[i].ulType = lpMatch->ulType;
@@ -771,7 +771,7 @@ HRESULT	ECMAPIProp::UpdateACLs(ULONG cNewPerms, ECPERMISSION *lpNewPerms)
 			// Remove from list of new permissions
 			if (lpMatch != &lpNewPerms[cNewPerms - 1])
 				std::swap(*lpMatch, lpNewPerms[cNewPerms - 1]);
-			cNewPerms--;
+			--cNewPerms;
 		}
 	}
 

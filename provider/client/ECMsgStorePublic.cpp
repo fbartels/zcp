@@ -533,15 +533,13 @@ HRESULT ECMsgStorePublic::BuildIPMSubTree()
 	hr = GetPublicEntryId(ePE_Favorites, lpProps, &lpProps[cProps].Value.bin.cb, (LPENTRYID*)&lpProps[cProps].Value.bin.lpb);
 	if(hr != hrSuccess)
 		goto exit;
-	
-	cProps++;
+	++cProps;
 
 	lpProps[cProps].ulPropTag = PR_LONGTERM_ENTRYID_FROM_TABLE;
 	hr = GetPublicEntryId(ePE_Favorites, lpProps, &lpProps[cProps].Value.bin.cb, (LPENTRYID*)&lpProps[cProps].Value.bin.lpb);
 	if(hr != hrSuccess)
 		goto exit;
-	
-	cProps++;
+	++cProps;
 
 	lpProps[cProps].ulPropTag = PR_DISPLAY_TYPE;
 	lpProps[cProps++].Value.ul = DT_FOLDER;
@@ -553,8 +551,7 @@ HRESULT ECMsgStorePublic::BuildIPMSubTree()
 	hr = GetPublicEntryId(ePE_IPMSubtree, lpProps, &lpProps[cProps].Value.bin.cb, (LPENTRYID*)&lpProps[cProps].Value.bin.lpb);
 	if (hr != hrSuccess)
 		goto exit;
-
-	cProps++;
+	++cProps;
 
 	lpProps[cProps].ulPropTag = PR_DISPLAY_NAME_W;
 	lpProps[cProps++].Value.lpszW = _W("Favorites"); // FIXME: Use dynamic name, read from global profile (like exchange)
@@ -565,12 +562,11 @@ HRESULT ECMsgStorePublic::BuildIPMSubTree()
 	lpProps[cProps++].Value.ul = 0;
 
 	if (ECMAPIProp::DefaultMAPIGetProp(PR_STORE_ENTRYID, this, 0, &lpProps[cProps], this, lpProps) == hrSuccess)
-		cProps++;
+		++cProps;
 	if (ECMAPIProp::DefaultMAPIGetProp(PR_STORE_RECORD_KEY, this, 0, &lpProps[cProps], this, lpProps) == hrSuccess)
-		cProps++;
+		++cProps;
 	if (ECMAPIProp::DefaultMAPIGetProp(PR_STORE_SUPPORT_MASK, this, 0, &lpProps[cProps], this, lpProps) == hrSuccess)
-		cProps++;
-
+		++cProps;
 
 	lpProps[cProps].ulPropTag = PR_INSTANCE_KEY;
 	lpProps[cProps].Value.bin.cb = sizeof(ULONG)*2;
@@ -580,15 +576,13 @@ HRESULT ECMsgStorePublic::BuildIPMSubTree()
 
 	memset(lpProps[cProps].Value.bin.lpb, 0, lpProps[cProps].Value.bin.cb );
 	memcpy(lpProps[cProps].Value.bin.lpb, &ulRowId, sizeof(ULONG));
-
-	cProps++;
+	++cProps;
 
 	lpProps[cProps].ulPropTag = PR_RECORD_KEY;
 	hr = GetPublicEntryId(ePE_Favorites, lpProps, &lpProps[cProps].Value.bin.cb, (LPENTRYID*)&lpProps[cProps].Value.bin.lpb);
 	if(hr != hrSuccess)
 		goto exit;
-	
-	cProps++;
+	++cProps;
 
 	lpProps[cProps].ulPropTag = PR_ACCESS;
 	lpProps[cProps++].Value.ul = MAPI_ACCESS_READ;
@@ -626,8 +620,7 @@ HRESULT ECMsgStorePublic::BuildIPMSubTree()
 	///////////////////////////////////////////////////
 	// the folder "Public Folders"
 	//
-	ulRowId++;
-
+	++ulRowId;
 	cProps = 0;
 	cMaxProps = 20;
 
@@ -639,15 +632,13 @@ HRESULT ECMsgStorePublic::BuildIPMSubTree()
 	hr = ((ECMsgStorePublic*)GetMsgStore())->GetPublicEntryId(ePE_PublicFolders, lpProps, &lpProps[cProps].Value.bin.cb, (LPENTRYID*)&lpProps[cProps].Value.bin.lpb);
 	if(hr != hrSuccess)
 		goto exit;
-	
-	cProps++;
+	++cProps;
 	
 	lpProps[cProps].ulPropTag = PR_LONGTERM_ENTRYID_FROM_TABLE;
 	hr = GetPublicEntryId(ePE_PublicFolders, lpProps, &lpProps[cProps].Value.bin.cb, (LPENTRYID*)&lpProps[cProps].Value.bin.lpb);
 	if(hr != hrSuccess)
 		goto exit;
-	
-	cProps++;
+	++cProps;
 
 	lpProps[cProps].ulPropTag = PR_DISPLAY_TYPE;
 	lpProps[cProps++].Value.ul = DT_FOLDER;
@@ -659,8 +650,7 @@ HRESULT ECMsgStorePublic::BuildIPMSubTree()
 	hr = GetPublicEntryId(ePE_IPMSubtree, lpProps, &lpProps[cProps].Value.bin.cb, (LPENTRYID*)&lpProps[cProps].Value.bin.lpb);
 	if (hr != hrSuccess)
 		goto exit;
-
-	cProps++;
+	++cProps;
 
 	lpProps[cProps].ulPropTag = PR_DISPLAY_NAME_W;
 	lpProps[cProps++].Value.lpszW = _W("Public Folders"); // FIXME: Use dynamic name, read from global profile (like exchange)
@@ -671,11 +661,11 @@ HRESULT ECMsgStorePublic::BuildIPMSubTree()
 	lpProps[cProps++].Value.ul = 0;
 
 	if (ECMAPIProp::DefaultMAPIGetProp(PR_STORE_ENTRYID, this, 0, &lpProps[cProps], this, lpProps) == hrSuccess)
-		cProps++;
+		++cProps;
 	if (ECMAPIProp::DefaultMAPIGetProp(PR_STORE_RECORD_KEY, this, 0, &lpProps[cProps], this, lpProps) == hrSuccess)
-		cProps++;
+		++cProps;
 	if (ECMAPIProp::DefaultMAPIGetProp(PR_STORE_SUPPORT_MASK, this, 0, &lpProps[cProps], this, lpProps) == hrSuccess)
-		cProps++;
+		++cProps;
 
 	lpProps[cProps].ulPropTag = PR_INSTANCE_KEY;
 	lpProps[cProps].Value.bin.cb = sizeof(ULONG)*2;
@@ -685,15 +675,13 @@ HRESULT ECMsgStorePublic::BuildIPMSubTree()
 
 	memset(lpProps[cProps].Value.bin.lpb, 0, lpProps[cProps].Value.bin.cb );
 	memcpy(lpProps[cProps].Value.bin.lpb, &ulRowId, sizeof(ULONG));
-
-	cProps++;
+	++cProps;
 
 	lpProps[cProps].ulPropTag = PR_RECORD_KEY;
 	hr = GetPublicEntryId(ePE_PublicFolders, lpProps, &lpProps[cProps].Value.bin.cb, (LPENTRYID*)&lpProps[cProps].Value.bin.lpb);
 	if(hr != hrSuccess)
 		goto exit;
-	
-	cProps++;
+	++cProps;
 
 	lpProps[cProps].ulPropTag = PR_ACCESS;
 	lpProps[cProps++].Value.ul = 2; //FIXME: use variable

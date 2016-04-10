@@ -616,8 +616,7 @@ HRESULT ECMAPIFolder::CopyMessages(LPENTRYLIST lpMsgList, LPCIID lpInterface, LP
 			//goto exit;
 
 		// Check if right store	
-		for(i=0; i < lpMsgList->cValues; i++)
-		{
+		for (i = 0; i < lpMsgList->cValues; ++i) {
 			hr = HrGetStoreGuidFromEntryId(lpMsgList->lpbin[i].cb, lpMsgList->lpbin[i].lpb, &guidMsg);
 			// check if the message in the store of the folder (serverside copy possible)
 			if(hr == hrSuccess && IsZarafaEntryId(lpMsgList->lpbin[i].cb, lpMsgList->lpbin[i].lpb) && memcmp(&guidMsg, &guidFolder, sizeof(MAPIUID)) == 0)
@@ -819,8 +818,7 @@ HRESULT ECMAPIFolder::SetReadFlags(LPENTRYLIST lpMsgList, ULONG ulUIParam, LPMAP
 			lpProgress->GetFlags(&ulPGFlags);
 		}
 
-		for(ULONG i = 0; i < lpMsgList->cValues; i++)
-		{
+		for (ULONG i = 0; i < lpMsgList->cValues; ++i) {
 			if(OpenEntry(lpMsgList->lpbin[i].cb, (LPENTRYID)lpMsgList->lpbin[i].lpb, &IID_IMessage, MAPI_MODIFY, &ulObjType, (LPUNKNOWN*)&lpMessage) == hrSuccess)
 			{
 				if(lpMessage->SetReadFlag(ulFlags&~MESSAGE_DIALOG) != hrSuccess)

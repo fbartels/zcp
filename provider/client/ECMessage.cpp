@@ -277,12 +277,11 @@ HRESULT ECMessage::GetProps(LPSPropTagArray lpPropTagArray, ULONG ulFlags, ULONG
 				ulBestMatch = ulBestMatchTable[m_ulBodyType][0];
 			else {
 				// Find best match in requested set
-				for (int i = 0; i < 3; i++) {
+				for (int i = 0; i < 3; ++i)
 					if (Util::FindPropInArray(ptrPropTagArray, PROP_TAG(PT_UNSPECIFIED, PROP_ID(ulBestMatchTable[m_ulBodyType][i]))) >= 0) {
 						ulBestMatch = ulBestMatchTable[m_ulBodyType][i];
 						break;
 					}
-				}
 			}
 
 			// Remove the non-best bodies from the requested set.
@@ -914,8 +913,10 @@ HRESULT ECMessage::GetAttachmentTable(ULONG ulFlags, LPMAPITABLE *lppTable)
 			ECMapiObjects::const_iterator iterObjects;
 			std::list<ECProperty>::const_iterator iterPropVals;
 
-			for (iterObjects = m_sMapiObject->lstChildren->begin(); iterObjects != m_sMapiObject->lstChildren->end(); iterObjects++) {
-
+			for (iterObjects = m_sMapiObject->lstChildren->begin();
+			     iterObjects != m_sMapiObject->lstChildren->end();
+			     ++iterObjects)
+			{
 				if ((*iterObjects)->ulObjType != MAPI_ATTACH)
 					continue;
 
@@ -923,7 +924,7 @@ HRESULT ECMessage::GetAttachmentTable(ULONG ulFlags, LPMAPITABLE *lppTable)
 					continue;
 
 				this->ulNextAttUniqueId = (*iterObjects)->ulUniqueId > this->ulNextAttUniqueId ? (*iterObjects)->ulUniqueId : this->ulNextAttUniqueId;
-				this->ulNextAttUniqueId++;
+				++this->ulNextAttUniqueId;
 
 				{
 					ULONG ulProps = (*iterObjects)->lstProperties->size();
@@ -938,7 +939,10 @@ HRESULT ECMessage::GetAttachmentTable(ULONG ulFlags, LPMAPITABLE *lppTable)
 					lpPropID = NULL;
 					lpPropType = NULL;
 
-					for (i = 0, iterPropVals = (*iterObjects)->lstProperties->begin(); iterPropVals != (*iterObjects)->lstProperties->end(); iterPropVals++, i++) {
+					for (i = 0, iterPropVals = (*iterObjects)->lstProperties->begin();
+					     iterPropVals != (*iterObjects)->lstProperties->end();
+					     ++iterPropVals, ++i)
+					{
 						(*iterPropVals).CopyToByRef(&lpProps[i]);
 
 						if (lpProps[i].ulPropTag == PR_ATTACH_NUM) {
@@ -955,14 +959,14 @@ HRESULT ECMessage::GetAttachmentTable(ULONG ulFlags, LPMAPITABLE *lppTable)
 					}
 
 					if (lpPropID == NULL) {
-						ulProps++;
+						++ulProps;
 						lpPropID = &lpProps[i++];
 					}
 					lpPropID->ulPropTag = PR_ATTACH_NUM;
 					lpPropID->Value.ul = (*iterObjects)->ulUniqueId;				// use uniqueid from "recount" code in WSMAPIPropStorage::desoapertize()
 
 					if (lpPropType == NULL) {
-						ulProps++;
+						++ulProps;
 						lpPropType = &lpProps[i++];
 					}
 					lpPropType->ulPropTag = PR_OBJECT_TYPE;
@@ -1138,7 +1142,7 @@ HRESULT ECMessage::CreateAttach(LPCIID lpInterface, ULONG ulFlags, const IAttach
 	*lpulAttachmentNum = sID.Value.ul;
 
 	// successfully created attachment, so increment counter for the next
-	this->ulNextAttUniqueId++;
+	++this->ulNextAttUniqueId;
 
 exit:
 	if(lpStorage)
@@ -1215,8 +1219,9 @@ HRESULT ECMessage::GetRecipientTable(ULONG ulFlags, LPMAPITABLE *lppTable)
 			ECMapiObjects::const_iterator iterObjects;
 			std::list<ECProperty>::const_iterator iterPropVals;
 
-			for (iterObjects = m_sMapiObject->lstChildren->begin(); iterObjects != m_sMapiObject->lstChildren->end(); iterObjects++) {
-
+			for (iterObjects = m_sMapiObject->lstChildren->begin();
+			     iterObjects != m_sMapiObject->lstChildren->end();
+			     ++iterObjects) {
 				// The only valid types are MAPI_MAILUSER and MAPI_DISTLIST. However some MAPI clients put in other
 				// values as object type. We know about the existence of MAPI_ATTACH as another valid subtype for
 				// Messages, so we'll skip those, treat MAPI_DISTLIST as MAPI_DISTLIST and anything else as
@@ -1228,7 +1233,7 @@ HRESULT ECMessage::GetRecipientTable(ULONG ulFlags, LPMAPITABLE *lppTable)
 					continue;
 
 				this->ulNextRecipUniqueId = (*iterObjects)->ulUniqueId > this->ulNextRecipUniqueId ? (*iterObjects)->ulUniqueId : this->ulNextRecipUniqueId;
-				this->ulNextRecipUniqueId++;
+				++this->ulNextRecipUniqueId;
 
 				{
 					ULONG ulProps = (*iterObjects)->lstProperties->size();
@@ -1243,8 +1248,10 @@ HRESULT ECMessage::GetRecipientTable(ULONG ulFlags, LPMAPITABLE *lppTable)
 					ECAllocateBuffer(sizeof(SPropValue)*(ulProps+2), (void**)&lpProps);
 
 					lpPropID = NULL;
-					for (i = 0, iterPropVals = (*iterObjects)->lstProperties->begin(); iterPropVals != (*iterObjects)->lstProperties->end(); iterPropVals++, i++) {
-
+					for (i = 0, iterPropVals = (*iterObjects)->lstProperties->begin();
+					     iterPropVals != (*iterObjects)->lstProperties->end();
+					     ++iterPropVals, ++i)
+					{
 						(*iterPropVals).CopyToByRef(&lpProps[i]);
 
 						if (lpProps[i].ulPropTag == PR_ROWID) {
@@ -1258,14 +1265,14 @@ HRESULT ECMessage::GetRecipientTable(ULONG ulFlags, LPMAPITABLE *lppTable)
 					}
 
 					if (lpPropID == NULL) {
-						ulProps++;
+						++ulProps;
 						lpPropID = &lpProps[i++];
 					}
 					lpPropID->ulPropTag = PR_ROWID;
 					lpPropID->Value.ul = (*iterObjects)->ulUniqueId;				// use uniqueid from "recount" code in WSMAPIPropStorage::ECSoapObjectToMapiObject()
 
 					if (lpPropObjType == NULL) {
-						ulProps++;
+						++ulProps;
 						lpPropObjType = &lpProps[i++];
 					}
 					lpPropObjType->ulPropTag = PR_OBJECT_TYPE;
@@ -1370,7 +1377,7 @@ HRESULT ECMessage::ModifyRecipients(ULONG ulFlags, LPADRLIST lpMods)
 		ulNextRecipUniqueId = 0;
 	}
 
-	for (i=0; i<lpMods->cEntries; i++) {
+	for (i = 0; i < lpMods->cEntries; ++i) {
 		if(ulFlags & MODRECIP_ADD || ulFlags == 0) {
 			// Add a new PR_ROWID
 			sPropAdd[0].ulPropTag = PR_ROWID;
@@ -1875,7 +1882,7 @@ HRESULT ECMessage::SaveRecips()
 	if (hr != hrSuccess)
 		goto exit;
 
-	for (i=0; i<lpRowSet->cRows; i++) {
+	for (i = 0; i < lpRowSet->cRows; ++i) {
 		MAPIOBJECT *mo = NULL;
 
 		// Get the right object type for a DistList
@@ -1900,22 +1907,20 @@ HRESULT ECMessage::SaveRecips()
 
 		if (lpulStatus[i] == ECROW_MODIFIED || lpulStatus[i] == ECROW_ADDED) {
 			mo->bChanged = true;
-			for (j = 0; j < lpRowSet->aRow[i].cValues; j++) {
+			for (j = 0; j < lpRowSet->aRow[i].cValues; ++j)
 				if(PROP_TYPE(lpRowSet->aRow[i].lpProps[j].ulPropTag) != PT_NULL) {
 					mo->lstModified->push_back(ECProperty(&lpRowSet->aRow[i].lpProps[j]));
 					// as in ECGenericProp.cpp, we also save the properties to the known list,
 					// since this is used when we reload the object from memory.
 					mo->lstProperties->push_back(ECProperty(&lpRowSet->aRow[i].lpProps[j]));
 				}
-			}
 		} else if (lpulStatus[i] == ECROW_DELETED) {
 			mo->bDelete = true;
 		} else {
 			// ECROW_NORMAL, untouched recipient
-			for (j = 0; j < lpRowSet->aRow[i].cValues; j++) {
+			for (j = 0; j < lpRowSet->aRow[i].cValues; ++j)
 				if(PROP_TYPE(lpRowSet->aRow[i].lpProps[j].ulPropTag) != PT_NULL)
 					mo->lstProperties->push_back(ECProperty(&lpRowSet->aRow[i].lpProps[j]));
-			}
 		}
 
 		// find old recipient in child list, and remove if present
@@ -1956,9 +1961,9 @@ void ECMessage::RecursiveMarkDelete(MAPIOBJECT *lpObj) {
 	lpObj->lstModified->clear();
 	lpObj->lstProperties->clear();
 
-	for (iterSObj = lpObj->lstChildren->begin(); iterSObj != lpObj->lstChildren->end(); iterSObj++) {
+	for (iterSObj = lpObj->lstChildren->begin();
+	     iterSObj != lpObj->lstChildren->end(); ++iterSObj)
 		RecursiveMarkDelete(*iterSObj);
-	}
 }
 
 BOOL ECMessage::HasAttachment()
@@ -1979,10 +1984,10 @@ BOOL ECMessage::HasAttachment()
 		}
 	}
 
-	for (iterObjects = m_sMapiObject->lstChildren->begin(); iterObjects != m_sMapiObject->lstChildren->end(); iterObjects++) {
+	for (iterObjects = m_sMapiObject->lstChildren->begin();
+	     iterObjects != m_sMapiObject->lstChildren->end(); ++iterObjects)
 		if ((*iterObjects)->ulObjType == MAPI_ATTACH)
 			break;
-	}
 
 	bRet = (iterObjects != m_sMapiObject->lstChildren->end());
 
@@ -2015,8 +2020,7 @@ HRESULT ECMessage::SyncAttachments()
 	if (hr != hrSuccess)
 		goto exit;
 
-	for (i=0; i<lpRowSet->cRows; i++) {
-
+	for (i = 0; i < lpRowSet->cRows; ++i) {
 		if (lpulStatus[i] != ECROW_DELETED)
 			continue;
 
@@ -2079,7 +2083,8 @@ HRESULT ECMessage::UpdateTable(ECMemTable *lpTable, ULONG ulObjType, ULONG ulObj
 	}
 
 	// update hierarchy id in table
-	for (iterObjects = m_sMapiObject->lstChildren->begin(); iterObjects != m_sMapiObject->lstChildren->end(); iterObjects++) {
+	for (iterObjects = m_sMapiObject->lstChildren->begin();
+	     iterObjects != m_sMapiObject->lstChildren->end(); ++iterObjects) {
 		if ((*iterObjects)->ulObjType == ulObjType) {
 			sUniqueProp.ulPropTag = ulObjKeyProp;
 			sUniqueProp.Value.ul = (*iterObjects)->ulUniqueId;
@@ -2103,7 +2108,10 @@ HRESULT ECMessage::UpdateTable(ECMemTable *lpTable, ULONG ulObjType, ULONG ulObj
 				if ((hr = MAPIAllocateBuffer(sizeof(SPropValue)*ulProps, (void**)&lpNewProps)) != hrSuccess)
 					goto exit;
 
-				for (i = 0, iterPropVals = (*iterObjects)->lstProperties->begin(); iterPropVals != (*iterObjects)->lstProperties->end(); iterPropVals++, i++) {
+				for (i = 0, iterPropVals = (*iterObjects)->lstProperties->begin();
+				     iterPropVals != (*iterObjects)->lstProperties->end();
+				     ++iterPropVals, ++i)
+				{
 					(*iterPropVals).CopyToByRef(&lpNewProps[i]);
 					if (PROP_ID(lpNewProps[i].ulPropTag) == PROP_ID(PR_ATTACH_DATA_OBJ)) {
 						lpNewProps[i].ulPropTag = CHANGE_PROP_TYPE(lpNewProps[i].ulPropTag, PT_ERROR);
@@ -2488,11 +2496,12 @@ HRESULT	ECMessage::GetPropHandler(ULONG ulPropTag, void* lpProvider, ULONG ulFla
 			WCHAR *lpszColon = wcschr(lpsPropValue->Value.lpszW, ':');
 			if (lpszColon && (lpszColon - lpsPropValue->Value.lpszW) > 1 && (lpszColon - lpsPropValue->Value.lpszW) < 4) {
 				WCHAR *c = lpsPropValue->Value.lpszW;
-				while (c < lpszColon && iswdigit(*c)) c++; // test for all digits prefix
+				while (c < lpszColon && iswdigit(*c))
+					++c; // test for all digits prefix
 				if (c != lpszColon) {
-					lpszColon++;
+					++lpszColon;
 					if (*lpszColon == ' ')
-						lpszColon++;
+						++lpszColon;
 					lpsPropValue->Value.lpszW = lpszColon; // set new subject string
 				}
 			}
@@ -2502,11 +2511,12 @@ HRESULT	ECMessage::GetPropHandler(ULONG ulPropTag, void* lpProvider, ULONG ulFla
 			char *lpszColon = strchr(lpsPropValue->Value.lpszA, ':');
 			if (lpszColon && (lpszColon - lpsPropValue->Value.lpszA) > 1 && (lpszColon - lpsPropValue->Value.lpszA) < 4) {
 				char *c = lpsPropValue->Value.lpszA;
-				while (c < lpszColon && isdigit(*c)) c++; // test for all digits prefix
+				while (c < lpszColon && isdigit(*c))
+					++c; // test for all digits prefix
 				if (c != lpszColon) {
-					lpszColon++;
+					++lpszColon;
 					if (*lpszColon == ' ')
-						lpszColon++;
+						++lpszColon;
 					lpsPropValue->Value.lpszA = lpszColon; // set new subject string
 				}
 			}
@@ -2879,7 +2889,10 @@ static HRESULT HrCopyObjIDs(MAPIOBJECT *lpDest, const MAPIOBJECT *lpSrc)
 
     lpDest->ulObjId = lpSrc->ulObjId;
 
-    for(iterSrc = lpSrc->lstChildren->begin(); iterSrc != lpSrc->lstChildren->end(); iterSrc++) {
+    for (iterSrc = lpSrc->lstChildren->begin();
+         iterSrc != lpSrc->lstChildren->end();
+         ++iterSrc)
+    {
     	iterDest = lpDest->lstChildren->find(*iterSrc);
         if(iterDest != lpDest->lstChildren->end()) {
             hr = HrCopyObjIDs(*iterDest, *iterSrc);
@@ -2956,7 +2969,10 @@ HRESULT ECMessage::HrSaveChild(ULONG ulFlags, MAPIOBJECT *lpsMapiObject) {
 	ECAllocateBuffer(sizeof(SPropValue)*(ulProps+2), (void**)&lpProps);
 
 	lpPropID = NULL;
-	for (i = 0, iterPropVals = lpsMapiObject->lstProperties->begin(); iterPropVals != lpsMapiObject->lstProperties->end(); iterPropVals++, i++) {
+	for (i = 0, iterPropVals = lpsMapiObject->lstProperties->begin();
+	     iterPropVals != lpsMapiObject->lstProperties->end();
+	     ++iterPropVals, ++i)
+	{
 		(*iterPropVals).CopyToByRef(&lpProps[i]);
 
 		if (lpProps[i].ulPropTag == PR_ATTACH_NUM) {
@@ -2973,12 +2989,12 @@ HRESULT ECMessage::HrSaveChild(ULONG ulFlags, MAPIOBJECT *lpsMapiObject) {
 	}
 
 	if (lpPropID == NULL) {
-		ulProps++;
+		++ulProps;
 		lpPropID = &lpProps[i++];
 	}
 
 	if (lpPropObjType == NULL) {
-		ulProps++;
+		++ulProps;
 		lpPropObjType = &lpProps[i++];
 	}
 

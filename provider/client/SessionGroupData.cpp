@@ -148,10 +148,8 @@ ULONG SessionGroupData::AddRef()
 	ULONG cRef;
     
 	pthread_mutex_lock(&m_hRefMutex);
-    m_cRef++;
-	cRef = m_cRef;
-    pthread_mutex_unlock(&m_hRefMutex);
-	
+	cRef = ++m_cRef;
+	pthread_mutex_unlock(&m_hRefMutex);
 	return cRef;
 }
 
@@ -160,10 +158,8 @@ ULONG SessionGroupData::Release()
 	ULONG cRef;
     
 	pthread_mutex_lock(&m_hRefMutex);
-	m_cRef--;
-    cRef = m_cRef;
-    pthread_mutex_unlock(&m_hRefMutex);
-
+	cRef = --m_cRef;
+	pthread_mutex_unlock(&m_hRefMutex);
 	return cRef;
 }
 

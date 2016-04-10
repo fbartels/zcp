@@ -276,7 +276,7 @@ HRESULT __stdcall ECExchangeModifyTable::ModifyTable(ULONG ulFlags, LPROWLIST lp
 			goto exit;
 	}
 
-	for(i=0;i<lpMods->cEntries;i++) {
+	for (i = 0; i < lpMods->cEntries; ++i) {
 		switch(lpMods->aEntries[i].ulRowFlags) {
 			case ROW_ADD:
 			case ROW_MODIFY:
@@ -391,7 +391,7 @@ HRESULT ECExchangeModifyTable::OpenACLS(ECMAPIProp *lpecMapiProp, ULONG ulFlags,
 	// Default exchange PR_MEMBER_ID ids
 	//  0 = default acl
 	// -1 = Anonymous acl
-	for (ULONG i=0; i<cPerms; i++) {
+	for (ULONG i = 0; i < cPerms; ++i) {
 		if (lpECPerms[i].ulType == ACCESS_TYPE_GRANT)
 		{
 			
@@ -480,8 +480,7 @@ HRESULT ECExchangeModifyTable::SaveACLS(ECMAPIProp *lpecMapiProp, ECMemTable *lp
 	if (hr != hrSuccess)
 		goto exit;
 
-	for(ULONG i=0; i < lpRowSet->cRows; i++)
-	{
+	for (ULONG i = 0; i < lpRowSet->cRows; ++i) {
 		if (lpulStatus[i]  == ECROW_NORMAL)
 			continue;
 
@@ -523,8 +522,7 @@ HRESULT ECExchangeModifyTable::SaveACLS(ECMAPIProp *lpecMapiProp, ECMemTable *lp
 		}
 
 		lpECPermissions[cECPerm].ulRights = lpMemberRights->Value.ul&ecRightsAll;
-
-		cECPerm++;
+		++cECPerm;
 	}
 
 	if (cECPerm > 0)
@@ -651,7 +649,7 @@ HRESULT ECExchangeModifyTable::HrDeserializeTable(char *lpSerialized, ECMemTable
 	if(hr != hrSuccess)
 		goto exit;
 
-	for (i = 0; i < lpsRowSet->cRows; i++) {
+	for (i = 0; i < lpsRowSet->cRows; ++i) {
 		// Note: the ECKeyTable only uses an ULONG as the key.
 		//       Information placed in the HighPart of this PT_I8 is lost!
 		sRowId.ulPropTag = PR_RULE_ID;
@@ -661,7 +659,7 @@ HRESULT ECExchangeModifyTable::HrDeserializeTable(char *lpSerialized, ECMemTable
 		if(hr != hrSuccess)
 			goto exit;
 
-		for (n = 0; n < cValues; n++) {
+		for (n = 0; n < cValues; ++n) {
 			/*
 			 * If a string type is PT_STRING8, it is old and
 			 * assumed to be in WTF-1252 (CP-1252 values directly

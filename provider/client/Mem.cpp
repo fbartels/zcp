@@ -178,7 +178,8 @@ HRESULT FreeMapiObject(MAPIOBJECT *lpsObject)
 	delete lpsObject->lstModified;
 	delete lpsObject->lstProperties;
 
-	for (iterSObj = lpsObject->lstChildren->begin(); iterSObj != lpsObject->lstChildren->end(); iterSObj++)
+	for (iterSObj = lpsObject->lstChildren->begin();
+	     iterSObj != lpsObject->lstChildren->end(); ++iterSObj)
 		FreeMapiObject(*iterSObj);
 
 	delete lpsObject->lstChildren;

@@ -317,10 +317,9 @@ HRESULT ECXPLogon::ClearOldSubmittedMessages(LPMAPIFOLDER lpFolder)
 	if (hr != hrSuccess)
 		goto exit;
 
-	for (unsigned int i = 0; i < ptrRows.size(); i++) {
+	for (unsigned int i = 0; i < ptrRows.size(); ++i)
 		if(ptrRows[i].lpProps[0].ulPropTag == PR_ENTRYID)
 			lpDeleteItemEntryList->lpbin[lpDeleteItemEntryList->cValues++] = ptrRows[i].lpProps[0].Value.bin;
-	}
 
 	if(lpDeleteItemEntryList->cValues > 0)
 		hr = lpFolder->DeleteMessages(lpDeleteItemEntryList, 0, NULL, 0); //Delete message on the server
@@ -523,8 +522,7 @@ HRESULT ECXPLogon::SubmitMessage(ULONG ulFlags, LPMESSAGE lpMessage, ULONG * lpu
 	if (hr != erSuccess)
 		goto exit;
 
-	for (ulRow=0; ulRow < lpRecipRows->cRows; ulRow++)
-    {
+	for (ulRow = 0; ulRow < lpRecipRows->cRows; ++ulRow) {
 		LPSPropValue lpsPropValue = PpropFindProp(lpRecipRows->aRow[ulRow].lpProps, lpRecipRows->aRow[ulRow].cValues, PR_ADDRTYPE);
 		LPSPropValue lpsResponsibility = PpropFindProp(lpRecipRows->aRow[ulRow].lpProps, lpRecipRows->aRow[ulRow].cValues, PR_RESPONSIBILITY);
 
@@ -705,7 +703,7 @@ HRESULT ECXPLogon::FlushQueues(ULONG ulUIParam, ULONG cbTargetTransport, LPENTRY
 }
 
 ULONG ECXPLogon::OnNotify(ULONG cNotif, LPNOTIFICATION lpNotifs){
-	for(unsigned int i=0; i < cNotif; i++) {
+	for (unsigned int i = 0; i < cNotif; ++i) {
 		if(lpNotifs[i].ulEventType == fnevObjectDeleted) {
 			pthread_mutex_lock(&m_hExitMutex);
 			pthread_cond_signal(&m_hExitSignal);

@@ -360,8 +360,8 @@ HRESULT RemoveAllProviders(ECMapProvider* lpmapProvider)
 	if (lpmapProvider == NULL)
 		return MAPI_E_INVALID_PARAMETER;
 
-	for (iterProvider = lpmapProvider->begin(); iterProvider != lpmapProvider->end(); iterProvider++)
-	{
+	for (iterProvider = lpmapProvider->begin();
+	     iterProvider != lpmapProvider->end(); ++iterProvider) {
 #ifdef HAVE_OFFLINE_SUPPORT
 		if (iterProvider->second.lpMSProviderOffline)
 			iterProvider->second.lpMSProviderOffline->Release();

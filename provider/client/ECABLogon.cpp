@@ -416,8 +416,7 @@ HRESULT ECABLogon::PrepareRecips(ULONG ulFlags, LPSPropTagArray lpPropTagArray, 
 	if(lpPropTagArray == NULL || lpPropTagArray->cValues == 0) // There is no work to do.
 		goto exit;
 
-	for(unsigned int i=0; i < lpRecipList->cEntries; i++)
-	{
+	for (unsigned int i = 0; i < lpRecipList->cEntries; ++i) {
 		rgpropvalsRecip	= lpRecipList->aEntries[i].rgPropVals;
 		cPropsRecip		= lpRecipList->aEntries[i].cValues;
 
@@ -447,7 +446,7 @@ HRESULT ECABLogon::PrepareRecips(ULONG ulFlags, LPSPropTagArray lpPropTagArray, 
 		// merge the properties
 		ECAllocateBuffer((cValues+cPropsRecip)*sizeof(SPropValue), (void**)&lpNewPropArray);
 
-		for(j=0; j < cValues; j++) {
+		for (j = 0; j < cValues; ++j) {
 			lpPropVal = NULL;
 
 			if(PROP_TYPE(lpPropArray[j].ulPropTag) == PT_ERROR)
@@ -462,8 +461,7 @@ HRESULT ECABLogon::PrepareRecips(ULONG ulFlags, LPSPropTagArray lpPropTagArray, 
 				goto exit;
 		}
 
-		for(j=0; j < cPropsRecip; j++)
-		{
+		for (j = 0; j < cPropsRecip; ++j) {
 			if ( PpropFindProp(lpNewPropArray, cValues, rgpropvalsRecip[j].ulPropTag ) ||
 				PROP_TYPE( rgpropvalsRecip[j].ulPropTag ) == PT_ERROR )
 				continue;
@@ -471,9 +469,7 @@ HRESULT ECABLogon::PrepareRecips(ULONG ulFlags, LPSPropTagArray lpPropTagArray, 
 			hr = Util::HrCopyProperty(lpNewPropArray + cValues, &rgpropvalsRecip[j], lpNewPropArray);
 			if(hr != hrSuccess)
 				goto exit;			
-				
-				
-			cValues++;
+			++cValues;
 		}
 
 		lpRecipList->aEntries[i].rgPropVals	= lpNewPropArray;

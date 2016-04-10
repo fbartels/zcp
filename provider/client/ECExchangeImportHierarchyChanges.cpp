@@ -522,7 +522,7 @@ HRESULT ECExchangeImportHierarchyChanges::ImportFolderDeletion(ULONG ulFlags, LP
 	ULONG cbEntryId;
 	LPENTRYID lpEntryId = NULL;
 
-	for(ulSKNr = 0; ulSKNr < lpSourceEntryList->cValues; ulSKNr++){
+	for (ulSKNr = 0; ulSKNr < lpSourceEntryList->cValues; ++ulSKNr) {
 		MAPIFreeBuffer(lpEntryId);
 		lpEntryId = NULL;
 		hr = m_lpFolder->GetMsgStore()->lpTransport->HrEntryIDFromSourceKey(m_lpFolder->GetMsgStore()->m_cbEntryId, m_lpFolder->GetMsgStore()->m_lpEntryId, lpSourceEntryList->lpbin[ulSKNr].cb, lpSourceEntryList->lpbin[ulSKNr].lpb, 0, NULL, &cbEntryId, &lpEntryId);

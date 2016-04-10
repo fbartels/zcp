@@ -130,12 +130,9 @@ ECNamedProp::~ECNamedProp()
 	std::map<MAPINAMEID *, ULONG, ltmap>::const_iterator iterMap;
 
 	// Clear all the cached names
-	for(iterMap = mapNames.begin(); iterMap != mapNames.end(); iterMap++) {
-		if(iterMap->first) {
+	for (iterMap = mapNames.begin(); iterMap != mapNames.end(); ++iterMap)
+		if(iterMap->first)
 			ECFreeBuffer(iterMap->first);
-		}
-	}
-
 	if(lpTransport)
 		lpTransport->Release();
 }
@@ -163,14 +160,14 @@ HRESULT ECNamedProp::GetNamesFromIDs(LPSPropTagArray FAR * lppPropTags, LPGUID l
 	ECAllocateBuffer(sizeof(LPMAPINAMEID) * lpsPropTags->cValues, (void **)&lppPropNames);
 
 	// Pass 1, local reverse mapping (FAST)
-	for(i=0;i<lpsPropTags->cValues; i++) {
-		if(ResolveReverseLocal(PROP_ID(lpsPropTags->aulPropTag[i]), lpPropSetGuid, ulFlags, lppPropNames, &lppPropNames[i]) != hrSuccess) {
+	for (i = 0; i < lpsPropTags->cValues; ++i)
+		if (ResolveReverseLocal(PROP_ID(lpsPropTags->aulPropTag[i]),
+		    lpPropSetGuid, ulFlags, lppPropNames,
+		    &lppPropNames[i]) != hrSuccess)
 			lppPropNames[i] = NULL;
-		}
-	}
 
 	// Pass 2, cache reverse mapping (FAST)
-	for(i=0;i<lpsPropTags->cValues; i++) {
+	for (i = 0; i < lpsPropTags->cValues; ++i) {
 		if(lppPropNames[i] == NULL) {
 			if(PROP_ID(lpsPropTags->aulPropTag[i]) > SERVER_NAMED_OFFSET) {
 				ResolveReverseCache(PROP_ID(lpsPropTags->aulPropTag[i]), lpPropSetGuid, ulFlags, lppPropNames, &lppPropNames[i]);
@@ -185,14 +182,12 @@ HRESULT ECNamedProp::GetNamesFromIDs(LPSPropTagArray FAR * lppPropTags, LPGUID l
 
 	cUnresolved = 0;
 	// Pass 3, server reverse lookup (SLOW)
-	for(i=0;i<lpsPropTags->cValues;i++) {
-		if(lppPropNames[i] == NULL ) {
+	for (i = 0; i < lpsPropTags->cValues; ++i)
+		if (lppPropNames[i] == NULL)
 			if(PROP_ID(lpsPropTags->aulPropTag[i]) > SERVER_NAMED_OFFSET) {
 				lpsUnresolved->aulPropTag[cUnresolved] = PROP_ID(lpsPropTags->aulPropTag[i]) - SERVER_NAMED_OFFSET;
-				cUnresolved++;
+				++cUnresolved;
 			}
-		}
-	}
 	lpsUnresolved->cValues = cUnresolved;
 
 	if(cUnresolved > 0) {
@@ -207,26 +202,21 @@ HRESULT ECNamedProp::GetNamesFromIDs(LPSPropTagArray FAR * lppPropTags, LPGUID l
 			goto exit;
 		}
 
-		for(i=0;i<cResolved;i++) {
+		for (i = 0; i < cResolved; ++i)
 			if(lppResolved[i] != NULL)
 				UpdateCache(lpsUnresolved->aulPropTag[i] + SERVER_NAMED_OFFSET, lppResolved[i]);
-		}
 
 		// re-scan the cache
-		for(i=0;i<lpsPropTags->cValues; i++) {
-			if(lppPropNames[i] == NULL) {
-				if(PROP_ID(lpsPropTags->aulPropTag[i]) > SERVER_NAMED_OFFSET) {
+		for (i = 0; i < lpsPropTags->cValues; ++i)
+			if (lppPropNames[i] == NULL)
+				if (PROP_ID(lpsPropTags->aulPropTag[i]) > SERVER_NAMED_OFFSET)
 					ResolveReverseCache(PROP_ID(lpsPropTags->aulPropTag[i]), lpPropSetGuid, ulFlags, lppPropNames, &lppPropNames[i]);
-				} 
-			}
-		}
 	}
 
 	// Check for errors
-	for(i=0;i<lpsPropTags->cValues; i++) {
+	for (i = 0; i < lpsPropTags->cValues; ++i)
 		if(lppPropNames[i] == NULL)
 			hr = MAPI_W_ERRORS_RETURNED;
-	}
 
 	*lpppPropNames = lppPropNames;
 	*lpcPropNames = lpsPropTags->cValues;
@@ -261,7 +251,7 @@ HRESULT ECNamedProp::GetIDsFromNames(ULONG cPropNames, LPMAPINAMEID FAR * lppPro
 	}
 
 	// Sanity check input
-	for(i=0;i<cPropNames;i++) {
+	for (i = 0; i < cPropNames; ++i) {
 		if(lppPropNames[i] == NULL) {
 			hr = MAPI_E_INVALID_PARAMETER;
 			goto exit;
@@ -277,29 +267,25 @@ HRESULT ECNamedProp::GetIDsFromNames(ULONG cPropNames, LPMAPINAMEID FAR * lppPro
 
 
 	// Pass 1, resolve static (local) names (FAST)
-	for(i=0;i<cPropNames;i++) {
+	for (i = 0; i < cPropNames; ++i)
 		if(lppPropNames[i] == NULL || ResolveLocal(lppPropNames[i], &lpsPropTagArray->aulPropTag[i]) != hrSuccess)
 			lpsPropTagArray->aulPropTag[i] = PROP_TAG(PT_ERROR, 0);
-	}
 
 	// Pass 2, resolve names from local cache (FAST)
-	for(i=0;i<cPropNames;i++) {
-		if(lppPropNames[i] != NULL && lpsPropTagArray->aulPropTag[i] == PROP_TAG(PT_ERROR, 0)) {
+	for (i = 0; i < cPropNames; ++i)
+		if (lppPropNames[i] != NULL && lpsPropTagArray->aulPropTag[i] == PROP_TAG(PT_ERROR, 0))
 			ResolveCache(lppPropNames[i], &lpsPropTagArray->aulPropTag[i]);
-		}
-	}
 
 	// Pass 3, resolve names from server (SLOW, but decreases in frequency with store lifetime)
 
 	lppPropNamesUnresolved = new MAPINAMEID * [lpsPropTagArray->cValues]; // over-allocated
 
 	// Get a list of unresolved names
-	for(i=0;i<cPropNames;i++) {
+	for (i = 0; i < cPropNames; ++i)
 		if(lpsPropTagArray->aulPropTag[i] == PROP_TAG(PT_ERROR, 0) && lppPropNames[i] != NULL ) {
 			lppPropNamesUnresolved[cUnresolved] = lppPropNames[i];
-			cUnresolved++;
+			++cUnresolved;
 		}
-	}
 
 	if(cUnresolved) {
 		// Let the server resolve these names 
@@ -309,28 +295,25 @@ HRESULT ECNamedProp::GetIDsFromNames(ULONG cPropNames, LPMAPINAMEID FAR * lppPro
 			goto exit;
 
 		// Put the names into the local cache for all the IDs the server gave us
-		for(i=0;i<cUnresolved;i++) {
+		for (i = 0; i < cUnresolved; ++i)
 			if(lpServerIDs[i] != 0)
 				UpdateCache(lpServerIDs[i] + SERVER_NAMED_OFFSET, lppPropNamesUnresolved[i]);
-		}
 
 		// Pass 4, re-resolve from local cache (FAST)
-		for(i=0;i<cPropNames;i++) {
-			if(lppPropNames[i] != NULL && lpsPropTagArray->aulPropTag[i] == PROP_TAG(PT_ERROR, 0)) {
+		for (i = 0; i < cPropNames; ++i)
+			if (lppPropNames[i] != NULL &&
+			    lpsPropTagArray->aulPropTag[i] == PROP_TAG(PT_ERROR, 0))
 				ResolveCache(lppPropNames[i], &lpsPropTagArray->aulPropTag[i]);
-			}
-		}
 	}
 	
 	// Finally, check for any errors left in the returned structure
 	hr = hrSuccess;
 
-	for(i=0;i<cPropNames;i++) {
+	for (i = 0; i < cPropNames; ++i)
 		if(lpsPropTagArray->aulPropTag[i] == PROP_TAG(PT_ERROR, 0)) {
 			hr = MAPI_W_ERRORS_RETURNED;
 			break;
 		}
-	}
 
 	*lppPropTags = lpsPropTagArray;
 	lpsPropTagArray = NULL;
@@ -373,7 +356,7 @@ HRESULT ECNamedProp::ResolveReverseCache(ULONG ulId, LPGUID lpGuid, ULONG ulFlag
 	// Loop through the map to find the reverse-lookup of the named property. This could be speeded up by
 	// used a bimap (bi-directional map)
 
-	for(iterMap = mapNames.begin(); iterMap != mapNames.end(); iterMap++) {
+	for (iterMap = mapNames.begin(); iterMap != mapNames.end(); ++iterMap)
 		if(iterMap->second == ulId) { // FIXME match GUID
 			if(lpGuid) {
 				ASSERT(memcmp(lpGuid, iterMap->first->lpguid, sizeof(GUID)) == 0); // TEST michel
@@ -382,7 +365,6 @@ HRESULT ECNamedProp::ResolveReverseCache(ULONG ulId, LPGUID lpGuid, ULONG ulFlag
 			hr = HrCopyNameId(iterMap->first, lppName, lpBase);
 			break;
 		}
-	}
 
 	return hr;
 }

@@ -145,9 +145,8 @@ HRESULT WSABPropStorage::HrReadProps(LPSPropTagArray *lppPropTags,ULONG *cValues
 
 	(*lppPropTags)->cValues = sResponse.aPropTag.__size;
 
-	for(i=0;i<sResponse.aPropTag.__size;i++) {
+	for (i = 0; i < sResponse.aPropTag.__size; ++i)
 		(*lppPropTags)->aulPropTag[i] = sResponse.aPropTag.__ptr[i];
-	}
 
 	// Convert the property values to a MAPI propvalarray
 	*cValues = sResponse.aPropVal.__size;
@@ -161,7 +160,7 @@ HRESULT WSABPropStorage::HrReadProps(LPSPropTagArray *lppPropTags,ULONG *cValues
 			goto exit;
 	}
 
-	for(i=0;i<sResponse.aPropVal.__size;i++) {
+	for (i = 0; i < sResponse.aPropVal.__size; ++i) {
 		hr = CopySOAPPropValToMAPIPropVal(&(*ppValues)[i],&sResponse.aPropVal.__ptr[i], *ppValues, &converter);
 
 		if(hr != hrSuccess)
@@ -233,10 +232,10 @@ HRESULT WSABPropStorage::HrWriteProps(ULONG cValues, LPSPropValue pValues, ULONG
 
 	sPropVals.__ptr = new propVal[cValues];
 
-	for(i=0;i<cValues;i++) {
+	for (i = 0; i < cValues; ++i) {
 		hr = CopyMAPIPropValToSOAPPropVal(&sPropVals.__ptr[j], &pValues[i], &converter);
 		if(hr == hrSuccess)
-			j++;
+			++j;
 	}
 
 	hr = hrSuccess;
@@ -321,10 +320,10 @@ HRESULT WSABPropStorage::HrLoadObject(MAPIOBJECT **lppsMapiObject)
 	
 	ECAllocateBuffer(sizeof(SPropValue) * sResponse.aPropVal.__size, (void **)&lpProp);
 
-	for (i = 0; i < sResponse.aPropTag.__size; i++)
+	for (i = 0; i < sResponse.aPropTag.__size; ++i)
 		mo->lstAvailable->push_back(sResponse.aPropTag.__ptr[i]);
 
-	for (i = 0; i < sResponse.aPropVal.__size; i++) {
+	for (i = 0; i < sResponse.aPropVal.__size; ++i) {
 		hr = CopySOAPPropValToMAPIPropVal(lpProp, &sResponse.aPropVal.__ptr[i], lpProp, &converter);
 		if (hr != hrSuccess)
 			goto exit;

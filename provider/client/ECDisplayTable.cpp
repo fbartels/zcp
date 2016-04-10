@@ -456,13 +456,13 @@ HRESULT ECDisplayTable::CreateTableFromProperty(ECABProp *lpABProp, LPCIID lpiid
 				goto exit;
 
 			/* Increase PR_ROWID */
-			sEntry[0].Value.ul++;
+			++sEntry[0].Value.ul;
 		}
 	}
 
 	lpValue = PpropFindProp(lpProps, ulProps, ulMVPropTag);
 	if (lpValue) {
-		for (unsigned int j = 0; j < lpValue->Value.MVszA.cValues; j++) {
+		for (unsigned int j = 0; j < lpValue->Value.MVszA.cValues; ++j) {
 			sEntry[1].ulPropTag = ulColumnTag;
 			sEntry[1].Value.lpszA = lpValue->Value.MVszA.lppszA[j];
 
@@ -471,7 +471,7 @@ HRESULT ECDisplayTable::CreateTableFromProperty(ECABProp *lpABProp, LPCIID lpiid
 				goto exit;
 
 			/* Increase PR_ROWID */
-			sEntry[0].Value.ul++;
+			++sEntry[0].Value.ul;
 		}
 	}
 
@@ -484,7 +484,7 @@ HRESULT ECDisplayTable::CreateTableFromProperty(ECABProp *lpABProp, LPCIID lpiid
 		goto exit;
 
 	/* Remote PR_ROWID, and set columns */
-	tagaColumns.cValues--;
+	--tagaColumns.cValues;
 	hr = lpView->SetColumns((LPSPropTagArray)&tagaColumns, MAPI_DEFERRED_ERRORS);
 	if (hr != hrSuccess)
 		goto exit;
@@ -553,12 +553,12 @@ HRESULT ECDisplayTable::CreateTableFromResolved(ECABProp *lpABProp, LPCIID lpiid
 	}
 
 	if (lpAddrList) {
-		for (ULONG i = 0; i < lpAddrList->cEntries; i++) {
+		for (ULONG i = 0; i < lpAddrList->cEntries; ++i) {
 			LPSPropValue lpProps = lpAddrList->aEntries[i].rgPropVals;
 			ULONG ulProps = lpAddrList->aEntries[i].cValues;
 
 			/* Overwrite PR_ROWID */
-			for (ULONG j = 0; j < ulProps; j++) {
+			for (ULONG j = 0; j < ulProps; ++j) {
 				if (PROP_ID(lpProps[j].ulPropTag) != PROP_ID(PR_ROWID))
 					continue;
 
@@ -581,7 +581,7 @@ HRESULT ECDisplayTable::CreateTableFromResolved(ECABProp *lpABProp, LPCIID lpiid
 		goto exit;
 
 	/* Remote PR_ROWID, and set columns */
-	tagaColumns.cValues--;
+	--tagaColumns.cValues;
 	hr = lpView->SetColumns((LPSPropTagArray)&tagaColumns, MAPI_DEFERRED_ERRORS);
 	if (hr != hrSuccess)
 		goto exit;
@@ -618,7 +618,7 @@ HRESULT ECDisplayTable::ResolveFromEntryId(IABContainer *lpABContainer, LPSPropV
 
 		lpAddrList->cEntries = 0;
 
-		for (ULONG i = 0; i < lpEntryId->Value.MVbin.cValues; i++) {
+		for (ULONG i = 0; i < lpEntryId->Value.MVbin.cValues; ++i) {
 			hr = lpABContainer->OpenEntry(lpEntryId->Value.MVbin.lpbin[i].cb, (LPENTRYID)lpEntryId->Value.MVbin.lpbin[i].lpb,
 										  &IID_IMAPIProp, 0, &ulObj, (LPUNKNOWN *)&lpABObject);
 			if (hr != hrSuccess) {
@@ -634,7 +634,7 @@ HRESULT ECDisplayTable::ResolveFromEntryId(IABContainer *lpABContainer, LPSPropV
 				goto exit;
 
 			hr = hrSuccess;
-			lpAddrList->cEntries++;
+			++lpAddrList->cEntries;
 		}
 	} else {
 		hr = MAPIAllocateBuffer(CbNewADRLIST(1), (LPVOID *)&lpAddrList);

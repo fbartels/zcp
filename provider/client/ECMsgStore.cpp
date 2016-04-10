@@ -685,10 +685,9 @@ HRESULT ECMsgStore::Reload(void *lpParam, ECSESSIONID sessionid)
 	ECMsgStore *lpThis = (ECMsgStore *)lpParam;
 	std::set<ULONG>::const_iterator iter;
 
-	for(iter = lpThis->m_setAdviseConnections.begin(); iter != lpThis->m_setAdviseConnections.end(); iter++) {
+	for (iter = lpThis->m_setAdviseConnections.begin();
+	     iter != lpThis->m_setAdviseConnections.end(); ++iter)
 		lpThis->m_lpNotifyClient->Reregister(*iter);
-	}
-
 	return hr;
 }
 
@@ -1069,8 +1068,7 @@ HRESULT ECMsgStore::GetReceiveFolderTable(ULONG ulFlags, LPMAPITABLE *lppTable)
 	if(hr != hrSuccess)
 		goto exit;
 
-	for(i=0; i<lpsRowSet->cRows; i++)
-	{
+	for (i = 0; i < lpsRowSet->cRows; ++i) {
 		hr = lpMemTable->HrModifyRow(ECKeyTable::TABLE_ROW_ADD, NULL, lpsRowSet->aRow[i].lpProps, NUM_RFT_PROPS);
 		if(hr != hrSuccess)
 			goto exit;
@@ -2813,24 +2811,20 @@ HRESULT ECMsgStore::SetSpecialEntryIdOnFolder(LPMAPIFOLDER lpFolder, ECMAPIProp 
 			ECAllocateMore(sizeof(SBinary)*lpPropMVValueNew->Value.MVbin.cValues, lpPropMVValueNew, (void**)&lpPropMVValueNew->Value.MVbin.lpbin);
 			memset(lpPropMVValueNew->Value.MVbin.lpbin, 0, sizeof(SBinary)*lpPropMVValueNew->Value.MVbin.cValues);
 
-			for(unsigned int i=0; i <lpPropMVValueNew->Value.MVbin.cValues; i++)
-			{
+			for (unsigned int i = 0; i <lpPropMVValueNew->Value.MVbin.cValues; ++i)
 				if(ulMVPos == i)
 					lpPropMVValueNew->Value.MVbin.lpbin[i] = lpPropValue->Value.bin;
-			}
 		}else{
 			lpPropMVValueNew->Value.MVbin.cValues = (lpPropMVValue->Value.MVbin.cValues < ulMVPos)? lpPropValue->Value.bin.cb : ulMVPos+1;
 			ECAllocateMore(sizeof(SBinary)*lpPropMVValueNew->Value.MVbin.cValues, lpPropMVValueNew, (void**)&lpPropMVValueNew->Value.MVbin.lpbin);
 
 			memset(lpPropMVValueNew->Value.MVbin.lpbin, 0, sizeof(SBinary)*lpPropMVValueNew->Value.MVbin.cValues);
 
-			for(unsigned int i=0; i <lpPropMVValueNew->Value.MVbin.cValues; i++)
-			{
+			for (unsigned int i = 0; i < lpPropMVValueNew->Value.MVbin.cValues; ++i)
 				if(ulMVPos == i)
 					lpPropMVValueNew->Value.MVbin.lpbin[i] = lpPropValue->Value.bin;
 				else
 					lpPropMVValueNew->Value.MVbin.lpbin[i] = lpPropMVValue->Value.MVbin.lpbin[i];
-			}
 		}
 
 		lpPropMVValueNew->ulPropTag = ulPropTag;
@@ -3463,7 +3457,7 @@ HRESULT ECMsgStore::MsgStoreDnToPseudoUrl(const utf8string &strMsgStoreDN, utf8s
 		return MAPI_E_INVALID_PARAMETER;
 
 	// Check if the for last part starts with 'cn='
-	riPart++;
+	++riPart;
 	if (strnicmp(riPart->c_str(), "cn=", 3) != 0)
 		return MAPI_E_INVALID_PARAMETER;
 

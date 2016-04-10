@@ -435,7 +435,7 @@ HRESULT ECExchangeImportContentsChanges::ImportMessageDeletion(ULONG ulFlags, LP
 	if ((hr = MAPIAllocateBuffer(sizeof(SBinary)* lpSourceEntryList->cValues, (LPVOID*)&EntryList.lpbin)) != hrSuccess)
 		goto exit;
 
-	for(ulSKNr = 0; ulSKNr < lpSourceEntryList->cValues; ulSKNr++){
+	for (ulSKNr = 0; ulSKNr < lpSourceEntryList->cValues; ++ulSKNr) {
 		hr = m_lpFolder->GetMsgStore()->lpTransport->HrEntryIDFromSourceKey(m_lpFolder->GetMsgStore()->m_cbEntryId, m_lpFolder->GetMsgStore()->m_lpEntryId, m_lpSourceKey->Value.bin.cb, m_lpSourceKey->Value.bin.lpb, lpSourceEntryList->lpbin[ulSKNr].cb, lpSourceEntryList->lpbin[ulSKNr].lpb, &EntryList.lpbin[EntryList.cValues].cb, (LPENTRYID*)&EntryList.lpbin[EntryList.cValues].lpb);
 		if(hr == MAPI_E_NOT_FOUND){
 			hr = hrSuccess;
@@ -443,7 +443,7 @@ HRESULT ECExchangeImportContentsChanges::ImportMessageDeletion(ULONG ulFlags, LP
 		}
 		if(hr != hrSuccess)
 			goto exit;
-		EntryList.cValues++;
+		++EntryList.cValues;
 	}
 	
 	if(EntryList.cValues == 0)
@@ -455,9 +455,8 @@ HRESULT ECExchangeImportContentsChanges::ImportMessageDeletion(ULONG ulFlags, LP
 
 exit:
 	if(EntryList.lpbin){
-		for(ulSKNr = 0; ulSKNr < EntryList.cValues; ulSKNr++){
+		for (ulSKNr = 0; ulSKNr < EntryList.cValues; ++ulSKNr)
 			MAPIFreeBuffer(EntryList.lpbin[ulSKNr].lpb);
-		}
 		MAPIFreeBuffer(EntryList.lpbin);
 	}
 	return hr;
@@ -468,7 +467,7 @@ HRESULT ECExchangeImportContentsChanges::ImportPerUserReadStateChange(ULONG cEle
 	ULONG ulSKNr, cbEntryId;
 	LPENTRYID lpEntryId = NULL;
 
-	for(ulSKNr = 0; ulSKNr < cElements; ulSKNr++){
+	for (ulSKNr = 0; ulSKNr < cElements; ++ulSKNr) {
 		hr = m_lpFolder->GetMsgStore()->lpTransport->HrEntryIDFromSourceKey(m_lpFolder->GetMsgStore()->m_cbEntryId, m_lpFolder->GetMsgStore()->m_lpEntryId , m_lpSourceKey->Value.bin.cb, m_lpSourceKey->Value.bin.lpb, lpReadState[ulSKNr].cbSourceKey, lpReadState[ulSKNr].pbSourceKey, &cbEntryId, &lpEntryId);
 		if(hr == MAPI_E_NOT_FOUND){
 			hr = hrSuccess;
@@ -704,7 +703,7 @@ HRESULT ECExchangeImportContentsChanges::CreateConflictMessageOnly(LPMESSAGE lpM
 	if(hr != hrSuccess)
 		goto exit;
 
-	for(ulCount = 0; ulCount < lpConflictItems->Value.MVbin.cValues; ulCount++){
+	for (ulCount = 0; ulCount < lpConflictItems->Value.MVbin.cValues; ++ulCount) {
 		lpEntryIds[ulCount].cb = lpConflictItems->Value.MVbin.lpbin[ulCount].cb;
 		lpEntryIds[ulCount].lpb = lpConflictItems->Value.MVbin.lpbin[ulCount].lpb;
 	}
@@ -712,7 +711,7 @@ HRESULT ECExchangeImportContentsChanges::CreateConflictMessageOnly(LPMESSAGE lpM
 	lpEntryIds[ulCount].lpb = lpEntryIdProp->Value.bin.lpb;
 
 	lpConflictItems->Value.MVbin.lpbin = lpEntryIds;
-	lpConflictItems->Value.MVbin.cValues++;
+	++lpConflictItems->Value.MVbin.cValues;
 
 	if (lppConflictItems) {
 		*lppConflictItems = lpConflictItems;
@@ -793,11 +792,9 @@ HRESULT ECExchangeImportContentsChanges::CreateConflictFolders(){
 		goto exit;
 
 	//copy from original PR_ADDITIONAL_REN_ENTRYIDS
-	if(lpAdditionalREN){
-		for(ulCount = 0; ulCount < lpAdditionalREN->Value.MVbin.cValues; ulCount++){
+	if(lpAdditionalREN)
+		for (ulCount = 0; ulCount < lpAdditionalREN->Value.MVbin.cValues; ++ulCount)
 			lpNewAdditionalREN->Value.MVbin.lpbin[ulCount] = lpAdditionalREN->Value.MVbin.lpbin[ulCount];
-		}
-	}
 
 	hr = CreateConflictFolder(_("Sync Issues"), lpNewAdditionalREN, 1, lpParentFolder, &lpConflictFolder);
 	if(hr != hrSuccess) {

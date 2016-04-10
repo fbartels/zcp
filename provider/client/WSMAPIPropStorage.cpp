@@ -240,7 +240,9 @@ HRESULT WSMAPIPropStorage::HrMapiObjectToSoapObject(MAPIOBJECT *lpsMapiObject, s
 		lpSaveObj->delProps.__ptr = new unsigned int[size];
 		lpSaveObj->delProps.__size = size;
 		i = 0;
-		for (iterDelProps = lpsMapiObject->lstDeleted->begin(); iterDelProps != lpsMapiObject->lstDeleted->end(); iterDelProps++, i++)
+		for (iterDelProps = lpsMapiObject->lstDeleted->begin();
+		     iterDelProps != lpsMapiObject->lstDeleted->end();
+		     ++iterDelProps, ++i)
 			lpSaveObj->delProps.__ptr[i] = *iterDelProps;
 	} else {
 		lpSaveObj->delProps.__ptr = NULL;
@@ -252,7 +254,10 @@ HRESULT WSMAPIPropStorage::HrMapiObjectToSoapObject(MAPIOBJECT *lpsMapiObject, s
 	if (size != 0) {
 		lpSaveObj->modProps.__ptr = new struct propVal[size];
 		i = 0;
-		for (iterModProps = lpsMapiObject->lstModified->begin(); iterModProps != lpsMapiObject->lstModified->end(); iterModProps++) {
+		for (iterModProps = lpsMapiObject->lstModified->begin();
+		     iterModProps != lpsMapiObject->lstModified->end();
+		     ++iterModProps)
+		{
 			SPropValue tmp = iterModProps->GetMAPIPropValRef();
 
 			if( PROP_ID(tmp.ulPropTag) == ulPropId) {
@@ -266,7 +271,7 @@ HRESULT WSMAPIPropStorage::HrMapiObjectToSoapObject(MAPIOBJECT *lpsMapiObject, s
 
 			hr = CopyMAPIPropValToSOAPPropVal(&lpSaveObj->modProps.__ptr[i], &tmp, lpConverter);
 			if(hr == hrSuccess)
-				i++;
+				++i;
 		}
 		lpSaveObj->modProps.__size = i;
 	} else {
@@ -283,7 +288,9 @@ HRESULT WSMAPIPropStorage::HrMapiObjectToSoapObject(MAPIOBJECT *lpsMapiObject, s
 			lpSaveObj->__ptr = new struct saveObject[size];
 			i = 0;
 			size = 0;
-			for (iterChildren = lpsMapiObject->lstChildren->begin(); iterChildren != lpsMapiObject->lstChildren->end(); iterChildren++, i++) {
+			for (iterChildren = lpsMapiObject->lstChildren->begin();
+			     iterChildren != lpsMapiObject->lstChildren->end();
+			     ++iterChildren, ++i) {
 				// Only send children if:
 				// - Modified AND NOT deleted
 				// - Deleted AND loaded from server (locally created/deleted items with no server ID needn't be sent)
@@ -330,7 +337,9 @@ HRESULT WSMAPIPropStorage::HrUpdateSoapObject(MAPIOBJECT *lpsMapiObject, struct 
 		lpsSaveObj->lpInstanceIds = NULL;
 
 		/* Search for the correct property and copy it into the soap object, note that we already allocated the required memory... */
-		for (iterProps = lpsMapiObject->lstModified->begin(); iterProps != lpsMapiObject->lstModified->end(); iterProps++) {
+		for (iterProps = lpsMapiObject->lstModified->begin();
+		     iterProps != lpsMapiObject->lstModified->end();
+		     ++iterProps) {
 			sData = iterProps->GetMAPIPropValRef();
 
 			if (PROP_ID(sData.ulPropTag) != ulPropId)
@@ -345,8 +354,7 @@ HRESULT WSMAPIPropStorage::HrUpdateSoapObject(MAPIOBJECT *lpsMapiObject, struct 
 			hr = CopyMAPIPropValToSOAPPropVal(&lpsSaveObj->modProps.__ptr[lpsSaveObj->modProps.__size], &sData, lpConverter);
 			if(hr != hrSuccess)
 				return hr;
-
-			lpsSaveObj->modProps.__size++;
+			++lpsSaveObj->modProps.__size;
 			break;
 		}
 
@@ -354,7 +362,7 @@ HRESULT WSMAPIPropStorage::HrUpdateSoapObject(MAPIOBJECT *lpsMapiObject, struct 
 		ASSERT(!(iterProps == lpsMapiObject->lstModified->end()) );
 	}
 
-	for (i = 0; i < lpsSaveObj->__size; i++) {
+	for (i = 0; i < lpsSaveObj->__size; ++i) {
 		MAPIOBJECT find(lpsSaveObj->__ptr[i].ulObjType, lpsSaveObj->__ptr[i].ulClientId);
 		iter = lpsMapiObject->lstChildren->find(&find);
 		
@@ -372,13 +380,13 @@ void WSMAPIPropStorage::DeleteSoapObject(struct saveObject *lpSaveObj)
 	int i;
 
 	if (lpSaveObj->__ptr) {
-		for (i = 0; i < lpSaveObj->__size; i++)
+		for (i = 0; i < lpSaveObj->__size; ++i)
 			DeleteSoapObject(&lpSaveObj->__ptr[i]);
 		delete [] lpSaveObj->__ptr;
 	}
 
 	if (lpSaveObj->modProps.__ptr) {
-		for (i = 0; i < lpSaveObj->modProps.__size; i++)
+		for (i = 0; i < lpSaveObj->modProps.__size; ++i)
 			FreePropVal(&lpSaveObj->modProps.__ptr[i], false);
 		delete [] lpSaveObj->modProps.__ptr;
 	}
@@ -390,10 +398,8 @@ void WSMAPIPropStorage::DeleteSoapObject(struct saveObject *lpSaveObj)
 
 ECRESULT WSMAPIPropStorage::EcFillPropTags(struct saveObject *lpsSaveObj, MAPIOBJECT *lpsMapiObj)
 {
-	for (int i = 0; i < lpsSaveObj->delProps.__size; i++) {
+	for (int i = 0; i < lpsSaveObj->delProps.__size; ++i)
 		lpsMapiObj->lstAvailable->push_back(lpsSaveObj->delProps.__ptr[i]);
-	}
-
 	return erSuccess;
 }
 
@@ -403,7 +409,7 @@ ECRESULT WSMAPIPropStorage::EcFillPropValues(struct saveObject *lpsSaveObj, MAPI
 	LPSPropValue lpsProp = NULL;
 	convert_context	context;
 
-	for (int i = 0; i < lpsSaveObj->modProps.__size; i++) {
+	for (int i = 0; i < lpsSaveObj->modProps.__size; ++i) {
 		ECAllocateBuffer(sizeof(SPropValue), (void **)&lpsProp);
 
 		ec = CopySOAPPropValToMAPIPropVal(lpsProp, &lpsSaveObj->modProps.__ptr[i], lpsProp, &context);
@@ -460,7 +466,7 @@ HRESULT WSMAPIPropStorage::HrUpdateMapiObject(MAPIOBJECT *lpClientObj, struct sa
 		if ((*iterObj)->bDelete) {
 			// this child was removed, so we don't need it anymore
 			iterDel = iterObj;
-			iterObj++;
+			++iterObj;
 			FreeMapiObject(*iterDel);
 			lpClientObj->lstChildren->erase(iterDel);
 		} else if ((*iterObj)->bChanged) {
@@ -469,7 +475,7 @@ HRESULT WSMAPIPropStorage::HrUpdateMapiObject(MAPIOBJECT *lpClientObj, struct sa
 			while (i < lpsServerObj->__size) {
 				if ((*iterObj)->ulUniqueId == lpsServerObj->__ptr[i].ulClientId && (*iterObj)->ulObjType == lpsServerObj->__ptr[i].ulObjType)
 					break;
-				i++;
+				++i;
 			}
 			if (i == lpsServerObj->__size) {
 				// huh?
@@ -479,9 +485,9 @@ HRESULT WSMAPIPropStorage::HrUpdateMapiObject(MAPIOBJECT *lpClientObj, struct sa
 
 			HrUpdateMapiObject(*iterObj, &lpsServerObj->__ptr[i]);
 
-			iterObj++;
+			++iterObj;
 		} else {
-			iterObj++;
+			++iterObj;
 			// this was never sent to the server, so it is not going to be in the server object
 		}
 	}
@@ -558,7 +564,7 @@ ECRESULT WSMAPIPropStorage::ECSoapObjectToMapiObject(struct saveObject *lpsSaveO
 	lpsMapiObject->ulObjType = lpsSaveObj->ulObjType;
 
 	// children
-	for (i = 0; i < lpsSaveObj->__size; i++) {
+	for (i = 0; i < lpsSaveObj->__size; ++i) {
 		switch (lpsSaveObj->__ptr[i].ulObjType) {
 		case MAPI_ATTACH:
 			AllocNewMapiObject(ulAttachUniqueId++, lpsSaveObj->__ptr[i].ulServerId, lpsSaveObj->__ptr[i].ulObjType, &mo);

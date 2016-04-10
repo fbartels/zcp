@@ -139,7 +139,7 @@ ECMAPITable::~ECMAPITable()
 	while( iterMapInt != m_ulConnectionList.end() )
 	{
 		iterMapIntDel = iterMapInt;
-		iterMapInt++;
+		++iterMapInt;
 		Unadvise(*iterMapIntDel);
 	}
 
@@ -739,7 +739,8 @@ HRESULT ECMAPITable::Reload(void *lpParam)
 
 	// The underlying data has been reloaded, therefore we must re-register the advises. This is called
 	// after the transport has re-established its state
-	for(iter = lpThis->m_ulConnectionList.begin(); iter != lpThis->m_ulConnectionList.end(); iter++) {
+	for (iter = lpThis->m_ulConnectionList.begin();
+	     iter != lpThis->m_ulConnectionList.end(); ++iter) {
 		hr = lpThis->lpNotifyClient->Reregister(*iter, 4, (BYTE *)&lpThis->lpTableOps->ulTableId);
 		if(hr != hrSuccess)
 			goto exit;

@@ -100,7 +100,7 @@ HRESULT ClientUtil::HrInitializeStatusRow (const char * lpszProviderDisplay, ULO
 		if(hResult != hrSuccess)
 			goto exit;
 		memcpy(lpspvStatusRow[cCurVal].Value.lpszA, lpszProviderDisplay, size);
-		cCurVal++;
+		++cCurVal;
 
 	// Set the PR_DISPLAY_NAME property
 		lpspvStatusRow[cCurVal].ulPropTag = PR_DISPLAY_NAME_A;
@@ -108,7 +108,7 @@ HRESULT ClientUtil::HrInitializeStatusRow (const char * lpszProviderDisplay, ULO
 		if(hResult != hrSuccess)
 			goto exit;
 		memcpy(lpspvStatusRow[cCurVal].Value.lpszA, lpszProviderDisplay, size);
-		cCurVal++;
+		++cCurVal;
 	}
 
 	// PR_PROVIDER_DLL_NAME

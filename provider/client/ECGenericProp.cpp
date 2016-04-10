@@ -105,7 +105,7 @@ ECGenericProp::~ECGenericProp()
 		FreeMapiObject(m_sMapiObject);
 
 	if(lstProps) {
-		for(iterProps = lstProps->begin(); iterProps != lstProps->end(); iterProps++)
+		for (iterProps = lstProps->begin(); iterProps != lstProps->end(); ++iterProps)
 			iterProps->second.DeleteProperty();
 
 		delete lstProps;
@@ -461,9 +461,8 @@ HRESULT ECGenericProp::HrSetClean()
 	ECPropertyEntryIterator iterProps;
 
 	// also remove deleted marked properties, since the object isn't reloaded from the server anymore
-	for(iterProps = lstProps->begin(); iterProps != lstProps->end(); iterProps++) {
-			iterProps->second.HrSetClean();
-	}
+	for (iterProps = lstProps->begin(); iterProps != lstProps->end(); ++iterProps)
+		iterProps->second.HrSetClean();
 
 	m_setDeletedProps.clear();
 
@@ -484,13 +483,12 @@ HRESULT ECGenericProp::HrRemoveModifications(MAPIOBJECT *lpsMapiObject, ULONG ul
 
 	lpsMapiObject->lstDeleted->remove(ulPropTag);
 
-	for(iterProps = lpsMapiObject->lstModified->begin(); iterProps != lpsMapiObject->lstModified->end(); iterProps++) {
+	for (iterProps = lpsMapiObject->lstModified->begin();
+	     iterProps != lpsMapiObject->lstModified->end(); ++iterProps)
 		if(iterProps->GetPropTag() == ulPropTag) {
 			lpsMapiObject->lstModified->erase(iterProps);
 			break;
 		}
-	}
-
 	return hr;
 }
 
@@ -584,15 +582,15 @@ HRESULT ECGenericProp::SaveChanges(ULONG ulFlags)
 
 	// save into m_sMapiObject
 	
-	for (iterDelProps = m_setDeletedProps.begin(); iterDelProps != m_setDeletedProps.end(); iterDelProps++) {
+	for (iterDelProps = m_setDeletedProps.begin();
+	     iterDelProps != m_setDeletedProps.end(); ++iterDelProps) {
 		// Make sure the property is not present in deleted/modified list
 		HrRemoveModifications(m_sMapiObject, *iterDelProps);
 
 		m_sMapiObject->lstDeleted->push_back(*iterDelProps);
 	}
 
-	for (iterProps = lstProps->begin(); iterProps != lstProps->end(); iterProps++) {
-
+	for (iterProps = lstProps->begin(); iterProps != lstProps->end(); ++iterProps) {
 		// Property is dirty, so we have to save it
 		if (iterProps->second.FIsDirty()) {
 			// Save in the 'modified' list
@@ -630,8 +628,8 @@ HRESULT ECGenericProp::SaveChanges(ULONG ulFlags)
 	// that save to ECParentStorage, the object will be untouched. The code below will do nothing.
 
 	// Large properties received
-	for(iterPropTags = m_sMapiObject->lstAvailable->begin(); iterPropTags != m_sMapiObject->lstAvailable->end(); iterPropTags++) {
-		
+	for (iterPropTags = m_sMapiObject->lstAvailable->begin();
+	     iterPropTags != m_sMapiObject->lstAvailable->end(); ++iterPropTags) {
 		// ONLY if not present
 		iterProps = lstProps->find(PROP_ID(*iterPropTags));
 		if (iterProps == lstProps->end() || iterProps->second.GetPropTag() != *iterPropTags) {
@@ -642,13 +640,13 @@ HRESULT ECGenericProp::SaveChanges(ULONG ulFlags)
 	m_sMapiObject->lstAvailable->clear();
 
 	// Normal properties with value
-	for (iterPropVals = m_sMapiObject->lstProperties->begin(); iterPropVals != m_sMapiObject->lstProperties->end(); iterPropVals++) {
+	for (iterPropVals = m_sMapiObject->lstProperties->begin();
+	     iterPropVals != m_sMapiObject->lstProperties->end(); ++iterPropVals)
 		// don't add any 'error' types ... (the storage object shouldn't really give us these anyway ..)
 		if (PROP_TYPE((*iterPropVals).GetPropTag()) != PT_ERROR) {
 			SPropValue tmp = iterPropVals->GetMAPIPropValRef();
 			HrSetRealProp(&tmp);
 		}
-	}
 
 	// Note that we currently don't support the server removing properties after the SaveObject call
 
@@ -808,7 +806,7 @@ HRESULT ECGenericProp::HrLoadProps()
 		m_sMapiObject = NULL;
 
 		// only remove my own properties: keep recipients and attachment tables
-		for(iterProps = lstProps->begin(); iterProps != lstProps->end(); iterProps++)
+		for (iterProps = lstProps->begin(); iterProps != lstProps->end(); ++iterProps)
 			iterProps->second.DeleteProperty();
 
 		lstProps->clear();
@@ -824,14 +822,16 @@ HRESULT ECGenericProp::HrLoadProps()
 
 	// Add *all* the entries as with empty values; values for these properties will be
 	// retrieved on-demand
-	for(iterPropTags = m_sMapiObject->lstAvailable->begin(); iterPropTags != m_sMapiObject->lstAvailable->end(); iterPropTags++) {
+	for (iterPropTags = m_sMapiObject->lstAvailable->begin();
+	     iterPropTags != m_sMapiObject->lstAvailable->end(); ++iterPropTags) {
 		ECPropertyEntry entry(*iterPropTags);
 
 		lstProps->insert(std::make_pair(PROP_ID(*iterPropTags), entry));
 	}
 
 	// Load properties
-	for (iterPropVals = m_sMapiObject->lstProperties->begin(); iterPropVals != m_sMapiObject->lstProperties->end(); iterPropVals++) {
+	for (iterPropVals = m_sMapiObject->lstProperties->begin();
+	     iterPropVals != m_sMapiObject->lstProperties->end(); ++iterPropVals) {
 		// don't add any 'error' types ... (the storage object shouldn't really give us these anyway ..)
 		if (PROP_TYPE((*iterPropVals).GetPropTag()) != PT_ERROR) {
 			SPropValue tmp = iterPropVals->GetMAPIPropValRef();
@@ -942,7 +942,7 @@ HRESULT ECGenericProp::GetProps(LPSPropTagArray lpPropTagArray, ULONG ulFlags, U
 
 	ECAllocateBuffer(sizeof(SPropValue) * lpGetPropTagArray->cValues, (LPVOID *)&lpsPropValue);
 
-	for(i=0;i < lpGetPropTagArray->cValues; i++) {
+	for (i = 0; i < lpGetPropTagArray->cValues; ++i) {
 		if(HrGetHandler(lpGetPropTagArray->aulPropTag[i], NULL, &lpfnGetProp, &lpParam) == hrSuccess) {
 			lpsPropValue[i].ulPropTag = lpGetPropTagArray->aulPropTag[i];
 
@@ -996,8 +996,8 @@ HRESULT ECGenericProp::GetPropList(ULONG ulFlags, LPSPropTagArray FAR * lppPropT
 	// Some will overlap so we've actually allocated slightly too much memory
 
 	// Add the callback types first
-	for(iterCallBack = lstCallBack.begin(); iterCallBack != lstCallBack.end(); iterCallBack++) {
-
+	for (iterCallBack = lstCallBack.begin();
+	     iterCallBack != lstCallBack.end(); ++iterCallBack) {
 		// Don't add 'hidden' properties
 		if(iterCallBack->second.fHidden)
 			continue;
@@ -1028,7 +1028,7 @@ HRESULT ECGenericProp::GetPropList(ULONG ulFlags, LPSPropTagArray FAR * lppPropT
 	}
 
 	// Then add the others, if not added yet
-	for(iterProps = lstProps->begin(); iterProps != lstProps->end() ; iterProps++) {
+	for (iterProps = lstProps->begin(); iterProps != lstProps->end(); ++iterProps) {
 		if(HrGetHandler(iterProps->second.GetPropTag(),NULL,NULL,NULL) != 0) {
 			ULONG ulPropTag = iterProps->second.GetPropTag();
 
@@ -1073,7 +1073,7 @@ HRESULT ECGenericProp::SetProps(ULONG cValues, LPSPropValue lpPropArray, LPSProp
 	if(hr != hrSuccess)
 		goto exit;
 
-	for(unsigned int i=0;i<cValues;i++) {
+	for (unsigned int i = 0; i < cValues; ++i) {
 		// Ignore the PR_NULL property tag and all properties with a type of PT_ERROR;
 		// no changes and report no problems in the SPropProblemArray structure. 
 		if(PROP_TYPE(lpPropArray[i].ulPropTag) == PR_NULL ||
@@ -1090,7 +1090,7 @@ HRESULT ECGenericProp::SetProps(ULONG cValues, LPSPropValue lpPropArray, LPSProp
 			lpProblems->aProblem[nProblem].scode = hrT;
 			lpProblems->aProblem[nProblem].ulIndex = i;
 			lpProblems->aProblem[nProblem].ulPropTag = lpPropArray[i].ulPropTag; // Hold here the real property
-			nProblem++;
+			++nProblem;
 		}
 	}
 
@@ -1140,8 +1140,7 @@ HRESULT ECGenericProp::DeleteProps(LPSPropTagArray lpPropTagArray, LPSPropProble
 	if (er != erSuccess)
 		return MAPI_E_NOT_ENOUGH_MEMORY;
 
-	for(unsigned int i=0;i<lpPropTagArray->cValues;i++) {
-
+	for (unsigned int i = 0; i < lpPropTagArray->cValues; ++i) {
 		// See if it's computed
 		iterCallBack = lstCallBack.find(PROP_ID(lpPropTagArray->aulPropTag[i]));
 
@@ -1151,7 +1150,7 @@ HRESULT ECGenericProp::DeleteProps(LPSPropTagArray lpPropTagArray, LPSPropProble
 			lpProblems->aProblem[nProblem].scode = MAPI_E_COMPUTED;
 			lpProblems->aProblem[nProblem].ulIndex = i;
 			lpProblems->aProblem[nProblem].ulPropTag = lpPropTagArray->aulPropTag[i];
-			nProblem++;
+			++nProblem;
 		} else {
 
 			hrT = HrDeleteRealProp(lpPropTagArray->aulPropTag[i],FALSE);
@@ -1161,7 +1160,7 @@ HRESULT ECGenericProp::DeleteProps(LPSPropTagArray lpPropTagArray, LPSPropProble
 				lpProblems->aProblem[nProblem].scode = hrT;
 				lpProblems->aProblem[nProblem].ulIndex = i;
 				lpProblems->aProblem[nProblem].ulPropTag = lpPropTagArray->aulPropTag[i];
-				nProblem++;
+				++nProblem;
 			}
 		}
 	}

@@ -242,8 +242,7 @@ HRESULT ECNotifyMaster::ReserveConnection(ULONG *lpulConnection)
 	pthread_mutex_lock(&m_hMutex);
 
 	*lpulConnection = m_ulConnection;
-	m_ulConnection++;
-
+	++m_ulConnection;
 	pthread_mutex_unlock(&m_hMutex);
 
 	return hrSuccess;
@@ -384,7 +383,7 @@ void* ECNotifyMaster::NotifyWatch(void *pTmpNotifyMaster)
 
 		/* 'exitable' sleep before reconnect */
 		if (bReconnect) {
-			for (ULONG i = 10; i > 0; i--) {
+			for (ULONG i = 10; i > 0; --i) {
 				Sleep(100);
 				if (pNotifyMaster->m_bThreadExit)
 					goto exit;
@@ -445,9 +444,10 @@ void* ECNotifyMaster::NotifyWatch(void *pTmpNotifyMaster)
 
 				pthread_mutex_lock(&pNotifyMaster->m_hMutex);
 
-				for(iterNotifyClients = pNotifyMaster->m_listNotifyClients.begin(); iterNotifyClients != pNotifyMaster->m_listNotifyClients.end(); iterNotifyClients++) {
+				for (iterNotifyClients = pNotifyMaster->m_listNotifyClients.begin();
+				     iterNotifyClients != pNotifyMaster->m_listNotifyClients.end();
+				     ++iterNotifyClients)
 					(*iterNotifyClients)->NotifyReload();
-				}
 
 				pthread_mutex_unlock(&pNotifyMaster->m_hMutex);
 				continue;
@@ -469,7 +469,7 @@ void* ECNotifyMaster::NotifyWatch(void *pTmpNotifyMaster)
 		 * Loop through all notifications and sort them by connection number
 		 * with these mappings we can later send all notifications per connection to the appropriate client.
 		 */
-		for (ULONG item = 0; item < pNotifyArray->__size; item++) {
+		for (ULONG item = 0; item < pNotifyArray->__size; ++item) {
 			ULONG ulConnection = pNotifyArray->__ptr[item].ulConnection;
 
 			// No need to do a find before an insert with a default object.
@@ -479,7 +479,10 @@ void* ECNotifyMaster::NotifyWatch(void *pTmpNotifyMaster)
 			iterNotifications->second.push_back(&pNotifyArray->__ptr[item]);
 		}
 
-		for (iterNotifications = mapNotifications.begin(); iterNotifications != mapNotifications.end(); iterNotifications++) {
+		for (iterNotifications = mapNotifications.begin();
+		     iterNotifications != mapNotifications.end();
+		     ++iterNotifications)
+		{
 			NOTIFYCONNECTIONCLIENTMAP::const_iterator iterClient;
 
 			/*

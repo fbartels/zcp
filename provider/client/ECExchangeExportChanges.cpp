@@ -633,7 +633,7 @@ HRESULT ECExchangeExportChanges::GetChangeCount(ULONG *lpcChanges) {
 
 	// Changes in flags or deletions are only one step all together
 	if(!m_lstHardDelete.empty() || !m_lstSoftDelete.empty() || !m_lstFlag.empty())
-	    cChanges++;
+		++cChanges;
 	cChanges += m_lstChange.size();
 
 	*lpcChanges = cChanges;
@@ -712,7 +712,7 @@ HRESULT ECExchangeExportChanges::ConfigSelective(ULONG ulPropTag, LPENTRYLIST lp
 	if(hr != hrSuccess)
 		return hr;
 
-	for(unsigned int i=0; i<lpEntries->cValues; i++) {
+	for (unsigned int i = 0; i < lpEntries->cValues; ++i) {
 		memset(&m_lpChanges[i], 0, sizeof(ICSCHANGE));
 		hr = MAPIAllocateMore(lpEntries->lpbin[i].cb, m_lpChanges, (void **)&m_lpChanges[i].sSourceKey.lpb);
 		if(hr != hrSuccess)
@@ -1037,7 +1037,7 @@ HRESULT ECExchangeExportChanges::ExportMessageChangesSlow() {
 			goto exit;
 		}
 
-		for(ulCount = 0; ulCount < lpRows->cRows; ulCount++){
+		for (ulCount = 0; ulCount < lpRows->cRows; ++ulCount) {
 			hr = lpDestMessage->DeleteAttach(lpRows->aRow[ulCount].lpProps[0].Value.ul, 0, NULL, 0);
 			if(hr != hrSuccess) {
 				ZLOG_DEBUG(m_lpLogger, "Unable to delete destination's attachment number %d", lpRows->aRow[ulCount].lpProps[0].Value.ul);
@@ -1068,7 +1068,7 @@ HRESULT ECExchangeExportChanges::ExportMessageChangesSlow() {
 		if(hr !=  hrSuccess)
 			goto exit;
 
-		for(ulCount = 0; ulCount < lpRows->cRows; ulCount++){
+		for (ulCount = 0; ulCount < lpRows->cRows; ++ulCount) {
 			hr = lpSourceMessage->OpenAttach(lpRows->aRow[ulCount].lpProps[0].Value.ul, &IID_IAttachment, 0, &lpSourceAttach);
 			if(hr !=  hrSuccess) {
 				ZLOG_DEBUG(m_lpLogger, "Unable to open attachment %d in source message", lpRows->aRow[ulCount].lpProps[0].Value.ul);
@@ -1177,8 +1177,8 @@ next:
 
 		MAPIFreeBuffer(lpPropTagArray);
 		lpPropTagArray = NULL;
-		m_ulStep++;
-		ulSteps++;
+		++m_ulStep;
+		++ulSteps;
 	}
 
 	if(m_ulStep < m_lstChange.size())
@@ -1340,15 +1340,13 @@ HRESULT ECExchangeExportChanges::ExportMessageFlags(){
 		goto exit;
 
 	ulCount = 0;
-	for(lpChange = m_lstFlag.begin(); lpChange != m_lstFlag.end(); lpChange++){
-
+	for (lpChange = m_lstFlag.begin(); lpChange != m_lstFlag.end(); ++lpChange) {
 		if ((hr = MAPIAllocateMore(lpChange->sSourceKey.cb, lpReadState, (LPVOID *)&lpReadState[ulCount].pbSourceKey)) != hrSuccess)
 			goto exit;
 		lpReadState[ulCount].cbSourceKey = lpChange->sSourceKey.cb;
 		memcpy(lpReadState[ulCount].pbSourceKey, lpChange->sSourceKey.lpb, lpChange->sSourceKey.cb );
 		lpReadState[ulCount].ulFlags = lpChange->ulFlags;
-
-		ulCount++;
+		++ulCount;
 	}
 
 	if(ulCount > 0){
@@ -1362,9 +1360,8 @@ HRESULT ECExchangeExportChanges::ExportMessageFlags(){
 		}
 
 		// Mark the flag changes as processed
-		for(lpChange = m_lstFlag.begin(); lpChange != m_lstFlag.end(); lpChange++){
+		for (lpChange = m_lstFlag.begin(); lpChange != m_lstFlag.end(); ++lpChange)
 			m_setProcessedChanges.insert(std::pair<unsigned int, std::string>(lpChange->ulChangeId, std::string((char *)lpChange->sSourceKey.lpb, lpChange->sSourceKey.cb)));
-		}
 	}
 
 exit:
@@ -1526,8 +1523,8 @@ next:
 		lpPropArray = NULL;
 		MAPIFreeBuffer(lpEntryID);
 		lpEntryID = NULL;
-		ulSteps++;
-		m_ulStep++;
+		++ulSteps;
+		++m_ulStep;
 	}
 
 	if(m_ulStep < m_lstChange.size())
@@ -1641,7 +1638,10 @@ HRESULT ECExchangeExportChanges::UpdateStream(LPSTREAM lpStream){
 		if(hr != hrSuccess)
 			goto exit;
 
-		for(iterProcessedChange = m_setProcessedChanges.begin(); iterProcessedChange != m_setProcessedChanges.end(); iterProcessedChange++) {
+		for (iterProcessedChange = m_setProcessedChanges.begin();
+		     iterProcessedChange != m_setProcessedChanges.end();
+		     ++iterProcessedChange)
+		{
 			ulChangeId = iterProcessedChange->first;
 			hr = lpStream->Write(&ulChangeId, 4, &ulSize);
 			if(hr != hrSuccess)
@@ -1687,13 +1687,12 @@ HRESULT ECExchangeExportChanges::ChangesToEntrylist(std::list<ICSCHANGE> * lpLst
 		lpEntryList->lpbin = NULL;
 	}
 	ulCount = 0;
-	for(lpChange = lpLstChanges->begin(); lpChange != lpLstChanges->end(); lpChange++){
-
+	for (lpChange = lpLstChanges->begin(); lpChange != lpLstChanges->end(); ++lpChange) {
 		lpEntryList->lpbin[ulCount].cb = lpChange->sSourceKey.cb;
 		if ((hr = MAPIAllocateMore(lpChange->sSourceKey.cb, lpEntryList, (void **)&lpEntryList->lpbin[ulCount].lpb)) != hrSuccess)
 			goto exit;
 		memcpy(lpEntryList->lpbin[ulCount].lpb, lpChange->sSourceKey.lpb, lpChange->sSourceKey.cb);
-		ulCount++;
+		++ulCount;
 	}
 
 	lpEntryList->cValues = ulCount;
@@ -1717,7 +1716,7 @@ HRESULT ECExchangeExportChanges::AddProcessedChanges(ChangeList &lstChanges)
 {
 	ChangeListIter iterChange;
 
-	for(iterChange = lstChanges.begin(); iterChange != lstChanges.end(); iterChange++)
+	for (iterChange = lstChanges.begin(); iterChange != lstChanges.end(); ++iterChange)
 		m_setProcessedChanges.insert(std::pair<unsigned int, std::string>(iterChange->ulChangeId, std::string((char *)iterChange->sSourceKey.lpb, iterChange->sSourceKey.cb)));
 
 	return hrSuccess;

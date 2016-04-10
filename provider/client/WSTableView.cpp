@@ -233,9 +233,8 @@ HRESULT WSTableView::HrQueryColumns(ULONG ulFlags, LPSPropTagArray *lppsPropTags
 	if(hr != hrSuccess)
 		goto exit;
 
-	for(i=0;i<sResponse.sPropTagArray.__size;i++) {
+	for (i = 0; i < sResponse.sPropTagArray.__size; ++i)
 		lpsPropTags->aulPropTag[i] = sResponse.sPropTagArray.__ptr[i];
-	}
 
 	lpsPropTags->cValues = sResponse.sPropTagArray.__size;
 
@@ -297,7 +296,7 @@ HRESULT WSTableView::HrSortTable(LPSSortOrderSet lpsSortOrderSet)
 	sSort.__size = lpsSortOrderSet->cSorts;
 	sSort.__ptr = new sortOrder[lpsSortOrderSet->cSorts];
 
-	for(i=0;i<lpsSortOrderSet->cSorts;i++) {
+	for (i = 0; i < lpsSortOrderSet->cSorts; ++i) {
 		sSort.__ptr[i].ulOrder = lpsSortOrderSet->aSort[i].ulOrder;
 		sSort.__ptr[i].ulPropTag = lpsSortOrderSet->aSort[i].ulPropTag;
 	}
@@ -712,7 +711,7 @@ HRESULT WSTableView::HrMulti(ULONG ulDeferredFlags, LPSPropTagArray lpsPropTagAr
         sSort.sSortOrder.__size = lpsSortOrderSet->cSorts;
         sSort.sSortOrder.__ptr = new sortOrder[lpsSortOrderSet->cSorts];
 
-        for(i=0;i<lpsSortOrderSet->cSorts;i++) {
+        for (i = 0; i < lpsSortOrderSet->cSorts; ++i) {
             sSort.sSortOrder.__ptr[i].ulOrder = lpsSortOrderSet->aSort[i].ulOrder;
             sSort.sSortOrder.__ptr[i].ulPropTag = lpsSortOrderSet->aSort[i].ulPropTag;
         }

@@ -136,8 +136,7 @@ HRESULT	ECExportAddressbookChanges::Config(LPSTREAM lpStream, ULONG ulFlags, IEC
 				return hr;
 
 			m_setProcessed.insert(ulProcessed);
-
-			ulCount--;
+			--ulCount;
 		}
 	}
 
@@ -304,8 +303,7 @@ HRESULT ECExportAddressbookChanges::Synchronize(ULONG *lpulSteps, ULONG *lpulPro
 
 	// Mark the change as processed
 	m_setProcessed.insert(m_lpChanges[m_ulThisChange].ulChangeId);
-
-    m_ulThisChange++;
+	++m_ulThisChange;
 
     if(lpulSteps)
         *lpulSteps = m_ulChanges;
@@ -361,7 +359,8 @@ HRESULT ECExportAddressbookChanges::UpdateState(LPSTREAM lpStream)
 		return hr;
 
 	// Write the processed IDs
-	for(iterProcessed = m_setProcessed.begin(); iterProcessed != m_setProcessed.end(); iterProcessed++) {
+	for (iterProcessed = m_setProcessed.begin();
+	     iterProcessed != m_setProcessed.end(); ++iterProcessed) {
 		ulProcessed = *iterProcessed;
 
 		hr = lpStream->Write(&ulProcessed, sizeof(ULONG), &ulWritten);

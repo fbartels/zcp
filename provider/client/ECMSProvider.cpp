@@ -583,9 +583,7 @@ HRESULT ECMSProvider::SpoolerLogon(LPMAPISUP lpMAPISup, ULONG ulUIParam, LPTSTR 
 		hr = MAPI_E_NO_ACCESS;
 		goto exit;
 	}
-
-	strSep++;
-
+	++strSep;
 	sProfileProps.strUserName = (wchar_t*)lpbSpoolSecurity;
 	sProfileProps.strPassword = strSep;
 

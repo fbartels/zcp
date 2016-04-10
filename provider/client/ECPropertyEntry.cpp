@@ -499,7 +499,7 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 
 		this->Value.MVbin.cValues = lpsProp->Value.MVbin.cValues;
 
-		for(unsigned int i=0;i<lpsProp->Value.MVbin.cValues;i++) {
+		for (unsigned int i = 0; i < lpsProp->Value.MVbin.cValues; ++i) {
 			if(lpsProp->Value.MVbin.lpbin[i].cb > 0)
 			{
 				if (lpsProp->Value.MVbin.lpbin[i].lpb == NULL)
@@ -530,9 +530,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 		if(ulSize < ulNewSize) {
 			
 			if(this->Value.MVszW.lppszW) {
-				for(i=0;i<this->Value.MVszW.cValues;i++) {
+				for (i = 0; i < this->Value.MVszW.cValues; ++i)
 					delete [] this->Value.MVszW.lppszW[i];
-				}
 				delete [] this->Value.MVszW.lppszW;
 			}
 
@@ -548,8 +547,7 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 
 		this->Value.MVszW.cValues = lpsProp->Value.MVszA.cValues;
 
-		for(unsigned int i=0;i<lpsProp->Value.MVszA.cValues;i++)
-		{
+		for (unsigned int i = 0; i < lpsProp->Value.MVszA.cValues; ++i) {
 			std::wstring wstrTmp;
 
 			if (lpsProp->Value.MVszA.lppszA[i] == NULL)
@@ -575,9 +573,8 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 
 		if(ulSize < ulNewSize) {
 			if(this->Value.MVszW.lppszW) {
-				for(unsigned int i=0;i<this->Value.MVszW.cValues;i++) {
+				for (unsigned int i = 0; i < this->Value.MVszW.cValues; ++i)
 					delete[] this->Value.MVszW.lppszW[i];
-				}
 				delete[] this->Value.MVszW.lppszW;
 			}
 
@@ -593,7 +590,7 @@ HRESULT ECProperty::CopyFromInternal(LPSPropValue lpsProp) {
 
 		this->Value.MVszW.cValues = lpsProp->Value.MVszW.cValues;
 
-		for(unsigned int i=0;i<lpsProp->Value.MVszW.cValues;i++) {
+		for (unsigned int i = 0; i < lpsProp->Value.MVszW.cValues; ++i) {
 			if (lpsProp->Value.MVszW.lppszW[i] == NULL)
 				return dwLastError = MAPI_E_INVALID_PARAMETER;
 			if(this->Value.MVszW.lppszW[i] == NULL || wcslen(this->Value.MVszW.lppszW[i]) < wcslen(lpsProp->Value.MVszW.lppszW[i])) {
@@ -718,9 +715,8 @@ ECProperty::~ECProperty()
 			ASSERT(("We should never have PT_MV_STRING8 storage", 0));
 			// Deliberate fallthrough
 		case PT_MV_UNICODE: {
-			for(unsigned int i=0;i<this->Value.MVszW.cValues;i++) {
+			for (unsigned int i = 0; i < this->Value.MVszW.cValues; ++i)
 				delete [] this->Value.MVszW.lppszW[i];
-			}
 			delete [] this->Value.MVszW.lppszW;
 			break;
 		}
@@ -951,7 +947,7 @@ HRESULT ECProperty::CopyTo(LPSPropValue lpsProp, void *lpBase, ULONG ulRequestPr
 			lpsProp->Value.MVbin.cValues = this->Value.MVbin.cValues;
 			lpsProp->Value.MVbin.lpbin = lpBin;
 			
-			for(unsigned int i=0;i<this->Value.MVbin.cValues;i++) {
+			for (unsigned int i = 0; i < this->Value.MVbin.cValues; ++i) {
 				lpsProp->Value.MVbin.lpbin[i].cb = this->Value.MVbin.lpbin[i].cb;
 				if(lpsProp->Value.MVbin.lpbin[i].cb > 0)
 				{

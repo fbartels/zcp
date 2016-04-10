@@ -571,9 +571,9 @@ HRESULT WSTransport::HrReLogon()
 
 	// Notify new session to listeners
 	pthread_mutex_lock(&m_mutexSessionReload);
-	for(iter = m_mapSessionReload.begin(); iter != m_mapSessionReload.end(); iter++) {
+	for (iter = m_mapSessionReload.begin();
+	     iter != m_mapSessionReload.end(); ++iter)
 		iter->second.second(iter->second.first, this->m_ecSessionId);
-	}
 	pthread_mutex_unlock(&m_mutexSessionReload);
 	return hrSuccess;
 }
@@ -615,7 +615,7 @@ ECRESULT WSTransport::TrySSOLogon(ZarafaCmd* lpCmd, LPCSTR szServer, utf8string 
 	if (SecStatus != SEC_E_OK)
 		goto exit;
 
-	for (ulPid = 0; ulPid < cPackages; ulPid++) {
+	for (ulPid = 0; ulPid < cPackages; ++ulPid) {
 		// find auto detect method, always (?) first item in the list
 		// TODO: config option to force a method?
 		if (_tcsicmp(_T("Negotiate"), lpPackageInfo[ulPid].Name) == 0)
@@ -1494,7 +1494,7 @@ HRESULT WSTransport::HrGetIDsFromNames(LPMAPINAMEID *lppPropNames, ULONG cNames,
 	ECAllocateBuffer(sizeof(struct namedProp) * cNames, (void **)&sNamedProps.__ptr);
 	memset(sNamedProps.__ptr, 0 , sizeof(struct namedProp) * cNames);
 
-	for(i=0;i<cNames;i++) {	
+	for (i = 0; i < cNames; ++i) {	
 		switch(lppPropNames[i]->ulKind) {
 		case MNID_ID:
 			ECAllocateMore(sizeof(unsigned int), sNamedProps.__ptr,(void **)&sNamedProps.__ptr[i].lpId);
@@ -1580,7 +1580,7 @@ HRESULT WSTransport::HrGetNamesFromIDs(LPSPropTagArray lpsPropTags, LPMAPINAMEID
 	ECAllocateBuffer(sizeof(LPMAPINAMEID) * sResponse.lpsNames.__size, (void **) &lppNames);
 
 	// Loop through all the returned names, and put it into the return value
-	for(i=0;i<sResponse.lpsNames.__size;i++) {
+	for (i = 0; i < sResponse.lpsNames.__size; ++i) {
 		// Each MAPINAMEID must be allocated
 		ECAllocateMore(sizeof(MAPINAMEID), lppNames, (void **) &lppNames[i]);
 
@@ -1654,8 +1654,7 @@ HRESULT WSTransport::HrGetReceiveFolderTable(ULONG ulFlags, ULONG cbStoreEntryID
 	memset(lpsRowSet, 0, CbNewSRowSet(sReceiveFolders.sFolderArray.__size));
 	lpsRowSet->cRows = sReceiveFolders.sFolderArray.__size;
 
-	for(i=0; i < sReceiveFolders.sFolderArray.__size; i++)
-	{
+	for (i = 0; i < sReceiveFolders.sFolderArray.__size; ++i) {
 		ulRowId = i+1;
 
 		lpsRowSet->aRow[i].cValues = NUM_RFT_PROPS;
@@ -3780,8 +3779,7 @@ HRESULT WSTransport::HrGetPermissionRules(int ulType, ULONG cbEntryID,
 	END_SOAP_CALL
 
 	ECAllocateBuffer(sizeof(ECPERMISSION) * sRightResponse.pRightsArray->__size, (void**)&lpECPermissions);
-	for(unsigned int i = 0; i < sRightResponse.pRightsArray->__size; i++)
-	{
+	for (unsigned int i = 0; i < sRightResponse.pRightsArray->__size; ++i) {
 		lpECPermissions[i].ulRights	= sRightResponse.pRightsArray->__ptr[i].ulRights;
 		lpECPermissions[i].ulState	= sRightResponse.pRightsArray->__ptr[i].ulState;
 		lpECPermissions[i].ulType	= sRightResponse.pRightsArray->__ptr[i].ulType;
@@ -3837,16 +3835,15 @@ HRESULT WSTransport::HrSetPermissionRules(ULONG cbEntryID, LPENTRYID lpEntryID,
 	sEntryId.__size = cbUnWrapStoreID;
 
 	// Count the updated items
-	for(i=0; i < cPermissions; i++){
+	for (i = 0; i < cPermissions; ++i)
 		if(lpECPermissions[i].ulState != RIGHT_NORMAL)
-			nChangedItems++;
-	}
+			++nChangedItems;
 
 	rArray.__ptr = s_alloc<rights>(m_lpCmd->soap, nChangedItems);
 	rArray.__size = nChangedItems;
 
 	nItem = 0;
-	for(i=0; i < cPermissions; i++){
+	for (i = 0 ; i < cPermissions; ++i) {
 		if(lpECPermissions[i].ulState != RIGHT_NORMAL){
 			rArray.__ptr[nItem].ulRights = lpECPermissions[i].ulRights;
 			rArray.__ptr[nItem].ulState	 = lpECPermissions[i].ulState;
@@ -3856,8 +3853,7 @@ HRESULT WSTransport::HrSetPermissionRules(ULONG cbEntryID, LPENTRYID lpEntryID,
 			hr = CopyMAPIEntryIdToSOAPEntryId(lpECPermissions[i].sUserId.cb, (LPENTRYID)lpECPermissions[i].sUserId.lpb, &rArray.__ptr[nItem].sUserId, true);
 			if (hr != hrSuccess)
 				goto exit;
-
-			nItem++;
+			++nItem;
 		}
 	}
 
@@ -3973,8 +3969,7 @@ HRESULT WSTransport::HrResolveNames(LPSPropTagArray lpPropTagArray, ULONG ulFlag
 	ASSERT(sResponse.aFlags.__size == lpFlagList->cFlags);
 	ASSERT((ULONG)sResponse.sRowSet.__size == lpAdrList->cEntries);
 
-	for (i = 0; i < sResponse.aFlags.__size; i++)
-	{
+	for (i = 0; i < sResponse.aFlags.__size; ++i) {
 		// Set the resolved items
 		if(lpFlagList->ulFlag[i] == MAPI_UNRESOLVED && sResponse.aFlags.__ptr[i] == MAPI_RESOLVED)
 		{
@@ -4489,7 +4484,7 @@ HRESULT WSTransport::HrGetChanges(const std::string& sourcekey, ULONG ulSyncId, 
 
 	ECAllocateBuffer(sResponse.sChangesArray.__size * sizeof(ICSCHANGE), (void**)&lpChanges);
 
-	for(i=0;i<sResponse.sChangesArray.__size;i++) {
+	for (i = 0; i < sResponse.sChangesArray.__size; ++i) {
 		lpChanges[i].ulChangeId = sResponse.sChangesArray.__ptr[i].ulChangeId;
 		lpChanges[i].ulChangeType = sResponse.sChangesArray.__ptr[i].ulChangeType;
 		lpChanges[i].ulFlags = sResponse.sChangesArray.__ptr[i].ulFlags;
@@ -4815,7 +4810,7 @@ HRESULT WSTransport::HrLicenseCapa(unsigned int ulServiceType, char ***lppszCapa
     if(hr != hrSuccess)
         goto exit;
 
-    for(unsigned int i=0; i < sResponse.sCapabilities.__size; i++) {
+    for (unsigned int i = 0; i < sResponse.sCapabilities.__size; ++i) {
         if ((hr = MAPIAllocateMore(strlen(sResponse.sCapabilities.__ptr[i])+1, lpszCapas, (void **) &lpszCapas[i])) != hrSuccess)
 		goto exit;
         strcpy(lpszCapas[i], sResponse.sCapabilities.__ptr[i]);
@@ -4974,7 +4969,7 @@ HRESULT WSTransport::AddSessionReloadCallback(void *lpParam, SESSIONRELOADCALLBA
 	m_mapSessionReload[m_ulReloadId] = data;
 	if(lpulId)
 		*lpulId = m_ulReloadId;
-	m_ulReloadId++;
+	++m_ulReloadId;
 	pthread_mutex_unlock(&m_mutexSessionReload);
 
 	return hrSuccess;

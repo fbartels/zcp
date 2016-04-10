@@ -582,7 +582,7 @@ HRESULT ECNotifyClient::ReleaseAll()
 
 	pthread_mutex_lock(&m_hMutex);
 
-	for(iIterAdvise = m_mapAdvise.begin(); iIterAdvise != m_mapAdvise.end(); iIterAdvise++){
+	for (iIterAdvise = m_mapAdvise.begin(); iIterAdvise != m_mapAdvise.end(); ++iIterAdvise) {
 		iIterAdvise->second->lpAdviseSink->Release();
 		iIterAdvise->second->lpAdviseSink = NULL;
 	}
@@ -621,12 +621,9 @@ HRESULT ECNotifyClient::NotifyReload()
 
 	// Don't send the notification while we are locked
 	pthread_mutex_lock(&m_hMutex);
-	for(iterAdvise = m_mapAdvise.begin(); iterAdvise != m_mapAdvise.end(); iterAdvise++) {
-		if(iterAdvise->second->cbKey == 4) {
+	for (iterAdvise = m_mapAdvise.begin(); iterAdvise != m_mapAdvise.end(); ++iterAdvise)
+		if (iterAdvise->second->cbKey == 4)
 			Notify(iterAdvise->first, notifications);
-		}
-	}
-
 	pthread_mutex_unlock(&m_hMutex);
 
 	return hr;
@@ -642,7 +639,8 @@ HRESULT ECNotifyClient::Notify(ULONG ulConnection, const NOTIFYLIST &lNotificati
 	NOTIFICATIONLIST			notifications;
 	NOTIFICATIONLIST::const_iterator iterNotification;
 
-	for (iterNotify = lNotifications.begin(); iterNotify != lNotifications.end(); iterNotify++) {
+	for (iterNotify = lNotifications.begin();
+	     iterNotify != lNotifications.end(); ++iterNotify) {
 		LPNOTIFICATION tmp = NULL;
 
 		hr = CopySOAPNotificationToMAPINotification(m_lpProvider, *iterNotify, &tmp);
@@ -678,7 +676,7 @@ HRESULT ECNotifyClient::Notify(ULONG ulConnection, const NOTIFYLIST &lNotificati
 			while (iterNotification != notifications.end() && i < MAX_NOTIFS_PER_CALL) {
 				/* We can do a straight memcpy here because pointers are still intact */
 				memcpy(&lpNotifs[i++], *iterNotification, sizeof(NOTIFICATION));
-				iterNotification++;
+				++iterNotification;
 			}
 
 			/* Send notification to the listener */
@@ -716,7 +714,8 @@ exit:
 	MAPIFreeBuffer(lpNotifs);
 
 	/* Release all notifications */
-	for (iterNotification = notifications.begin(); iterNotification != notifications.end(); iterNotification++)
+	for (iterNotification = notifications.begin();
+	     iterNotification != notifications.end(); ++iterNotification)
 		MAPIFreeBuffer(*iterNotification);
 
 	return hr;
@@ -742,7 +741,8 @@ HRESULT ECNotifyClient::NotifyChange(ULONG ulConnection, const NOTIFYLIST &lNoti
 		goto exit;
 	memset(lpSyncStates->lpbin, 0, sizeof *lpSyncStates->lpbin * MAX_NOTIFS_PER_CALL);
 
-	for (iterNotify = lNotifications.begin(); iterNotify != lNotifications.end(); iterNotify++) {
+	for (iterNotify = lNotifications.begin();
+	     iterNotify != lNotifications.end(); ++iterNotify) {
 		LPSBinary	tmp = NULL;
 
 		hr = CopySOAPChangeNotificationToSyncState(*iterNotify, &tmp, lpSyncStates);
@@ -774,7 +774,7 @@ HRESULT ECNotifyClient::NotifyChange(ULONG ulConnection, const NOTIFYLIST &lNoti
 			while (iterSyncStates != syncStates.end() && lpSyncStates->cValues < MAX_NOTIFS_PER_CALL) {
 				/* We can do a straight memcpy here because pointers are still intact */
 				memcpy(&lpSyncStates->lpbin[lpSyncStates->cValues++], *iterSyncStates, sizeof *lpSyncStates->lpbin);
-				iterSyncStates++;
+				++iterSyncStates;
 			}
 
 			/* Send notification to the listener */
