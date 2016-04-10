@@ -242,8 +242,10 @@ static HRESULT MungeForwardBody(LPMESSAGE lpMessage, LPMESSAGE lpOrigMessage)
 		// if body tag was not found, this will make it be placed after the first tag, probably <html>
 		if ((pos == strHTML.c_str() && *pos == '<') || pos != strHTML.c_str()) {
 			// not all html bodies start actually using tags, so only seek if we find a <, or if we found a body tag starting point.
-			while (*pos && *pos != '>') pos++;
-			if (*pos == '>') pos++;
+			while (*pos && *pos != '>')
+				++pos;
+			if (*pos == '>')
+				++pos;
 		}
 
 
@@ -523,7 +525,7 @@ static HRESULT CheckRecipients(ECLogger *lpLogger, LPADRBOOK lpAdrBook,
 
 	lpRecipients->cEntries = 0;
 
-	for (ULONG i = 0; i < lpRuleRecipients->cEntries; i++) {
+	for (ULONG i = 0; i < lpRuleRecipients->cEntries; ++i) {
 		hr = HrGetAddress(lpAdrBook, lpRuleRecipients->aEntries[i].rgPropVals, lpRuleRecipients->aEntries[i].cValues, PR_ENTRYID,
 						  CHANGE_PROP_TYPE(PR_DISPLAY_NAME, PT_UNSPECIFIED), CHANGE_PROP_TYPE(PR_ADDRTYPE, PT_UNSPECIFIED), CHANGE_PROP_TYPE(PR_SMTP_ADDRESS, PT_UNSPECIFIED), 
 						  strRuleName, strRuleType, strRuleAddress);
@@ -560,8 +562,7 @@ static HRESULT CheckRecipients(ECLogger *lpLogger, LPADRBOOK lpAdrBook,
             
             lpRecipType->Value.ul = MAPI_P1;
         }
-
-		lpRecipients->cEntries++;
+		++lpRecipients->cEntries;
 	}
 
 	if (lpRecipients->cEntries == 0) {
@@ -663,7 +664,7 @@ static HRESULT CreateForwardCopy(ECLogger *lpLogger, LPADRBOOK lpAdrBook,
         sPropResend.ulPropTag = PR_MESSAGE_FLAGS;
         sPropResend.Value.ul = MSGFLAG_UNSENT | MSGFLAG_RESEND | MSGFLAG_READ;
         
-        lpExclude->cValues--; // strip PR_MESSAGE_RECIPIENTS, since original recipients should be used
+		--lpExclude->cValues; // strip PR_MESSAGE_RECIPIENTS, since original recipients should be used
         hr = HrSetOneProp(lpFwdMsg, &sPropResend);
         if(hr != hrSuccess)
             goto exit;
@@ -974,8 +975,7 @@ HRESULT HrProcessRules(const std::string &recip, PyMapiPlugin *pyMapiPlugin,
 
 		sc -> countAdd("rules", "n_actions", int64_t(lpActions->cActions));
 
-		for(ULONG n=0; n<lpActions->cActions; n++) {
-
+		for (ULONG n = 0; n < lpActions->cActions; ++n) {
 			// do action
 			switch(lpActions->lpAction[n].acttype) {
 			case OP_MOVE:

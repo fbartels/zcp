@@ -433,7 +433,8 @@ static HRESULT ExpandRecipients(LPADRBOOK lpAddrBook, IMessage *lpMessage)
 	}
 
 exit:
-	for (iterGroups = lExpandedGroups.begin(); iterGroups != lExpandedGroups.end(); iterGroups++)
+	for (iterGroups = lExpandedGroups.begin();
+	     iterGroups != lExpandedGroups.end(); ++iterGroups)
 		MAPIFreeBuffer(iterGroups->lpb);
 
 	if (lpTable)
@@ -1017,7 +1018,7 @@ HRESULT SendUndeliverable(LPADRBOOK lpAddrBook, ECSender *lpMailer,
 		memcpy(lpPropValue[ulPropPos].Value.bin.lpb, "SMTP:", 5);
 		if(lpPropValue[ulPropPos].Value.bin.cb > 5)
 			memcpy(lpPropValue[ulPropPos].Value.bin.lpb+5, strMailAddress.data(), lpPropValue[ulPropPos].Value.bin.cb - 5);
-		ulPropPos++;
+		++ulPropPos;
 
 		// PR_SENT_REPRESENTING_SEARCH_KEY
 		lpPropValue[ulPropPos].ulPropTag = PR_SENT_REPRESENTING_SEARCH_KEY;
@@ -1029,8 +1030,7 @@ HRESULT SendUndeliverable(LPADRBOOK lpAddrBook, ECSender *lpMailer,
 		memcpy(lpPropValue[ulPropPos].Value.bin.lpb, "SMTP:", 5);
 		if(lpPropValue[ulPropPos].Value.bin.cb > 5)
 			memcpy(lpPropValue[ulPropPos].Value.bin.lpb+5, strMailAddress.data(), lpPropValue[ulPropPos].Value.bin.cb - 5);
-		ulPropPos++;
-
+		++ulPropPos;
 	}
 
 	hr = ECCreateOneOff((LPTSTR)lpUserAdmin->lpszFullName, (LPTSTR)L"SMTP", (LPTSTR)lpUserAdmin->lpszMailAddress,
@@ -1380,7 +1380,7 @@ HRESULT SendUndeliverable(LPADRBOOK lpAddrBook, ECSender *lpMailer,
 			lpMods->aEntries[cEntries].rgPropVals[ulPropModsPos++].Value.ul = MAPI_REASON_TRANSFER_FAILED;
 
 			lpMods->aEntries[cEntries].cValues = ulPropModsPos;
-			cEntries++;
+			++cEntries;
 		}
 
 		lpMods->cEntries = cEntries;
@@ -1832,7 +1832,7 @@ static HRESULT HrCheckAllowedEntryIDArray(const char *szFunc,
 	ULONG ulObjType;
 	ULONG ulCmpRes;
 
-	for (ULONG i = 0; i < cValues; i++) {
+	for (ULONG i = 0; i < cValues; ++i) {
 		// quick way to see what object the entryid points to .. otherwise we need to call OpenEntry, which is slow
 		if (GetNonPortableObjectType(lpEntryIDs[i].cb, (LPENTRYID)lpEntryIDs[i].lpb, &ulObjType))
 			continue;

@@ -351,7 +351,8 @@ static void sighup(int sig)
 static void sigchld(int)
 {
 	int stat;
-	while (waitpid (-1, &stat, WNOHANG) > 0) g_nLMTPThreads--;
+	while (waitpid (-1, &stat, WNOHANG) > 0)
+		--g_nLMTPThreads;
 }
 
 // Look for segmentation faults
@@ -804,7 +805,7 @@ static HRESULT ResolveUsers(const DeliveryArgs *lpArgs,
 
 	lpFlagList->cFlags = ulRCPT;
 
-	for (iter = lRCPT->begin(), ulRCPT = 0; iter != lRCPT->end(); iter++, ulRCPT++) {
+	for (iter = lRCPT->begin(), ulRCPT = 0; iter != lRCPT->end(); ++iter, ++ulRCPT) {
 		lpAdrList->aEntries[ulRCPT].cValues = 1;
 
 		hr = MAPIAllocateBuffer(sizeof(SPropValue), (void **) &lpAdrList->aEntries[ulRCPT].rgPropVals);
@@ -825,7 +826,7 @@ static HRESULT ResolveUsers(const DeliveryArgs *lpArgs,
 	if (hr != hrSuccess)
 		goto exit;
 
-	for (iter = lRCPT->begin(), ulRCPT = 0; iter != lRCPT->end(); iter++, ulRCPT++) {
+	for (iter = lRCPT->begin(), ulRCPT = 0; iter != lRCPT->end(); ++iter, ++ulRCPT) {
 		(*iter)->ulResolveFlags = lpFlagList->ulFlag[ulRCPT];
 
 		ULONG temp = lpFlagList->ulFlag[ulRCPT];
@@ -965,13 +966,13 @@ static HRESULT FreeServerRecipients(companyrecipients_t *lpCompanyRecips)
 		goto exit;
 	}
 
-	for (iterCMP = lpCompanyRecips->begin(); iterCMP != lpCompanyRecips->end(); iterCMP++) {
-		for (iterSRV = iterCMP->second.begin(); iterSRV != iterCMP->second.end(); iterSRV++) {
-			for (iterRCPT = iterSRV->second.begin(); iterRCPT != iterSRV->second.end(); iterRCPT++)
+	for (iterCMP = lpCompanyRecips->begin();
+	     iterCMP != lpCompanyRecips->end(); ++iterCMP)
+		for (iterSRV = iterCMP->second.begin();
+		     iterSRV != iterCMP->second.end(); ++iterSRV)
+			for (iterRCPT = iterSRV->second.begin();
+			     iterRCPT != iterSRV->second.end(); ++iterRCPT)
 				delete *iterRCPT;
-		}
-	}
-
 	lpCompanyRecips->clear();
 
 exit:
@@ -1089,7 +1090,7 @@ static HRESULT ResolveServerToPath(IMAPISession *lpSession,
 	}
 
 	lpSrvNameList->cServers = 0;
-	for (iter = lpServerNameRecips->begin(); iter != lpServerNameRecips->end(); iter++) {
+	for (iter = lpServerNameRecips->begin(); iter != lpServerNameRecips->end(); ++iter) {
 		if (iter->first.empty()) {
 			// recipient doesn't have a home server.
 			// don't try to resolve since that will break the GetServerDetails call
@@ -1104,7 +1105,7 @@ static HRESULT ResolveServerToPath(IMAPISession *lpSession,
 		}
 
 		wcscpy((LPWSTR)lpSrvNameList->lpszaServer[lpSrvNameList->cServers], iter->first.c_str());
-		lpSrvNameList->cServers++;
+		++lpSrvNameList->cServers;
 	}
 
 	hr = lpServiceAdmin->GetServerDetails(lpSrvNameList, EC_SERVERDETAIL_PREFEREDPATH | MAPI_UNICODE, &lpSrvList);
@@ -1113,7 +1114,7 @@ static HRESULT ResolveServerToPath(IMAPISession *lpSession,
 		goto exit;
 	}
 
-	for (ULONG i = 0; i < lpSrvList->cServers; i++) {
+	for (ULONG i = 0; i < lpSrvList->cServers; ++i) {
 		iter = lpServerNameRecips->find((LPWSTR)lpSrvList->lpsaServer[i].lpszName);
 		if (iter == lpServerNameRecips->end()) {
 			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Server '%s' not found", (char*)lpSrvList->lpsaServer[i].lpszName);
@@ -2905,15 +2906,13 @@ static HRESULT ProcessDeliveryToServer(PyMapiPlugin *lppyMapiPlugin,
 		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to open default store for system account, error code: 0x%08X", hr);
 
 		// notify LMTP client soft error to try again later
-		for (iter = listRecipients.begin(); iter != listRecipients.end(); iter++) {
+		for (iter = listRecipients.begin(); iter != listRecipients.end(); ++iter)
 			// error will be shown in postqueue status in postfix, probably too in other serves and mail syslog service
 			(*iter)->wstrDeliveryStatus = L"450 4.5.0 %ls network or permissions error to zarafa server: " + wstringify(hr, true);
-		}
-
 		goto exit;
 	}
 
-	for (iter = listRecipients.begin(); iter != listRecipients.end(); iter++) {
+	for (iter = listRecipients.begin(); iter != listRecipients.end(); ++iter) {
 		/*
 		 * Normal error codes must be ignored, since we want to attempt to deliver the email to all users,
 		 * however when the error code MAPI_W_CANCEL_MESSAGE was provided, the message has expired and it is
@@ -3089,7 +3088,7 @@ static HRESULT ProcessDeliveryToCompany(PyMapiPlugin *lppyMapiPlugin,
 		goto exit;
 	}
 
-	for (iter = listServerPathRecips.begin(); iter != listServerPathRecips.end(); iter++) {
+	for (iter = listServerPathRecips.begin(); iter != listServerPathRecips.end(); ++iter) {
 		IMessage *lpMessageTmp = NULL;
 		bool bFallbackDeliveryTmp = false;
 
@@ -3150,8 +3149,8 @@ FindLowestAdminLevelSession(const serverrecipients_t *lpServerRecips,
 	ECRecipient *lpRecip = NULL;
 	bool bFound = false;
 
-	for (iterSRV = lpServerRecips->begin(); iterSRV != lpServerRecips->end(); iterSRV++) {
-		for (iterRCP = iterSRV->second.begin(); iterRCP != iterSRV->second.end(); iterRCP++) {
+	for (iterSRV = lpServerRecips->begin(); iterSRV != lpServerRecips->end(); ++iterSRV) {
+		for (iterRCP = iterSRV->second.begin(); iterRCP != iterSRV->second.end(); ++iterRCP) {
 			if ((*iterRCP)->ulDisplayType == DT_REMOTE_MAILUSER)
 				continue;
 			else if (!lpRecip)
@@ -3213,7 +3212,7 @@ static HRESULT ProcessDeliveryToList(PyMapiPlugin *lppyMapiPlugin,
 	 * resolving will occur with the minimum set of view-levels to other
 	 * companies.
 	 */
-	for (iter = lpCompanyRecips->begin(); iter != lpCompanyRecips->end(); iter++) {
+	for (iter = lpCompanyRecips->begin(); iter != lpCompanyRecips->end(); ++iter) {
 		hr = FindLowestAdminLevelSession(&iter->second, lpArgs, &lpUserSession);
 		if (hr != hrSuccess) {
 			g_lpLogger->Log(EC_LOGLEVEL_ERROR, "ProcessDeliveryToList(): FindLowestAdminLevelSession failed %x", hr);
@@ -3335,7 +3334,7 @@ static void *HandlerLMTP(void *lpArg)
 
 		if(hr == MAPI_E_TIMEOUT) {
 			if(timeouts < 10) {
-				timeouts++;
+				++timeouts;
 				continue;
 			}
 
@@ -3531,7 +3530,7 @@ static void *HandlerLMTP(void *lpArg)
 						for (recipients_t::const_iterator iRecipient = iServer->second.begin(); iRecipient != iServer->second.end(); ++iRecipient) {
 							std::vector<std::wstring>::const_iterator i;
 							WCHAR wbuffer[4096];
-							for (i = (*iRecipient)->vwstrRecipients.begin(); i != (*iRecipient)->vwstrRecipients.end(); i++) {
+							for (i = (*iRecipient)->vwstrRecipients.begin(); i != (*iRecipient)->vwstrRecipients.end(); ++i) {
 								swprintf(wbuffer, arraySize(wbuffer), (*iRecipient)->wstrDeliveryStatus.c_str(), i->c_str());
 								mapRecipientResults.insert(make_pair<string,string>(converter.convert_to<string>(*i),
 																					// rawsize([N]) returns N, not contents len, so cast to fix
@@ -3751,7 +3750,7 @@ static HRESULT running_service(const char *servicename, bool bDaemonize,
 			continue;
 		}
 
-		g_nLMTPThreads++;
+		++g_nLMTPThreads;
 
 		// One socket has signalled a new incoming connection
 		DeliveryArgs *lpDeliveryArgs = new DeliveryArgs();
@@ -3793,7 +3792,7 @@ static HRESULT running_service(const char *servicename, bool bDaemonize,
 	kill(0, SIGTERM);
 
 	// wait max 30 seconds
-	for (int i = 30; g_nLMTPThreads && i; i--) {
+	for (int i = 30; g_nLMTPThreads && i; --i) {
 		if (i % 5 == 0)
 			g_lpLogger->Log(EC_LOGLEVEL_DEBUG, "Waiting for %d processes to terminate", g_nLMTPThreads);
 		sleep(1);

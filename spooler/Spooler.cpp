@@ -247,7 +247,7 @@ static LONG __stdcall AdviseCallback(void *lpContext, ULONG cNotif,
     LPNOTIFICATION lpNotif)
 {
 	pthread_mutex_lock(&hMutexMessagesWaiting);
-	for (ULONG i = 0; i < cNotif; i++) {
+	for (ULONG i = 0; i < cNotif; ++i) {
 		if (lpNotif[i].info.tab.ulTableEvent == TABLE_RELOAD) {
 			// Table needs a reload - trigger a reconnect with the server
 			nReload = true;
@@ -503,8 +503,7 @@ static HRESULT CleanFinishedMessages(IMAPISession *lpAdminSession,
 	g_lpLogger->Log(EC_LOGLEVEL_DEBUG, "Cleaning %d messages from queue", (int)finished.size());
 
 	// process finished entries
-	for (i = finished.begin(); i != finished.end(); i++)
-	{
+	for (i = finished.begin(); i != finished.end(); ++i) {
 		sSendData = mapSendData[i->first];
 
 		/* Find exit status, and decide to remove mail from queue or not */
@@ -953,7 +952,7 @@ exit:
 				break;
 
 			Sleep(1000);
-			ulCount++;
+			++ulCount;
 		}
 		if (ulCount == 60)
 			g_lpLogger->Log(EC_LOGLEVEL_DEBUG, "%d threads did not yet exit, closing anyway.", (int)mapSendData.size());
@@ -1114,8 +1113,7 @@ static HRESULT running_server(const char *szSMTP, int ulPort,
 
 		if (disconnects == 0)
 			g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Server connection lost. Reconnecting in 3 seconds...");
-
-		disconnects++;
+		++disconnects;
 		Sleep(3000);			// wait 3s until retry to connect
 	}
 
