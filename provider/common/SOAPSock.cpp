@@ -238,8 +238,7 @@ int gsoap_connect_pipe(struct soap *soap, const char *endpoint, const char *host
 		MultiByteToWideChar(CP_ACP,MB_PRECOMPOSED,endpoint+5+2,strlen(endpoint+5+2),x,1024);
 #endif
 
-	for (int nRetry=0; nRetry < 10; nRetry++)
-	{
+	for (int nRetry = 0; nRetry < 10; ++nRetry) {
 #ifdef UNDER_CE
 		hSocket = CreateFileW(x, GENERIC_READ|GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
 #else
@@ -613,7 +612,7 @@ int ssl_verify_callback_zarafa_control(int ok, X509_STORE_CTX *store, BOOL bShow
 		// since I try to find the issuer, aren't those all known and trusted?
 		// or does it mean when the bRootCA one is trusted, everything below should automatically be trusted?
 		if (!ValidateCertificateChain(pCertificate)) {
-			iSCD->second.errors++;
+			++iSCD->second.errors;
 			iSCD->second.bTrusted = false;
 		} else {
 			iSCD->second.bTrusted = true;
@@ -625,7 +624,7 @@ int ssl_verify_callback_zarafa_control(int ok, X509_STORE_CTX *store, BOOL bShow
 		dwFlags &= ~(CERT_STORE_REVOCATION_FLAG | CERT_STORE_SIGNATURE_FLAG);
 	if (CertVerifySubjectCertificateContext(pCertificate, iSCD->second.pPrevCertificate, &dwFlags) != TRUE) {
 		// flags say what's wrong
-		iSCD->second.errors++;
+		++iSCD->second.errors;
 		iSCD->second.bVerified = false;
 	} else {
 		iSCD->second.bVerified = true;
@@ -655,13 +654,13 @@ int ssl_verify_callback_zarafa_control(int ok, X509_STORE_CTX *store, BOOL bShow
 			int hlen = strlen(hostname);
 			int slen = strlen(subject+1);
 			if (hlen < slen-1 || strcmp(subject+1, hostname+hlen-slen) != 0) {
-				iSCD->second.errors++;
+				++iSCD->second.errors;
 				iSCD->second.bVerified = false;
 			}
 		} else {
 			// name must match
 			if (strcmp(subject, hostname) != 0) {
-				iSCD->second.errors++;
+				++iSCD->second.errors;
 				iSCD->second.bVerified = false;
 			}
 		}
@@ -844,7 +843,7 @@ HRESULT LoadCertificatesFromRegistry()
 		if (RegEnumValueA(keySSL, index, lpValueName, &cbValueName, NULL, &dwType, NULL, &cbRawCert) != ERROR_SUCCESS)
 			break;
 		if (dwType != REG_BINARY) {
-			index++;
+			++index;
 			continue;
 		}
 
@@ -857,7 +856,7 @@ HRESULT LoadCertificatesFromRegistry()
 		iSCD->second.user_choice = IDYES;
 		
 		delete [] lpRawCert;
-		index++;
+		++index;
 	} while (TRUE);
 	
 	RegCloseKey(keySSL);

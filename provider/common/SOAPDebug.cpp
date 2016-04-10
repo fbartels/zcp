@@ -68,32 +68,38 @@ std::string RestrictionToString(const restrictTable *lpRestriction,
 	if(lpRestriction == NULL)
 		return "NULL";
 
-	for (j=0; j<indent; j++) strResult += "  ";
+	for (j = 0; j < indent; ++j)
+		strResult += "  ";
 
 	switch(lpRestriction->ulType)
 	{
 		case RES_OR:
 			strResult = "RES_OR:\n";
-			for(i=0; i < lpRestriction->lpOr->__size; i++) {
-				for (j=0; j<indent+1; j++) strResult += "  ";
+			for (i = 0; i < lpRestriction->lpOr->__size; ++i) {
+				for (j = 0; j < indent + 1; ++j)
+					strResult += "  ";
 				strResult += "Restriction: "+ RestrictionToString(lpRestriction->lpOr->__ptr[i], indent+1)+"\n";
 			}
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "---or---\n";
 			break;
 		case RES_AND:
 			strResult = "RES_AND:\n";
-			for(i=0; i < lpRestriction->lpAnd->__size; i++){
-				for (j=0; j<indent+1; j++) strResult += "  ";
+			for (i = 0; i < lpRestriction->lpAnd->__size; ++i) {
+				for (j = 0; j < indent + 1; ++j)
+					strResult += "  ";
 				strResult += "Restriction: " + RestrictionToString(lpRestriction->lpAnd->__ptr[i], indent+1);
 			}
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "---and---\n";
 			break;
 
 		case RES_BITMASK:
 			strResult = "RES_BITMASK:\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			switch(lpRestriction->lpBitmask->ulType){
 				case BMR_EQZ:
 					strResult+= "BMR: R_EQZ\n";
@@ -105,67 +111,86 @@ std::string RestrictionToString(const restrictTable *lpRestriction,
 					strResult+= "BMR: Not specified("+stringify(lpRestriction->lpBitmask->ulType)+")\n";
 					break;
 			}
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "proptag: "+PropNameFromPropTag(lpRestriction->lpBitmask->ulPropTag)+"\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "mask: "+stringify(lpRestriction->lpBitmask->ulMask)+"\n";
 			break;
 		case RES_COMMENT:
 			strResult = "RES_COMMENT:\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "props: " + PropNameFromPropArray(lpRestriction->lpComment->sProps.__size, lpRestriction->lpComment->sProps.__ptr)+"\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "restriction: "+ RestrictionToString(lpRestriction->lpComment->lpResTable, indent+1)+"\n";
 			break;
 		case RES_COMPAREPROPS:
 			strResult = "RES_COMPAREPROPS:\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "relop: "+RelationalOperatorToString(lpRestriction->lpCompare->ulType)+"\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "proptag1: "+PropNameFromPropTag(lpRestriction->lpCompare->ulPropTag1)+"\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "proptag2: "+PropNameFromPropTag(lpRestriction->lpCompare->ulPropTag2)+"\n";
 			break;
 		case RES_CONTENT:
 			strResult = "RES_CONTENT:\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "FuzzyLevel: "+FuzzyLevelToString(lpRestriction->lpContent->ulFuzzyLevel)+"\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "proptag: "+PropNameFromPropTag(lpRestriction->lpContent->ulPropTag)+"\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "props: " + PropNameFromPropArray(1, lpRestriction->lpContent->lpProp)+"\n";
 			break;
 		case RES_EXIST:
 			strResult = "RES_EXIST:\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "proptag: "+PropNameFromPropTag(lpRestriction->lpExist->ulPropTag)+"\n";
 			break;
 		case RES_NOT:
 			strResult = "RES_NOT:\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "restriction: "+ RestrictionToString(lpRestriction->lpNot->lpNot, indent+1)+"\n";
 			break;
 		case RES_PROPERTY:
 			strResult = "RES_PROPERTY:\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "relop: "+RelationalOperatorToString(lpRestriction->lpProp->ulType)+"\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "proptag: "+PropNameFromPropTag(lpRestriction->lpProp->ulPropTag)+((lpRestriction->lpProp->ulPropTag&MV_FLAG)?" (MV_PROP)":"")+"\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "props: " + PropNameFromPropArray(1, lpRestriction->lpProp->lpProp)+((lpRestriction->lpProp->lpProp->ulPropTag&MV_FLAG)?" (MV_PROP)":"")+"\n";
 			break;
 		case RES_SIZE:
 			strResult = "RES_SIZE:\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "relop: "+RelationalOperatorToString(lpRestriction->lpSize->ulType)+"\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "proptag: "+PropNameFromPropTag(lpRestriction->lpSize->ulPropTag)+"\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "sizeofprop: "+ stringify(lpRestriction->lpSize->cb) + "\n";
 			break;
 		case RES_SUBRESTRICTION:
 			strResult = "RES_SUBRESTRICTION:\n";
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			switch(lpRestriction->lpSub->ulSubObject) {
 				case PR_MESSAGE_RECIPIENTS:
 					strResult+= "subobject: PR_MESSAGE_RECIPIENTS\n";
@@ -177,7 +202,8 @@ std::string RestrictionToString(const restrictTable *lpRestriction,
 					strResult += "subobject: Not specified("+stringify(lpRestriction->lpSub->ulSubObject)+")\n";
 					break;
 			}
-			for (j=0; j<indent; j++) strResult += "  ";
+			for (j = 0; j < indent; ++j)
+				strResult += "  ";
 			strResult += "Restriction: "+ RestrictionToString(lpRestriction->lpSub->lpSubObject, indent+1)+"\n";
 			break;
 		default:
@@ -198,8 +224,7 @@ std::string PropNameFromPropArray(unsigned int cValues,
 	else if(cValues == 0)
 		return "EMPTY";
 
-	for(unsigned int i =0; i < cValues; i++)
-	{	
+	for (unsigned int i = 0; i < cValues; ++i) {
 		if(i>0)
 			data+=", ";
 
@@ -309,15 +334,13 @@ std::string PropValueToString(const propVal *lpPropValue)
 			break;
 		case PT_MV_UNICODE:
 			strResult = "PT_MV_UNICODE[" + stringify(lpPropValue->Value.mvi.__size) + "]" + "\n";
-			for (int i = 0; i < lpPropValue->Value.mvi.__size; i++) {
+			for (int i = 0; i < lpPropValue->Value.mvi.__size; ++i)
 				strResult += std::string("\t") + lpPropValue->Value.mvszA.__ptr[i] + "\n";
-			}
 			break;
 		case PT_MV_STRING8:
 			strResult = "PT_MV_STRING8[" + stringify(lpPropValue->Value.mvi.__size) + "]" + "\n";
-			for (int i = 0; i < lpPropValue->Value.mvi.__size; i++) {
+			for (int i = 0; i < lpPropValue->Value.mvi.__size; ++i)
 				strResult += std::string("\t") + lpPropValue->Value.mvszA.__ptr[i] + "\n";
-			}
 			break;
 		case PT_MV_BINARY:
 			strResult = "PT_MV_BINARY[" + stringify(lpPropValue->Value.mvi.__size) + "]";

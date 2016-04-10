@@ -208,11 +208,9 @@ property_map objectdetails_t::GetPropMapAnonymous() const {
 	property_map anonymous;
 	property_map::const_iterator iter;
 
-	for (iter = m_mapProps.begin(); iter != m_mapProps.end(); iter++) {
+	for (iter = m_mapProps.begin(); iter != m_mapProps.end(); ++iter)
 		if (((unsigned int)iter->first) & 0xffff0000)
 			anonymous.insert(*iter);
-	}
-
 	return anonymous;
 }
 
@@ -220,11 +218,9 @@ property_mv_map objectdetails_t::GetPropMapListAnonymous() const {
 	property_mv_map anonymous;
 	property_mv_map::const_iterator iter;
 
-	for (iter = m_mapMVProps.begin(); iter != m_mapMVProps.end(); iter++) {
+	for (iter = m_mapMVProps.begin(); iter != m_mapMVProps.end(); ++iter)
 		if (((unsigned int)iter->first) & 0xffff0000)
 			anonymous.insert(*iter);
-	}
-
 	return anonymous;
 }
 
@@ -258,10 +254,9 @@ void objectdetails_t::MergeFrom(const objectdetails_t &from) {
 
 	ASSERT(this->m_objclass == from.m_objclass);
 
-	for (fi = from.m_mapProps.begin(); fi != from.m_mapProps.end(); fi++)
+	for (fi = from.m_mapProps.begin(); fi != from.m_mapProps.end(); ++fi)
 		this->m_mapProps[fi->first].assign(fi->second);
-
-	for (fmvi = from.m_mapMVProps.begin(); fmvi != from.m_mapMVProps.end(); fmvi++)
+	for (fmvi = from.m_mapMVProps.begin(); fmvi != from.m_mapMVProps.end(); ++fmvi)
 		this->m_mapMVProps[fmvi->first].assign(fmvi->second.begin(), fmvi->second.end());
 }
 
@@ -278,16 +273,13 @@ unsigned int objectdetails_t::GetObjectSize()
 	std::list<std::string>::const_iterator istr;
 
 	ulSize += MEMORY_USAGE_MAP(m_mapProps.size(), property_map);
-	for (i = m_mapProps.begin(); i != m_mapProps.end(); i++)
+	for (i = m_mapProps.begin(); i != m_mapProps.end(); ++i)
 		ulSize += MEMORY_USAGE_STRING(i->second);
 
 	ulSize += MEMORY_USAGE_MAP(m_mapMVProps.size(), property_mv_map);
-
-	for (mvi = m_mapMVProps.begin(); mvi != m_mapMVProps.end(); mvi++) {
-		for (istr = mvi->second.begin(); istr != mvi->second.end(); istr++)
+	for (mvi = m_mapMVProps.begin(); mvi != m_mapMVProps.end(); ++mvi)
+		for (istr = mvi->second.begin(); istr != mvi->second.end(); ++istr)
 			ulSize += MEMORY_USAGE_STRING((*istr));
-	}
-
 	return ulSize;
 }
 
@@ -299,17 +291,17 @@ std::string objectdetails_t::ToStr(void) const
 	std::list<std::string>::const_iterator istr;
 
 	str = "propmap: ";
-	for (i = m_mapProps.begin(); i != m_mapProps.end(); i++) {
+	for (i = m_mapProps.begin(); i != m_mapProps.end(); ++i) {
 		if(i != m_mapProps.begin())  str+= ", ";
 		str+= stringify(i->first) + "='";
 		str+= i->second + "'";
 	}
 
 	str += " mvpropmap: ";
-	for (mvi = m_mapMVProps.begin(); mvi != m_mapMVProps.end(); mvi++) {
+	for (mvi = m_mapMVProps.begin(); mvi != m_mapMVProps.end(); ++mvi) {
 		if(mvi != m_mapMVProps.begin()) str += ", ";
 		str += stringify(mvi->first) + "=(";
-		for (istr = mvi->second.begin(); istr != mvi->second.end(); istr++) {
+		for (istr = mvi->second.begin(); istr != mvi->second.end(); ++istr) {
 			if(istr != mvi->second.begin()) str +=", ";
 			str += *istr;
 		}

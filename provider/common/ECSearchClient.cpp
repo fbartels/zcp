@@ -82,9 +82,8 @@ ECRESULT ECSearchClient::GetProperties(setindexprops_t &setProps)
 
 	lstProps = tokenize(lstResponse[0], " ");
 
-	for (iter = lstProps.begin(); iter != lstProps.end(); iter++) {
+	for (iter = lstProps.begin(); iter != lstProps.end(); ++iter)
 		setProps.insert(atoui(iter->c_str()));
-	}
 	return erSuccess;
 }
 
@@ -110,7 +109,8 @@ ECRESULT ECSearchClient::Scope(const std::string &strServer,
 		return er;
 
 	strScope = "SCOPE " + strServer + " " + strStore;
-	for (std::list<unsigned int>::const_iterator i = lstFolders.begin(); i != lstFolders.end(); i++)
+	for (std::list<unsigned int>::const_iterator i = lstFolders.begin();
+	     i != lstFolders.end(); ++i)
 		strScope += " " + stringify(*i);
 
 	er = DoCmd(strScope, lstResponse);
@@ -178,9 +178,8 @@ ECRESULT ECSearchClient::Query(std::list<unsigned int> &lstMatches)
 
 	lstResponseIds = tokenize(lstResponse[0], " ");
 
-	for (unsigned int i = 0; i < lstResponseIds.size(); i++) {
+	for (unsigned int i = 0; i < lstResponseIds.size(); ++i)
 		lstMatches.push_back(atoui(lstResponseIds[i].c_str()));
-	}
 	return erSuccess;
 }
 

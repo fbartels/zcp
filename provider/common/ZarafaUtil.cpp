@@ -109,8 +109,7 @@ bool ValidateZarafaEntryList(LPENTRYLIST lpMsgList, unsigned int ulCheckType)
 	if (lpMsgList == NULL)
 		return false;
 
-	for(ULONG i=0; i < lpMsgList->cValues; i++)
-	{
+	for (ULONG i = 0; i < lpMsgList->cValues; ++i) {
 		peid = (PEID)lpMsgList->lpbin[i].lpb;
 
 		if( !(((lpMsgList->lpbin[i].cb == sizeof(EID) && peid->ulVersion == 1) ||
