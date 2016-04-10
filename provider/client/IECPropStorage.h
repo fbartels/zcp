@@ -91,7 +91,8 @@ typedef struct MAPIOBJECT {
 	};
 
 	/* copy constructor */
-	MAPIOBJECT(MAPIOBJECT *lpSource) {
+	MAPIOBJECT(const MAPIOBJECT *lpSource)
+	{
 		this->bChanged = lpSource->bChanged;
 		this->bChangedInstance = lpSource->bChangedInstance;
 		this->bDelete = lpSource->bDelete;
@@ -113,9 +114,9 @@ typedef struct MAPIOBJECT {
 		*this->lstProperties = *lpSource->lstProperties;
 		*this->lstAvailable = *lpSource->lstAvailable;
 
-		for (std::set<MAPIOBJECT*, CompareMAPIOBJECT>::iterator i = lpSource->lstChildren->begin(); i != lpSource->lstChildren->end(); i++) {
+		for (std::set<MAPIOBJECT *, CompareMAPIOBJECT>::const_iterator i = lpSource->lstChildren->begin();
+		     i != lpSource->lstChildren->end(); ++i)
 			this->lstChildren->insert(new MAPIOBJECT(*i));
-		}
 	};
 
 	/* data */
