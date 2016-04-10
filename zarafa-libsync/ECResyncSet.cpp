@@ -101,7 +101,7 @@ void ECResyncSetIterator::SetFlags(ULONG flags)
 void ECResyncSetIterator::Next()
 {
 	if (IsValid())
-		m_iterator++;
+		++m_iterator;
 }
 
 const FILETIME ECResyncSetIterator::s_nullTime = {0, 0};

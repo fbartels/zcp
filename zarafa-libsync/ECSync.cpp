@@ -248,10 +248,9 @@ ECSync::~ECSync(){
 	LPMDB lpOnlineStore = NULL;
 
 	StopSync();
-
-	for(iterNotif = m_lstNewMailNotifs.begin(); iterNotif != m_lstNewMailNotifs.end(); iterNotif++) {
+	for (iterNotif = m_lstNewMailNotifs.begin();
+	     iterNotif != m_lstNewMailNotifs.end(); ++iterNotif)
 		MAPIFreeBuffer(*iterNotif);
-	}
 
 	if (m_ulOnlineAdviseConnection && m_lpOnlineContext && m_lpOnlineContext->HrGetMsgStore(&lpOnlineStore) == hrSuccess) {
 		lpOnlineStore->Unadvise(m_ulOnlineAdviseConnection);
@@ -757,7 +756,7 @@ HRESULT ECSync::HrCreateChangeNotificationStatusStreams(LPSTREAM *lppOnlineStrea
 			goto exit;
 	}
 
-	for (ULONG ulCount = 0; ulCount < lpRows->cRows; ulCount++) {
+	for (ULONG ulCount = 0; ulCount < lpRows->cRows; ++ulCount) {
 		if (lpRows->aRow[ulCount].lpProps[0].ulPropTag != PR_SOURCE_KEY)
 			continue;
 
@@ -1320,7 +1319,8 @@ wait:
 		// Although the sync may have not succeeded, send the new mail notifications anyway. This may cause you
 		// to get new mail notifications for e-mails that you haven't had yet. But on the other hand, it makes sure
 		// that you don't get new mail notifications for e-mails that you received quite some time ago.
-		for(iterNewMail = m_lstNewMailNotifs.begin(); iterNewMail != m_lstNewMailNotifs.end(); iterNewMail++) {
+		for (iterNewMail = m_lstNewMailNotifs.begin();
+		     iterNewMail != m_lstNewMailNotifs.end(); ++iterNewMail) {
 			m_lpOfflineContext->HrNotifyNewMail(*iterNewMail);
 			MAPIFreeBuffer(*iterNewMail);
 		}
@@ -1716,8 +1716,7 @@ HRESULT ECSync::MessageSync(std::list<SBinary> &lstChanges){
 	UpdateSyncStatus(EC_SYNC_STATUS_MESSAGE, 0);
 
 	if (m_lpOfflineContext->HrGetReceiveFolder(&lpInboxFolder) == hrSuccess) {
-
-		for(ulCount = 0; ulCount < sptInbox.cValues; ulCount++){
+		for (ulCount = 0; ulCount < sptInbox.cValues; ++ulCount) {
 			hr = HrGetOneProp(lpInboxFolder, sptInbox.aulPropTag[ulCount], &lpPropValue);
 			if(hr != hrSuccess) {
 				hr = hrSuccess;
@@ -1740,7 +1739,7 @@ nextdefaultfolder:
 		}
 	}
 
-	for (iChanges = lstChanges.begin(); iChanges != lstChanges.end(); iChanges++) {
+	for (iChanges = lstChanges.begin(); iChanges != lstChanges.end(); ++iChanges) {
 		hr = CheckExit();
 		if(hr!= hrSuccess)
 			goto exit;
@@ -1763,12 +1762,9 @@ exit:
 
 HRESULT ECSync::ReleaseChangeList(std::list<SBinary> &lstChanges) {
 	std::list<SBinary>::const_iterator i;
-	for (i = lstChanges.begin(); i != lstChanges.end(); i++) {
+	for (i = lstChanges.begin(); i != lstChanges.end(); ++i)
 		delete [] i->lpb;
-	}
-
 	lstChanges.clear();
-
 	return hrSuccess;
 }
 
@@ -1794,7 +1790,7 @@ HRESULT ECSync::CreateChangeList(std::list<SBinary> *lplstChanges, ULONG *lpulSt
 	if(hr != hrSuccess)
 		goto exit;
 
-	for (ulCount = 0; ulCount < lpRows->cRows; ulCount++) {
+	for (ulCount = 0; ulCount < lpRows->cRows; ++ulCount) {
 		hr = CheckExit();
 		if(hr!= hrSuccess)
 			goto exit;
@@ -2082,7 +2078,7 @@ HRESULT ECSync::MessageSyncFolderOneWay(LPMAPIFOLDER lpFromFolder, LPMAPIFOLDER 
 	}while(hrSync == SYNC_W_PROGRESS);
 
 	m_ulTotalStep += ulStep;
-	m_ulTotalStep++; // Folder itself counts as one step
+	++m_ulTotalStep; // Folder itself counts as one step
 
 	if(m_lpSyncProgressCallBack && (hrSync == hrSuccess || hrSync == SYNC_W_PROGRESS))
 		m_lpSyncProgressCallBack(m_lpSyncProgressCallBackObject, ulStep, ulSteps, 0.20 + ((double)m_ulTotalStep / m_ulTotalSteps) * 0.80, strFolderName.c_str());
@@ -2275,7 +2271,7 @@ HRESULT ECSync::HrCreateRemindersFolder(){
 		lpRestriction[ulValues].res.resProperty.ulPropTag = PR_PARENT_ENTRYID;
 		lpRestriction[ulValues].res.resProperty.lpProp = lpPropWasteBasket;
 		lpRestriction[ulValues].res.resProperty.relop = RELOP_NE;
-		ulValues++;
+		++ulValues;
 	}
 
 	if(HrGetOneProp(lpOfflineStore, PR_IPM_OUTBOX_ENTRYID, &lpPropOutBox) == hrSuccess){
@@ -2284,7 +2280,7 @@ HRESULT ECSync::HrCreateRemindersFolder(){
 		lpRestriction[ulValues].res.resProperty.ulPropTag = PR_PARENT_ENTRYID;
 		lpRestriction[ulValues].res.resProperty.lpProp = lpPropOutBox;
 		lpRestriction[ulValues].res.resProperty.relop = RELOP_NE;
-		ulValues++;
+		++ulValues;
 	}
 
 	if(HrGetOneProp(lpInboxFolder, PR_IPM_DRAFTS_ENTRYID, &lpPropDrafts) == hrSuccess){
@@ -2293,7 +2289,7 @@ HRESULT ECSync::HrCreateRemindersFolder(){
 		lpRestriction[ulValues].res.resProperty.ulPropTag = PR_PARENT_ENTRYID;
 		lpRestriction[ulValues].res.resProperty.lpProp = lpPropDrafts;
 		lpRestriction[ulValues].res.resProperty.relop = RELOP_NE;
-		ulValues++;
+		++ulValues;
 	}
 
 	if(HrGetOneProp(lpInboxFolder, PR_ADDITIONAL_REN_ENTRYIDS, &lpPropAdditionalREN) == hrSuccess){
@@ -2307,7 +2303,7 @@ HRESULT ECSync::HrCreateRemindersFolder(){
 			lpRestriction[ulValues].res.resProperty.lpProp->ulPropTag = PR_PARENT_ENTRYID;
 			lpRestriction[ulValues].res.resProperty.lpProp->Value.bin.cb = lpPropAdditionalREN->Value.MVbin.lpbin[0].cb;
 			lpRestriction[ulValues].res.resProperty.lpProp->Value.bin.lpb = lpPropAdditionalREN->Value.MVbin.lpbin[0].lpb;
-			ulValues++;
+			++ulValues;
 		}
 		if(lpPropAdditionalREN->Value.MVbin.cValues > 1 && lpPropAdditionalREN->Value.MVbin.lpbin[1].cb > 0){
 			lpRestriction[ulValues].rt = RES_PROPERTY;
@@ -2319,7 +2315,7 @@ HRESULT ECSync::HrCreateRemindersFolder(){
 			lpRestriction[ulValues].res.resProperty.lpProp->ulPropTag = PR_PARENT_ENTRYID;
 			lpRestriction[ulValues].res.resProperty.lpProp->Value.bin.cb = lpPropAdditionalREN->Value.MVbin.lpbin[1].cb;
 			lpRestriction[ulValues].res.resProperty.lpProp->Value.bin.lpb = lpPropAdditionalREN->Value.MVbin.lpbin[1].lpb;
-			ulValues++;
+			++ulValues;
 		}
 		if(lpPropAdditionalREN->Value.MVbin.cValues > 2 && lpPropAdditionalREN->Value.MVbin.lpbin[2].cb > 0){
 			lpRestriction[ulValues].rt = RES_PROPERTY;
@@ -2331,7 +2327,7 @@ HRESULT ECSync::HrCreateRemindersFolder(){
 			lpRestriction[ulValues].res.resProperty.lpProp->ulPropTag = PR_PARENT_ENTRYID;
 			lpRestriction[ulValues].res.resProperty.lpProp->Value.bin.cb = lpPropAdditionalREN->Value.MVbin.lpbin[2].cb;
 			lpRestriction[ulValues].res.resProperty.lpProp->Value.bin.lpb = lpPropAdditionalREN->Value.MVbin.lpbin[2].lpb;
-			ulValues++;
+			++ulValues;
 		}
 		if(lpPropAdditionalREN->Value.MVbin.cValues > 4 && lpPropAdditionalREN->Value.MVbin.lpbin[4].cb > 0){
 			lpRestriction[ulValues].rt = RES_PROPERTY;
@@ -2343,7 +2339,7 @@ HRESULT ECSync::HrCreateRemindersFolder(){
 			lpRestriction[ulValues].res.resProperty.lpProp->ulPropTag = PR_PARENT_ENTRYID;
 			lpRestriction[ulValues].res.resProperty.lpProp->Value.bin.cb = lpPropAdditionalREN->Value.MVbin.lpbin[4].cb;
 			lpRestriction[ulValues].res.resProperty.lpProp->Value.bin.lpb = lpPropAdditionalREN->Value.MVbin.lpbin[4].lpb;
-			ulValues++;
+			++ulValues;
 		}
 	}
 	lpRootRestriction->res.resAnd.lpRes[0].res.resAnd.cRes = ulValues;
@@ -2527,7 +2523,7 @@ HRESULT ECSync::HrSyncReceiveFolders(ECSyncContext *lpFromContext, ECSyncContext
 	if(hr != hrSuccess)
 		goto exit;
 
-	for (ULONG ulCount = 0; ulCount < lpRows->cRows; ulCount++) {
+	for (ULONG ulCount = 0; ulCount < lpRows->cRows; ++ulCount) {
 		if(lpRows->aRow[ulCount].lpProps[0].ulPropTag != PR_ENTRYID || lpRows->aRow[ulCount].lpProps[1].ulPropTag != PR_MESSAGE_CLASS_A ||strcmp(lpRows->aRow[ulCount].lpProps[1].Value.lpszA, "IPC")==0)
 			continue;
 		hr = lpToStore->SetReceiveFolder((LPTSTR)lpRows->aRow[ulCount].lpProps[1].Value.lpszA, 0, lpRows->aRow[ulCount].lpProps[0].Value.bin.cb, (LPENTRYID)lpRows->aRow[ulCount].lpProps[0].Value.bin.lpb);
@@ -2800,9 +2796,9 @@ HRESULT ECSync::Logoff(){
 	std::list<LPNOTIFICATION>::const_iterator iterNotif;
 	LPMDB lpStore = NULL;
 
-	for(iterNotif = m_lstNewMailNotifs.begin(); iterNotif != m_lstNewMailNotifs.end(); iterNotif++) {
+	for (iterNotif = m_lstNewMailNotifs.begin();
+	     iterNotif != m_lstNewMailNotifs.end(); ++iterNotif)
 		MAPIFreeBuffer(*iterNotif);
-	}
 	m_lstNewMailNotifs.clear();
 
 	if(m_ulOnlineAdviseConnection && m_lpOnlineContext && m_lpOnlineContext->HrGetMsgStore(&lpStore) == hrSuccess) {
@@ -2828,7 +2824,7 @@ ULONG ECSync::OnNotify(ULONG cNotif, LPNOTIFICATION lpNotifs) {
 	bool bStartSync = false;
 
 	// Process all new mail notifications and save them for later
-	for(unsigned int i=0; i < cNotif; i++) {
+	for (unsigned int i = 0; i < cNotif; ++i) {
 		if(lpNotifs[i].ulEventType & m_ulSyncOnNotify)
 			bStartSync = true;
 
