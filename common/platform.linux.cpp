@@ -43,6 +43,7 @@
 
 #include <zarafa/zcdefs.h>
 #include <zarafa/platform.h>
+#include <zarafa/ECLogger.h>
 
 #include <sys/select.h>
 #include <sys/time.h>
@@ -51,8 +52,10 @@
 #include <cstdio>
 #include <cctype>
 #include <ctime>
+#include <dirent.h>
 #include <mapicode.h>			// return codes
 #include <unistd.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
 #include <cstdlib>
@@ -399,4 +402,75 @@ std::vector<std::string> get_backtrace(void)
 	free(symbollist);
 	return result;
 #undef BT_MAX
+}
+
+static void dump_fdtable_summary(pid_t pid)
+{
+	char procdir[64];
+	snprintf(procdir, sizeof(procdir), "/proc/%ld/fd", static_cast<long>(pid));
+	DIR *dh = opendir(procdir);
+	if (dh == NULL)
+		return;
+	std::string msg;
+	struct dirent de_space, *de = NULL;
+	while (readdir_r(dh, &de_space, &de) == 0 && de != NULL) {
+		if (de->d_type != DT_LNK)
+			continue;
+		std::string de_name(std::string(procdir) + "/" + de->d_name);
+		struct stat sb;
+		if (stat(de_name.c_str(), &sb) < 0) {
+			msg += " ?";
+		} else switch (sb.st_mode & S_IFMT) {
+			case S_IFREG:  msg += " ."; break;
+			case S_IFSOCK: msg += " s"; break;
+			case S_IFDIR:  msg += " d"; break;
+			case S_IFIFO:  msg += " p"; break;
+			case S_IFCHR:  msg += " c"; break;
+			default:       msg += " O"; break;
+		}
+		msg += de->d_name;
+	}
+	closedir(dh);
+	ec_log_debug("FD map:%s", msg.c_str());
+}
+
+/* ALERT! Big hack!
+ *
+ * This function relocates an open file descriptor to a new file descriptor above 1024. The
+ * reason we do this is because, although we support many open FDs up to FD_SETSIZE, libraries
+ * that we use may not (most notably libldap). This means that if a new socket is allocated within
+ * libldap as socket 1025, libldap will fail because it was compiled with FD_SETSIZE=1024. To fix
+ * this problem, we make sure that most FDs under 1024 are free for use by external libraries, while
+ * we use the range 1024 -> \infty.
+ */
+int ec_relocate_fd(int fd)
+{
+	static const int typical_limit = 1024;
+
+	int relocated = fcntl(fd, F_DUPFD, typical_limit);
+	if (relocated >= 0) {
+		close(fd);
+		return relocated;
+	}
+	if (errno == EINVAL) {
+		/*
+		 * The range start (typical_limit) was already >=RLIMIT_NOFILE.
+		 * Just stay silent.
+		 */
+		static bool warned_once;
+		if (warned_once)
+			return fd;
+		warned_once = true;
+		ec_log_warn("F_DUPFD yielded EINVAL\n");
+		return fd;
+	}
+	static time_t warned_last;
+	time_t now = time(NULL);
+	if (warned_last + 60 > now)
+		return fd;
+	ec_log_notice(
+		"Relocation of FD %d into high range (%d+) could not be completed: "
+		"%s. Keeping old number.\n", fd, typical_limit, strerror(errno));
+	dump_fdtable_summary(getpid());
+	return fd;
 }

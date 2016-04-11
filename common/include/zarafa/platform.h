@@ -193,5 +193,6 @@ void my_readahead(const int fd);
 void give_filesize_hint(const int fd, const off_t len);
 
 bool force_buffers_to_disk(const int fd);
+extern int ec_relocate_fd(int);
 
 #endif // PLATFORM_H
