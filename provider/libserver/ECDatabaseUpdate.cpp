@@ -403,7 +403,7 @@ ECRESULT UpdateDatabaseConvertEntryIDs(ECDatabase *lpDatabase)
 
 	ec_log_notice("  Stores to convert: %d", nStores);
 
-	for(i=0; i < nStores; i++ ) {
+	for (i = 0; i < nStores; ++i) {
 		lpDBRow = lpDatabase->FetchRow(lpResult);
 		lpDBLenths = lpDatabase->FetchRowLengths(lpResult);
 		if(lpDBRow == NULL || lpDBRow[0] == NULL || lpDBRow[1] == NULL || 
@@ -468,12 +468,9 @@ ECRESULT CreateRecursiveStoreEntryIds(ECDatabase *lpDatabase, unsigned int ulSto
 		while(iterFolders != lstFolders.end()) {
 
 			strInValues += stringify(*iterFolders);
-			iterFolders++;
-			
-			if((strDefaultQuery.size() + strInValues.size() * 2) > lpDatabase->GetMaxAllowedPacket()) {
+			++iterFolders;
+			if (strDefaultQuery.size() + strInValues.size() * 2 > lpDatabase->GetMaxAllowedPacket())
 				break;
-			}
-
 			if(iterFolders != lstFolders.end())
 				strInValues += ",";
 		}
@@ -1551,7 +1548,7 @@ ECRESULT UpdateDatabaseConvertObjectTypeToObjectClass(ECDatabase *lpDatabase)
 	mapTypes.insert(std::pair<unsigned int, unsigned int>(5, NONACTIVE_USER)); // USEROBJECT_TYPE_NONACTIVE
 	mapTypes.insert(std::pair<unsigned int, unsigned int>(6, CONTAINER_ADDRESSLIST)); // USEROBJECT_TYPE_ADDRESSLIST
 
-	for (iTypes = mapTypes.begin(); iTypes != mapTypes.end(); iTypes++) {
+	for (iTypes = mapTypes.begin(); iTypes != mapTypes.end(); ++iTypes) {
 		// extern id, because it links to object table for DB plugin
 		// on LDAP plugin, object table is empty.
 		er = lpDatabase->DoSelect("SELECT `externid`, `objectclass` FROM `users` WHERE `externid` is not NULL AND `objectclass` = "+stringify(iTypes->first), &lpResult);
@@ -1646,7 +1643,7 @@ ECRESULT UpdateDatabaseCompanyNameToCompanyId(ECDatabase *lpDatabase)
 	}
 
 	// update objects to link via externid in companyid, not companyname anymore
-	for (iter = mapIdToName.begin(); iter != mapIdToName.end(); iter++) {
+	for (iter = mapIdToName.begin(); iter != mapIdToName.end(); ++iter) {
 		strQuery = "UPDATE objectproperty SET value = 0x" + bin2hex(iter->first) +
 			" WHERE propname='companyid' AND value = '" + iter->second + "'";
 
@@ -1822,8 +1819,7 @@ ECRESULT UpdateDatabaseFixDBPluginSendAs(ECDatabase *lpDatabase)
 	if (er != erSuccess)
 		goto exit;
 
-	for (iRelations = lstRelations.begin(); iRelations != lstRelations.end(); iRelations++)
-	{
+	for (iRelations = lstRelations.begin(); iRelations != lstRelations.end(); ++iRelations) {
 		er = lpDatabase->DoUpdate("INSERT INTO objectrelation (objectid, parentobjectid, relationtype) VALUES ("+iRelations->second+", "+iRelations->first+", 6)");
 		if (er != erSuccess)
 			goto exit;
@@ -1871,7 +1867,7 @@ ECRESULT UpdateDatabaseMoveSubscribedList(ECDatabase *lpDatabase)
 		mapStoreInbox.insert(pair<string,string>(string(lpDBRow[0], lpDBLen[0]), string(lpDBRow[1], lpDBLen[1])));
 	}
 
-	for (i = mapStoreInbox.begin(); i != mapStoreInbox.end(); i++) {
+	for (i = mapStoreInbox.begin(); i != mapStoreInbox.end(); ++i) {
 		// Remove property if it's already there (possible if you run new gateway against old server before upgrade)
 		er = lpDatabase->DoDelete("DELETE FROM properties WHERE storeid="+i->first+" AND hierarchyid="+i->first+" AND tag=0x6784 AND type=0x0102");
 		if (er != erSuccess)

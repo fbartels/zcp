@@ -85,10 +85,7 @@ ECRESULT ECMultiStoreTable::Load() {
 	sObjectTableKey		sRowItem;
 
 	Clear();
-	
-	for (i = m_lstObjects.begin(); i != m_lstObjects.end(); i++) {
+	for (i = m_lstObjects.begin(); i != m_lstObjects.end(); ++i)
 		UpdateRow(ECKeyTable::TABLE_ROW_ADD, *i, 0);
-	}
-	
 	return er;
 }

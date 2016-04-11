@@ -80,7 +80,7 @@ static BOOL NormalizeRestrictionIsFalse(const struct restrictTable *lpRestrict)
     if(lpRestrict->ulType != RES_AND)
         goto exit;
         
-    for(unsigned int i = 0; i < lpRestrict->lpAnd->__size ; i++) {
+    for (unsigned int i = 0; i < lpRestrict->lpAnd->__size; ++i) {
         if (lpRestrict->lpAnd->__ptr[i]->ulType == RES_EXIST)
             setExist.insert(lpRestrict->lpAnd->__ptr[i]->lpExist->ulPropTag);
         else if (lpRestrict->lpAnd->__ptr[i]->ulType == RES_NOT) {
@@ -122,8 +122,7 @@ static ECRESULT NormalizeRestrictionNestedAnd(struct restrictTable *lpRestrict)
     if(lpRestrict->ulType != RES_AND)
         goto exit;
         
-    for(unsigned int i = 0; i < lpRestrict->lpAnd->__size; i++) {
-        
+    for (unsigned int i = 0; i < lpRestrict->lpAnd->__size; ++i) {
         if(lpRestrict->lpAnd->__ptr[i]->ulType == RES_AND) {
             // First, flatten our subchild
             er = NormalizeRestrictionNestedAnd(lpRestrict->lpAnd->__ptr[i]);
@@ -131,9 +130,8 @@ static ECRESULT NormalizeRestrictionNestedAnd(struct restrictTable *lpRestrict)
                 goto exit;
 
             // Now, get all the clauses from the child AND-clause and push them to this AND-clause
-            for(unsigned j = 0; j < lpRestrict->lpAnd->__ptr[i]->lpAnd->__size; j++) {
+            for (unsigned j = 0; j < lpRestrict->lpAnd->__ptr[i]->lpAnd->__size; ++j)
                 lstClauses.push_back(lpRestrict->lpAnd->__ptr[i]->lpAnd->__ptr[j]);
-            }
 
             delete [] lpRestrict->lpAnd->__ptr[i]->lpAnd->__ptr;
             delete lpRestrict->lpAnd->__ptr[i]->lpAnd;
@@ -192,7 +190,7 @@ static ECRESULT NormalizeGetMultiSearch(struct restrictTable *lpRestrict,
     sMultiSearch.setFields.clear();
     
     if(lpRestrict->ulType == RES_OR) {
-        for(unsigned int i = 0; i < lpRestrict->lpOr->__size ; i++) {
+        for (unsigned int i = 0; i < lpRestrict->lpOr->__size; ++i) {
             SIndexedTerm terms;
             
             if(NormalizeRestrictionIsFalse(lpRestrict->lpOr->__ptr[i]))
@@ -290,9 +288,9 @@ static ECRESULT NormalizeRestrictionMultiFieldSearch(
                 // Remove it from the restriction since it is now handled as a multisearch
                 FreeRestrictTable(lpRestrict->lpAnd->__ptr[i]);
                 memmove(&lpRestrict->lpAnd->__ptr[i], &lpRestrict->lpAnd->__ptr[i+1], sizeof(struct restrictTable *) * (lpRestrict->lpAnd->__size - i - 1));
-                lpRestrict->lpAnd->__size--;
+                --lpRestrict->lpAnd->__size;
             } else {
-                i++;
+                ++i;
             }
         }
     } else {

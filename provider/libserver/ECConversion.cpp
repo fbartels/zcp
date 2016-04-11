@@ -130,8 +130,7 @@ ECRESULT ConvertSearchCriteria52XTo6XX(ECDatabase *lpDatabase, char* lpData, str
 
 		// Get them from the database
 		strQuery = "SELECT val_binary FROM indexedproperties WHERE tag=0x0FFF AND hierarchyid IN ("; //PR_ENTRYID
-		for (i=0; i < lpSearchCriteria->lpFolders->__size; i++)
-		{
+		for (i = 0; i < lpSearchCriteria->lpFolders->__size; ++i) {
 			if (i != 0)strQuery+= ",";
 			strQuery+= stringify(lpSearchCriteria->lpFolders->__ptr[i]);
 		}
@@ -155,8 +154,7 @@ ECRESULT ConvertSearchCriteria52XTo6XX(ECDatabase *lpDatabase, char* lpData, str
 			memcpy(lpNewSearchCriteria->lpFolders->__ptr[i].__ptr, (unsigned char*) lpDBRow[0], lpDBLenths[0]);
 
 			lpNewSearchCriteria->lpFolders->__ptr[i].__size = (unsigned int) lpDBLenths[0];
-			
-			lpNewSearchCriteria->lpFolders->__size++;
+			++lpNewSearchCriteria->lpFolders->__size;
 		}
 		
 	} //if (lpSearchCriteria...)
@@ -215,18 +213,18 @@ SOAP_FMAC3 struct searchCriteria52X * SOAP_FMAC4 soap_in_searchCriteria52X(struc
 		for (;;)
 		{	soap->error = SOAP_TAG_MISMATCH;
 			if (soap_flag_lpRestrict && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_PointerTorestrictTable(soap, "lpRestrict", &a->lpRestrict, "restrictTable"))
-				{	soap_flag_lpRestrict--;
+				if (soap_in_PointerTorestrictTable(soap, "lpRestrict", &a->lpRestrict, "restrictTable")) {
+					--soap_flag_lpRestrict;
 					continue;
 				}
 			if (soap_flag_lpFolders && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_PointerToentryList52X(soap, "lpFolders", &a->lpFolders, "entryList"))
-				{	soap_flag_lpFolders--;
+				if (soap_in_PointerToentryList52X(soap, "lpFolders", &a->lpFolders, "entryList")) {
+					--soap_flag_lpFolders;
 					continue;
 				}
 			if (soap_flag_ulFlags && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_unsignedInt(soap, "ulFlags", &a->ulFlags, "xsd:unsignedInt"))
-				{	soap_flag_ulFlags--;
+				if (soap_in_unsignedInt(soap, "ulFlags", &a->ulFlags, "xsd:unsignedInt")) {
+					--soap_flag_ulFlags;
 					continue;
 				}
 			if (soap->error == SOAP_TAG_MISMATCH)
@@ -292,8 +290,8 @@ SOAP_FMAC3 struct entryList52X * SOAP_FMAC4 soap_in_entryList52X(struct soap *so
 			if (soap_flag___ptr && soap->error == SOAP_TAG_MISMATCH)
 			{	unsigned int *p;
 				soap_new_block(soap);
-				for (a->__size = 0; !soap_element_begin_in(soap, "item", 1, type); a->__size++)
-				{	p = (unsigned int *)soap_push_block(soap, NULL, sizeof(unsigned int));
+				for (a->__size = 0; !soap_element_begin_in(soap, "item", 1, type); ++a->__size) {
+					p = (unsigned int *)soap_push_block(soap, NULL, sizeof(unsigned int));
 					soap_default_unsignedInt(soap, p);
 					soap_revert(soap);
 					if (!soap_in_unsignedInt(soap, "item", p, "xsd:unsignedInt"))

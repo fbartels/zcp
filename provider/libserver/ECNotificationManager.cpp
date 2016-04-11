@@ -114,7 +114,8 @@ ECNotificationManager::~ECNotificationManager()
 
     // Close and free any pending requests (clients will receive EOF)
     std::map<ECSESSIONID, NOTIFREQUEST>::const_iterator iterRequest;
-    for(iterRequest = m_mapRequests.begin(); iterRequest != m_mapRequests.end(); iterRequest++) {
+    for (iterRequest = m_mapRequests.begin();
+         iterRequest != m_mapRequests.end(); ++iterRequest) {
 		// we can't call zarafa_notify_done here, race condition on shutdown in ECSessionManager vs ECDispatcher
 		zarafa_end_soap_connection(iterRequest->second.soap);
 		soap_destroy(iterRequest->second.soap);
@@ -232,7 +233,9 @@ void *ECNotificationManager::Work() {
         pthread_mutex_unlock(&m_mutexSessions);
         
         // Look at all the sessions that have signalled a change
-        for(iterSessions = setActiveSessions.begin(); iterSessions != setActiveSessions.end(); iterSessions++) {
+        for (iterSessions = setActiveSessions.begin();
+             iterSessions != setActiveSessions.end(); ++iterSessions)
+        {
             lpItem = NULL;
         
             pthread_mutex_lock(&m_mutexRequests);
@@ -319,7 +322,7 @@ void *ECNotificationManager::Work() {
                 // Mark the session as active so it will be processed in the next loop
                 NotifyChange(iterRequest->first);
             }
-            iterRequest++;
+            ++iterRequest;
         } 
         pthread_mutex_unlock(&m_mutexRequests);
         

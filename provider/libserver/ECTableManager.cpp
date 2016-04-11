@@ -134,7 +134,7 @@ ECTableManager::~ECTableManager()
 	// Clean up tables, if CloseTable(..) isn't called 
 	while(iterTables != mapTable.end()) {
 		iterNext = iterTables;
-		iterNext++;
+		++iterNext;
 		CloseTable(iterTables->first);
 		iterTables = iterNext;
 	}
@@ -174,9 +174,7 @@ void ECTableManager::AddTableEntry(TABLE_ENTRY *lpEntry, unsigned int *lpulTable
             // Other table types don't need updates from other sessions
             break;
     }
-
-	ulNextTableId++;
-
+	++ulNextTableId;
 	pthread_mutex_unlock(&hListMutex);
 	
 }
@@ -687,7 +685,7 @@ ECRESULT ECTableManager::UpdateOutgoingTables(ECKeyTable::UpdateType ulType, uns
 
 	pthread_mutex_lock(&hListMutex);
 
-	for(iterTables = mapTable.begin(); iterTables != mapTable.end(); iterTables++) {
+	for (iterTables = mapTable.begin(); iterTables != mapTable.end(); ++iterTables) {
 		if(	iterTables->second->ulTableType == TABLE_ENTRY::TABLE_TYPE_OUTGOINGQUEUE &&
 			(iterTables->second->sTable.sOutgoingQueue.ulStoreId == ulStoreId ||
 			 iterTables->second->sTable.sOutgoingQueue.ulStoreId == 0) &&
@@ -717,7 +715,7 @@ ECRESULT ECTableManager::UpdateTables(ECKeyTable::UpdateType ulType, unsigned in
 	// manager, and then update the row if required.
 
 	// First, do all the actual contents tables and hierarchy tables
-	for(iterTables = mapTable.begin(); iterTables != mapTable.end(); iterTables++) {
+	for (iterTables = mapTable.begin(); iterTables != mapTable.end(); ++iterTables) {
 		if(	iterTables->second->ulTableType == TABLE_ENTRY::TABLE_TYPE_GENERIC &&
 			iterTables->second->sTable.sGeneric.ulParentId == ulObjId && 
 			iterTables->second->sTable.sGeneric.ulObjectFlags == ulFlags &&
@@ -753,10 +751,9 @@ ECRESULT ECTableManager::GetStats(unsigned int *lpulTables, unsigned int *lpulOb
 	ulTables = mapTable.size();
 	ulSize = MEMORY_USAGE_MAP(ulTables, TABLEENTRYMAP);
 
-	for(iterEntry = mapTable.begin(); iterEntry !=  mapTable.end(); iterEntry++) {
+	for (iterEntry = mapTable.begin(); iterEntry !=  mapTable.end(); ++iterEntry)
 		if(iterEntry->second->ulTableType != TABLE_ENTRY::TABLE_TYPE_SYSTEMSTATS) // Skip system stats since it would recursively include itself
 			ulSize += iterEntry->second->lpTable->GetObjectSize();
-	}
 
 	pthread_mutex_unlock(&hListMutex);
 

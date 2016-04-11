@@ -79,14 +79,14 @@ static ECRESULT GetSubRestrictionRecursive(struct restrictTable *lpRestrict,
     
     switch(lpRestrict->ulType) {
         case RES_AND:
-            for(i=0;i<lpRestrict->lpAnd->__size;i++) {
+            for (i = 0; i < lpRestrict->lpAnd->__size; ++i) {
                 er = GetSubRestrictionRecursive(lpRestrict->lpAnd->__ptr[i], lpulCount, ulSubRestriction, lppSubRestrict, maxdepth-1);
                 if(er != erSuccess)
                     goto exit;
             }        
             break;
         case RES_OR:
-            for(i=0;i<lpRestrict->lpOr->__size;i++) {
+            for (i = 0; i < lpRestrict->lpOr->__size; ++i) {
                 er = GetSubRestrictionRecursive(lpRestrict->lpOr->__ptr[i], lpulCount, ulSubRestriction, lppSubRestrict, maxdepth-1);
                 if(er != erSuccess)
                     goto exit;
@@ -112,7 +112,7 @@ static ECRESULT GetSubRestrictionRecursive(struct restrictTable *lpRestrict,
             }
             // Counting subrestrictions
             if(lpulCount)
-                (*lpulCount)++;
+			++*lpulCount;
                     
             break;
         
@@ -157,7 +157,7 @@ ECRESULT RunSubRestrictions(ECSession *lpSession, void *lpECODStore, struct rest
     
     lpResults = new SUBRESTRICTIONRESULTS;
     
-    for(i=0;i<ulCount;i++) {
+    for (i = 0; i < ulCount; ++i) {
         er = GetSubRestriction(lpRestrict, i, &lpSubRestrict);
         if(er != erSuccess)
             goto exit;
@@ -224,7 +224,7 @@ ECRESULT RunSubRestriction(ECSession *lpSession, void *lpECODStore, struct restr
     // Get the subobject id's we're querying from the database
     strQuery = "SELECT hierarchy.parent, hierarchy.id FROM hierarchy WHERE hierarchy.type = " + stringify(ulType) + " AND hierarchy.parent IN (";
     
-    for(iterObject = lpObjects->begin(); iterObject != lpObjects->end(); iterObject++) {
+    for (iterObject = lpObjects->begin(); iterObject != lpObjects->end(); ++iterObject) {
         strQuery += stringify(iterObject->ulObjId);
         strQuery += ",";
     }
@@ -273,7 +273,7 @@ ECRESULT RunSubRestriction(ECSession *lpSession, void *lpECODStore, struct restr
         
     iterObject = lstSubObjects.begin();
     // Loop through all the rows, see if they match
-    for(i=0;i<lpRowSet->__size;i++) {
+    for (i = 0; i < lpRowSet->__size; ++i) {
         er = ECGenericObjectTable::MatchRowRestrict(lpSession->GetSessionManager()->GetCacheManager(), &lpRowSet->__ptr[i], lpRestrict->lpSubObject, NULL, locale, &fMatch);
         if(er != erSuccess)
             goto exit;
@@ -290,7 +290,8 @@ ECRESULT RunSubRestriction(ECSession *lpSession, void *lpECODStore, struct restr
         // Optimisation possibility: if one of the subobjects matches, we shouldn't bother checking
         // other subobjects. This is a rather minor optimisation though.
         
-        iterObject++; // lstSubObjects will always be in the same order as lpRowSet
+        ++iterObject;
+        // lstSubObjects will always be in the same order as lpRowSet
     }
 
 exit:
@@ -317,9 +318,9 @@ ECRESULT FreeSubRestrictionResults(SUBRESTRICTIONRESULTS *lpResults) {
     
     SUBRESTRICTIONRESULTS::const_iterator iterResults;
     
-    for(iterResults = lpResults->begin(); iterResults != lpResults->end(); iterResults++) {
-        delete *iterResults;
-    }
+	for (iterResults = lpResults->begin(); iterResults != lpResults->end();
+	     ++iterResults)
+		delete *iterResults;
     
     delete lpResults;
     

@@ -853,8 +853,7 @@ ECRESULT ECGetContentChangesHelper::ProcessRows(const std::vector<DB_ROW> &db_ro
 		m_lpChanges->__ptr[m_ulChangeCnt].ulChangeType = ulChangeType;
 
 		m_lpChanges->__ptr[m_ulChangeCnt].ulFlags = ulFlags;
-
-		m_ulChangeCnt++;
+		++m_ulChangeCnt;
 	}
 exit:
 	free(matches);
@@ -889,8 +888,7 @@ ECRESULT ECGetContentChangesHelper::ProcessResidualMessages()
 		m_lpChanges->__ptr[m_ulChangeCnt].ulChangeType = ICS_HARD_DELETE;
 		
 		m_lpChanges->__ptr[m_ulChangeCnt].ulFlags = 0;
-		
-		m_ulChangeCnt++;
+		++m_ulChangeCnt;
 	}	
 	
 exit:

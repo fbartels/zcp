@@ -151,8 +151,7 @@ ECRESULT zarafa_unloadlibrary(void)
 	while( iterDBObject != g_lpDBObjectList.end())
 	{
 		iNext = iterDBObject;
-		iNext++;
-
+		++iNext;
 		delete (*iterDBObject);
 
 		g_lpDBObjectList.erase(iterDBObject);
@@ -235,10 +234,9 @@ ECRESULT zarafa_exit()
 	// Close all database connections
 	pthread_mutex_lock(&g_hMutexDBObjectList);
 
-	for(iterDBObject = g_lpDBObjectList.begin(); iterDBObject != g_lpDBObjectList.end(); iterDBObject++)
-	{
+	for (iterDBObject = g_lpDBObjectList.begin();
+	     iterDBObject != g_lpDBObjectList.end(); ++iterDBObject)
 		(*iterDBObject)->Close();		
-	}
 	pthread_mutex_unlock(&g_hMutexDBObjectList);
 
 exit:

@@ -804,7 +804,8 @@ ECRESULT GetChanges(struct soap *soap, ECSession *lpSession, SOURCEKEY sFolderSo
         lstFolderIds.push_back(ulFolderId);
 
 		// Recursive loop through all folders
-		for(lpFolderId = lstFolderIds.begin(); lpFolderId != lstFolderIds.end(); lpFolderId++){
+		for (lpFolderId = lstFolderIds.begin();
+		     lpFolderId != lstFolderIds.end(); ++lpFolderId) {
 			if(*lpFolderId == 0) {
 			    if(lpSession->GetSecurity()->GetAdminLevel() != ADMIN_LEVEL_SYSADMIN) {
 			        er = ZARAFA_E_NO_ACCESS;
@@ -922,7 +923,8 @@ nextFolder:
 			i = 0;
 			
 			if((ulFlags & SYNC_CATCHUP) == 0) {
-                for(lpFolderId = lstFolderIds.begin(); lpFolderId != lstFolderIds.end(); lpFolderId++) {
+                for (lpFolderId = lstFolderIds.begin();
+                     lpFolderId != lstFolderIds.end(); ++lpFolderId) {
 
                     if(*lpFolderId == ulFolderId)
                         continue; // don't send the folder itself as a change
@@ -964,8 +966,7 @@ nextFolder:
                     if(lpDBResult)
                         lpDatabase->FreeResult(lpDBResult);
                     lpDBResult = NULL;
-
-                    i++;
+                    ++i;
                 }
             }
 			lpChanges->__size = i;
@@ -976,7 +977,8 @@ nextFolder:
 			lpChanges->__size = lstChanges.size();
 
 			i = 0;
-			for(iterChanges = lstChanges.begin(); iterChanges != lstChanges.end(); iterChanges++) {
+			for (iterChanges = lstChanges.begin();
+			     iterChanges != lstChanges.end(); ++iterChanges) {
 				strQuery = "SELECT changes.id, changes.sourcekey, changes.parentsourcekey, changes.change_type, changes.flags FROM changes WHERE changes.id="+stringify(*iterChanges);
 
 				er = lpDatabase->DoSelect(strQuery, &lpDBResult);
@@ -1015,8 +1017,7 @@ nextFolder:
 				if(lpDBResult)
 					lpDatabase->FreeResult(lpDBResult);
 				lpDBResult = NULL;
-
-				i++;
+				++i;
 			}
 			lpChanges->__size = i;
 		}
@@ -1099,8 +1100,7 @@ nextFolder:
 
                 if(iter->id > ulMaxChange)
                     ulMaxChange = iter->id;
-
-                i++;
+                ++i;
             }
 
             lpChanges->__size = i;
@@ -1178,8 +1178,7 @@ nextFolder:
                 lpChanges->__ptr[i].sParentSourceKey.__ptr = s_alloc<unsigned char>(soap, sizeof(eid));
                 memcpy(lpChanges->__ptr[i].sParentSourceKey.__ptr, &eid, sizeof(eid));
                 lpChanges->__ptr[i].ulChangeType = ICS_AB_NEW;
-                
-                i++;
+                ++i;
             }
             
             lpChanges->__size = i;

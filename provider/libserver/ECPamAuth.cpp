@@ -74,7 +74,7 @@ static int converse(int num_msg, const struct pam_message **msg,
 	if (!response)
 		return PAM_BUF_ERR;
 
-	for (i = 0; i < num_msg; i++) {
+	for (i = 0; i < num_msg; ++i) {
 		response[i].resp_retcode = 0;
 		response[i].resp = 0;
 

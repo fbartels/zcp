@@ -254,7 +254,7 @@ void BTSession::Lock()
 {
 	// Increase our refcount by one
 	pthread_mutex_lock(&m_hThreadReleasedMutex);
-	this->m_ulRefCount++;
+	++this->m_ulRefCount;
 	pthread_mutex_unlock(&m_hThreadReleasedMutex);
 }
 
@@ -262,7 +262,7 @@ void BTSession::Unlock()
 {
 	// Decrease our refcount by one, signal ThreadReleased if RefCount == 0
 	pthread_mutex_lock(&m_hThreadReleasedMutex);
-	this->m_ulRefCount--;
+	--this->m_ulRefCount;
 	if(!IsLocked())
 		pthread_cond_signal(&m_hThreadReleased);
 	pthread_mutex_unlock(&m_hThreadReleasedMutex);
@@ -289,7 +289,7 @@ void BTSession::RecordRequest(struct soap* soap)
 	m_ulLastRequestPort = soap->port;
 	if (soap->proxy_from && ((SOAPINFO*)soap->user)->bProxy)
 		m_strProxyHost = soap->host;
-	m_ulRequests++;
+	++m_ulRequests;
 }
 
 unsigned int BTSession::GetRequests()
@@ -646,7 +646,7 @@ void ECSession::GetBusyStates(std::list<BUSYSTATE> *lpStates)
 	// so the lock time is short, which will block _all_ incoming functions
 	lpStates->clear();
 	pthread_mutex_lock(&m_hStateLock);
-	for (iMap = m_mapBusyStates.begin(); iMap != m_mapBusyStates.end(); iMap++)
+	for (iMap = m_mapBusyStates.begin(); iMap != m_mapBusyStates.end(); ++iMap)
 		lpStates->push_back(iMap->second);
 	pthread_mutex_unlock(&m_hStateLock);
 }
@@ -1149,7 +1149,7 @@ ECRESULT ECAuthSession::ValidateUserCertificate(struct soap* soap, const char* l
 			goto exit;
 		}
 
-		for (bfs::directory_iterator key(keysdir); key != key_last; key++) {
+		for (bfs::directory_iterator key(keysdir); key != key_last; ++key) {
 			if (is_directory(key->status()))
 				continue;
 
@@ -1544,7 +1544,7 @@ ECRESULT ECAuthSession::ValidateSSOData_NTLM(struct soap* soap, const char* lpsz
 
 			// close all other open file descriptors, so ntlm doesn't keep the zarafa-server sockets open
 			j = getdtablesize();
-			for (k = 3; k < j; k++)
+			for (k = 3; k < j; ++k)
 				close(k);
 
 			execl("/bin/sh", "sh", "-c", "ntlm_auth -d0 --helper-protocol=squid-2.5-ntlmssp", NULL);
@@ -1672,7 +1672,7 @@ retry:
 		// if the domain separator is not found, assume we only have the username (samba)
 		string::size_type pos = strAnswer.find_first_of(separator);
 		if (pos != string::npos) {
-			pos++;
+			++pos;
 			strAnswer.assign(strAnswer, pos, strAnswer.length()-pos);
 		}
 
@@ -1765,7 +1765,7 @@ ECRESULT ECAuthSession::ValidateSSOData(struct soap* soap, const char* lpszName,
 			goto exit;
 		}
 
-		for (m_ulPid = 0; m_ulPid < m_cPackages; m_ulPid++) {
+		for (m_ulPid = 0; m_ulPid < m_cPackages; ++m_ulPid) {
 			// find auto detect method, always (?) first item in the list
 			// TODO: config option to force a method?
 			if (_tcsicmp(_T("Negotiate"), m_lpPackageInfo[m_ulPid].Name) == 0)

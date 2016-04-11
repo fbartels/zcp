@@ -385,15 +385,15 @@ ECRESULT ECGenProps::GetPropComputed(struct soap *soap, unsigned int ulObjType, 
 		{
 			char* c = lpPropVal->Value.lpszA;
 			while (c < lpszColon && isdigit(*c))
-				c++; // test for all digits prefix
+				++c; // test for all digits prefix
 			if (c != lpszColon)
 			{
-				lpszColon++; // skip ':'
+				++lpszColon; // skip ':'
 				size_t newlength = strlen(lpszColon);
 				if (newlength > 0 && lpszColon[0] == ' ')
 				{
-					lpszColon++; // skip space
-					newlength--; // adjust length
+					++lpszColon; // skip space
+					--newlength; // adjust length
 				}
 				lpPropVal->Value.lpszA = s_alloc<char>(soap, newlength + 1);
 				memcpy(lpPropVal->Value.lpszA, lpszColon, newlength);
@@ -967,7 +967,7 @@ ECRESULT ECGenProps::GetStoreName(struct soap *soap, ECSession* lpSession, unsig
 
         strFormat = string(lpSession->GetSessionManager()->GetConfig()->GetSetting("storename_format"));
 
-        for (int i = 0; i < sPropValArray.__size; i++) {
+        for (int i = 0; i < sPropValArray.__size; ++i) {
             string sub;
             size_t pos = 0;
 

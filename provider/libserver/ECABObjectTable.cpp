@@ -584,7 +584,7 @@ ECRESULT ECABObjectTable::Load()
 		}
 	}
 
-	for (iterObjects = lpObjects->begin(); iterObjects != lpObjects->end(); iterObjects++) {
+	for (iterObjects = lpObjects->begin(); iterObjects != lpObjects->end(); ++iterObjects) {
 		/* Only add visible items */
 		if (lpSession->GetSecurity()->IsUserObjectVisible(iterObjects->ulId) != erSuccess)
 			continue;

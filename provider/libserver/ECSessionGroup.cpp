@@ -108,9 +108,8 @@ ECSessionGroup::~ECSessionGroup()
 {
 	/* Unsubscribe any subscribed stores */
 	std::multimap<unsigned int, unsigned int>::const_iterator i;
-	for(i=m_mapSubscribedStores.begin(); i != m_mapSubscribedStores.end(); i++) {
+	for (i = m_mapSubscribedStores.begin(); i != m_mapSubscribedStores.end(); ++i)
 		m_lpSessionManager->UnsubscribeObjectEvents(i->second, m_sessionGroupId);
-	}
 
 	/* Release any GetNotifyItems() threads */
 	pthread_mutex_destroy(&m_hNotificationLock);
@@ -127,7 +126,7 @@ void ECSessionGroup::Lock()
 {
 	/* Increase our refcount by one */
 	pthread_mutex_lock(&m_hThreadReleasedMutex);
-	m_ulRefCount++;
+	++m_ulRefCount;
 	pthread_mutex_unlock(&m_hThreadReleasedMutex);
 }
 
@@ -135,7 +134,7 @@ void ECSessionGroup::Unlock()
 {
 	// Decrease our refcount by one, signal ThreadReleased if RefCount == 0
 	pthread_mutex_lock(&m_hThreadReleasedMutex);
-	m_ulRefCount--;
+	--m_ulRefCount;
 	if (!IsLocked())
 		pthread_cond_signal(&m_hThreadReleased);
 	pthread_mutex_unlock(&m_hThreadReleasedMutex);
@@ -170,13 +169,12 @@ void ECSessionGroup::ReleaseSession(ECSession *lpSession)
 
 	for (i = m_mapSubscribe.begin(); i != m_mapSubscribe.end(); ) {
 		if (i->second.ulSession != lpSession->GetSessionId()) {
-			i++;
+			++i;
 			continue;
 		}
 
 		iRemove = i;
-		i++;
-
+		++i;
 		m_mapSubscribe.erase(iRemove);
 
 	}
@@ -331,10 +329,9 @@ ECRESULT ECSessionGroup::AddNotification(notification *notifyItem, unsigned int 
 	// Since we now have a notification ready to send, tell the session manager that we have something to send. Since
 	// a notification can be read from any session in the session group, we have to notify all of the sessions
 	pthread_mutex_lock(&m_hSessionMapLock);
-	for(iterSessions = m_mapSessions.begin(); iterSessions != m_mapSessions.end(); iterSessions++) {
-    	m_lpSessionManager->NotifyNotificationReady(iterSessions->second.lpSession->GetSessionId());
-    }
-    
+	for (iterSessions = m_mapSessions.begin();
+	     iterSessions != m_mapSessions.end(); ++iterSessions)
+		m_lpSessionManager->NotifyNotificationReady(iterSessions->second.lpSession->GetSessionId());
 	pthread_mutex_unlock(&m_hSessionMapLock);
 
 	return hr;
@@ -459,9 +456,9 @@ ECRESULT ECSessionGroup::AddChangeNotification(const std::set<unsigned int> &syn
 	// Since we now have a notification ready to send, tell the session manager that we have something to send. Since
 	// a notifications can be read from any session in the session group, we have to notify all of the sessions
 	pthread_mutex_lock(&m_hSessionMapLock);
-	for(iterSessions = m_mapSessions.begin(); iterSessions != m_mapSessions.end(); iterSessions++) {
-    	m_lpSessionManager->NotifyNotificationReady(iterSessions->second.lpSession->GetSessionId());
-    }
+	for (iterSessions = m_mapSessions.begin();
+	     iterSessions != m_mapSessions.end(); ++iterSessions)
+		m_lpSessionManager->NotifyNotificationReady(iterSessions->second.lpSession->GetSessionId());
     
 	pthread_mutex_unlock(&m_hSessionMapLock);
 
@@ -500,9 +497,9 @@ ECRESULT ECSessionGroup::AddChangeNotification(ECSESSIONID ulSessionId, unsigned
 	// Since we now have a notification ready to send, tell the session manager that we have something to send. Since
 	// a notifications can be read from any session in the session group, we have to notify all of the sessions
 	pthread_mutex_lock(&m_hSessionMapLock);
-	for(iterSessions = m_mapSessions.begin(); iterSessions != m_mapSessions.end(); iterSessions++) {
-    	m_lpSessionManager->NotifyNotificationReady(iterSessions->second.lpSession->GetSessionId());
-    }
+	for (iterSessions = m_mapSessions.begin();
+	     iterSessions != m_mapSessions.end(); ++iterSessions)
+		m_lpSessionManager->NotifyNotificationReady(iterSessions->second.lpSession->GetSessionId());
     
 	pthread_mutex_unlock(&m_hSessionMapLock);
 
@@ -591,10 +588,9 @@ unsigned int ECSessionGroup::GetObjectSize()
 	ulSize += MEMORY_USAGE_MAP(m_mapSubscribe.size(), SUBSCRIBEMAP);
 	ulSize += MEMORY_USAGE_MAP(m_mapChangeSubscribe.size(), CHANGESUBSCRIBEMAP);
 
-	for(iterlNotify = m_listNotification.begin(), ulItems = 0; iterlNotify != m_listNotification.end(); iterlNotify++, ulItems++)
-	{
+	for (iterlNotify = m_listNotification.begin(), ulItems = 0;
+	     iterlNotify != m_listNotification.end(); ++iterlNotify, ++ulItems)
 		ulSize += iterlNotify->GetObjectSize();
-	}
 	ulSize += MEMORY_USAGE_LIST(ulItems, NOTIFICATIONLIST);
 
 	pthread_mutex_unlock(&m_hNotificationLock);

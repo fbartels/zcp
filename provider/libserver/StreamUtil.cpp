@@ -413,8 +413,7 @@ ECRESULT SerializeDatabasePropVal(LPCSTREAMCAPS lpStreamCaps, DB_ROW lpRow, DB_L
 		ulCount = atoi(lpRow[FIELD_NR_ID]);
 		er = lpSink->Write(&ulCount, sizeof(ulCount), 1);
 		ulLastPos = 0;
-		for (unsigned x = 0 ;er == erSuccess && x < ulCount; x++)
-		{
+		for (unsigned int x = 0; er == erSuccess && x < ulCount; ++x) {
 			ParseMVProp(lpRow[FIELD_NR_ULONG], lpLen[FIELD_NR_ULONG], &ulLastPos, &strData);
 			i = (short)atoi(strData.c_str());
 			er = lpSink->Write(&i, sizeof(i), 1);
@@ -429,8 +428,7 @@ ECRESULT SerializeDatabasePropVal(LPCSTREAMCAPS lpStreamCaps, DB_ROW lpRow, DB_L
 		ulCount = atoi(lpRow[FIELD_NR_ID]);
 		er = lpSink->Write(&ulCount, sizeof(ulCount), 1);
 		ulLastPos = 0;
-		for (unsigned x = 0; er == erSuccess && x < ulCount; x++)
-		{
+		for (unsigned int x = 0; er == erSuccess && x < ulCount; ++x) {
 			ParseMVProp(lpRow[FIELD_NR_ULONG], lpLen[FIELD_NR_ULONG], &ulLastPos, &strData);
 			ul = atoui((char*)strData.c_str());
 			er = lpSink->Write(&ul, sizeof(ul), 1);
@@ -445,8 +443,7 @@ ECRESULT SerializeDatabasePropVal(LPCSTREAMCAPS lpStreamCaps, DB_ROW lpRow, DB_L
 		ulCount = atoi(lpRow[FIELD_NR_ID]);
 		er = lpSink->Write(&ulCount, sizeof(ulCount), 1);
 		ulLastPos = 0;
-		for (unsigned x = 0; er == erSuccess && x < ulCount; x++)
-		{
+		for (unsigned int x = 0; er == erSuccess && x < ulCount; ++x) {
 			ParseMVProp(lpRow[FIELD_NR_DOUBLE], lpLen[FIELD_NR_DOUBLE], &ulLastPos, &strData);
 			flt = (float)strtod_l(strData.c_str(), NULL, loc);
 			er = lpSink->Write(&flt, sizeof(flt), 1);
@@ -462,8 +459,7 @@ ECRESULT SerializeDatabasePropVal(LPCSTREAMCAPS lpStreamCaps, DB_ROW lpRow, DB_L
 		ulCount = atoi(lpRow[FIELD_NR_ID]);
 		er = lpSink->Write(&ulCount, sizeof(ulCount), 1);
 		ulLastPos = 0;
-		for (unsigned x = 0; er == erSuccess && x < ulCount; x++)
-		{
+		for (unsigned int x = 0; er == erSuccess && x < ulCount; ++x) {
 			ParseMVProp(lpRow[FIELD_NR_DOUBLE], lpLen[FIELD_NR_DOUBLE], &ulLastPos, &strData);
 			dbl = strtod_l(strData.c_str(), NULL, loc);
 			er = lpSink->Write(&dbl, sizeof(dbl), 1);
@@ -479,8 +475,7 @@ ECRESULT SerializeDatabasePropVal(LPCSTREAMCAPS lpStreamCaps, DB_ROW lpRow, DB_L
 		er = lpSink->Write(&ulCount, sizeof(ulCount), 1);
 		ulLastPos = 0;
 		ulLastPos2 = 0;
-		for (unsigned x = 0; er == erSuccess && x < ulCount; x++)
-		{
+		for (unsigned int x = 0; er == erSuccess && x < ulCount; ++x) {
 			ParseMVProp(lpRow[FIELD_NR_LO], lpLen[FIELD_NR_LO], &ulLastPos, &strData);
 			hilo.lo = atoui((char*)strData.c_str());
 			ParseMVProp(lpRow[FIELD_NR_HI], lpLen[FIELD_NR_HI], &ulLastPos2, &strData);
@@ -499,8 +494,7 @@ ECRESULT SerializeDatabasePropVal(LPCSTREAMCAPS lpStreamCaps, DB_ROW lpRow, DB_L
 		ulCount = atoi(lpRow[FIELD_NR_ID]);
 		er = lpSink->Write(&ulCount, sizeof(ulCount), 1);
 		ulLastPos = 0;
-		for (unsigned x = 0; er == erSuccess && x < ulCount; x++)
-		{
+		for (unsigned int x = 0; er == erSuccess && x < ulCount; ++x) {
 			ParseMVProp(lpRow[FIELD_NR_BINARY], lpLen[FIELD_NR_BINARY], &ulLastPos, &strData);
 			ulLen = (unsigned int)strData.size();
 			er = lpSink->Write(&ulLen, sizeof(ulLen), 1);
@@ -517,8 +511,7 @@ ECRESULT SerializeDatabasePropVal(LPCSTREAMCAPS lpStreamCaps, DB_ROW lpRow, DB_L
 		ulCount = atoi(lpRow[FIELD_NR_ID]);
 		er = lpSink->Write(&ulCount, sizeof(ulCount), 1);
 		ulLastPos = 0;
-		for (unsigned x = 0; er == erSuccess && x < ulCount; x++)
-		{
+		for (unsigned int x = 0; er == erSuccess && x < ulCount; ++x) {
 			ParseMVProp(lpRow[FIELD_NR_STRING], lpLen[FIELD_NR_STRING], &ulLastPos, &strData);
 			if (lpStreamCaps->bSupportUnicode) {
 				ulLen = (unsigned int)strData.size();
@@ -543,8 +536,7 @@ ECRESULT SerializeDatabasePropVal(LPCSTREAMCAPS lpStreamCaps, DB_ROW lpRow, DB_L
 		ulCount = atoi(lpRow[FIELD_NR_ID]);
 		er = lpSink->Write(&ulCount, sizeof(ulCount), 1);
 		ulLastPos = 0;
-		for (unsigned x = 0; er == erSuccess && x < ulCount; x++)
-		{
+		for (unsigned int x = 0; er == erSuccess && x < ulCount; ++x) {
 			ParseMVProp(lpRow[FIELD_NR_LONGINT], lpLen[FIELD_NR_LONGINT], &ulLastPos, &strData);
 			li = _atoi64(strData.c_str());
 			er = lpSink->Write(&li, sizeof(li), 1);
@@ -673,29 +665,29 @@ ECRESULT SerializePropVal(LPCSTREAMCAPS lpStreamCaps, const struct propVal &sPro
 		break;
 	case PT_MV_I2:
 		er = lpSink->Write(&sPropVal.Value.mvi.__size, sizeof(sPropVal.Value.mvi.__size), 1);
-		for (int x = 0; er == erSuccess && x < sPropVal.Value.mvi.__size; x++)
+		for (int x = 0; er == erSuccess && x < sPropVal.Value.mvi.__size; ++x)
 			er = lpSink->Write(&sPropVal.Value.mvi.__ptr[x], sizeof(sPropVal.Value.mvi.__ptr[x]), 1);
 		break;
 	case PT_MV_LONG:
 		er = lpSink->Write(&sPropVal.Value.mvl.__size, sizeof(sPropVal.Value.mvl.__size), 1);
-		for (int x = 0; er == erSuccess && x < sPropVal.Value.mvl.__size; x++)
+		for (int x = 0; er == erSuccess && x < sPropVal.Value.mvl.__size; ++x)
 			er = lpSink->Write(&sPropVal.Value.mvl.__ptr[x], sizeof(sPropVal.Value.mvl.__ptr[x]), 1);
 		break;
 	case PT_MV_R4:
 		er = lpSink->Write(&sPropVal.Value.mvflt.__size, sizeof(sPropVal.Value.mvflt.__size), 1);
-		for (int x = 0; er == erSuccess && x < sPropVal.Value.mvflt.__size; x++)
+		for (int x = 0; er == erSuccess && x < sPropVal.Value.mvflt.__size; ++x)
 			er = lpSink->Write(&sPropVal.Value.mvflt.__ptr[x], sizeof(sPropVal.Value.mvflt.__ptr[x]), 1);
 		break;
 	case PT_MV_DOUBLE:
 	case PT_MV_APPTIME:
 		er = lpSink->Write(&sPropVal.Value.mvdbl.__size, sizeof(sPropVal.Value.mvdbl.__size), 1);
-		for (int x = 0; er == erSuccess && x < sPropVal.Value.mvdbl.__size; x++)
+		for (int x = 0; er == erSuccess && x < sPropVal.Value.mvdbl.__size; ++x)
 			er = lpSink->Write(&sPropVal.Value.mvdbl.__ptr[x], sizeof(sPropVal.Value.mvdbl.__ptr[x]), 1);
 		break;
 	case PT_MV_CURRENCY:
 	case PT_MV_SYSTIME:
 		er = lpSink->Write(&sPropVal.Value.mvhilo.__size, sizeof(sPropVal.Value.mvhilo.__size), 1);
-		for (int x = 0; er == erSuccess && x < sPropVal.Value.mvhilo.__size; x++) {
+		for (int x = 0; er == erSuccess && x < sPropVal.Value.mvhilo.__size; ++x) {
 			er = lpSink->Write(&sPropVal.Value.mvhilo.__ptr[x].hi, sizeof(sPropVal.Value.mvhilo.__ptr[x].hi), 1);
 			if (er == erSuccess)
 				er = lpSink->Write(&sPropVal.Value.mvhilo.__ptr[x].lo, sizeof(sPropVal.Value.mvhilo.__ptr[x].lo), 1);
@@ -704,7 +696,7 @@ ECRESULT SerializePropVal(LPCSTREAMCAPS lpStreamCaps, const struct propVal &sPro
 	case PT_MV_BINARY:
 	case PT_MV_CLSID:
 		er = lpSink->Write(&sPropVal.Value.mvbin.__size, sizeof(sPropVal.Value.mvbin.__size), 1);
-		for (int x = 0; er == erSuccess && x < sPropVal.Value.mvbin.__size; x++) {
+		for (int x = 0; er == erSuccess && x < sPropVal.Value.mvbin.__size; ++x) {
 			er = lpSink->Write(&sPropVal.Value.mvbin.__ptr[x].__size, sizeof(sPropVal.Value.mvbin.__ptr[x].__size), 1);
 			if (er == erSuccess)
 				er = lpSink->Write(sPropVal.Value.mvbin.__ptr[x].__ptr, 1, sPropVal.Value.mvbin.__ptr[x].__size);
@@ -713,7 +705,7 @@ ECRESULT SerializePropVal(LPCSTREAMCAPS lpStreamCaps, const struct propVal &sPro
 	case PT_MV_STRING8:
 	case PT_MV_UNICODE:
 		er = lpSink->Write(&sPropVal.Value.mvszA.__size, sizeof(sPropVal.Value.mvszA.__size), 1);
-		for (int x = 0; er == erSuccess && x < sPropVal.Value.mvszA.__size; x++) {
+		for (int x = 0; er == erSuccess && x < sPropVal.Value.mvszA.__size; ++x) {
 			if (lpStreamCaps->bSupportUnicode) {
 				ulLen = (unsigned)strlen(sPropVal.Value.mvszA.__ptr[x]);
 				er = lpSink->Write(&ulLen, sizeof(ulLen), 1);
@@ -730,7 +722,7 @@ ECRESULT SerializePropVal(LPCSTREAMCAPS lpStreamCaps, const struct propVal &sPro
 		break;
 	case PT_MV_I8:
 		er = lpSink->Write(&sPropVal.Value.mvli.__size, sizeof(sPropVal.Value.mvli.__size), 1);
-		for (int x = 0; er == erSuccess && x < sPropVal.Value.mvli.__size; x++)
+		for (int x = 0; er == erSuccess && x < sPropVal.Value.mvli.__size; ++x)
 			er = lpSink->Write(&sPropVal.Value.mvli.__ptr[x], sizeof(sPropVal.Value.mvli.__ptr[x]), 1);
 		break;
 
@@ -779,7 +771,7 @@ static ECRESULT SerializeProps(struct propValArray *lpPropVals,
 	if (er != erSuccess)
     	goto exit;
     	
-	for(unsigned int i=0; i < ulCount; i++) {
+	for (unsigned int i = 0; i < ulCount; ++i) {
 		er = SerializePropVal(lpStreamCaps, lpPropVals->__ptr[i], lpSink, lpNamedPropDefs);
         if (er != erSuccess)
 	        goto exit;
@@ -901,16 +893,14 @@ static ECRESULT SerializeProps(ECSession *lpecSession, ECDatabase *lpDatabase,
 		er = SerializeDatabasePropVal(lpStreamCaps, lpDBRow, lpDBLen, lpTempSink);
 		if (er != erSuccess)
 			goto exit;
-			
-		ulCount++;
+		++ulCount;
 	}
 
 	for (std::list<struct propVal>::const_iterator it = sPropValList.begin(); it != sPropValList.end(); ++it) {
 		er = SerializePropVal(lpStreamCaps, *it, lpTempSink, NULL);		// No NamedPropDefMap needed for computed properties
 		if (er != erSuccess)
 			goto exit;
-			
-		ulCount++;
+		++ulCount;
 	}
 
 	er = lpSink->Write(&ulCount, sizeof(ulCount), 1);
@@ -1287,7 +1277,7 @@ static ECRESULT DeserializePropVal(struct soap *soap,
 		if (er == erSuccess) {
 			lpsPropval->Value.mvhilo.__size = ulCount;
 			lpsPropval->Value.mvhilo.__ptr = s_alloc<hiloLong>(soap, ulCount);
-			for (unsigned x = 0; er == erSuccess &&  x < ulCount; x++) {
+			for (unsigned int x = 0; er == erSuccess && x < ulCount; ++x) {
 				er = lpSource->Read(&lpsPropval->Value.mvhilo.__ptr[x].hi, sizeof(lpsPropval->Value.mvhilo.__ptr[x].hi), ulCount);
 				if (er == erSuccess)
 					er = lpSource->Read(&lpsPropval->Value.mvhilo.__ptr[x].lo, sizeof(lpsPropval->Value.mvhilo.__ptr[x].lo), ulCount);
@@ -1301,7 +1291,7 @@ static ECRESULT DeserializePropVal(struct soap *soap,
 		if (er == erSuccess) {
 			lpsPropval->Value.mvbin.__size = ulCount;
 			lpsPropval->Value.mvbin.__ptr = s_alloc<xsd__base64Binary>(soap, ulCount);
-			for (unsigned x = 0; er == erSuccess && x < ulCount; x++) {
+			for (unsigned int x = 0; er == erSuccess && x < ulCount; ++x) {
 				er = lpSource->Read(&ulLen, sizeof(ulLen), 1);
 				if (er == erSuccess) {
 					lpsPropval->Value.mvbin.__ptr[x].__size = ulLen;
@@ -1318,7 +1308,7 @@ static ECRESULT DeserializePropVal(struct soap *soap,
 		if (er == erSuccess) {
 			lpsPropval->Value.mvszA.__size = ulCount;
 			lpsPropval->Value.mvszA.__ptr = s_alloc<char*>(soap, ulCount);
-			for (unsigned x = 0; er == erSuccess && x < ulCount; x++) {
+			for (unsigned int x = 0; er == erSuccess && x < ulCount; ++x) {
 				er = lpSource->Read(&ulLen, sizeof(ulLen), 1);
 				if (er == erSuccess) {
 					if (lpStreamCaps->bSupportUnicode) {
@@ -1972,8 +1962,7 @@ ECRESULT GetValidatedPropCount(ECDatabase *lpDatabase, DB_RESULT lpDBResult, uns
 			continue;
 		} else if (er != erSuccess)
 			goto exit;
-
-		ulCount++;
+		++ulCount;
 	}
 
 	lpDatabase->ResetResult(lpDBResult);

@@ -1108,8 +1108,7 @@ ECRESULT ECDatabaseAttachment::SaveAttachmentInstance(ULONG ulInstanceId, ULONG 
 			ec_log_err("ECAttachmentStorage::SaveAttachmentInstance(): DoInsert failed %x", er);
 			goto exit;
 		}
-
-		ulChunk++;
+		++ulChunk;
 		iSizeLeft -= iChunkSize;
 		iPtr += iChunkSize;
 	} while (iSizeLeft > 0);
@@ -1159,8 +1158,7 @@ ECRESULT ECDatabaseAttachment::SaveAttachmentInstance(ULONG ulInstanceId, ULONG 
 			ec_log_err("ECAttachmentStorage::SaveAttachmentInstance(): DoInsert failed %x", er);
 			goto exit;
 		}
-
-		ulChunk++;
+		++ulChunk;
 		iSizeLeft -= iChunkSize;
 	}
 
@@ -1183,8 +1181,8 @@ ECRESULT ECDatabaseAttachment::DeleteAttachmentInstances(const std::list<ULONG> 
 	std::string strQuery;
 
 	strQuery = (std::string)"DELETE FROM lob WHERE instanceid IN (";
-
-	for (iterDel = lstDeleteInstances.begin(); iterDel != lstDeleteInstances.end(); iterDel++) {
+	for (iterDel = lstDeleteInstances.begin();
+	     iterDel != lstDeleteInstances.end(); ++iterDel) {
 		if (iterDel != lstDeleteInstances.begin())
 			strQuery += ",";
 		strQuery += stringify(*iterDel);
@@ -2040,10 +2038,11 @@ ECRESULT ECFileAttachment::DeleteAttachmentInstances(const std::list<ULONG> &lst
 	int errors = 0;
 	std::list<ULONG>::const_iterator iterDel;
 
-	for (iterDel = lstDeleteInstances.begin(); iterDel != lstDeleteInstances.end(); iterDel++) {
+	for (iterDel = lstDeleteInstances.begin();
+	     iterDel != lstDeleteInstances.end(); ++iterDel) {
 		er = this->DeleteAttachmentInstance(*iterDel, bReplace);
 		if (er != erSuccess)
-			errors++;
+			++errors;
 	}
 
 	if (errors)
@@ -2347,16 +2346,16 @@ ECRESULT ECFileAttachment::Commit()
 	m_bTransaction = false;
 
 	// Delete the attachments
-	for (iterAtt = m_setDeletedAttachment.begin(); iterAtt != m_setDeletedAttachment.end(); iterAtt++) {
+	for (iterAtt = m_setDeletedAttachment.begin();
+	     iterAtt != m_setDeletedAttachment.end(); ++iterAtt)
 		if(DeleteAttachmentInstance(*iterAtt, false) != erSuccess)
 			bError = true;
-	}
 
 	// Delete marked attachments
-	for (iterAtt = m_setMarkedAttachment.begin(); iterAtt != m_setMarkedAttachment.end(); iterAtt++) {
+	for (iterAtt = m_setMarkedAttachment.begin();
+	     iterAtt != m_setMarkedAttachment.end(); ++iterAtt)
 		if (DeleteMarkedAttachment(*iterAtt) != erSuccess)
 			bError = true;
-	}
 
 	if (bError) {
 		ASSERT(FALSE);
@@ -2390,15 +2389,15 @@ ECRESULT ECFileAttachment::Rollback()
 	m_setDeletedAttachment.clear();
 	
 	// Remove the created attachments
-	for (iterAtt = m_setNewAttachment.begin(); iterAtt != m_setNewAttachment.end(); iterAtt++) 	{
+	for (iterAtt = m_setNewAttachment.begin();
+	     iterAtt != m_setNewAttachment.end(); ++iterAtt)
 		if(DeleteAttachmentInstance(*iterAtt, false) != erSuccess)
 			bError = true;
-	}
 	// Restore marked attachment
-	for (iterAtt = m_setMarkedAttachment.begin(); iterAtt != m_setMarkedAttachment.end(); iterAtt++) {
+	for (iterAtt = m_setMarkedAttachment.begin();
+	     iterAtt != m_setMarkedAttachment.end(); ++iterAtt)
 		if (RestoreMarkedAttachment(*iterAtt) != erSuccess)
 			bError = true;
-	}
 
 	m_setNewAttachment.clear();
 	m_setMarkedAttachment.clear();

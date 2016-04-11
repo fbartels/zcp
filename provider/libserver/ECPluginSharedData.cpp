@@ -66,14 +66,14 @@ ECPluginSharedData::~ECPluginSharedData()
 {
 	delete m_lpConfig;
 	if (m_lpDefaults) {
-		for (int n = 0; m_lpDefaults[n].szName; n++) {
+		for (int n = 0; m_lpDefaults[n].szName; ++n) {
 			free(const_cast<char *>(m_lpDefaults[n].szName));
 			free(const_cast<char *>(m_lpDefaults[n].szValue));
 		}
 		delete [] m_lpDefaults;
 	}
 	if (m_lpszDirectives) {
-		for (int n = 0; m_lpszDirectives[n]; n++)
+		for (int n = 0; m_lpszDirectives[n]; ++n)
 			free(m_lpszDirectives[n]);
 		delete [] m_lpszDirectives;
 	}
@@ -87,8 +87,7 @@ void ECPluginSharedData::GetSingleton(ECPluginSharedData **lppSingleton,
 
 	if (!m_lpSingleton)
 		m_lpSingleton = new ECPluginSharedData(lpParent, lpStatsCollector, bHosted, bDistributed);
-
-	m_lpSingleton->m_ulRefCount++;
+	++m_lpSingleton->m_ulRefCount;
 	*lppSingleton = m_lpSingleton;
 
 	pthread_mutex_unlock(&m_SingletonLock);
@@ -97,7 +96,7 @@ void ECPluginSharedData::GetSingleton(ECPluginSharedData **lppSingleton,
 void ECPluginSharedData::AddRef()
 {
 	pthread_mutex_lock(&m_SingletonLock);
-	m_ulRefCount++;
+	++m_ulRefCount;
 	pthread_mutex_unlock(&m_SingletonLock);
 }
 
@@ -124,9 +123,10 @@ ECConfig *ECPluginSharedData::CreateConfig(const configsetting_t *lpDefaults,
 		 * so it isn't removed from memory when the plugin unloads.
 		 */
 		if (lpDefaults) {
-			for (n = 0; lpDefaults[n].szName; n++) ;
+			for (n = 0; lpDefaults[n].szName; ++n)
+				;
 			m_lpDefaults = new configsetting_t[n+1];
-			for (n = 0; lpDefaults[n].szName; n++) {
+			for (n = 0; lpDefaults[n].szName; ++n) {
 				m_lpDefaults[n].szName = strdup(lpDefaults[n].szName);
 				m_lpDefaults[n].szValue = strdup(lpDefaults[n].szValue);
 				m_lpDefaults[n].ulFlags = lpDefaults[n].ulFlags;
@@ -137,9 +137,10 @@ ECConfig *ECPluginSharedData::CreateConfig(const configsetting_t *lpDefaults,
 		}
 
 		if (lpszDirectives) {
-			for (n = 0; lpszDirectives[n]; n++) ;
+			for (n = 0; lpszDirectives[n]; ++n)
+				;
 			m_lpszDirectives = new char*[n+1];
-			for (n = 0; lpszDirectives[n]; n++)
+			for (n = 0; lpszDirectives[n]; ++n)
 				m_lpszDirectives[n] = strdup(lpszDirectives[n]);
 			m_lpszDirectives[n] = NULL;
 		}

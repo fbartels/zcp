@@ -93,7 +93,7 @@ ECRESULT ECConvenientDepthABObjectTable::QueryRowData(ECGenericObjectTable *lpGe
         goto exit;
 
     // Insert the PR_DEPTH for all the rows since the row engine has no knowledge of depth
-    for(iterRow=lpRowList->begin(); iterRow != lpRowList->end(); iterRow++, n++) {
+    for (iterRow = lpRowList->begin(); iterRow != lpRowList->end(); ++iterRow, ++n) {
         lpProp = FindProp(&(*lppRowSet)->__ptr[n], PROP_TAG(PT_ERROR, PROP_ID(PR_DEPTH)));
         
         if(lpProp) {
@@ -144,9 +144,9 @@ ECRESULT ECConvenientDepthABObjectTable::Load()
 	lstObjects.push_back(root);
 
     // 'Recursively' loop through all our containers and add each of those children to our object list
-    for(objectIter = lstObjects.begin(); objectIter != lstObjects.end(); objectIter++) {
+    for (objectIter = lstObjects.begin(); objectIter != lstObjects.end(); ++objectIter) {
         if(LoadHierarchyContainer(objectIter->ulId, 0, &lpSubObjects) == erSuccess) {
-            for(iterSubObjects = lpSubObjects->begin(); iterSubObjects != lpSubObjects->end(); iterSubObjects++) {
+            for (iterSubObjects = lpSubObjects->begin(); iterSubObjects != lpSubObjects->end(); ++iterSubObjects) {
                 CONTAINERINFO folder;
                 folder.ulId = iterSubObjects->ulId;
                 folder.ulDepth = objectIter->ulDepth+1;
@@ -160,7 +160,7 @@ ECRESULT ECConvenientDepthABObjectTable::Load()
     }
 
     // Add all the rows into the row engine, except the root object (the folder itself does not show in its own hierarchy table)
-	for (objectIter = lstObjects.begin(); objectIter != lstObjects.end(); objectIter++) {
+	for (objectIter = lstObjects.begin(); objectIter != lstObjects.end(); ++objectIter) {
 	    if(objectIter->ulId != lpODAB->ulABParentId) {
     	    m_mapDepth[objectIter->ulId] = objectIter->ulDepth;
     	    m_mapPath[objectIter->ulId] = objectIter->strPath;

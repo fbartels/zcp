@@ -248,8 +248,7 @@ ECRESULT ECSecurity::GetGroupsForUser(unsigned int ulUserId, std::list<localobje
 				delete lpGroupInGroups;
 			}
 			er = erSuccess;		// Ignore error (eg. cannot use that function on group Everyone)
-
-			iterGroups++;
+			++iterGroups;
 		}
 	}
 
@@ -288,32 +287,27 @@ ECRESULT ECSecurity::GetObjectPermission(unsigned int ulObjId, unsigned int* lpu
 		if(m_lpSession->GetSessionManager()->GetCacheManager()->GetACLs(ulCurObj, &lpRights) == erSuccess) {
 			// This object has ACL's, check if any of them are for this user
 
-			for(i=0;i<lpRights->__size;i++) {
+			for (i = 0; i < lpRights->__size; ++i)
 				if(lpRights->__ptr[i].ulType == ACCESS_TYPE_GRANT && lpRights->__ptr[i].ulUserid == m_ulUserID) {
 					*lpulRights |= lpRights->__ptr[i].ulRights;
 					bFoundACL = true;
 				}
-			}
 
 			// Check for the company we are in and add the permissions
-			for (i = 0; i < lpRights->__size; i++) {
+			for (i = 0; i < lpRights->__size; ++i)
 				if (lpRights->__ptr[i].ulType == ACCESS_TYPE_GRANT && lpRights->__ptr[i].ulUserid == m_ulCompanyID) {
 					*lpulRights |= lpRights->__ptr[i].ulRights;
 					bFoundACL = true;
 				}
-			}
 
 			// Also check for groups that we are in, and add those permissions
-			if(m_lpGroups || GetGroupsForUser(m_ulUserID, &m_lpGroups) == erSuccess) {
-				for(iterGroups = m_lpGroups->begin(); iterGroups != m_lpGroups->end(); iterGroups++) {
-					for(i=0;i<lpRights->__size;i++) {
+			if(m_lpGroups || GetGroupsForUser(m_ulUserID, &m_lpGroups) == erSuccess)
+				for (iterGroups = m_lpGroups->begin(); iterGroups != m_lpGroups->end(); ++iterGroups)
+					for (i = 0; i < lpRights->__size; ++i)
 						if(lpRights->__ptr[i].ulType == ACCESS_TYPE_GRANT && lpRights->__ptr[i].ulUserid == iterGroups->ulId) {
 							*lpulRights |= lpRights->__ptr[i].ulRights;
 							bFoundACL = true;
 						}
-					}
-				}
-			}
 		}
 
 		if(lpRights)
@@ -338,9 +332,7 @@ ECRESULT ECSecurity::GetObjectPermission(unsigned int ulObjId, unsigned int* lpu
 		// This can really only happen if you have a broken tree in the database, eg a record which has
 		// parent == id. To break out of the loop we limit the depth to 64 which is very deep in practice. This means
 		// that you never have any rights for folders that are more than 64 levels of folders away from their ACL ..
-		ulDepth++;
-		
-		if(ulDepth > MAX_PARENT_LIMIT) {
+		if (++ulDepth > MAX_PARENT_LIMIT) {
 			ec_log_err("Maximum depth reached for object %d, deepest object: %d", ulObjId, ulCurObj);
 			er = erSuccess;
 			goto exit;
@@ -439,7 +431,7 @@ ECRESULT ECSecurity::CheckDeletedParent(unsigned int ulId)
 		}
 
 		ulId = ulParentObjId;
-		ulDepth++;
+		++ulDepth;
 	} while (ulObjType != MAPI_STORE && ulParentObjId != CACHE_NO_PARENT && ulDepth <= MAX_PARENT_LIMIT);
 
 	// return error when max depth is reached, so we don't create folders and messages deeper than the limit
@@ -691,8 +683,7 @@ ECRESULT ECSecurity::GetRights(unsigned int objid, int ulType, struct rightsArra
 		lpsRightsArray->__size = ulCount;
 
 		memset(lpsRightsArray->__ptr, 0, sizeof(struct rights) * ulCount);
-
-		for(i=0; i < ulCount; i++){
+		for (i = 0; i < ulCount; ++i) {
 			lpDBRow = lpDatabase->FetchRow(lpDBResult);
 
 			if(lpDBRow == NULL) {
@@ -769,8 +760,7 @@ ECRESULT ECSecurity::SetRights(unsigned int objid, struct rightsArray *lpsRights
 	// Invalidate cache for this object
 	m_lpSession->GetSessionManager()->GetCacheManager()->Update(fnevObjectModified, objid);
 
-	for(i=0; i< lpsRightsArray->__size; i++)
-	{
+	for (i = 0; i< lpsRightsArray->__size; ++i) {
 		// FIXME: check for each object if it belongs to the store we're logged into (except for admin)
 
 		// Get the correct local id
@@ -802,7 +792,7 @@ ECRESULT ECSecurity::SetRights(unsigned int objid, struct rightsArray *lpsRights
 			sDetails.GetClass() != ACTIVE_USER &&
 			sDetails.GetClass() != DISTLIST_SECURITY &&
 			sDetails.GetClass() != CONTAINER_COMPANY) {
-				ulErrors++;
+				++ulErrors;
 				continue;
 		}
 
@@ -926,7 +916,8 @@ ECRESULT ECSecurity::GetViewableCompanyIds(unsigned int ulFlags, list<localobjec
 	 * too many entries in the list. We need to filter those out now.
 	 */
 	*lppObjects = new list<localobjectdetails_t>();
-	for (iter = m_lpViewCompanies->begin(); iter != m_lpViewCompanies->end(); iter++) {
+	for (iter = m_lpViewCompanies->begin();
+	     iter != m_lpViewCompanies->end(); ++iter) {
 		if ((m_ulUserID != 0) &&
 			(ulFlags & USERMANAGEMENT_ADDRESSBOOK) &&
 			iter->GetPropBool(OB_PROP_B_AB_HIDDEN))
@@ -981,13 +972,12 @@ ECRESULT ECSecurity::IsUserObjectVisible(unsigned int ulUserObjectId)
 		if (er != erSuccess)
 			goto exit;
 	}
-
-	for (iterCompany = m_lpViewCompanies->begin(); iterCompany != m_lpViewCompanies->end(); iterCompany++) {
+	for (iterCompany = m_lpViewCompanies->begin();
+	     iterCompany != m_lpViewCompanies->end(); ++iterCompany)
 		if (iterCompany->ulId == ulCompanyId) {
 			er = erSuccess;
 			goto exit;
 		}
-	}
 
 	/* Item was not found */
 	er = ZARAFA_E_NOT_FOUND;
@@ -1084,10 +1074,10 @@ ECRESULT ECSecurity::GetAdminCompanies(unsigned int ulFlags, list<localobjectdet
 	for (iterObjects = lpObjects->begin(); iterObjects != lpObjects->end(); ) {
 		if (IsUserObjectVisible(iterObjects->ulId) != erSuccess) {
 			iterObjectsRemove = iterObjects;
-			iterObjects++;
+			++iterObjects;
 			lpObjects->erase(iterObjectsRemove);
 		} else {
-			iterObjects++;
+			++iterObjects;
 		}
 	}
 
@@ -1264,13 +1254,12 @@ ECRESULT ECSecurity::IsAdminOverUserObject(unsigned int ulUserObjectId)
 		if (er != erSuccess)
 			goto exit;
 	}
-
-	for (objectIter = m_lpAdminCompanies->begin(); objectIter != m_lpAdminCompanies->end(); objectIter++) {
+	for (objectIter = m_lpAdminCompanies->begin();
+	     objectIter != m_lpAdminCompanies->end(); ++objectIter)
 		if (objectIter->ulId == ulCompanyId) {
 			er = erSuccess;
 			goto exit;
 		}
-	}
 
 	/* Item was not found, so no access */
 	er = ZARAFA_E_NO_ACCESS;
@@ -1630,7 +1619,8 @@ unsigned int ECSecurity::GetObjectSize()
 	
 
 	if (m_lpGroups) {
-		for (iter = m_lpGroups->begin(), ulItems = 0; iter != m_lpGroups->end(); iter++, ulItems++) 
+		for (iter = m_lpGroups->begin(), ulItems = 0;
+		     iter != m_lpGroups->end(); ++iter, ++ulItems)
 			ulSize += iter->GetObjectSize();
 
 		ulSize += MEMORY_USAGE_LIST(ulItems, list<localobjectdetails_t>);
@@ -1638,7 +1628,8 @@ unsigned int ECSecurity::GetObjectSize()
 
 	if (m_lpViewCompanies)
 	{
-		for (iter = m_lpViewCompanies->begin(), ulItems = 0; iter != m_lpViewCompanies->end(); iter++, ulItems++)
+		for (iter = m_lpViewCompanies->begin(), ulItems = 0;
+		     iter != m_lpViewCompanies->end(); ++iter, ++ulItems)
 			ulSize += iter->GetObjectSize();
 
 		ulSize += MEMORY_USAGE_LIST(ulItems, list<localobjectdetails_t>);
@@ -1646,7 +1637,8 @@ unsigned int ECSecurity::GetObjectSize()
 
 	if (m_lpAdminCompanies)
 	{
-		for (iter = m_lpAdminCompanies->begin(), ulItems = 0; iter != m_lpAdminCompanies->end(); iter++, ulItems++)
+		for (iter = m_lpAdminCompanies->begin(), ulItems = 0;
+		     iter != m_lpAdminCompanies->end(); ++iter, ++ulItems)
 			ulSize += iter->GetObjectSize();
 
 		ulSize += MEMORY_USAGE_LIST(ulItems, list<localobjectdetails_t>);

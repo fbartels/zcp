@@ -163,8 +163,7 @@ ECSessionManager::~ECSessionManager()
 	while(iSession != m_mapSessions.end()) {
 		delete iSession->second;
 		iSessionNext = iSession;
-		iSessionNext++;
-
+		++iSessionNext;
 		ec_log_info("End of session (shutdown) %llu",
 			static_cast<unsigned long long>(iSession->first));
 
@@ -412,8 +411,7 @@ ECRESULT ECSessionManager::RemoveAllSessions()
 	{
 		lpSession = iIterSession->second;
 		iSessionNext = iIterSession;
-		iSessionNext++;
-
+		++iSessionNext;
 		m_mapSessions.erase(iIterSession);
 
 		iIterSession = iSessionNext;
@@ -425,9 +423,9 @@ ECRESULT ECSessionManager::RemoveAllSessions()
 	pthread_rwlock_unlock(&m_hCacheRWLock);
 	
 	// Do the actual session deletes, while the session map is not locked (!)
-	for(iterSessionList = lstSessions.begin(); iterSessionList != lstSessions.end(); iterSessionList++) {
+	for (iterSessionList = lstSessions.begin();
+	     iterSessionList != lstSessions.end(); ++iterSessionList)
 	    delete *iterSessionList;
-	}
 	
 	return er;
 }
@@ -451,8 +449,7 @@ ECRESULT ECSessionManager::CancelAllSessions(ECSESSIONID sessionIDException)
 		if(iIterSession->first != sessionIDException) {
 			lpSession = iIterSession->second;
 			iSessionNext = iIterSession;
-			iSessionNext++;
-
+			++iSessionNext;
 			// Tell the notification manager to wake up anyone waiting for this session
 			m_lpNotificationManager->NotifyChange(iIterSession->first);
 			
@@ -462,7 +459,7 @@ ECRESULT ECSessionManager::CancelAllSessions(ECSESSIONID sessionIDException)
 
 			lstSessions.push_back(lpSession);
 		} else {
-			iIterSession++;
+			++iIterSession;
 		}
 	}
 
@@ -470,9 +467,9 @@ ECRESULT ECSessionManager::CancelAllSessions(ECSESSIONID sessionIDException)
 	pthread_rwlock_unlock(&m_hCacheRWLock);
 	
 	// Do the actual session deletes, while the session map is not locked (!)
-	for(iterSessionList = lstSessions.begin(); iterSessionList != lstSessions.end(); iterSessionList++) {
+	for (iterSessionList = lstSessions.begin();
+	     iterSessionList != lstSessions.end(); ++iterSessionList)
 	    delete *iterSessionList;
-	}
 	
 	return er;
 }
@@ -486,9 +483,9 @@ ECRESULT ECSessionManager::ForEachSession(void(*callback)(ECSession*, void*), vo
 
 	pthread_rwlock_rdlock(&m_hCacheRWLock);
 
-	for (iIterSession = m_mapSessions.begin(); iIterSession != m_mapSessions.end(); iIterSession++) {
+	for (iIterSession = m_mapSessions.begin();
+	     iIterSession != m_mapSessions.end(); ++iIterSession)
 		callback(dynamic_cast<ECSession*>(iIterSession->second), obj);
-	}
 
 	pthread_rwlock_unlock(&m_hCacheRWLock);
 
@@ -851,13 +848,13 @@ ECRESULT ECSessionManager::AddNotification(notification *notifyItem, unsigned in
 	while(iterObjectSubscription != m_mapObjectSubscriptions.end() && iterObjectSubscription->first == ulStore) {
 		// Send a notification only once to a session group, even if it has subscribed multiple times
 		setGroups.insert(iterObjectSubscription->second);
-		iterObjectSubscription++;
+		++iterObjectSubscription;
 	}
 	
 	pthread_mutex_unlock(&m_mutexObjectSubscriptions);
 
 	// Send each subscribed session group one notification
-	for (iterGroups = setGroups.begin(); iterGroups != setGroups.end(); iterGroups++){
+	for (iterGroups = setGroups.begin(); iterGroups != setGroups.end(); ++iterGroups) {
 		pthread_rwlock_rdlock(&m_hGroupLock);
 		iIterator = m_mapSessionGroups.find(*iterGroups);
 		if(iIterator != m_mapSessionGroups.end())
@@ -936,7 +933,7 @@ void* ECSessionManager::SessionCleaner(void *lpTmpSessionManager)
 					static_cast<unsigned long long>(iRemove->first));
 				lpSessionManager->m_mapSessions.erase(iRemove);
 			} else {
-				iIterator++;
+				++iIterator;
 			}
 		}
 
@@ -1048,7 +1045,7 @@ ECRESULT ECSessionManager::UpdateSubscribedTables(ECKeyTable::UpdateType ulType,
     iterSubscriptions = m_mapTableSubscriptions.find(sSubscription);
     while(iterSubscriptions != m_mapTableSubscriptions.end() && iterSubscriptions->first == sSubscription) {
         setSessions.insert(iterSubscriptions->second);
-        iterSubscriptions++;
+        ++iterSubscriptions;
     }
     
     pthread_mutex_unlock(&m_mutexTableSubscriptions);
@@ -1057,7 +1054,9 @@ ECRESULT ECSessionManager::UpdateSubscribedTables(ECKeyTable::UpdateType ulType,
     // sessions have the same table opened at one time.
 
     // For each of the sessions that are interested, send the table change
-	for(iterSubscribedSession = setSessions.begin(); iterSubscribedSession != setSessions.end(); iterSubscribedSession++) {
+	for (iterSubscribedSession = setSessions.begin();
+	     iterSubscribedSession != setSessions.end();
+	     ++iterSubscribedSession) {
 		// Get session
 		pthread_rwlock_rdlock(&m_hCacheRWLock);
 		lpBTSession = GetSession(*iterSubscribedSession, true);
@@ -1311,7 +1310,8 @@ ECRESULT ECSessionManager::NotificationChange(const set<unsigned int> &syncIds, 
 
 	// Send the notification to all sessionsgroups so that any client listening for these
 	// notifications can receive them
-	for(iIterator = m_mapSessionGroups.begin(); iIterator != m_mapSessionGroups.end(); iIterator++)
+	for (iIterator = m_mapSessionGroups.begin();
+	     iIterator != m_mapSessionGroups.end(); ++iIterator)
 		iIterator->second->AddChangeNotification(syncIds, ulChangeId, ulChangeType);
 	
 	pthread_rwlock_unlock(&m_hGroupLock);
@@ -1393,9 +1393,9 @@ void ECSessionManager::GetStats(sSessionManagerStats &sStats)
 	sStats.group.ulItems = m_mapSessionGroups.size();
 	sStats.group.ullSize = MEMORY_USAGE_HASHMAP(sStats.group.ulItems, SESSIONGROUPMAP);
 
-	for (itersg = m_mapSessionGroups.begin(); itersg != m_mapSessionGroups.end(); itersg++) {
+	for (itersg = m_mapSessionGroups.begin();
+	     itersg != m_mapSessionGroups.end(); ++itersg)
 		sStats.group.ullSize += itersg->second->GetObjectSize();
-	}
 
 	pthread_rwlock_unlock(&m_hGroupLock);
 
@@ -1547,9 +1547,8 @@ ECRESULT ECSessionManager::GetNewSourceKey(SOURCEKEY* lpSourceKey){
 	}
 
 	*lpSourceKey = SOURCEKEY(*m_lpServerGuid, m_ullSourceKeyAutoIncrement + 1);
-    m_ullSourceKeyAutoIncrement++;
-	m_ulSourceKeyQueue--;
-
+	++m_ullSourceKeyAutoIncrement;
+	--m_ulSourceKeyQueue;
 	pthread_mutex_unlock(&m_hSourceKeyAutoIncrementMutex);
 
 exit:
@@ -1657,7 +1656,7 @@ ECRESULT ECSessionManager::GetNewSequence(SEQUENCE seq, unsigned long long *lpll
 		}
 		m_ulSeqIMAPQueue = 50;
 	}
-	m_ulSeqIMAPQueue--;
+	--m_ulSeqIMAPQueue;
 	*lpllSeqId = m_ulSeqIMAP++;
 
 	pthread_mutex_unlock(&m_hSeqMutex);
@@ -1718,7 +1717,7 @@ ECRESULT ECSessionManager::UnsubscribeTableEvents(TABLE_ENTRY::TABLE_TYPE ulType
     while(iter != m_mapTableSubscriptions.end() && iter->first == sSubscription) {
         if(iter->second == sessionID)
             break;
-        iter++;
+        ++iter;
     }
     
     if(iter != m_mapTableSubscriptions.end()) {
@@ -1752,7 +1751,9 @@ ECRESULT ECSessionManager::UnsubscribeObjectEvents(unsigned int ulStoreId, ECSES
     pthread_mutex_lock(&m_mutexObjectSubscriptions);
     i = m_mapObjectSubscriptions.find(ulStoreId);
     
-    while(i != m_mapObjectSubscriptions.end() && i->first == ulStoreId && i->second != sessionID) i++;
+	while (i != m_mapObjectSubscriptions.end() && i->first == ulStoreId &&
+	    i->second != sessionID)
+		++i;
     
     if(i != m_mapObjectSubscriptions.end()) {
         m_mapObjectSubscriptions.erase(i);

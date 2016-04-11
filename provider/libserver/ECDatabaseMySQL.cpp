@@ -527,7 +527,7 @@ ECRESULT ECDatabaseMySQL::InitializeDBStateInner()
 		goto exit;
 #endif
 	
-	for(unsigned int i = 0; i < arraySize(stored_procedures); i++) {
+	for (unsigned int i = 0; i < arraySize(stored_procedures); ++i) {
 		er = DoUpdate(std::string("DROP PROCEDURE IF EXISTS ") + stored_procedures[i].szName);
 		if(er != erSuccess)
 			goto exit;
@@ -1475,11 +1475,9 @@ ECRESULT ECDatabaseMySQL::Rollback() {
 			MYSQL_ROW row = mysql_fetch_row(lpResult);
 			if (row) {
 				unsigned int fields = mysql_num_fields(lpResult);
-				for (unsigned int i = 0; i < fields; ++i) {
-					if (row[i]) {
+				for (unsigned int i = 0; i < fields; ++i)
+					if (row[i])
 						ec_log_err("%s", row[i]);
-					}
-				}
 			}
 			mysql_free_result(lpResult);
 		}
@@ -1983,7 +1981,7 @@ ECRESULT ECDatabaseMySQL::ValidateTables()
 	if(lpResult) FreeResult(lpResult);
 	lpResult = NULL;
 
-	for(iterTables = listTables.begin(); iterTables != listTables.end(); iterTables++) {
+	for (iterTables = listTables.begin(); iterTables != listTables.end(); ++iterTables) {
 		er = DoSelect("CHECK TABLE " + *iterTables, &lpResult);
 		if(er != erSuccess) {
 			ec_log_err("Unable to check table \"%s\"", iterTables->c_str());
@@ -2014,8 +2012,8 @@ ECRESULT ECDatabaseMySQL::ValidateTables()
 
 		ECDBUpdateProgress::GetInstance(listErrorTables.size(), this, &lpProgress);
 #endif
-		for(iterTables = listErrorTables.begin(); iterTables != listErrorTables.end(); iterTables++) {
-
+		for (iterTables = listErrorTables.begin();
+		     iterTables != listErrorTables.end(); ++iterTables) {
 #ifdef HAVE_OFFLINE_SUPPORT
 			if (lpProgress) {
 				er = lpProgress->Start(cUpdate); 
@@ -2032,7 +2030,8 @@ ECRESULT ECDatabaseMySQL::ValidateTables()
 				break;
 			}
 #ifdef HAVE_OFFLINE_SUPPORT
-			if (lpProgress) lpProgress->Finish(cUpdate++);
+			if (lpProgress)
+				lpProgress->Finish(cUpdate++);
 #endif
 		}
 #ifdef HAVE_OFFLINE_SUPPORT

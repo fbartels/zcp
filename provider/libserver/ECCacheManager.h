@@ -294,15 +294,14 @@ public:
 	};
     ~ECsCells() {
 		std::map<unsigned int, struct propVal>::iterator i;
-        for(i=mapPropVals.begin(); i!=mapPropVals.end(); i++) {
-            FreePropVal(&i->second, false); 
-        }
+		for (i = mapPropVals.begin(); i != mapPropVals.end(); ++i)
+			FreePropVal(&i->second, false);
     };
     
     ECsCells(const ECsCells &src) {
         struct propVal val;
         std::map<unsigned int, struct propVal>::const_iterator i;
-        for(i=src.mapPropVals.begin(); i!=src.mapPropVals.end(); i++) {
+        for (i = src.mapPropVals.begin(); i != src.mapPropVals.end(); ++i) {
             CopyPropVal((struct propVal *)&i->second, &val);
             mapPropVals[i->first] = val;
         }
@@ -315,12 +314,12 @@ public:
     ECsCells& operator=(const ECsCells &src) {
         struct propVal val;
         std::map<unsigned int, struct propVal>::iterator i;
-        for(i=mapPropVals.begin(); i!=mapPropVals.end(); i++) {
-            FreePropVal(&i->second, false); 
-        }
+		for (i = mapPropVals.begin(); i != mapPropVals.end(); ++i)
+			FreePropVal(&i->second, false);
         mapPropVals.clear();
         
-        for(i=((ECsCells &)src).mapPropVals.begin(); i!=((ECsCells &)src).mapPropVals.end(); i++) {
+        for (i = ((ECsCells &)src).mapPropVals.begin();
+             i != ((ECsCells &)src).mapPropVals.end(); ++i) {
             CopyPropVal((struct propVal *)&i->second, &val);
             mapPropVals[i->first] = val;
         }
@@ -390,7 +389,7 @@ public:
         size_t ulSize = 0;
         
         std::map<unsigned int, struct propVal>::const_iterator i;
-        for(i=mapPropVals.begin(); i!=mapPropVals.end(); i++) {
+        for (i = mapPropVals.begin(); i != mapPropVals.end(); ++i) {
             switch(i->second.__union) {
                 case SOAP_UNION_propValData_lpszA:
                     ulSize += i->second.Value.lpszA ? (unsigned int)strlen(i->second.Value.lpszA) : 0;
@@ -471,10 +470,9 @@ inline unsigned int IPRSHash(const ECsIndexProp& _Keyval1)
 	unsigned int a    = 63689;
 	unsigned int hash = 0;
 
-	for(std::size_t i = 0; i < _Keyval1.cbData; i++)
-	{
+	for (std::size_t i = 0; i < _Keyval1.cbData; ++i) {
 		hash = hash * a + _Keyval1.lpData[i];
-			a    = a * b;
+		a *= b;
 	}
 
 	return hash;

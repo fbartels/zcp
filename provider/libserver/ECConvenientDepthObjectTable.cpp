@@ -154,7 +154,7 @@ ECRESULT ECConvenientDepthObjectTable::Load() {
 		
 		while(iterFolders != lstFolders.end()) {
 		    strQuery += stringify(iterFolders->ulFolderId);
-		    iterFolders++;
+		    ++iterFolders;
 		    if(iterFolders != lstFolders.end())
     		    strQuery += ",";
         }
@@ -196,7 +196,7 @@ ECRESULT ECConvenientDepthObjectTable::Load() {
             
             // If we were pointing at the last item, point at the freshly inserted item
             if(iterFolders == lstFolders.end())
-                iterFolders--;
+			--iterFolders;
 		}
 
 		if (lpDBResult) {
@@ -206,8 +206,7 @@ ECRESULT ECConvenientDepthObjectTable::Load() {
 		
 		// If you're insane enough to have more than 256 levels over folders than we cut it off here because this function's
 		// memory usage goes up exponentially ..
-		ulDepth++;
-		if(ulDepth > 256)
+		if (++ulDepth > 256)
 		    break;
 	}
 	
@@ -216,7 +215,7 @@ ECRESULT ECConvenientDepthObjectTable::Load() {
 	
 	// ... and put the data into the row system
 
-	for(iterFolders = lstFolders.begin(); iterFolders != lstFolders.end(); iterFolders++) {
+	for (iterFolders = lstFolders.begin(); iterFolders != lstFolders.end(); ++iterFolders) {
 		if(iterFolders->ulFolderId == m_ulFolderId)
 			continue;
 
@@ -252,7 +251,7 @@ ECRESULT ECConvenientDepthObjectTable::GetComputedDepth(struct soap *soap, ECSes
 			er = ZARAFA_E_NOT_FOUND;
 			goto exit;
 		}
-		lpPropVal->Value.ul++;
+		++lpPropVal->Value.ul;
 	}
 	
 exit:

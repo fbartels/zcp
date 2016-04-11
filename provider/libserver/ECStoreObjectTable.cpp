@@ -278,25 +278,27 @@ ECRESULT ECStoreObjectTable::ReloadTableMVData(ECObjectTableList* lplistRows, EC
 	// scan for MV-props and add rows
 	strQuery = "SELECT h.id, orderid FROM hierarchy as h";
 	j = 0;
-	for(iterListMVPropTag = lplistMVPropTag->begin(); iterListMVPropTag != lplistMVPropTag->end(); iterListMVPropTag++)
+	for (iterListMVPropTag = lplistMVPropTag->begin();
+	     iterListMVPropTag != lplistMVPropTag->end(); ++iterListMVPropTag)
 	{
 		strColName = "col"+stringify(j);
 		strQuery += " LEFT JOIN mvproperties as "+strColName+" ON h.id="+strColName+".hierarchyid AND "+strColName+".tag="+stringify(PROP_ID(*iterListMVPropTag))+" AND "+strColName+".type="+stringify(PROP_TYPE(NormalizeDBPropTag(*iterListMVPropTag) &~MV_INSTANCE));
-		j++;
+		++j;
 		break; //FIXME: limit 1 column, multi MV cols
-	}//for(iterListMVPropTag
+	} // for iterListMVPropTag
 		
 	strQuery += " WHERE h.id IN(";
 
 	j = 0;
 	cListRows = lplistRows->size();
-	for(iterListRows = lplistRows->begin(); iterListRows != lplistRows->end(); iterListRows++)
+	for (iterListRows = lplistRows->begin();
+	     iterListRows != lplistRows->end(); ++iterListRows)
 	{
 		strQuery += stringify(iterListRows->ulObjId);
 
 		if(j != (int)(cListRows-1))
 			strQuery += ",";
-		j++;
+		++j;
 	}
 	strQuery += ") ORDER by id, orderid";
 
@@ -399,18 +401,19 @@ ECRESULT ECStoreObjectTable::QueryRowData(ECGenericObjectTable *lpThis, struct s
 	memset(lpsRowSet->__ptr, 0, sizeof(propValArray) * lpsRowSet->__size);
 
 	// Allocate memory for all rows
-	for(i=0; i<lpsRowSet->__size; i++) {
+	for (i = 0; i < lpsRowSet->__size; ++i) {
 		lpsRowSet->__ptr[i].__size = lpsPropTagArray->__size;
 		lpsRowSet->__ptr[i].__ptr = s_alloc<propVal>(soap, lpsPropTagArray->__size);
 		memset(lpsRowSet->__ptr[i].__ptr, 0, sizeof(propVal) * lpsPropTagArray->__size);
 	}
 
 	// Scan cache for anything that we can find, and generate any properties that don't come from normal database queries.
-	for(i=0, iterRowList = lpRowList->begin(); iterRowList != lpRowList->end(); iterRowList++, i++)
+	for (i = 0, iterRowList = lpRowList->begin();
+	     iterRowList != lpRowList->end(); ++iterRowList, ++i)
 	{
 	    bool bRowComplete = true;
 	    
-	    for(k=0; k < lpsPropTagArray->__size; k++) {
+	    for (k = 0; k < lpsPropTagArray->__size; ++k) {
 	    	unsigned int ulPropTag;
 	    	
 	    	if(iterRowList->ulObjId == 0 || ECGenProps::GetPropSubstitute(lpODStore->ulObjType, lpsPropTagArray->__ptr[k], &ulPropTag) != erSuccess)
@@ -497,14 +500,15 @@ ECRESULT ECStoreObjectTable::QueryRowData(ECGenericObjectTable *lpThis, struct s
 			}
 				
 			// Build list of rows that are incomplete (not in cache) AND deferred
-			for(iterDeferred = lstDeferred.begin(); iterDeferred != lstDeferred.end(); iterDeferred++) {
+			for (iterDeferred = lstDeferred.begin();
+			     iterDeferred != lstDeferred.end(); ++iterDeferred) {
 				sKey.ulObjId = *iterDeferred;
 				sKey.ulOrderId = 0;
 				iterIncomplete = mapIncompleteRows.lower_bound(sKey);
 				while(iterIncomplete != mapIncompleteRows.end() && iterIncomplete->first.ulObjId == *iterDeferred) {
 					g_lpStatsCollector->Increment(SCN_DATABASE_DEFERRED_FETCHES);
 					mapRows[iterIncomplete->first] = iterIncomplete->second;
-					iterIncomplete++;
+					++iterIncomplete;
 				}
 			}
 		}
@@ -515,11 +519,11 @@ ECRESULT ECStoreObjectTable::QueryRowData(ECGenericObjectTable *lpThis, struct s
         
     if(!mapRows.empty()) {
         // Get rows from row order engine
-        for(iterRows = mapRows.begin(); iterRows != mapRows.end(); iterRows++) {
+        for (iterRows = mapRows.begin(); iterRows != mapRows.end(); ++iterRows) {
             mapColumns.clear();
 
             // Find out which columns we need
-            for(k=0; k < lpsPropTagArray->__size; k++) {
+            for (k = 0; k < lpsPropTagArray->__size; ++k) {
                 if(setCellDone.count(std::make_pair(iterRows->second, k)) == 0) {
                     // Not done yet, remember that we need to get this column
                     unsigned int ulPropTag;
@@ -548,9 +552,9 @@ ECRESULT ECStoreObjectTable::QueryRowData(ECGenericObjectTable *lpThis, struct s
 			lpSession->GetSessionManager()->GetCacheManager()->GetObjects(*lpRowList, mapObjects);
 
         // Split requests into same-folder blocks
-        for(k=0; k < lpsPropTagArray->__size; k++) {
-        	
-            for(i=0, iterRowList = lpRowList->begin(); iterRowList != lpRowList->end(); iterRowList++, i++) {
+        for (k = 0; k < lpsPropTagArray->__size; ++k) {
+            for (i = 0, iterRowList = lpRowList->begin();
+                 iterRowList != lpRowList->end(); ++iterRowList, ++i) {
             	if(setCellDone.count(std::make_pair(i,k)) != 0)
             		continue; // already done
             	
@@ -580,7 +584,8 @@ ECRESULT ECStoreObjectTable::QueryRowData(ECGenericObjectTable *lpThis, struct s
         
         mapColumns.clear();
         // Convert the set of column IDs to a map from property tag to column ID
-        for(iterColumnIDs = setColumnIDs.begin(); iterColumnIDs != setColumnIDs.end(); iterColumnIDs++) {
+        for (iterColumnIDs = setColumnIDs.begin();
+             iterColumnIDs != setColumnIDs.end(); ++iterColumnIDs) {
         	unsigned int ulPropTag;
         	
         	if(ECGenProps::GetPropSubstitute(lpODStore->ulObjType, lpsPropTagArray->__ptr[*iterColumnIDs], &ulPropTag) != erSuccess)
@@ -588,9 +593,10 @@ ECRESULT ECStoreObjectTable::QueryRowData(ECGenericObjectTable *lpThis, struct s
         		
         	mapColumns.insert(std::make_pair(ulPropTag, *iterColumnIDs));
         }
-		for(iterStoreIdObjIds = mapStoreIdObjIds.begin(); iterStoreIdObjIds != mapStoreIdObjIds.end(); iterStoreIdObjIds++) {
+		for (iterStoreIdObjIds = mapStoreIdObjIds.begin();
+		     iterStoreIdObjIds != mapStoreIdObjIds.end();
+		     ++iterStoreIdObjIds)
 			er = QueryRowDataByColumn(lpThis, soap, lpSession, mapColumns, iterStoreIdObjIds->first, iterStoreIdObjIds->second, lpsRowSet);
-		}
     }
     
     if(!bTableLimit) {
@@ -600,9 +606,11 @@ ECRESULT ECStoreObjectTable::QueryRowData(ECGenericObjectTable *lpThis, struct s
     	 * - Check each output value that we have already retrieved to see if it was truncated (value may have come from cache or column engine)
     	 * - Get any additional data via QueryRowDataByRow() if needed since that is the only method to get > 255 bytes
     	 */
-		for(k=0; k < lpsPropTagArray->__size; k++) {
+		for (k = 0; k < lpsPropTagArray->__size; ++k) {
 			if(IsTruncatableType(lpsPropTagArray->__ptr[k])) {
-				for(i=0, iterRowList = lpRowList->begin(); iterRowList != lpRowList->end(); iterRowList++, i++) {
+				for (i = 0, iterRowList = lpRowList->begin();
+				     iterRowList != lpRowList->end();
+				     ++iterRowList, ++i) {
 					if(IsTruncated(&lpsRowSet->__ptr[i].__ptr[k])) {
 						
 						// We only want one column in this row
@@ -619,15 +627,20 @@ ECRESULT ECStoreObjectTable::QueryRowData(ECGenericObjectTable *lpThis, struct s
 		}
     }
     
-    for(k=0; k < lpsPropTagArray->__size; k++) {
-        // Do any post-processing operations
-        if(ECGenProps::IsPropComputed(lpsPropTagArray->__ptr[k], lpODStore->ulObjType) == erSuccess) {
-            for(i=0, iterRowList = lpRowList->begin(); iterRowList != lpRowList->end(); iterRowList++, i++) {
-				if (iterRowList->ulObjId != 0) // Do not change category values!
-	                ECGenProps::GetPropComputed(soap, lpODStore->ulObjType, lpsPropTagArray->__ptr[k], iterRowList->ulObjId, &lpsRowSet->__ptr[i].__ptr[k]);
-            }
-        }
-    }
+	for (k = 0; k < lpsPropTagArray->__size; ++k)
+		// Do any post-processing operations
+		if (ECGenProps::IsPropComputed(lpsPropTagArray->__ptr[k],
+		    lpODStore->ulObjType) == erSuccess)
+			for (i = 0, iterRowList = lpRowList->begin();
+			     iterRowList != lpRowList->end();
+			     ++iterRowList, ++i)
+				if (iterRowList->ulObjId != 0)
+					// Do not change category values!
+					ECGenProps::GetPropComputed(soap,
+						lpODStore->ulObjType,
+						lpsPropTagArray->__ptr[k],
+						iterRowList->ulObjId,
+						&lpsRowSet->__ptr[i].__ptr[k]);
     
     *lppRowSet = lpsRowSet;
 	lpsRowSet = NULL;
@@ -678,7 +691,7 @@ ECRESULT ECStoreObjectTable::QueryRowDataByRow(ECGenericObjectTable *lpThis,
 	
 	g_lpStatsCollector->Increment(SCN_DATABASE_ROW_READS, 1);
 
-    for(iterColumns = mapColumns.begin(); iterColumns != mapColumns.end(); iterColumns++) {
+    for (iterColumns = mapColumns.begin(); iterColumns != mapColumns.end(); ++iterColumns) {
         unsigned int ulPropTag = iterColumns->first;
         
         // Remember the types of columns being requested for later use
@@ -700,7 +713,7 @@ ECRESULT ECStoreObjectTable::QueryRowDataByRow(ECGenericObjectTable *lpThis,
         // mapColumns now contains the data that we still need to request from the database for this row.
         strQuery = "SELECT " + strPropColOrder + " FROM properties WHERE hierarchyid="+stringify(sKey.ulObjId) + " AND properties.tag IN (";
         
-        for(iterColumns = mapColumns.begin(); iterColumns != mapColumns.end(); iterColumns++) {
+        for (iterColumns = mapColumns.begin(); iterColumns != mapColumns.end(); ++iterColumns) {
             // A subquery is defined for this type, we don't have to get the data in the normal way.
             if(setSubQueries.find(iterColumns->first) != setSubQueries.end())
                 continue;
@@ -722,7 +735,7 @@ ECRESULT ECStoreObjectTable::QueryRowDataByRow(ECGenericObjectTable *lpThis,
             
         strQuery += "SELECT " + (std::string)MVPROPCOLORDER + " FROM mvproperties WHERE hierarchyid="+stringify(sKey.ulObjId) + " AND mvproperties.tag IN (";
         
-        for(iterColumns = mapColumns.begin(); iterColumns != mapColumns.end(); iterColumns++) {
+        for (iterColumns = mapColumns.begin(); iterColumns != mapColumns.end(); ++iterColumns) {
             if(setSubQueries.find(iterColumns->first) != setSubQueries.end())
                 continue;
             if((iterColumns->first & MV_FLAG) && !(iterColumns->first & MV_INSTANCE)) {
@@ -743,7 +756,7 @@ ECRESULT ECStoreObjectTable::QueryRowDataByRow(ECGenericObjectTable *lpThis,
             
         strQuery += "SELECT " + strMVIPropColOrder + " FROM mvproperties WHERE hierarchyid="+stringify(sKey.ulObjId);
         
-        for(iterColumns = mapColumns.begin(); iterColumns != mapColumns.end(); iterColumns++) {
+        for (iterColumns = mapColumns.begin(); iterColumns != mapColumns.end(); ++iterColumns) {
             if(setSubQueries.find(iterColumns->first) != setSubQueries.end())
                 continue;
             if((iterColumns->first & MV_FLAG) && (iterColumns->first & MV_INSTANCE)) {
@@ -759,7 +772,7 @@ ECRESULT ECStoreObjectTable::QueryRowDataByRow(ECGenericObjectTable *lpThis,
     if(bNeedSubQueries) {
         std::string strPropColOrder;
         
-        for(iterColumns = mapColumns.begin(); iterColumns != mapColumns.end(); iterColumns++) {
+        for (iterColumns = mapColumns.begin(); iterColumns != mapColumns.end(); ++iterColumns) {
             if(ECGenProps::GetPropSubquery(iterColumns->first, strSubQuery) == erSuccess) {
                 strPropColOrder = GetPropColOrder(iterColumns->first, strSubQuery);
 
@@ -800,8 +813,8 @@ ECRESULT ECStoreObjectTable::QueryRowDataByRow(ECGenericObjectTable *lpThis,
 
                 if(CopyDatabasePropValToSOAPPropVal(soap, lpDBRow, lpDBLen, &lpsRowSet->__ptr[ulRowNum].__ptr[iterColumns->second]) != erSuccess) {
                 	// This can happen if a subquery returned a NULL field or if your database contains bad data (eg a NULL field where there shouldn't be)
-                    iterColumns++;
-                    continue;
+			++iterColumns;
+			continue;
                 }
                 
                 // Update property tag to requested property tag; requested type may have been PT_UNICODE while database contains PT_STRING8
@@ -825,7 +838,7 @@ ECRESULT ECStoreObjectTable::QueryRowDataByRow(ECGenericObjectTable *lpThis,
     }
 
 
-    for(iterColumns = mapColumns.begin(); iterColumns != mapColumns.end(); iterColumns++) {
+    for (iterColumns = mapColumns.begin(); iterColumns != mapColumns.end(); ++iterColumns) {
     	ASSERT(lpsRowSet->__ptr[ulRowNum].__ptr[iterColumns->second].ulPropTag == 0);
 		CopyEmptyCellToSOAPPropVal(soap, iterColumns->first, &lpsRowSet->__ptr[ulRowNum].__ptr[iterColumns->second]);
 		lpSession->GetSessionManager()->GetCacheManager()->SetCell(&sKey, iterColumns->first, &lpsRowSet->__ptr[ulRowNum].__ptr[iterColumns->second]);
@@ -892,7 +905,7 @@ ECRESULT ECStoreObjectTable::QueryRowDataByColumn(ECGenericObjectTable *lpThis,
 	ulMin = ulMax = PROP_ID(mapColumns.begin()->first);
 
     // Split columns into MV columns and non-MV columns
-    for(iterColumns = mapColumns.begin(); iterColumns != mapColumns.end(); iterColumns++) {
+    for (iterColumns = mapColumns.begin(); iterColumns != mapColumns.end(); ++iterColumns) {
     	if((iterColumns->first & MVI_FLAG) == MVI_FLAG) {
     		if(!strMVITags.empty())
     			strMVITags += ",";
@@ -917,7 +930,7 @@ ECRESULT ECStoreObjectTable::QueryRowDataByColumn(ECGenericObjectTable *lpThis,
     	ulMax = max(ulMax, PROP_ID(iterColumns->first));
     }
     
-    for(iterObjIds = mapObjIds.begin(); iterObjIds != mapObjIds.end(); iterObjIds++) {
+    for (iterObjIds = mapObjIds.begin(); iterObjIds != mapObjIds.end(); ++iterObjIds) {
     	if(!strHierarchyIds.empty())
     		strHierarchyIds += ",";
     	strHierarchyIds += stringify(iterObjIds->first.ulObjId);
@@ -938,7 +951,8 @@ ECRESULT ECStoreObjectTable::QueryRowDataByColumn(ECGenericObjectTable *lpThis,
 		strQuery += "SELECT " MVIPROPCOLORDER ", hierarchyid, orderid FROM mvproperties WHERE hierarchyid IN(" + strHierarchyIds + ") AND tag IN (" +strMVITags +")";
 	}
 	if(!setSubQueries.empty()) {
-		for(iterSubQueries = setSubQueries.begin(); iterSubQueries != setSubQueries.end(); iterSubQueries++) {
+		for (iterSubQueries = setSubQueries.begin();
+		     iterSubQueries != setSubQueries.end(); ++iterSubQueries) {
 			if(!strQuery.empty())
 				strQuery += " UNION ";
 			if(ECGenProps::GetPropSubquery(*iterSubQueries, strSubquery) == erSuccess) {
@@ -1016,7 +1030,7 @@ ECRESULT ECStoreObjectTable::QueryRowDataByColumn(ECGenericObjectTable *lpThis,
 					lpsRowSet->__ptr[iterObjIds->second].__ptr[iterColumns->second].ulPropTag &= ~MVI_FLAG;
 				
 				setDone.insert(std::make_pair(iterObjIds->second, iterColumns->second));
-				iterColumns++;
+				++iterColumns;
 			}
 			
 			// We may have more than one row to fill in an MVI table; if we're handling a non-MVI property, then we have to duplicate that
@@ -1024,12 +1038,12 @@ ECRESULT ECStoreObjectTable::QueryRowDataByColumn(ECGenericObjectTable *lpThis,
 			if(ulType & MVI_FLAG)
 				break; // For the MVI column, we should get one result for each row
 			else
-				iterObjIds++; // For non-MVI columns, we get one result for all expanded rows 
+				++iterObjIds; // For non-MVI columns, we get one result for all expanded rows
 		}
 	}
 	
-	for(iterColumns = mapColumns.begin(); iterColumns != mapColumns.end(); iterColumns++) {
-		for(iterObjIds = mapObjIds.begin(); iterObjIds != mapObjIds.end(); iterObjIds++) {
+	for (iterColumns = mapColumns.begin(); iterColumns != mapColumns.end(); ++iterColumns)
+		for (iterObjIds = mapObjIds.begin(); iterObjIds != mapObjIds.end(); ++iterObjIds)
 			if(setDone.count(std::make_pair(iterObjIds->second, iterColumns->second)) == 0) {
 				// We may be overwriting a value that was retrieved from the cache before.
 				if(soap == NULL && lpsRowSet->__ptr[iterObjIds->second].__ptr[iterColumns->second].ulPropTag != 0) {
@@ -1038,8 +1052,6 @@ ECRESULT ECStoreObjectTable::QueryRowDataByColumn(ECGenericObjectTable *lpThis,
 				CopyEmptyCellToSOAPPropVal(soap, iterColumns->first, &lpsRowSet->__ptr[iterObjIds->second].__ptr[iterColumns->second]);
 				lpSession->GetSessionManager()->GetCacheManager()->SetCell((sObjectTableKey*)&iterObjIds->first, iterColumns->first, &lpsRowSet->__ptr[iterObjIds->second].__ptr[iterColumns->second]);
 			}
-		}
-	}
 	
 exit:
 	if(lpDBResult)
@@ -1082,11 +1094,12 @@ ECRESULT ECStoreObjectTable::GetMVRowCount(unsigned int ulObjId, unsigned int *l
 	// scan for MV-props and add rows
 	strQuery = "SELECT count(h.id) FROM hierarchy as h";
 	j=0;
-	for(iterListMVPropTag = m_listMVSortCols.begin(); iterListMVPropTag != m_listMVSortCols.end(); iterListMVPropTag++)
+	for (iterListMVPropTag = m_listMVSortCols.begin();
+	     iterListMVPropTag != m_listMVSortCols.end(); ++iterListMVPropTag)
 	{
 		strColName = "col"+stringify(j);
 		strQuery += " LEFT JOIN mvproperties as "+strColName+" ON h.id="+strColName+".hierarchyid AND "+strColName+".tag="+stringify(PROP_ID(*iterListMVPropTag))+" AND "+strColName+".type="+stringify(PROP_TYPE(NormalizeDBPropTag(*iterListMVPropTag) &~MV_INSTANCE));
-		j++;
+		++j;
 	}
 	
 	strQuery += " WHERE h.id="+stringify(ulObjId)+" ORDER by h.id, orderid";
@@ -1183,7 +1196,7 @@ ECRESULT ECStoreObjectTable::Load()
                 continue;
                 
 			lstObjIds.push_back(atoi(lpDBRow[0]));
-			i++;
+			++i;
         }
 
         LoadRows(&lstObjIds, 0);
@@ -1307,10 +1320,9 @@ ECRESULT ECStoreObjectTable::AddRowKey(ECObjectTableList* lpRows, unsigned int *
     	 * of deleted items we take the cross section of lpRows and setMatches. In most cases the result
     	 * will be equal to setMatches though.
     	 */
-    	for(iterRows = lpRows->begin(); iterRows != lpRows->end(); iterRows++) {
+	for (iterRows = lpRows->begin(); iterRows != lpRows->end(); ++iterRows)
     		if(setMatches.find(iterRows->ulObjId) != setMatches.end())
     			sMatchedRows.push_back(*iterRows);
-    	}
     	
     	// Pass filtered results to AddRowKey, which will perform any further filtering required
     	er = ECGenericObjectTable::AddRowKey(&sMatchedRows, lpulLoaded, ulFlags, bLoad, true, lpNewRestrict);
@@ -1371,7 +1383,7 @@ ECRESULT GetDeferredTableUpdates(ECDatabase *lpDatabase, ECObjectTableList* lpRo
 	
 	std::string strQuery = "SELECT hierarchyid FROM deferredupdate WHERE hierarchyid IN( ";
 
-	for(iterRowList = lpRowList->begin(); iterRowList != lpRowList->end(); iterRowList++) {
+	for (iterRowList = lpRowList->begin(); iterRowList != lpRowList->end(); ++iterRowList) {
 		strQuery += stringify(iterRowList->ulObjId);
 		strQuery += ",";
 	}

@@ -124,10 +124,8 @@ static bool execute_script(const char *scriptname, ...)
 	va_end(v);
 
 	ec_log_debug("Running script `%s`", scriptname);
-
-	for(i=lstEnv.begin(); i!=lstEnv.end(); i++) {
+	for (i = lstEnv.begin(); i != lstEnv.end(); ++i)
 		env[n++] = i->c_str();
-	}
 	env[n] = NULL;
 
 #ifdef LINUX
@@ -412,7 +410,8 @@ ECRESULT ECUserManagement::GetLocalObjectListFromSignatures(const list<objectsig
 	if (er != erSuccess)
 		goto exit;
 
-	for (iterSignatures = lstSignatures.begin(); iterSignatures != lstSignatures.end(); iterSignatures++) {
+	for (iterSignatures = lstSignatures.begin();
+	     iterSignatures != lstSignatures.end(); ++iterSignatures) {
 		iterExternLocal = mapExternToLocal.find(iterSignatures->id);
 		if (iterExternLocal == mapExternToLocal.end())
 			continue;
@@ -457,7 +456,9 @@ ECRESULT ECUserManagement::GetLocalObjectListFromSignatures(const list<objectsig
 			goto exit;
 		}
 
-		for (iterExternDetails = lpExternDetails->begin(); iterExternDetails != lpExternDetails->end(); iterExternDetails++) {
+		for (iterExternDetails = lpExternDetails->begin();
+		     iterExternDetails != lpExternDetails->end();
+		     ++iterExternDetails) {
 			iterExternLocal = mapExternToLocal.find(iterExternDetails->first);
 			if (iterExternLocal == mapExternToLocal.end())
 				continue;
@@ -564,7 +565,8 @@ ECRESULT ECUserManagement::GetCompanyObjectListAndSync(objectclass_t objclass, u
 	if (er != erSuccess)
 		goto exit;
 
-	for (iterLocalIds = lpLocalIds->begin(); iterLocalIds != lpLocalIds->end(); iterLocalIds++) {
+	for (iterLocalIds = lpLocalIds->begin();
+	     iterLocalIds != lpLocalIds->end(); ++iterLocalIds) {
 		if(IsInternalObject(*iterLocalIds)) {
 			// Local user, add it to the result array directly
 			objectdetails_t details = objectdetails_t();
@@ -609,7 +611,9 @@ ECRESULT ECUserManagement::GetCompanyObjectListAndSync(objectclass_t objclass, u
 		}
 
 		// Loop through all the external signatures, adding them to the lpUsers list which we're going to be returning
-		for (iterExternSignatures = lpExternSignatures->begin(); iterExternSignatures != lpExternSignatures->end(); iterExternSignatures++) {
+		for (iterExternSignatures = lpExternSignatures->begin();
+		     iterExternSignatures != lpExternSignatures->end();
+		     ++iterExternSignatures) {
 			iterSignatureIdToLocal = mapSignatureIdToLocal.find(iterExternSignatures->id);
 
 			if (iterSignatureIdToLocal == mapSignatureIdToLocal.end()) {
@@ -623,17 +627,14 @@ ECRESULT ECUserManagement::GetCompanyObjectListAndSync(objectclass_t objclass, u
 
 				// Entry was moved rather then created, this means that in our localIdList we have
 				// an entry which matches this object.
-				if (bMoved) {
+				if (bMoved)
 					for (iterSignatureIdToLocal = mapSignatureIdToLocal.begin();
-						 iterSignatureIdToLocal != mapSignatureIdToLocal.end();
-						 iterSignatureIdToLocal++)
-					{
+					     iterSignatureIdToLocal != mapSignatureIdToLocal.end();
+					     ++iterSignatureIdToLocal)
 						if (iterSignatureIdToLocal->second.first == ulObjectId) {
 							mapSignatureIdToLocal.erase(iterSignatureIdToLocal);
 							break;
 						}
-					}
-				}
 			} else {
 				ulObjectId = iterSignatureIdToLocal->second.first;
 
@@ -658,7 +659,9 @@ ECRESULT ECUserManagement::GetCompanyObjectListAndSync(objectclass_t objclass, u
 		lpExternSignatures = auto_ptr<signatures_t>(new signatures_t());;
 		
 		// Dont sync, just use whatever is in the local user database
-		for(iterSignatureIdToLocal = mapSignatureIdToLocal.begin(); iterSignatureIdToLocal != mapSignatureIdToLocal.end(); iterSignatureIdToLocal++) {
+		for (iterSignatureIdToLocal = mapSignatureIdToLocal.begin();
+		     iterSignatureIdToLocal != mapSignatureIdToLocal.end();
+		     ++iterSignatureIdToLocal) {
 			lpExternSignatures->push_back(objectsignature_t(iterSignatureIdToLocal->first, iterSignatureIdToLocal->second.second));
 			
 			mapExternIdToLocal.insert(std::make_pair(iterSignatureIdToLocal->first, iterSignatureIdToLocal->second.first));
@@ -672,18 +675,19 @@ ECRESULT ECUserManagement::GetCompanyObjectListAndSync(objectclass_t objclass, u
 
 	// mapSignatureIdToLocal is now a map of objects that were NOT in the external user database
 	if(bSync) {
-		if (bIsSafeMode) {
+		if (bIsSafeMode)
 			ec_log_err("user_safe_mode: would normally now delete %lu local users (you may see this message more often as the delete is now omitted)", static_cast<unsigned long>(mapExternIdToLocal.size() - lpExternSignatures->size()));
-		}
-		else {
-		for (iterSignatureIdToLocal = mapSignatureIdToLocal.begin(); iterSignatureIdToLocal != mapSignatureIdToLocal.end(); iterSignatureIdToLocal++)
+		else
+		for (iterSignatureIdToLocal = mapSignatureIdToLocal.begin();
+		     iterSignatureIdToLocal != mapSignatureIdToLocal.end();
+		     ++iterSignatureIdToLocal)
 			MoveOrDeleteLocalObject(iterSignatureIdToLocal->second.first, iterSignatureIdToLocal->first.objclass); // second == map value, first == id
-	}
 	}
 
 	// Convert details for client usage
 	if (!(ulFlags & USERMANAGEMENT_IDS_ONLY)) {
-		for (iterObjects = lpObjects->begin(); iterObjects != lpObjects->end(); iterObjects++) {
+		for (iterObjects = lpObjects->begin();
+		     iterObjects != lpObjects->end(); ++iterObjects) {
 			if (IsInternalObject(iterObjects->ulId))
 				continue;
 			er = UpdateUserDetailsToClient(&(*iterObjects));
@@ -754,7 +758,8 @@ ECRESULT ECUserManagement::GetSubObjectsOfObjectAndSync(userobject_relation_t re
 		if (lpCompanies->empty())
 			lpCompanies->push_back(localobjectdetails_t(0, CONTAINER_COMPANY));
 
-		for (iterObjects = lpCompanies->begin(); iterObjects != lpCompanies->end(); iterObjects++) {
+		for (iterObjects = lpCompanies->begin();
+		     iterObjects != lpCompanies->end(); ++iterObjects) {
 			er = GetCompanyObjectListAndSync(OBJECTCLASS_UNKNOWN, iterObjects->ulId, &lpObjectsTmp, ulFlags | USERMANAGEMENT_SHOW_HIDDEN);
 			if (er != erSuccess)
 				goto exit;
@@ -796,7 +801,8 @@ ECRESULT ECUserManagement::GetSubObjectsOfObjectAndSync(userobject_relation_t re
 
 	// Convert details for client usage
 	if (!(ulFlags & USERMANAGEMENT_IDS_ONLY)) {
-		for (iterObjects = lpObjects->begin(); iterObjects != lpObjects->end(); iterObjects++) {
+		for (iterObjects = lpObjects->begin();
+		     iterObjects != lpObjects->end(); ++iterObjects) {
 			if (IsInternalObject(iterObjects->ulId))
 				continue;
 			er = UpdateUserDetailsToClient(&(*iterObjects));
@@ -918,7 +924,8 @@ ECRESULT ECUserManagement::GetParentObjectsOfObjectAndSync(userobject_relation_t
 
 	// Convert details for client usage
 	if (!(ulFlags & USERMANAGEMENT_IDS_ONLY)) {
-		for (iterObjects = lpObjects->begin(); iterObjects != lpObjects->end(); iterObjects++) {
+		for (iterObjects = lpObjects->begin();
+		     iterObjects != lpObjects->end(); ++iterObjects) {
 			if (IsInternalObject(iterObjects->ulId))
 				continue;
 			er = UpdateUserDetailsToClient(&(*iterObjects));
@@ -1595,14 +1602,16 @@ ECRESULT ECUserManagement::GetLocalObjectsIdsOrCreate(const list<objectsignature
 	pair<map<objectid_t, unsigned int>::iterator,bool> result;
 	unsigned int ulObjectId;
 
-	for (iterSignature = lstSignatures.begin(); iterSignature != lstSignatures.end(); iterSignature++)
+	for (iterSignature = lstSignatures.begin();
+	     iterSignature != lstSignatures.end(); ++iterSignature)
 		lstExternObjIds.push_back(iterSignature->id);
 
 	er = m_lpSession->GetSessionManager()->GetCacheManager()->GetUserObjects(lstExternObjIds, lpmapLocalObjIds);
 	if (er != erSuccess)
 		goto exit;
 
-	for (iterSignature = lstSignatures.begin(); iterSignature != lstSignatures.end(); iterSignature++) {
+	for (iterSignature = lstSignatures.begin();
+	     iterSignature != lstSignatures.end(); ++iterSignature) {
 		result = lpmapLocalObjIds->insert(make_pair(iterSignature->id, 0));
 		if (result.second == false)
 			// object already exists
@@ -1993,7 +2002,8 @@ done:
 	 * TODO: check with a point system,
 	 * if you have 2 objects, one have a match of 99% and one 50%
 	 * use the one with 99% */
-	for (iterSignature = lpObjectsignatures->begin(); iterSignature != lpObjectsignatures->end(); iterSignature++) {
+	for (iterSignature = lpObjectsignatures->begin();
+	     iterSignature != lpObjectsignatures->end(); ++iterSignature) {
 		unsigned int ulIdTmp = 0;
 
 		er = GetLocalObjectIdOrCreate(*iterSignature, &ulIdTmp);
@@ -2107,7 +2117,8 @@ ECRESULT ECUserManagement::QueryContentsRowData(struct soap *soap, ECObjectTable
 	memset(lpsRowSet->__ptr, 0, sizeof(propValArray) * lpRowList->size());
 
 	// Get Extern ID and Types for all items
-	for (i = 0, iterRowList = lpRowList->begin(); iterRowList != lpRowList->end(); iterRowList++, i++) {
+	for (i = 0, iterRowList = lpRowList->begin();
+	     iterRowList != lpRowList->end(); ++iterRowList, ++i) {
 		er = GetExternalId(iterRowList->ulObjId, &externid);
 		if (er != erSuccess) {
 			er = erSuccess; /* Skip entry, but don't complain */
@@ -2130,7 +2141,9 @@ ECRESULT ECUserManagement::QueryContentsRowData(struct soap *soap, ECObjectTable
 	try {
 		mapExternObjectDetails = lpPlugin->getObjectDetails(lstObjects);
 		// Copy each item over
-		for(iterExternObjectDetails = mapExternObjectDetails->begin(); iterExternObjectDetails != mapExternObjectDetails->end(); iterExternObjectDetails++) {
+		for (iterExternObjectDetails = mapExternObjectDetails->begin();
+		     iterExternObjectDetails != mapExternObjectDetails->end();
+		     ++iterExternObjectDetails) {
 			mapAllObjectDetails.insert(std::make_pair(iterExternObjectDetails->first, iterExternObjectDetails->second));
 
 			// Get the local object id for the item
@@ -2158,7 +2171,9 @@ ECRESULT ECUserManagement::QueryContentsRowData(struct soap *soap, ECObjectTable
 	// mapAllObjectDetails now contains the details per type of all objects that we need.
 
 	// Loop through user data and fill in data in rowset
-	for(iterExternObjectDetails = mapAllObjectDetails.begin(); iterExternObjectDetails != mapAllObjectDetails.end(); iterExternObjectDetails++)
+	for (iterExternObjectDetails = mapAllObjectDetails.begin();
+	     iterExternObjectDetails != mapAllObjectDetails.end();
+	     ++iterExternObjectDetails)
 	{
 		objectid_t objectid = iterExternObjectDetails->first;
 		objectdetails_t &objectdetails = iterExternObjectDetails->second; // reference, no need to copy
@@ -2183,7 +2198,8 @@ ECRESULT ECUserManagement::QueryContentsRowData(struct soap *soap, ECObjectTable
 	}
 
 	// Loop through items, set local data and set other non-found data to NOT FOUND
-	for (i = 0, iterRowList = lpRowList->begin(); iterRowList != lpRowList->end(); iterRowList++) {
+	for (i = 0, iterRowList = lpRowList->begin();
+	     iterRowList != lpRowList->end(); ++iterRowList) {
 		// Fill in any missing data with ZARAFA_E_NOT_FOUND
 		if(IsInternalObject(iterRowList->ulObjId)) {
 			objectdetails_t details;
@@ -2200,14 +2216,14 @@ ECRESULT ECUserManagement::QueryContentsRowData(struct soap *soap, ECObjectTable
 				lpsRowSet->__ptr[i].__ptr = s_alloc<propVal>(soap, lpPropTagArray->__size);
 				lpsRowSet->__ptr[i].__size = lpPropTagArray->__size;
 
-				for (j = 0; j < lpPropTagArray->__size; j++) {
+				for (j = 0; j < lpPropTagArray->__size; ++j) {
 					lpsRowSet->__ptr[i].__ptr[j].ulPropTag = PROP_TAG(PT_ERROR, PROP_ID(lpPropTagArray->__ptr[j]));
 					lpsRowSet->__ptr[i].__ptr[j].Value.ul = ZARAFA_E_NOT_FOUND;
 					lpsRowSet->__ptr[i].__ptr[j].__union = SOAP_UNION_propValData_ul;
 				}
 			}
 		}
-		i++;
+		++i;
 	}
 
 	// All done
@@ -2244,7 +2260,8 @@ ECRESULT ECUserManagement::QueryHierarchyRowData(struct soap *soap, ECObjectTabl
 	lpsRowSet->__ptr = s_alloc<propValArray>(soap, lpRowList->size());
 	memset(lpsRowSet->__ptr, 0, sizeof(propValArray) * lpRowList->size());
 
-	for (iterRowList = lpRowList->begin(); iterRowList != lpRowList->end(); iterRowList++) {
+	for (iterRowList = lpRowList->begin(); iterRowList != lpRowList->end();
+	     ++iterRowList) {
 		/* Although it propbably doesn't make a lot of sense, we need to check for company containers here.
 		 * this is because with convenient depth tables, the children of the Zarafa Address Book will not
 		 * only be the Global Address Book, but also the company containers. */
@@ -2271,7 +2288,7 @@ ECRESULT ECUserManagement::QueryHierarchyRowData(struct soap *soap, ECObjectTabl
 			if(er != erSuccess)
 				goto exit;
 		}
-		i++;
+		++i;
 	}
 
 	// All done
@@ -2536,7 +2553,8 @@ ECRESULT ECUserManagement::ConvertExternIDsToLocalIDs(objectdetails_t *lpDetails
 		if (er != erSuccess)
 			goto exit;
 
-		for (iterLocalIDs = mapLocalIDs.begin(); iterLocalIDs != mapLocalIDs.end(); iterLocalIDs++) {
+		for (iterLocalIDs = mapLocalIDs.begin();
+		     iterLocalIDs != mapLocalIDs.end(); ++iterLocalIDs) {
 			if (iterLocalIDs->first.objclass != ACTIVE_USER && OBJECTCLASS_TYPE(iterLocalIDs->first.objclass) != OBJECTTYPE_DISTLIST)
 				continue;
 			lpDetails->AddPropInt(OB_PROP_LI_SENDAS, iterLocalIDs->second);
@@ -2627,7 +2645,7 @@ ECRESULT ECUserManagement::ComplementDefaultFeatures(objectdetails_t *lpDetails)
 			continue;
 		}
 		defaultEnabled.erase(*i);
-		i++;
+		++i;
 	}
 
 	// explicit enable remove from default disable, and add in defaultEnabled
@@ -3659,7 +3677,8 @@ ECRESULT ECUserManagement::ConvertAnonymousObjectDetailToProp(struct soap *soap,
 		lpPropVal->Value.mvbin.__size = 0;
 		lpPropVal->Value.mvbin.__ptr = s_alloc<struct xsd__base64Binary>(soap, lobjValues.size());
 
-		for (i = 0, iterObjects = lobjValues.begin(); iterObjects != lobjValues.end(); iterObjects++) {
+		for (i = 0, iterObjects = lobjValues.begin();
+		     iterObjects != lobjValues.end(); ++iterObjects) {
 			er = CreateABEntryID(soap, *iterObjects, &sPropVal);
 			if (er != erSuccess)
 				continue;
@@ -3706,7 +3725,8 @@ ECRESULT ECUserManagement::ConvertAnonymousObjectDetailToProp(struct soap *soap,
 		lpPropVal->ulPropTag = ulPropTag;
 		lpPropVal->Value.mvszA.__size = lstrValues.size();		
 		lpPropVal->Value.mvszA.__ptr = s_alloc<char *>(soap, lstrValues.size());
-		for (i = 0, iterValues = lstrValues.begin(); iterValues != lstrValues.end(); i++, iterValues++)
+		for (i = 0, iterValues = lstrValues.begin();
+		     iterValues != lstrValues.end(); ++i, ++iterValues)
 			lpPropVal->Value.mvszA.__ptr[i] = s_strcpy(soap, iterValues->c_str());
 		lpPropVal->__union = SOAP_UNION_propValData_mvszA;
 		break;
@@ -3722,7 +3742,8 @@ ECRESULT ECUserManagement::ConvertAnonymousObjectDetailToProp(struct soap *soap,
 		lpPropVal->ulPropTag = ulPropTag;
 		lpPropVal->Value.mvbin.__size = lstrValues.size();		
 		lpPropVal->Value.mvbin.__ptr = s_alloc<struct xsd__base64Binary>(soap, lstrValues.size());
-		for (i = 0, iterValues = lstrValues.begin(); iterValues != lstrValues.end(); i++, iterValues++) {
+		for (i = 0, iterValues = lstrValues.begin();
+		     iterValues != lstrValues.end(); ++i, ++iterValues) {
 			lpPropVal->Value.mvbin.__ptr[i].__size = iterValues->size();
 			lpPropVal->Value.mvbin.__ptr[i].__ptr = s_alloc<unsigned char>(soap, iterValues->size());
 
@@ -3783,7 +3804,7 @@ ECRESULT ECUserManagement::ConvertObjectDetailsToProps(struct soap *soap, unsign
 	lpPropVals->__ptr = s_alloc<struct propVal>(soap, lpPropTags->__size);
 	lpPropVals->__size = lpPropTags->__size;
 
-	for (i = 0; i < lpPropTags->__size ; i++) {
+	for (i = 0; i < lpPropTags->__size; ++i) {
 		lpPropVal = &lpPropVals->__ptr[i];
 		lpPropVal->ulPropTag = lpPropTags->__ptr[i];
 
@@ -4004,7 +4025,9 @@ ECRESULT ECUserManagement::ConvertObjectDetailsToProps(struct soap *soap, unsign
 					lpPropVal->Value.mvbin.__size = strCerts.size();
 					lpPropVal->Value.mvbin.__ptr = s_alloc<struct xsd__base64Binary>(soap, strCerts.size());
 
-					for (i = 0, iCert = strCerts.begin(); iCert != strCerts.end(); iCert++, i++) {
+					for (i = 0, iCert = strCerts.begin();
+					     iCert != strCerts.end();
+					     ++iCert, ++i) {
 						lpPropVal->Value.mvbin.__ptr[i].__size = iCert->size();
 						lpPropVal->Value.mvbin.__ptr[i].__ptr = s_alloc<unsigned char>(soap, iCert->size());
 
@@ -4029,8 +4052,10 @@ ECRESULT ECUserManagement::ConvertObjectDetailsToProps(struct soap *soap, unsign
 					lpPropVal->Value.mvbin.__size = 0;
 					lpPropVal->Value.mvbin.__ptr = s_alloc<struct xsd__base64Binary>(soap, userIds.size());
 
-					for (i = 0, iterUserIds = userIds.begin(); iterUserIds != userIds.end(); iterUserIds++) {
-						
+					for (i = 0, iterUserIds = userIds.begin();
+					     iterUserIds != userIds.end();
+					     ++iterUserIds)
+					{
 						er = CreateABEntryID(soap, *iterUserIds, &sPropVal);
 						if (er != erSuccess)
 							continue;
@@ -4065,7 +4090,9 @@ ECRESULT ECUserManagement::ConvertObjectDetailsToProps(struct soap *soap, unsign
 
 				// Use lower-case 'smtp' prefix for aliases
 				strPrefix = "smtp:";
-				for (iterAliases = lstAliases.begin(); iterAliases != lstAliases.end(); iterAliases++)
+				for (iterAliases = lstAliases.begin();
+				     iterAliases != lstAliases.end();
+				     ++iterAliases)
 					lpPropVal->Value.mvszA.__ptr[i++] = s_strcpy(soap, (strPrefix + *iterAliases).c_str());
 				
 				lpPropVal->Value.mvszA.__size = i;
@@ -4245,8 +4272,10 @@ ECRESULT ECUserManagement::ConvertObjectDetailsToProps(struct soap *soap, unsign
 					lpPropVal->Value.mvbin.__size = 0;
 					lpPropVal->Value.mvbin.__ptr = s_alloc<struct xsd__base64Binary>(soap, userIds.size());
 
-					for (i = 0, iterUserIds = userIds.begin(); iterUserIds != userIds.end(); iterUserIds++) {
-						
+					for (i = 0, iterUserIds = userIds.begin();
+					     iterUserIds != userIds.end();
+					     ++iterUserIds)
+					{
 						er = CreateABEntryID(soap, *iterUserIds, &sPropVal);
 						if (er != erSuccess)
 							continue;
@@ -4281,7 +4310,9 @@ ECRESULT ECUserManagement::ConvertObjectDetailsToProps(struct soap *soap, unsign
 
 				// Use lower-case 'smtp' prefix for aliases
 				strPrefix = "smtp:";
-				for (iterAliases = lstAliases.begin(); iterAliases != lstAliases.end(); iterAliases++)
+				for (iterAliases = lstAliases.begin();
+				     iterAliases != lstAliases.end();
+				     ++iterAliases)
 					lpPropVal->Value.mvszA.__ptr[i++] = s_strcpy(soap, (strPrefix + *iterAliases).c_str());
 
 				lpPropVal->Value.mvszA.__size = i;
@@ -4349,7 +4380,7 @@ ECRESULT ECUserManagement::ConvertContainerObjectDetailsToProps(struct soap *soa
 	lpPropVals->__ptr = s_alloc<struct propVal>(soap, lpPropTags->__size);
 	lpPropVals->__size = lpPropTags->__size;
 
-	for(i=0;i<lpPropTags->__size;i++) {
+	for (i = 0; i < lpPropTags->__size; ++i) {
 		lpPropVal = &lpPropVals->__ptr[i];
 		lpPropVal->ulPropTag = lpPropTags->__ptr[i];
 
@@ -4572,7 +4603,7 @@ ECRESULT ECUserManagement::ConvertABContainerToProps(struct soap *soap, unsigned
 		goto exit;
 	}
 
-	for (i = 0; i < lpPropTagArray->__size; i++) {
+	for (i = 0; i < lpPropTagArray->__size; ++i) {
 		lpPropVal = &lpPropValArray->__ptr[i];
 		lpPropVal->ulPropTag = lpPropTagArray->__ptr[i];
 
@@ -5224,7 +5255,8 @@ ECRESULT ECUserManagement::SyncAllObjects()
 		ec_log_info("Synchronized user list");
 	} else {
 		// per company, get all users
-		for (iCompany = lplstCompanyObjects->begin(); iCompany != lplstCompanyObjects->end(); iCompany++) {
+		for (iCompany = lplstCompanyObjects->begin();
+		     iCompany != lplstCompanyObjects->end(); ++iCompany) {
 			er = GetCompanyObjectListAndSync(OBJECTCLASS_UNKNOWN, iCompany->ulId, &lplstUserObjects, ulFlags);
 			if (er != erSuccess) {
 				ec_log_err("Error synchronizing user list for company %d: %08X", iCompany->ulId, er);
