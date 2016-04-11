@@ -517,7 +517,7 @@ auto_ptr<signatures_t> UnixUserPlugin::getAllObjects(const objectid_t &companyid
 		return objectlist;
 
 	// Distribute all objects over the various types
-	for (iterObjs = objectlist->begin(); iterObjs != objectlist->end(); iterObjs++) {
+	for (iterObjs = objectlist->begin(); iterObjs != objectlist->end(); ++iterObjs) {
 		if (!objectstrings[iterObjs->id.objclass].empty())
 			objectstrings[iterObjs->id.objclass] += ", ";
 		objectstrings[iterObjs->id.objclass] += iterObjs->id.id;
@@ -525,7 +525,8 @@ auto_ptr<signatures_t> UnixUserPlugin::getAllObjects(const objectid_t &companyid
 
 	// make list of obsolete objects
 	strQuery = "SELECT id, objectclass FROM " + (string)DB_OBJECT_TABLE + " WHERE ";
-	for (iterStrings = objectstrings.begin(); iterStrings != objectstrings.end(); iterStrings++) {
+	for (iterStrings = objectstrings.begin();
+	     iterStrings != objectstrings.end(); ++iterStrings) {
 		if (iterStrings != objectstrings.begin())
 			strQuery += "AND ";
 		strQuery +=
@@ -555,7 +556,8 @@ auto_ptr<signatures_t> UnixUserPlugin::getAllObjects(const objectid_t &companyid
 
 	// remove obsolete objects
 	strQuery = "DELETE FROM " + (string)DB_OBJECT_TABLE + " WHERE ";
-	for (iterStrings = objectstrings.begin(); iterStrings != objectstrings.end(); iterStrings++) {
+	for (iterStrings = objectstrings.begin();
+	     iterStrings != objectstrings.end(); ++iterStrings) {
 		if (iterStrings != objectstrings.begin())
 			strQuery += "OR ";
 		strQuery += "(externid IN (" + iterStrings->second + ") AND objectclass = " + stringify(iterStrings->first) + ")";
@@ -574,7 +576,8 @@ auto_ptr<signatures_t> UnixUserPlugin::getAllObjects(const objectid_t &companyid
 		"SELECT o.id "
 		"FROM " + (string)DB_OBJECT_TABLE + " AS o "
 		"WHERE ";
-	for (iterStrings = objectstrings.begin(); iterStrings != objectstrings.end(); iterStrings++) {
+	for (iterStrings = objectstrings.begin();
+	     iterStrings != objectstrings.end(); ++iterStrings) {
 		if (iterStrings != objectstrings.begin())
 			strSubQuery += "OR ";
 		strSubQuery += "(o.externid IN (" + iterStrings->second + ") AND o.objectclass = " + stringify(iterStrings->first) + ")";
@@ -741,12 +744,11 @@ auto_ptr<signatures_t> UnixUserPlugin::getParentObjectsForObject(userobject_rela
 		if (exceptgidset.find(gr->gr_gid) != exceptgidset.end())
 			continue;
 
-		for (int i = 0; gr->gr_mem[i] != NULL; i++) {
+		for (int i = 0; gr->gr_mem[i] != NULL; ++i)
 			if (strcmp(username.c_str(), gr->gr_mem[i]) == 0) {
 				objectlist->push_back(objectsignature_t(objectid_t(tostring(gr->gr_gid), DISTLIST_SECURITY), gr->gr_name));
 				break;
 			}
-		}
 	}
 	endgrent();
 	pthread_mutex_unlock(m_plugin_lock);
@@ -779,13 +781,12 @@ auto_ptr<signatures_t> UnixUserPlugin::getSubObjectsForObject(userobject_relatio
 	LOG_PLUGIN_DEBUG("%s Relation: Group member", __FUNCTION__);
 
 	findGroupID(parentid.id, &grp, buffer);
-	for (unsigned int i = 0; grp.gr_mem[i] != NULL; i++) {
+	for (unsigned int i = 0; grp.gr_mem[i] != NULL; ++i)
 		try {
 			objectlist->push_back(resolveUserName(grp.gr_mem[i]));
 		} catch (std::exception &e) {
 			// Ignore error
 		}
-	}
 
 	transform(exceptuids.begin(), exceptuids.end(), inserter(exceptuidset, exceptuidset.begin()), fromstring<const std::string,uid_t>);
 
@@ -909,7 +910,7 @@ auto_ptr<map<objectid_t, objectdetails_t> > UnixUserPlugin::getObjectDetails(con
 	if (objectids.empty())
 		return mapdetails;
 
-	for (iterID = objectids.begin(); iterID != objectids.end(); iterID++) {
+	for (iterID = objectids.begin(); iterID != objectids.end(); ++iterID) {
 		try {
 			uDetails = this->getObjectDetails(*iterID);
 		}

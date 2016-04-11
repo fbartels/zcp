@@ -126,14 +126,16 @@ auto_ptr<map<objectid_t, objectdetails_t> > DBPlugin::getObjectDetails(const lis
 
 	LOG_PLUGIN_DEBUG("%s N=%d", __FUNCTION__, (int)objectids.size());
 
-	for (list<objectid_t>::const_iterator i = objectids.begin(); i != objectids.end(); i++) {
+	for (std::list<objectid_t>::const_iterator i = objectids.begin();
+	     i != objectids.end(); ++i) {
 		if (!objectstrings[i->objclass].empty())
 			objectstrings[i->objclass] += ", ";
 		objectstrings[i->objclass] += "'" + m_lpDatabase->Escape(i->id) + "'";
 	}
 
 	/* Create subquery which combines all externids with the matching objectclass */
-	for (iterStrings = objectstrings.begin(); iterStrings != objectstrings.end(); iterStrings++) {
+	for (iterStrings = objectstrings.begin();
+	     iterStrings != objectstrings.end(); ++iterStrings) {
 		if (iterStrings != objectstrings.begin())
 			strSubQuery += " OR ";
 		strSubQuery += "(o.externid IN (" + iterStrings->second + ") "
@@ -368,7 +370,8 @@ void DBPlugin::changeObject(const objectid_t &objectid, const objectdetails_t &d
 
 		bFirstOne = true;
 
-		for (iterProps = lpDeleteProps->begin(); iterProps != lpDeleteProps->end(); iterProps++) {
+		for (iterProps = lpDeleteProps->begin();
+		     iterProps != lpDeleteProps->end(); ++iterProps) {
 			if (!bFirstOne)
 				strDeleteQuery += ",";
 			strDeleteQuery += *iterProps;
@@ -428,13 +431,13 @@ void DBPlugin::changeObject(const objectid_t &objectid, const objectdetails_t &d
 			strQuery += "((" + strSubQuery + "),'" + m_lpDatabase->Escape(sValidProps[i].column) + "','" +  m_lpDatabase->Escape(propvalue) + "')";
 			bFirstOne = false;
 		}
-
-		i++;
+		++i;
 	}
 
 	/* Load optional anonymous attributes */
 	anonymousProps = details.GetPropMapAnonymous();
-	for (iterAnonymous = anonymousProps.begin(); iterAnonymous != anonymousProps.end(); iterAnonymous++) {
+	for (iterAnonymous = anonymousProps.begin();
+	     iterAnonymous != anonymousProps.end(); ++iterAnonymous) {
 		if (!iterAnonymous->second.empty()) {
 			if (!bFirstOne)
 				strQuery += ",";
@@ -467,7 +470,8 @@ void DBPlugin::changeObject(const objectid_t &objectid, const objectdetails_t &d
 		" AND propname IN (";
 
 	anonymousMVProps = details.GetPropMapListAnonymous();
-	for (iterMVAnonymous = anonymousMVProps.begin(); iterMVAnonymous != anonymousMVProps.end(); iterMVAnonymous++) {
+	for (iterMVAnonymous = anonymousMVProps.begin();
+	     iterMVAnonymous != anonymousMVProps.end(); ++iterMVAnonymous) {
 		ulOrderId = 0;
 
 		if (!bFirstDel)
@@ -478,7 +482,8 @@ void DBPlugin::changeObject(const objectid_t &objectid, const objectdetails_t &d
 		if (iterMVAnonymous->second.empty())
 			continue;
 
-		for (iterProps = iterMVAnonymous->second.begin(); iterProps != iterMVAnonymous->second.end(); iterProps++) {
+		for (iterProps = iterMVAnonymous->second.begin();
+		     iterProps != iterMVAnonymous->second.end(); ++iterProps) {
 			if (!iterProps->empty()) {
 				if (!bFirstOne)
 					strQuery += ",";
@@ -492,7 +497,7 @@ void DBPlugin::changeObject(const objectid_t &objectid, const objectdetails_t &d
 					"'" + m_lpDatabase->Escape(stringify(iterMVAnonymous->first, true)) + "',"
 					"" + stringify(ulOrderId) + ","
 					"'" +  m_lpDatabase->Escape(strData) + "')";
-				ulOrderId++;
+				++ulOrderId;
 				bFirstOne = false;
 			}
 		}
@@ -766,7 +771,7 @@ auto_ptr<signatures_t> DBPlugin::searchObjects(const string &match, const char *
 		strMatchPrefix = " = ";
 	}
 
-	for (unsigned int i = 0; search_props[i] != NULL; i++) {
+	for (unsigned int i = 0; search_props[i] != NULL; ++i) {
 		strQuery += "(op.propname='" + (string)search_props[i] + "' AND op.value " + strMatchPrefix + " '" + strMatch + "')";
 		if (search_props[i + 1] != NULL)
 			strQuery += " OR ";
@@ -946,7 +951,7 @@ void DBPlugin::addSendAsToDetails(const objectid_t &objectid, objectdetails_t *l
 
 	sendas = getSubObjectsForObject(OBJECTRELATION_USER_SENDAS, objectid);
 
-	for (iter = sendas->begin(); iter != sendas->end(); iter++)
+	for (iter = sendas->begin(); iter != sendas->end(); ++iter)
 		lpDetails->AddPropObject(OB_PROP_LO_SENDAS, iter->id);
 }
 
@@ -964,7 +969,7 @@ auto_ptr<abprops_t> DBPlugin::getExtraAddressbookProperties()
 	strTable[0] = (string)DB_OBJECTPROPERTY_TABLE;
 	strTable[1] = (string)DB_OBJECTMVPROPERTY_TABLE;
 
-	for (unsigned int i = 0; i < 2; i++) {
+	for (unsigned int i = 0; i < 2; ++i) {
 		strQuery =
 			"SELECT op.propname "
 			"FROM " + strTable[i] + " AS op "

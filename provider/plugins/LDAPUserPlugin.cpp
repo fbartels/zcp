@@ -497,7 +497,7 @@ LDAP *LDAPUserPlugin::ConnectLDAP(const char *bind_dn, const char *bind_pw) {
 	}
 
 	// Initialize LDAP struct
-	for(unsigned long int loop=0; loop<ldap_servers.size(); loop++) {
+	for (unsigned long int loop = 0; loop < ldap_servers.size(); ++loop) {
 		const int limit = 0;
 		const int version = LDAP_VERSION3;
 		std::string currentServer = ldap_servers.at(ldapServerIndex);
@@ -570,7 +570,7 @@ LDAP *LDAPUserPlugin::ConnectLDAP(const char *bind_dn, const char *bind_pw) {
 			ec_log_err("LDAP unbind failed");
 	fail2:
 		// see if another (if any) server does work
-		ldapServerIndex++;
+		++ldapServerIndex;
 		if (ldapServerIndex >= ldap_servers.size())
 			ldapServerIndex = 0;
 		m_lpStatsCollector->Increment(SCN_LDAP_CONNECT_FAILED);
@@ -618,10 +618,9 @@ void LDAPUserPlugin::my_ldap_search_s(char *base, int scope, char *filter, char 
 
 	gettimeofday(&tstart, NULL);
 
-	if (attrs) {
-		for (unsigned int i = 0; attrs[i] != NULL; i++)
+	if (attrs != NULL)
+		for (unsigned int i = 0; attrs[i] != NULL; ++i)
 			req += string(attrs[i]) + " ";
-	}
 
 	// filter must be NULL to request everything (becomes (objectClass=*) in ldap library)
 	if (filter[0] == '\0') {
@@ -705,10 +704,8 @@ std::list<std::string> LDAPUserPlugin::GetClasses(const char *lpszClasses)
 	std::vector<std::string> vecClasses = tokenize(lpszClasses, ',');
 	std::list<std::string> lstClasses;
 
-	for(unsigned int i=0; i < vecClasses.size(); i++) {
+	for (unsigned int i = 0; i < vecClasses.size(); ++i)
 		lstClasses.push_back(trim(vecClasses[i]));
-	}
-
 	return lstClasses;
 }
 
@@ -716,11 +713,10 @@ bool LDAPUserPlugin::MatchClasses(std::set<std::string> setClasses, std::list<st
 {
 	std::list<std::string>::const_iterator i;
 
-	for(i=lstClasses.begin(); i!=lstClasses.end(); i++) {
+	for (i = lstClasses.begin(); i!=lstClasses.end(); ++i) {
 		std::string upcase = strToUpper(*i);
-		if(setClasses.find(upcase) == setClasses.end()) {
+		if (setClasses.find(upcase) == setClasses.end())
 			return false;
-		}
 	}
 
 	return true;
@@ -740,10 +736,8 @@ std::string LDAPUserPlugin::GetObjectClassFilter(const char *lpszObjectClassAttr
 		std::list<std::string>::const_iterator i;
 		filter = "(&";
 
-		for(i=lstObjectClasses.begin(); i!=lstObjectClasses.end(); i++) {
+		for (i = lstObjectClasses.begin(); i != lstObjectClasses.end(); ++i)
 			filter += (std::string)"(" + lpszObjectClassAttr + "=" + *i + ")";
-		}
-
 		filter += ")";
 	}
 
@@ -834,9 +828,9 @@ objectid_t LDAPUserPlugin::GetObjectIdForEntry(LDAPMessage *entry)
 	 * If that does not resolve the ambiguity, then object classes with higher numerical values
 	 * override those with lower numerical values (most importantly, contacts override users)
 	 */
-	for (list<string>::const_iterator i = objclasses.begin(); i != objclasses.end(); i++) {
+	for (list<string>::const_iterator i = objclasses.begin();
+	     i != objclasses.end(); ++i)
 		setObjectClasses.insert(strToUpper(*i));
-	}
 
 	lstLDAPObjectClasses = GetClasses(class_user_type);
 	if(MatchClasses(setObjectClasses, lstLDAPObjectClasses))
@@ -1015,7 +1009,7 @@ auto_ptr<signatures_t> LDAPUserPlugin::getAllObjectsByFilter(const string &based
 	END_FOREACH_LDAP_PAGING
 
 	/* Update cache */
-	for (iterDNCache = mapDNCache.begin(); iterDNCache != mapDNCache.end(); iterDNCache++)
+	for (iterDNCache = mapDNCache.begin(); iterDNCache != mapDNCache.end(); ++iterDNCache)
 		m_lpCache->setObjectDNCache(iterDNCache->first, auto_ptr<dn_cache_t>(iterDNCache->second));
 
 	return signatures;
@@ -1437,7 +1431,8 @@ auto_ptr<signatures_t> LDAPUserPlugin::objectDNtoObjectSignatures(objectclass_t 
 {
 	auto_ptr<signatures_t> signatures = auto_ptr<signatures_t>(new signatures_t());;
 
-	for (list<string>::const_iterator i = dn.begin(); i != dn.end(); i++) {
+	for (std::list<std::string>::const_iterator i = dn.begin();
+	     i != dn.end(); ++i) {
 		try {
 			signatures->push_back(objectDNtoObjectSignature(objclass, *i));
 		} catch (objectnotfound &e) {
@@ -1499,10 +1494,10 @@ auto_ptr<signatures_t> LDAPUserPlugin::resolveObjectsFromAttributes(objectclass_
 		companyDN = ldap_basedn; // in hosted, companyDN is the same as searchbase?
 
 	ldap_filter = "(&" + ldap_filter + "(|";
-	for (list<string>::const_iterator i = objects.begin(); i != objects.end(); i++) {
-		for (unsigned int j = 0; lppAttr[j] != NULL; j++)
+	for (std::list<std::string>::const_iterator i = objects.begin();
+	     i != objects.end(); ++i)
+		for (unsigned int j = 0; lppAttr[j] != NULL; ++j)
 			ldap_filter += "(" + string(lppAttr[j]) + "=" + StringEscapeSequence(*i) + ")";
-	}
 	ldap_filter += "))";
 
 	return getAllObjectsByFilter(ldap_basedn, LDAP_SCOPE_SUBTREE, ldap_filter, companyDN, false);
@@ -1833,12 +1828,11 @@ list<string> LDAPUserPlugin::getLDAPAttributeValues(char *attribute, LDAPMessage
 
 	berval = ldap_get_values_len(m_ldap, entry, attribute);
 
-	if (berval != NULL) {
-		for (int i = 0; berval[i] != NULL; i++) {
+	if (berval != NULL)
+		for (int i = 0; berval[i] != NULL; ++i) {
 			s.assign(berval[i]->bv_val, berval[i]->bv_len);
 			r.push_back(s);
 		}
-	}
 	return r;
 }
 
@@ -1972,12 +1966,12 @@ auto_ptr<map<objectid_t, objectdetails_t> > LDAPUserPlugin::getObjectDetails(con
 		// find all the different object classes in the objectids list, and make an or filter based on that
 		objectclass_t objclass = (objectclass_t)-1; // set to something invalid
 		ldap_filter = "(|";
-		for(set<objectid_t>::const_iterator iter = setObjectIds.begin(); iter != setObjectIds.end(); iter++) {
+		for (std::set<objectid_t>::const_iterator iter = setObjectIds.begin();
+		     iter != setObjectIds.end(); ++iter)
 			if (objclass != iter->objclass) {
 				ldap_filter += getSearchFilter(iter->objclass);
 				objclass = iter->objclass;
 			}
-		}
 		ldap_filter += ")";
 
 		bCutOff = true;
@@ -2029,7 +2023,7 @@ auto_ptr<map<objectid_t, objectdetails_t> > LDAPUserPlugin::getObjectDetails(con
 					ec_log_crit("Incorrect object class %d for item \"%s\"", iter->objclass, iter->id.c_str());
 					continue;
 				}
-				iter++;
+				++iter;
 			}
 			ldap_filter += "))";
 		}
@@ -2159,10 +2153,10 @@ auto_ptr<map<objectid_t, objectdetails_t> > LDAPUserPlugin::getObjectDetails(con
 				default:
 					ldap_attrs = getLDAPAttributeValues(att, entry);
 
-					if ((ulPropTag & 0x0000FFFE) == 0x001E) { // if (PROP_TYPE(ulPropTag) == PT_STRING8 || PT_UNICODE)
-						for (list<string>::iterator i = ldap_attrs.begin(); i != ldap_attrs.end(); i++)
+					if ((ulPropTag & 0xFFFE) == 0x1E) // if (PROP_TYPE(ulPropTag) == PT_STRING8 || PT_UNICODE)
+						for (std::list<std::string>::iterator i = ldap_attrs.begin();
+						     i != ldap_attrs.end(); ++i)
 							*i = m_iconv->convert(*i);
-					}
 
 					if (ulPropTag & 0x1000) /* MV_FLAG */
 						sObjDetails.SetPropListString((property_key_t)ulPropTag, ldap_attrs);
@@ -2386,9 +2380,10 @@ auto_ptr<map<objectid_t, objectdetails_t> > LDAPUserPlugin::getObjectDetails(con
 					// try to rat out the object causing the failed ldap query
 					ec_log_err("Not all objects in relation found for object \"%s\"", o->second.GetPropString(OB_PROP_S_LOGIN).c_str());
 				}
-				for (iSignature = lstSignatures->begin(); iSignature != lstSignatures->end(); iSignature++) {
+				for (iSignature = lstSignatures->begin();
+				     iSignature != lstSignatures->end();
+				     ++iSignature)
 					o->second.AddPropObject(p->propname, iSignature->id);
-				}
 			} catch (ldap_error &e) {
 				if(!LDAP_NAME_ERROR(e.GetLDAPError()))
 					throw;
@@ -2455,11 +2450,11 @@ static LDAPMod *newLDAPModification(char *attribute, const list<string> &values)
 	mod->mod_type = attribute;
 	mod->mod_vals.modv_strvals = (char**) calloc(values.size() + 1, sizeof(char*));
 	int idx = 0;
-	for (list<string>::const_iterator i = values.begin(); i != values.end(); i++) {
+	for (std::list<std::string>::const_iterator i = values.begin();
+	     i != values.end(); ++i)
 		// A strdup is necessary to be able to call free on it in the
 		// method changeAttribute, below.
 		mod->mod_vals.modv_strvals[idx++] = strdup((*i).c_str());
-	}
 	mod->mod_vals.modv_strvals[idx] = NULL;
 	return mod;
 }
@@ -2505,9 +2500,8 @@ int LDAPUserPlugin::changeAttribute(const char *dn, char *attribute, const std::
 	}
 
 	// Free all calloced / strduped memory
-	for (int i = 0; mods[0]->mod_vals.modv_strvals[i] != NULL; i++) {
+	for (int i = 0; mods[0]->mod_vals.modv_strvals[i] != NULL; ++i)
 		free(mods[0]->mod_vals.modv_strvals[i]);
-	}
 	free(mods[0]->mod_vals.modv_strvals);
 	free(mods[0]);
 
@@ -3124,11 +3118,8 @@ HRESULT LDAPUserPlugin::BintoEscapeSequence(const char* lpdata, size_t size, str
 {
 	HRESULT hr = 0;
 	lpEscaped->clear();
-
-	for(size_t t=0; t < size; t++) {
+	for (size_t t = 0; t < size; ++t)
 		lpEscaped->append("\\"+toHex(lpdata[t]));
-	}
-
 	return hr;
 }
 
@@ -3141,17 +3132,13 @@ std::string LDAPUserPlugin::StringEscapeSequence(const char* lpdata, size_t size
 {
 	std::string strEscaped;
 
-	for(size_t t=0; t < size; t++) {
-
-		if( lpdata[t] != ' ' &&
-			(lpdata[t] < '0' || lpdata[t] > 122 || (lpdata[t] >= 58/*:*/ && lpdata[t] <= 64 /*:;<=>?@*/) || (lpdata[t] >= 91 && lpdata[t] <= 96)/* [\]^_`*/) )
-		{
+	for (size_t t = 0; t < size; ++t)
+		if (lpdata[t] != ' ' && (lpdata[t] < '0' || lpdata[t] > 122 ||
+		    (lpdata[t] >= 58 /*:*/ && lpdata[t] <= 64 /*:;<=>?@*/) ||
+		    (lpdata[t] >= 91 && lpdata[t] <= 96) /* [\]^_`*/))
 			strEscaped.append("\\"+toHex(lpdata[t]));
-		}else{
+		else
 			strEscaped.append((char*)&lpdata[t], 1);
-		}
-	}
-
 	return strEscaped;
 }
 
@@ -3239,8 +3226,7 @@ auto_ptr<abprops_t> LDAPUserPlugin::getExtraAddressbookProperties()
 	std::list<configsetting_t>::const_iterator i;
 
 	LOG_PLUGIN_DEBUG("%s", __FUNCTION__);
-
-	for (i = lExtraAttrs.begin(); i != lExtraAttrs.end(); i++)
+	for (i = lExtraAttrs.begin(); i != lExtraAttrs.end(); ++i)
 		lProps->push_back(xtoi(i->szName));
 
 	return lProps;
