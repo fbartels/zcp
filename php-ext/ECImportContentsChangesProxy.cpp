@@ -112,15 +112,11 @@ ECImportContentsChangesProxy::~ECImportContentsChangesProxy() {
 }
 
 ULONG 	ECImportContentsChangesProxy::AddRef() {
-    m_cRef++;
-    
-    return m_cRef;
+	return ++m_cRef;
 }
 
 ULONG	ECImportContentsChangesProxy::Release() {
-    m_cRef--;
-    
-    if(m_cRef == 0) {
+	if (--m_cRef == 0) {
         delete this;
         return 0;
     }

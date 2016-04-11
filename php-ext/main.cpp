@@ -3386,8 +3386,7 @@ ZEND_FUNCTION(mapi_getidsfromnames)
 	if(guidHash)
 		zend_hash_internal_pointer_reset(guidHash);
 
-	for (i=0; i<hashTotal; i++)
-	{
+	for (i = 0; i < hashTotal; ++i) {
 		//	Gets the element that exist at the current pointer.
 		zend_hash_get_current_data(targetHash,(void **) &entry);
 		if(guidHash)
@@ -3450,10 +3449,8 @@ ZEND_FUNCTION(mapi_getidsfromnames)
 		goto exit;
 	} else {
 		array_init(return_value);
-
-		for (unsigned int i=0; i<lpPropTagArray->cValues; i++) {
+		for (unsigned int i = 0; i < lpPropTagArray->cValues; ++i)
 			add_next_index_long(return_value, (LONG)lpPropTagArray->aulPropTag[i]);
-		}
 	}
 
 exit:
@@ -3942,7 +3939,7 @@ ZEND_FUNCTION(mapi_getnamesfromids)
 
 	// This code should be moved to typeconversions.cpp
 	array_init(return_value);
-	for (count = 0 ; count < lpPropTags->cValues; count++ ) {
+	for (count = 0; count < lpPropTags->cValues; ++count) {
 		if (pPropNames[count] == NULL)
 			continue;			// FIXME: the returned array is smaller than the passed array!
 
@@ -3960,7 +3957,7 @@ ZEND_FUNCTION(mapi_getnamesfromids)
 			int slen;
 			char *buffer;
 			slen = wcstombs(NULL, pPropNames[count]->Kind.lpwstrName, 0);	// find string size
-			slen++;															// add terminator
+			++slen;															// add terminator
 			buffer = new char[slen];										// alloc
 			wcstombs(buffer, pPropNames[count]->Kind.lpwstrName, slen);		// convert & terminate
 			add_assoc_string(prop, "name", buffer, 1);
@@ -4597,8 +4594,7 @@ ZEND_FUNCTION(mapi_zarafa_getuserlist)
 	}
 
 	array_init(return_value);
-	for (i=0; i<nUsers; i++) {
-
+	for (i = 0; i < nUsers; ++i) {
 		MAKE_STD_ZVAL(zval_data_value);
 		array_init(zval_data_value);
 
@@ -5308,8 +5304,7 @@ ZEND_FUNCTION(mapi_zarafa_getgrouplist)
 
 
 	array_init(return_value);
-	for (i=0; i<ulGroups; i++) {
-
+	for (i = 0; i < ulGroups; ++i) {
 		MAKE_STD_ZVAL(zval_data_value);
 		array_init(zval_data_value);
 
@@ -5368,8 +5363,7 @@ ZEND_FUNCTION(mapi_zarafa_getgrouplistofuser)
 		goto exit;
 
 	array_init(return_value);
-	for (i=0; i<ulGroups; i++) {
-
+	for (i = 0; i < ulGroups; ++i) {
 		MAKE_STD_ZVAL(zval_data_value);
 		array_init(zval_data_value);
 
@@ -5429,8 +5423,7 @@ ZEND_FUNCTION(mapi_zarafa_getuserlistofgroup)
 		goto exit;
 
 	array_init(return_value);
-	for (i=0; i<ulUsers; i++) {
-
+	for (i = 0; i < ulUsers; ++i) {
 		MAKE_STD_ZVAL(zval_data_value);
 		array_init(zval_data_value);
 
@@ -5708,7 +5701,7 @@ ZEND_FUNCTION(mapi_zarafa_getcompanylist)
 		goto exit;
 
 	array_init(return_value);
-	for (i=0; i<nCompanies; i++) {
+	for (i = 0; i < nCompanies; ++i) {
 		MAKE_STD_ZVAL(zval_data_value);
 		array_init(zval_data_value);
 
@@ -5858,7 +5851,7 @@ ZEND_FUNCTION(mapi_zarafa_get_remote_viewlist)
 		goto exit;
 
 	array_init(return_value);
-	for (unsigned int i = 0; i < ulCompanies; i++) {
+	for (unsigned int i = 0; i < ulCompanies; ++i) {
 		MAKE_STD_ZVAL(zval_data_value);
 		array_init(zval_data_value);
 
@@ -6009,7 +6002,7 @@ ZEND_FUNCTION(mapi_zarafa_get_remote_adminlist)
 		goto exit;
 
 	array_init(return_value);
-	for (unsigned int i = 0; i < ulUsers; i++) {
+	for (unsigned int i = 0; i < ulUsers; ++i) {
 		MAKE_STD_ZVAL(zval_data_value);
 		array_init(zval_data_value);
 
@@ -6162,7 +6155,7 @@ ZEND_FUNCTION(mapi_zarafa_get_quota_recipientlist)
 		goto exit;
 
 	array_init(return_value);
-	for (unsigned int i = 0; i < ulUsers; i++) {
+	for (unsigned int i = 0; i < ulUsers; ++i) {
 		MAKE_STD_ZVAL(zval_data_value);
 		array_init(zval_data_value);
 
@@ -6213,13 +6206,11 @@ ZEND_FUNCTION(mapi_zarafa_check_license)
 	if(MAPI_G(hr) != hrSuccess)
 		goto exit;
         
-	for(ULONG i=0; i < ulCapas; i++) {
+	for (ULONG i = 0; i < ulCapas; ++i)
 		if(strcasecmp(lpszCapas[i], szFeature) == 0) {
 			RETVAL_TRUE;
 			break;
 		}
-	}
-    
 exit:
 	MAPIFreeBuffer(lpszCapas);
 	if(lpLicense)
@@ -6261,10 +6252,8 @@ ZEND_FUNCTION(mapi_zarafa_getcapabilities)
 		goto exit;
 
 	array_init(return_value);
-	for(ULONG i=0; i < ulCapas; i++) {
+	for (ULONG i = 0; i < ulCapas; ++i)
 		add_index_string(return_value, i, lpszCapas[i], 1);    
-	}
-    
 exit:
 	MAPIFreeBuffer(lpszCapas);
 	if(lpLicense)
@@ -6332,8 +6321,7 @@ ZEND_FUNCTION(mapi_zarafa_getpermissionrules)
 	}
 
 	array_init(return_value);
-	for (i=0; i<cPerms; i++) {
-
+	for (i = 0; i < cPerms; ++i) {
 		MAKE_STD_ZVAL(zval_data_value);
 		array_init(zval_data_value);
 
@@ -6421,7 +6409,7 @@ ZEND_FUNCTION(mapi_zarafa_setpermissionrules)
 		goto exit;
 	memset(lpECPerms, 0, sizeof(ECPERMISSION)*cPerms);
 	
-	for (j=0, i=0; i<cPerms; i++) {
+	for (j = 0, i = 0; i < cPerms; ++i) {
 		zend_hash_get_current_data(target_hash, (void **) &entry);
 
 		// null pointer returned if perms was not array(array()).
@@ -6456,8 +6444,7 @@ ZEND_FUNCTION(mapi_zarafa_setpermissionrules)
 		} else {
 			lpECPerms[j].ulState = RIGHT_NEW|RIGHT_AUTOUPDATE_DENIED;
 		}
-
-		j++;
+		++j;
 		zend_hash_move_forward(target_hash);
 	}
 
@@ -6590,7 +6577,7 @@ ZEND_FUNCTION(mapi_freebusysupport_loaddata)
 		goto exit;
 
 	// Get the user entryid's
-	for (j=0, i=0; i<cUsers; i++) {
+	for (j = 0, i = 0; i < cUsers; ++i) {
 		if(zend_hash_get_current_data(target_hash, (void **) &entry) == FAILURE)
 		{
 			MAPI_G(hr) = MAPI_E_INVALID_ENTRYID;
@@ -6599,9 +6586,7 @@ ZEND_FUNCTION(mapi_freebusysupport_loaddata)
 
 		lpUsers[j].m_cbEid = Z_STRLEN_PP(entry);
 		lpUsers[j].m_lpEid = (LPENTRYID)Z_STRVAL_PP(entry);
-
-		j++;
-
+		++j;
 		zend_hash_move_forward(target_hash);
 	}
 
@@ -6615,7 +6600,7 @@ ZEND_FUNCTION(mapi_freebusysupport_loaddata)
 
 	//Return an array of IFreeBusyData interfaces
 	array_init(return_value);
-	for (i=0; i<cUsers; i++) {
+	for (i = 0; i < cUsers; ++i) {
 		if(lppFBData[i])
 		{
 			// Set resource relation
@@ -6673,7 +6658,7 @@ ZEND_FUNCTION(mapi_freebusysupport_loadupdate)
 		goto exit;
 
 	// Get the user entryid's
-	for (j=0, i=0; i<cUsers; i++) {
+	for (j = 0, i = 0; i < cUsers; ++i) {
 		if(zend_hash_get_current_data(target_hash, (void **) &entry) == FAILURE)
 		{
 			MAPI_G(hr) = MAPI_E_INVALID_ENTRYID;
@@ -6682,9 +6667,7 @@ ZEND_FUNCTION(mapi_freebusysupport_loadupdate)
 
 		lpUsers[j].m_cbEid = Z_STRLEN_PP(entry);
 		lpUsers[j].m_lpEid = (LPENTRYID)Z_STRVAL_PP(entry);
-
-		j++;
-
+		++j;
 		zend_hash_move_forward(target_hash);
 	}
 
@@ -6698,7 +6681,7 @@ ZEND_FUNCTION(mapi_freebusysupport_loadupdate)
 
 	//Return an array of IFreeBusyUpdate interfaces
 	array_init(return_value);
-	for (i=0; i<cUsers; i++) {
+	for (i = 0; i < cUsers; ++i) {
 		if(lppFBUpdate[i])
 		{
 			// Set resource relation
@@ -6876,8 +6859,7 @@ ZEND_FUNCTION(mapi_freebusyenumblock_next)
 
 	array_init(return_value);
 
-	for (i=0; i<cFetch; i++) {
-
+	for (i = 0; i < cFetch; ++i) {
 		MAKE_STD_ZVAL(zval_data_value);
 		array_init(zval_data_value);
 
@@ -6993,7 +6975,7 @@ ZEND_FUNCTION(mapi_freebusyupdate_publish)
 	if(MAPI_G(hr) != hrSuccess)
 		goto exit;
 
-	for (i=0; i<cBlocks; i++) {
+	for (i = 0; i < cBlocks; ++i) {
 		zend_hash_get_current_data(target_hash, (void **) &entry);
 
 		data = HASH_OF(entry[0]);
@@ -7878,12 +7860,11 @@ ZEND_FUNCTION(mapi_feature)
     
     if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &szFeature, &cbFeature) == FAILURE) return;
     
-    for(unsigned int i = 0; i < arraySize(features); i++) {
+	for (unsigned int i = 0; i < arraySize(features); ++i)
         if(stricmp(features[i], szFeature) == 0) {
             RETVAL_TRUE;
             break;
-        }
-    }
+	}
     LOG_END();
     return;
 }

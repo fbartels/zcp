@@ -29,9 +29,8 @@ int my_getopt_long_permissive(int argc, char **argv, const char *shortopts,
 				memmove(&argv[i], &argv[i + 1], move_count * sizeof(char *));
 
 			argv[i] = tmp;
-
-			optind--;
-			saved_optind--;
+			--optind;
+			--saved_optind;
 		}
 	}
 

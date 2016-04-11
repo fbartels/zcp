@@ -320,14 +320,14 @@ static HRESULT ConvertUnicodeToString8(LPSRestriction lpRestriction,
 
 	switch (lpRestriction->rt) {
 	case RES_OR:
-		for (i = 0; i < lpRestriction->res.resOr.cRes; i++) {
+		for (i = 0; i < lpRestriction->res.resOr.cRes; ++i) {
 			hr = ConvertUnicodeToString8(&lpRestriction->res.resOr.lpRes[i], base, converter);
 			if (hr != hrSuccess)
 				goto exit;
 		}
 		break;
 	case RES_AND:
-		for (i = 0; i < lpRestriction->res.resAnd.cRes; i++) {
+		for (i = 0; i < lpRestriction->res.resAnd.cRes; ++i) {
 			hr = ConvertUnicodeToString8(&lpRestriction->res.resAnd.lpRes[i], base, converter);
 			if (hr != hrSuccess)
 				goto exit;
@@ -344,14 +344,13 @@ static HRESULT ConvertUnicodeToString8(LPSRestriction lpRestriction,
 			if (hr != hrSuccess)
 				goto exit;
 		}
-		for (i = 0; i < lpRestriction->res.resComment.cValues; i++) {
+		for (i = 0; i < lpRestriction->res.resComment.cValues; ++i)
 			if (PROP_TYPE(lpRestriction->res.resComment.lpProp[i].ulPropTag) == PT_UNICODE) {
 				hr = ConvertUnicodeToString8(lpRestriction->res.resComment.lpProp[i].Value.lpszW, &lpRestriction->res.resComment.lpProp[i].Value.lpszA, base, converter);
 				if (hr != hrSuccess)
 					goto exit;
 				lpRestriction->res.resComment.lpProp[i].ulPropTag = CHANGE_PROP_TYPE(lpRestriction->res.resComment.lpProp[i].ulPropTag, PT_STRING8);
 			}
-		}
 		break;
 	case RES_COMPAREPROPS:
 		break;
@@ -392,7 +391,7 @@ static HRESULT ConvertUnicodeToString8(const SRow *lpRow, void *base,
 	if (lpRow == NULL)
 		goto exit;
 
-	for (ULONG c = 0; c < lpRow->cValues; c++) {
+	for (ULONG c = 0; c < lpRow->cValues; ++c) {
 		if (PROP_TYPE(lpRow->lpProps[c].ulPropTag) == PT_UNICODE) {
 			hr = ConvertUnicodeToString8(lpRow->lpProps[c].Value.lpszW, &lpRow->lpProps[c].Value.lpszA, base, converter);
 			if (hr != hrSuccess)
@@ -415,7 +414,7 @@ static HRESULT ConvertUnicodeToString8(const ADRLIST *lpAdrList, void *base,
 	if (lpAdrList == NULL)
 		goto exit;
 
-	for (ULONG c = 0; c < lpAdrList->cEntries; c++) {
+	for (ULONG c = 0; c < lpAdrList->cEntries; ++c) {
 		// treat as row
 		hr = ConvertUnicodeToString8((LPSRow)&lpAdrList->aEntries[c], base, converter);
 		if (hr != hrSuccess)
@@ -433,14 +432,12 @@ static HRESULT ConvertUnicodeToString8(const ACTIONS *lpActions, void *base, con
 	if (lpActions == NULL)
 		goto exit;
 
-	for (ULONG c = 0; c < lpActions->cActions; c++) {
+	for (ULONG c = 0; c < lpActions->cActions; ++c)
 		if (lpActions->lpAction[c].acttype == OP_FORWARD || lpActions->lpAction[c].acttype == OP_DELEGATE) {
 			hr = ConvertUnicodeToString8(lpActions->lpAction[c].lpadrlist, base, converter);
 			if (hr != hrSuccess)
 				goto exit;
 		}
-	}
-
 exit:
 	return hr;
 }
