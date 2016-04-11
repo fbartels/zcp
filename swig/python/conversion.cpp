@@ -362,7 +362,7 @@ PyObject *Object_from_LPSPropValue(LPSPropValue lpProp)
 #define QUADPART(x) x.QuadPart
 #define PT_MV_CASE(MVname,MVelem,From,Sub) \
 			Value = PyList_New(0); \
-			for(unsigned int i=0; i<lpProp->Value.MV##MVname.cValues; i++) { \
+			for (unsigned int i = 0; i < lpProp->Value.MV##MVname.cValues; ++i) { \
 				PyObject *elem = From(Sub(lpProp->Value.MV##MVname.lp##MVelem[i])); \
 				PyList_Append(Value, elem); \
 				Py_DECREF(elem); \
@@ -385,7 +385,7 @@ PyObject *Object_from_LPSPropValue(LPSPropValue lpProp)
 			PT_MV_CASE(li,li,PyLong_FromLongLong,QUADPART)
 		case PT_MV_SYSTIME:
 			Value = PyList_New(0);
-			for(unsigned int i=0; i<lpProp->Value.MVft.cValues; i++) {
+			for (unsigned int i = 0; i < lpProp->Value.MVft.cValues; ++i) {
 				PyObject *elem = Object_from_FILETIME(lpProp->Value.MVft.lpft[i]);
 				PyList_Append(Value, elem);
 				Py_DECREF(elem);
@@ -395,7 +395,7 @@ PyObject *Object_from_LPSPropValue(LPSPropValue lpProp)
 			PT_MV_CASE(szA,pszA,PyString_FromString,BASE)
 		case PT_MV_BINARY:
 			Value = PyList_New(0);
-			for(unsigned int i=0; i<lpProp->Value.MVbin.cValues; i++) {
+			for (unsigned int i = 0; i < lpProp->Value.MVbin.cValues; ++i) {
 				PyObject *elem = PyString_FromStringAndSize((const char *)lpProp->Value.MVbin.lpbin[i].lpb, lpProp->Value.MVbin.lpbin[i].cb);
 				PyList_Append(Value, elem);
 				Py_DECREF(elem);
@@ -403,7 +403,7 @@ PyObject *Object_from_LPSPropValue(LPSPropValue lpProp)
 			break;
 		case PT_MV_UNICODE:
 			Value = PyList_New(0);
-			for(unsigned int i=0; i<lpProp->Value.MVszW.cValues; i++) {
+			for (unsigned int i = 0; i < lpProp->Value.MVszW.cValues; ++i) {
 				int len = wcslen(lpProp->Value.MVszW.lppszW[i]);
 				PyObject *elem = PyUnicode_FromWideChar(lpProp->Value.MVszW.lppszW[i], len);
 				PyList_Append(Value, elem);
@@ -412,7 +412,7 @@ PyObject *Object_from_LPSPropValue(LPSPropValue lpProp)
 			break;
 		case PT_MV_CLSID:
 			Value = PyList_New(0);
-			for(unsigned int i=0; i<lpProp->Value.MVguid.cValues; i++) {
+			for (unsigned int i = 0; i < lpProp->Value.MVguid.cValues; ++i) {
 				PyObject *elem = PyString_FromStringAndSize((const char *)&lpProp->Value.MVguid.lpguid[i], sizeof(GUID));
 				PyList_Append(Value, elem);
 				Py_DECREF(elem);
@@ -456,7 +456,7 @@ PyObject *		List_from_LPSPropValue(LPSPropValue lpProps, ULONG cValues)
 	PyObject *list = PyList_New(0);
 	PyObject *item = NULL;
 
-	for(unsigned int i=0; i<cValues; i++) {
+	for (unsigned int i = 0; i < cValues; ++i) {
 		item = Object_from_LPSPropValue(&lpProps[i]);
 		if(PyErr_Occurred())
 			goto exit;
@@ -486,7 +486,7 @@ PyObject *	  List_from_wchar_t(wchar_t **lpStrings, ULONG cElements)
 	PyObject *list = PyList_New(0);
 	PyObject *item = NULL;
 
-	for(unsigned int i=0; i<cElements; i++) {
+	for (unsigned int i = 0; i < cElements; ++i) {
 		item = PyUnicode_FromWideChar(lpStrings[i], wcslen(lpStrings[i]));
 		if(PyErr_Occurred())
 			goto exit;
@@ -635,7 +635,7 @@ void Object_to_LPSPropValue(PyObject *object, LPSPropValue lpProp, ULONG ulFlags
 				while((elem = PyIter_Next(iter))) {						\
 					Sub(lpProp->Value.MV##MVname.lp##MVelem[n]) = As(elem); \
 					Py_DECREF(elem);									\
-					n++;												\
+					++n;												\
 				}														\
 			}															\
 			lpProp->Value.MV##MVname.cValues = n; \
@@ -669,7 +669,7 @@ void Object_to_LPSPropValue(PyObject *object, LPSPropValue lpProp, ULONG ulFlags
 			while((elem = PyIter_Next(iter))) {
 				lpProp->Value.MVft.lpft[n] = Object_to_FILETIME(elem);
 				Py_DECREF(elem);
-				n++;
+				++n;
 			}
 
 			lpProp->Value.MVft.cValues = n;
@@ -697,7 +697,7 @@ void Object_to_LPSPropValue(PyObject *object, LPSPropValue lpProp, ULONG ulFlags
 				}
 
 				Py_DECREF(elem);
-				n++;
+				++n;
 			}
 
 			lpProp->Value.MVszA.cValues = n;
@@ -726,7 +726,7 @@ void Object_to_LPSPropValue(PyObject *object, LPSPropValue lpProp, ULONG ulFlags
 				lpProp->Value.MVbin.lpbin[n].cb = size;
 
 				Py_DECREF(elem);
-				n++;
+				++n;
 			}
 
 			lpProp->Value.MVbin.cValues = n;
@@ -752,7 +752,7 @@ void Object_to_LPSPropValue(PyObject *object, LPSPropValue lpProp, ULONG ulFlags
 
 
 				Py_DECREF(elem);
-				n++;
+				++n;
 			}
 
 			lpProp->Value.MVszW.cValues = n;
@@ -779,7 +779,7 @@ void Object_to_LPSPropValue(PyObject *object, LPSPropValue lpProp, ULONG ulFlags
 				memcpy(&lpProp->Value.MVguid.lpguid[n], guid, size);
 
 				Py_DECREF(elem);
-				n++;
+				++n;
 			}
 
 			lpProp->Value.MVguid.cValues = n;
@@ -859,8 +859,7 @@ LPSPropValue	List_to_LPSPropValue(PyObject *object, ULONG *cValues, ULONG ulFlag
 
 		Py_DECREF(elem);
 		elem = NULL;
-
-		i++;
+		++i;
 	}
 
 	lpResult = lpProps;
@@ -914,7 +913,7 @@ LPSPropTagArray	List_to_LPSPropTagArray(PyObject *object, ULONG /*ulFlags*/)
 	while((elem = PyIter_Next(iter))) {
 		lpPropTagArray->aulPropTag[n] = (ULONG)PyLong_AsUnsignedLong(elem);
 		Py_DECREF(elem);
-		n++;
+		++n;
 	}
 
 	lpPropTagArray->cValues = n;
@@ -943,7 +942,7 @@ PyObject *		List_from_LPSPropTagArray(LPSPropTagArray lpPropTagArray)
 
 	list = PyList_New(0);
 
-	for(unsigned int i=0; i < lpPropTagArray->cValues; i++) {
+	for (unsigned int i = 0; i < lpPropTagArray->cValues; ++i) {
 		elem = PyLong_FromUnsignedLong(lpPropTagArray->aulPropTag[i]);
 		PyList_Append(list, elem);
 		if(PyErr_Occurred())
@@ -1011,7 +1010,7 @@ void Object_to_LPSRestriction(PyObject *object, LPSRestriction lpsRestriction, v
 
 			if(PyErr_Occurred())
 				goto exit;
-			n++;
+			++n;
 			Py_DECREF(elem);
 			elem = NULL;
 		}
@@ -1428,7 +1427,7 @@ PyObject *		Object_from_LPACTIONS(ACTIONS *lpsActions)
 	}
 
 	subs = PyList_New(0);
-	for (UINT i = 0; i < lpsActions->cActions; i++) {
+	for (UINT i = 0; i < lpsActions->cActions; ++i) {
 		sub = Object_from_LPACTION(&lpsActions->lpAction[i]);
 		if (!sub)
 			goto exit;
@@ -1674,8 +1673,7 @@ LPSSortOrderSet	Object_to_LPSSortOrderSet(PyObject *object)
 
 		lpsSortOrderSet->aSort[i].ulOrder = PyLong_AsUnsignedLong(ulOrder);
 		lpsSortOrderSet->aSort[i].ulPropTag = PyLong_AsUnsignedLong(ulPropTag);
-
-		i++;
+		++i;
 		Py_DECREF(elem);
 	}
 
@@ -1713,7 +1711,7 @@ PyObject *		Object_from_LPSSortOrderSet(LPSSortOrderSet lpSortOrderSet)
 
 	sorts = PyList_New(0);
 
-	for(unsigned int i=0; i<lpSortOrderSet->cSorts; i++) {
+	for (unsigned int i = 0; i < lpSortOrderSet->cSorts; ++i) {
 		sort = PyObject_CallFunction(PyTypeSSort, "(ll)", lpSortOrderSet->aSort[i].ulPropTag, lpSortOrderSet->aSort[i].ulOrder);
 
 		if(PyErr_Occurred())
@@ -1751,7 +1749,7 @@ PyObject *		List_from_LPSRowSet(LPSRowSet lpRowSet)
 	PyObject *list = PyList_New(0);
 	PyObject *item = NULL;
 
-	for(unsigned int i=0; i<lpRowSet->cRows; i++) {
+	for (unsigned int i = 0; i < lpRowSet->cRows; ++i) {
 		item = List_from_LPSPropValue(lpRowSet->aRow[i].lpProps, lpRowSet->aRow[i].cValues);
 
 		if(PyErr_Occurred())
@@ -1809,7 +1807,7 @@ LPSRowSet		List_to_LPSRowSet(PyObject *list, ULONG ulFlags)
 
 		Py_DECREF(elem);
 		elem = NULL;
-		i++;
+		++i;
 	}
 
 	lpsRowSet->cRows = i;
@@ -1901,7 +1899,7 @@ PyObject *		List_from_LPSPropProblemArray(LPSPropProblemArray lpProblemArray)
 
 	list = PyList_New(0);
 
-	for(unsigned int i=0; i<lpProblemArray->cProblem; i++) {
+	for (unsigned int i = 0; i < lpProblemArray->cProblem; ++i) {
 		elem = Object_from_LPSPropProblem(&lpProblemArray->aProblem[i]);
 
 		if(PyErr_Occurred())
@@ -1956,7 +1954,7 @@ LPSPropProblemArray List_to_LPSPropProblemArray(PyObject *list, ULONG /*ulFlags*
 
 		Py_DECREF(elem);
 		elem = NULL;
-		i++;
+		++i;
 	}
 
 	lpsProblems->cProblem = i;
@@ -2009,7 +2007,7 @@ PyObject * List_from_LPMAPINAMEID(LPMAPINAMEID *lppMAPINameId, ULONG cNames)
 
 	list = PyList_New(0);
 
-	for(unsigned int i = 0; i < cNames ; i++) {
+	for (unsigned int i = 0; i < cNames; ++i) {
 		elem = Object_from_LPMAPINAMEID(lppMAPINameId[i]);
 
 		if(PyErr_Occurred())
@@ -2132,8 +2130,7 @@ LPMAPINAMEID *	List_to_p_LPMAPINAMEID(PyObject *list, ULONG *lpcNames, ULONG /*u
 
 		if(PyErr_Occurred())
 			goto exit;
-
-		i++;
+		++i;
 		Py_DECREF(elem);
 		elem = NULL;
 	}
@@ -2193,8 +2190,7 @@ LPENTRYLIST		List_to_LPENTRYLIST(PyObject *list)
 		if (MAPIAllocateMore(strlen, lpEntryList, (void**)&lpEntryList->lpbin[i].lpb) != hrSuccess)
 			goto exit;
 		memcpy(lpEntryList->lpbin[i].lpb, ptr, strlen);
-
-		i++;
+		++i;
 		Py_DECREF(elem);
 		elem = NULL;
 	}
@@ -2223,7 +2219,7 @@ PyObject *		List_from_LPENTRYLIST(LPENTRYLIST lpEntryList)
 	list = PyList_New(0);
 
 	if (lpEntryList) {
-		for(unsigned int i = 0; i < lpEntryList->cValues ; i++) {
+		for (unsigned int i = 0; i < lpEntryList->cValues; ++i) {
 			elem = PyString_FromStringAndSize((const char*)lpEntryList->lpbin[i].lpb, lpEntryList->lpbin[i].cb);
 			if(PyErr_Occurred())
 				goto exit;
@@ -2258,7 +2254,7 @@ PyObject *		List_from_LPNOTIFICATION(LPNOTIFICATION lpNotif, ULONG cNotifs)
 	PyObject *list = PyList_New(0);
 	PyObject *item = NULL;
 
-	for(unsigned int i=0; i<cNotifs; i++) {
+	for (unsigned int i = 0; i < cNotifs; ++i) {
 		item = Object_from_LPNOTIFICATION(&lpNotif[i]);
 		if(PyErr_Occurred())
 			goto exit;
@@ -2479,8 +2475,7 @@ LPFlagList		List_to_LPFlagList(PyObject *list)
 
 		if(PyErr_Occurred())
 			goto exit;
-
-		i++;
+		++i;
 		Py_DECREF(elem);
 		elem = NULL;
 	}
@@ -2507,7 +2502,7 @@ PyObject *		List_from_LPFlagList(LPFlagList lpFlags)
 	PyObject *list = PyList_New(0);
 	PyObject *elem = NULL;
 
-	for(unsigned int i=0; i<lpFlags->cFlags; i++) {
+	for (unsigned int i = 0; i < lpFlags->cFlags; ++i) {
 		elem = PyLong_FromUnsignedLong(lpFlags->ulFlag[i]);
 		PyList_Append(list, elem);
 
@@ -2579,9 +2574,7 @@ LPREADSTATE		List_to_LPREADSTATE(PyObject *list, ULONG *lpcElements)
 
 		memcpy(lpList[i].pbSourceKey, ptr, len);
 		lpList[i].cbSourceKey = len;
-
-		i++;
-
+		++i;
 		Py_DECREF(flags);
 		flags = NULL;
 
@@ -2625,7 +2618,7 @@ PyObject *		List_from_LPREADSTATE(LPREADSTATE lpReadState, ULONG cElements)
 	PyObject *elem = NULL;
 	PyObject *sourcekey = NULL;
 
-	for (unsigned int i = 0; i < cElements; i++) {
+	for (unsigned int i = 0; i < cElements; ++i) {
 		sourcekey = PyString_FromStringAndSize((char*)lpReadState[i].pbSourceKey, lpReadState[i].cbSourceKey);
 		if (PyErr_Occurred())
 			goto exit;
@@ -2688,8 +2681,7 @@ LPCIID			List_to_LPCIID(PyObject *list, ULONG *cInterfaces)
 		}
 
 		memcpy(&lpList[i], ptr, sizeof(*lpList));
-
-		i++;
+		++i;
 		Py_DECREF(elem);
 		elem = NULL;
 	}
@@ -2722,7 +2714,7 @@ PyObject *List_from_LPCIID(LPCIID iids, ULONG cElements)
 	PyObject *list = PyList_New(0);
 	PyObject *iid = NULL;
 
-	for (unsigned int i = 0; i < cElements; i++) {
+	for (unsigned int i = 0; i < cElements; ++i) {
 		iid = PyString_FromStringAndSize((char*)&iids[i], sizeof(IID));
 		if (PyErr_Occurred())
 			goto exit;
@@ -2935,7 +2927,7 @@ PyObject *List_from_LPECUSER(ECUSER *lpUser, ULONG cElements, ULONG ulFlags)
 	PyObject *list = PyList_New(0);
 	PyObject *item = NULL;
 
-	for(unsigned int i=0; i<cElements; i++) {
+	for (unsigned int i = 0; i < cElements; ++i) {
 		item = Object_from_LPECUSER(&lpUser[i], ulFlags);
 		if (PyErr_Occurred())
 			goto exit;
@@ -3008,7 +3000,7 @@ PyObject *List_from_LPECGROUP(ECGROUP *lpGroup, ULONG cElements, ULONG ulFlags)
 	PyObject *list = PyList_New(0);
 	PyObject *item = NULL;
 
-	for(unsigned int i=0; i<cElements; i++) {
+	for (unsigned int i = 0; i < cElements; ++i) {
 		item = Object_from_LPECGROUP(&lpGroup[i], ulFlags);
 		if (PyErr_Occurred())
 			goto exit;
@@ -3081,7 +3073,7 @@ PyObject *List_from_LPECCOMPANY(ECCOMPANY *lpCompany, ULONG cElements,
 	PyObject *list = PyList_New(0);
 	PyObject *item = NULL;
 
-	for(unsigned int i=0; i<cElements; i++) {
+	for (unsigned int i = 0; i < cElements; ++i) {
 		item = Object_from_LPECCOMPANY(&lpCompany[i], ulFlags);
 		if (PyErr_Occurred())
 			goto exit;
@@ -3160,8 +3152,7 @@ LPROWLIST List_to_LPROWLIST(PyObject *object, ULONG ulFlags)
 
 		Py_DECREF(elem);
 		elem = NULL;
-
-		n++;
+		++n;
 	}
 
 	lpRowList->cEntries = n;
@@ -3338,7 +3329,7 @@ ECSVRNAMELIST *List_to_LPECSVRNAMELIST(PyObject *object)
 
 		Py_DECREF(elem);
 		elem = NULL;
-		lpSvrNameList->cServers++;
+		++lpSvrNameList->cServers;
 	}
 
 
@@ -3368,7 +3359,7 @@ PyObject *List_from_LPECSERVERLIST(ECSERVERLIST *lpServerList)
 	PyObject *list = PyList_New(0);
 	PyObject *item = NULL;
 
-	for(unsigned int i=0; i<lpServerList->cServers; i++) {
+	for (unsigned int i = 0; i < lpServerList->cServers; ++i) {
 		item = Object_from_LPECSERVER(&lpServerList->lpsaServer[i]);
 		if (PyErr_Occurred())
 			goto exit;

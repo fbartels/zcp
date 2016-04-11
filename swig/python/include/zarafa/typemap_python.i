@@ -413,7 +413,7 @@ SWIG_FromBytePtrAndSize(const unsigned char* carray, size_t size)
     int i;
     $1 = PyList_Size($input);
     $2 = (char **) malloc(($1+1)*sizeof(char *));
-    for (i = 0; i < $1; i++) {
+    for (i = 0; i < $1; ++i) {
       PyObject *o = PyList_GetItem($input,i);
       if (PyString_Check(o))
 	$2[i] = PyString_AsString(PyList_GetItem($input,i));

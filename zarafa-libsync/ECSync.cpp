@@ -1216,8 +1216,7 @@ loop:
 		ulRetry = 5;
 		while(ulRetry && (!m_lpOfflineContext || !m_lpOnlineContext || hr != hrSuccess)) {
 			hr = ReLogin();
-			ulRetry--;
-
+			--ulRetry;
 			if(CheckExit() != hrSuccess)
 				goto wait;
 
