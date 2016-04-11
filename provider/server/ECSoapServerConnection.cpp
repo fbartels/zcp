@@ -406,7 +406,7 @@ ECRESULT ECSoapServerConnection::ListenSSL(const char* lpServerName, int nServer
 		bool ssl_neg = false;
 
 		if (*ssl_name == '!') {
-			ssl_name++;
+			++ssl_name;
 			ssl_neg = true;
 		}
 

@@ -314,10 +314,8 @@ ECThreadManager::ECThreadManager(ECLogger *lpLogger, ECDispatcher *lpDispatcher,
     pthread_mutex_lock(&m_mutexThreads);
     // Start our worker threads
 	m_lpPrioWorker = new ECPriorityWorkerThread(m_lpLogger, this, lpDispatcher);
-    for(unsigned int i=0;i<ulThreads;i++) {
-        ECWorkerThread *lpWorker = new ECWorkerThread(m_lpLogger, this, lpDispatcher);
-        m_lstThreads.push_back(lpWorker);
-    }
+	for (unsigned int i = 0; i < ulThreads; ++i)
+		m_lstThreads.push_back(new ECWorkerThread(m_lpLogger, this, lpDispatcher));
     pthread_mutex_unlock(&m_mutexThreads);
 }
 
@@ -346,8 +344,8 @@ ECThreadManager::~ECThreadManager()
 ECRESULT ECThreadManager::ForceAddThread(int nThreads)
 {
     pthread_mutex_lock(&m_mutexThreads);
-    for(int i=0;i<nThreads;i++) 
-        m_lstThreads.push_back(new ECWorkerThread(m_lpLogger, this, m_lpDispatcher));
+	for (int i = 0; i < nThreads; ++i)
+		m_lstThreads.push_back(new ECWorkerThread(m_lpLogger, this, m_lpDispatcher));
     pthread_mutex_unlock(&m_mutexThreads);
     
     return erSuccess;
@@ -636,12 +634,16 @@ ECRESULT ECDispatcher::GetNextWorkItem(WORKITEM **lppItem, bool bWait, bool bPri
     } else {
         // No item waiting
         if(bWait && !m_bExit) {
-            pthread_mutex_lock(&m_mutexIdle); m_ulIdle++; pthread_mutex_unlock(&m_mutexIdle);
+            pthread_mutex_lock(&m_mutexIdle);
+            ++m_ulIdle;
+            pthread_mutex_unlock(&m_mutexIdle);
             
             // If requested, wait until item is available
             pthread_cond_wait(condItems, &m_mutexItems);
             
-            pthread_mutex_lock(&m_mutexIdle); m_ulIdle--; pthread_mutex_unlock(&m_mutexIdle);
+            pthread_mutex_lock(&m_mutexIdle);
+            --m_ulIdle;
+            pthread_mutex_unlock(&m_mutexIdle);
 
             if(!queue->empty() && !m_bExit) {
                 lpItem = queue->front();
@@ -673,7 +675,7 @@ ECRESULT ECDispatcher::NotifyDone(struct soap *soap)
 		zarafa_end_soap_connection(soap);
         soap_free(soap);
     } else {
-		soap->max_keep_alive--;
+		--soap->max_keep_alive;
 		if (soap->max_keep_alive == 0)
 			soap->keep_alive = 0;
         if(soap->socket != SOAP_INVALID_SOCKET) {
@@ -800,10 +802,12 @@ ECRESULT ECDispatcherSelect::MainLoop()
             
             FD_SET(iterSockets->second.soap->socket, &readfds);
             maxfds = max(maxfds, iterSockets->second.soap->socket);
-            iterSockets++;
+            ++iterSockets;
         }
         // Listen on listener sockets
-        for(iterListenSockets = m_setListenSockets.begin(); iterListenSockets != m_setListenSockets.end(); iterListenSockets++) {
+        for (iterListenSockets = m_setListenSockets.begin();
+             iterListenSockets != m_setListenSockets.end();
+             ++iterListenSockets) {
 			FD_SET(iterListenSockets->second->socket, &readfds);
             maxfds = max(maxfds, iterListenSockets->second->socket);
         }
@@ -849,16 +853,19 @@ ECRESULT ECDispatcherSelect::MainLoop()
                 }
                 
                 // N holds the number of descriptors set in readfds, so decrease by one since we handled that one.
-                n--;
+		--n;
             } else {
-                iterSockets++;
+		++iterSockets;
             }
         }
 
         pthread_mutex_unlock(&m_mutexSockets);
 
         // Search for activity on listen sockets
-        for(iterListenSockets = m_setListenSockets.begin(); iterListenSockets != m_setListenSockets.end(); iterListenSockets++) {
+        for (iterListenSockets = m_setListenSockets.begin();
+             iterListenSockets != m_setListenSockets.end();
+             ++iterListenSockets)
+        {
             if(FD_ISSET(iterListenSockets->second->socket, &readfds)) {
                 struct soap *newsoap;
                 ACTIVESOCKET sActive;
@@ -940,17 +947,21 @@ ECRESULT ECDispatcherSelect::MainLoop()
     while(!m_queuePrioItems.empty()) { zarafa_end_soap_connection(m_queuePrioItems.front()->soap); soap_free(m_queuePrioItems.front()->soap); m_queuePrioItems.pop(); }
     pthread_mutex_unlock(&m_mutexItems);
 
-    // Close all listener sockets. 
-    for(iterListenSockets = m_setListenSockets.begin(); iterListenSockets != m_setListenSockets.end(); iterListenSockets++) {
+	// Close all listener sockets. 
+	for (iterListenSockets = m_setListenSockets.begin();
+	     iterListenSockets != m_setListenSockets.end();
+	     ++iterListenSockets) {
 		zarafa_end_soap_listener(iterListenSockets->second); 
-        soap_free(iterListenSockets->second);
-    }
-    // Close all sockets. This will cause all that we were listening on clients to get an EOF
+		soap_free(iterListenSockets->second);
+	}
+	// Close all sockets. This will cause all that we were listening on clients to get an EOF
 	pthread_mutex_lock(&m_mutexSockets);
-    for(iterSockets = m_setSockets.begin(); iterSockets != m_setSockets.end(); iterSockets++) {
+	for (iterSockets = m_setSockets.begin();
+	     iterSockets != m_setSockets.end();
+	     ++iterSockets) {
 		zarafa_end_soap_connection(iterSockets->second.soap); 
-        soap_free(iterSockets->second.soap);
-    }
+		soap_free(iterSockets->second.soap);
+	}
 	pthread_mutex_unlock(&m_mutexSockets);
     
     return er;
@@ -1006,7 +1017,9 @@ ECRESULT ECDispatcherEPoll::MainLoop()
 
 	epevent.events = EPOLLIN | EPOLLPRI; // wait for input and priority (?) events
 
-	for (iterListenSockets = m_setListenSockets.begin(); iterListenSockets != m_setListenSockets.end(); iterListenSockets++) {
+	for (iterListenSockets = m_setListenSockets.begin();
+	     iterListenSockets != m_setListenSockets.end();
+	     ++iterListenSockets) {
 		epevent.data.fd = iterListenSockets->second->socket; 
 		epoll_ctl(m_epFD, EPOLL_CTL_ADD, iterListenSockets->second->socket, &epevent);
 	}
@@ -1030,7 +1043,7 @@ ECRESULT ECDispatcherEPoll::MainLoop()
                     // Socket has been inactive for more than server_recv_timeout seconds, close the socket
                     shutdown(iterSockets->second.soap->socket, SHUT_RDWR);
                 }
-                iterSockets++;
+                ++iterSockets;
             }
             last = now;
         }
@@ -1038,7 +1051,7 @@ ECRESULT ECDispatcherEPoll::MainLoop()
 
 		n = epoll_wait(m_epFD, epevents, m_fdMax, 1000); // timeout -1 is wait indefinitely
 		pthread_mutex_lock(&m_mutexSockets);
-		for (int i = 0; i < n; i++) {
+		for (int i = 0; i < n; ++i) {
 			iterListenSockets = m_setListenSockets.find(epevents[i].data.fd);
 
 			if (iterListenSockets != m_setListenSockets.end()) {
@@ -1138,14 +1151,16 @@ ECRESULT ECDispatcherEPoll::MainLoop()
     while(!m_queuePrioItems.empty()) { zarafa_end_soap_connection(m_queuePrioItems.front()->soap); soap_free(m_queuePrioItems.front()->soap); m_queuePrioItems.pop(); }
     pthread_mutex_unlock(&m_mutexItems);
 
-    // Close all listener sockets. 
-    for(iterListenSockets = m_setListenSockets.begin(); iterListenSockets != m_setListenSockets.end(); iterListenSockets++) {
+	// Close all listener sockets.
+	for (iterListenSockets = m_setListenSockets.begin();
+	     iterListenSockets != m_setListenSockets.end();
+	     ++iterListenSockets) {
         zarafa_end_soap_listener(iterListenSockets->second);
         soap_free(iterListenSockets->second);
     }
     // Close all sockets. This will cause all that we were listening on clients to get an EOF
 	pthread_mutex_lock(&m_mutexSockets);
-    for(iterSockets = m_setSockets.begin(); iterSockets != m_setSockets.end(); iterSockets++) {
+    for (iterSockets = m_setSockets.begin(); iterSockets != m_setSockets.end(); ++iterSockets) {
         zarafa_end_soap_connection(iterSockets->second.soap);
         soap_free(iterSockets->second.soap);
     }
@@ -1214,7 +1229,7 @@ ECRESULT ECDispatcherWin32::MainLoop()
 
         // Listen on rescan trigger
 		hEvent[cEvents] = m_hRescanEvent;
-		cEvents++;
+		++cEvents;
 		lstWatch.push_back(m_hRescanEvent);
 
 		pthread_mutex_lock(&m_mutexSockets);
@@ -1243,7 +1258,7 @@ ECRESULT ECDispatcherWin32::MainLoop()
 				
 				// Remove from active socket set
                 iterErase = iterSockets;
-                iterSockets++;
+                ++iterSockets;
                 m_setSockets.erase(iterErase);
 
                 continue;
@@ -1304,15 +1319,17 @@ ECRESULT ECDispatcherWin32::MainLoop()
 				if(iterPending != mapPending.end()) {
 					// Store the event that we're listening on
 					hEvent[cEvents] = iterPending->second->sOverlapped.hEvent;
-					cEvents++;
+					++cEvents;
 					lstWatch.push_back((HANDLE)iterSockets->second.soap->socket);
 				}
             }
-            iterSockets++;
+            ++iterSockets;
         }
 
         // Listen on listener sockets
-        for(iterListenSockets = m_setListenSockets.begin(); iterListenSockets != m_setListenSockets.end(); iterListenSockets++) {
+        for (iterListenSockets = m_setListenSockets.begin();
+             iterListenSockets != m_setListenSockets.end();
+             ++iterListenSockets) {
 			if (cEvents >= ARRAY_SIZE(hEvent))
 				continue;
 			iterPending = mapPending.find((HANDLE)iterListenSockets->second->socket);
@@ -1350,7 +1367,7 @@ ECRESULT ECDispatcherWin32::MainLoop()
 
 			if(iterPending != mapPending.end()) {
 				hEvent[cEvents] = iterPending->second->sOverlapped.hEvent;
-				cEvents++;
+				++cEvents;
 				lstWatch.push_back((HANDLE)iterListenSockets->second->socket);
 			}
         }
@@ -1400,7 +1417,7 @@ ECRESULT ECDispatcherWin32::MainLoop()
 					soap_free(iterSockets->second.soap);
 
 					iterErase = iterSockets;
-					iterSockets++;
+					++iterSockets;
 					m_setSockets.erase(iterErase);
 				} else {
 					// Actual data waiting
@@ -1505,22 +1522,26 @@ ECRESULT ECDispatcherWin32::MainLoop()
     pthread_mutex_unlock(&m_mutexItems);
 
 	// Delete all pending requests
-	for(iterPending = mapPending.begin(); iterPending != mapPending.end(); iterPending++) {
+	for (iterPending = mapPending.begin();
+	     iterPending != mapPending.end(); ++iterPending) {
 		CloseHandle(iterPending->second->sOverlapped.hEvent);
 		delete(iterPending->second);
 	}
 
     // Close all listener sockets.  (bit of a hack since they were passed from outside this class!)
-    for(iterListenSockets = m_setListenSockets.begin(); iterListenSockets != m_setListenSockets.end(); iterListenSockets++) {
+	for (iterListenSockets = m_setListenSockets.begin();
+	     iterListenSockets != m_setListenSockets.end();
+	     ++iterListenSockets) {
         zarafa_end_soap_listener(iterListenSockets->second);
         soap_free(iterListenSockets->second);
-    }
+	}
     // Close all sockets. This will cause all that we were listening on clients to get an EOF
 	pthread_mutex_lock(&m_mutexSockets);
-    for(iterSockets = m_setSockets.begin(); iterSockets != m_setSockets.end(); iterSockets++) {
+	for (iterSockets = m_setSockets.begin();
+	     iterSockets != m_setSockets.end(); ++iterSockets) {
         zarafa_end_soap_connection(iterSockets->second.soap);
         soap_free(iterSockets->second.soap);
-    }
+	}
 	pthread_mutex_unlock(&m_mutexSockets);
     
     return er;

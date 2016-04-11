@@ -371,15 +371,13 @@ static ECRESULT check_database_attachments(ECDatabase *lpDatabase)
 	}
 
 	// Create attachment directories
-	if (strcmp(g_lpConfig->GetSetting("attachment_storage"), "files") == 0) {
+	if (strcmp(g_lpConfig->GetSetting("attachment_storage"), "files") == 0)
 		// These values are hard coded .. if they change, the hash algorithm will fail, and you'll be FUCKED.
-		for (int i = 0; i < ATTACH_PATHDEPTH_LEVEL1; i++) {
-			for (int j = 0; j < ATTACH_PATHDEPTH_LEVEL2; j++) {
+		for (int i = 0; i < ATTACH_PATHDEPTH_LEVEL1; ++i)
+			for (int j = 0; j < ATTACH_PATHDEPTH_LEVEL2; ++j) {
 				string path = (string)g_lpConfig->GetSetting("attachment_path") + PATH_SEPARATOR + stringify(i) + PATH_SEPARATOR + stringify(j);
 				CreatePath(path.c_str());
 			}
-		}
-	}
 
 exit:
 	if (lpResult)

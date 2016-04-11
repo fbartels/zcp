@@ -148,7 +148,7 @@ int HandleClientUpdate(struct soap *soap)
 	// the version comes as "/autoupdate/6.20.1.1234", convert it to "6.20.1.1234"
 	szCurrentVersion = soap->path + strlen("/autoupdate");
 	if (szCurrentVersion[0] == '/')
-		szCurrentVersion++;
+		++szCurrentVersion;
 
 	if (szCurrentVersion[0] != '\0') {
 		g_lpLogger->Log(EC_LOGLEVEL_INFO, "Client update: The current client version is %s.", szCurrentVersion);
@@ -358,7 +358,8 @@ static bool GetLatestVersionAtServer(const char *szUpdatePath,
 		}
 
 		bfs::directory_iterator update_last;
-		for (bfs::directory_iterator update(updatesdir); update != update_last; update++) {
+		for (bfs::directory_iterator update(updatesdir);
+		     update != update_last; ++update) {
 			const bfs::file_type file_type = update->status().type();
 			if (file_type != bfs::regular_file && file_type != bfs::symlink_file) {
 				continue;
@@ -737,8 +738,7 @@ int ns__setClientUpdateStatus(struct soap *soap, struct clientUpdateStatusReques
 			content = soap_get_mime_attachment(soap, (void*)strFile.c_str());
 			if (!content)
 				break;
-
-			ulFile++;
+			++ulFile;
 		}
 
 		if (soap->error) {
