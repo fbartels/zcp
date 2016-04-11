@@ -3659,12 +3659,11 @@ class Permission(object):
         self.server = server
 
     @property
-    def member(self): # XXX company, use entryid
-        name = self.mapirow[PR_MEMBER_NAME]
+    def member(self): # XXX company?
         try:
-            return self.server.user(name)
-        except ZarafaNotFoundException:
-            return self.server.group(name)
+            return self.server.user(self.server.sa.GetUser(self.mapirow[PR_MEMBER_ENTRYID], MAPI_UNICODE).Username)
+        except (ZarafaNotFoundException, MAPIErrorNotFound):
+            return self.server.group(self.server.sa.GetGroup(self.mapirow[PR_MEMBER_ENTRYID], MAPI_UNICODE).Groupname)
 
     @property
     def rights(self):
