@@ -30,7 +30,7 @@ class ZarafaFS(fuse.Fuse):
         self.path_object = {} # XXX caching everything, so don't use this on a large account..
 
     def getattr(self, path, fh=None):
-        print >>file(LOG, 'a'), 'getattr', path, fh
+        print >>open(LOG, 'a'), 'getattr', path, fh
         try:
             splitpath = path.split(os.sep)
             last = splitpath[-1]
@@ -48,11 +48,11 @@ class ZarafaFS(fuse.Fuse):
             return st
 
         except Exception, e:
-            print >>file(LOG, 'a'), traceback.format_exc(e)
+            print >>open(LOG, 'a'), traceback.format_exc(e)
 
     def readdir(self, path, fh):
         try:
-            print >>file(LOG, 'a'), 'readdir', path, fh
+            print >>open(LOG, 'a'), 'readdir', path, fh
 
             yield fuse.Direntry('.')
             yield fuse.Direntry('..')
@@ -87,12 +87,12 @@ class ZarafaFS(fuse.Fuse):
 
             # XXX attachments!
 
-        except Exception, e:
-            print >>file(LOG, 'a'), traceback.format_exc(e)
+        except Exception as e:
+            print >>open(LOG, 'a'), traceback.format_exc(e)
  
     def read(self, path, size, offset):
         try:
-            print >>file(LOG, 'a'), 'read', path, size, offset
+            print >>open(LOG, 'a'), 'read', path, size, offset
             splitpath = path.split(os.sep)
             last = splitpath[-1]
             parentpath = os.sep.join(splitpath[:-1])
@@ -101,8 +101,8 @@ class ZarafaFS(fuse.Fuse):
                 item = self.path_object[parentpath]
                 eml = item.eml()
                 return eml[offset:offset+size]
-        except Exception, e:
-            print >>file(LOG, 'a'), traceback.format_exc(e)
+        except Exception as e:
+            print >>open(LOG, 'a'), traceback.format_exc(e)
 
 def main():
     server = ZarafaFS(dash_s_do='setsingle')

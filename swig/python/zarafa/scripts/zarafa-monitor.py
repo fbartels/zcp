@@ -65,7 +65,7 @@ class Monitor(zarafa.Service):
                         if 0 < getattr(user.quota, limit+'_limit') < u.store.size:
                             log.warning('Mailbox of user %s has exceeded its %s limit' % (u.name, limit))
                             if self.check_quota_interval(u):
-                                mail = file(self.config['userquota_warning_template']).readlines()
+                                mail = open(self.config['userquota_warning_template']).readlines()
                                 mail = ''.join(mail)
                                 mail = self.replace_template(mail, u)
                                 for r in u.quota.recipients:
