@@ -1,6 +1,6 @@
 #include <getopt.h>
 #include <string.h>
-#include "my_getopt.h"
+#include <zarafa/my_getopt.h>
 
 int my_getopt_long_permissive(int argc, char **argv, const char *shortopts,
     const struct option *longopts, int *longind)
