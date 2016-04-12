@@ -171,8 +171,8 @@ public:
 	void GetStats(sSessionManagerStats &sStats);
 	ECRESULT DumpStats();
 
-	bool IsHostedSupported();
-	bool IsDistributedSupported();
+	bool IsHostedSupported(void) { return m_bHostedZarafa; }
+	bool IsDistributedSupported(void) { return m_bDistributedZarafa; }
 	ECRESULT GetLicensedUsers(unsigned int ulServiceType, unsigned int* lpulLicensedUsers);
 	ECRESULT GetServerGUID(GUID* lpServerGuid);
 
@@ -199,12 +199,12 @@ public:
 	ULONG GetSortLCID(ULONG ulStoreId);
 	ECLocale GetSortLocale(ULONG ulStoreId);
 
-	ECCacheManager*	GetCacheManager();
-	ECSearchFolders* GetSearchFolders();
-	ECConfig*		GetConfig();
-	ECLogger*		GetAudit();
-	ECPluginFactory* GetPluginFactory();
-	ECLockManager*	GetLockManager();
+	ECCacheManager *GetCacheManager(void) { return m_lpECCacheManager; }
+	ECSearchFolders *GetSearchFolders(void) { return m_lpSearchFolders; }
+	ECConfig *GetConfig(void) { return m_lpConfig; }
+	ECLogger *GetAudit(void) { return m_lpAudit; }
+	ECPluginFactory *GetPluginFactory(void) { return m_lpPluginFactory; }
+	ECLockManager *GetLockManager(void) { return m_ptrLockManager.get(); }
 
 protected:
 	BTSession* 			GetSession(ECSESSIONID sessionID, bool fLockSession = false);

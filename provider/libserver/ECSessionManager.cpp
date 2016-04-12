@@ -1319,16 +1319,6 @@ ECRESULT ECSessionManager::NotificationChange(const set<unsigned int> &syncIds, 
 	return er;
 }
 
-ECCacheManager*	ECSessionManager::GetCacheManager()
-{
-	return m_lpECCacheManager;
-}
-
-ECSearchFolders* ECSessionManager::GetSearchFolders()
-{
-	return m_lpSearchFolders;
-}
-
 /**
  * Get the sessionmanager statistics
  * 
@@ -1457,16 +1447,6 @@ ECRESULT ECSessionManager::DumpStats()
 	return this->m_lpECCacheManager->DumpStats();
 }
 
-ECConfig* ECSessionManager::GetConfig()
-{
-	return m_lpConfig;
-}
-
-ECLogger* ECSessionManager::GetAudit()
-{
-	return m_lpAudit;
-}
-
 ECRESULT ECSessionManager::GetLicensedUsers(unsigned int ulServiceType, unsigned int* lpulLicensedUsers)
 {
 	ECRESULT er = erSuccess;
@@ -1491,26 +1471,6 @@ ECRESULT ECSessionManager::GetLicensedUsers(unsigned int ulServiceType, unsigned
 	*lpulLicensedUsers = ulLicensedUsers;
 
 	return er;
-}
-
-bool ECSessionManager::IsHostedSupported()
-{
-	return m_bHostedZarafa;
-}
-
-bool ECSessionManager::IsDistributedSupported()
-{
-	return m_bDistributedZarafa;
-}
-
-ECPluginFactory* ECSessionManager::GetPluginFactory()
-{
-	return m_lpPluginFactory;
-}
-
-ECLockManager* ECSessionManager::GetLockManager()
-{
-	return m_ptrLockManager.get();
 }
 
 ECRESULT ECSessionManager::GetServerGUID(GUID* lpServerGuid){
