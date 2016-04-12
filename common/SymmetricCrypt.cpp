@@ -70,14 +70,9 @@ static const char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-bool SymmetricIsCrypted(const std::string &strCrypted)
+bool SymmetricIsCrypted(const char *c)
 {
-	std::string strPrefix = strCrypted.substr(0,4);
-
-	if(strPrefix == "{1}:" || strPrefix == "{2}:")
-		return true;
-	else
-		return false;
+	return strncmp(c, "{1}:", 4) == 0 || strncmp(c, "{2}:", 4) == 0;
 }
 
 /**
@@ -95,14 +90,9 @@ bool SymmetricIsCrypted(const std::string &strCrypted)
  * @retval	true	The provided string was encrypted.
  * @retval	false 	The provided string was not encrypted.
  */
-bool SymmetricIsCrypted(const std::wstring &wstrCrypted)
+bool SymmetricIsCrypted(const wchar_t *c)
 {
-	std::wstring wstrPrefix = wstrCrypted.substr(0,4);
-
-	if(wstrPrefix == L"{1}:" || wstrPrefix == L"{2}:")
-		return true;
-	else
-		return false;
+	return wcsncmp(c, L"{1}:", 4) == 0 || wcsncmp(c, L"{2}:", 4) == 0;
 }
 
 /**
@@ -185,7 +175,7 @@ static std::string SymmetricDecryptBlob(unsigned int ulAlg, const std::string &s
  */
 std::string SymmetricDecrypt(const std::string &strCrypted)
 {
-	if(!SymmetricIsCrypted(strCrypted))
+	if (!SymmetricIsCrypted(strCrypted.c_str()))
 		return "";
 
 	// Remove prefix
@@ -207,7 +197,7 @@ std::string SymmetricDecrypt(const std::string &strCrypted)
  */
 std::string SymmetricDecrypt(const std::wstring &wstrCrypted)
 {
-	if(!SymmetricIsCrypted(wstrCrypted))
+	if (!SymmetricIsCrypted(wstrCrypted.c_str()))
 		return "";
 
 	// Remove prefix

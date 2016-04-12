@@ -44,8 +44,8 @@
 #ifndef SYMMETRICCRYPT_H
 #define SYMMETRICCRYPT_H
 
-bool SymmetricIsCrypted(const std::wstring &wstrCrypted);
-bool SymmetricIsCrypted(const std::string &strCrypted);
+bool SymmetricIsCrypted(const wchar_t *);
+bool SymmetricIsCrypted(const char *);
 
 std::string SymmetricCrypt(const std::wstring &strPlain);
 std::wstring SymmetricCryptW(const std::wstring &strPlain);
