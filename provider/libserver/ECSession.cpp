@@ -200,34 +200,9 @@ ECRESULT BTSession::ValidateOriginator(struct soap *soap)
 	return ZARAFA_E_END_OF_SESSION;
 }
 
-ECSESSIONID BTSession::GetSessionId()
-{
-	return m_sessionID;
-}
-
-time_t BTSession::GetSessionTime()
-{
-	return m_sessionTime + m_ulSessionTimeout;
-}
-
 void BTSession::UpdateSessionTime()
 {
 	m_sessionTime = GetProcessTime();
-}
-
-unsigned int BTSession::GetCapabilities()
-{
-	return m_ulClientCapabilities;
-}
-
-ECSessionManager* BTSession::GetSessionManager()
-{
-	return m_lpSessionManager;
-}
-
-ECUserManagement* BTSession::GetUserManagement()
-{
-	return m_lpUserManagement;
 }
 
 ECRESULT BTSession::GetDatabase(ECDatabase **lppDatabase)
@@ -268,18 +243,9 @@ void BTSession::Unlock()
 	pthread_mutex_unlock(&m_hThreadReleasedMutex);
 }
 
-bool BTSession::IsLocked() {
-	return (m_ulRefCount > 0);
-}
-
 time_t BTSession::GetIdleTime()
 {
 	return GetProcessTime() - m_sessionTime;
-}
-
-std::string BTSession::GetSourceAddr()
-{
-	return m_strSourceAddr;
 }
 
 void BTSession::RecordRequest(struct soap* soap)

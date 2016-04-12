@@ -107,13 +107,13 @@ public:
 	virtual ECRESULT Shutdown(unsigned int ulTimeout);
 
 	virtual ECRESULT ValidateOriginator(struct soap *soap);
-	virtual ECSESSIONID GetSessionId();
+	virtual ECSESSIONID GetSessionId(void) const { return m_sessionID; }
 
-	virtual time_t GetSessionTime();
+	virtual time_t GetSessionTime(void) const { return m_sessionTime + m_ulSessionTimeout; }
 	virtual void UpdateSessionTime();
-	virtual unsigned int GetCapabilities();
-	virtual ECSessionManager* GetSessionManager();
-	virtual ECUserManagement* GetUserManagement();
+	virtual unsigned int GetCapabilities(void) const { return m_ulClientCapabilities; }
+	virtual ECSessionManager *GetSessionManager(void) const { return m_lpSessionManager; }
+	virtual ECUserManagement *GetUserManagement(void) const { return m_lpUserManagement; }
 	virtual ECRESULT GetDatabase(ECDatabase **lppDatabase);
 	virtual ECRESULT GetAdditionalDatabase(ECDatabase **lppDatabase);
 	ECRESULT GetServerGUID(GUID* lpServerGuid);
@@ -125,7 +125,7 @@ public:
 
 	virtual void Lock();
 	virtual void Unlock();
-	virtual bool IsLocked();
+	virtual bool IsLocked(void) const { return m_ulRefCount > 0; }
 	
 	virtual void RecordRequest(struct soap *soap);
 	virtual unsigned int GetRequests();
@@ -138,7 +138,7 @@ public:
 	virtual size_t GetObjectSize() = 0;
 
 	time_t GetIdleTime();
-	std::string GetSourceAddr();
+	std::string GetSourceAddr(void) { return m_strSourceAddr; }
 
 	typedef enum {
 	    METHOD_NONE, METHOD_USERPASSWORD, METHOD_SOCKET, METHOD_SSO, METHOD_SSL_CERT
