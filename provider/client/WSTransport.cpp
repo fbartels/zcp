@@ -364,7 +364,7 @@ HRESULT WSTransport::HrLogon2(const struct sGlobalProfileProps &sProfileProps)
 	    !(sResponse.ulCapabilities & ZARAFA_CAP_CRYPT)) {
 		// Login with username and password
 		if (SOAP_OK != lpCmd->ns__logon(const_cast<char *>(strUserName.c_str()),
-		    const_cast<char *>(SymmetricDecrypt(sProfileProps.strPassword).c_str()),
+		    const_cast<char *>(SymmetricDecrypt(sProfileProps.strPassword.c_str()).c_str()),
 		    const_cast<char *>(strImpersonateUser.c_str()),
 		    const_cast<char *>(PROJECT_VERSION_CLIENT_STR),
 		    ulCapabilities, ulLogonFlags, sLicenseRequest,

@@ -50,8 +50,8 @@ bool SymmetricIsCrypted(const char *);
 std::string SymmetricCrypt(const std::wstring &strPlain);
 std::wstring SymmetricCryptW(const std::wstring &strPlain);
 
-std::string SymmetricDecrypt(const std::string &strCrypted);
-std::string SymmetricDecrypt(const std::wstring &wstrCrypted);
-std::wstring SymmetricDecryptW(const std::wstring &wstrCrypted);
+std::string SymmetricDecrypt(const char *strCrypted);
+std::string SymmetricDecrypt(const wchar_t *wstrCrypted);
+std::wstring SymmetricDecryptW(const wchar_t *wstrCrypted);
 
 #endif

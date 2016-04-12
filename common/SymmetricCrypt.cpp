@@ -111,7 +111,7 @@ std::string SymmetricCrypt(const std::wstring &strPlain)
 	for (size_t i = 0; i < z; ++i)
 		u[i] ^= 0xA5;
 	// Do the base64 encode
-	return "{2}:" + base64_encode(reinterpret_cast<const unsigned char *>(u.c_str()), u.size());
+	return "{2}:" + base64_encode(reinterpret_cast<const unsigned char *>(u.c_str()), z);
 }
 
 /**
@@ -141,15 +141,16 @@ std::wstring SymmetricCryptW(const std::wstring &strPlain)
  */
 static std::string SymmetricDecryptBlob(unsigned int ulAlg, const std::string &strXORed)
 {
-	std::string strRaw;
+	std::string strRaw = strXORed;
+	size_t z = strRaw.size();
 	
 	assert(ulAlg == 1 || ulAlg == 2);
 
-	for (unsigned int i = 0; i < strXORed.size(); ++i)
-		strRaw.append(1, (unsigned char)(((unsigned char)strXORed.at(i)) ^ 0xa5));
+	for (unsigned int i = 0; i < z; ++i)
+		strRaw[i] ^= 0xA5;
 	
 	// Check the encoding algorithm. If it equals 1, the raw data is windows-1252.
-	// Otherwise, it must be 2, which means it is allready UTF-8.
+	// Otherwise, it must be 2, which means it is already UTF-8.
 	if (ulAlg == 1)
 		strRaw = convert_to<std::string>("UTF-8", strRaw, rawsize(strRaw), "WINDOWS-1252");
 	
@@ -166,16 +167,13 @@ static std::string SymmetricDecryptBlob(unsigned int ulAlg, const std::string &s
  * 
  * @return	THe decrypted password encoded in UTF-8.
  */
-std::string SymmetricDecrypt(const std::string &strCrypted)
+std::string SymmetricDecrypt(const char *strCrypted)
 {
-	if (!SymmetricIsCrypted(strCrypted.c_str()))
+	if (!SymmetricIsCrypted(strCrypted))
 		return "";
-
-	// Remove prefix
-	std::string strBase64 = convert_to<std::string>(strCrypted.substr(4));
-	std::string strXORed = base64_decode(strBase64);
-	
-	return SymmetricDecryptBlob(strCrypted.at(1) - '0', strXORed);
+	// Length has been guaranteed to be >=4.
+	return SymmetricDecryptBlob(strCrypted[1] - '0',
+		base64_decode(convert_to<std::string>(strCrypted + 4)));
 }
 
 /**
@@ -188,16 +186,13 @@ std::string SymmetricDecrypt(const std::string &strCrypted)
  * 
  * @return	THe decrypted password encoded in UTF-8.
  */
-std::string SymmetricDecrypt(const std::wstring &wstrCrypted)
+std::string SymmetricDecrypt(const wchar_t *wstrCrypted)
 {
-	if (!SymmetricIsCrypted(wstrCrypted.c_str()))
+	if (!SymmetricIsCrypted(wstrCrypted))
 		return "";
-
-	// Remove prefix
-	std::string strBase64 = convert_to<std::string>(wstrCrypted.substr(4));
-	std::string strXORed = base64_decode(strBase64);
-
-	return SymmetricDecryptBlob(wstrCrypted.at(1) - '0', strXORed);
+	// Length has been guaranteed to be >=4.
+	return SymmetricDecryptBlob(wstrCrypted[1] - '0',
+		base64_decode(convert_to<std::string>(wstrCrypted + 4)));
 }
 
 /**
@@ -210,7 +205,7 @@ std::string SymmetricDecrypt(const std::wstring &wstrCrypted)
  * 
  * @return	THe decrypted password encoded in in UTF-16/32 (depending on type of wchar_t).
  */
-std::wstring SymmetricDecryptW(const std::wstring &wstrCrypted)
+std::wstring SymmetricDecryptW(const wchar_t *wstrCrypted)
 {
 	const std::string strDecrypted = SymmetricDecrypt(wstrCrypted);
 	return convert_to<std::wstring>(strDecrypted, rawsize(strDecrypted), "UTF-8");
