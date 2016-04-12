@@ -105,20 +105,13 @@ bool SymmetricIsCrypted(const wchar_t *c)
  */
 std::string SymmetricCrypt(const std::wstring &strPlain)
 {
-	std::string strUTF8ed = convert_to<std::string>("UTF-8", strPlain, rawsize(strPlain), CHARSET_WCHAR);
-	std::string strXORed;
+	std::string u = convert_to<std::string>("UTF-8", strPlain, rawsize(strPlain), CHARSET_WCHAR);
+	size_t z = u.size();
 
-	// Do the XOR 0xa5
-	for (unsigned int i = 0; i < strUTF8ed.size(); ++i)
-		strXORed.append(1, (unsigned char)(((unsigned char)strUTF8ed.at(i)) ^ 0xa5));
-
+	for (size_t i = 0; i < z; ++i)
+		u[i] ^= 0xA5;
 	// Do the base64 encode
-	std::string strBase64 = base64_encode((const unsigned char *)strXORed.c_str(), strXORed.size());
-
-	// Prefix with {1}:
-	std::string strCrypted = (std::string)"{2}:" + strBase64;
-
-	return strCrypted;
+	return "{2}:" + base64_encode(reinterpret_cast<const unsigned char *>(u.c_str()), u.size());
 }
 
 /**
