@@ -118,31 +118,31 @@ public:
 	objectdetails_t(objectclass_t objclass);
 	objectdetails_t();
 
-	unsigned int 			GetPropInt(const property_key_t &propname) const;
-	bool					GetPropBool(const property_key_t &propname) const;
-	std::string				GetPropString(const property_key_t &propname) const;
-	std::list<unsigned int>	GetPropListInt(const property_key_t &propname) const;
-	std::list<std::string>	GetPropListString(const property_key_t &propname) const;
-	objectid_t				GetPropObject(const property_key_t &propname) const;
-	std::list<objectid_t>	GetPropListObject(const property_key_t &propname) const;
+	unsigned int 			GetPropInt(property_key_t propname) const;
+	bool					GetPropBool(property_key_t propname) const;
+	std::string				GetPropString(property_key_t propname) const;
+	std::list<unsigned int>	GetPropListInt(property_key_t propname) const;
+	std::list<std::string>	GetPropListString(property_key_t propname) const;
+	objectid_t				GetPropObject(property_key_t propname) const;
+	std::list<objectid_t>	GetPropListObject(property_key_t propname) const;
 	property_map			GetPropMapAnonymous() const;
 	property_mv_map			GetPropMapListAnonymous() const;
-	bool					HasProp(const property_key_t &propname) const;
+	bool					HasProp(property_key_t propname) const;
 
-	bool			PropListStringContains(const property_key_t &propname, const std::string &value, bool ignoreCase = false) const;
+	bool			PropListStringContains(property_key_t propname, const std::string &value, bool ignoreCase = false) const;
 
-	void			SetPropInt(const property_key_t &propname, unsigned int value);
-	void			SetPropBool(const property_key_t &propname, bool value);
-	void			SetPropString(const property_key_t &propname, const std::string &value);
-	void			SetPropListString(const property_key_t &propname, const std::list<std::string> &value);
-	void			SetPropObject(const property_key_t &propname, const objectid_t &value);
-	void			SetPropListObject(const property_key_t &propname, const std::list<objectid_t> &value);
+	void			SetPropInt(property_key_t propname, unsigned int value);
+	void			SetPropBool(property_key_t propname, bool value);
+	void			SetPropString(property_key_t propname, const std::string &value);
+	void			SetPropListString(property_key_t propname, const std::list<std::string> &value);
+	void			SetPropObject(property_key_t propname, const objectid_t &value);
+	void			SetPropListObject(property_key_t propname, const std::list<objectid_t> &value);
 
 	/* "mv" props */
-	void			AddPropInt(const property_key_t &propname, unsigned int value);
-	void			AddPropString(const property_key_t &propname, const std::string &value);
-	void			AddPropObject(const property_key_t &propname, const objectid_t &value);
-	void			ClearPropList(const property_key_t &propname);
+	void			AddPropInt(property_key_t propname, unsigned int value);
+	void			AddPropString(property_key_t propname, const std::string &value);
+	void			AddPropObject(property_key_t propname, const objectid_t &value);
+	void			ClearPropList(property_key_t propname);
 
 	void			MergeFrom(const objectdetails_t &from);
 

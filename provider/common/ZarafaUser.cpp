@@ -126,59 +126,78 @@ objectdetails_t::objectdetails_t(const objectdetails_t &objdetails) {
 	m_mapMVProps = objdetails.m_mapMVProps;
 }
 
-unsigned int objectdetails_t::GetPropInt(const property_key_t &propname) const {
+unsigned int objectdetails_t::GetPropInt(property_key_t propname) const
+{
 	property_map::const_iterator item = m_mapProps.find(propname);
 	return item == m_mapProps.end() ? 0 : atoi(item->second.c_str());
 }
 
-bool objectdetails_t::GetPropBool(const property_key_t &propname) const {
+bool objectdetails_t::GetPropBool(property_key_t propname) const
+{
 	property_map::const_iterator item = m_mapProps.find(propname);
 	return item == m_mapProps.end() ? false : atoi(item->second.c_str());
 }
 
-std::string	objectdetails_t::GetPropString(const property_key_t &propname) const {
+std::string objectdetails_t::GetPropString(property_key_t propname) const
+{
 	property_map::const_iterator item = m_mapProps.find(propname);
 	return item == m_mapProps.end() ? std::string() : item->second;
 }
 
-objectid_t objectdetails_t::GetPropObject(const property_key_t &propname) const {
+objectid_t objectdetails_t::GetPropObject(property_key_t propname) const
+{
 	property_map::const_iterator item = m_mapProps.find(propname);
 	return item == m_mapProps.end() ? objectid_t() : objectid_t(item->second);
 }
 
-void objectdetails_t::SetPropInt(const property_key_t &propname, unsigned int value) {
+void objectdetails_t::SetPropInt(property_key_t propname, unsigned int value)
+{
     m_mapProps[propname].assign(stringify(value));
 }
 
-void objectdetails_t::SetPropBool(const property_key_t &propname, bool value) {
+void objectdetails_t::SetPropBool(property_key_t propname, bool value)
+{
     m_mapProps[propname].assign(value ? "1" : "0");
 }
 
-void objectdetails_t::SetPropString(const property_key_t &propname, const std::string &value) {
+void objectdetails_t::SetPropString(property_key_t propname,
+    const std::string &value)
+{
     m_mapProps[propname].assign(value);
 }
 
-void objectdetails_t::SetPropListString(const property_key_t &propname, const std::list<std::string> &value) {
+void objectdetails_t::SetPropListString(property_key_t propname,
+    const std::list<std::string> &value)
+{
 	m_mapMVProps[propname].assign(value.begin(), value.end());
 }
 
-void objectdetails_t::SetPropObject(const property_key_t &propname, const objectid_t &value) {
+void objectdetails_t::SetPropObject(property_key_t propname,
+    const objectid_t &value)
+{
 	m_mapProps[propname].assign(((objectid_t)value).tostring());
 }
 
-void objectdetails_t::AddPropInt(const property_key_t &propname, unsigned int value) {
+void objectdetails_t::AddPropInt(property_key_t propname, unsigned int value)
+{
 	m_mapMVProps[propname].push_back(stringify(value));
 }
 
-void objectdetails_t::AddPropString(const property_key_t &propname, const std::string &value) {
+void objectdetails_t::AddPropString(property_key_t propname,
+    const std::string &value)
+{
 	m_mapMVProps[propname].push_back(value);
 }
 
-void objectdetails_t::AddPropObject(const property_key_t &propname, const objectid_t &value) {
+void objectdetails_t::AddPropObject(property_key_t propname,
+    const objectid_t &value)
+{
 	m_mapMVProps[propname].push_back(((objectid_t)value).tostring());
 }
 
-std::list<unsigned int> objectdetails_t::GetPropListInt(const property_key_t &propname) const {
+std::list<unsigned int>
+objectdetails_t::GetPropListInt(property_key_t propname) const
+{
 	property_mv_map::const_iterator mvitem = m_mapMVProps.find(propname);
 	if (mvitem == m_mapMVProps.end())
 		return std::list<unsigned int>();
@@ -188,13 +207,17 @@ std::list<unsigned int> objectdetails_t::GetPropListInt(const property_key_t &pr
 	return l;
 }
 
-std::list<std::string> objectdetails_t::GetPropListString(const property_key_t &propname) const {
+std::list<std::string>
+objectdetails_t::GetPropListString(property_key_t propname) const
+{
 	property_mv_map::const_iterator mvitem = m_mapMVProps.find(propname);
 	if (mvitem != m_mapMVProps.end()) return mvitem->second;
 	else return std::list<std::string>();
 }
 
-std::list<objectid_t> objectdetails_t::GetPropListObject(const property_key_t &propname) const {
+std::list<objectid_t>
+objectdetails_t::GetPropListObject(property_key_t propname) const
+{
 	property_mv_map::const_iterator mvitem = m_mapMVProps.find(propname);
 	if (mvitem == m_mapMVProps.end())
 		return std::list<objectid_t>();
@@ -224,18 +247,22 @@ property_mv_map objectdetails_t::GetPropMapListAnonymous() const {
 	return anonymous;
 }
 
-bool objectdetails_t::HasProp(const property_key_t &propname) const {
+bool objectdetails_t::HasProp(property_key_t propname) const
+{
 	return m_mapProps.find(propname) != m_mapProps.end() || m_mapMVProps.find(propname) != m_mapMVProps.end();
 }
 
-bool objectdetails_t::PropListStringContains(const property_key_t &propname, const std::string &value, bool ignoreCase) const {
+bool objectdetails_t::PropListStringContains(property_key_t propname,
+    const std::string &value, bool ignoreCase) const
+{
 	const std::list<std::string> list = GetPropListString(propname);
 	if (ignoreCase)
 		return std::find_if(list.begin(), list.end(), StringComparer<stricmp>(value)) != list.end();
 	return std::find_if(list.begin(), list.end(), StringComparer<strcmp>(value)) != list.end();
 }
 
-void objectdetails_t::ClearPropList(const property_key_t &propname) {
+void objectdetails_t::ClearPropList(property_key_t propname)
+{
 	m_mapMVProps[propname].clear();
 }
 
