@@ -620,7 +620,8 @@ exit:
 	return er;
 }
 
-ECRESULT ECDatabaseMySQL::CheckExistIndex(const std::string strTable, const std::string &strKey, bool *lpbExist)
+ECRESULT ECDatabaseMySQL::CheckExistIndex(const std::string &strTable,
+    const std::string &strKey, bool *lpbExist)
 {
 	ECRESULT		er = erSuccess;
 	std::string		strQuery;

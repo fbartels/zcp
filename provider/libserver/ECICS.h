@@ -133,7 +133,7 @@ private:
     unsigned int ulSize;
 };
 
-ECRESULT AddChange(BTSession *lpecSession, unsigned int ulSyncId, SOURCEKEY sSourceKey, SOURCEKEY sParentSourceKey, unsigned int ulChange, unsigned int ulFlags = 0, bool fForceNewChangeKey = false, std::string * lpstrChangeKey = NULL, std::string * lpstrChangeList = NULL);
+ECRESULT AddChange(BTSession *lpecSession, unsigned int ulSyncId, const SOURCEKEY &sSourceKey, const SOURCEKEY &sParentSourceKey, unsigned int ulChange, unsigned int ulFlags = 0, bool fForceNewChangeKey = false, std::string *lpstrChangeKey = NULL, std::string *lpstrChangeList = NULL);
 ECRESULT AddABChange(BTSession *lpecSession, unsigned int ulChange, SOURCEKEY sSourceKey, SOURCEKEY sParentSourceKey);
 ECRESULT GetChanges(struct soap *soap, ECSession *lpSession, SOURCEKEY sSourceKeyFolder, unsigned int ulSyncId, unsigned int ulChangeId, unsigned int ulChangeType, unsigned int ulFlags, struct restrictTable *lpsRestrict, unsigned int *lpulMaxChangeId, icsChangesArray **lppChanges);
 ECRESULT GetSyncStates(struct soap *soap, ECSession *lpSession, mv_long ulaSyncId, syncStateArray *lpsaSyncState);

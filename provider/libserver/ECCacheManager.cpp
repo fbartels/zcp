@@ -1163,8 +1163,9 @@ exit:
 	return er;
 }
 
-ECRESULT ECCacheManager::_GetUEIdObject(std::string strExternId, objectclass_t ulClass, unsigned int *lpulCompanyId,
-						unsigned int* lpulUserId, std::string* lpstrSignature)
+ECRESULT ECCacheManager::_GetUEIdObject(const std::string &strExternId,
+    objectclass_t ulClass, unsigned int *lpulCompanyId,
+    unsigned int *lpulUserId, std::string *lpstrSignature)
 {
 	ECRESULT		er = erSuccess;
 	ECsUEIdKey		sKey;
@@ -1192,7 +1193,8 @@ exit:
 	return er;
 }
 
-ECRESULT ECCacheManager::_DelUEIdObject(std::string strExternId, objectclass_t ulClass)
+ECRESULT ECCacheManager::_DelUEIdObject(const std::string &strExternId,
+    objectclass_t ulClass)
 {
 	ECRESULT	er = erSuccess;
 	ECsUEIdKey	sKey;

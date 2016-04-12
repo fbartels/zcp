@@ -119,7 +119,7 @@ public:
 	std::string GetDatabaseDir(void) _zcp_override;
 	
 	ECRESULT CheckExistColumn(const std::string &strTable, const std::string &strColumn, bool *lpbExist) _zcp_override;
-	ECRESULT CheckExistIndex(const std::string strTable, const std::string &strKey, bool *lpbExist) _zcp_override;
+	ECRESULT CheckExistIndex(const std::string &strTable, const std::string &strKey, bool *lpbExist) _zcp_override;
 
 public:
 	// Freememory methods

@@ -622,9 +622,8 @@ private:
 	ECRESULT _DelUserObject(unsigned int ulUserId);
 
 	ECRESULT _AddUEIdObject(const std::string &strExternId, const objectclass_t &ulClass, unsigned int ulCompanyId, unsigned int ulUserId, const std::string &strSignature);
-	ECRESULT _GetUEIdObject(std::string strExternId, objectclass_t ulClass, unsigned int *lpulCompanyId,
-							unsigned int* lpulUserId, std::string* lpstrSignature);
-	ECRESULT _DelUEIdObject(std::string strExternId, objectclass_t ulClass);
+	ECRESULT _GetUEIdObject(const std::string &strExternId, objectclass_t ulClass, unsigned int *lpulCompanyId, unsigned int* lpulUserId, std::string* lpstrSignature);
+	ECRESULT _DelUEIdObject(const std::string &strExternId, objectclass_t ulClass);
 
 	ECRESULT _AddUserObjectDetails(unsigned int, const objectdetails_t *);
 	ECRESULT _GetUserObjectDetails(unsigned int ulUserId, objectdetails_t *details);

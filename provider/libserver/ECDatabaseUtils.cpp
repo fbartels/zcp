@@ -431,7 +431,8 @@ exit:
 }
 // by table 
 
-ECRESULT ParseMVPropCount(char* lpRowData, ULONG ulSize, unsigned int *lpulLastPos, int *lpnItemCount)
+ECRESULT ParseMVPropCount(const char *lpRowData, ULONG ulSize,
+    unsigned int *lpulLastPos, int *lpnItemCount)
 {
 	ULONG	ulPos = *lpulLastPos;
 	ULONG	ulIter = ulPos;
@@ -450,7 +451,8 @@ ECRESULT ParseMVPropCount(char* lpRowData, ULONG ulSize, unsigned int *lpulLastP
 	return erSuccess;
 }
 
-ECRESULT ParseMVProp(char* lpRowData, ULONG ulSize, unsigned int *lpulLastPos, std::string *lpstrData)
+ECRESULT ParseMVProp(const char *lpRowData, ULONG ulSize,
+    unsigned int *lpulLastPos, std::string *lpstrData)
 {
 	ECRESULT er = erSuccess;
 
@@ -530,7 +532,8 @@ ULONG GetColOffset(unsigned int ulPropTag)
 	return ulField;
 }
 
-std::string GetPropColOrder(unsigned int ulPropTag, std::string strSubQuery)
+std::string GetPropColOrder(unsigned int ulPropTag,
+    const std::string &strSubQuery)
 {
 	std::string strPropColOrder = "0," + stringify(PROP_ID(ulPropTag)) + "," + stringify(PROP_TYPE(ulPropTag));
 	unsigned int ulField = 0;

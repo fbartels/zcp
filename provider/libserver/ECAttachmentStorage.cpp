@@ -1274,7 +1274,7 @@ ECRESULT ECDatabaseAttachment::Rollback()
 
 // Attachment storage is in separate files
 ECFileAttachment::ECFileAttachment(ECDatabase *lpDatabase,
-    std::string basepath, unsigned int ulCompressionLevel,
+    const std::string &basepath, unsigned int ulCompressionLevel,
     const bool force_changes_to_disk) :
 	ECAttachmentStorage(lpDatabase, ulCompressionLevel)
 {

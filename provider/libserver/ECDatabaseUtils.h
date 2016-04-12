@@ -96,7 +96,7 @@ enum { VALUE_NR_ULONG=0, VALUE_NR_STRING, VALUE_NR_BINARY, VALUE_NR_DOUBLE, VALU
 enum { FIELD_NR_ID=0, FIELD_NR_TAG, FIELD_NR_TYPE, FIELD_NR_ULONG, FIELD_NR_STRING, FIELD_NR_BINARY, FIELD_NR_DOUBLE, FIELD_NR_LONGINT, FIELD_NR_HI, FIELD_NR_LO, FIELD_NR_MAX };
 
 ULONG GetColOffset(ULONG ulPropTag);
-std::string GetPropColOrder(unsigned int ulPropTag, std::string strSubQuery);
+std::string GetPropColOrder(unsigned int ulPropTag, const std::string &strSubQuery);
 unsigned int GetColWidth(unsigned int ulPropType);
 ECRESULT	GetPropSize(DB_ROW lpRow, DB_LENGTHS lpLen, unsigned int *lpulSize);
 ECRESULT	CopySOAPPropValToDatabasePropVal(struct propVal *lpPropVal, unsigned int *ulColId, std::string &strColData, ECDatabase *lpMySQL, bool bTruncate);
@@ -105,8 +105,8 @@ ECRESULT	CopyDatabasePropValToSOAPPropVal(struct soap *soap, DB_ROW lpRow, DB_LE
 ULONG GetMVItemCount(struct propVal *lpPropVal);
 ECRESULT CopySOAPPropValToDatabaseMVPropVal(struct propVal *lpPropVal, int nItem, std::string &strColName, std::string &strColData, ECDatabase *lpDatabase);
 
-ECRESULT ParseMVProp(char* lpRowData, ULONG ulSize, unsigned int *lpulLastPos, std::string *lpstrData);
-ECRESULT ParseMVPropCount(char* lpRowData, ULONG ulSize, unsigned int *lpulLastPos, int *lpnItemCount);
+ECRESULT ParseMVProp(const char *lpRowData, ULONG ulSize, unsigned int *lpulLastPos, std::string *lpstrData);
+ECRESULT ParseMVPropCount(const char *lpRowData, ULONG ulSize, unsigned int *lpulLastPos, int *lpnItemCount);
 
 unsigned int NormalizeDBPropTag(unsigned int ulPropTag);
 bool CompareDBPropTag(unsigned int ulPropTag1, unsigned int ulPropTag2);

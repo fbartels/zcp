@@ -234,7 +234,11 @@ static void AddChangeKeyToChangeList(std::string *strChangeList,
 	}
 }
 
-ECRESULT AddChange(BTSession *lpSession, unsigned int ulSyncId, SOURCEKEY sSourceKey, SOURCEKEY sParentSourceKey, unsigned int ulChange, unsigned int ulFlags, bool fForceNewChangeKey, std::string * lpstrChangeKey, std::string * lpstrChangeList){
+ECRESULT AddChange(BTSession *lpSession, unsigned int ulSyncId,
+    const SOURCEKEY &sSourceKey, const SOURCEKEY &sParentSourceKey,
+    unsigned int ulChange, unsigned int ulFlags, bool fForceNewChangeKey,
+    std::string *lpstrChangeKey, std::string *lpstrChangeList)
+{
 	ECRESULT		er = erSuccess;
 	std::string		strQuery;
 	ECDatabase*		lpDatabase = NULL;

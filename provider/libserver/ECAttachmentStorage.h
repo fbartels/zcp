@@ -145,7 +145,7 @@ protected:
 
 class ECFileAttachment _zcp_final : public ECAttachmentStorage {
 public:
-	ECFileAttachment(ECDatabase *lpDatabase, std::string basepath, unsigned int ulCompressionLevel, const bool force_changes_to_disk);
+	ECFileAttachment(ECDatabase *lpDatabase, const std::string &basepath, unsigned int ulCompressionLevel, const bool force_changes_to_disk);
 
 protected:
 	virtual ~ECFileAttachment();
