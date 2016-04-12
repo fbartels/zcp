@@ -404,6 +404,6 @@ std::string serverdetails_t::GetSslPath() const {
 	return std::string();	
 }
 
-std::string serverdetails_t::GetProxyPath() const {
+const std::string &serverdetails_t::GetProxyPath() const {
 	return m_strProxyPath;
 }

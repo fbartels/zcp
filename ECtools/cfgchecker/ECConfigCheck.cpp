@@ -386,7 +386,7 @@ void ECConfigCheck::addCheck(const std::string &option1,
 	addCheck(config_check, flags);
 }
 
-string ECConfigCheck::getSetting(const std::string &option)
+const std::string &ECConfigCheck::getSetting(const std::string &option)
 {
 	return m_mSettings[option];
 }

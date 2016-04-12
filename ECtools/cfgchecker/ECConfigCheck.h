@@ -89,7 +89,7 @@ public:
 	void setMulti(bool multi);
 	void validate();
 
-	std::string getSetting(const std::string &);
+	const std::string &getSetting(const std::string &);
 
 protected:
 	static void printError(const std::string &, const std::string &);

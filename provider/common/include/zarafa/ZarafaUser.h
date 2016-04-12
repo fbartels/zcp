@@ -194,7 +194,7 @@ public:
 	std::string	GetFilePath() const;
 	std::string	GetHttpPath() const;
 	std::string	GetSslPath() const;
-	std::string	GetProxyPath() const;
+	const std::string &GetProxyPath(void) const;
 
 private:
 	std::string m_strServerName;

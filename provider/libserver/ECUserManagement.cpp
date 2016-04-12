@@ -2616,8 +2616,9 @@ ECRESULT ECUserManagement::ComplementDefaultFeatures(objectdetails_t *lpDetails)
 {
 	if (OBJECTCLASS_TYPE(lpDetails->GetClass()) != OBJECTTYPE_MAILUSER) {
 		// clear settings for anything but users
-		lpDetails->SetPropListString((property_key_t)PR_EC_ENABLED_FEATURES_A, list<string>());
-		lpDetails->SetPropListString((property_key_t)PR_EC_DISABLED_FEATURES_A, list<string>());
+		std::list<std::string> e;
+		lpDetails->SetPropListString((property_key_t)PR_EC_ENABLED_FEATURES_A, e);
+		lpDetails->SetPropListString((property_key_t)PR_EC_DISABLED_FEATURES_A, e);
 		return erSuccess;
 	}
 
