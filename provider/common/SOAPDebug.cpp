@@ -131,7 +131,9 @@ std::string RestrictionToString(const restrictTable *lpRestriction,
 			strResult = "RES_COMPAREPROPS:\n";
 			for (j = 0; j < indent; ++j)
 				strResult += "  ";
-			strResult += "relop: "+RelationalOperatorToString(lpRestriction->lpCompare->ulType)+"\n";
+			strResult += "relop: ";
+			strResult += RelationalOperatorToString(lpRestriction->lpCompare->ulType);
+			strResult += "\n";
 			for (j = 0; j < indent; ++j)
 				strResult += "  ";
 			strResult += "proptag1: "+PropNameFromPropTag(lpRestriction->lpCompare->ulPropTag1)+"\n";
@@ -167,7 +169,9 @@ std::string RestrictionToString(const restrictTable *lpRestriction,
 			strResult = "RES_PROPERTY:\n";
 			for (j = 0; j < indent; ++j)
 				strResult += "  ";
-			strResult += "relop: "+RelationalOperatorToString(lpRestriction->lpProp->ulType)+"\n";
+			strResult += "relop: ";
+			strResult += RelationalOperatorToString(lpRestriction->lpProp->ulType);
+			strResult += "\n";
 			for (j = 0; j < indent; ++j)
 				strResult += "  ";
 			strResult += "proptag: "+PropNameFromPropTag(lpRestriction->lpProp->ulPropTag)+((lpRestriction->lpProp->ulPropTag&MV_FLAG)?" (MV_PROP)":"")+"\n";
@@ -179,7 +183,9 @@ std::string RestrictionToString(const restrictTable *lpRestriction,
 			strResult = "RES_SIZE:\n";
 			for (j = 0; j < indent; ++j)
 				strResult += "  ";
-			strResult += "relop: "+RelationalOperatorToString(lpRestriction->lpSize->ulType)+"\n";
+			strResult += "relop: ";
+			strResult += RelationalOperatorToString(lpRestriction->lpSize->ulType);
+			strResult += "\n";
 			for (j = 0; j < indent; ++j)
 				strResult += "  ";
 			strResult += "proptag: "+PropNameFromPropTag(lpRestriction->lpSize->ulPropTag)+"\n";

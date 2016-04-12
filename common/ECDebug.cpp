@@ -1947,7 +1947,7 @@ default:
 }//PropNameFromPropTag
 
 
-std::string RelationalOperatorToString(ULONG relop)
+const char *RelationalOperatorToString(ULONG relop)
 {
 	switch(relop) {
 		RETURN_CASE(RELOP_GE)
@@ -2084,7 +2084,9 @@ std::string RestrictionToString(const SRestriction *lpRestriction,
 			strResult = "RES_COMPAREPROPS:\n";
 			for (j = 0; j < indent; ++j)
 				strResult += "  ";
-			strResult += "relop: "+RelationalOperatorToString(lpRestriction->res.resCompareProps.relop)+"\n";
+			strResult += "relop: ";
+			strResult += RelationalOperatorToString(lpRestriction->res.resCompareProps.relop);
+			strResult += "\n";
 			for (j = 0; j < indent; ++j)
 				strResult += "  ";
 			strResult += "proptag1: "+PropNameFromPropTag(lpRestriction->res.resCompareProps.ulPropTag1)+"\n";
@@ -2120,7 +2122,9 @@ std::string RestrictionToString(const SRestriction *lpRestriction,
 			strResult = "RES_PROPERTY:\n";
 			for (j = 0; j < indent; ++j)
 				strResult += "  ";
-			strResult += "relop: "+RelationalOperatorToString(lpRestriction->res.resProperty.relop)+"\n";
+			strResult += "relop: ";
+			strResult += RelationalOperatorToString(lpRestriction->res.resProperty.relop);
+			strResult += "\n";
 			for (j = 0; j < indent; ++j)
 				strResult += "  ";
 			strResult += "proptag: "+PropNameFromPropTag(lpRestriction->res.resProperty.ulPropTag)+((lpRestriction->res.resProperty.ulPropTag&MV_FLAG)?" (MV_PROP)":"")+"\n";
@@ -2132,7 +2136,9 @@ std::string RestrictionToString(const SRestriction *lpRestriction,
 			strResult = "RES_SIZE:\n";
 			for (j = 0; j < indent; ++j)
 				strResult += "  ";
-			strResult += "relop: "+RelationalOperatorToString(lpRestriction->res.resSize.relop)+"\n";
+			strResult += "relop: ";
+			strResult += RelationalOperatorToString(lpRestriction->res.resSize.relop);
+			strResult += "\n";
 			for (j = 0; j < indent; ++j)
 				strResult += "  ";
 			strResult += "proptag: "+PropNameFromPropTag(lpRestriction->res.resSize.ulPropTag)+"\n";
@@ -2300,25 +2306,19 @@ std::string RowToString(const SRow *lpRow)
 	return strResult;
 }
 
-std::string ABFlags(ULONG ulFlag)
+static const char *ABFlags(ULONG ulFlag)
 {
-	std::string strResult;
 	switch(ulFlag) {
 		case MAPI_UNRESOLVED:
-			strResult = "MAPI_UNRESOLVED";
-			break;
+			return "MAPI_UNRESOLVED";
 		case MAPI_AMBIGUOUS:
-			strResult = "MAPI_AMBIGUOUS";
-			break;
+			return "MAPI_AMBIGUOUS";
 		case MAPI_RESOLVED:
-			strResult = "MAPI_RESOLVED";
-			break;
+			return "MAPI_RESOLVED";
 		default:
-			strResult = "UNKNOWN";
-			break;
+			return "UNKNOWN";
 	}
-
-	return strResult;
+	return NULL;
 }
 
 std::string AdrRowSetToString(const ADRLIST *lpAdrList,
@@ -2329,8 +2329,15 @@ std::string AdrRowSetToString(const ADRLIST *lpAdrList,
 	if(lpAdrList == NULL)
 		return "NULL";
 
-	for (unsigned int i = 0; i < lpAdrList->cEntries; ++i)
-		strResult+= "row "+stringify(i) + " : " + RowToString((LPSRow)&lpAdrList->aEntries[i]) + "\n" + ((lpFlagList)?" flag="+ABFlags(lpFlagList->ulFlag[i])+"\n":"");
+	for (unsigned int i = 0; i < lpAdrList->cEntries; ++i) {
+		strResult += "row " + stringify(i) + " : " +
+			 RowToString((LPSRow)&lpAdrList->aEntries[i]) + "\n";
+		if (lpFlagList != NULL) {
+			strResult += " flag=";
+			strResult += ABFlags(lpFlagList->ulFlag[i]);
+			strResult += "\n";
+		}
+	}
 
 	return strResult;
 }
@@ -2376,7 +2383,7 @@ std::string RowListToString(const ROWLIST *lpRowList)
 	return strResult;
 }
 
-std::string ActionToString(const ACTION *lpAction)
+const char *ActionToString(const ACTION *lpAction)
 {
 	return "Action struct: NOT IMPLEMENTED";
 }
@@ -2522,45 +2529,32 @@ exit:
 	return str;
 }
 
-static std::string TableEventToString(ULONG ulTableEvent)
+static const char *TableEventToString(ULONG ulTableEvent)
 {
-	std::string str;
-
 	switch(ulTableEvent) 
 	{
 		case TABLE_CHANGED:
-			str = "TABLE_CHANGED";
-			break;
+			return "TABLE_CHANGED";
 		case TABLE_ERROR:
-			str = "TABLE_ERROR";
-			break;
+			return "TABLE_ERROR";
 		case TABLE_ROW_ADDED:
-			str = "TABLE_ROW_ADDED";
-			break;
+			return "TABLE_ROW_ADDED";
 		case TABLE_ROW_DELETED:
-			str = "TABLE_ROW_DELETED";
-			break;
+			return "TABLE_ROW_DELETED";
 		case TABLE_ROW_MODIFIED:
-			str = "TABLE_ROW_MODIFIED";
-			break;
+			return "TABLE_ROW_MODIFIED";
 		case TABLE_SORT_DONE:
-			str = "TABLE_SORT_DONE";
-			break;
+			return "TABLE_SORT_DONE";
 		case TABLE_RESTRICT_DONE:
-			str = "TABLE_RESTRICT_DONE";
-			break;
+			return "TABLE_RESTRICT_DONE";
 		case TABLE_SETCOL_DONE:
-			str = "TABLE_SETCOL_DONE";
-			break;
+			return "TABLE_SETCOL_DONE";
 		case TABLE_RELOAD:
-			str = "TABLE_RELOAD";
-			break;
+			return "TABLE_RELOAD";
 		default:
-			str = "<invalidate TYPE>";
-			break;
+			return "<invalidate TYPE>";
 	}
-
-	return str;
+	return NULL;
 }
 
 static std::string Notification_TableToString(const TABLE_NOTIFICATION *lpTab)
@@ -2574,10 +2568,16 @@ static std::string Notification_TableToString(const TABLE_NOTIFICATION *lpTab)
 		goto exit;
 	}
 
-	str += "\tTableEvent: (" + TableEventToString(lpTab->ulTableEvent) + " )\n";
+	str += "\tTableEvent: (";
+	str += TableEventToString(lpTab->ulTableEvent);
+	str += " )\n";
 	
-	str += "\tPropIndex: (" + PropValueToString(&lpTab->propIndex) + " )\n";
-	str += "\tPropPrior: (" + PropValueToString(&lpTab->propPrior) + " )\n";
+	str += "\tPropIndex: (";
+	str += PropValueToString(&lpTab->propIndex);
+	str += " )\n";;
+	str += "\tPropPrior: (";
+	str += PropValueToString(&lpTab->propPrior);
+	str += " )\n";
 	str += "\tRow: (" + RowToString(&lpTab->row) + " )\n";
 	
 exit:
@@ -2618,52 +2618,37 @@ Notification_ExtendedToString(const EXTENDED_NOTIFICATION *lpExt)
 	return str;
 }
 
-static std::string EventTypeToString(ULONG ulEventType)
+static const char *EventTypeToString(ULONG ulEventType)
 {
-	std::string str;
-
 	switch(ulEventType)
 	{
 		case fnevCriticalError: // ERROR_NOTIFICATION err;
-			str = "CriticalError";
-			break;
+			return "CriticalError";
 		case fnevNewMail:
-			str = "NewMail";
-			break;
+			return "NewMail";
 		case fnevObjectCreated:
-			str = "ObjectCreated";
-			break;
+			return "ObjectCreated";
 		case fnevObjectDeleted:
-			str = "ObjectDeleted";
-			break;
+			return "ObjectDeleted";
 		case fnevObjectModified:
-			str = "ObjectModified";
-			break;
+			return "ObjectModified";
 		case fnevObjectMoved:
-			str = "ObjectMoved";
-			break;
+			return "ObjectMoved";
 		case fnevObjectCopied:
-			str = "ObjectCopied";
-			break;
+			return "ObjectCopied";
 		case fnevSearchComplete:
-			str = "SearchComplete";
-			break;
+			return "SearchComplete";
 		case fnevTableModified:
-			str = "TableModified";
-			break;
+			return "TableModified";
 		case fnevStatusObjectModified:// STATUS_OBJECT_NOTIFICATION statobj;
-			str = "StatusObjectModified";
-			break;
+			return "StatusObjectModified";
 		case fnevExtended:// EXTENDED_NOTIFICATION ext;
-			str = "Extended";
-			break;
+			return "Extended";
 		case fnevReservedForMapi:
 		default:
-			str = "Unknown";
-			break;
+			return "Unknown";
 	}
-
-	return str;
+	return NULL;
 }
 
 std::string NotificationToString(ULONG cNotification,
@@ -2678,7 +2663,9 @@ std::string NotificationToString(ULONG cNotification,
 		if (cNotification > 1)
 			str += "item " + stringify(i) + " (\n";
 
-		str += "Eventtype: ( " + EventTypeToString(lpNotification[i].ulEventType) + " )\n";
+		str += "Eventtype: ( ";
+		str += EventTypeToString(lpNotification[i].ulEventType);
+		str += " )\n";
 		switch(lpNotification[i].ulEventType)
 		{
 			case fnevCriticalError: // ERROR_NOTIFICATION err;

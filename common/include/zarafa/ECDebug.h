@@ -84,7 +84,7 @@ std::string RowSetToString(const SRowSet *lpRows);
 std::string AdrRowSetToString(const ADRLIST *lpAdrList, const FlagList *lpFlagList);
 std::string RowEntryToString(const ROWENTRY *lpRowEntry);
 std::string RowListToString(const ROWLIST *lprowList);
-std::string ActionToString(const ACTION *lpAction);
+const char *ActionToString(const ACTION *);
 
 std::string SortOrderToString(const SSortOrder *lpSort);
 std::string SortOrderSetToString(const SSortOrderSet *lpSortCriteria);
@@ -98,11 +98,9 @@ const char *MsgServiceContextToString(ULONG ulContext);
 const char *ResourceTypeToString(ULONG ulResourceType);
 
 //Internal used only
-std::string RelationalOperatorToString(ULONG relop);
+const char *RelationalOperatorToString(ULONG relop);
 std::string FuzzyLevelToString(ULONG ulFuzzyLevel);
 std::string PropValueToString(const SPropValue *lpPropValue);
-
-std::string ABFlags(ULONG ulFlag);
 std::string EntryListToString(const ENTRYLIST *lpMsgList);
 std::string PermissionRulesToString(ULONG cPermissions, const ECPERMISSION *lpECPermissions);
 
