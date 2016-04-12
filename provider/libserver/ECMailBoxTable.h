@@ -43,12 +43,12 @@
 
 #pragma once
 
+#include <zarafa/zcdefs.h>
 #include "ECStoreObjectTable.h"
 
 class ECSession;
 
-class ECMailBoxTable : public ECStoreObjectTable
-{
+class ECMailBoxTable _zcp_final : public ECStoreObjectTable {
 protected:
 	ECMailBoxTable(ECSession *lpSession, unsigned int ulFlags, const ECLocale &locale);
 	virtual ~ECMailBoxTable();

@@ -44,10 +44,10 @@
 #ifndef ECSECURITYOFFLINE
 #define ECSECURITYOFFLINE
 
+#include <zarafa/zcdefs.h>
 #include "ECSecurity.h"
 
-class ECSecurityOffline : public ECSecurity
-{
+class ECSecurityOffline _zcp_final : public ECSecurity {
 public:
 	ECSecurityOffline(ECSession *lpSession, ECConfig *lpConfig);
 	virtual ~ECSecurityOffline(void);

@@ -45,13 +45,14 @@
 #ifndef ECPLUGINFACTORY_H
 #define ECPLUGINFACTORY_H
 
+#include <zarafa/zcdefs.h>
 #include <zarafa/ZarafaCode.h>
 #include <zarafa/ECConfig.h>
 #include <zarafa/ECPluginSharedData.h>
 #include "plugin.h"
 #include <pthread.h>
 
-class ECPluginFactory {
+class ECPluginFactory _zcp_final {
 public:
 	ECPluginFactory(ECConfig *config, IECStatsCollector *lpStatsCollector, bool bHosted, bool bDistributed);
 	~ECPluginFactory();

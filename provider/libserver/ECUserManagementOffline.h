@@ -41,10 +41,10 @@
  *
  */
 
+#include <zarafa/zcdefs.h>
 #include "ECUserManagement.h"
 
-class ECUserManagementOffline :	public ECUserManagement
-{
+class ECUserManagementOffline _zcp_final : public ECUserManagement {
 public:
 	ECUserManagementOffline(ECSession *lpSession, ECPluginFactory *lpPluginFactory, ECConfig *lpConfig);
 	virtual ~ECUserManagementOffline(void);

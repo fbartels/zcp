@@ -44,6 +44,7 @@
 #ifndef ECLockManager_INCLUDED
 #define ECLockManager_INCLUDED
 
+#include <zarafa/zcdefs.h>
 #include <zarafa/ZarafaCode.h>
 
 #include <map>
@@ -58,7 +59,7 @@ typedef boost::shared_ptr<ECLockManager> ECLockManagerPtr;
 ///////////////
 // ECObjectLock
 ///////////////
-class ECObjectLock {
+class ECObjectLock _zcp_final {
 public:
 	ECObjectLock();
 	ECObjectLock(ECLockManagerPtr ptrLockManager, unsigned int ulObjId, ECSESSIONID sessionId);
@@ -98,7 +99,7 @@ inline void ECObjectLock::swap(ECObjectLock &other) {
 ////////////////
 // ECLockManager
 ////////////////
-class ECLockManager : public boost::enable_shared_from_this<ECLockManager> {
+class ECLockManager _zcp_final : public boost::enable_shared_from_this<ECLockManager> {
 public:
 	static ECLockManagerPtr Create();
 	~ECLockManager();

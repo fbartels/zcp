@@ -44,6 +44,7 @@
 #ifndef ECICSHELPERS_H
 #define ECICSHELPERS_H
 
+#include <zarafa/zcdefs.h>
 #include "ECICS.h"
 #include "ECDatabase.h"
 
@@ -73,9 +74,7 @@ typedef std::map<SOURCEKEY,SAuxMessageData>	MESSAGESET, *LPMESSAGESET;
 class IDbQueryCreator;
 class IMessageProcessor;
 
-
-class ECGetContentChangesHelper
-{
+class ECGetContentChangesHelper _zcp_final {
 public:
 	static ECRESULT Create(struct soap *soap, ECSession *lpSession, ECDatabase *lpDatabase, const SOURCEKEY &sFolderSourceKey, unsigned int ulSyncId, unsigned int ulChangeId, unsigned int ulFlags, struct restrictTable *lpsRestrict, ECGetContentChangesHelper **lppHelper);
 	~ECGetContentChangesHelper();

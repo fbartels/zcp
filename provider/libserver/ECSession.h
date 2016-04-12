@@ -48,6 +48,7 @@
 #ifndef ECSESSION
 #define ECSESSION
 
+#include <zarafa/zcdefs.h>
 #include <list>
 #include <map>
 #include <set>
@@ -174,8 +175,7 @@ protected:
 /*
   Normal session
 */
-class ECSession : public BTSession
-{
+class ECSession _zcp_final : public BTSession {
 public:
 	ECSession(const std::string& strSourceAddr, ECSESSIONID sessionID, ECSESSIONGROUPID ecSessionGroupId, ECDatabaseFactory *lpDatabaseFactory, ECSessionManager *lpSessionManager, unsigned int ulCapabilities, bool bIsOffline, AUTHMETHOD ulAuthMethod, int pid, std::string strClientVersion, std::string strClientApp, std::string strClientApplicationVersion, std::string strClientApplicationMisc);
 
@@ -302,8 +302,7 @@ private:
 /*
   Authentication for offline session
 */
-class ECAuthSessionOffline : public ECAuthSession
-{
+class ECAuthSessionOffline _zcp_final : public ECAuthSession {
 public:
 	ECAuthSessionOffline(const std::string& strSourceAddr, ECSESSIONID sessionID, ECDatabaseFactory *lpDatabaseFactory, ECSessionManager *lpSessionManager, unsigned int ulCapabilities);
 

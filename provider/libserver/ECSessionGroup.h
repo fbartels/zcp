@@ -48,6 +48,7 @@
 #ifndef ECSESSIONGROUP
 #define ECSESSIONGROUP
 
+#include <zarafa/zcdefs.h>
 #include <list>
 #include <map>
 #include <set>
@@ -86,8 +87,7 @@ struct changeSubscribeItem {
 };
 typedef std::multimap<unsigned int, changeSubscribeItem> CHANGESUBSCRIBEMAP;	// SyncId -> changeSubscribeItem
 
-class ECSessionGroup
-{
+class ECSessionGroup _zcp_final {
 public:
 	ECSessionGroup(ECSESSIONGROUPID sessionGroupId, ECSessionManager *lpSessionManager);
 	virtual ~ECSessionGroup();

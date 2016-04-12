@@ -47,10 +47,11 @@
 
 #ifndef ECNOTIFICATION
 #define ECNOTIFICATION
+
+#include <zarafa/zcdefs.h>
 #include "soapH.h"
 
-class ECNotification  
-{
+class ECNotification _zcp_final {
 public:
 	ECNotification();
 	virtual ~ECNotification();

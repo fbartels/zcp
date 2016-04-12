@@ -44,10 +44,10 @@
 #ifndef ECCONVENIENTDEPTHABOBJECTTABLE_H
 #define ECCONVENIENTDEPTHABOBJECTTABLE_H
 
+#include <zarafa/zcdefs.h>
 #include "ECABObjectTable.h"
 
-
-class ECConvenientDepthABObjectTable : public ECABObjectTable {
+class ECConvenientDepthABObjectTable _zcp_final : public ECABObjectTable {
 protected:
 	ECConvenientDepthABObjectTable(ECSession *lpSession, unsigned int ulABId, unsigned int ulABType, unsigned int ulABParentId, unsigned int ulABParentType, unsigned int ulFlags, const ECLocale &locale);
 

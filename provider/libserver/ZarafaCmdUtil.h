@@ -44,6 +44,7 @@
 #ifndef ZARAFACMD_UTIL_H
 #define ZARAFACMD_UTIL_H
 
+#include <zarafa/zcdefs.h>
 #include "ECICS.h"
 #include "SOAPUtils.h"
 
@@ -56,7 +57,7 @@
 // Above EC_TABLE_CHANGE_THRESHOLD, a TABLE_CHANGE notification is sent instead of individual notifications
 #define EC_TABLE_CHANGE_THRESHOLD 10
 
-class EntryId {
+class EntryId _zcp_final {
 public:
     EntryId() { 
         updateStruct();
@@ -164,7 +165,7 @@ typedef struct _TCN {
 	unsigned int ulType;
 } TABLECHANGENOTIFICATION;
 
-class PARENTINFO {
+class PARENTINFO _zcp_final {
 public:
     PARENTINFO() : lItems(0), lFolders(0), lAssoc(0), lDeleted(0), lDeletedFolders(0), lDeletedAssoc(0), lUnread(0), ulStoreId(0) { }
     ~PARENTINFO() { }

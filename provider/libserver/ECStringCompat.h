@@ -44,6 +44,7 @@
 #ifndef ECSTRINGCOMPAT_H
 #define ECSTRINGCOMPAT_H
 
+#include <zarafa/zcdefs.h>
 #include <boost/noncopyable.hpp>
 #include <zarafa/ZarafaCode.h>
 #include "Zarafa.h"
@@ -62,8 +63,7 @@ struct company;
  * from the windows-1252 codepage encoded as UTF8. So the difference
  * with UTF8 is that is a string with true unicode code points.
  */
-class ECStringCompat : private boost::noncopyable
-{
+class ECStringCompat _zcp_final : private boost::noncopyable {
 public:
 	static char *WTF1252_to_WINDOWS1252(soap *lpsoap, const char *szWTF1252, convert_context *lpConverter = NULL);
 	static char *WTF1252_to_UTF8(struct soap *lpsoap, const char *szWTF1252, convert_context *lpConverter = NULL);

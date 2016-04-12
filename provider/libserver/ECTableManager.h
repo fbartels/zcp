@@ -44,6 +44,7 @@
 #ifndef TABLEMANAGER_H
 #define TABLEMANAGER_H
 
+#include <zarafa/zcdefs.h>
 #include <map>
 
 #include "ECDatabase.h"
@@ -90,7 +91,7 @@ typedef struct {
 
 typedef std::map<unsigned int, TABLE_ENTRY *> TABLEENTRYMAP;
 
-class ECTableManager {
+class ECTableManager _zcp_final {
 public:
 	ECTableManager(ECSession *lpSession);
 	~ECTableManager();

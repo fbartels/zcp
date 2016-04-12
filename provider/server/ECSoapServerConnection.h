@@ -44,6 +44,7 @@
 #ifndef ECSOAPSERVERCONNECTION_H
 #define ECSOAPSERVERCONNECTION_H
 
+#include <zarafa/zcdefs.h>
 #include <set>
 #include <zarafa/ZarafaCode.h>
 #include "ECThreadManager.h"
@@ -51,8 +52,7 @@
 #include <zarafa/ECLogger.h>
 #include <zarafa/ECConfig.h>
 
-class ECSoapServerConnection
-{
+class ECSoapServerConnection _zcp_final {
 public:
 	ECSoapServerConnection(ECConfig* lpConfig, ECLogger* lpLogger);
 	~ECSoapServerConnection();

@@ -46,6 +46,7 @@
 
 #define MAX_SORTKEY_LEN 4096
 
+#include <zarafa/zcdefs.h>
 #include "soapH.h"
 
 #include <list>
@@ -77,7 +78,7 @@ class ECCacheManager;
 
 typedef std::map<ECTableRow, sObjectTableKey> ECSortedCategoryMap;
 
-class ECCategory {
+class ECCategory _zcp_final {
 public:
     ECCategory(unsigned int ulCategory, struct propVal *lpProps, unsigned int cProps, unsigned int nProps, ECCategory *lpParent, unsigned int ulDepth, bool fExpanded, const ECLocale &locale);
     virtual ~ECCategory();

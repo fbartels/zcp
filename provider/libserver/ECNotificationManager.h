@@ -44,6 +44,7 @@
 #ifndef ECNOTIFICATIONMANAGER_H
 #define ECNOTIFICATIONMANAGER_H
 
+#include <zarafa/zcdefs.h>
 #include "ECSession.h"
 #include <zarafa/ECLogger.h>
 #include <zarafa/ECConfig.h>
@@ -65,7 +66,7 @@ struct NOTIFREQUEST {
     time_t ulRequestTime;
 };
 
-class ECNotificationManager {
+class ECNotificationManager _zcp_final {
 public:
 	ECNotificationManager();
 	~ECNotificationManager();

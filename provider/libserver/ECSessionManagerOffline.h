@@ -44,10 +44,10 @@
 #ifndef ECSESSIONMANAGER_OFFLINE_H
 #define ECSESSIONMANAGER_OFFLINE_H
 
+#include <zarafa/zcdefs.h>
 #include "ECSessionManager.h"
 
-class ECSessionManagerOffline :	public ECSessionManager
-{
+class ECSessionManagerOffline _zcp_final : public ECSessionManager {
 public:
 	ECSessionManagerOffline(ECConfig *lpConfig, bool bHostedZarafa, bool bDistributedZarafa);
 	virtual ~ECSessionManagerOffline(void);

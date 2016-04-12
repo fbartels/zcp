@@ -44,6 +44,7 @@
 #ifndef EC_USERSTORE_TABLE_H
 #define EC_USERSTORE_TABLE_H
 
+#include <zarafa/zcdefs.h>
 /* #include "ECStoreObjectTable.h" */
 #include "ECGenericObjectTable.h"
 #include <zarafa/ZarafaUser.h>
@@ -65,8 +66,7 @@ typedef struct {
 	unsigned long long ullStoreSize;// Size of the store
 } ECUserStore;
 
-class ECUserStoreTable : public ECGenericObjectTable
-{
+class ECUserStoreTable _zcp_final : public ECGenericObjectTable {
 protected:
 	ECUserStoreTable(ECSession *lpSession, unsigned int ulFlags, const ECLocale &locale);
 	virtual ~ECUserStoreTable();

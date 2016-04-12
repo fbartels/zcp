@@ -44,6 +44,7 @@
 #ifndef ECCACHEMANAGER
 #define ECCACHEMANAGER
 
+#include <zarafa/zcdefs.h>
 #include <map>
 #include <pthread.h>
 
@@ -121,24 +122,24 @@ inline bool operator <(const ECsUEIdKey &a, const ECsUEIdKey &b)
 }
 
 /* Intern Id cache */
-class ECsUEIdObject : public ECsCacheEntry {
+class ECsUEIdObject _zcp_final : public ECsCacheEntry {
 public:
 	unsigned int		ulCompanyId;
 	unsigned int		ulUserId;
 	std::string			strSignature;
 };
 
-class ECsUserObjectDetails : public ECsCacheEntry {
+class ECsUserObjectDetails _zcp_final : public ECsCacheEntry {
 public:
 	objectdetails_t			sDetails;
 };
 
-class ECsServerDetails : public ECsCacheEntry {
+class ECsServerDetails _zcp_final : public ECsCacheEntry {
 public:
 	serverdetails_t			sDetails;
 };
 
-class ECsObjects : public ECsCacheEntry {
+class ECsObjects _zcp_final : public ECsCacheEntry {
 public:
 	unsigned int	ulParent;
 	unsigned int	ulOwner;
@@ -146,12 +147,12 @@ public:
 	unsigned int	ulType;
 };
 
-class ECsQuota : public ECsCacheEntry {
+class ECsQuota _zcp_final : public ECsCacheEntry {
 public:
 	quotadetails_t	quota;
 };
 
-class ECsIndexObject : public ECsCacheEntry {
+class ECsIndexObject _zcp_final : public ECsCacheEntry {
 public:
 	inline bool operator==(const ECsIndexObject &other) const
 	{
@@ -176,7 +177,7 @@ public:
 	unsigned int ulTag;
 };
 
-class ECsIndexProp : public ECsCacheEntry {
+class ECsIndexProp _zcp_final : public ECsCacheEntry {
 public:
     ECsIndexProp() : ECsCacheEntry() { 
 		lpData = NULL; 
@@ -284,7 +285,7 @@ public:
 	unsigned int	cbData;
 };
 
-class ECsCells : public ECsCacheEntry {
+class ECsCells _zcp_final : public ECsCacheEntry {
 public:
     ECsCells() : ECsCacheEntry() { 
     	m_bComplete = false; 
@@ -417,7 +418,7 @@ public:
     bool m_bComplete;
 };
 
-class ECsACLs : public ECsCacheEntry {
+class ECsACLs _zcp_final : public ECsCacheEntry {
 public:
 	ECsACLs() : ECsCacheEntry() { ulACLs = 0; aACL = NULL; }
     ECsACLs(const ECsACLs &src) {
@@ -519,8 +520,7 @@ typedef hash_map<ECsIndexProp, ECsIndexObject>::Type ECMapPropToObject;
 
 #define CACHE_NO_PARENT 0xFFFFFFFF
 
-class ECCacheManager  
-{
+class ECCacheManager _zcp_final {
 public:
 	ECCacheManager(ECConfig *lpConfig, ECDatabaseFactory *lpDatabase);
 	virtual ~ECCacheManager();

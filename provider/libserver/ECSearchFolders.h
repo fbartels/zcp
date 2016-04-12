@@ -44,6 +44,7 @@
 #ifndef ECSEARCHFOLDERS_H
 #define ECSEARCHFOLDERS_H
 
+#include <zarafa/zcdefs.h>
 #include "ECDatabaseFactory.h"
 #include <zarafa/ECKeyTable.h>
 #include "ECStoreObjectTable.h"
@@ -57,7 +58,7 @@
 
 class ECSessionManager;
 
-typedef struct SEARCHFOLDER {
+typedef struct SEARCHFOLDER _zcp_final {
 	SEARCHFOLDER(unsigned int ulStoreId, unsigned int ulFolderId) {
 		this->lpSearchCriteria = NULL;
 		/* sThreadId */
@@ -121,7 +122,7 @@ typedef struct tagsSearchFolderStats
  * except rebuilding searchfolders; when the server starts and finds a searchfolder that was only half-built, a complete
  * rebuild is started since we don't know how far the rebuild got last time.
  */
-class ECSearchFolders {
+class ECSearchFolders _zcp_final {
 public:
     ECSearchFolders(ECSessionManager *lpSessionManager, ECDatabaseFactory *lpFactory);
     virtual ~ECSearchFolders();

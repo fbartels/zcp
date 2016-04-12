@@ -44,9 +44,10 @@
 #ifndef ECCONVENIENTDEPTHOBJECTTABLE_H
 #define ECCONVENIENTDEPTHOBJECTTABLE_H
 
+#include <zarafa/zcdefs.h>
 #include "ECStoreObjectTable.h"
 
-class ECConvenientDepthObjectTable : public ECStoreObjectTable {
+class ECConvenientDepthObjectTable _zcp_final : public ECStoreObjectTable {
 protected:
 	ECConvenientDepthObjectTable(ECSession *lpSession, unsigned int ulStoreId, GUID *lpGuid, unsigned int ulFolderId, unsigned int ulObjType, unsigned int ulFlags, const ECLocale &locale);
 public:

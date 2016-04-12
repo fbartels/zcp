@@ -44,6 +44,7 @@
 #ifndef ECGENPROPS_H
 #define ECGENPROPS_H
 
+#include <zarafa/zcdefs.h>
 #include <zarafa/ZarafaCode.h>
 
 #include <string>
@@ -64,7 +65,7 @@
 
 typedef struct _ECODStore ECODStore;
 
-class ECGenProps {
+class ECGenProps _zcp_final {
 public:
 	ECGenProps();
 	~ECGenProps();

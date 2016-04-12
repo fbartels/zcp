@@ -44,6 +44,7 @@
 #ifndef ECICS_H
 #define ECICS_H
 
+#include <zarafa/zcdefs.h>
 #include "ECSession.h"
 
 #include <set>
@@ -51,7 +52,7 @@
 // This class is used to pass SOURCEKEYs internally between parts of the server backend. You can use it as a char* to get the data, use size() to get the size,
 // and have various ways of creating new SOURCEKEYs, including using a GUID and an ID, which is used for zarafa-generated source keys.
 
-class SOURCEKEY {
+class SOURCEKEY _zcp_final {
 public:
     SOURCEKEY(void) : lpData(NULL), ulSize(0) {}
     SOURCEKEY(const SOURCEKEY &s) { 

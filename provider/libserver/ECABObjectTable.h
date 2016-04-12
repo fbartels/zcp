@@ -44,6 +44,7 @@
 #ifndef ECAB_OBJECTTABLE_H
 #define ECAB_OBJECTTABLE_H
 
+#include <zarafa/zcdefs.h>
 #include "soapH.h"
 #include "ECGenericObjectTable.h"
 #include "ECUserManagement.h"
@@ -60,8 +61,7 @@ typedef struct{
 #define AB_FILTER_ADDRESSLIST	0x00000002
 #define AB_FILTER_CONTACTS		0x00000004
 
-class ECABObjectTable : public ECGenericObjectTable
-{
+class ECABObjectTable : public ECGenericObjectTable {
 protected:
 	ECABObjectTable(ECSession *lpSession, unsigned int ulABId, unsigned int ulABType, unsigned int ulABParentId, unsigned int ulABParentType, unsigned int ulFlags, const ECLocale &locale);
 	virtual ~ECABObjectTable();

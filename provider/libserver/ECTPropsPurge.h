@@ -44,12 +44,14 @@
 #ifndef ECTPROPSPURGE_H
 #define ECTPROPSPURGE_H
 
+#include <zarafa/zcdefs.h>
+
 class ECDatabase;
 class ECConfig;
 class ECDatabaseFactory;
 class ECSession;
 
-class ECTPropsPurge {
+class ECTPropsPurge _zcp_final {
 public:
     ECTPropsPurge(ECConfig *lpConfig, ECDatabaseFactory *lpDatabaseFactory);
     ~ECTPropsPurge();

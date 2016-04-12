@@ -44,11 +44,12 @@
 #ifndef ECSEARCHOBJECTTABLE_H
 #define ECSEARCHOBJECTTABLE_H
 
+#include <zarafa/zcdefs.h>
 #include "ECStoreObjectTable.h"
 
 // The search folders only differ from normal 'store' tables in that they load the object list
 // from the searchresults instead of from the hierarchy table.
-class ECSearchObjectTable : public ECStoreObjectTable {
+class ECSearchObjectTable _zcp_final : public ECStoreObjectTable {
 protected:
 	ECSearchObjectTable(ECSession *lpSession, unsigned int ulStoreId, GUID *lpGuid, unsigned int ulFolderId, unsigned int ulObjType, unsigned int ulFlags, const ECLocale &locale);
 

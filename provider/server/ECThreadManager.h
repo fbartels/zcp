@@ -44,6 +44,7 @@
 #ifndef ECTHREADMANAGER_H
 #define ECTHREADMANAGER_H
 
+#include <zarafa/zcdefs.h>
 #include <queue>
 #include <set>
 
@@ -62,14 +63,14 @@ typedef struct {
     double dblReceiveStamp;		// time at which activity was detected on the socket
 } WORKITEM;
 
-typedef struct ACTIVESOCKET {
+typedef struct ACTIVESOCKET _zcp_final {
     struct soap *soap;
     time_t ulLastActivity;
     
     bool operator < (const ACTIVESOCKET &a) const { return a.soap->socket < this->soap->socket; };
 } ACTIVESOCKET;
 
-class FindSocket {
+class FindSocket _zcp_final {
 public:
 	FindSocket(SOAP_SOCKET s) { this->s = s; };
 
@@ -78,7 +79,7 @@ private:
 	SOAP_SOCKET s;
 };
 
-class FindListenSocket {
+class FindListenSocket _zcp_final {
 public:
 	FindListenSocket(SOAP_SOCKET s) { this->s = s; };
 
@@ -112,7 +113,7 @@ protected:
     ECDispatcher *m_lpDispatcher;
 };
 
-class ECPriorityWorkerThread : public ECWorkerThread {
+class ECPriorityWorkerThread _zcp_final : public ECWorkerThread {
 public:
 	ECPriorityWorkerThread(ECLogger *lpLogger, ECThreadManager *lpManager, ECDispatcher *lpDispatcher);
 	// The destructor is public since this thread isn't detached, we wait for the thread and clean it
@@ -123,7 +124,7 @@ public:
  * It is the thread manager's job to keep track of processing threads, and adding or removing threads
  * when requested. 
  */
-class ECThreadManager {
+class ECThreadManager _zcp_final {
 public:
     // ulThreads is the normal number of threads that are started; These threads are pre-started and will be in an idle state.
     ECThreadManager(ECLogger *lpLogger, ECDispatcher *lpDispatcher, unsigned int ulThreads);
@@ -159,7 +160,7 @@ private:
  *
  * Thread deletion is done by the Thread Manager.
  */
-class ECWatchDog {
+class ECWatchDog _zcp_final {
 public:
     ECWatchDog(ECConfig *lpConfig, ECLogger *lpLogger, ECDispatcher *lpDispatcher, ECThreadManager *lpThreadManager);
     ~ECWatchDog();
@@ -250,7 +251,7 @@ protected:
 	int			m_nSendTimeout;
 };
 
-class ECDispatcherSelect : public ECDispatcher {
+class ECDispatcherSelect _zcp_final : public ECDispatcher {
 private:
     int			m_fdRescanRead;
     int			m_fdRescanWrite;
@@ -267,7 +268,7 @@ public:
 };
 
 #ifdef HAVE_EPOLL_CREATE
-class ECDispatcherEPoll : public ECDispatcher {
+class ECDispatcherEPoll _zcp_final : public ECDispatcher {
 private:
 	int m_fdMax;
 	int m_epFD;
@@ -285,7 +286,7 @@ public:
 #endif
 
 #ifdef WIN32
-class ECDispatcherWin32 : public ECDispatcher {
+class ECDispatcherWin32 _zcp_final : public ECDispatcher {
 private:
 	// Windows handler
 	HANDLE					m_hRescanEvent;

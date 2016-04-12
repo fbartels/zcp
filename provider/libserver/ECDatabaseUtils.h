@@ -44,6 +44,7 @@
 #ifndef ECDATABASEUTILS_H
 #define ECDATABASEUTILS_H
 
+#include <zarafa/zcdefs.h>
 #include "ECMAPI.h"
 #include "Zarafa.h"
 #include <zarafa/ZarafaCode.h>
@@ -120,8 +121,7 @@ ECRESULT SetDatabaseSetting(ECDatabase *lpDatabase, const std::string &strSettin
  * This means the lock-error logging is restored when the scope in which an instance of
  * this class exists is exited.
  */
-class SuppressLockErrorLogging
-{
+class SuppressLockErrorLogging _zcp_final {
 public:
 	SuppressLockErrorLogging(ECDatabase *lpDatabase);
 	~SuppressLockErrorLogging();

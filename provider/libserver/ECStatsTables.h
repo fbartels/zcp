@@ -44,6 +44,7 @@
 #ifndef EC_STATS_TABLES_H
 #define EC_STATS_TABLES_H
 
+#include <zarafa/zcdefs.h>
 #include "ECGenericObjectTable.h"
 #include "ECSession.h"
 
@@ -57,7 +58,7 @@ typedef struct _statstrings {
 	std::string value;
 } statstrings;
 
-class ECSystemStatsTable : public ECGenericObjectTable {
+class ECSystemStatsTable _zcp_final : public ECGenericObjectTable {
 protected:
 	ECSystemStatsTable(ECSession *lpSession, unsigned int ulFlags, const ECLocale &locale);
 
@@ -96,7 +97,7 @@ typedef struct _sessiondata {
 	std::string client_application_version, client_application_misc;
 } sessiondata;
 
-class ECSessionStatsTable : public ECGenericObjectTable {
+class ECSessionStatsTable _zcp_final : public ECGenericObjectTable {
 protected:
 	ECSessionStatsTable(ECSession *lpSession, unsigned int ulFlags, const ECLocale &locale);
 
@@ -115,7 +116,7 @@ private:
 };
 
 
-class ECUserStatsTable : public ECGenericObjectTable {
+class ECUserStatsTable _zcp_final : public ECGenericObjectTable {
 protected:
 	ECUserStatsTable(ECSession *lpSession, unsigned int ulFlags, const ECLocale &locale);
 
@@ -130,8 +131,7 @@ private:
 	ECRESULT LoadCompanyUsers(ULONG ulCompanyId);
 };
 
-
-class ECCompanyStatsTable : public ECGenericObjectTable {
+class ECCompanyStatsTable _zcp_final : public ECGenericObjectTable {
 protected:
 	ECCompanyStatsTable(ECSession *lpSession, unsigned int ulFlags, const ECLocale &locale);
 
@@ -145,7 +145,7 @@ public:
 private:
 };
 
-class ECServerStatsTable : public ECGenericObjectTable {
+class ECServerStatsTable _zcp_final : public ECGenericObjectTable {
 protected:
 	ECServerStatsTable(ECSession *lpSession, unsigned int ulFlags, const ECLocale &locale);
 
