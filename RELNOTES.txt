@@ -78,6 +78,9 @@ Changes:
   "zarafa". If using our prebuilt DEB/RPM packages, this user and group
   will be created on installation (if not already present).
 
+* If you use PAM authentication with /etc/shadow, be aware that the
+  server needs to run as a user/group able to read it.
+
 * Permissions on directories like /var/lib/zarafa/* may need to be
   adjusted, especially if you use custom locations. We chose not to
   automatically recurisvely chown all of them, because it can
