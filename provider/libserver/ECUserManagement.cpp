@@ -265,7 +265,7 @@ ECRESULT ECUserManagement::AuthUserAndSync(const char* szLoginname, const char* 
 	 * We will resolve the company later when the session is created and the
 	 * company is requested through getDetails().
 	 */
-	er = GetUserAndCompanyFromLoginName(string(szLoginname), &username, &companyname);
+	er = GetUserAndCompanyFromLoginName(szLoginname, &username, &companyname);
 	if (er != erSuccess && er != ZARAFA_W_PARTIAL_COMPLETION)
 		goto exit;
 
@@ -2301,14 +2301,14 @@ exit:
 	return er;
 }
 
-ECRESULT ECUserManagement::GetUserAndCompanyFromLoginName(const string &strLoginName, string *lpstrUserName, string *lpstrCompanyName)
+ECRESULT ECUserManagement::GetUserAndCompanyFromLoginName(const std::string &strLoginName,
+    std::string *username, std::string *companyname)
 {
 	ECRESULT er = erSuccess;
 	string format = m_lpConfig->GetSetting("loginname_format");
 	bool bHosted = m_lpSession->GetSessionManager()->IsHostedSupported();
 	size_t pos_u = format.find("%u");
 	size_t pos_c = format.find("%c");
-	string username, companyname;
 	string start, middle, end;
 	size_t pos_s, pos_m, pos_e;
 	size_t pos_a, pos_b;
@@ -2320,9 +2320,9 @@ ECRESULT ECUserManagement::GetUserAndCompanyFromLoginName(const string &strLogin
 		if (bHosted)
 			er = ZARAFA_W_PARTIAL_COMPLETION;
 #endif
-		username = strLoginName;
-		companyname = "";
-		goto exit;
+		*username = strLoginName;
+		companyname->clear();
+		return er;
 	}
 
 	pos_a = (pos_u < pos_c) ? pos_u : pos_c;
@@ -2340,10 +2340,8 @@ ECRESULT ECUserManagement::GetUserAndCompanyFromLoginName(const string &strLogin
 	/*
 	 * There must be some sort of seperator between username and companyname.
 	 */
-	if (middle.empty()) {
-		er = ZARAFA_E_INVALID_PARAMETER;
-		goto exit;
-	}
+	if (middle.empty())
+		return ZARAFA_E_INVALID_PARAMETER;
 
 	pos_s = !start.empty() ? strLoginName.find(start, 0) : 0;
 	pos_m = strLoginName.find(middle, pos_s + start.size());
@@ -2359,9 +2357,9 @@ ECRESULT ECUserManagement::GetUserAndCompanyFromLoginName(const string &strLogin
 			strLoginName != ZARAFA_ACCOUNT_EVERYONE)
 				er = ZARAFA_E_INVALID_PARAMETER;
 #endif
-		username = strLoginName;
-		companyname = "";
-		goto exit;
+		*username = strLoginName;
+		companyname->clear();
+		return er;
 	}
 
 	if (pos_s == string::npos)
@@ -2370,22 +2368,16 @@ ECRESULT ECUserManagement::GetUserAndCompanyFromLoginName(const string &strLogin
 		pos_m = pos_b;
 
 	if (pos_u < pos_c) {
-		username = strLoginName.substr(pos_a, pos_m - pos_a);
-		companyname = strLoginName.substr(pos_m + middle.size(), pos_e - pos_m - middle.size());
+		*username = strLoginName.substr(pos_a, pos_m - pos_a);
+		*companyname = strLoginName.substr(pos_m + middle.size(), pos_e - pos_m - middle.size());
 	} else {
-		username = strLoginName.substr(pos_m + middle.size(), pos_e - pos_m - middle.size());
-		companyname = strLoginName.substr(pos_a, pos_m - pos_a);
+		*username = strLoginName.substr(pos_m + middle.size(), pos_e - pos_m - middle.size());
+		*companyname = strLoginName.substr(pos_a, pos_m - pos_a);
 	}
 
 	/* Neither username or companyname are allowed to be empty */
-	if (username.empty() || companyname.empty()) {
-		er = ZARAFA_E_NO_ACCESS;
-		goto exit;
-	}
-
-exit:
-	*lpstrUserName = username;
-	*lpstrCompanyName = companyname;
+	if (username->empty() || companyname->empty())
+		return ZARAFA_E_NO_ACCESS;
 	return er;
 }
 
