@@ -2533,9 +2533,9 @@ ECRESULT FreeNamedPropArray(struct namedPropArray *array, bool bFreeBase)
  * the contents of that header
  *
  * @param[in] soap Soap object of the request
- * @result String representation of the requester's source address
+ * @result String representation of the requester's source address, valid for as long as the soap object exists.
  */
-std::string GetSourceAddr(struct soap *soap)
+const char *GetSourceAddr(struct soap *soap)
 {
 	if( ((SOAPINFO *)soap->user)->bProxy && soap->proxy_from)
 		return soap->proxy_from;

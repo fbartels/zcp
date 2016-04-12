@@ -128,7 +128,7 @@ ECRESULT			FreeNamedPropArray(struct namedPropArray *array, bool bFreeBase);
 
 ULONG 				NormalizePropTag(ULONG ulPropTag);
 
-std::string 		GetSourceAddr(struct soap *soap);
+const char *GetSourceAddr(struct soap *soap);
 
 unsigned int SearchCriteriaSize(struct searchCriteria *lpSrc);
 unsigned int RestrictTableSize(struct restrictTable *lpSrc);

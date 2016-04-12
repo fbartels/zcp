@@ -140,8 +140,13 @@ void CreateSessionID(unsigned int ulCapabilities, ECSESSIONID *lpSessionId)
 /*
   BaseType session
 */
-BTSession::BTSession(const std::string& strSourceAddr, ECSESSIONID sessionID, ECDatabaseFactory *lpDatabaseFactory, ECSessionManager *lpSessionManager, unsigned int ulCapabilities) :
-	m_strSourceAddr(strSourceAddr), m_sessionID(sessionID), m_lpDatabaseFactory(lpDatabaseFactory), m_lpSessionManager(lpSessionManager), m_ulClientCapabilities(ulCapabilities)
+BTSession::BTSession(const char *src_addr, ECSESSIONID sessionID,
+    ECDatabaseFactory *lpDatabaseFactory, ECSessionManager *lpSessionManager,
+    unsigned int ulCapabilities) :
+	m_strSourceAddr(src_addr), m_sessionID(sessionID),
+	m_lpDatabaseFactory(lpDatabaseFactory),
+	m_lpSessionManager(lpSessionManager),
+	m_ulClientCapabilities(ulCapabilities)
 {
 	m_ulRefCount = 0;
 	m_sessionTime = GetProcessTime();
@@ -193,10 +198,11 @@ ECRESULT BTSession::ValidateOriginator(struct soap *soap)
 {
 	if (!m_bCheckIP)
 		return erSuccess;
-	std::string strSourceAddr = ::GetSourceAddr(soap);
-	if (m_strSourceAddr == strSourceAddr)
+	const char *s = ::GetSourceAddr(soap);
+	if (strcmp(m_strSourceAddr.c_str(), s) == 0)
 		return erSuccess;
-	ec_log_err("Denying access to session from source \"%s\" due to unmatched establishing source \"%s\"", strSourceAddr.c_str(), m_strSourceAddr.c_str());
+	ec_log_err("Denying access to session from source \"%s\" due to unmatched establishing source \"%s\"",
+		s, m_strSourceAddr.c_str());
 	return ZARAFA_E_END_OF_SESSION;
 }
 
@@ -294,8 +300,14 @@ size_t BTSession::GetInternalObjectSize()
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-ECSession::ECSession(const std::string& strSourceAddr, ECSESSIONID sessionID, ECSESSIONGROUPID ecSessionGroupId, ECDatabaseFactory *lpDatabaseFactory, ECSessionManager *lpSessionManager, unsigned int ulCapabilities, bool bIsOffline, AUTHMETHOD ulAuthMethod, int pid, std::string strClientVersion, std::string strClientApp, std::string strClientApplicationVersion, std::string strClientApplicationMisc) :
-	BTSession(strSourceAddr, sessionID, lpDatabaseFactory, lpSessionManager, ulCapabilities)
+ECSession::ECSession(const char *src_addr, ECSESSIONID sessionID,
+    ECSESSIONGROUPID ecSessionGroupId, ECDatabaseFactory *lpDatabaseFactory,
+    ECSessionManager *lpSessionManager, unsigned int ulCapabilities,
+    bool bIsOffline, AUTHMETHOD ulAuthMethod, int pid,
+    const std::string &cl_ver, const std::string &cl_app,
+    const std::string &cl_app_ver, const std::string &cl_app_misc) :
+	BTSession(src_addr, sessionID, lpDatabaseFactory, lpSessionManager,
+	    ulCapabilities)
 {
 	m_lpTableManager		= new ECTableManager(this);
 	m_lpEcSecurity			= NULL;
@@ -305,13 +317,13 @@ ECSession::ECSession(const std::string& strSourceAddr, ECSESSIONID sessionID, EC
 	m_ulAuthMethod			= ulAuthMethod;
 	m_ulConnectingPid		= pid;
 	m_ecSessionGroupId		= ecSessionGroupId;
-	m_strClientVersion		= strClientVersion;
+	m_strClientVersion		= cl_ver;
 	m_ulClientVersion		= ZARAFA_VERSION_UNKNOWN;
-	m_strClientApp			= strClientApp;
-	m_strClientApplicationVersion   = strClientApplicationVersion;
-	m_strClientApplicationMisc	= strClientApplicationMisc;
+	m_strClientApp			= cl_app;
+	m_strClientApplicationVersion   = cl_app_ver;
+	m_strClientApplicationMisc	= cl_app_misc;
 
-	ParseZarafaVersion(strClientVersion, &m_ulClientVersion);
+	ParseZarafaVersion(cl_ver, &m_ulClientVersion);
 	// Ignore result.
 
 	m_ulSessionTimeout = atoi(lpSessionManager->GetConfig()->GetSetting("session_timeout"));
@@ -740,8 +752,11 @@ size_t ECSession::GetObjectSize()
 /*
   ECAuthSession
 */
-ECAuthSession::ECAuthSession(const std::string& strSourceAddr, ECSESSIONID sessionID, ECDatabaseFactory *lpDatabaseFactory, ECSessionManager *lpSessionManager, unsigned int ulCapabilities) :
-		BTSession(strSourceAddr, sessionID, lpDatabaseFactory, lpSessionManager, ulCapabilities)
+ECAuthSession::ECAuthSession(const char *src_addr, ECSESSIONID sessionID,
+    ECDatabaseFactory *lpDatabaseFactory, ECSessionManager *lpSessionManager,
+    unsigned int ulCapabilities) :
+	BTSession(src_addr, sessionID, lpDatabaseFactory, lpSessionManager,
+	    ulCapabilities)
 {
 	m_ulUserID = 0;
 	m_bValidated = false;
@@ -830,7 +845,11 @@ ECAuthSession::~ECAuthSession()
 }
 
 
-ECRESULT ECAuthSession::CreateECSession(ECSESSIONGROUPID ecSessionGroupId, std::string strClientVersion, std::string strClientApp, std::string strClientAppVersion, std::string strClientAppMisc, ECSESSIONID *sessionID, ECSession **lppNewSession) {
+ECRESULT ECAuthSession::CreateECSession(ECSESSIONGROUPID ecSessionGroupId,
+    const std::string &cl_ver, const std::string &cl_app,
+    const std::string &cl_app_ver, const std::string &cl_app_misc,
+    ECSESSIONID *sessionID, ECSession **lppNewSession)
+{
 	ECRESULT er = erSuccess;
 	ECSession *lpSession = NULL;
 	ECSESSIONID newSID;
@@ -843,7 +862,11 @@ ECRESULT ECAuthSession::CreateECSession(ECSESSIONGROUPID ecSessionGroupId, std::
 	CreateSessionID(m_ulClientCapabilities, &newSID);
 
 	// ECAuthSessionOffline creates offline version .. no bOverrideClass construction
-	lpSession = new(std::nothrow) ECSession(m_strSourceAddr, newSID, ecSessionGroupId, m_lpDatabaseFactory, m_lpSessionManager, m_ulClientCapabilities, false, m_ulValidationMethod, m_ulConnectingPid, strClientVersion, strClientApp, strClientAppVersion, strClientAppMisc);
+	lpSession = new(std::nothrow) ECSession(m_strSourceAddr.c_str(),
+	            newSID, ecSessionGroupId, m_lpDatabaseFactory,
+	            m_lpSessionManager, m_ulClientCapabilities, false,
+	            m_ulValidationMethod, m_ulConnectingPid,
+	            cl_ver, cl_app, cl_app_ver, cl_app_misc);
 	if (!lpSession) {
 		er = ZARAFA_E_NOT_ENOUGH_MEMORY;
 		goto exit;
@@ -1870,13 +1893,21 @@ size_t ECAuthSession::GetObjectSize()
 }
 
 
-ECAuthSessionOffline::ECAuthSessionOffline(const std::string &strSourceAddr, ECSESSIONID sessionID, ECDatabaseFactory *lpDatabaseFactory, ECSessionManager *lpSessionManager, unsigned int ulCapabilities) :
-	ECAuthSession(strSourceAddr, sessionID, lpDatabaseFactory, lpSessionManager, ulCapabilities)
+ECAuthSessionOffline::ECAuthSessionOffline(const char *src_addr,
+    ECSESSIONID sessionID, ECDatabaseFactory *lpDatabaseFactory,
+    ECSessionManager *lpSessionManager, unsigned int ulCapabilities) :
+	ECAuthSession(src_addr, sessionID, lpDatabaseFactory, lpSessionManager,
+	    ulCapabilities)
 {
 	// nothing todo
 }
 
-ECRESULT ECAuthSessionOffline::CreateECSession(ECSESSIONGROUPID ecSessionGroupId, std::string strClientVersion, std::string strClientApp, std::string strClientAppVersion, std::string strClientAppMisc, ECSESSIONID *sessionID, ECSession **lppNewSession) {
+ECRESULT
+ECAuthSessionOffline::CreateECSession(ECSESSIONGROUPID ecSessionGroupId,
+    const std::string &cl_ver, const std::string &cl_app,
+    const std::string &cl_app_ver, const std::string &cl_app_misc,
+    ECSESSIONID *sessionID, ECSession **lppNewSession)
+{
 	ECRESULT er = erSuccess;
 	ECSession *lpSession = NULL;
 	ECSESSIONID newSID;
@@ -1889,7 +1920,10 @@ ECRESULT ECAuthSessionOffline::CreateECSession(ECSESSIONGROUPID ecSessionGroupId
 	CreateSessionID(m_ulClientCapabilities, &newSID);
 
 	// Offline version
-	lpSession = new(std::nothrow) ECSession(m_strSourceAddr, newSID, ecSessionGroupId, m_lpDatabaseFactory, m_lpSessionManager, m_ulClientCapabilities, true, m_ulValidationMethod, m_ulConnectingPid, strClientVersion, strClientApp, strClientAppVersion, strClientAppMisc);
+	lpSession = new(std::nothrow) ECSession(m_strSourceAddr.c_str(), newSID,
+	            ecSessionGroupId, m_lpDatabaseFactory, m_lpSessionManager,
+	            m_ulClientCapabilities, true, m_ulValidationMethod,
+	            m_ulConnectingPid, cl_ver, cl_app, cl_app_ver, cl_app_misc);
 	if (!lpSession) {
 		er = ZARAFA_E_NOT_ENOUGH_MEMORY;
 		goto exit;

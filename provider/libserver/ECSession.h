@@ -101,7 +101,7 @@ typedef struct {
 */
 class BTSession {
 public:
-	BTSession(const std::string& strSourceAddr, ECSESSIONID sessionID, ECDatabaseFactory *lpDatabaseFactory, ECSessionManager *lpSessionManager, unsigned int ulCapabilities);
+	BTSession(const char *addr, ECSESSIONID sessionID, ECDatabaseFactory *lpDatabaseFactory, ECSessionManager *lpSessionManager, unsigned int ulCapabilities);
 	virtual ~BTSession();
 
 	virtual ECRESULT Shutdown(unsigned int ulTimeout);
@@ -138,7 +138,7 @@ public:
 	virtual size_t GetObjectSize() = 0;
 
 	time_t GetIdleTime();
-	std::string GetSourceAddr(void) { return m_strSourceAddr; }
+	const std::string &GetSourceAddr(void) const { return m_strSourceAddr; }
 
 	typedef enum {
 	    METHOD_NONE, METHOD_USERPASSWORD, METHOD_SOCKET, METHOD_SSO, METHOD_SSL_CERT
@@ -177,7 +177,7 @@ protected:
 */
 class ECSession _zcp_final : public BTSession {
 public:
-	ECSession(const std::string& strSourceAddr, ECSESSIONID sessionID, ECSESSIONGROUPID ecSessionGroupId, ECDatabaseFactory *lpDatabaseFactory, ECSessionManager *lpSessionManager, unsigned int ulCapabilities, bool bIsOffline, AUTHMETHOD ulAuthMethod, int pid, std::string strClientVersion, std::string strClientApp, std::string strClientApplicationVersion, std::string strClientApplicationMisc);
+	ECSession(const char *addr, ECSESSIONID sessionID, ECSESSIONGROUPID ecSessionGroupId, ECDatabaseFactory *lpDatabaseFactory, ECSessionManager *lpSessionManager, unsigned int ulCapabilities, bool bIsOffline, AUTHMETHOD ulAuthMethod, int pid, const std::string &cl_vers, const std::string &cl_app, const std::string &cl_app_ver, const std::string &cl_app_misc);
 
 	virtual ECSESSIONGROUPID GetSessionGroupId();
 	virtual int				 GetConnectingPid();
@@ -247,7 +247,7 @@ private:
 */
 class ECAuthSession : public BTSession {
 public:
-	ECAuthSession(const std::string& strSourceAddr, ECSESSIONID sessionID, ECDatabaseFactory *lpDatabaseFactory, ECSessionManager *lpSessionManager, unsigned int ulCapabilities);
+	ECAuthSession(const char *addr, ECSESSIONID sessionID, ECDatabaseFactory *lpDatabaseFactory, ECSessionManager *lpSessionManager, unsigned int ulCapabilities);
 	virtual ~ECAuthSession();
 
 	ECRESULT ValidateUserLogon(const char* lpszName, const char* lpszPassword, const char* lpszImpersonateUser);
@@ -255,7 +255,7 @@ public:
 	ECRESULT ValidateUserCertificate(soap* soap, const char* lpszName, const char* lpszImpersonateUser);
 	ECRESULT ValidateSSOData(struct soap* soap, const char* lpszName, const char* lpszImpersonateUser, const char* szClientVersion, const char* szClientApp, const char *szClientAppVersion, const char *szClientAppMisc, const struct xsd__base64Binary* lpInput, struct xsd__base64Binary** lppOutput);
 
-	virtual ECRESULT CreateECSession(ECSESSIONGROUPID ecSessionGroupId, std::string strClientVersion, std::string strClientApp, std::string strClientAppVersion, std::string strClientAppMisc, ECSESSIONID *sessionID, ECSession **lppNewSession);
+	virtual ECRESULT CreateECSession(ECSESSIONGROUPID ecSessionGroupId, const std::string &cl_ver, const std::string &cl_app, const std::string &cl_app_ver, const std::string &cl_app_misc, ECSESSIONID *sessionID, ECSession **lppNewSession);
 
 	size_t GetObjectSize();
 
@@ -304,9 +304,9 @@ private:
 */
 class ECAuthSessionOffline _zcp_final : public ECAuthSession {
 public:
-	ECAuthSessionOffline(const std::string& strSourceAddr, ECSESSIONID sessionID, ECDatabaseFactory *lpDatabaseFactory, ECSessionManager *lpSessionManager, unsigned int ulCapabilities);
+	ECAuthSessionOffline(const char *addr, ECSESSIONID sessionID, ECDatabaseFactory *lpDatabaseFactory, ECSessionManager *lpSessionManager, unsigned int ulCapabilities);
 
-	ECRESULT CreateECSession(ECSESSIONGROUPID ecSessionGroupId, std::string strClientVersion, std::string strClientApp, std::string strClientAppVersion, std::string strClientAppMisc, ECSESSIONID *sessionID, ECSession **lppNewSession);
+	ECRESULT CreateECSession(ECSESSIONGROUPID ecSessionGroupId, const std::string &cl_ver, const std::string &cl_app, const std::string &cl_app_ver, const std::string &cl_app_misc, ECSESSIONID *sessionID, ECSession **lppNewSession);
 };
 
 #endif // #ifndef ECSESSION
