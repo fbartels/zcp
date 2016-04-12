@@ -98,7 +98,7 @@ public:
 	std::string		EscapeBinary(const unsigned char *lpData, unsigned int ulLen);
 	std::string		EscapeBinary(const std::string &strData);
 
-	std::string		GetError();
+	const char *GetError(void);
 	
 	ECRESULT		Begin();
 	ECRESULT		Commit();

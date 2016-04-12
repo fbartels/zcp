@@ -97,7 +97,7 @@ public:
 
 	ECRESULT ValidateTables(void) _zcp_override;
 
-	std::string GetError(void) _zcp_override;
+	const char *GetError(void) _zcp_override;
 	DB_ERROR GetLastError(void) _zcp_override;
 	bool SuppressLockErrorLogging(bool bSuppress) _zcp_override;
 	

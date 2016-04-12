@@ -106,7 +106,7 @@ public:
 	virtual	void			FreeResult(DB_RESULT sResult) = 0;
 
 	// Get error string
-	virtual std::string		GetError() = 0;
+	virtual const char *GetError(void) = 0;
 	
 	// Get last error code
 	virtual DB_ERROR		GetLastError() = 0;

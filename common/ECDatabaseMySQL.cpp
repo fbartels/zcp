@@ -482,7 +482,7 @@ std::string ECDatabaseMySQL::EscapeBinary(const std::string &strData)
 	return EscapeBinary(reinterpret_cast<const unsigned char *>(strData.c_str()), strData.size());
 }
 
-std::string ECDatabaseMySQL::GetError()
+const char *ECDatabaseMySQL::GetError(void)
 {
 	if (m_bMysqlInitialize == false)
 		return "MYSQL not initialized";
@@ -532,7 +532,7 @@ ECRESULT ECDatabaseMySQL::IsInnoDBSupported()
 
 	er = DoSelect("SHOW ENGINES", &lpResult);
 	if(er != erSuccess) {
-		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to query supported database engines. Error: %s", GetError().c_str());
+		m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to query supported database engines. Error: %s", GetError());
 		goto exit;
 	}
 
@@ -615,7 +615,7 @@ ECRESULT ECDatabaseMySQL::CreateDatabase(ECConfig *lpConfig)
 
 	strQuery = "CREATE DATABASE IF NOT EXISTS `"+std::string(lpConfig->GetSetting("mysql_database"))+"`";
 	if(Query(strQuery) != erSuccess){
-		m_lpLogger->Log(EC_LOGLEVEL_FATAL,"Unable to create database: %s", GetError().c_str());
+		m_lpLogger->Log(EC_LOGLEVEL_FATAL,"Unable to create database: %s", GetError());
 		return ZARAFA_E_DATABASE_ERROR;
 	}
 

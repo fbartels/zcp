@@ -1375,7 +1375,7 @@ void ECDatabaseMySQL::ResetResult(DB_RESULT sResult) {
 	mysql_data_seek((MYSQL_RES *)sResult, 0);
 }
 
-std::string ECDatabaseMySQL::GetError()
+const char *ECDatabaseMySQL::GetError(void)
 {
 	if(m_bMysqlInitialize == false)
 		return "MYSQL not initialized";
@@ -1508,7 +1508,7 @@ ECRESULT ECDatabaseMySQL::IsInnoDBSupported()
 
 	er = DoSelect("SHOW ENGINES", &lpResult);
 	if(er != erSuccess) {
-		ec_log_crit("Unable to query supported database engines. Error: %s", GetError().c_str());
+		ec_log_crit("Unable to query supported database engines. Error: %s", GetError());
 		goto exit;
 	}
 
@@ -1629,7 +1629,7 @@ ECRESULT ECDatabaseMySQL::CreateDatabase()
 
 	strQuery = "CREATE DATABASE IF NOT EXISTS `"+std::string(m_lpConfig->GetSetting("mysql_database"))+"`";
 	if(Query(strQuery) != erSuccess){
-		ec_log_crit("Unable to create database: %s", GetError().c_str());
+		ec_log_crit("Unable to create database: %s", GetError());
 		er = ZARAFA_E_DATABASE_ERROR;
 		goto exit;
 	}
@@ -1965,7 +1965,7 @@ ECRESULT ECDatabaseMySQL::ValidateTables()
 
 	er = DoSelect("SHOW TABLES", &lpResult);
 	if(er != erSuccess) {
-		ec_log_err("Unable to get all tables from the mysql database. %s", GetError().c_str());
+		ec_log_err("Unable to get all tables from the mysql database. %s", GetError());
 		goto exit;
 	}
 

@@ -103,7 +103,7 @@ HRESULT InstanceIdMapper::Init(ECConfig *lpConfig)
 	}
 	
 	if (er != erSuccess)
-		m_ptrDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "Database connection failed: " + m_ptrDatabase->GetError());
+		m_ptrDatabase->GetLogger()->Log(EC_LOGLEVEL_FATAL, "Database connection failed: %s", m_ptrDatabase->GetError());
 
 	return ZarafaErrorToMAPIError(er);
 }
