@@ -15,6 +15,8 @@ EXTRA_DIST = version versionheader.sh php-webclient-ajax \
 
 BUILT_SOURCES = source-moved-check common/include/zarafa/ecversion.h
 
+sbin_SCRIPTS = tools/python-scripts/zarafa-cachestat.py
+
 .PHONY: source-moved-check
 source-moved-check:
 	@${top_srcdir}/pwdcheck.sh "${abs_top_builddir}"
