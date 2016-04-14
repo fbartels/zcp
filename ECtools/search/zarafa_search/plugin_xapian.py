@@ -101,7 +101,7 @@ class Plugin:
         try:
             # XXX we assume here that all data is from the same store
             doc = (self.data or self.deletes)[0]
-            with closing(self.open_db(doc['serverid'], doc['storeid'], writable=True)) as db:
+            with closing(self.open_db(doc['serverid'], doc['storeid'], writable=True, log=self.log)) as db:
                 termgenerator = xapian.TermGenerator()
                 termgenerator.set_database(db)
                 termgenerator.set_flags(termgenerator.FLAG_SPELLING)
