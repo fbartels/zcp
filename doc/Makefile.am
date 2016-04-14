@@ -19,6 +19,7 @@ genpages = \
 	zarafa-server.8 zarafa-server.cfg.5 \
 	zarafa-set-oof.1 \
 	zarafa-spooler.8 zarafa-spooler.cfg.5 \
+	zarafa-backup-plus.8 \
 	zarafa-stats.1 \
 	zarafa-unix.cfg.5
 
