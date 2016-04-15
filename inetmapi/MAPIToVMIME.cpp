@@ -2178,26 +2178,47 @@ exit:
 }
 
 /**
- * check if named property exists which is used to hold voting options
+ * Check if the named property exists which is used to hold voting options.
  */
-
-bool MAPIToVMIME::is_voting_request(IMessage *lpMessage)
+bool MAPIToVMIME::is_voting_request(IMessage *msg)
 {
-	HRESULT hr = hrSuccess;
-	LPSPropTagArray lpPropTags = NULL;
-	LPSPropValue lpPropContentType = NULL;
-	MAPINAMEID named_prop = {(LPGUID)&PSETID_Common, MNID_ID, {0x8520}};
+	SPropTagArray *tags = NULL;
+	SPropValue *content_type = NULL;
+	MAPINAMEID named_prop = {const_cast<GUID *>(&PSETID_Common), MNID_ID, {0x8520}};
 	MAPINAMEID *named_proplist = &named_prop;
 
-	hr = lpMessage->GetIDsFromNames(1, &named_proplist, MAPI_CREATE, &lpPropTags);
+	HRESULT hr = msg->GetIDsFromNames(1, &named_proplist, MAPI_CREATE, &tags);
 	if (hr != hrSuccess)
-		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to read voting property. Error: %s (0x%08X)",
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "Unable to read voting property: %s (0x%08X)",
 			GetMAPIErrorMessage(hr), hr);
 	else
-		hr = HrGetOneProp(lpMessage, CHANGE_PROP_TYPE(lpPropTags->aulPropTag[0], PT_BINARY), &lpPropContentType);
+		hr = HrGetOneProp(msg, CHANGE_PROP_TYPE(tags->aulPropTag[0],
+		     PT_BINARY), &content_type);
 
-	MAPIFreeBuffer(lpPropTags);
-	MAPIFreeBuffer(lpPropContentType);
+	MAPIFreeBuffer(tags);
+	MAPIFreeBuffer(content_type);
+	return hr == hrSuccess;
+}
+
+/**
+ * Check if the named property exists which denotes if reminder is set
+ */
+bool MAPIToVMIME::has_reminder(IMessage *msg)
+{
+	SPropTagArray *tags = NULL;
+	SPropValue *content_type = NULL;
+	MAPINAMEID named_prop = {const_cast<GUID *>(&PSETID_Common), MNID_ID, {0x8503}};
+	MAPINAMEID *named_proplist = &named_prop;
+
+	HRESULT hr = msg->GetIDsFromNames(1, &named_proplist, MAPI_CREATE, &tags);
+	if (hr != hrSuccess)
+		ec_log_err("Unable to read reminder property: %s (0x%08x)",
+			GetMAPIErrorMessage(hr), hr);
+	else
+		hr = HrGetOneProp(msg, CHANGE_PROP_TYPE(tags->aulPropTag[0], PT_BOOLEAN), &content_type);
+
+	MAPIFreeBuffer(tags);
+	MAPIFreeBuffer(content_type);
 	return hr == hrSuccess;
 }
 
@@ -2290,6 +2311,10 @@ HRESULT MAPIToVMIME::handleTNEF(IMessage* lpMessage, vmime::messageBuilder* lpVM
 			strTnefReason = "Force TNEF because of voting request";
 		}
 
+		if (iUseTnef <= 0 && has_reminder(lpMessage)) {
+			iUseTnef = 1;
+			strTnefReason = "Force TNEF because of reminder";
+		}
         /*
          * Outlook 2000 always sets PR_EC_SEND_AS_ICAL to FALSE, because the
          * iCal option is somehow missing from the options property sheet, and 
