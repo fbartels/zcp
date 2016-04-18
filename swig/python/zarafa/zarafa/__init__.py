@@ -2574,7 +2574,8 @@ class Item(object):
         for row in self.table(PR_MESSAGE_RECIPIENTS):
             row = dict([(x.proptag, x) for x in row])
             if not _type or row[PR_RECIPIENT_TYPE].value == _type:
-                yield Address(self.server, *(row[p].value for p in (PR_ADDRTYPE_W, PR_DISPLAY_NAME_W, PR_EMAIL_ADDRESS_W, PR_ENTRYID)))
+                args = [row[p].value if p in row else None for p in (PR_ADDRTYPE_W, PR_DISPLAY_NAME_W, PR_EMAIL_ADDRESS_W, PR_ENTRYID)]
+                yield Address(self.server, *args)
 
     @property
     def to(self):
@@ -3195,7 +3196,7 @@ class Address:
     def name(self):
         """ Full name """
 
-        return self._name
+        return self._name or u''
 
     @property
     def email(self):
@@ -3211,7 +3212,7 @@ class Address:
             return self._email or ''
 
     def __unicode__(self):
-        return u'Address(%s)' % (self._name or self.email)
+        return u'Address(%s)' % (self.name or self.email)
 
     def __repr__(self):
         return _encode(unicode(self))
