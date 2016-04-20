@@ -10,7 +10,7 @@ SUBDIRS += ECtools spooler gateway caldav installer po doc swig
 
 #EXTRA_DIST = version php-webclient-ajax
 EXTRA_DIST = version versionheader.sh php-webclient-ajax \
-	LICENSE.txt CONTRIBUTORS.txt AGPL-3 TRADEMARKS.txt \
+	LICENSE.txt CONTRIBUTORS.txt AGPL-3 \
 	lddcheck global.am pwdcheck.sh
 
 BUILT_SOURCES = source-moved-check common/include/zarafa/ecversion.h
