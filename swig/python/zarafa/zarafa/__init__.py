@@ -3776,14 +3776,12 @@ def daemon_helper(func, service, log):
         if log and service:
             log.info('stopping %s', service.name)
 
-def daemonize(func, options=None, foreground=False, args=[], log=None, config=None, service=None):
+def daemonize(func, options=None, foreground=False, log=None, config=None, service=None):
     if log and service:
         log.info('starting %s', service.logname or service.name)
     uid = gid = None
     working_directory = '/'
     pidfile = None
-    if args:
-        pidfile = '/var/run/zarafad/%s.pid' % args[0].name
     if config:
         working_directory = config.get('running_path')
         pidfile = config.get('pid_file')
@@ -3791,6 +3789,8 @@ def daemonize(func, options=None, foreground=False, args=[], log=None, config=No
             uid = pwd.getpwnam(config.get('run_as_user')).pw_uid
         if config.get('run_as_group'):
             gid = grp.getgrnam(config.get('run_as_group')).gr_gid
+    if not pidfile and service:
+        pidfile = '/var/run/zarafad/%s.pid' % service.name
     if pidfile: # following checks copied from zarafa-ws
         pidfile = daemon.pidlockfile.TimeoutPIDLockFile(pidfile, 10)
         oldpid = pidfile.read_pid()
@@ -4303,7 +4303,7 @@ Encapsulates everything to create a simple Zarafa service, such as:
             signal.signal(sig, lambda *args: sys.exit(-sig))
         signal.signal(signal.SIGHUP, signal.SIG_IGN) # XXX long term, reload config?
         with log_exc(self.log):
-            daemonize(self.main, options=self.options, args=[], log=self.log, config=self.config, service=self)
+            daemonize(self.main, options=self.options, log=self.log, config=self.config, service=self)
 
 class Worker(Process):
     def __init__(self, service, name, **kwargs):
