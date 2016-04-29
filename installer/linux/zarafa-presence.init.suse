@@ -32,6 +32,8 @@ if [ -z "$ZARAFA_LOCALE" ]; then
 fi
 
 presence=`basename $PRESENCEPROGRAM`
+PIDFILE=/var/run/zarafad/presence.pid
+
 
 case "$1" in
     start)
@@ -44,12 +46,15 @@ case "$1" in
 		unset LC_ALL LANG
 		;;
 
-    stop)
-		echo -n "Stopping Zarafa presence "
-		killproc -t15 $presence
-		rc_status -v
-		;;
-
+    stop)   
+                echo -n "Stopping Zarafa presence "
+                killproc -t15 -p "/var/run/$presence.pid" python
+                RETVAL2="$?"
+                killproc -t15 -p $PIDFILE python
+                RETVAL="$?"
+                test "$RETVAL2" -eq 0 || "$RETVAL" -eq 0
+                rc_status -v
+                ;;
     restart)
 		$0 stop
 		$0 start
