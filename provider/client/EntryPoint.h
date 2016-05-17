@@ -37,7 +37,8 @@ HRESULT __stdcall RemoveFromMAPISVC();
 
 }
 
-HRESULT InitializeProvider(LPPROVIDERADMIN lpAdminProvider, IProfSect *lpProfSect, sGlobalProfileProps sProfileProps, ULONG *lpcStoreID, LPENTRYID *lppStoreID);
+class WSTransport;
+HRESULT InitializeProvider(LPPROVIDERADMIN lpAdminProvider, IProfSect *lpProfSect, sGlobalProfileProps, ULONG *lpcStoreID, LPENTRYID *lppStoreID, WSTransport * = NULL);
 
 // Global values
 extern tstring	g_strCommonFilesZarafa;

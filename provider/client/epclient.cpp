@@ -355,7 +355,9 @@ exit:
  *
  * @return MAPI error codes
  */
-HRESULT InitializeProvider(LPPROVIDERADMIN lpAdminProvider, IProfSect *lpProfSect, sGlobalProfileProps sProfileProps, ULONG *lpcStoreID, LPENTRYID *lppStoreID)
+HRESULT InitializeProvider(LPPROVIDERADMIN lpAdminProvider,
+    IProfSect *lpProfSect, sGlobalProfileProps sProfileProps,
+    ULONG *lpcStoreID, LPENTRYID *lppStoreID, WSTransport *transport)
 {
 	HRESULT hr = hrSuccess;
 
@@ -415,9 +417,13 @@ HRESULT InitializeProvider(LPPROVIDERADMIN lpAdminProvider, IProfSect *lpProfSec
 
 	TRACE_MAPI(TRACE_INFO, "InitializeProvider", "Resource type=%s", ResourceTypeToString(ulResourceType) );
 
-	hr = WSTransport::Create(0, &lpTransport);
-	if(hr != hrSuccess)
-		goto exit;
+	if (transport != NULL) {
+		lpTransport = transport;
+	} else {
+		hr = WSTransport::Create(0, &lpTransport);
+		if (hr != hrSuccess)
+			goto exit;
+	}
 
 	hr = lpTransport->HrLogon(sProfileProps);
 	if(hr != hrSuccess)
@@ -657,14 +663,14 @@ exit:
 	//Free allocated memory
 	MAPIFreeBuffer(pABeid);
 	pABeid = NULL;
-	if (lpTransport)
+	if (lpTransport != NULL && lpTransport != transport)
 		lpTransport->Release();
 
 	return hr;
 }
 
 static HRESULT UpdateProviders(LPPROVIDERADMIN lpAdminProviders,
-    const sGlobalProfileProps &sProfileProps)
+    const sGlobalProfileProps &sProfileProps, WSTransport *transport)
 {
 	HRESULT hr;
 
@@ -704,7 +710,7 @@ static HRESULT UpdateProviders(LPPROVIDERADMIN lpAdminProviders,
 		// Set already PR_PROVIDER_UID, ignore error
 		HrSetOneProp(ptrProfSect, lpsProviderUID);
 
-		hr = InitializeProvider(lpAdminProviders, ptrProfSect, sProfileProps, NULL, NULL);
+		hr = InitializeProvider(lpAdminProviders, ptrProfSect, sProfileProps, NULL, NULL, transport);
 		if (hr != hrSuccess)
 			return hr;
 	}
@@ -712,7 +718,10 @@ static HRESULT UpdateProviders(LPPROVIDERADMIN lpAdminProviders,
 }
 
 // Called by MAPI to configure, or create a service
-extern "C" HRESULT __stdcall MSGServiceEntry(HINSTANCE hInst, LPMALLOC lpMalloc, LPMAPISUP psup, ULONG ulUIParam, ULONG ulFlags, ULONG ulContext, ULONG cvals, LPSPropValue pvals, LPPROVIDERADMIN lpAdminProviders, MAPIERROR **lppMapiError)
+extern "C" HRESULT __stdcall MSGServiceEntry(HINSTANCE hInst,
+    LPMALLOC lpMalloc, LPMAPISUP psup, ULONG ulUIParam, ULONG ulFlags,
+    ULONG ulContext, ULONG cvals, LPSPropValue pvals,
+    LPPROVIDERADMIN lpAdminProviders, MAPIERROR **lppMapiError)
 {
 #if defined(WIN32) && !defined(WINCE)
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
@@ -847,7 +856,7 @@ extern "C" HRESULT __stdcall MSGServiceEntry(HINSTANCE hInst, LPMALLOC lpMalloc,
 				goto exit;
 			}
 
-			hr = InitializeProvider(lpAdminProviders, ptrProfSect, sProfileProps, NULL, NULL);
+			hr = InitializeProvider(lpAdminProviders, ptrProfSect, sProfileProps, NULL, NULL, NULL);
 			if (hr != hrSuccess)
 				goto exit;
 		
@@ -1227,7 +1236,7 @@ extern "C" HRESULT __stdcall MSGServiceEntry(HINSTANCE hInst, LPMALLOC lpMalloc,
 		}// while(1)
 
 		if(bInitStores) {
-			hr = UpdateProviders(lpAdminProviders, sProfileProps);
+			hr = UpdateProviders(lpAdminProviders, sProfileProps, lpTransport);
 			if(hr != hrSuccess)
 				goto exit;
 		}
