@@ -83,6 +83,7 @@ public:
 	virtual HRESULT HrClone(WSTransport **lppTransport);
 
 	virtual HRESULT HrLogOff();
+	HRESULT logoff_nd(void);
 	virtual HRESULT HrSetRecvTimeout(unsigned int ulSeconds);
 
 	virtual HRESULT CreateAndLogonAlternate(LPCSTR szServer, WSTransport **lppTransport) const;
@@ -329,6 +330,7 @@ protected:
 private:
 	pthread_mutex_t					m_ResolveResultCacheMutex;
 	ECCache<ECMapResolveResults>	m_ResolveResultCache;
+	bool m_has_session;
 
 friend class WSMessageStreamExporter;
 friend class WSMessageStreamImporter;
