@@ -1,5 +1,10 @@
 Release notes for 7.2.4
 =======================
+Fixes:
+* server: A fast-growing memory leak was resolved [ZCP-13952]
+* server: avoid "netlink: 4 bytes leftover" in dmesg [ZCP-13921]
+Enhancements:
+* server: add ICS log messages
 
 
 Release notes for 7.2.3
