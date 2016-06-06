@@ -71,7 +71,7 @@ libzarafa_server_la_SOURCES = \
 	ECTPropsPurge.cpp ECTPropsPurge.h \
 	ECMailBoxTable.cpp ECMailBoxTable.h \
 	ECTestProtocol.cpp ECTestProtocol.h \
-	ZarafaCmdUtil.cpp ZarafaCmdUtil.h \
+	ZarafaCmdUtil.cpp ZarafaCmdUtil.h logontime.cpp logontime.hpp \
 	ECLockManager.cpp ECLockManager.h
 libzarafa_server_la_LIBADD = \
 	../../common/libzcp_common_util.la ../common/libzarafacommon.la \
