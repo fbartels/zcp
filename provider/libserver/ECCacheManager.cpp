@@ -19,6 +19,7 @@
 //////////////////////////////////////////////////////////////////////
 #include <zarafa/platform.h>
 #include <exception>
+#include <boost/static_assert.hpp>
 
 #include <mapidefs.h>
 #include <mapitags.h>
@@ -1975,10 +1976,8 @@ ECRESULT ECCacheManager::GetEntryIdFromObject(unsigned int ulObjId, struct soap 
 	er = GetEntryIdFromObject(ulObjId, soap, ulFlags, lpEntryId);
 	if (er != erSuccess)
 		goto exit;
-		
-    // Set flags in entryid
-    ((EID *)lpEntryId->__ptr)->usFlags = ulFlags;
 
+	// Flags already set by GetEntryIdFromObject(4args)
 	*lppEntryId = lpEntryId;
 exit:
 	if (er != erSuccess)
@@ -1990,13 +1989,23 @@ exit:
 ECRESULT ECCacheManager::GetEntryIdFromObject(unsigned int ulObjId, struct soap *soap, unsigned int ulFlags, entryId* lpEntryId)
 {
 	ECRESULT	er = erSuccess;
+	EID *d;
 
 	er = GetPropFromObject( PROP_ID(PR_ENTRYID), ulObjId, soap, (unsigned int*)&lpEntryId->__size, &lpEntryId->__ptr);
 	if (er != erSuccess)
 	    goto exit;
 
-    // Set flags in entryid
-    ((EID *)lpEntryId->__ptr)->usFlags = ulFlags;
+	// Set flags in entryid
+	BOOST_STATIC_ASSERT(offsetof(EID, usFlags) == offsetof(EID_V0, usFlags));
+	d = reinterpret_cast<EID *>(lpEntryId->__ptr);
+	if (lpEntryId->__size < 0 ||
+	    static_cast<size_t>(lpEntryId->__size) <
+	    offsetof(EID, usFlags) + sizeof(d->usFlags)) {
+		ec_log_err("%s: entryid has size %d; not enough for EID_V1.usFlags",
+			__func__, lpEntryId->__size);
+		return MAPI_E_CORRUPT_DATA;
+	}
+	d->usFlags = ulFlags;
     
 exit:
 	return er;

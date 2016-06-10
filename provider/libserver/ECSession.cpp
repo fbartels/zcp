@@ -33,6 +33,7 @@
 #include <pwd.h>
 #include <dirent.h>
 #endif
+#include <boost/static_assert.hpp>
 
 #include <mapidefs.h>
 #include <mapitags.h>
@@ -649,6 +650,7 @@ void ECSession::GetClientApp(std::string *lpstrClientApp)
 ECRESULT ECSession::GetObjectFromEntryId(const entryId *lpEntryId, unsigned int *lpulObjId, unsigned int *lpulEidFlags)
 {
 	ECRESULT er = erSuccess;
+	EID *d;
 	unsigned int ulObjId = 0;
 
 	if (lpEntryId == NULL || lpulObjId == NULL) {
@@ -662,8 +664,17 @@ ECRESULT ECSession::GetObjectFromEntryId(const entryId *lpEntryId, unsigned int 
 
 	*lpulObjId = ulObjId;
 
-	if(lpulEidFlags)
-		*lpulEidFlags = ((EID *)lpEntryId->__ptr)->usFlags;
+	if (lpulEidFlags != NULL) {
+		BOOST_STATIC_ASSERT(offsetof(EID, usFlags) == offsetof(EID_V0, usFlags));
+		d = reinterpret_cast<EID *>(lpEntryId->__ptr);
+		if (lpEntryId->__size < 0 ||
+		    static_cast<size_t>(lpEntryId->__size) < offsetof(EID, usFlags) + sizeof(d->usFlags)) {
+			ec_log_err("%s: entryid has size %d; not enough for EID_V1.usFlags",
+				__func__, lpEntryId->__size);
+			return MAPI_E_CORRUPT_DATA;
+		}
+		*lpulEidFlags = d->usFlags;
+	}
 
 exit:
 	return er;
