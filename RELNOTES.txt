@@ -8,6 +8,7 @@ Fixes:
 * all daemons: fixed coredumps not getting generated most of the time
 * ics: avoid referencing a value-replaced mysql_fetch_lengths array
 * ldapplugin: hopefully avoid "Timed out" errors from ldap_search [KC-74]
+* swig: resolve a memory leak when using python components [KC-72]
 Enhancements:
 * server: add ICS log messages [ZCP-13980]
 * ldapplugin: improved error messages
