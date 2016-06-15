@@ -3,8 +3,13 @@ Release notes for 7.2.4
 Fixes:
 * server: A fast-growing memory leak was resolved [ZCP-13952]
 * server: avoid "netlink: 4 bytes leftover" in dmesg [ZCP-13921]
+* server: better guard against off-size EntryIDs
+* backup: restore container classes [ZCP-13968]
+* all daemons: fixed coredumps not getting generated most of the time
+* ics: avoid referencing a value-replaced mysql_fetch_lengths array
 Enhancements:
-* server: add ICS log messages
+* server: add ICS log messages [ZCP-13980]
+* ldapplugin: improved error messages
 
 
 Release notes for 7.2.3
