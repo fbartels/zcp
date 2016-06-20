@@ -1427,7 +1427,8 @@ int main(int argc, char *argv[]) {
 	}
 #endif
 
-	sc = new StatsClient(g_lpConfig->GetSetting("z_statsd_stats"), g_lpLogger);
+	sc = new StatsClient(g_lpLogger);
+	sc->startup(g_lpConfig->GetSetting("z_statsd_stats"));
 
 #ifdef WIN32
 	// Parse for standard arguments (install, uninstall, version etc.)
