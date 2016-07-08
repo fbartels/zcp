@@ -6,6 +6,7 @@ Documentation=man:zarafa-spooler(8) man:zarafa-spooler.cfg(5)
 Type=simple
 Environment=LC_ALL=C LANG=C
 ExecStart=/usr/sbin/zarafa-spooler -F -c /etc/zarafa/spooler.cfg
+ExecReload=/bin/kill -HUP $MAINPID
 
 [Install]
 WantedBy=multi-user.target

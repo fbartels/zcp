@@ -5,6 +5,7 @@ Description=Zarafa Collaboration Platform Presence Daemon
 Type=simple
 Environment=LC_ALL=C LANG=C
 ExecStart=/usr/sbin/zarafa-presence -F
+ExecReload=/bin/kill -HUP $MAINPID
 
 [Install]
 WantedBy=multi-user.target

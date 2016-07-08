@@ -6,6 +6,7 @@ Documentation=man:zarafa-gateway(8) man:zarafa-gateway.cfg(5)
 Type=simple
 Environment=LC_ALL=C LANG=C
 ExecStart=/usr/sbin/zarafa-gateway -F -c /etc/zarafa/gateway.cfg
+ExecReload=/bin/kill -HUP $MAINPID
 
 [Install]
 WantedBy=multi-user.target

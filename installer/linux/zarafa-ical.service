@@ -6,6 +6,7 @@ Documentation=man:zarafa-ical(8) man:zarafa-ical.cfg(5)
 Type=simple
 Environment=LC_ALL=C LANG=C
 ExecStart=/usr/sbin/zarafa-ical -F -c /etc/zarafa/ical.cfg
+ExecReload=/bin/kill -HUP $MAINPID
 
 [Install]
 WantedBy=multi-user.target

@@ -6,6 +6,7 @@ Documentation=man:zarafa-monitor(8) man:zarafa-monitor.cfg(5)
 Type=simple
 Environment=LC_ALL=C LANG=C
 ExecStart=/usr/sbin/zarafa-monitor -F -c /etc/zarafa/monitor.cfg
+ExecReload=/bin/kill -HUP $MAINPID
 
 [Install]
 WantedBy=multi-user.target
