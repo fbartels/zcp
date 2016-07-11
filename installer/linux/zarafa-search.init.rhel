@@ -59,7 +59,7 @@ start() {
 
 stop() {
 	echo -n $"Stopping $search: "
-	killproc $SEARCHPROGRAM
+	killproc -p "$pidfile"
 	RETVAL=$?
 	echo
 	[ $RETVAL -eq 0 ] && rm -f $lockfile $pidfile
@@ -74,7 +74,7 @@ restart() {
 
 reload() {
 	echo -n $"Restarting $search: "
-	killproc $SEARCHPROGRAM -SIGHUP
+	killproc -p "$pidfile" -SIGHUP
 	RETVAL=$?
 	echo
 
@@ -90,7 +90,7 @@ case "$1" in
 		stop
 		;;
     status)
-		status $search
+		status -p "$pidfile"
 		RETVAL=$?
 		;;
     restart|force-reload)
