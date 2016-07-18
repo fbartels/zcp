@@ -1122,7 +1122,7 @@ Looks at command-line to see if another server address or other related options 
         try:
             mailuser = self.mapisession.OpenEntry(entryid, None, 0)
             return self.user(HrGetOneProp(mailuser, PR_ACCOUNT).Value).email # XXX PR_SMTP_ADDRESS_W from mailuser?
-        except (Error, MAPIErrorNotFound): # XXX deleted user
+        except (ZarafaException, MAPIErrorNotFound): # XXX deleted user
             return '' # XXX groups
 
     def __unicode__(self):
