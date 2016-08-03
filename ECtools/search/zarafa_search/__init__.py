@@ -62,6 +62,7 @@ CONFIG = {
     'run_as_user': Config.string(default="zarafa"),
     'run_as_group': Config.string(default="zarafa"),
     'search_engine': Config.string(default='xapian'),
+    'index_junk': Config.boolean(default=True),
     'server_bind_name': Config.string(default='file:///var/run/zarafad/search.sock'),
     'ssl_private_key_file': Config.path(default=None, check=False), # XXX don't check when default=None?
     'ssl_certificate_file': Config.path(default=None, check=False),
@@ -154,7 +155,8 @@ class IndexWorker(zarafa.Worker):
                 (_, storeguid, folderid, reindex) = self.iqueue.get()
                 store = server.store(storeguid)
                 folder = zarafa.Folder(store, folderid.decode('hex')) # XXX
-                if store.public or folder not in (store.junk, store.outbox):
+                if (folder not in (store.root, store.outbox, store.drafts)) and \
+                   (folder != store.junk or config['index_junk']):
                     self.log.info('syncing folder: %s %s' % (storeguid, folder.name))
                     importer = FolderImporter(server.guid, config, plugin, self.log)
                     state = db_get(state_db, folder.entryid) if not reindex else None
