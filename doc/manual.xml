@@ -9891,6 +9891,8 @@
 			<listitem>
 				<para>Remove the current index of the given user and
 				start to make a new index immediately.</para>
+				<para>The given argument can be a user name, store GUID or 'public'
+				(without quotes) to indicate the public store.</para>
 				<para>The zarafa-search daemon must already be running
 				on the same machine.</para>
             </listitem>
