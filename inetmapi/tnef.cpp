@@ -1581,14 +1581,14 @@ HRESULT ECTNEF::Finish()
 	if(ulFlags == TNEF_DECODE) {
 		// Write properties to message
 		for (iterProps = lstProps.begin(); iterProps != lstProps.end(); ++iterProps) {
+			unsigned int id = PROP_ID((*iterProps)->ulPropTag);
 
-			if(PROP_ID((*iterProps)->ulPropTag) == PROP_ID(PR_MESSAGE_CLASS) ||
-				!FPropExists(m_lpMessage, (*iterProps)->ulPropTag) ||
-				PROP_ID((*iterProps)->ulPropTag) == PROP_ID(PR_RTF_COMPRESSED) ||
-				PROP_ID((*iterProps)->ulPropTag) == PROP_ID(PR_HTML))
-			{
+			if (id == PROP_ID(PR_MESSAGE_CLASS) ||
+			    !FPropExists(m_lpMessage, (*iterProps)->ulPropTag) ||
+			    id == PROP_ID(PR_RTF_COMPRESSED) ||
+			    id == PROP_ID(PR_HTML) ||
+			    id == PROP_ID(PR_INTERNET_CPID))
   				m_lpMessage->SetProps(1, *iterProps, NULL);
-			}
 			// else, Property already exists, do *not* overwrite it
 
 		}
