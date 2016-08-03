@@ -19,7 +19,10 @@ class Plugin:
 
     def search(self, server_guid, store_guid, folder_ids, fields_terms, query, log):
         log.info('performing query: %s' % query)
-        return [r['docid'] for r in self.solr.search(query, fl=['docid'])], '' # XXX suggestions
+        return [r['docid'] for r in self.solr.search(query, fl=['docid'])]
+
+    def suggest(self, server_guid, store_guid, terms, orig, log):
+        return orig
 
     def update(self, doc):
         self.data.append(doc)
