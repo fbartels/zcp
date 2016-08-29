@@ -1,7 +1,7 @@
 """
 High-level python bindings for Zarafa
 
-Copyright 2014 Zarafa and contributors, license AGPLv3 (see LICENSE file for details)
+Copyright 2005 - 2016 Zarafa and its licensors (see LICENSE file for details)
 
 Some goals:
 
@@ -51,12 +51,14 @@ Main classes:
 from __future__ import with_statement
 
 import contextlib
-import cPickle as pickle
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 import csv
 import daemon
 import errno
 import fnmatch
-import lockfile
 import daemon.pidlockfile
 import datetime
 from functools import wraps
@@ -67,16 +69,21 @@ except ImportError:
     pass
 import logging.handlers
 from multiprocessing import Process, Queue
-from Queue import Empty
+try:
+    from Queue import Empty
+except ImportError:
+    from queue import Empty
 import optparse
 import os.path
 import pwd
 import socket
 import sys
-import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 import struct
 import threading
-import time
 import traceback
 import mailbox
 import email.parser
@@ -122,8 +129,20 @@ PSETID_Log = DEFINE_OLEGUID(0x0006200A, 0, 0)
 PSETID_Note = DEFINE_OLEGUID(0x0006200E, 0, 0)
 PSETID_Meeting = DEFINE_GUID(0x6ED8DA90, 0x450B, 0x101B,0x98, 0xDA, 0x00, 0xAA, 0x00, 0x3F, 0x13, 0x05)
 
-NAMED_PROPS_INTERNET_HEADERS = [MAPINAMEID(PS_INTERNET_HEADERS, MNID_STRING, u'x-original-to'),]
-NAMED_PROPS_ARCHIVER = [MAPINAMEID(PSETID_Archive, MNID_STRING, u'store-entryids'), MAPINAMEID(PSETID_Archive, MNID_STRING, u'item-entryids'), MAPINAMEID(PSETID_Archive, MNID_STRING, u'stubbed'),]
+NAMED_PROPS_INTERNET_HEADERS = [
+    MAPINAMEID(PS_INTERNET_HEADERS, MNID_STRING, u'x-original-to'),
+]
+
+NAMED_PROPS_ARCHIVER = [
+    MAPINAMEID(PSETID_Archive, MNID_STRING, u'store-entryids'),
+    MAPINAMEID(PSETID_Archive, MNID_STRING, u'item-entryids'),
+    MAPINAMEID(PSETID_Archive, MNID_STRING, u'stubbed'),
+    MAPINAMEID(PSETID_Archive, MNID_STRING, u'ref-store-entryid'),
+    MAPINAMEID(PSETID_Archive, MNID_STRING, u'ref-item-entryid'),
+    MAPINAMEID(PSETID_Archive, MNID_STRING, u'ref-prev-entryid'),
+    MAPINAMEID(PSETID_Archive, MNID_STRING, u'flags')
+]
+
 NAMED_PROP_CATEGORY = MAPINAMEID(PS_PUBLIC_STRINGS, MNID_STRING, u'Keywords')
 
 GUID_NAMESPACE = {
@@ -459,6 +478,32 @@ def _encode(s):
 def _decode(s):
     return s.decode(getattr(sys.stdin, 'encoding', 'utf8') or 'utf8')
 
+def _permissions(obj):
+        try:
+            acl_table = obj.mapiobj.OpenProperty(PR_ACL_TABLE, IID_IExchangeModifyTable, 0, 0)
+        except MAPIErrorNotFound:
+            return
+        table = Table(obj.server, acl_table.GetTable(0), PR_ACL_TABLE)
+        for row in table.dict_rows():
+            yield Permission(acl_table, row, obj.server)
+
+def _permission(obj, member, create):
+        for permission in obj.permissions():
+            if permission.member == member:
+                return permission
+        if create:
+            acl_table = obj.mapiobj.OpenProperty(PR_ACL_TABLE, IID_IExchangeModifyTable, 0, 0)
+            if isinstance(member, User): # XXX *.id_ or something..?
+                memberid = member.userid
+            elif isinstance(member, Group):
+                memberid = member.groupid
+            else:
+                memberid = member.companyid
+            acl_table.ModifyTable(0, [ROWENTRY(ROW_ADD, [SPropValue(PR_MEMBER_ENTRYID, memberid.decode('hex')), SPropValue(PR_MEMBER_RIGHTS, 0)])])
+            return obj.permission(member)
+        else:
+            raise ZarafaNotFoundException("no permission entry for '%s'" % member.name)
+
 class ZarafaException(Exception):
     pass
 
@@ -697,7 +742,7 @@ class Table(object):
         return '\n'.join(result)
 
     def csv(self, *args, **kwargs):
-        csvfile = StringIO.StringIO()
+        csvfile = StringIO()
         writer = csv.writer(csvfile, *args, **kwargs)
         writer.writerows(self.data(header=True))
         return csvfile.getvalue()
@@ -801,7 +846,7 @@ Looks at command-line to see if another server address or other related options 
         self._admin_store = None
         self._gab = None
         entryid = HrGetOneProp(self.mapistore, PR_STORE_ENTRYID).Value
-        self.pseudo_url = entryid[entryid.find('pseudo:'):-1] # XXX ECSERVER
+        self.pseudo_url = entryid[entryid.find(b'pseudo:'):-1] # XXX ECSERVER
         self.name = self.pseudo_url[9:] # XXX get this kind of stuff from pr_ec_statstable_servers..?
         self._archive_sessions = {}
 
@@ -1018,6 +1063,11 @@ Looks at command-line to see if another server address or other related options 
             return self.mapisession.OpenMsgStore(0, row[0].Value, None, MDB_WRITE)
         raise ZarafaNotFoundException("no such store: '%s'" % guid)
 
+    def _store2(self, storeid): # XXX max lifetime
+        if storeid not in self._store_cache:
+            self._store_cache[storeid] = self.mapisession.OpenMsgStore(0, storeid, IID_IMsgStore, MDB_WRITE)
+        return self._store_cache[storeid]
+
     def groups(self):
         for name in MAPI.Util.AddressBook.GetGroupList(self.mapisession, None, MAPI_UNICODE):
             yield Group(name, self)
@@ -1076,7 +1126,7 @@ Looks at command-line to see if another server address or other related options 
         table = self.ems.GetMailboxTable(None, 0)
         table.SetColumns([PR_DISPLAY_NAME_W, PR_ENTRYID], 0)
         for row in table.QueryRows(-1, 0):
-            store = Store(self, self.mapisession.OpenMsgStore(0, row[1].Value, None, MDB_WRITE))
+            store = Store(self, self.mapisession.OpenMsgStore(0, row[1].Value, None, MDB_WRITE)) # XXX cache
             if system or store.public or (store.user and store.user.name != 'SYSTEM'):
                 yield store
 
@@ -1085,6 +1135,9 @@ Looks at command-line to see if another server address or other related options 
             mapistore = self.sa.CreateStore(ECSTORE_TYPE_PUBLIC, EID_EVERYONE)
             return Store(self, mapistore)
         # XXX
+
+    def remove_store(self, store): # XXX server.delete?
+        self.sa.RemoveStore(store.guid.decode('hex'))
 
     def sync_users(self):
         # Flush user cache on the server
@@ -1699,14 +1752,20 @@ class Store(object):
     def prop(self, proptag):
         return _prop(self, self.mapiobj, proptag)
 
-    def props(self):
-        return _props(self.mapiobj)
+    def props(self, namespace=None):
+        return _props(self.mapiobj, namespace=namespace)
 
     def create_searchfolder(self, text=None): # XXX store.findroot.create_folder()?
         import uuid # XXX username+counter? permission problems to determine number?
         finder_root = self.root.folder('FINDER_ROOT') # XXX store.findroot?
         mapiobj = finder_root.mapiobj.CreateFolder(FOLDER_SEARCH, str(uuid.uuid4()), 'comment', None, 0)
         return Folder(self, mapiobj=mapiobj)
+
+    def permissions(self):
+        return _permissions(self)
+
+    def permission(self, member, create=False):
+        return _permission(self, member, create)
 
     def __eq__(self, s): # XXX check same server?
         if isinstance(s, Store):
@@ -2133,33 +2192,13 @@ class Folder(object):
         return Folder(self.store, self._entryid, deleted=True)
 
     def permissions(self):
-        try:
-            acl_table = self.mapiobj.OpenProperty(PR_ACL_TABLE, IID_IExchangeModifyTable, 0, 0)
-        except MAPIErrorNotFound:
-            return
-        table = Table(self.server, acl_table.GetTable(0), PR_ACL_TABLE)
-        for row in table.dict_rows():
-            yield Permission(acl_table, row, self.server)
+        return _permissions(self)
 
     def permission(self, member, create=False):
-        for permission in self.permissions():
-            if permission.member == member:
-                return permission
-        if create:
-            acl_table = self.mapiobj.OpenProperty(PR_ACL_TABLE, IID_IExchangeModifyTable, 0, 0)
-            if isinstance(member, User): # XXX *.id_ or something..?
-                memberid = member.userid
-            elif isinstance(member, Group):
-                memberid = member.groupid
-            else:
-                memberid = member.companyid
-            acl_table.ModifyTable(0, [ROWENTRY(ROW_ADD, [SPropValue(PR_MEMBER_ENTRYID, memberid.decode('hex')), SPropValue(PR_MEMBER_RIGHTS, 0)])])
-            return self.permission(member)
-        else:
-            raise ZarafaNotFoundException("no permission entry for '%s'" % member.name)
+        return _permission(self, member, create)
 
     def rights(self, member):
-        if member == self.store.user: # XXX admin-over-user
+        if member == self.store.user: # XXX admin-over-user, Store.rights (inheritance)
             return NAME_RIGHT.keys()
         parent = self
         feids = set() # avoid loops
@@ -2239,7 +2278,8 @@ class Item(object):
             
         elif create:
             self.mapiobj = self.folder.mapiobj.CreateMessage(None, 0)
-            self.server = server = self.folder.store.server # XXX
+            self.store = self.folder.store
+            self.server = server = self.store.server # XXX
 
             if eml is not None:
                 # options for CreateMessage: 0 / MAPI_ASSOCIATED
@@ -3497,9 +3537,11 @@ class User(object):
         arch_store = arch_session.OpenMsgStore(0, arch_storeid, None, MDB_WRITE)
         return Store(self.server, arch_store) # XXX server?
 
+    # XXX deprecated? user.store = .., user.archive_store = ..
     def hook(self, store): # XXX add Company.(un)hook for public store
         self.server.sa.HookStore(ECSTORE_TYPE_PRIVATE, self.userid.decode('hex'), store.guid.decode('hex'))
 
+    # XXX deprecated? user.store = None
     def unhook(self):
         return self.server.sa.UnhookStore(ECSTORE_TYPE_PRIVATE, self.userid.decode('hex'))
 
@@ -3524,7 +3566,6 @@ class User(object):
             return HrGetOneProp(self.mapiobj, PR_EC_ARCHIVE_SERVERS).Value[0]
         except MAPIErrorNotFound:
             return
-
 
     def prop(self, proptag):
         return _prop(self, self.mapiobj, proptag)
@@ -3593,8 +3634,10 @@ class User(object):
 
         return self
 
-    def __getattr__(self, x):
-        return getattr(self.store, x)
+    def __getattr__(self, x): # XXX add __setattr__, e.g. for 'user.archive_store = None'
+        store = self.store
+        if store:
+            return getattr(store, x)
 
 class Quota(object):
     """
@@ -3746,7 +3789,7 @@ class TrackingContentsImporter(ECImportContentsChanges):
             else:
                 store_entryid = PpropFindProp(props, PR_STORE_ENTRYID).Value
                 store_entryid = WrapStoreEntryID(0, 'zarafa6client.dll', store_entryid[:-4])+self.server.pseudo_url+'\x00'
-                mapistore = self.server.mapisession.OpenMsgStore(0, store_entryid, None, 0)
+                mapistore = self.server.mapisession.OpenMsgStore(0, store_entryid, None, 0) # XXX cache
             item = Item()
             item.server = self.server
             item.store = Store(self.server, mapistore)
@@ -3842,13 +3885,6 @@ def daemonize(func, options=None, foreground=False, log=None, config=None, servi
                     raise
                 # errno.ENOENT indicates that no process with pid=oldpid exists, which is ok
                 pidfile.break_lock()
-#            else: # XXX can we do this in general? are there libraries to avoid having to deal with this? daemonrunner?
-#                # A process exists with pid=oldpid, check if it's a zarafa-ws instance.
-#                # sys.argv[0] contains the script name, which matches cmdline[1]. But once compiled
-#                # sys.argv[0] is probably the executable name, which will match cmdline[0].
-#                if not sys.argv[0] in cmdline[:2]:
-#                    # break the lock if it's another process
-#                    pidfile.break_lock()
     if uid is not None and gid is not None:
         for h in log.handlers:
             if isinstance(h, logging.handlers.WatchedFileHandler):
@@ -3884,12 +3920,12 @@ def _loglevel(options, config):
         '4': logging.INFO,
         '5': logging.INFO,
         '6': logging.DEBUG,
-        'debug': logging.DEBUG,
-        'info': logging.INFO,
-        'warning': logging.WARNING,
-        'error': logging.ERROR,
-        'critical': logging.CRITICAL,
-    }[log_level]
+        'DEBUG': logging.DEBUG,
+        'INFO': logging.INFO,
+        'WARNING': logging.WARNING,
+        'ERROR': logging.ERROR,
+        'CRITICAL': logging.CRITICAL,
+    }[log_level.upper()]
 
 def logger(service, options=None, stdout=False, config=None, name=''):
     logger = logging.getLogger(name or service)
@@ -3923,6 +3959,9 @@ def logger(service, options=None, stdout=False, config=None, name=''):
 
 def _parse_date(option, opt_str, value, parser):
     setattr(parser.values, option.dest, datetime.datetime.strptime(value, '%Y-%m-%d'))
+
+def _parse_loglevel(option, opt_str, value, parser):
+    setattr(parser.values, option.dest, value.upper())
 
 def parser(options='cskpUPufmvCSlbe', usage=None):
     """
@@ -3992,7 +4031,7 @@ Available options:
     if 'F' in options: parser.add_option('-F', '--foreground', dest='foreground', action='store_true', help='run program in foreground')
 
     if 'm' in options: parser.add_option('-m', '--modify', dest='modify', action='store_true', help='enable database modification')
-    if 'l' in options: parser.add_option('-l', '--log-level', dest='loglevel', action='store', help='set log level', metavar='NAME')
+    if 'l' in options: parser.add_option('-l', '--log-level', dest='loglevel', action='callback', default='INFO', type='str', callback=_parse_loglevel, help='set log level (CRITICAL, ERROR, WARNING, INFO, DEBUG)', metavar='LEVEL')
     if 'v' in options: parser.add_option('-v', '--verbose', dest='verbose', action='store_true', help='enable verbose output')
     if 'V' in options: parser.add_option('-V', '--version', dest='version', action='store_true', help='show program version')
 
@@ -4198,7 +4237,7 @@ Example::
 
 CONFIG = {
     'log_method': Config.string(options=['file', 'syslog'], default='file'),
-    'log_level': Config.string(options=map(str, range(7))+['info', 'debug', 'warning', 'error', 'critical'], default='info'),
+    'log_level': Config.string(options=[str(i) for i in range(7)] + ['info', 'debug', 'warning', 'error', 'critical'], default='info'),
     'log_file': Config.string(default=None),
     'log_timestamp': Config.integer(options=[0,1], default=1),
     'pid_file': Config.string(default=None),
