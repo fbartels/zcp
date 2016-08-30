@@ -849,7 +849,6 @@ Looks at command-line to see if another server address or other related options 
         entryid = HrGetOneProp(self.mapistore, PR_STORE_ENTRYID).Value
         self.pseudo_url = entryid[entryid.find(b'pseudo:'):-1] # XXX ECSERVER
         self.name = self.pseudo_url[9:] # XXX get this kind of stuff from pr_ec_statstable_servers..?
-        self._archive_sessions = {}
 
     def nodes(self): # XXX delay mapi sessions until actually needed
         for row in self.table(PR_EC_STATSTABLE_SERVERS).dict_rows():
@@ -868,15 +867,6 @@ Looks at command-line to see if another server address or other related options 
     def gab_table(self): # XXX separate addressbook class? useful to add to self.tables?
         ct = self.gab.GetContentsTable(MAPI_DEFERRED_ERRORS)
         return Table(self, ct, PR_CONTAINER_CONTENTS)
-
-    def _archive_session(self, host):
-        if host not in self._archive_sessions:
-            try:
-                self._archive_sessions[host] = OpenECSession('SYSTEM', '', 'https://%s:237/zarafa' % host, sslkey_file=self.sslkey_file, sslkey_pass=self.sslkey_pass)
-            except: # MAPIErrorLogonFailed, MAPIErrorNetworkError:
-                self._archive_sessions[host] = None # XXX avoid subsequent timeouts for now
-                raise ZarafaException("could not connect to server at '%s'" % host)
-        return self._archive_sessions[host]
 
     @property
     def ab(self):
@@ -1725,6 +1715,47 @@ class Store(object):
             pass
 
     @property
+    def archive_store(self):
+        """ Archive :class:`Store` or *None* if not found """
+
+        ids = self.mapiobj.GetIDsFromNames(NAMED_PROPS_ARCHIVER, 0) # XXX merge namedprops stuff
+        PROP_STORE_ENTRYIDS = CHANGE_PROP_TYPE(ids[0], PT_MV_BINARY)
+
+        try:
+            # support for multiple archives was a mistake, and is not and _should not_ be used. so we just pick nr 0.
+            entryid = HrGetOneProp(self.mapiobj, PROP_STORE_ENTRYIDS).Value[0]
+        except MAPIErrorNotFound:
+            return
+
+        return Store(entryid=entryid, server=self.server) # XXX server?
+
+    @archive_store.setter
+    def archive_store(self, store):
+        ids = self.mapiobj.GetIDsFromNames(NAMED_PROPS_ARCHIVER, 0) # XXX merge namedprops stuff
+        PROP_STORE_ENTRYIDS = CHANGE_PROP_TYPE(ids[0], PT_MV_BINARY)
+        PROP_ITEM_ENTRYIDS = CHANGE_PROP_TYPE(ids[1], PT_MV_BINARY)
+
+        # XXX only for detaching atm
+        if store is None:
+            self.mapiobj.DeleteProps([PROP_STORE_ENTRYIDS, PROP_ITEM_ENTRYIDS])
+            self.mapiobj.SaveChanges(KEEP_OPEN_READWRITE)
+
+    @property
+    def archive_folder(self):
+        """ Archive :class:`Folder` or *None* if not found """
+
+        ids = self.mapiobj.GetIDsFromNames(NAMED_PROPS_ARCHIVER, 0) # XXX merge namedprops stuff
+        PROP_ITEM_ENTRYIDS = CHANGE_PROP_TYPE(ids[1], PT_MV_BINARY)
+
+        try:
+            # support for multiple archives was a mistake, and is not and _should not_ be used. so we just pick nr 0.
+            arch_folderid = HrGetOneProp(self.mapiobj, PROP_ITEM_ENTRYIDS).Value[0]
+        except MAPIErrorNotFound:
+            return
+
+        return self.archive_store.folder(entryid=arch_folderid.encode('hex'))
+
+    @property
     def company(self):
         table = self.server.sa.OpenUserStoresTable(MAPI_UNICODE)
         table.Restrict(SPropertyRestriction(RELOP_EQ, PR_EC_STOREGUID, SPropValue(PR_EC_STOREGUID, self.guid.decode('hex'))), TBL_BATCH)
@@ -2236,6 +2267,45 @@ class Folder(object):
             if not state & SEARCH_REBUILD:
                 break
 
+    @property
+    def archive_folder(self):
+        """ Archive :class:`Folder` or *None* if not found """
+
+        ids = self.mapiobj.GetIDsFromNames(NAMED_PROPS_ARCHIVER, 0) # XXX merge namedprops stuff
+        PROP_STORE_ENTRYIDS = CHANGE_PROP_TYPE(ids[0], PT_MV_BINARY)
+        PROP_ITEM_ENTRYIDS = CHANGE_PROP_TYPE(ids[1], PT_MV_BINARY)
+
+        try:
+            # support for multiple archives was a mistake, and is not and _should not_ be used. so we just pick nr 0.
+            store_entryid = HrGetOneProp(self.mapiobj, PROP_STORE_ENTRYIDS).Value[0]
+            folder_entryid = HrGetOneProp(self.mapiobj, PROP_ITEM_ENTRYIDS).Value[0]
+        except MAPIErrorNotFound:
+            return
+
+        return Store(entryid=store_entryid, server=self.server).folder(entryid=folder_entryid.encode('hex'))
+
+    @property
+    def primary_store(self):
+        ids = self.mapiobj.GetIDsFromNames(NAMED_PROPS_ARCHIVER, 0) # XXX merge namedprops stuff
+        PROP_REF_STORE_ENTRYID = CHANGE_PROP_TYPE(ids[3], PT_BINARY)
+        try:
+            entryid = HrGetOneProp(self.mapiobj, PROP_REF_STORE_ENTRYID).Value
+        except MAPIErrorNotFound:
+            return
+        return Store(entryid=entryid, server=self.server)
+
+    @property
+    def primary_folder(self):
+        ids = self.mapiobj.GetIDsFromNames(NAMED_PROPS_ARCHIVER, 0) # XXX merge namedprops stuff
+        PROP_REF_ITEM_ENTRYID = CHANGE_PROP_TYPE(ids[4], PT_BINARY)
+        entryid = HrGetOneProp(self.mapiobj, PROP_REF_ITEM_ENTRYID).Value
+
+        if self.primary_store:
+            try:
+                return self.primary_store.folder(entryid=entryid.encode('hex'))
+            except MAPIErrorNotFound:
+                pass
+
     def __eq__(self, f): # XXX check same store?
         if isinstance(f, Folder):
             return self._entryid == f._entryid
@@ -2324,25 +2394,18 @@ class Item(object):
             self.mapiobj.SaveChanges(KEEP_OPEN_READWRITE)
 
     @property
-    def _arch_item(self): # make an explicit connection to archive server so we can handle otherwise silenced errors (MAPI errors in mail bodies for example)
+    def _arch_item(self): # open archive store explicitly so we can handle otherwise silenced errors (MAPI errors in mail bodies for example)
         if self._architem is None:
             if self.stubbed:
                 ids = self.mapiobj.GetIDsFromNames(NAMED_PROPS_ARCHIVER, 0)
                 PROP_STORE_ENTRYIDS = CHANGE_PROP_TYPE(ids[0], PT_MV_BINARY)
-                try:
-                    # support for multiple archives was a mistake, and is not and _should not_ be used. so we just pick nr 0.
-                    arch_storeid = HrGetOneProp(self.mapiobj, PROP_STORE_ENTRYIDS).Value[0]
-                    arch_server = arch_storeid[arch_storeid.find('pseudo://')+9:-1]
-                    arch_session = self.server._archive_session(arch_server)
-                    if arch_session is None: # XXX first connection failed, no need to report about this multiple times
-                        self._architem = self.mapiobj
-                    else:
-                        PROP_ITEM_ENTRYIDS = CHANGE_PROP_TYPE(ids[1], PT_MV_BINARY)
-                        item_entryid = HrGetOneProp(self.mapiobj, PROP_ITEM_ENTRYIDS).Value[0]
-                        arch_store = arch_session.OpenMsgStore(0, arch_storeid, None, 0)
-                        self._architem = arch_store.OpenEntry(item_entryid, None, 0)
-                except MAPIErrorNotFound: # XXX fix 'stubbed' definition!!
-                    self._architem = self.mapiobj
+                PROP_ITEM_ENTRYIDS = CHANGE_PROP_TYPE(ids[1], PT_MV_BINARY)
+
+                # support for multiple archives was a mistake, and is not and _should not_ be used. so we just pick nr 0.
+                arch_storeid = HrGetOneProp(self.mapiobj, PROP_STORE_ENTRYIDS).Value[0]
+                item_entryid = HrGetOneProp(self.mapiobj, PROP_ITEM_ENTRYIDS).Value[0]
+
+                self._architem = self.server._store2(arch_storeid).OpenEntry(item_entryid, None, 0)
             else:
                 self._architem = self.mapiobj
         return self._architem
@@ -2892,6 +2955,60 @@ class Item(object):
                 item = Item(mapiobj=msg)
                 item.server = self.server # XXX
                 return item
+
+    @property
+    def primary_item(self):
+        ids = self.mapiobj.GetIDsFromNames(NAMED_PROPS_ARCHIVER, 0) # XXX merge namedprops stuff
+        PROP_REF_ITEM_ENTRYID = CHANGE_PROP_TYPE(ids[4], PT_BINARY)
+        entryid = HrGetOneProp(self.mapiobj, PROP_REF_ITEM_ENTRYID).Value
+
+        try:
+            return self.folder.primary_store.item(entryid=entryid.encode('hex'))
+        except MAPIErrorNotFound:
+            pass
+
+    def restore(self):
+        ids = self.mapiobj.GetIDsFromNames(NAMED_PROPS_ARCHIVER, 0) # XXX cache folder.GetIDs..?
+        PROP_STUBBED = CHANGE_PROP_TYPE(ids[2], PT_BOOLEAN)
+        PROP_REF_STORE_ENTRYID = CHANGE_PROP_TYPE(ids[3], PT_BINARY)
+        PROP_REF_ITEM_ENTRYID = CHANGE_PROP_TYPE(ids[4], PT_BINARY)
+        PROP_REF_PREV_ENTRYID = CHANGE_PROP_TYPE(ids[5], PT_BINARY)
+        PROP_FLAGS = CHANGE_PROP_TYPE(ids[6], PT_LONG)
+
+        # get/create primary item
+        primary_item = self.primary_item
+        if not primary_item:
+            mapiobj = self.folder.primary_folder.mapiobj.CreateMessage(None, 0)
+            new = True
+        else:
+            mapiobj = primary_item.mapiobj
+            new = False
+
+        if not new and not primary_item.stubbed:
+            return
+
+        # cleanup primary item
+        mapiobj.DeleteProps([PROP_STUBBED, PR_ICON_INDEX])
+        at = mapiobj.GetAttachmentTable(0)
+        at.SetColumns([PR_ATTACH_NUM], TBL_BATCH)
+        while True:
+            rows = at.QueryRows(20, 0)
+            if len(rows) == 0:
+                break
+            for row in rows:
+                mapiobj.DeleteAttach(row[0].Value, 0, None, 0)
+
+        # copy contents into it
+        exclude_props = [PROP_REF_STORE_ENTRYID, PROP_REF_ITEM_ENTRYID, PROP_REF_PREV_ENTRYID, PROP_FLAGS]
+        self.mapiobj.CopyTo(None, exclude_props, 0, None, IID_IMessage, mapiobj, 0)
+
+        mapiobj.SaveChanges(KEEP_OPEN_READWRITE)
+
+        # update backref
+        if new:
+            entryid = HrGetOneProp(mapiobj, PR_ENTRYID).Value
+            self.mapiobj.SetProps([SPropValue(PROP_REF_ITEM_ENTRYID, entryid)])
+            self.mapiobj.SaveChanges(KEEP_OPEN_READWRITE)
 
     def __unicode__(self):
         return u'Item(%s)' % self.subject
@@ -3511,25 +3628,6 @@ class User(object):
             return Store(entryid=entryid, server=self.server)
         except MAPIErrorNotFound:
             pass
-
-    @property
-    def archive_store(self):
-        """ Archive :class:`Store` for user or *None* if not found """
-
-        mapistore = self.store.mapiobj
-        ids = mapistore.GetIDsFromNames(NAMED_PROPS_ARCHIVER, 0) # XXX merge namedprops stuff
-        PROP_STORE_ENTRYIDS = CHANGE_PROP_TYPE(ids[0], PT_MV_BINARY)
-        try:
-            # support for multiple archives was a mistake, and is not and _should not_ be used. so we just pick nr 0.
-            arch_storeid = HrGetOneProp(mapistore, PROP_STORE_ENTRYIDS).Value[0]
-        except MAPIErrorNotFound:
-            return
-        arch_server = arch_storeid[arch_storeid.find('pseudo://')+9:-1]
-        arch_session = self.server._archive_session(arch_server)
-        if arch_session is None:
-            return
-        arch_store = arch_session.OpenMsgStore(0, arch_storeid, None, MDB_WRITE)
-        return Store(self.server, arch_store) # XXX server?
 
     # XXX deprecated? user.store = .., user.archive_store = ..
     def hook(self, store): # XXX add Company.(un)hook for public store
