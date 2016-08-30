@@ -47,9 +47,7 @@ Main classes:
 
 """
 
-# Python 2.5 doesn't have with
-from __future__ import with_statement
-
+import collections
 import contextlib
 try:
     import cPickle as pickle
@@ -635,8 +633,10 @@ Wrapper around MAPI properties
                 # The datetime object is of "naive" type, has local time and
                 # no TZ info. :-(
                 #
-                self._value = datetime.datetime.fromtimestamp(self.mapiobj.Value.unixtime)
-                
+                try:
+                    self._value = datetime.datetime.fromtimestamp(self.mapiobj.Value.unixtime)
+                except ValueError: # Y10K: datetime is limited to 4-digit years
+                    self._value = datetime.datetime(9999, 1, 1)
             else:
                 self._value = self.mapiobj.Value
         return self._value
@@ -786,6 +786,7 @@ Looks at command-line to see if another server address or other related options 
         self.service = service
         self.log = log
         self.mapisession = mapisession
+        self._store_cache = {}
 
         if not self.mapisession:
             # get cmd-line options
@@ -887,7 +888,7 @@ Looks at command-line to see if another server address or other related options 
     @property
     def admin_store(self):
         if not self._admin_store:
-            self._admin_store = Store(self, self.mapistore)
+            self._admin_store = Store(mapiobj=self.mapistore, server=self)
         return self._admin_store
 
     @property
@@ -1087,7 +1088,7 @@ Looks at command-line to see if another server address or other related options 
         group = self.group(name)
         self.sa.DeleteGroup(group._ecgroup.GroupID)
 
-    def store(self, guid):
+    def store(self, guid=None, entryid=None):
         """ Return :class:`store <Store>` with given GUID; raise exception if not found """
 
         if guid == 'public':
@@ -1095,7 +1096,7 @@ Looks at command-line to see if another server address or other related options 
                 raise ZarafaNotFoundException("no public store")
             return self.public_store
         else:
-            return Store(self, self._store(guid))
+            return Store(guid=guid, entryid=entryid, server=self)
 
     def get_store(self, guid):
         """ Return :class:`store <Store>` with given GUID or *None* if not found """
@@ -1120,20 +1121,20 @@ Looks at command-line to see if another server address or other related options 
                         raise ZarafaNotFoundException("no public store")
                     yield self.public_store
                 else:
-                    yield Store(self, self._store(guid))
+                    yield Store(guid, server=self)
             return
 
         table = self.ems.GetMailboxTable(None, 0)
         table.SetColumns([PR_DISPLAY_NAME_W, PR_ENTRYID], 0)
         for row in table.QueryRows(-1, 0):
-            store = Store(self, self.mapisession.OpenMsgStore(0, row[1].Value, None, MDB_WRITE)) # XXX cache
+            store = Store(mapiobj=self.mapisession.OpenMsgStore(0, row[1].Value, None, MDB_WRITE), server=self) # XXX cache
             if system or store.public or (store.user and store.user.name != 'SYSTEM'):
                 yield store
 
     def create_store(self, public=False):
         if public:
             mapistore = self.sa.CreateStore(ECSTORE_TYPE_PUBLIC, EID_EVERYONE)
-            return Store(self, mapistore)
+            return Store(mapiobj=mapistore, server=self)
         # XXX
 
     def remove_store(self, store): # XXX server.delete?
@@ -1151,7 +1152,7 @@ Looks at command-line to see if another server address or other related options 
             self.sa.GetCompanyList(MAPI_UNICODE)
             raise ZarafaException('request for server-wide public store in multi-company setup')
         except MAPIErrorNoSupport:
-            return self.companies().next().public_store
+            return next(self.companies()).public_store
 
     @property
     def state(self):
@@ -1178,7 +1179,7 @@ Looks at command-line to see if another server address or other related options 
         except (ZarafaException, MAPIErrorNotFound): # XXX deleted user
             return '' # XXX groups
 
-    def __unicode__(self):
+    def __str__(self):
         return u'Server(%s)' % self.server_socket
 
     def __repr__(self):
@@ -1272,10 +1273,6 @@ class Group(object):
     def hidden(self, value):
         self._update(hidden=value)
 
-    @property
-    def groupid(self):
-        return bin2hex(self._ecgroup.GroupID)
-
     # XXX: also does groups..
     def add_user(self, user):
         if isinstance(user, Group):
@@ -1351,7 +1348,7 @@ class Company(object):
             for row in table.QueryRows(-1,0):
                 prop = PpropFindProp(row, PR_EC_STOREGUID)
                 if prop:
-                    yield Store(prop.Value.encode('hex'), self.server)
+                    yield Store(prop.Value.encode('hex'), server=self.server)
         else:
             for store in self.server.stores():
                 yield store
@@ -1364,13 +1361,12 @@ class Company(object):
             pubstore = GetPublicStore(self.server.mapisession)
             if pubstore is None:
                 return None
-            return Store(self.server, pubstore)
+            return Store(mapiobj=pubstore, server=self.server)
         try:
-            publicstoreid = self.server.ems.CreateStoreEntryID(None, self._name, MAPI_UNICODE)
+            entryid = self.server.ems.CreateStoreEntryID(None, self._name, MAPI_UNICODE)
         except MAPIErrorNotFound:
             return None
-        publicstore = self.server.mapisession.OpenMsgStore(0, publicstoreid, None, MDB_WRITE)
-        return Store(self.server, publicstore)
+        return Store(entryid=entryid, server=self.server)
 
     def create_store(self, public=False):
         if public:
@@ -1378,7 +1374,7 @@ class Company(object):
                 mapistore = self.server.sa.CreateStore(ECSTORE_TYPE_PUBLIC, EID_EVERYONE)
             else:
                 mapistore = self.server.sa.CreateStore(ECSTORE_TYPE_PUBLIC, self._eccompany.CompanyID)
-            return Store(self.server, mapistore)
+            return Store(mapiobj=mapistore, server=self.server)
         # XXX
 
     def user(self, name, create=False):
@@ -1457,11 +1453,12 @@ class Store(object):
     
     """
 
-    def __init__(self, server, mapiobj=None):
-        if isinstance(server, str): # XXX fix args
-            guid, server = server, Server()
-            mapiobj = server._store(guid)
-        self.server = server
+    def __init__(self, guid=None, entryid=None, mapiobj=None, server=None):
+        self.server = server or Server()
+        if guid:
+            mapiobj = self.server._store(guid)
+        elif entryid:
+            mapiobj = self.server._store2(entryid)
         self.mapiobj = mapiobj
         # XXX: fails if store is orphaned and guid is given..
         self._root = self.mapiobj.OpenEntry(None, None, 0)
@@ -1734,7 +1731,7 @@ class Store(object):
         for row in table.QueryRows(1,0):
             companyname = PpropFindProp(row, PR_EC_COMPANY_NAME_W)
             if companyname is None: # XXX single-tenant, improve check..
-                return self.server.companies().next()
+                return next(self.server.companies())
             else:
                 return self.server.company(companyname.Value)
 
@@ -1965,7 +1962,6 @@ class Folder(object):
 
     def create_item(self, eml=None, ics=None, vcf=None, load=None, loads=None, attachments=True, **kwargs): # XXX associated
         item = Item(self, eml=eml, ics=ics, vcf=vcf, load=load, loads=loads, attachments=attachments, create=True)
-        item.server = self.server
         for key, val in kwargs.items():
             setattr(item, key, val)
         return item
@@ -2061,7 +2057,6 @@ class Folder(object):
         if '/' in path.replace('\\/', ''): # XXX MAPI folders may contain '/' (and '\') in their names..
             subfolder = self
             for name in UNESCAPED_SLASH_RE.split(path):
-                name = name.replace('\\SLASH\\', '\\/')
                 subfolder = subfolder.folder(name, create=create, recurse=False)
             return subfolder
 
@@ -3512,9 +3507,8 @@ class User(object):
         """ Default :class:`Store` for user or *None* if no store is attached """
 
         try:
-            storeid = self.server.ems.CreateStoreEntryID(None, self._name, MAPI_UNICODE)
-            mapistore = self.server.mapisession.OpenMsgStore(0, storeid, IID_IMsgStore, MDB_WRITE|MAPI_DEFERRED_ERRORS)
-            return Store(self.server, mapistore)
+            entryid = self.server.ems.CreateStoreEntryID(None, self._name, MAPI_UNICODE)
+            return Store(entryid=entryid, server=self.server)
         except MAPIErrorNotFound:
             pass
 
@@ -3792,7 +3786,7 @@ class TrackingContentsImporter(ECImportContentsChanges):
                 mapistore = self.server.mapisession.OpenMsgStore(0, store_entryid, None, 0) # XXX cache
             item = Item()
             item.server = self.server
-            item.store = Store(self.server, mapistore)
+            item.store = Store(mapiobj=mapistore, server=self.server)
             try:
                 item.mapiobj = _openentry_raw(mapistore, entryid.Value, 0)
                 item.folderid = PpropFindProp(props, PR_EC_PARENT_HIERARCHYID).Value
@@ -3870,8 +3864,8 @@ def daemonize(func, options=None, foreground=False, log=None, config=None, servi
         if config.get('run_as_group'):
             gid = grp.getgrnam(config.get('run_as_group')).gr_gid
     if not pidfile and service:
-        pidfile = '/var/run/zarafad/%s.pid' % service.name
-    if pidfile: # following checks copied from zarafa-ws
+        pidfile = "/var/run/zarafad/%s.pid" % service.name
+    if pidfile:
         pidfile = daemon.pidlockfile.TimeoutPIDLockFile(pidfile, 10)
         oldpid = pidfile.read_pid()
         if oldpid is None:
@@ -4369,6 +4363,7 @@ Encapsulates everything to create a simple Zarafa service, such as:
             for msg in self.config.errors:
                 self.log.error(msg)
             sys.exit(1)
+        self.stats = collections.defaultdict(int, {'errors': 0})
 
     @property
     def server(self):
