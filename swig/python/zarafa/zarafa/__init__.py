@@ -2096,7 +2096,9 @@ class Folder(object):
         matches = [f for f in self.folders(recurse=recurse) if f.name == path]
         if len(matches) == 0:
             if create:
-                return self.create_folder(path)
+                name = path.replace('\\/', '/')
+                mapifolder = self.mapiobj.CreateFolder(FOLDER_GENERIC, unicode(name), u'', None, MAPI_UNICODE)
+                return Folder(self.store, HrGetOneProp(mapifolder, PR_ENTRYID).Value)
             else:
                 raise ZarafaNotFoundException("no such folder: '%s'" % path)
         elif len(matches) > 1:
@@ -2135,10 +2137,8 @@ class Folder(object):
                 for subfolder in folder.folders(depth=depth+1):
                     yield subfolder
 
-    def create_folder(self, name, **kwargs):
-        name = name.replace('\\/', '/')
-        mapifolder = self.mapiobj.CreateFolder(FOLDER_GENERIC, unicode(name), u'', None, MAPI_UNICODE)
-        folder = Folder(self.store, HrGetOneProp(mapifolder, PR_ENTRYID).Value)
+    def create_folder(self, path, **kwargs):
+        folder = self.folder(path, create=True)
         for key, val in kwargs.items():
             setattr(folder, key, val)
         return folder
@@ -2681,13 +2681,15 @@ class Item(object):
     def sender(self):
         """ Sender :class:`Address` """
 
-        return Address(self.server, *(self.prop(p).value for p in (PR_SENDER_ADDRTYPE_W, PR_SENDER_NAME_W, PR_SENDER_EMAIL_ADDRESS_W, PR_SENDER_ENTRYID)))
+        args = [self.get_prop(p).value if self.get_prop(p) else None for p in (PR_SENDER_ADDRTYPE_W, PR_SENDER_NAME_W, PR_SENDER_EMAIL_ADDRESS_W, PR_SENDER_ENTRYID)]
+        return Address(self.server, *args)
 
     @property
     def from_(self):
         """ From :class:`Address` """
 
-        return Address(self.server, *(self.prop(p).value for p in (PR_SENT_REPRESENTING_ADDRTYPE_W, PR_SENT_REPRESENTING_NAME_W, PR_SENT_REPRESENTING_EMAIL_ADDRESS_W, PR_SENT_REPRESENTING_ENTRYID)))
+        args = [self.get_prop(p).value if self.get_prop(p) else None for p in (PR_SENT_REPRESENTING_ADDRTYPE_W, PR_SENT_REPRESENTING_NAME_W, PR_SENT_REPRESENTING_EMAIL_ADDRESS_W, PR_SENT_REPRESENTING_ENTRYID)]
+        return Address(self.server, *args)
 
     @from_.setter
     def from_(self, addr):
@@ -2850,7 +2852,7 @@ class Item(object):
             else:
                 props.append([searchkey, key, None])
 
-    def _dump(self, attachments=True, archiver=True):
+    def _dump(self, attachments=True, archiver=True, skip_broken=False):
         # props
         props = []
         tag_data = {}
@@ -2884,18 +2886,30 @@ class Item(object):
         atts = []
         # XXX optimize by looking at PR_MESSAGE_FLAGS?
         for row in self.table(PR_MESSAGE_ATTACHMENTS).dict_rows(): # XXX should we use GetAttachmentTable?
-            num = row[PR_ATTACH_NUM]
-            method = row[PR_ATTACH_METHOD] # XXX default
-            att = self.mapiobj.OpenAttach(num, IID_IAttachment, 0)
-            if method == ATTACH_EMBEDDED_MSG:
-                msg = att.OpenProperty(PR_ATTACH_DATA_OBJ, IID_IMessage, 0, MAPI_MODIFY | MAPI_DEFERRED_ERRORS)
-                item = Item(mapiobj=msg)
-                item.server = self.server # XXX
-                data = item._dump() # recursion
-                atts.append(([[a, b, None] for a, b in row.items()], data))
-            elif attachments:
-                data = _stream(att, PR_ATTACH_DATA_BIN)
-                atts.append(([[a, b, None] for a, b in row.items()], data))
+            try:
+                num = row[PR_ATTACH_NUM]
+                method = row[PR_ATTACH_METHOD] # XXX default
+                att = self.mapiobj.OpenAttach(num, IID_IAttachment, 0)
+                if method == ATTACH_EMBEDDED_MSG:
+                    msg = att.OpenProperty(PR_ATTACH_DATA_OBJ, IID_IMessage, 0, MAPI_MODIFY | MAPI_DEFERRED_ERRORS)
+                    item = Item(mapiobj=msg)
+                    item.server = self.server # XXX
+                    data = item._dump() # recursion
+                    atts.append(([[a, b, None] for a, b in row.items()], data))
+                elif method == ATTACH_BY_VALUE and attachments:
+                    data = _stream(att, PR_ATTACH_DATA_BIN)
+                    atts.append(([[a, b, None] for a, b in row.items()], data))
+            except Exception as e: # XXX generalize so usable in more places
+                service = self.server.service
+                log = (service or self.server).log
+                if log:
+                    log.error('could not serialize attachment')
+                if skip_broken:
+                    log.error(traceback.format_exc(e))
+                    if service and service.stats:
+                        service.stats['errors'] += 1
+                else:
+                    raise
 
         return {
             'props': props,
@@ -2906,8 +2920,8 @@ class Item(object):
     def dump(self, f, attachments=True, archiver=True):
         pickle.dump(self._dump(attachments=attachments, archiver=archiver), f, pickle.HIGHEST_PROTOCOL)
 
-    def dumps(self, attachments=True, archiver=True):
-        return pickle.dumps(self._dump(attachments=attachments, archiver=archiver), pickle.HIGHEST_PROTOCOL)
+    def dumps(self, attachments=True, archiver=True, skip_broken=False):
+        return pickle.dumps(self._dump(attachments=attachments, archiver=archiver, skip_broken=skip_broken), pickle.HIGHEST_PROTOCOL)
 
     def _load(self, d, attachments):
         # props
