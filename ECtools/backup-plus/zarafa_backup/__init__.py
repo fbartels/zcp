@@ -529,30 +529,46 @@ def load_rules(folder, user, server, data, log):
         etxml = ElementTree.tostring(etxml)
         folder.create_prop(PR_RULES_DATA, etxml)
 
+def _get_fbf(user, flags, log):
+    try:
+        fbeid = user.root.prop(PR_FREEBUSY_ENTRYIDS).value[1]
+        return user.store.mapiobj.OpenEntry(fbeid, None, flags)
+    except MAPIErrorNotFound:
+        log.warning("skipping delegation because of missing freebusy data")
+
 def dump_delegates(user, server, log):
     """ dump delegate users for given user """
 
-    # XXX more freebusy stuff?
-    fbeid = user.root.prop(PR_FREEBUSY_ENTRYIDS).value[1]
-    fbf = user.store.mapiobj.OpenEntry(fbeid, None, 0)
+    fbf = _get_fbf(user, 0, log)
+    delegate_uids = []
     try:
-        delegate_uids = HrGetOneProp(fbf, PR_SCHDINFO_DELEGATE_ENTRYIDS).Value
+        if fbf:
+            delegate_uids = HrGetOneProp(fbf, PR_SCHDINFO_DELEGATE_ENTRYIDS).Value
     except MAPIErrorNotFound:
-        delegate_uids = []
-    usernames = [server.sa.GetUser(uid, MAPI_UNICODE).Username for uid in delegate_uids]
+        pass
+
+    usernames = []
+    for uid in delegate_uids:
+        try:
+            usernames.append(server.sa.GetUser(uid, MAPI_UNICODE).Username)
+        except MAPIErrorNotFound:
+            log.warning("skipping delegate user for unknown userid")
     return pickle.dumps(usernames)
 
 def load_delegates(user, server, data, log):
     """ load delegate users for given user """
 
-    data = pickle.loads(data)
-    fbeid = user.root.prop(PR_FREEBUSY_ENTRYIDS).value[1]
-    fbf = user.store.mapiobj.OpenEntry(fbeid, None, MAPI_MODIFY)
-    try:
-        fbf.SetProps([SPropValue(PR_SCHDINFO_DELEGATE_ENTRYIDS, [server.user(name).userid.decode('hex') for name in data])])
+    userids = []
+    for name in pickle.loads(data):
+        try:
+            userids.append(server.user(name).userid.decode('hex'))
+        except zarafa.ZarafaNotFoundException:
+            log.warning("skipping delegation for unknown user '%s'" % name)
+
+    fbf = _get_fbf(user, MAPI_MODIFY, log)
+    if fbf:
+        fbf.SetProps([SPropValue(PR_SCHDINFO_DELEGATE_ENTRYIDS, userids)])
         fbf.SaveChanges(0)
-    except zarafa.ZarafaNotFoundException:
-        log.warning("skipping delegation for unknown user '%s'" % name)
 
 def main():
     # select common options
