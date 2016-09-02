@@ -1550,7 +1550,7 @@ class Store(object):
         except MAPIErrorNotFound:
             pass
 
-     @property
+    @property
     def common_views(self):
         """ :class:`Folder` contains folders for managing views for the message store """
 
