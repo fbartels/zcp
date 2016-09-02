@@ -1501,7 +1501,7 @@ class Store(object):
 
         try:
             return self.root.folder('FINDER_ROOT')
-        except NotFoundError:
+        except ZarafaNotFoundException:
             pass
 
     @property
@@ -1547,6 +1547,15 @@ class Store(object):
 
         try:
             return Folder(self, HrGetOneProp(self._root, PR_IPM_CONTACT_ENTRYID).Value)
+        except MAPIErrorNotFound:
+            pass
+
+     @property
+    def common_views(self):
+        """ :class:`Folder` contains folders for managing views for the message store """
+
+        try:
+            return Folder(self, self.prop(PR_COMMON_VIEWS_ENTRYID).value)
         except MAPIErrorNotFound:
             pass
 
