@@ -1496,6 +1496,15 @@ class Store(object):
             pass
 
     @property
+    def findroot(self):
+        """ :class:`Folder` designated as search-results root """
+
+        try:
+            return self.root.folder('FINDER_ROOT')
+        except NotFoundError:
+            pass
+
+    @property
     def inbox(self):
         """ :class:`Folder` designated as inbox """
 
@@ -1787,8 +1796,7 @@ class Store(object):
 
     def create_searchfolder(self, text=None): # XXX store.findroot.create_folder()?
         import uuid # XXX username+counter? permission problems to determine number?
-        finder_root = self.root.folder('FINDER_ROOT') # XXX store.findroot?
-        mapiobj = finder_root.mapiobj.CreateFolder(FOLDER_SEARCH, str(uuid.uuid4()), 'comment', None, 0)
+        mapiobj = self.findroot.mapiobj.CreateFolder(FOLDER_SEARCH, str(uuid.uuid4()), 'comment', None, 0)
         return Folder(self, mapiobj=mapiobj)
 
     def permissions(self):
@@ -1796,6 +1804,25 @@ class Store(object):
 
     def permission(self, member, create=False):
         return _permission(self, member, create)
+
+    def favorites(self):
+        """Returns a list of favorite folders """
+
+        table = self.common_views.mapiobj.GetContentsTable(MAPI_ASSOCIATED)
+        table.SetColumns([PR_MESSAGE_CLASS, PR_SUBJECT, PR_WLINK_ENTRYID, PR_WLINK_FLAGS, PR_WLINK_ORDINAL, PR_WLINK_STORE_ENTRYID, PR_WLINK_TYPE], 0)
+        table.Restrict(SPropertyRestriction(RELOP_EQ, PR_MESSAGE_CLASS, SPropValue(PR_MESSAGE_CLASS, "IPM.Microsoft.WunderBar.Link")), TBL_BATCH)
+
+        for row in table.QueryRows(-1, 0):
+            entryid = bin2hex(row[2].Value)
+            store_entryid = bin2hex(row[5].Value)
+
+            if store_entryid != self.entryid: # XXX: Handle favorites from public stores
+                continue
+
+            try:
+                yield self.folder(entryid=bin2hex(row[2].Value))
+            except MAPIErrorNotFound:
+                pass
 
     def __eq__(self, s): # XXX check same server?
         if isinstance(s, Store):
@@ -2251,7 +2278,7 @@ class Folder(object):
         searchfolder.search_wait()
         for item in searchfolder:
             yield item
-        self.store.root.folder('FINDER_ROOT').mapiobj.DeleteFolder(searchfolder.entryid.decode('hex'), 0, None, 0) # XXX store.findroot
+        self.store.findroot.mapiobj.DeleteFolder(searchfolder.entryid.decode('hex'), 0, None, 0) # XXX store.findroot
 
     def search_start(self, folder, text): # XXX RECURSIVE_SEARCH
         # specific restriction format, needed to reach indexer
@@ -2307,6 +2334,13 @@ class Folder(object):
                 return self.primary_store.folder(entryid=entryid.encode('hex'))
             except MAPIErrorNotFound:
                 pass
+
+    @property
+    def created(self):
+        try:
+            return self.prop(PR_CREATION_TIME).value
+        except MAPIErrorNotFound:
+            pass
 
     def __eq__(self, f): # XXX check same store?
         if isinstance(f, Folder):
@@ -2479,6 +2513,13 @@ class Item(object):
     def body(self, x):
         self.mapiobj.SetProps([SPropValue(PR_BODY_W, unicode(x))])
         self.mapiobj.SaveChanges(KEEP_OPEN_READWRITE)
+
+    @property
+    def created(self):
+        try:
+            return self.prop(PR_CREATION_TIME).value
+        except MAPIErrorNotFound:
+            pass
 
     @property
     def received(self):
