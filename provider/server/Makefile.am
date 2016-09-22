@@ -24,7 +24,7 @@ zarafa_server_LDADD = \
 	${top_builddir}/common/libzcp_common_ssl.la \
 	$(PROG_LIBS) ${icu_uc_LIBS} \
 	$(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS) $(ICU_LIBS) $(DL_LIBS)	\
-	$(MYSQL_LIBS) $(SSL_LIBS) $(PAM_LIBS) $(KRB5_LIBS) -lrt
+	$(MYSQL_LIBS) $(SSL_LIBS) $(PAM_LIBS) $(KRB5_LIBS) -lrt ${TCMALLOC_LIBS}
 
 zarafa_server_SOURCES = ECServer.cpp  \
 						ECSoapServerConnection.h ECSoapServerConnection.cpp \
