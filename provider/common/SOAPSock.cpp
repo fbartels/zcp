@@ -23,6 +23,7 @@
 #endif
 
 #include "SOAPUtils.h"
+#include <zarafa/stringutil.h>
 #include <zarafa/threadutil.h>
 #include <zarafa/CommonUtil.h>
 #include <string>
@@ -95,9 +96,7 @@ static int gsoap_connect_pipe(struct soap *soap, const char *endpoint,
 	// >= because there also needs to be room for the 0x00
 	if (strlen(socket_name) >= sizeof(saddr.sun_path))
 		return SOAP_EOF;
-
-	strncpy(saddr.sun_path, socket_name, sizeof(saddr.sun_path));
-
+	kc_strlcpy(saddr.sun_path, socket_name, sizeof(saddr.sun_path));
 	connect(fd, (struct sockaddr *)&saddr, sizeof(struct sockaddr_un));
 
  	soap->sendfd = soap->recvfd = SOAP_INVALID_SOCKET;
