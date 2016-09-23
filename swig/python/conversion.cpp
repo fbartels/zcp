@@ -2501,7 +2501,7 @@ LPMAPIERROR		Object_to_LPMAPIERROR(PyObject *)
 {
 	LPMAPIERROR	lpError = NULL;
 	if (MAPIAllocateBuffer(sizeof(LPMAPIERROR), (LPVOID*)&lpError) == hrSuccess)
-		memset(lpError, 0, sizeof(LPMAPIERROR));
+		memset(lpError, 0, sizeof(*lpError));
 	return lpError;
 }
 
