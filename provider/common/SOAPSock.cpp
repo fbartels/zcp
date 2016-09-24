@@ -448,14 +448,22 @@ static int kc_ssl_check_name(X509_STORE_CTX *store)
 		return false;
 	}
 	X509_NAME *name = X509_get_subject_name(cert);
+	ASN1_STRING *sdata;
 	const char *subject = NULL;
 	if (name != NULL) {
 		int i = X509_NAME_get_index_by_NID(name, NID_commonName, -1);
-		if (i != -1)
-			subject = reinterpret_cast<const char *>(ASN1_STRING_data(X509_NAME_ENTRY_get_data(X509_NAME_get_entry(name, i))));
+		if (i != -1) {
+			sdata = X509_NAME_ENTRY_get_data(X509_NAME_get_entry(name, i));
+			subject = reinterpret_cast<const char *>(ASN1_STRING_data(sdata));
+		}
 	}
 	if (subject == NULL) {
 		ec_log_err("Server presented no X.509 Subject name. Aborting login.");
+		return false;
+	}
+	if (ASN1_STRING_length(sdata) < 0 ||
+	    strlen(subject) != static_cast<size_t>(ASN1_STRING_length(sdata))) {
+		ec_log_err("Server presented an X.509 Subject name with '\\0' bytes. Aborting login.");
 		return false;
 	}
 	const char *hostname = static_cast<const char *>(SSL_CTX_get_ex_data(ctx, ssl_zvcb_index));
