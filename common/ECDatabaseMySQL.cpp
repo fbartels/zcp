@@ -202,11 +202,8 @@ ECRESULT ECDatabaseMySQL::Close()
 // Get database ownership
 bool ECDatabaseMySQL::Lock()
 {
-
-	pthread_mutex_lock(&m_hMutexMySql);
-
 	m_bLocked = true;
-
+	pthread_mutex_lock(&m_hMutexMySql);
 	return m_bLocked;
 }
 
