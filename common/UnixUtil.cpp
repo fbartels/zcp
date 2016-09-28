@@ -128,7 +128,7 @@ int unix_create_pidfile(const char *argv0, ECConfig *lpConfig,
 	string pidfilename = "/var/run/zarafad/" + string(argv0) + ".pid";
 	FILE *pidfile;
 	int oldpid;
-	char tmp[255];
+	char tmp[256];
 	bool running = false;
 
 	if (strcmp(lpConfig->GetSetting("pid_file"), "")) {
@@ -138,13 +138,16 @@ int unix_create_pidfile(const char *argv0, ECConfig *lpConfig,
 	// test for existing and running process
 	pidfile = fopen(pidfilename.c_str(), "r");
 	if (pidfile) {
-		fscanf(pidfile, "%d", &oldpid);
+		if (fscanf(pidfile, "%d", &oldpid) < 1)
+			oldpid = -1;
 		fclose(pidfile);
 
 		snprintf(tmp, 255, "/proc/%d/cmdline", oldpid);
 		pidfile = fopen(tmp, "r");
 		if (pidfile) {
-			fscanf(pidfile, "%s", tmp);
+			memset(tmp, '\0', sizeof(tmp));
+			if (fscanf(pidfile, "%255s", tmp) < 1)
+				/* nothing */;
 			fclose(pidfile);
 
 			if (strlen(tmp) < strlen(argv0)) {
