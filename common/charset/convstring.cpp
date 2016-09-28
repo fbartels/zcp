@@ -31,24 +31,20 @@ static const char THIS_FILE[] = __FILE__;
  *
  * @param[in]	lpsPropVal
  *			Pointer to the SPropValue object to extract the data from.
- * @param[in]	bCheapCopy
- *			If set to true, the string data is only referenced from
- *			the SPropValue object. Otherwise a copy is made.
- *
  * @return	A new convstring object.
  */
-convstring convstring::from_SPropValue(const SPropValue *lpsPropVal, bool bCheapCopy)
+convstring convstring::from_SPropValue(const SPropValue *lpsPropVal)
 {
 	if (!lpsPropVal)
 		return convstring();
 	
 	switch (PROP_TYPE(lpsPropVal->ulPropTag)) {
 	case PT_STRING8:
-		return convstring(lpsPropVal->Value.lpszA, bCheapCopy);
+		return convstring(lpsPropVal->Value.lpszA);
 		break;
 	
 	case PT_UNICODE:
-		return convstring(lpsPropVal->Value.lpszW, bCheapCopy);
+		return convstring(lpsPropVal->Value.lpszW);
 		break;
 	
 	default:
@@ -65,15 +61,11 @@ convstring convstring::from_SPropValue(const SPropValue *lpsPropVal, bool bCheap
  *
  * @param[in]	sPropVal
  *			Reference to the SPropValue object to extract the data from.
- * @param[in]	bCheapCopy
- *			If set to true, the string data is only referenced from
- *			the SPropValue object. Otherwise a copy is made.
- *
  * @return	A new convstring object.
  */
-convstring convstring::from_SPropValue(const SPropValue &sPropVal, bool bCheapCopy)
+convstring convstring::from_SPropValue(const SPropValue &sPropVal)
 {
-	return from_SPropValue(&sPropVal, bCheapCopy);
+	return from_SPropValue(&sPropVal);
 }
 
 /** Default constructor
@@ -114,18 +106,11 @@ convstring::convstring(const convstring &other)
  * @param[in]	lpsz
  *			The string to base the new object on. This string
  *			is expected to be encoded in the current locale.
- * @param[in]	bCheapCopy
- *			If set to true, the provided string is only referenced.
- *			Otherwise it's copied.
  */
-convstring::convstring(const char *lpsz, bool bCheapCopy)
+convstring::convstring(const char *lpsz)
 : m_lpsz(reinterpret_cast<const TCHAR*>(lpsz))
 , m_ulFlags(0)
 {
-	if (!bCheapCopy && m_lpsz != NULL) {
-		m_str.assign(m_lpsz);
-		m_lpsz = m_str.c_str();
-	}
 }
 
 /** Create a new convstring object based on a raw char pointer.
@@ -136,18 +121,11 @@ convstring::convstring(const char *lpsz, bool bCheapCopy)
  * @param[in]	lpsz
  *			The string to base the new object on. This string
  *			is expected to be encoded as a wide character string.
- * @param[in]	bCheapCopy
- *			If set to true, the provided string is only referenced.
- *			Otherwise it's copied.
  */
-convstring::convstring(const wchar_t *lpsz, bool bCheapCopy)
+convstring::convstring(const wchar_t *lpsz)
 : m_lpsz(reinterpret_cast<const TCHAR*>(lpsz))
 , m_ulFlags(MAPI_UNICODE)
 {
-	if (!bCheapCopy && m_lpsz != NULL) {
-		m_str.assign(m_lpsz);
-		m_lpsz = m_str.c_str();
-	}
 }
 
 /** Create a new convstring object based on a raw pointer.
@@ -164,18 +142,11 @@ convstring::convstring(const wchar_t *lpsz, bool bCheapCopy)
  *			string is assumed to be encoded as a wide character
  *			string. Otherwise it is assumed to be encoded in the
  *			current locale.
- * @param[in]	bCheapCopy
- *			If set to true, the provided string is only referenced.
- *			Otherwise it's copied.
  */
-convstring::convstring(const TCHAR *lpsz, ULONG ulFlags, bool bCheapCopy)
+convstring::convstring(const TCHAR *lpsz, ULONG ulFlags)
 : m_lpsz(lpsz)
 , m_ulFlags(ulFlags)
 {
-	if (!bCheapCopy && m_lpsz != NULL) {
-		m_str.assign(m_lpsz);
-		m_lpsz = m_str.c_str();
-	}
 }
 
 /** Perform a conversion from the internal string to the requested encoding.
