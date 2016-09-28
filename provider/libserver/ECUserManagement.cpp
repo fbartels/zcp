@@ -2076,6 +2076,8 @@ ECRESULT ECUserManagement::QueryContentsRowData(struct soap *soap, ECObjectTable
 	ASSERT(lpRowList != NULL);
 
 	lpsRowSet = s_alloc<struct rowSet>(soap);
+	if (lpsRowSet == NULL)
+		return ZARAFA_E_NOT_ENOUGH_MEMORY;
 	lpsRowSet->__size = 0;
 	lpsRowSet->__ptr = NULL;
 
@@ -2203,7 +2205,7 @@ ECRESULT ECUserManagement::QueryContentsRowData(struct soap *soap, ECObjectTable
 	*lppRowSet = lpsRowSet;
 
 exit:
-	if (er != erSuccess && lpsRowSet != NULL) {
+	if (er != erSuccess) {
 		s_free(soap, lpsRowSet->__ptr);
 		s_free(soap, lpsRowSet);
 	}

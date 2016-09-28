@@ -471,7 +471,7 @@ exit:
 	pABeid = NULL;
 	if (lpTransport != NULL && lpTransport != transport)
 		lpTransport->Release(); /* implies logoff */
-	else
+	else if (lpTransport != NULL)
 		lpTransport->logoff_nd();
 
 	return hr;
