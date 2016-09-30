@@ -835,13 +835,11 @@ ECRESULT ECDispatcherSelect::MainLoop()
                 ACTIVESOCKET sActive;
                 
                 newsoap = soap_copy(iterListenSockets->second);
-                zarafa_new_soap_connection(SOAP_CONNECTION_TYPE(iterListenSockets->second), newsoap);
-                
                 if(newsoap == NULL) {
                     m_lpLogger->Log(EC_LOGLEVEL_FATAL, "Unable to accept new connection: out of memory");
                     continue;
                 }
-                
+                zarafa_new_soap_connection(SOAP_CONNECTION_TYPE(iterListenSockets->second), newsoap);
                 // Record last activity (now)
                 time(&sActive.ulLastActivity);
 

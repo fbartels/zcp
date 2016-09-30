@@ -62,6 +62,11 @@ openssl req -new -x509 -key privkey.pem -out cacert.pem -days 1095
 SSL_CTX* ECChannel::lpCTX = NULL;
 
 HRESULT ECChannel::HrSetCtx(ECConfig *lpConfig, ECLogger *lpLogger) {
+	if (lpConfig == NULL) {
+		lpLogger->Log(EC_LOGLEVEL_ERROR, "ECChannel::HrSetCtx(): invalid parameters");
+		return MAPI_E_CALL_FAILED;
+	}
+
 	HRESULT hr = hrSuccess;
 	const char *szFile = NULL;
 	const char *szPath = NULL;
@@ -72,12 +77,6 @@ HRESULT ECChannel::HrSetCtx(ECConfig *lpConfig, ECLogger *lpLogger) {
 #if !defined(OPENSSL_NO_ECDH) && defined(NID_X9_62_prime256v1)
 	EC_KEY *ecdh;
 #endif
-
-	if (lpConfig == NULL) {
-		lpLogger->Log(EC_LOGLEVEL_ERROR, "ECChannel::HrSetCtx(): invalid parameters");
-		hr = MAPI_E_CALL_FAILED;
-		goto exit;
-	}
 
 	if (lpCTX) {
 		SSL_CTX_free(lpCTX);
