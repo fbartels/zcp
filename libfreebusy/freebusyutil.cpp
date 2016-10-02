@@ -831,12 +831,12 @@ HRESULT HrAddFBBlock(OccrInfo sOccrInfo, OccrInfo **lppsOccrInfo, ULONG *lpcValu
 		goto exit;
 	
 	if(lpsInputOccrInfo)
-		hr = HrCopyFBBlockSet(lpsNewOccrInfo, lpsInputOccrInfo, (*lpcValues));
+		hr = HrCopyFBBlockSet(lpsNewOccrInfo, lpsInputOccrInfo, ulModVal);
 	
 	if(hr != hrSuccess)
 		goto exit;
-
-	(*lpcValues) = ulModVal;
+	if (lpcValues != NULL)
+		*lpcValues = ulModVal;
 	lpsNewOccrInfo[ulModVal -1] = sOccrInfo;
 	*lppsOccrInfo = lpsNewOccrInfo;
 

@@ -1657,16 +1657,17 @@ HRESULT ECExchangeExportChanges::ChangesToEntrylist(std::list<ICSCHANGE> * lpLst
 	if(lpEntryList->cValues > 0){
 		if ((hr = MAPIAllocateMore(sizeof(SBinary) * lpEntryList->cValues, lpEntryList, (LPVOID *)&lpEntryList->lpbin)) != hrSuccess)
 			goto exit;
+		ulCount = 0;
+		for (lpChange = lpLstChanges->begin(); lpChange != lpLstChanges->end(); ++lpChange) {
+			lpEntryList->lpbin[ulCount].cb = lpChange->sSourceKey.cb;
+			hr = MAPIAllocateMore(lpChange->sSourceKey.cb, lpEntryList, (void **)&lpEntryList->lpbin[ulCount].lpb);
+			if (hr != hrSuccess)
+				goto exit;
+			memcpy(lpEntryList->lpbin[ulCount].lpb, lpChange->sSourceKey.lpb, lpChange->sSourceKey.cb);
+			++ulCount;
+		}
 	}else{
 		lpEntryList->lpbin = NULL;
-	}
-	ulCount = 0;
-	for (lpChange = lpLstChanges->begin(); lpChange != lpLstChanges->end(); ++lpChange) {
-		lpEntryList->lpbin[ulCount].cb = lpChange->sSourceKey.cb;
-		if ((hr = MAPIAllocateMore(lpChange->sSourceKey.cb, lpEntryList, (void **)&lpEntryList->lpbin[ulCount].lpb)) != hrSuccess)
-			goto exit;
-		memcpy(lpEntryList->lpbin[ulCount].lpb, lpChange->sSourceKey.lpb, lpChange->sSourceKey.cb);
-		++ulCount;
 	}
 
 	lpEntryList->cValues = ulCount;
