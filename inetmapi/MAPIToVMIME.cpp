@@ -150,6 +150,7 @@ MAPIToVMIME::MAPIToVMIME()
 	lpLogger = new ECLogger_Null();
 	m_lpAdrBook = NULL;
 	imopt_default_sending_options(&sopt);
+	m_lpSession = NULL;
 }
 
 /**
