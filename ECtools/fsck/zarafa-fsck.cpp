@@ -370,14 +370,14 @@ static HRESULT RunStoreValidation(const char *strHost, const char *strUser,
 	LPSPropValue lpAddRenProp = NULL;
 	ULONG cbEntryIDSrc = 0;
 	LPENTRYID lpEntryIDSrc = NULL;
-	ECLogger *const lpLogger = new ECLogger_File(EC_LOGLEVEL_FATAL, 0, "-", false);
 
 	hr = MAPIInitialize(NULL);
 	if (hr != hrSuccess) {
 		cout << "Unable to initialize session" << endl;
-		goto exit;
+		return hr;
 	}
 
+	ECLogger *const lpLogger = new ECLogger_File(EC_LOGLEVEL_FATAL, 0, "-", false);
 	// input from commandline is current locale
 	if (strUser)
 		strwUsername = convert_to<wstring>(strUser);
