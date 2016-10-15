@@ -47,6 +47,8 @@ ECDatabaseMySQL::ECDatabaseMySQL(ECLogger *lpLogger)
 	m_bConnected		= false;
 	m_bLocked			= false;
 	m_bAutoLock			= true;
+	m_ulMaxAllowedPacket = MAX_ALLOWED_PACKET;
+	memset(&m_lpMySQL, 0, sizeof(m_lpMySQL));
 	m_lpLogger			= lpLogger;
 	m_lpLogger->AddRef();
 
