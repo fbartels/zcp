@@ -2416,7 +2416,7 @@ NOTIFICATION *	Object_to_LPNOTIFICATION(PyObject *obj)
 			oTmp = NULL;
 
 	} else {
-		PyErr_Format(PyExc_RuntimeError, "Bad object type %x", obj->ob_type);
+		PyErr_Format(PyExc_RuntimeError, "Bad object type %p", obj->ob_type);
 	}
 
 exit:
