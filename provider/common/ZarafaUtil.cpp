@@ -205,6 +205,11 @@ ECRESULT SIEntryIDToID(ULONG cb, LPBYTE lpInstanceId, LPGUID guidServer, unsigne
 	return erSuccess;
 }
 
+template<typename T> static int twcmp(T a, T b)
+{
+	return (a < b) ? -1 : (a == b) ? 0 : 1;
+}
+
 /**
  * Compares ab entryid's and returns an int, can be used for sorting algorithms.
  * <0 left first
@@ -221,20 +226,22 @@ int SortCompareABEID(ULONG cbEntryID1, LPENTRYID lpEntryID1, ULONG cbEntryID2, L
 	if (lpEntryID1 == NULL || lpEntryID2 == NULL)
 		return 0;
 	if (peid1->ulVersion != peid2->ulVersion)
-		return peid1->ulVersion - peid2->ulVersion;
+		return twcmp(peid1->ulVersion, peid2->ulVersion);
 
 	// sort: user(6), group(8), company(4)
 	if (peid1->ulType != peid2->ulType)  {
 		if (peid1->ulType == MAPI_ABCONT)
-			rv = -1;
+			return -1;
 		else if (peid2->ulType == MAPI_ABCONT)
-			rv = 1;
-
-		rv = peid1->ulType - peid2->ulType;
+			return 1;
+		else
+			rv = twcmp(peid1->ulType, peid2->ulType);
+		if (rv != 0)
+			return rv;
 	}
 
 	if (peid1->ulVersion == 0) {
-		rv = peid1->ulId - peid2->ulId;
+		rv = twcmp(peid1->ulId, peid2->ulId);
 	} else {
 		rv = strcmp((char*)peid1->szExId, (char*)peid2->szExId);
 	}
