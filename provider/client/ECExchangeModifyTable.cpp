@@ -94,8 +94,8 @@ ECExchangeModifyTable::ECExchangeModifyTable(ULONG ulUniqueTag, ECMemTable *tabl
 	m_lpParent = lpParent;
 
 	m_bPushToServer = true;
-
-	m_lpParent->AddRef();
+	if (m_lpParent != NULL)
+		m_lpParent->AddRef();
 }
 
 ECExchangeModifyTable::~ECExchangeModifyTable() {

@@ -881,9 +881,8 @@ exit:
 				ulThreads = mapSendData.size();
 				g_lpLogger->Log(EC_LOGLEVEL_WARNING, "Still waiting for %d thread%c to exit.", ulThreads, ulThreads!=1?'s':' ');
 			}
-
-			CleanFinishedMessages(lpAdminSession, lpSpooler);
-
+			if (lpSpooler != NULL)
+				CleanFinishedMessages(lpAdminSession, lpSpooler);
 			if (mapSendData.size() == 0)
 				break;
 

@@ -944,7 +944,9 @@ HRESULT ECExchangeExportChanges::ExportMessageChangesSlow() {
 			// SYNC_E_IGNORE. This is required for the BES ICS exporter
 			goto next;
 		}
-
+		if (lpSourceMessage == NULL)
+			// Well this is getting silly. If we do not have a source message, where the heck should we copy from?
+			goto next;
 		hr = lpSourceMessage->CopyTo(0, NULL, (LPSPropTagArray)&sptMessageExcludes, 0, NULL, &IID_IMessage, lpDestMessage, 0, NULL);
 		if(hr != hrSuccess) {
 			ZLOG_DEBUG(m_lpLogger, "Unable to copy to imported message");
