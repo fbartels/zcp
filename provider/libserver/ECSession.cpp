@@ -1414,8 +1414,8 @@ exit:
 
 	if (gssServername != GSS_C_NO_NAME)
 		gss_release_name(&status, &gssServername);
-
-	*lppOutput = lpOutput;
+	if (lppOutput != NULL)
+		*lppOutput = lpOutput;
 #endif
 
 	return er;

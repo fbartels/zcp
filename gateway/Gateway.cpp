@@ -170,8 +170,9 @@ static void *Handler(void *lpArg)
 
 #ifdef LINUX
 	// make sure the pipe logger does not exit when this handler exits, but only frees the memory.
-	if (dynamic_cast<ECLogger_Pipe*>(lpLogger) != NULL)
-		dynamic_cast<ECLogger_Pipe*>(lpLogger)->Disown();
+	ECLogger_Pipe *pipelog = dynamic_cast<ECLogger_Pipe*>(lpLogger);
+	if (pipelog != NULL)
+		pipelog->Disown();
 #endif
 
 	std::string inBuffer;
