@@ -31,6 +31,10 @@ SOAP_CPP_SRC=$(SOAP_CPP_CLIENT) soapServer.cpp $(SOAP_H_FILES) $(SOAP_NS) $(SOAP
 $(SOAP_CPP_SRC) : ns.xsd
 ns.xsd: $(SOAPHEADER)
 	$(GSOAP_SOAPCPP2) -x -I$(SOAP_INC) $<
+	if ! grep -q 'propVal\[\]' soapC*; then \
+		echo "ERROR: This gsoap generator did not produce an acceptable wire protocol. http://sf.net/p/gsoap2/bugs/1075/"; \
+		exit 1; \
+	fi
 
 #libsoapserver_a_LDADD=$(SOAP_CPP_LIB)
 BUILT_SOURCES=ns.xsd $(SOAP_CPP_SRC)
