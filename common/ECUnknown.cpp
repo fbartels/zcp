@@ -180,8 +180,8 @@ BOOL ECUnknown::IsChildOf(const ECUnknown *lpObject) {
 // (AddChild) objects depending on us. 
 
 HRESULT ECUnknown::Suicide() {
-	HRESULT hr = hrSuccess;
 	ECUnknown *lpParent = this->lpParent;
+	ECUnknown *self = this;
 
 	// First, destroy the current object
 	this->lpParent = NULL;
@@ -193,11 +193,9 @@ HRESULT ECUnknown::Suicide() {
 	// and may only be access through functions in ECUnknown.
 
 	// Now, tell our parent to delete this object
-	if(lpParent) {
-		lpParent->RemoveChild(this);
-	}
-
-	return hr;
+	if (lpParent != NULL)
+		lpParent->RemoveChild(self);
+	return hrSuccess;
 }
 
 HRESULT __stdcall ECUnknown::xUnknown::QueryInterface(REFIID refiid, void ** lppInterface)
