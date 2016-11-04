@@ -24,11 +24,6 @@
 #include <openssl/conf.h>
 #include <openssl/engine.h>
 
-#ifdef WIN32
-typedef __int32 int32_t;
-typedef unsigned __int32 uint32_t;
-#endif
-
 #ifdef _DEBUG
 #undef THIS_FILE
 static const char THIS_FILE[]=__FILE__;

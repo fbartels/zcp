@@ -33,11 +33,7 @@ static const char THIS_FILE[] = __FILE__;
  */
 void setCharsetBestAttempt(std::string &strCharset)
 {
-#ifdef WIN32
-	strCharset += "//IGNORE";
-#else
 	strCharset += "//TRANSLIT";
-#endif
 }
 
 template <typename _T>

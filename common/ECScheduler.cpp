@@ -29,14 +29,6 @@
 static const char THIS_FILE[] = __FILE__;
 #endif
 
-#ifdef WIN32
-inline struct tm* localtime_r (const time_t *clock, struct tm *result) {
-       if (!clock || !result) return NULL;
-       memcpy(result,localtime(clock),sizeof(*result));
-       return result;
-}
-#endif
-
 #define SCHEDULER_POLL_FREQUENCY	5
 
 ECScheduler::ECScheduler(ECLogger *lpLogger)

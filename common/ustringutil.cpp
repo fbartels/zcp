@@ -80,11 +80,7 @@ At some point we need to rewqrite these functions to do all the conversion on th
 
 #include "ustringutil/utfutil.h"
 
-#ifdef WIN32
-typedef UCharIterator	WCharIterator;
-#else
 typedef UTF32Iterator	WCharIterator;
-#endif
 #if __cplusplus >= 201100L
 typedef std::unique_ptr<Collator> unique_ptr_Collator;
 #else
@@ -190,11 +186,7 @@ bool str_equals(const char *s1, const char *s2, const ECLocale &locale)
 
     return a.compare(b) == 0;
 #else
-#ifdef WIN32
-	return strcoll_l(s1, s2, locale) == 0;
-#else
 	return strcmp(s1, s2) == 0;
-#endif	
 #endif
 }
 
@@ -220,11 +212,7 @@ bool str_iequals(const char *s1, const char *s2, const ECLocale &locale)
 
     return a.caseCompare(b, 0) == 0;
 #else
-#ifdef WIN32
-	return stricoll_l(s1, s2, locale) == 0;
-#else
 	return strcasecmp_l(s1, s2, locale) == 0;
-#endif
 #endif
 }
 
@@ -252,11 +240,7 @@ bool str_startswith(const char *s1, const char *s2, const ECLocale &locale)
 
 #else
 	size_t cb2 = strlen(s2);
-#ifdef WIN32
-	return strlen(s1) >= cb2 ? (strncoll_l(s1, s2, cb2, locale) == 0) : false;
-#else
 	return strlen(s1) >= cb2 ? (strncmp(s1, s2, cb2) == 0) : false;
-#endif
 #endif
 }
 
@@ -283,11 +267,7 @@ bool str_istartswith(const char *s1, const char *s2, const ECLocale &locale)
     return a.caseCompare(0, b.length(), b, 0) == 0;
 #else
 	size_t cb2 = strlen(s2);
-#ifdef WIN32
-	return strlen(s1) >= cb2 ? (strnicoll_l(s1, s2, cb2, locale) == 0) : false;
-#else
 	return strlen(s1) >= cb2 ? (strncasecmp_l(s1, s2, cb2, locale) == 0) : false;
-#endif
 #endif
 }
 
@@ -319,11 +299,7 @@ int str_compare(const char *s1, const char *s2, const ECLocale &locale)
 
 	return ptrCollator->compare(a,b,status);
 #else
-#ifdef WIN32
-	int r = strcoll_l(s1, s2, locale);
-#else
 	int r = strcmp(s1, s2);
-#endif
 	return (r < 0 ? -1 : (r > 0 ? 1 : 0));
 #endif
 }
@@ -362,11 +338,7 @@ int str_icompare(const char *s1, const char *s2, const ECLocale &locale)
 
 	return ptrCollator->compare(a,b,status);
 #else
-#ifdef WIN32
-	int r = stricoll_l(s1, s2, locale);
-#else
 	int r = strcasecmp_l(s1, s2, locale);
-#endif
 	return (r < 0 ? -1 : (r > 0 ? 1 : 0));
 #endif
 }
@@ -399,19 +371,7 @@ bool str_contains(const char *haystack, const char *needle, const ECLocale &loca
 
     return u_strstr(a.getTerminatedBuffer(), b.getTerminatedBuffer());
 #else
-#ifdef WIN32
-	const size_t cbHaystack = strlen(haystack);
-	const size_t cbNeedle = strlen(needle);
-	const char *lpHay = haystack;
-	while (cbHaystack - (lpHay - haystack) >= cbNeedle) {
-		if (strncoll_l(lpHay, needle, cbNeedle, locale) == 0)
-			return true;
-		++lpHay;
-	}
-	return false;
-#else
 	return strstr(haystack, needle) != NULL;
-#endif
 #endif
 }
 
@@ -440,19 +400,7 @@ bool str_icontains(const char *haystack, const char *needle, const ECLocale &loc
 
     return u_strstr(a.getTerminatedBuffer(), b.getTerminatedBuffer());
 #else
-#ifdef WIN32
-	const size_t cbHaystack = strlen(haystack);
-	const size_t cbNeedle = strlen(needle);
-	const char *lpHay = haystack;
-	while (cbHaystack - (lpHay - haystack) >= cbNeedle) {
-		if (strnicoll_l(lpHay, needle, cbNeedle, locale) == 0)
-			return true;
-		++lpHay;
-	}
-	return false;
-#else
 	return strcasestr(haystack, needle) != NULL;
-#endif
 #endif
 }
 
@@ -480,11 +428,7 @@ bool wcs_equals(const wchar_t *s1, const wchar_t *s2, const ECLocale &locale)
 
     return a.compare(b) == 0;
 #else
-#ifdef WIN32
-	return wcscoll_l(s1, s2, locale) == 0;
-#else
 	return wcscmp(s1, s2) == 0;
-#endif
 #endif
 }
 
@@ -510,11 +454,7 @@ bool wcs_iequals(const wchar_t *s1, const wchar_t *s2, const ECLocale &locale)
 
     return a.caseCompare(b, 0) == 0;
 #else
-#ifdef WIN32
-	return wcsicoll_l(s1, s2, locale) == 0;
-#else
 	return wcscasecmp_l(s1, s2, locale) == 0;
-#endif
 #endif
 }
 
@@ -541,11 +481,7 @@ bool wcs_startswith(const wchar_t *s1, const wchar_t *s2, const ECLocale &locale
     return a.compare(0, b.length(), b) == 0;
 #else
 	size_t cb2 = wcslen(s2);
-#ifdef WIN32
-	return wcslen(s1) >= cb2 ? (wcsncoll_l(s1, s2, cb2, locale) == 0) : false;
-#else
 	return wcslen(s1) >= cb2 ? (wcsncmp(s1, s2, cb2) == 0) : false;
-#endif
 #endif
 }
 
@@ -572,11 +508,7 @@ bool wcs_istartswith(const wchar_t *s1, const wchar_t *s2, const ECLocale &local
     return a.caseCompare(0, b.length(), b, 0) == 0;
 #else
 	size_t cb2 = wcslen(s2);
-#ifdef WIN32
-	return wcslen(s1) >= cb2 ? (wcsnicoll_l(s1, s2, cb2, locale) == 0) : false;
-#else
 	return wcslen(s1) >= cb2 ? (wcsncasecmp_l(s1, s2, cb2, locale) == 0) : false;
-#endif
 #endif
 }
 
@@ -608,11 +540,7 @@ int wcs_compare(const wchar_t *s1, const wchar_t *s2, const ECLocale &locale)
 
 	return ptrCollator->compare(a,b,status);
 #else
-#ifdef WIN32
-	int r = wcscoll_l(s1, s2, locale);
-#else
 	int r = wcscmp(s1, s2);
-#endif
 	return (r < 0 ? -1 : (r > 0 ? 1 : 0));
 #endif
 }
@@ -651,11 +579,7 @@ int wcs_icompare(const wchar_t *s1, const wchar_t *s2, const ECLocale &locale)
 
 	return ptrCollator->compare(a,b,status);
 #else
-#ifdef WIN32
-	int r = wcsicoll_l(s1, s2, locale);
-#else
 	int r = wcscasecmp_l(s1, s2, locale);
-#endif
 	return (r < 0 ? -1 : (r > 0 ? 1 : 0));
 #endif
 }
@@ -688,19 +612,7 @@ bool wcs_contains(const wchar_t *haystack, const wchar_t *needle, const ECLocale
 
     return u_strstr(a.getTerminatedBuffer(), b.getTerminatedBuffer());
 #else
-#ifdef WIN32
-	const size_t cbHaystack = wcslen(haystack);
-	const size_t cbNeedle = wcslen(needle);
-	const wchar_t *lpHay = haystack;
-	while (cbHaystack - (lpHay - haystack) >= cbNeedle) {
-		if (wcsncoll_l(lpHay, needle, cbNeedle, locale) == 0)
-			return true;
-		++lpHay;
-	}
-	return false;
-#else
 	return wcsstr(haystack, needle) != NULL;
-#endif
 #endif
 }
 
@@ -739,11 +651,7 @@ bool wcs_icontains(const wchar_t *haystack, const wchar_t *needle, const ECLocal
 	const size_t cbNeedle = wcslen(needle);
 	const wchar_t *lpHay = haystack;
 	while (cbHaystack - (lpHay - haystack) >= cbNeedle) {
-#ifdef WIN32
-		if (wcsnicoll_l(lpHay, needle, cbNeedle, locale) == 0)
-#else
 		if (wcsncasecmp_l(lpHay, needle, cbNeedle, locale) == 0)
-#endif
 			return true;
 		++lpHay;
 	}
@@ -1334,12 +1242,6 @@ ECLocale createLocaleFromName(const char *lpszLocale)
 #ifdef ZCP_USES_ICU
 	return Locale::createFromName(lpszLocale);
 #else
-#ifdef WIN32
-	ECRESULT er = LocaleIdToLocaleName(lpszLocale, &lpszLocale);
-	if (er != erSuccess)
-		lpszLocale = "";
-
-#endif
 	if (lpszLocale == NULL)
 		lpszLocale = "";
 	// We only need LC_CTYPE and LC_COLLATE, but createlocale doesn't support that
@@ -1498,11 +1400,7 @@ void createSortKeyData(const wchar_t *s, int nCap, const ECLocale &locale, unsig
 
 #ifdef ZCP_USES_ICU
 	UnicodeString ustring;
-#ifdef WIN32
-	ustring = s;
-#else
 	ustring = UTF32ToUnicode((const UChar32*)s);
-#endif
 	createSortKeyData(ustring, nCap, locale, lpcbKey, lppKey);
 #else
 	ASSERT((locale_t)locale != NULL);

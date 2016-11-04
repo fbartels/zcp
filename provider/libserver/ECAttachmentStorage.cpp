@@ -1259,18 +1259,9 @@ ECFileAttachment::ECFileAttachment(ECDatabase *lpDatabase,
 {
 	m_basepath = basepath;
 	if (m_basepath.empty())
-#ifdef WIN32
-		m_basepath = "Zarafa Data";
-#else
 		m_basepath = "/var/lib/zarafa";
-#endif
 
 	this -> force_changes_to_disk = force_changes_to_disk;
-#ifdef WIN32
-	if (force_changes_to_disk)
-		ec_log_warn("Sync to disk for directories not supported on WIN32; ignoring setting");
-#endif
-
 #ifndef WIN32
 	m_dirFd = -1;
 	m_dirp = NULL;
@@ -1311,11 +1302,7 @@ ECFileAttachment::~ECFileAttachment()
  */
 bool ECFileAttachment::ExistAttachmentInstance(ULONG ulInstanceId)
 {
-#ifdef WIN32
-#	define z_stat _stat
-#else
 #	define z_stat stat
-#endif
 	ECRESULT er = erSuccess;
 	string filename = CreateAttachmentFilename(ulInstanceId, m_bFileCompression);
 
@@ -1819,12 +1806,7 @@ ECRESULT ECFileAttachment::SaveAttachmentInstance(ULONG ulInstanceId,
 		}
 	}
 	else {
-#ifdef WIN32
-		fd = _open(filename.c_str(), _O_WRONLY | _O_CREAT | _O_TRUNC, _S_IREAD | _S_IWRITE);
-#else
 		fd = open(filename.c_str(), O_WRONLY | O_CREAT | O_TRUNC, S_IWUSR | S_IRUSR);
-#endif
-
 		if (fd < 0) {
 			ec_log_err("Unable to open attachment \"%s\" for writing: %s", filename.c_str(), strerror(errno));
 			er = ZARAFA_E_DATABASE_ERROR;
@@ -1879,11 +1861,7 @@ ECRESULT ECFileAttachment::SaveAttachmentInstance(ULONG ulInstanceId,
 	unsigned char szBuffer[CHUNK_SIZE];
 	size_t iSizeLeft = iSize;
 
-#ifdef WIN32
-	int fd = _open(filename.c_str(), _O_RDWR | _O_CREAT, _S_IREAD | _S_IWRITE);
-#else
 	int fd = open(filename.c_str(), O_RDWR | O_CREAT, S_IWUSR | S_IRUSR);
-#endif
 	if (fd == -1) {
 		ec_log_err("Unable to open attachment \"%s\" for writing: %s.",
 			filename.c_str(), strerror(errno));

@@ -102,9 +102,6 @@ HRESULT INFLoader::LoadINFs()
 				continue;
 
  			string strFilename = path_to_string(inffile->path());
-#ifdef WIN32
-			transform(strFilename.begin(), strFilename.begin(), strFilename.end(), ::tolower);
-#endif
 			string::size_type pos = strFilename.rfind(".inf", strFilename.size(), strlen(".inf"));
 
 			if (pos == string::npos || strFilename.size() - pos != strlen(".inf"))
@@ -219,18 +216,12 @@ const inf_section* INFLoader::GetSection(const string& strSectionName) const
 vector<string> INFLoader::GetINFPaths()
 {
 	vector<string> ret;
-#ifdef WIN32
-	// @todo fix real path
-	ret.push_back("%CommonProgramFiles%\\System\\MSMAPI\\1033\\MAPISVC.INF");
-	ret.push_back("%CommonProgramFiles(86)%\\System\\MSMAPI\\1033\\MAPISVC.INF");
-#else
 	char *env = getenv("MAPI_CONFIG_PATH");
 	if (env)
 		ba::split(ret, env, ba::is_any_of(":"), ba::token_compress_on);
 	else
 	// @todo, load both, or just one?
 		ret.push_back(MAPICONFIGDIR);
-#endif
 	return ret;
 }
 

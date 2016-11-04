@@ -34,11 +34,6 @@
 #include <zarafa/Util.h>
 #include <zarafa/stringutil.h>
 #include <zarafa/mapiext.h>
-
-#ifdef WIN32
-#define NOTIFY_THROUGH_SUPPORT_OBJECT
-#endif
-
 #define MAX_NOTIFS_PER_CALL 64
 
 #ifdef _DEBUG

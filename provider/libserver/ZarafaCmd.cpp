@@ -658,16 +658,6 @@ int ns__logon(struct soap *soap, char *user, char *pass, char *impersonate, char
 		goto exit;
 	}
 
-#ifdef WIN32
-	// only set persistent on windows pipe sockets, because linux does not call zarafa_disconnect_soap_connection() on connection close
-
-	// Mark this session as persistent if it was connected via a named pipe. This means the session cannot
-	// timeout as long as the connection is alive.
-	if(SOAP_CONNECTION_TYPE_NAMED_PIPE(soap)) {
-		g_lpSessionManager->SetSessionPersistentConnection(sessionID, (unsigned int)soap->socket);
-	}
-#endif
-
 	lpsResponse->ulSessionId = sessionID;
 	if (clientCaps & ZARAFA_CAP_MULTI_SERVER)
 		lpsResponse->ulCapabilities |= ZARAFA_CAP_MULTI_SERVER;
@@ -841,13 +831,6 @@ int ns__ssoLogon(struct soap *soap, ULONG64 ulSessionId, char *szUsername, char 
 		er = ZARAFA_E_INVALID_VERSION;
 		goto exit;
 	}
-
-#ifdef WIN32
-		// only set persistent on windows pipe sockets, because linux does not call zarafa_disconnect_soap_connection() on connection close
-		if(SOAP_CONNECTION_TYPE_NAMED_PIPE(soap)) {
-			g_lpSessionManager->SetSessionPersistentConnection(newSessionID, (unsigned int)soap->socket);
-		}
-#endif
 
 		// delete authsession
 		lpecAuthSession->Unlock();

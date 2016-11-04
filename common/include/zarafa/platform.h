@@ -50,10 +50,6 @@
 #undef _FORTIFY_SOURCE
 #endif
 
-#if defined(WIN32) || defined(WINCE)
-  #include <zarafa/platform.win32.h>
-#else
-
   // We have to include this now in case select.h is included too soon.
   // Increase our maximum amount of file descriptors to 8192
   #include <bits/types.h>
@@ -67,7 +63,6 @@
   #include "config.h"
   #endif
   #include <zarafa/platform.linux.h>
-#endif
 
 #define ZARAFA_SYSTEM_USER		"SYSTEM"
 #define ZARAFA_SYSTEM_USER_W	L"SYSTEM"

@@ -44,10 +44,6 @@
 #endif
 
 #include <zarafa/ECConfig.h>
-#if defined(_WIN32) && !defined(WINCE)
-#include "NTService.h"
-#endif
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -99,11 +95,7 @@ std::string ECLogger::MakeTimestamp() {
 	time_t now = time(NULL);
 	tm local;
 
-#ifdef WIN32
-	local = *localtime(&now);
-#else
 	localtime_r(&now, &local);
-#endif
 
 	char buffer[_LOG_TSSIZE];
 
@@ -473,85 +465,6 @@ void ECLogger_Syslog::LogVA(unsigned int loglevel, const char *format, va_list& 
 }
 #endif
 
-#if defined(_WIN32) && !defined(WINCE)
-ECLogger_Eventlog::ECLogger_Eventlog(unsigned int max_ll, const char *lpszServiceName) : ECLogger(max_ll) {
-	m_hEventSource = NULL;
-
-	if(lpszServiceName)
-		strcpy(m_szServiceName, lpszServiceName);
-	else
-		m_szServiceName[0] = 0;
-
-	levelmap[EC_LOGLEVEL_NONE] = EVENTLOG_ERROR_TYPE;
-	levelmap[EC_LOGLEVEL_CRIT] = EVENTLOG_ERROR_TYPE;
-	levelmap[EC_LOGLEVEL_ERROR] = EVENTLOG_ERROR_TYPE;
-	levelmap[EC_LOGLEVEL_WARNING] = EVENTLOG_WARNING_TYPE;
-	levelmap[EC_LOGLEVEL_NOTICE] = EVENTLOG_INFORMATION_TYPE;
-	levelmap[EC_LOGLEVEL_INFO] = EVENTLOG_INFORMATION_TYPE;
-	levelmap[EC_LOGLEVEL_DEBUG] = EVENTLOG_INFORMATION_TYPE;
-	levelmap[EC_LOGLEVEL_ALWAYS] = EVENTLOG_INFORMATION_TYPE;
-	// EVENTLOG_SUCCESS
-	// EVENTLOG_AUDIT_SUCCESS
-	// EVENTLOG_AUDIT_FAILURE
-}
-
-ECLogger_Eventlog::~ECLogger_Eventlog() {
-	if (m_hEventSource)
-		::DeregisterEventSource(m_hEventSource);
-}
-
-void ECLogger_Eventlog::Reset() {
-}
-
-void ECLogger_Eventlog::Log(unsigned int loglevel, const char *format, ...) {
-	if (!ECLogger::Log(loglevel))
-		return;
-
-	va_list va;
-	va_start(va, format);
-	LogVA(loglevel, format, va);
-	va_end(va);
-}
-
-void ECLogger_Eventlog::LogVA(unsigned int loglevel, const char *format, va_list& va) {
-	char msgbuffer[_LOG_BUFSIZE];
-	_vsnprintf(msgbuffer, sizeof msgbuffer, format, va);
-	ReportEventLog(levelmap[loglevel & EC_LOGLEVEL_MASK], msgbuffer);
-}
-
-void ECLogger_Eventlog::Log(unsigned int loglevel, const string &message) {
-	if (!ECLogger::Log(loglevel))
-		return;
-
-	ReportEventLog(levelmap[loglevel & EC_LOGLEVEL_MASK], message.c_str());
-}
-
-void ECLogger_Eventlog::ReportEventLog(WORD wType, const char *szMsg) {
-	DWORD dwID = EVMSG_DEFAULT;
-	const char *ps[1];
-	ps[0] = szMsg;
-
-	// Check the event source has been registered and if
-	// not then register it now
-	if (!m_hEventSource) {
-		m_hEventSource = ::RegisterEventSourceA(NULL,  // local machine
-				m_szServiceName); // source name
-	}
-
-	if (m_hEventSource) {
-		::ReportEventA(m_hEventSource,
-				wType,
-				0,
-				dwID,
-				NULL, // sid
-				1, // size of array ps
-				0,
-				ps,
-				NULL);
-	}
-}
-#endif
-
 /**
  * Consructor
  */
@@ -679,11 +592,7 @@ void ECLogger_Pipe::Log(unsigned int loglevel, const std::string &message) {
 	off += 1;
 
 	if (prefix == LP_TID)
-#ifdef WIN32
-		len = snprintf(msgbuffer + off, sizeof msgbuffer - off, "[%p] ", pthread_self());
-#else
-	len = snprintf(msgbuffer + off, sizeof msgbuffer - off, "[0x%08x] ", (unsigned int)pthread_self());
-#endif
+		len = snprintf(msgbuffer + off, sizeof msgbuffer - off, "[0x%08x] ", (unsigned int)pthread_self());
 	else if (prefix == LP_PID)
 		len = snprintf(msgbuffer + off, sizeof msgbuffer - off, "[%5d] ", getpid());
 
@@ -727,11 +636,7 @@ void ECLogger_Pipe::LogVA(unsigned int loglevel, const char *format, va_list& va
 	off += 1;
 
 	if (prefix == LP_TID)
-#ifdef WIN32
-		len = snprintf(msgbuffer + off, sizeof msgbuffer - off, "[%p] ", pthread_self());
-#else
-	len = snprintf(msgbuffer + off, sizeof msgbuffer - off, "[0x%08x] ", (unsigned int)pthread_self());
-#endif
+		len = snprintf(msgbuffer + off, sizeof msgbuffer - off, "[0x%08x] ", (unsigned int)pthread_self());
 	else if (prefix == LP_PID)
 		len = snprintf(msgbuffer + off, sizeof msgbuffer - off, "[%5d] ", getpid());
 
@@ -820,9 +725,6 @@ namespace PrivatePipe {
 		int s;
 		int l;
 		bool bNPTL = true;
-#ifdef WIN32
-		fd_set readfds;
-#endif
 
 		confstr(_CS_GNU_LIBPTHREAD_VERSION, buffer, sizeof(buffer));
 		if (strncmp(buffer, "linuxthreads", strlen("linuxthreads")) == 0)
@@ -854,19 +756,6 @@ namespace PrivatePipe {
 		// We want the prefix of each individual thread/fork, so don't add that of the Pipe version.
 		m_lpFileLogger->SetLogprefix(LP_NONE);
 
-#ifdef WIN32
-		while (true) {
-			FD_ZERO(&readfds);
-			FD_SET(readfd, &readfds);
-
-			// blocking wait, returns on error or data waiting to log
-			ret = select(readfd + 1, &readfds, NULL, NULL, NULL);
-			if (ret <= 0) {
-				if (errno == EINTR)
-					continue;	// logger received SIGHUP, which wakes the select
-				break;
-			}
-#else
 		struct pollfd fds[1] = { { readfd, POLLIN, 0 } };
 
 		while(true) {
@@ -881,7 +770,6 @@ namespace PrivatePipe {
 			}
 			if (ret == 0)
 				continue;
-#endif
 
 			complete.clear();
 
@@ -1033,11 +921,7 @@ ECLogger* CreateLogger(ECConfig *lpConfig, const char *argv0,
 		fprintf(stderr, "syslog logging is only available on linux.\n");
 #endif
 	} else if (stricmp(lpConfig->GetSetting((prepend+"log_method").c_str()), "eventlog") == 0) {
-#if defined(_WIN32) && !defined(WINCE)
-		lpLogger = new ECLogger_Eventlog(loglevel, lpszServiceName);
-#else
 		fprintf(stderr, "eventlog logging is only available on windows.\n");
-#endif
 	} else if (stricmp(lpConfig->GetSetting((prepend+"log_method").c_str()), "file") == 0) {
 		int ret = 0;
 #ifdef LINUX
@@ -1145,11 +1029,7 @@ void LogConfigErrors(ECConfig *lpConfig) {
 void generic_sigsegv_handler(ECLogger *lpLogger, const char *app_name,
     const char *version_string, int signr, const siginfo_t *si, const void *uc)
 {
-#ifdef _WIN32
-	ECLogger_Eventlog localLogger(EC_LOGLEVEL_DEBUG, app_name);
-#else
 	ECLogger_Syslog localLogger(EC_LOGLEVEL_DEBUG, app_name, LOG_MAIL);
-#endif
 
 	if (lpLogger == NULL)
 		lpLogger = &localLogger;

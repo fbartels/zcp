@@ -44,19 +44,9 @@
 #include <gssapi/gssapi.h>
 #endif
 
-#ifdef WIN32
-#define SECURITY_WIN32
-#include <Security.h>
-#endif
-
 class ECSecurity;
 class ECUserManagement;
 class SOURCEKEY;
-
-#ifdef WIN32
-// used for pthread_t, implementation in ECSoapServerConnection.cpp
-bool operator<(const pthread_t &pta, const pthread_t &ptb);
-#endif
 
 void CreateSessionID(unsigned int ulCapabilities, ECSESSIONID *lpSessionId);
 

@@ -19,10 +19,6 @@
 //
 
 #include <zarafa/platform.h>
-
-#ifdef _WIN32
-	#include "ECNTService.h"
-#endif
 #include <climits>
 #include <cstdio>
 #include <cstdlib>
@@ -152,10 +148,6 @@ int main(int argc, char *argv[]) {
 	int daemonize = 1;
 	bool bIgnoreUnknownConfigOptions = false;
 
-#if defined(_WIN32)
-	ECNTService ecNTService;
-#endif
-
 	// Default settings
 	static const configsetting_t lpDefaults[] = {
 		{ "smtp_server","localhost" },
@@ -250,11 +242,7 @@ int main(int argc, char *argv[]) {
 	if (!m_lpThreadMonitor->lpConfig->LoadSettings(szConfig) ||
 	    !m_lpThreadMonitor->lpConfig->ParseParams(argc - optind, &argv[optind], NULL) ||
 	    (!bIgnoreUnknownConfigOptions && m_lpThreadMonitor->lpConfig->HasErrors())) {
-#ifdef WIN32
-		m_lpThreadMonitor->lpLogger = new ECLogger_Eventlog(EC_LOGLEVEL_INFO, "ZarafaMonitor");
-#else
 		m_lpThreadMonitor->lpLogger = new ECLogger_File(EC_LOGLEVEL_INFO, 0, "-", false); // create fatal logger without a timestamp to stderr
-#endif
 		ec_log_set(m_lpThreadMonitor->lpLogger);
 		LogConfigErrors(m_lpThreadMonitor->lpConfig);
 		hr = E_FAIL;
@@ -315,20 +303,7 @@ int main(int argc, char *argv[]) {
 	// Init exit threads
 	pthread_mutex_init(&m_hExitMutex, NULL);
 	pthread_cond_init(&m_hExitSignal, NULL);
-
-#if defined(_WIN32)
-	// Parse for standard arguments (install, uninstall, version etc.)
-	if (!ecNTService.ParseStandardArgs(argc, argv))
-	{
-		ecNTService.StartService(&m_lpThreadMonitor->bShutdown, szPath);
-	}
-	
-	hr = ecNTService.m_Status.dwWin32ExitCode;
-	if(hr == ERROR_FAILED_SERVICE_CONTROLLER_CONNECT)
-#endif
 		hr = running_service(szPath);
-
-
 exit:
 	if(m_lpThreadMonitor)
 		deleteThreadMonitor(m_lpThreadMonitor, true);

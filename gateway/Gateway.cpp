@@ -19,13 +19,6 @@
 #include <zarafa/platform.h>
 #include <climits>
 #include <csignal>
-
-#ifdef WIN32
-#include "ECNTService.h"
-#include <process.h>
-#else
-#endif
-
 #include <inetmapi/inetmapi.h>
 
 #include <mapi.h>
@@ -401,11 +394,7 @@ int main(int argc, char *argv[]) {
 	if (!g_lpConfig->LoadSettings(szConfig) ||
 	    !g_lpConfig->ParseParams(argc - optind, &argv[optind], NULL) ||
 	    (!bIgnoreUnknownConfigOptions && g_lpConfig->HasErrors())) {
-#ifdef WIN32
-		g_lpLogger = new ECLogger_Eventlog(EC_LOGLEVEL_INFO, "ZarafaGateway");
-#else
 		g_lpLogger = new ECLogger_File(EC_LOGLEVEL_INFO, 0, "-", false);	// create logger without a timestamp to stderr
-#endif
 		ec_log_set(g_lpLogger);
 		LogConfigErrors(g_lpConfig);
 		hr = E_FAIL;
@@ -432,17 +421,6 @@ int main(int argc, char *argv[]) {
 
 	if (!szPath)
 		szPath = g_lpConfig->GetSetting("server_socket");
-
-#ifdef _WIN32
-	// Parse for standard arguments (install, uninstall, version etc.)
-	if (!ecNTService.ParseStandardArgs(argc, argv)) {
-		ecNTService.StartService(szPath);
-	}
-
-	hr = ecNTService.m_Status.dwWin32ExitCode;
-	if (hr != ERROR_FAILED_SERVICE_CONTROLLER_CONNECT)
-		goto exit;
-#endif
 
 	g_strHostString = g_lpConfig->GetSetting("server_hostname", NULL, "");
 	if (g_strHostString.empty())
@@ -530,18 +508,6 @@ static HRESULT running_service(const char *szPath, const char *servicename)
 		}
 #endif
 	}
-
-#ifdef WIN32
-	// Initialize Winsock
-	WSADATA wsaData;
-	int iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
-
-	if (iResult != NO_ERROR){
-		g_lpLogger->Log(EC_LOGLEVEL_ERROR, "Can't initialize Winsock");
-		hr = E_FAIL;
-		goto exit;
-	}
-#endif
 
 	bListenPOP3 = (strcmp(g_lpConfig->GetSetting("pop3_enable"), "yes") == 0);
 	bListenPOP3s = (strcmp(g_lpConfig->GetSetting("pop3s_enable"), "yes") == 0);
@@ -838,11 +804,6 @@ exit:
 #ifdef LINUX
 	free(st.ss_sp);
 #endif
-
-#ifdef WIN32
-	WSACleanup();
-#endif
-
 #ifdef ZCP_USES_ICU
 	// cleanup ICU data so valgrind is happy
 	u_cleanup();
