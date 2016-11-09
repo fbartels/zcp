@@ -1737,9 +1737,11 @@ HRESULT VMIMEToMAPI::dissect_ical(vmime::ref<vmime::header> vmHeader,
 	ULONG ulAttNr = 0;
 	ICalToMapi *lpIcalMapi = NULL;
 	SPropValuePtr ptrSubject;
-
-	// Some senders send utf-8 iCalendar information without a charset (Exchange does this). Default
-	// to utf-8 if no charset was specified
+	/*
+	 * Some senders send UTF-8 iCalendar information without a charset
+	 * (Exchange does this). Default to UTF-8 if no charset was specified,
+	 * as mandated by RFC 5545 § 3.1.4.
+	 */
 	strCharset = vmBody->getCharset().getName();
 	if (strCharset == "us-ascii")
 		// We can safely upgrade from us-ascii to utf-8 since it is compatible
