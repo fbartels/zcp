@@ -1802,6 +1802,11 @@ HRESULT VMIMEToMAPI::dissect_ical(vmime::ref<vmime::header> vmHeader,
 		lpLogger->Log(EC_LOGLEVEL_ERROR, "dissect_ical-1834: Error while converting ical to mapi: %s (%x)", GetMAPIErrorMessage(hr), hr);
 		goto exit;
 	}
+	/* Evaluate whether vconverter gave us an initial body */
+	if (!bIsAttachment && m_mailState.bodyLevel < BODY_PLAIN &&
+	    (FPropExists(lpMessage, PR_BODY_A) ||
+	    FPropExists(lpMessage, PR_BODY_W)))
+		m_mailState.bodyLevel = BODY_PLAIN;
 	if (!bIsAttachment)
 		goto exit;
 
