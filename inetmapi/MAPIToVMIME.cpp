@@ -2223,17 +2223,23 @@ bool MAPIToVMIME::has_reminder(IMessage *msg)
 	SPropValue *content_type = NULL;
 	MAPINAMEID named_prop = {const_cast<GUID *>(&PSETID_Common), MNID_ID, {0x8503}};
 	MAPINAMEID *named_proplist = &named_prop;
+	bool result = false;
 
 	HRESULT hr = msg->GetIDsFromNames(1, &named_proplist, MAPI_CREATE, &tags);
-	if (hr != hrSuccess)
+	if (hr != hrSuccess) {
 		ec_log_err("Unable to read reminder property: %s (0x%08x)",
 			GetMAPIErrorMessage(hr), hr);
-	else
+	} else {
 		hr = HrGetOneProp(msg, CHANGE_PROP_TYPE(tags->aulPropTag[0], PT_BOOLEAN), &content_type);
+		if (hr == hrSuccess)
+			result = content_type->Value.b;
+		else
+			ec_log_err("Unable to get reminder property: %s (0x%08x)", GetMAPIErrorMessage(hr), hr);
+	}
 
 	MAPIFreeBuffer(tags);
 	MAPIFreeBuffer(content_type);
-	return hr == hrSuccess;
+	return result;
 }
 
 /**
