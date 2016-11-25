@@ -439,7 +439,7 @@ static int kc_ssl_astr_match(const char *hostname, ASN1_STRING *astr)
 		return false;
 	int alen = ASN1_STRING_length(astr);
 	if (alen < 0 || strlen(cstr) != static_cast<size_t>(alen)) {
-		ec_log_err("K-1720: Server presented an X.509 string with '\\0' bytes. Aborting login.");
+		ec_log_err("K-1720: Server presented an X.509 string with '\\0' bytes.");
 		return -1;
 	}
 	if (kc_wildcard_cmp(cstr, hostname)) {
@@ -460,7 +460,7 @@ static int kc_ssl_check_certnames(const char *hostname, X509 *cert)
 
 	X509_NAME *name = X509_get_subject_name(cert);
 	if (name == NULL) {
-		ec_log_err("K-1722: server certificate has no X.509 subject name. Aborting login.");
+		ec_log_err("K-1722: server certificate has no X.509 subject name.");
 		return false;
 	}
 
@@ -527,23 +527,20 @@ static int kc_ssl_check_cert(X509_STORE_CTX *store)
 	}
 	const char *hostname = static_cast<const char *>(SSL_CTX_get_ex_data(ctx, ssl_zvcb_index));
 	if (hostname == NULL) {
-		ec_log_err("Internal fluctuation - no hostname in our SSL context. Aborting login.");
+		ec_log_err("Internal fluctuation - no hostname in our SSL context.");
 		return false;
 	}
 	bool ret = kc_ssl_check_certnames(hostname, cert);
 	if (ret > 0)
 		return true;
-	ec_log_err("K-1725: certificate of server %s had no matching names. "
-		"Aborting login.", hostname);
+	ec_log_err("K-1725: certificate of server %s had no matching names. ",
+		hostname);
 	return false;
 }
 
 int ssl_verify_callback_zarafa_silent(int ok, X509_STORE_CTX *store)
 {
-	if (!kc_ssl_check_cert(store)) {
-		X509_STORE_CTX_set_error(store, X509_V_ERR_CERT_REJECTED);
-		ok = 0;
-	}
+	kc_ssl_check_cert(store);
 	int sslerr;
 
 	if (ok == 0)
