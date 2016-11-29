@@ -1456,20 +1456,18 @@ ECRESULT ECFileAttachment::LoadAttachmentInstance(struct soap *soap, ULONG ulIns
 	filename = CreateAttachmentFilename(ulInstanceId, bCompressed);
 
 	fd = open(filename.c_str(), O_RDONLY);
-	if (fd == -1) {
-		bCompressed = !bCompressed;
-
-		filename = CreateAttachmentFilename(ulInstanceId, bCompressed);
-
-		fd = open(filename.c_str(), O_RDONLY);
+	if (fd < 0 && errno != ENOENT) {
+		/* Access problems */
+		ec_log_err("K-1561: cannot open attachment \"%s\": %s", filename.c_str(), strerror(errno));
+		return ZARAFA_E_NO_ACCESS;
+	} else if (fd < 0) {
+		/* Not found, try gzip */
+		bCompressed = true;
+		if (fd < 0) {
+			ec_log_err("K-1562: cannot open attachment \"%s\": %s", filename.c_str(), strerror(errno));
+			return ZARAFA_E_NOT_FOUND;
+		}
 	}
-
-	if (fd == -1) {
-		ec_log_err("ECFileAttachment::LoadAttachmentInstance(SOAP): cannot open attachment \"%s\": %s", filename.c_str(), strerror(errno));
-		er = ZARAFA_E_NOT_FOUND;
-		goto exit;
-	}
-
 	my_readahead(fd);
 
 	/*
@@ -1642,12 +1640,20 @@ ECRESULT ECFileAttachment::LoadAttachmentInstance(ULONG ulInstanceId, size_t *lp
 	filename = CreateAttachmentFilename(ulInstanceId, bCompressed);
 
 	fd = open(filename.c_str(), O_RDONLY);
-	if (fd == -1) {
-		er = ZARAFA_E_NOT_FOUND;
-		ec_log_err("ECFileAttachment::LoadAttachmentInstance(): cannot open \"%s\": %s", filename.c_str(), strerror(errno));
-		goto exit;
+	if (fd < 0 && errno != ENOENT) {
+		/* Access problems */
+		ec_log_err("K-1563: cannot open attachment \"%s\": %s", filename.c_str(), strerror(errno));
+		return ZARAFA_E_NO_ACCESS;
+	} else if (fd < 0) {
+		/* Not found, try gzip */
+		bCompressed = true;
+		filename = CreateAttachmentFilename(ulInstanceId, bCompressed);
+		fd = open(filename.c_str(), O_RDONLY);
+		if (fd < 0) {
+			ec_log_err("K-1564: cannot open attachment \"%s\": %s", filename.c_str(), strerror(errno));
+			return ZARAFA_E_NOT_FOUND;
+		}
 	}
-
 	my_readahead(fd);
 
 	if (bCompressed) {
