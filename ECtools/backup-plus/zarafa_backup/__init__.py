@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import binascii
 import csv
 from contextlib import closing
 import cPickle as pickle
@@ -47,7 +48,7 @@ zarafa-backup --index user1 -f Inbox/subfolder --recursive --period-begin 2014-0
 def dbopen(path): # XXX unfortunately dbhash.open doesn't seem to accept unicode
     return dbhash.open(path.encode(sys.stdout.encoding or 'utf8'), 'c')
 
-def _decode(s): # XXX make optparse give us unicode
+def _decode(s):
     return s.decode(sys.stdout.encoding or 'utf8')
 
 class BackupWorker(zarafa.Worker):
@@ -71,11 +72,11 @@ class BackupWorker(zarafa.Worker):
 
                 # backup user and store properties
                 if not options.folders:
-                    file(path+'/store', 'w').write(dump_props(store.props()))
+                    file(path+'/store', 'w').write(dump_props(store.props(), stats, self.log))
                     if user:
-                        file(path+'/user', 'w').write(dump_props(user.props()))
+                        file(path+'/user', 'w').write(dump_props(user.props(), stats, self.log))
                         if not options.skip_meta:
-                            file(path+'/delegates', 'w').write(dump_delegates(user, server, self.log))
+                            file(path+'/delegates', 'w').write(dump_delegates(user, server, stats, self.log))
 
                 # check command-line options and backup folders
                 t0 = time.time()
@@ -118,10 +119,10 @@ class BackupWorker(zarafa.Worker):
 
         # backup folder properties, path, metadata
         file(data_path+'/path', 'w').write(folder.path.encode('utf8'))
-        file(data_path+'/folder', 'w').write(dump_props(folder.props()))
+        file(data_path+'/folder', 'w').write(dump_props(folder.props(), stats, self.log))
         if not options.skip_meta:
-            file(data_path+'/acl', 'w').write(dump_acl(folder, user, server, self.log))
-            file(data_path+'/rules', 'w').write(dump_rules(folder, user, server, self.log))
+            file(data_path+'/acl', 'w').write(dump_acl(folder, user, server, stats, self.log))
+            file(data_path+'/rules', 'w').write(dump_rules(folder, user, server, stats, self.log))
         if options.only_meta:
             return
 
@@ -165,12 +166,13 @@ class FolderImporter:
         """ deleted item from 'items' and 'index' databases """
 
         with log_exc(self.log, self.stats):
-            self.log.debug('folder %s: deleted document with sourcekey %s' % (self.folder.sourcekey, item.sourcekey))
-            with closing(dbopen(self.folder_path+'/items')) as db:
-                del db[item.sourcekey]
-            with closing(dbopen(self.folder_path+'/index')) as db:
-                del db[item.sourcekey]
-            self.stats['deletes'] += 1
+            with closing(dbopen(self.folder_path+'/items')) as db_items:
+                with closing(dbopen(self.folder_path+'/index')) as db_index:
+                    if item.sourcekey in db_items: # ICS can generate delete events without update events..
+                        self.log.debug('folder %s: deleted document with sourcekey %s' % (self.folder.sourcekey, item.sourcekey))
+                        del db_items[item.sourcekey]
+                        del db_index[item.sourcekey]
+                        self.stats['deletes'] += 1
 
 class Service(zarafa.Service):
     """ main backup process """
@@ -208,7 +210,7 @@ class Service(zarafa.Service):
         self.log.info('starting restore of %s' % self.data_path)
         username = os.path.split(self.data_path)[1]
         if self.options.users:
-            store = self._store(_decode(self.options.users[0]))
+            store = self._store(self.options.users[0])
         elif self.options.stores:
             store = self.server.store(self.options.stores[0])
         else:
@@ -233,15 +235,16 @@ class Service(zarafa.Service):
                         store.mapiobj.SetProps([SPropValue(proptag, value)])
                 store.mapiobj.SaveChanges(KEEP_OPEN_READWRITE)
             if os.path.exists('%s/delegates' % self.data_path):
-                load_delegates(user, self.server, file('%s/delegates' % self.data_path).read(), self.log)
+                load_delegates(user, self.server, file('%s/delegates' % self.data_path).read(), stats, self.log)
 
         # determine stored and specified folders
         path_folder = folder_struct(self.data_path, self.options)
-        paths = [_decode(f) for f in self.options.folders] or sorted(path_folder.keys())
+        paths = self.options.folders or sorted(path_folder.keys())
         if self.options.recursive:
             paths = [path2 for path2 in path_folder for path in paths if (path2+'//').startswith(path+'/')]
 
         # restore specified folders
+        restored = []
         for path in paths:
             if path not in path_folder:
                 self.log.error('no such folder: %s' % path)
@@ -255,14 +258,24 @@ class Service(zarafa.Service):
                     (self.options.skip_deleted and folder == store.wastebasket))):
                         continue
                 data_path = path_folder[path]
-                self.restore_folder(folder, path, data_path, store, store.subtree, stats, user, self.server)
+                if not self.options.only_meta:
+                    self.restore_folder(folder, path, data_path, store, store.subtree, stats, user, self.server)
+                restored.append((folder, data_path))
+
+        # restore metadata
+        if not (self.options.sourcekeys or self.options.skip_meta):
+            self.log.info('restoring metadata')
+            for (folder, data_path) in restored:
+                load_acl(folder, user, self.server, file(data_path+'/acl').read(), stats, self.log)
+                load_rules(folder, user, self.server, file(data_path+'/rules').read(), stats, self.log)
+
         self.log.info('restore completed in %.2f seconds (%d changes, ~%.2f/sec, %d errors)' %
             (time.time()-t0, stats['changes'], stats['changes']/(time.time()-t0), stats['errors']))
 
     def create_jobs(self):
         """ check command-line options and determine which stores should be backed up """
 
-        output_dir = _decode(self.options.output_dir) if self.options.output_dir else ''
+        output_dir = self.options.output_dir or u''
         jobs = []
 
         # specified companies/all users
@@ -309,13 +322,6 @@ class Service(zarafa.Service):
             container_class = folderprops.get(long(PR_CONTAINER_CLASS_W))
             if container_class:
                 folder.container_class = container_class
-
-            # restore metadata
-            if not self.options.skip_meta:
-                load_acl(folder, user, server, file(data_path+'/acl').read(), self.log)
-                load_rules(folder, user, server, file(data_path+'/rules').read(), self.log)
-            if self.options.only_meta:
-                return
 
         # load existing sourcekeys in folder, to check for duplicates
         existing = set()
@@ -368,10 +374,14 @@ class Service(zarafa.Service):
 
         if '@' in username:
             u, c = username.split('@')
-            if u == c: return self.server.company(c).public_store
-            else: return self.server.user(username).store
-        elif username == 'public': return self.server.public_store
-        else: return self.server.user(username).store
+            if u == 'public' or u == c:
+                return self.server.company(c).public_store
+            else:
+                return self.server.user(username).store
+        elif username == 'public':
+            return self.server.public_store
+        else:
+            return self.server.user(username).store
 
 def folder_struct(data_path, options, mapper=None):
     """ determine all folders in backup directory """
@@ -404,7 +414,7 @@ def show_contents(data_path, options):
     # setup CSV writer, perform basic checks
     writer = csv.writer(sys.stdout)
     path_folder = folder_struct(data_path, options)
-    paths = [_decode(f) for f in options.folders] or sorted(path_folder)
+    paths = options.folders or sorted(path_folder)
     for path in paths:
         if path not in path_folder:
             print 'no such folder:', path
@@ -437,97 +447,105 @@ def show_contents(data_path, options):
             for key, d in items:
                 writer.writerow([key, path.encode(sys.stdout.encoding or 'utf8'), d['last_modified'], d['subject'].encode(sys.stdout.encoding or 'utf8')])
 
-def dump_props(props):
+def dump_props(props, stats, log):
     """ dump given MAPI properties """
 
-    return pickle.dumps(dict((prop.proptag, prop.mapiobj.Value) for prop in props))
+    data = {}
+    with log_exc(log, stats):
+        data = dict((prop.proptag, prop.mapiobj.Value) for prop in props)
+    return pickle.dumps(data)
 
-def dump_acl(folder, user, server, log):
+def dump_acl(folder, user, server, stats, log):
     """ dump acl for given folder """
 
     rows = []
-    acl_table = folder.mapiobj.OpenProperty(PR_ACL_TABLE, IID_IExchangeModifyTable, 0, 0)
-    table = acl_table.GetTable(0)
-    for row in table.QueryRows(-1,0):
-        try:
-            row[1].Value = ('user', server.sa.GetUser(row[1].Value, MAPI_UNICODE).Username)
-        except MAPIErrorNotFound:
+    with log_exc(log, stats):
+        acl_table = folder.mapiobj.OpenProperty(PR_ACL_TABLE, IID_IExchangeModifyTable, 0, 0)
+        table = acl_table.GetTable(0)
+        for row in table.QueryRows(-1,0):
             try:
-                row[1].Value = ('group', server.sa.GetGroup(row[1].Value, MAPI_UNICODE).Groupname)
+                row[1].Value = ('user', server.sa.GetUser(row[1].Value, MAPI_UNICODE).Username)
             except MAPIErrorNotFound:
-                log.warning("skipping access control entry for unknown user/group '%s'" % row[1].Value)
-                continue
-        rows.append(row)
+                try:
+                    row[1].Value = ('group', server.sa.GetGroup(row[1].Value, MAPI_UNICODE).Groupname)
+                except MAPIErrorNotFound:
+                    log.warning("skipping access control entry for unknown user/group '%s'" % row[1].Value)
+                    continue
+            rows.append(row)
     return pickle.dumps(rows)
 
-def load_acl(folder, user, server, data, log):
+def load_acl(folder, user, server, data, stats, log):
     """ load acl for given folder """
 
-    data = pickle.loads(data)
-    rows = []
-    for row in data:
-        try:
-            member_type, value = row[1].Value
-            if member_type == 'user':
-                entryid = server.user(value).userid
-            else:
-                entryid = server.group(value).groupid
-            row[1].Value = entryid.decode('hex')
-            rows.append(row)
-        except zarafa.ZarafaNotFoundException:
-            log.warning("skipping access control entry for unknown user/group '%s'" % row[1].Value)
-    acltab = folder.mapiobj.OpenProperty(PR_ACL_TABLE, IID_IExchangeModifyTable, 0, MAPI_MODIFY)
-    acltab.ModifyTable(0, [ROWENTRY(ROW_ADD, row) for row in rows])
+    with log_exc(log, stats):
+        data = pickle.loads(data)
+        rows = []
+        for row in data:
+            try:
+                member_type, value = row[1].Value
+                if member_type == 'user':
+                    entryid = server.user(value).userid
+                else:
+                    entryid = server.group(value).groupid
+                row[1].Value = entryid.decode('hex')
+                rows.append(row)
+            except zarafa.ZarafaNotFoundException:
+                log.warning("skipping access control entry for unknown user/group '%s'" % row[1].Value)
+        acltab = folder.mapiobj.OpenProperty(PR_ACL_TABLE, IID_IExchangeModifyTable, 0, MAPI_MODIFY)
+        acltab.ModifyTable(0, [ROWENTRY(ROW_ADD, row) for row in rows])
 
-def dump_rules(folder, user, server, log):
+def dump_rules(folder, user, server, stats, log):
     """ dump rules for given folder """
 
-    try:
-        ruledata = folder.prop(PR_RULES_DATA).value
-    except MAPIErrorNotFound:
-        ruledata = None
-    else:
-        etxml = ElementTree.fromstring(ruledata)
-        for actions in etxml.findall('./item/item/actions'):
-            for movecopy in actions.findall('.//moveCopy'):
-                try:
-                    s = movecopy.findall('store')[0]
-                    store = server.mapisession.OpenMsgStore(0, s.text.decode('base64'), None, 0)
-                    guid = HrGetOneProp(store, PR_STORE_RECORD_KEY).Value.encode('hex')
-                    store = server.store(guid)
-                    if store.public:
-                        s.text = 'public'
-                    else:
-                        s.text = store.user.name if store != user.store else ''
-                    f = movecopy.findall('folder')[0]
-                    path = store.folder(entryid=f.text.decode('base64').encode('hex')).path
-                    f.text = path
-                except zarafa.ZarafaNotFoundException:
-                    log.warning("skipping rule for unknown store/folder")
-        ruledata = ElementTree.tostring(etxml)
+    ruledata = None
+    with log_exc(log, stats):
+        try:
+            ruledata = folder.prop(PR_RULES_DATA).value
+        except MAPIErrorNotFound:
+            pass
+        else:
+            etxml = ElementTree.fromstring(ruledata)
+            for actions in etxml.findall('./item/item/actions'):
+                for movecopy in actions.findall('.//moveCopy'):
+                    try:
+                        s = movecopy.findall('store')[0]
+                        store = server.mapisession.OpenMsgStore(0, s.text.decode('base64'), None, 0)
+                        guid = HrGetOneProp(store, PR_STORE_RECORD_KEY).Value.encode('hex')
+                        store = server.store(guid)
+                        if store.public:
+                            s.text = 'public'
+                        else:
+                            s.text = store.user.name if store != user.store else ''
+                        f = movecopy.findall('folder')[0]
+                        path = store.folder(entryid=f.text.decode('base64').encode('hex')).path
+                        f.text = path
+                    except (zarafa.ZarafaNotFoundException, MAPIErrorNotFound, binascii.Error):
+                        log.warning("cannot serialize rule for unknown store/folder")
+            ruledata = ElementTree.tostring(etxml)
     return pickle.dumps(ruledata)
 
-def load_rules(folder, user, server, data, log):
+def load_rules(folder, user, server, data, stats, log):
     """ load rules for given folder """
 
-    data = pickle.loads(data)
-    if data:
-        etxml = ElementTree.fromstring(data)
-        for actions in etxml.findall('./item/item/actions'):
-            for movecopy in actions.findall('.//moveCopy'):
-                try:
-                    s = movecopy.findall('store')[0]
-                    if s.text == 'public':
-                        store = server.public_store
-                    else:
-                        store = server.user(s.text).store if s.text else user.store
-                    s.text = store.entryid.decode('hex').encode('base64').strip()
-                    f = movecopy.findall('folder')[0]
-                    f.text = store.folder(f.text).entryid.decode('hex').encode('base64').strip()
-                except zarafa.ZarafaNotFoundException:
-                    log.warning("skipping rule for unknown store/folder")
-        etxml = ElementTree.tostring(etxml)
-        folder.create_prop(PR_RULES_DATA, etxml)
+    with log_exc(log, stats):
+        data = pickle.loads(data)
+        if data:
+            etxml = ElementTree.fromstring(data)
+            for actions in etxml.findall('./item/item/actions'):
+                for movecopy in actions.findall('.//moveCopy'):
+                    try:
+                        s = movecopy.findall('store')[0]
+                        if s.text == 'public':
+                            store = server.public_store
+                        else:
+                            store = server.user(s.text).store if s.text else user.store
+                        s.text = store.entryid.decode('hex').encode('base64').strip()
+                        f = movecopy.findall('folder')[0]
+                        f.text = store.folder(f.text).entryid.decode('hex').encode('base64').strip()
+                    except zarafa.ZarafaNotFoundException:
+                        log.warning("skipping rule for unknown store/folder")
+            etxml = ElementTree.tostring(etxml)
+            folder.create_prop(PR_RULES_DATA, etxml)
 
 def _get_fbf(user, flags, log):
     try:
@@ -536,39 +554,42 @@ def _get_fbf(user, flags, log):
     except MAPIErrorNotFound:
         log.warning("skipping delegation because of missing freebusy data")
 
-def dump_delegates(user, server, log):
+def dump_delegates(user, server, stats, log):
     """ dump delegate users for given user """
 
-    fbf = _get_fbf(user, 0, log)
-    delegate_uids = []
-    try:
-        if fbf:
-            delegate_uids = HrGetOneProp(fbf, PR_SCHDINFO_DELEGATE_ENTRYIDS).Value
-    except MAPIErrorNotFound:
-        pass
-
     usernames = []
-    for uid in delegate_uids:
+    with log_exc(log, stats):
+        fbf = _get_fbf(user, 0, log)
+        delegate_uids = []
         try:
-            usernames.append(server.sa.GetUser(uid, MAPI_UNICODE).Username)
+            if fbf:
+                delegate_uids = HrGetOneProp(fbf, PR_SCHDINFO_DELEGATE_ENTRYIDS).Value
         except MAPIErrorNotFound:
-            log.warning("skipping delegate user for unknown userid")
+            pass
+
+        for uid in delegate_uids:
+            try:
+                usernames.append(server.sa.GetUser(uid, MAPI_UNICODE).Username)
+            except MAPIErrorNotFound:
+                log.warning("skipping delegate user for unknown userid")
+
     return pickle.dumps(usernames)
 
-def load_delegates(user, server, data, log):
+def load_delegates(user, server, data, stats, log):
     """ load delegate users for given user """
 
-    userids = []
-    for name in pickle.loads(data):
-        try:
-            userids.append(server.user(name).userid.decode('hex'))
-        except zarafa.ZarafaNotFoundException:
-            log.warning("skipping delegation for unknown user '%s'" % name)
+    with log_exc(log, stats):
+        userids = []
+        for name in pickle.loads(data):
+            try:
+                userids.append(server.user(name).userid.decode('hex'))
+            except zarafa.ZarafaNotFoundException:
+                log.warning("skipping delegation for unknown user '%s'" % name)
 
-    fbf = _get_fbf(user, MAPI_MODIFY, log)
-    if fbf:
-        fbf.SetProps([SPropValue(PR_SCHDINFO_DELEGATE_ENTRYIDS, userids)])
-        fbf.SaveChanges(0)
+        fbf = _get_fbf(user, MAPI_MODIFY, log)
+        if fbf:
+            fbf.SetProps([SPropValue(PR_SCHDINFO_DELEGATE_ENTRYIDS, userids)])
+            fbf.SaveChanges(0)
 
 def main():
     # select common options
@@ -590,7 +611,7 @@ def main():
 
     # parse and check command-line options
     options, args = parser.parse_args()
-    options.foreground = True
+    options.service = False
     if options.restore or options.stats or options.index:
         assert len(args) == 1 and os.path.isdir(args[0]), 'please specify path to backup data'
     else:
