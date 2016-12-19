@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import binascii
 import csv
+import datetime
 from contextlib import closing
 import cPickle as pickle
 import dbhash
@@ -93,12 +94,17 @@ class BackupWorker(zarafa.Worker):
                     paths.add(folder.path)
                     self.backup_folder(path, folder, store.subtree, config, options, stats, user, server)
 
-                # remove deleted folders
+                # timestamp deleted folders
                 if not options.folders:
                     path_folder = folder_struct(path, options)
                     for fpath in set(path_folder) - paths:
-                        self.log.info('removing deleted folder: %s' % fpath)
-                        shutil.rmtree(path_folder[fpath])
+                        with closing(dbopen(path_folder[fpath]+'/index')) as db_index:
+                            idx = db_index.get('folder')
+                            d = pickle.loads(idx) if idx else {}
+                            if not d.get('backup_deleted'):
+                                self.log.info('deleted folder: %s' % fpath)
+                                d['backup_deleted'] = self.service.timestamp
+                                db_index['folder'] = pickle.dumps(d)
 
                 changes = stats['changes'] + stats['deletes']
                 self.log.info('backing up %s took %.2f seconds (%d changes, ~%.2f/sec, %d errors)' %
@@ -127,7 +133,7 @@ class BackupWorker(zarafa.Worker):
             return
 
         # sync over ICS, using stored 'state'
-        importer = FolderImporter(folder, data_path, config, options, self.log, stats)
+        importer = FolderImporter(folder, data_path, config, options, self.log, stats, self.service)
         statepath = '%s/state' % data_path
         state = None
         if os.path.exists(statepath):
@@ -142,7 +148,7 @@ class FolderImporter:
     """ tracks changes for a given folder """
 
     def __init__(self, *args):
-        self.folder, self.folder_path, self.config, self.options, self.log, self.stats = args
+        self.folder, self.folder_path, self.config, self.options, self.log, self.stats, self.service = args
 
     def update(self, item, flags):
         """ store updated item in 'items' database, and subject and date in 'index' database """
@@ -159,6 +165,7 @@ class FolderImporter:
                     'subject': item.subject,
                     'orig_sourcekey': orig_prop,
                     'last_modified': item.last_modified,
+                    'backup_updated': self.service.timestamp,
                 })
             self.stats['changes'] += 1
 
@@ -170,16 +177,24 @@ class FolderImporter:
                 with closing(dbopen(self.folder_path+'/index')) as db_index:
                     if item.sourcekey in db_items: # ICS can generate delete events without update events..
                         self.log.debug('folder %s: deleted document with sourcekey %s' % (self.folder.sourcekey, item.sourcekey))
-                        del db_items[item.sourcekey]
-                        del db_index[item.sourcekey]
+                        if self.options.deletes in (None, 'yes'):
+                            idx = pickle.loads(db_index[item.sourcekey])
+                            idx['backup_deleted'] = self.service.timestamp
+                            db_index[item.sourcekey] = pickle.dumps(idx)
+                        else:
+                            del db_items[item.sourcekey]
+                            del db_index[item.sourcekey]
                         self.stats['deletes'] += 1
 
 class Service(zarafa.Service):
     """ main backup process """
 
     def main(self):
+        self.timestamp = datetime.datetime.now()
         if self.options.restore:
             self.restore()
+        elif self.options.purge:
+            self.purge()
         else:
             self.backup()
 
@@ -258,6 +273,10 @@ class Service(zarafa.Service):
                     (self.options.skip_deleted and folder == store.wastebasket))):
                         continue
                 data_path = path_folder[path]
+
+                if self.options.deletes in (None, 'no') and folder_deleted(data_path):
+                    continue
+
                 if not self.options.only_meta:
                     self.restore_folder(folder, path, data_path, store, store.subtree, stats, user, self.server)
                 restored.append((folder, data_path))
@@ -271,6 +290,37 @@ class Service(zarafa.Service):
 
         self.log.info('restore completed in %.2f seconds (%d changes, ~%.2f/sec, %d errors)' %
             (time.time()-t0, stats['changes'], stats['changes']/(time.time()-t0), stats['errors']))
+
+    def purge(self):
+        """ permanently delete old folders/items from backup """
+
+        assert not self.options.folders, 'cannot combine --folder with --purge'
+
+        stats = {'folders': 0, 'items': 0}
+        self.data_path = _decode(self.args[0].rstrip('/'))
+        path_folder = folder_struct(self.data_path, self.options)
+
+        for path, data_path in path_folder.items():
+            # check if folder was deleted
+            self.log.info('checking folder: %s' % path)
+            if folder_deleted(data_path):
+                if (self.timestamp - folder_deleted(data_path)).days > self.options.purge:
+                    self.log.debug('purging folder')
+                    shutil.rmtree(data_path)
+                    stats['folders'] += 1
+            else: # check all items for deletion
+                with closing(dbopen(data_path+'/items')) as db_items:
+                    with closing(dbopen(data_path+'/index')) as db_index:
+                        for item, idx in db_index.items():
+                            d = pickle.loads(idx)
+                            backup_deleted = d.get('backup_deleted')
+                            if backup_deleted and (self.timestamp - backup_deleted).days > self.options.purge:
+                                self.log.debug('purging item: %s' % item)
+                                stats['items'] += 1
+                                del db_items[item]
+                                del db_index[item]
+
+        self.log.info('purged %d folders and %d items' % (stats['folders'], stats['items']))
 
     def create_jobs(self):
         """ check command-line options and determine which stores should be backed up """
@@ -349,7 +399,8 @@ class Service(zarafa.Service):
                     # date check against 'index'
                     last_modified = index[sourcekey2]['last_modified']
                     if ((self.options.period_begin and last_modified < self.options.period_begin) or
-                        (self.options.period_end and last_modified >= self.options.period_end)):
+                        (self.options.period_end and last_modified >= self.options.period_end) or
+                        (index[sourcekey2].get('backup_deleted') and self.options.deletes in (None, 'no'))):
                         continue
 
                     # check for duplicates
@@ -408,6 +459,14 @@ def folder_path(folder, subtree):
         parent = parent.parent
     return path[1:]
 
+def folder_deleted(data_path):
+    if os.path.exists(data_path+'/index'):
+        with closing(dbhash.open(data_path+'/index')) as db:
+           idx = db.get('folder')
+           if idx and pickle.loads(idx).get('backup_deleted'):
+               return pickle.loads(idx).get('backup_deleted')
+    return None
+
 def show_contents(data_path, options):
     """ summary of contents of backup directory, at the item or folder level, in CSV format """
 
@@ -427,13 +486,18 @@ def show_contents(data_path, options):
         data_path = path_folder[path]
         items = []
 
+        if options.deletes == 'no' and folder_deleted(data_path):
+            continue
+
         # filter items on date using 'index' database
         if os.path.exists(data_path+'/index'):
             with closing(dbhash.open(data_path+'/index')) as db:
                 for key, value in db.iteritems():
                     d = pickle.loads(value)
-                    if ((options.period_begin and d['last_modified'] < options.period_begin) or
-                        (options.period_end and d['last_modified'] >= options.period_end)):
+                    if ((key == 'folder') or
+                        (options.period_begin and d['last_modified'] < options.period_begin) or
+                        (options.period_end and d['last_modified'] >= options.period_end) or
+                        (options.deletes == 'no' and d.get('backup_deleted'))):
                         continue
                     items.append((key, d))
 
@@ -596,12 +660,14 @@ def main():
     parser = zarafa.parser('ckpsufwUPCSlObe', usage='zarafa-backup [PATH] [options]')
 
     # add custom options
-    parser.add_option('', '--skip-junk', dest='skip_junk', action='store_true', help='skip junk mail')
-    parser.add_option('', '--skip-deleted', dest='skip_deleted', action='store_true', help='skip deleted mail')
+    parser.add_option('', '--skip-junk', dest='skip_junk', action='store_true', help='skip junk folder')
+    parser.add_option('', '--skip-deleted', dest='skip_deleted', action='store_true', help='skip deleted items folder')
     parser.add_option('', '--skip-public', dest='skip_public', action='store_true', help='skip public store')
     parser.add_option('', '--skip-attachments', dest='skip_attachments', action='store_true', help='skip attachments')
     parser.add_option('', '--skip-meta', dest='skip_meta', action='store_true', help='skip metadata')
     parser.add_option('', '--only-meta', dest='only_meta', action='store_true', help='only backup/restore metadata')
+    parser.add_option('', '--deletes', dest='deletes', help='store/restore deleted items/folders', metavar='YESNO')
+    parser.add_option('', '--purge', dest='purge', type='int', help='purge items/folders deleted more than N days ago', metavar='N')
     parser.add_option('', '--restore', dest='restore', action='store_true', help='restore from backup')
     parser.add_option('', '--restore-root', dest='restore_root', help='restore under specific folder', metavar='PATH')
     parser.add_option('', '--stats', dest='stats', action='store_true', help='list folders for PATH')
@@ -612,10 +678,12 @@ def main():
     # parse and check command-line options
     options, args = parser.parse_args()
     options.service = False
-    if options.restore or options.stats or options.index:
+    if options.restore or options.stats or options.index or options.purge:
         assert len(args) == 1 and os.path.isdir(args[0]), 'please specify path to backup data'
     else:
         assert len(args) == 0, 'too many arguments'
+    if options.deletes and options.deletes not in ('yes', 'no'):
+        raise Exception("--deletes option takes 'yes' or 'no'")
 
     if options.stats or options.index:
         # handle --stats/--index
