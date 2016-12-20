@@ -10614,6 +10614,31 @@
 		  </varlistentry>
 
 		  <varlistentry>
+			<term>
+				<option>--deletes</option>
+				<replaceable>YESNO</replaceable>
+			</term>
+			<listitem>
+			  <para>Backup/restore/show deleted items/folders. The default when backing up is to maintain
+			  data which has been soft- or hard-deleted. The default when restoring
+			  is to not restore such data. The default when viewing the contents of a backup directory is
+			  to show such data.</para>
+			</listitem>
+		  </varlistentry>
+
+		  <varlistentry>
+			<term>
+				<option>--purge</option>
+				<replaceable>N</replaceable>
+			</term>
+			<listitem>
+			  <para>Permanently delete data from backup directory which has been marked as deleted more than
+			  the specified number of days ago.
+			  </para>
+			</listitem>
+		  </varlistentry>
+
+		  <varlistentry>
 			<term><option>--output-dir</option></term>
 			<term>
 			  <option>-O</option>
