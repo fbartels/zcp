@@ -24,6 +24,7 @@
 #include <fstream>
 
 #include <zarafa/ECIConv.h>
+#include <zarafa/ECLogger.h>
 #include "WSTransport.h"
 #include "ProviderUtil.h"
 #include "SymmetricCrypt.h"
@@ -297,10 +298,13 @@ HRESULT WSTransport::HrLogon2(const struct sGlobalProfileProps &sProfileProps)
 	    const_cast<char *>(GetAppName().c_str()),
 	    const_cast<char *>(sProfileProps.strClientAppVersion.c_str()),
 	    const_cast<char *>(sProfileProps.strClientAppMisc.c_str()),
-	    &sResponse))
+	    &sResponse)) {
+		const char *d = soap_check_faultdetail(lpCmd->soap);
+		ec_log_err("gsoap connect: %s", d == NULL ? "()" : d);
 		er = ZARAFA_E_SERVER_NOT_RESPONDING;
-	else
+	} else {
 		er = sResponse.er;
+	}
 
 	// If the user was denied, and the server did not support encryption, and the password was encrypted, decrypt it now
 	// so that we support older servers. If the password was not encrypted, then it was just wrong, and if the server supported encryption
