@@ -1,3 +1,7 @@
+Release notes for 7.2.5
+=======================
+https://documentation.zarafa.com/zarafa_changelog/zcp.html#zcp-7-2-5-rc-final-106
+
 Release notes for 7.2.4
 =======================
 Fixes:
