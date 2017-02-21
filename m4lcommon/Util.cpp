@@ -17,7 +17,7 @@
 
 #include <zarafa/zcdefs.h>
 #include <zarafa/platform.h>
-
+#include <algorithm>
 #include <mapidefs.h>
 #include <mapiutil.h>
 #include <mapispi.h>
@@ -1996,6 +1996,11 @@ exit:
 	return hr;
 }
 
+static bool is_nul_wchar(wchar_t c)
+{
+	return c == L'\0';
+}
+
 /**
  * Converts HTML (PT_BINARY, with specified codepage) to plain text (PT_UNICODE)
  *
@@ -2007,14 +2012,15 @@ exit:
 HRESULT Util::HrHtmlToText(IStream *html, IStream *text, ULONG ulCodepage)
 {
 	HRESULT hr = hrSuccess;
-	wstring wstrHTML;
+	std::wstring wstrHTML, filt;
 	CHtmlToTextParser	parser;
 	
 	hr = HrConvertStreamToWString(html, ulCodepage, &wstrHTML);
 	if(hr != hrSuccess)
 		goto exit;
 
-	if (!parser.Parse(wstrHTML.c_str())) {
+	std::remove_copy_if(wstrHTML.begin(), wstrHTML.end(), std::back_inserter(filt), is_nul_wchar);
+	if (!parser.Parse(filt.c_str())) {
 		hr = MAPI_E_CORRUPT_DATA;
 		goto exit;
 	}
