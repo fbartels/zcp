@@ -297,7 +297,7 @@ HRESULT CreateSoapTransport(ULONG ulUIFlags,
 #ifdef WITH_OPENSSL
 	if (strncmp("https:", lpCmd->endpoint, 6) == 0) {
 		// no need to add certificates to call, since soap also calls SSL_CTX_set_default_verify_paths()
-		if(soap_ssl_client_context(lpCmd->soap, SOAP_SSL_DEFAULT,
+		if (soap_ssl_client_context(lpCmd->soap, SOAP_SSL_DEFAULT | SOAP_SSL_SKIP_HOST_CHECK,
 								strSSLKeyFile != NULL && *strSSLKeyFile != '\0' ? strSSLKeyFile : NULL,
 								strSSLKeyPass != NULL && *strSSLKeyPass != '\0' ? strSSLKeyPass : NULL,
 								NULL, NULL,
