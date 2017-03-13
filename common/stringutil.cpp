@@ -755,3 +755,27 @@ char *kc_strlcpy(char *dest, const char *src, size_t n)
 	dest[n-1] = '\0';
 	return dest;
 }
+
+static inline bool is_nul_char(char c)
+{
+	return c == '\0';
+}
+
+static inline bool is_nul_wchar(wchar_t c)
+{
+	return c == L'\0';
+}
+
+std::string string_strip_nuls(const std::string &i)
+{
+	std::string o;
+	std::remove_copy_if(i.begin(), i.end(), std::back_inserter(o), is_nul_char);
+	return o;
+}
+
+std::wstring string_strip_nuls(const std::wstring &i)
+{
+	std::wstring o;
+	std::remove_copy_if(i.begin(), i.end(), std::back_inserter(o), is_nul_wchar);
+	return o;
+}

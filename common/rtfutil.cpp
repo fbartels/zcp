@@ -24,6 +24,7 @@
 #include <zarafa/CommonUtil.h>
 #include <zarafa/Util.h>
 #include <zarafa/charset/convert.h>
+#include <zarafa/stringutil.h>
 #include "HtmlEntity.h"
 
 #include "rtfutil.h"
@@ -182,10 +183,11 @@ static std::wstring RTFFlushStateOutput(convert_context &convertContext,
  * @param[out]	lpStrHTMLOut	HTML output in requested ulCodepage
  * @param[out]	ulCodepage		codepage for HTML output
  */
-HRESULT HrExtractHTMLFromRTF(const std::string &lpStrRTFIn,
+HRESULT HrExtractHTMLFromRTF(const std::string &rtf_unfilt,
     std::string &lpStrHTMLOut, ULONG ulCodepage)
 {
 	HRESULT hr;
+	std::string lpStrRTFIn = string_strip_nuls(rtf_unfilt);
 	const char *szInput = lpStrRTFIn.c_str();
 	const char *szANSICharset = "us-ascii";
 	const char *szHTMLCharset;
@@ -416,10 +418,11 @@ HRESULT HrExtractHTMLFromRTF(const std::string &lpStrRTFIn,
  * @param[out]	lpStrHTMLOut	HTML output in requested ulCodepage
  * @param[out]	ulCodepage		codepage for HTML output
  */
-HRESULT HrExtractHTMLFromTextRTF(const std::string &lpStrRTFIn,
+HRESULT HrExtractHTMLFromTextRTF(const std::string &rtf_unfilt,
     std::string &lpStrHTMLOut, ULONG ulCodepage)
 {
 	HRESULT hr;
+	std::string lpStrRTFIn = string_strip_nuls(rtf_unfilt);
 	std::wstring wstrUnicodeTmp;
 	const char *szInput = lpStrRTFIn.c_str();
 	const char *szANSICharset = "us-ascii";
@@ -727,10 +730,11 @@ HRESULT HrExtractHTMLFromTextRTF(const std::string &lpStrRTFIn,
  *
  * @todo Export the right HTML tags, now only plain stuff
  */
-HRESULT HrExtractHTMLFromRealRTF(const std::string &lpStrRTFIn,
+HRESULT HrExtractHTMLFromRealRTF(const std::string &rtf_unfilt,
     std::string &lpStrHTMLOut, ULONG ulCodepage)
 {
 	HRESULT hr;
+	std::string lpStrRTFIn = string_strip_nuls(rtf_unfilt);
 	std::wstring wstrUnicodeTmp;
 	const char *szInput = lpStrRTFIn.c_str();
 	const char *szANSICharset = "us-ascii";
@@ -1099,9 +1103,10 @@ bool isrtftext(const char *buf, unsigned int len)
  * @return	mapi error code
  * @retval	MAPI_E_NOT_ENOUGH_MEMORY	too many states in rtf, > 256
  */
-HRESULT HrExtractBODYFromTextRTF(const std::string &lpStrRTFIn,
+HRESULT HrExtractBODYFromTextRTF(const std::string &rtf_unfilt,
     std::wstring &strBodyOut)
 {
+	std::string lpStrRTFIn = string_strip_nuls(rtf_unfilt);
 	const char *szInput = lpStrRTFIn.c_str();
 	const char *szANSICharset = "us-ascii";
 	int ulState = 0;
