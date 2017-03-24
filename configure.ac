@@ -82,8 +82,10 @@ ZCPPFLAGS="$BUILDOS -DHAVE_CONFIG_H \
 ZCXXFLAGS="-Wall -Wmissing-declarations -Wno-write-strings"
 
 # programs that use files >2gb need 64bit file support
+# Force C++98 so we do not accidentally backport something C++11y
+# from KC that will not compile on all targets.
 LFS_CFLAGS=`getconf LFS_CFLAGS`
-ZCPPFLAGS="$ZCPPFLAGS $LFS_CFLAGS"
+ZCPPFLAGS="$ZCPPFLAGS $LFS_CFLAGS -std=gnu++98"
 
 # disable variadic-macros: too much warning: anonymous variadic macros were introduced in C99, only on new compilers
 AC_MSG_CHECKING([whether C++ compiler understands -Wno-variadic-macros option])
