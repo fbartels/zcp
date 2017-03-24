@@ -1,6 +1,43 @@
+Release notes for 7.2.6
+=======================
+Fixes:
+* presence, search: init script fix (status_of_proc -p) [ZCP-13964, ZCP-13971]
+* Fix unicode user for zarafa-mailbox-permissions [KC-292]
+* common: fix empty text bodies when converting U+0000 from HTML [KC-557,KC-580]
+
+
 Release notes for 7.2.5
 =======================
+Fixes:
+* mailbox-permissions: resolve a crash involving Unicode [KC-100]
+* backup: users without a store are now ignored [KC-78]
+* inetmapi: character set was ignored when reading TNEF mails
+  (mails with a winmail.dat part/attachment) [KC-83]
+* search: continue even if xapian db cannot be opened [KC-174]
+* dagent: iCal descriptions caused wrong body parts to be displayed [KC-138]
+* dagent: mr-process failed to copy attachments to the calendar item [KC-202]
+* icalmapi: unbreak timezone lookup [KC-313]
+* caldav: Lightning workaround is not to apply to Apple mail client [KC-145]
+* gateway: report missing attachments over IMAP better [KC-436]
+* inetmapi: review misdetection of TNEF necessity for reminders [KC-348]
+* inetmapi: avoid overzealously generating winmail.dat [KC-348]
+Enhancements:
+* server: speed up login phase by caching PR_LOGON_TIME [KC-6]
+* libicalmapi: improve fallback scenario to server_timezone in ical.cfg [KC-11]
+* spooler: rule name is now logged [KC-102]
+* server: indexing of junk folders can be controlled now [KC-17]
+* backup: add option to skip broken attachments [KC-45]
+* backup: miscellaneous [KC-161, KC-162, KC-192]
+* server: warn about on-disk attachments that have wrong metadata [KC-104]
+Changes:
+* search: no longer do indexing on root and Draft folders [KC-57]
+* search: index junk folders, but skip updating suggestion list [KC-57]
+* server: libs3 is now dlopened to workaround libldap effects [KC-64]
+* spooler: messages with reminder will be sent with a TNEF copy [KC-152]
+* search: treat '_' as a word break [KC-290]
+
 https://documentation.zarafa.com/zarafa_changelog/zcp.html#zcp-7-2-5-rc-final-106
+
 
 Release notes for 7.2.4
 =======================
